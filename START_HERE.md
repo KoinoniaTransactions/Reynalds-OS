@@ -1,36 +1,108 @@
 # START HERE — Reynalds OS
 
-## Current Canonical Release
+## Welcome
 
-Version: 11.2.0  
-Release: Koinonia Contact Page Assembly  
-Date: 2026-07-03
+This document is the primary entry point for Reynalds OS.
 
-## Read Order for Future Chats
+Future developers and AI sessions should begin here before making recommendations or writing code.
 
-1. `CURRENT_STATE.md`
-2. `PROJECT_MEMORY.md`
-3. `NEXT_ACTION.md`
-4. `AI_DEVELOPMENT_CHARTER.md`
-5. `ARCHITECT_HANDOFF.md`
-6. Latest repository audit under `docs/release_audits/`
+---
 
-## Core Rule
+# Current Canonical Release
 
-Reynalds OS is the source of truth. Do not rely on chat memory when repository files are available.
+Version: 11.3.1
 
-## Current Website Routes
+Workspace:
+Reynalds_OS_v11_3_1_Work
 
-- `/` — internal Reynalds OS dashboard; preserve this route.
-- `/koinonia` — public Koinonia Home page.
-- `/koinonia/services` — public Services & Pricing page.
-- `/koinonia/about` — public About page.
-- `/koinonia/contact` — public Contact page.
+Primary Production Workspace:
+Koinonia ERP
 
-## Current Status
+---
 
-All four primary public Koinonia routes are assembled. The next sprint is Site QA and Launch Readiness Review.
+# Required Reading Order
 
-## Important Launch QA Item
+## Phase 1 — Understand the Project
 
-Final phone and SMS links were not found in the repository. Do not invent them. Confirm them before launch.
+1. BRAIN/README.md
+2. BRAIN/PRODUCT_VISION.md
+3. BRAIN/ARCHITECTURE_PRINCIPLES.md
+
+## Phase 2 — Understand Current Development
+
+4. BRAIN/PROJECT_STATE.md
+5. BRAIN/CURRENT_PRIORITIES.md
+6. BRAIN/SESSION_HANDOFF.md
+7. BRAIN/VERSION_HISTORY.md
+
+## Phase 3 — Historical Context
+
+Review legacy documentation only if additional historical context is required.
+
+- CURRENT_STATE.md
+- PROJECT_MEMORY.md
+- NEXT_ACTION.md
+- AI_DEVELOPMENT_CHARTER.md
+- ARCHITECT_HANDOFF.md
+
+---
+
+# Core Development Rule
+
+The Brain is now the authoritative engineering documentation.
+
+Conversation history is temporary.
+
+Repository documentation is permanent.
+
+When repository documentation and previous chat history disagree, repository documentation takes precedence.
+
+---
+
+# Current Product
+
+Product:
+Reynalds OS
+
+First Production Workspace:
+Koinonia ERP
+
+Mission:
+
+Create an intelligent operating system that helps run service businesses through shared objects, workflows, timelines, finance, operations, knowledge, automation, and AI-guided decision support.
+
+---
+
+# Current Website Routes
+
+/                         Internal Reynalds OS Dashboard
+/koinonia                Public Home
+/koinonia/services       Services
+/koinonia/about          About
+/koinonia/contact        Contact
+
+---
+
+# Current Development Priority
+
+1. Complete Brain architecture
+2. Stabilize Object Engine
+3. Complete Dashboard Command Center
+4. Finish Koinonia production website
+5. Begin production deployment
+
+---
+
+# Architectural Rules
+
+• Preserve existing architecture.
+• Review code before changing it.
+• Reuse existing components whenever possible.
+• Explain proposed changes before implementation.
+• Wait for approval before major architectural work.
+
+---
+
+# Long-Term Vision
+
+Reynalds OS will become a universal operating system capable of managing businesses, ministries, organizations, projects, and personal workflows through a shared object model and AI-assisted orchestration.
