@@ -45,3 +45,55 @@ The next major milestone is a locally running Reynalds OS instance with:
 - Operations
 - Finance
 - Brain documentation fully established
+# Active Development Tracks
+
+## Track A — Koinonia (Highest Priority)
+
+Objective:
+
+Launch the first production application built on Reynalds OS.
+
+Current work includes:
+
+- Home
+- Services
+- About
+- Contact
+- Pricing
+- Mobile optimization
+- QA
+- Launch preparation
+
+Development pauses only when additional operating system infrastructure is required.
+
+---
+
+## Track B — Reynalds OS Foundation
+
+Develop shared infrastructure only when needed to support Koinonia.
+
+Examples:
+
+- Brain Engine
+- Object Registry
+- Universal Search
+- Timeline
+- Workspace Manager
+- Command Center
+
+The operating system should grow in response to real application needs rather than speculative architecture.
+
+---
+
+## Track C — Future Applications
+
+After Koinonia launches:
+
+- CRM
+- Transactions
+- Finance
+- Operations
+- Knowledge
+- Intelligence
+- Family
+- Personal
