@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Koinonia ERP Home Dashboard Prototype</title>
+  <style>
+    :root {
+      --ros-bg: #f7f1e8;
+      --ros-surface: #ffffff;
+      --ros-text: #161616;
+      --ros-muted: #5f5f5f;
+      --ros-gold: #b88a44;
+      --ros-border: rgba(184,138,68,0.28);
+      --ros-shadow: rgba(0,0,0,0.06);
+      --ros-status-healthy: #2e7d32;
+      --ros-status-attention: #b8860b;
+      --ros-status-critical: #b23b3b;
+      --ros-status-neutral: #777777;
+      --ros-font-ui: Arial, Helvetica, sans-serif;
+      --ros-font-display: Georgia, 'Times New Roman', serif;
+      --ros-radius-card: 20px;
+      --ros-radius-button: 999px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--ros-bg);
+      color: var(--ros-text);
+      font-family: var(--ros-font-ui);
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+    }
+
+    aside {
+      background: #161616;
+      color: white;
+      padding: 24px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--ros-gold);
+      display: grid;
+      place-items: center;
+      font-family: var(--ros-font-display);
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .brand strong {
+      display: block;
+      font-family: var(--ros-font-display);
+      font-size: 22px;
+    }
+
+    .brand span {
+      color: #cfcfcf;
+      font-size: 12px;
+    }
+
+    nav a {
+      display: block;
+      color: #e6e6e6;
+      text-decoration: none;
+      padding: 12px 14px;
+      border-radius: 14px;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    nav a.active, nav a:hover {
+      background: rgba(184,138,68,0.22);
+      color: #fff;
+    }
+
+    main {
+      padding: 24px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .search {
+      background: #fff;
+      border: 1px solid var(--ros-border);
+      border-radius: var(--ros-radius-button);
+      padding: 14px 18px;
+      box-shadow: 0 12px 30px var(--ros-shadow);
+      color: var(--ros-muted);
+    }
+
+    .button {
+      border: none;
+      border-radius: var(--ros-radius-button);
+      padding: 13px 17px;
+      background: var(--ros-text);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .button.gold { background: var(--ros-gold); }
+    .icon-button {
+      border: 1px solid var(--ros-border);
+      background: #fff;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      box-shadow: 0 12px 30px var(--ros-shadow);
+    }
+
+    .page-title {
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      color: var(--ros-gold);
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: var(--ros-font-display);
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1;
+      margin: 0;
+    }
+
+    .sub {
+      color: var(--ros-muted);
+      margin-top: 12px;
+      font-size: 16px;
+      max-width: 850px;
+      line-height: 1.55;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .kpis {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      margin-bottom: 18px;
+    }
+
+    .content-grid {
+      grid-template-columns: 1.15fr .85fr;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--ros-surface);
+      border: 1px solid var(--ros-border);
+      border-radius: var(--ros-radius-card);
+      padding: 20px;
+      box-shadow: 0 14px 35px var(--ros-shadow);
+    }
+
+    .kpi .label {
+      color: var(--ros-muted);
+      font-size: 12px;
+      margin-bottom: 9px;
+    }
+
+    .kpi .value {
+      font-family: var(--ros-font-display);
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .kpi .note {
+      color: var(--ros-muted);
+      font-size: 12px;
+      margin-top: 7px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      font-family: var(--ros-font-display);
+      font-size: 25px;
+      margin: 0;
+    }
+
+    .small-link {
+      color: var(--ros-gold);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .priority {
+      display: grid;
+      grid-template-columns: 12px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 0;
+      border-top: 1px solid #eee;
+    }
+
+    .priority:first-of-type { border-top: none; }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .red { background: var(--ros-status-critical); }
+    .yellow { background: var(--ros-status-attention); }
+    .green { background: var(--ros-status-healthy); }
+
+    .priority strong { display: block; font-size: 15px; }
+    .priority span { color: var(--ros-muted); font-size: 13px; }
+
+    .pill {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #f0e7dc;
+      color: #543814;
+      white-space: nowrap;
+    }
+
+    .two {
+      grid-template-columns: 1fr 1fr;
+      margin-top: 18px;
+    }
+
+    .queue-item, .activity, .recommendation {
+      padding: 13px 0;
+      border-top: 1px solid #eee;
+    }
+
+    .queue-item:first-of-type,
+    .activity:first-of-type,
+    .recommendation:first-of-type { border-top: none; }
+
+    .queue-item strong, .activity strong, .recommendation strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .queue-item span, .activity span, .recommendation span {
+      color: var(--ros-muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .bar {
+      height: 9px;
+      background: #eee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .bar > div {
+      height: 100%;
+      width: 64%;
+      background: var(--ros-gold);
+    }
+
+    .mobile-note {
+      display: none;
+      background: #fff;
+      border: 1px solid var(--ros-border);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 18px;
+      color: var(--ros-muted);
+    }
+
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 1fr; }
+      aside { position: relative; height: auto; }
+      nav { display: flex; overflow-x: auto; gap: 8px; }
+      nav a { white-space: nowrap; }
+      .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .content-grid, .two { grid-template-columns: 1fr; }
+      .topbar { grid-template-columns: 1fr; }
+      .mobile-note { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="mark">K</div>
+        <div>
+          <strong>Koinonia</strong>
+          <span>ERP Dashboard Prototype</span>
+        </div>
+      </div>
+      <nav>
+        <a class="active" href="#">Dashboard</a>
+        <a href="#">CRM</a>
+        <a href="#">Transactions</a>
+        <a href="#">Contracts</a>
+        <a href="#">Showings</a>
+        <a href="#">Operations</a>
+        <a href="#">Finance</a>
+        <a href="#">Success</a>
+        <a href="#">Knowledge</a>
+        <a href="#">Reports</a>
+        <a href="#">ROS</a>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div class="search">Search agents, transactions, properties, SOPs, object IDs...</div>
+        <button class="button gold">+ New</button>
+        <button class="button">AI Command</button>
+        <button class="icon-button">🔔</button>
+      </div>
+
+      <div class="mobile-note">
+        Mobile priority: show priorities, work queue, closings, notifications, and quick capture.
+      </div>
+
+      <section class="page-title">
+        <div class="eyebrow">Home Dashboard · ROS-0043</div>
+        <h1>Today’s Executive Dashboard</h1>
+        <p class="sub">Designed to answer one question: what should be worked on right now? This prototype uses sample data and the ROS Design System v1.0.</p>
+      </section>
+
+      <section class="grid kpis">
+        <div class="card kpi">
+          <div class="label">Active Transactions</div>
+          <div class="value">18</div>
+          <div class="note">3 need attention</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Draft Requests</div>
+          <div class="value">6</div>
+          <div class="note">2 waiting on client</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Showings</div>
+          <div class="value">4</div>
+          <div class="note">1 feedback due</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Revenue Month</div>
+          <div class="value">$7.8k</div>
+          <div class="note">forecast $12.4k</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Tasks Due</div>
+          <div class="value">12</div>
+          <div class="note">5 high priority</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Client Health</div>
+          <div class="value">92%</div>
+          <div class="note">strong trend</div>
+        </div>
+      </section>
+
+      <section class="grid content-grid">
+        <div>
+          <div class="card">
+            <div class="section-head">
+              <h2>Priority Panel</h2>
+              <span class="small-link">View all</span>
+            </div>
+            <div class="priority">
+              <div class="dot red"></div>
+              <div><strong>Closing tomorrow — Smith Transaction</strong><span>Final QA and closing figures need confirmation.</span></div>
+              <div class="pill">Critical</div>
+            </div>
+            <div class="priority">
+              <div class="dot yellow"></div>
+              <div><strong>Inspection deadline today — Johnson</strong><span>Verify objection status and update communication log.</span></div>
+              <div class="pill">Due Today</div>
+            </div>
+            <div class="priority">
+              <div class="dot yellow"></div>
+              <div><strong>Draft waiting on approval — Garcia</strong><span>Client has not approved revised amendment.</span></div>
+              <div class="pill">Waiting</div>
+            </div>
+            <div class="priority">
+              <div class="dot yellow"></div>
+              <div><strong>Showing feedback overdue — Wilson</strong><span>Feedback should be sent before end of day.</span></div>
+              <div class="pill">Follow-Up</div>
+            </div>
+            <div class="priority">
+              <div class="dot green"></div>
+              <div><strong>Review request ready — Brown</strong><span>Customer Success handoff is complete.</span></div>
+              <div class="pill">Ready</div>
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div class="card">
+              <div class="section-head">
+                <h2>My Work Queue</h2>
+                <span class="small-link">Prioritized</span>
+              </div>
+              <div class="queue-item"><strong>Due Now</strong><span>2 items · closing QA and lender confirmation</span></div>
+              <div class="queue-item"><strong>Today</strong><span>6 items · deadlines, updates, document checks</span></div>
+              <div class="queue-item"><strong>Waiting on Client</strong><span>4 items · draft approvals and missing terms</span></div>
+              <div class="queue-item"><strong>QA Review</strong><span>3 items · intake, active review, pre-closing</span></div>
+            </div>
+
+            <div class="card">
+              <div class="section-head">
+                <h2>Calendar & Closings</h2>
+                <span class="small-link">This week</span>
+              </div>
+              <div class="queue-item"><strong>Today</strong><span>Inspection deadline · Johnson</span></div>
+              <div class="queue-item"><strong>Tomorrow</strong><span>Closing · Smith Transaction</span></div>
+              <div class="queue-item"><strong>Friday</strong><span>Showing window · Wilson Property</span></div>
+              <div class="queue-item"><strong>Next Monday</strong><span>Appraisal follow-up · Carter</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="section-head">
+              <h2>Revenue Snapshot</h2>
+              <span class="small-link">Finance</span>
+            </div>
+            <div class="queue-item"><strong>This Month</strong><span>$7,800 collected · $12,400 forecasted</span></div>
+            <div class="queue-item"><strong>Outstanding Invoices</strong><span>$2,195 pending</span></div>
+            <div class="queue-item"><strong>Revenue by Service</strong><span>Transaction Management leads current revenue.</span></div>
+            <div class="bar"><div></div></div>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head">
+              <h2>AI Recommendations</h2>
+              <span class="small-link">ROS</span>
+            </div>
+            <div class="recommendation"><strong>Review high-risk files first.</strong><span>Based on 1 critical transaction and 2 deadlines within 24 hours.</span></div>
+            <div class="recommendation"><strong>Prepare Customer Success requests.</strong><span>3 closings are within 7 days and may become review opportunities.</span></div>
+            <div class="recommendation"><strong>Monitor capacity next week.</strong><span>Closing volume and drafting requests may create workload compression.</span></div>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head">
+              <h2>Recent Activity</h2>
+              <span class="small-link">Live Feed</span>
+            </div>
+            <div class="activity"><strong>New transaction opened</strong><span>123 Main · Transaction Management</span></div>
+            <div class="activity"><strong>Draft completed</strong><span>Garcia amendment ready for review</span></div>
+            <div class="activity"><strong>Payment received</strong><span>Transaction Coordination Plus · $389</span></div>
+            <div class="activity"><strong>Review submitted</strong><span>Customer Success · Brown closing</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

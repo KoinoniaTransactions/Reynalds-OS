@@ -1,0 +1,190 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  status    String   @default("active")
+  settings  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users     User[]
+  roles     Role[]
+  objects   RosObject[]
+  events    TimelineEvent[]
+}
+
+model User {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  email       String   @unique
+  roleId      String?
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  role        Role?     @relation(fields: [roleId], references: [id])
+}
+
+model Role {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  name         String
+  permissions  Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  workspace    Workspace @relation(fields: [workspaceId], references: [id])
+  users        User[]
+}
+
+model RosObject {
+  id          String   @id @default(cuid())
+  workspaceId String
+  objectType  String
+  name        String
+  status      String
+  health      String
+  ownerId     String?
+  nextAction  String?
+  data        Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  archivedAt  DateTime?
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  events      TimelineEvent[]
+  sourceLinks ObjectRelationship[] @relation("source")
+  targetLinks ObjectRelationship[] @relation("target")
+}
+
+model ObjectRelationship {
+  id             String   @id @default(cuid())
+  sourceObjectId String
+  targetObjectId String
+  relationshipType String
+  createdAt      DateTime @default(now())
+
+  sourceObject RosObject @relation("source", fields: [sourceObjectId], references: [id])
+  targetObject RosObject @relation("target", fields: [targetObjectId], references: [id])
+}
+
+model TimelineEvent {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  objectId     String
+  actorId      String?
+  eventType    String
+  summary      String
+  previousValue Json?
+  newValue      Json?
+  createdAt     DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  object    RosObject @relation(fields: [objectId], references: [id])
+}
+
+model Workflow {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  name         String
+  status       String
+  triggerEvent String
+  definition   Json
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model WorkflowRun {
+  id           String   @id @default(cuid())
+  workflowId   String
+  objectId     String
+  status       String
+  currentStage String?
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+}
+
+model Task {
+  id              String   @id @default(cuid())
+  workspaceId      String
+  relatedObjectId  String?
+  ownerId          String?
+  title            String
+  status           String
+  priority         String
+  dueAt            DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model AutomationRule {
+  id             String   @id @default(cuid())
+  workspaceId    String
+  name           String
+  triggerEvent   String
+  conditions     Json
+  actions        Json
+  requiresReview Boolean  @default(false)
+  status         String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Notification {
+  id              String   @id @default(cuid())
+  workspaceId      String
+  userId           String?
+  relatedObjectId  String?
+  level            String
+  title            String
+  message          String
+  status           String
+  dueAt            DateTime?
+  createdAt        DateTime @default(now())
+}
+
+model Document {
+  id              String   @id @default(cuid())
+  workspaceId      String
+  relatedObjectId  String?
+  fileName         String
+  fileUrl          String
+  documentType     String
+  status           String
+  createdAt        DateTime @default(now())
+}
+
+model Invoice {
+  id              String   @id @default(cuid())
+  workspaceId      String
+  clientObjectId   String
+  relatedObjectId  String?
+  packageObjectId  String?
+  amount           Decimal
+  status           String
+  dueAt            DateTime?
+  paidAt           DateTime?
+  createdAt        DateTime @default(now())
+}
+
+model Payment {
+  id         String   @id @default(cuid())
+  workspaceId String
+  invoiceId  String
+  amount     Decimal
+  status     String
+  receivedAt DateTime?
+  createdAt  DateTime @default(now())
+}

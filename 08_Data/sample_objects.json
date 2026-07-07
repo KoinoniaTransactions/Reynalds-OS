@@ -1,0 +1,276 @@
+[
+  {
+    "id": "REL-000001",
+    "type": "Relationship",
+    "name": "Sarah Johnson",
+    "status": "Active Client",
+    "owner": "CRM",
+    "health": "Strong",
+    "next_action": "Send transaction update",
+    "related": [
+      "BRK-000001",
+      "CLI-000001",
+      "TXN-000001",
+      "INV-1007",
+      "CS-000001"
+    ]
+  },
+  {
+    "id": "CLI-000001",
+    "type": "Client",
+    "name": "Sarah Johnson Client Account",
+    "status": "Active",
+    "owner": "Koinonia",
+    "health": "Strong",
+    "next_action": "Prepare review request after closing",
+    "related": [
+      "REL-000001",
+      "PKG-000001",
+      "TXN-000001",
+      "INV-1007"
+    ]
+  },
+  {
+    "id": "BRK-000001",
+    "type": "Brokerage",
+    "name": "Parker Realty Group",
+    "status": "Active Relationship",
+    "owner": "CRM",
+    "health": "Good",
+    "next_action": "Monitor referral potential",
+    "related": [
+      "REL-000001"
+    ]
+  },
+  {
+    "id": "PTY-000001",
+    "type": "Property",
+    "name": "123 Main Street",
+    "status": "Under Contract",
+    "owner": "Operations",
+    "health": "Attention",
+    "next_action": "Confirm commission instructions",
+    "related": [
+      "TXN-000001",
+      "DOC-000001"
+    ]
+  },
+  {
+    "id": "TXN-000001",
+    "type": "Transaction",
+    "name": "Smith Transaction",
+    "status": "Closing Prep",
+    "owner": "Operations",
+    "health": "Critical",
+    "next_action": "Complete final QA review",
+    "related": [
+      "CLI-000001",
+      "REL-000001",
+      "PTY-000001",
+      "TASK-000001",
+      "EXC-000001",
+      "INV-1007",
+      "CS-000001"
+    ]
+  },
+  {
+    "id": "TASK-000001",
+    "type": "Task",
+    "name": "Complete final QA review",
+    "status": "Due Now",
+    "owner": "Jeremiah",
+    "health": "Critical",
+    "next_action": "Verify closing figures and commission paperwork",
+    "related": [
+      "TXN-000001",
+      "QA-000001",
+      "EXC-000001"
+    ]
+  },
+  {
+    "id": "QA-000001",
+    "type": "QA Review",
+    "name": "Smith Pre-Closing QA",
+    "status": "Incomplete",
+    "owner": "Operations",
+    "health": "Critical",
+    "next_action": "Complete QA checklist",
+    "related": [
+      "TXN-000001",
+      "TASK-000001",
+      "EXC-000001"
+    ]
+  },
+  {
+    "id": "EXC-000001",
+    "type": "Exception",
+    "name": "Commission instruction confirmation missing",
+    "status": "Open",
+    "owner": "Operations",
+    "health": "Critical",
+    "next_action": "Confirm commission instructions",
+    "related": [
+      "TXN-000001",
+      "TASK-000001",
+      "QA-000001"
+    ]
+  },
+  {
+    "id": "INV-1007",
+    "type": "Invoice",
+    "name": "Smith Transaction Invoice",
+    "status": "Paid",
+    "owner": "Finance",
+    "health": "Healthy",
+    "next_action": "Archive financial record",
+    "related": [
+      "TXN-000001",
+      "CLI-000001",
+      "PAY-000001",
+      "PKG-000001"
+    ]
+  },
+  {
+    "id": "PAY-000001",
+    "type": "Payment",
+    "name": "Payment for INV-1007",
+    "status": "Received",
+    "owner": "Finance",
+    "health": "Healthy",
+    "next_action": "Reconcile if needed",
+    "related": [
+      "INV-1007",
+      "CLI-000001"
+    ]
+  },
+  {
+    "id": "PKG-000001",
+    "type": "Package",
+    "name": "Transaction Coordination Plus",
+    "status": "Active",
+    "owner": "Koinonia",
+    "health": "Healthy",
+    "next_action": "Use prepaid pricing rule",
+    "related": [
+      "OBJ-00000002",
+      "INV-1007",
+      "CLI-000001"
+    ]
+  },
+  {
+    "id": "OBJ-00000002",
+    "type": "Service",
+    "name": "Transaction Management Service",
+    "status": "Production Certified",
+    "owner": "Repository",
+    "health": "Healthy",
+    "next_action": "Monitor improvement opportunities",
+    "related": [
+      "PKG-000001",
+      "TXN-000001",
+      "WF-000001"
+    ]
+  },
+  {
+    "id": "WF-000001",
+    "type": "Workflow",
+    "name": "Transaction Management Workflow",
+    "status": "Active",
+    "owner": "Platform",
+    "health": "Healthy",
+    "next_action": "Execute closing prep stage",
+    "related": [
+      "OBJ-00000002",
+      "TXN-000001",
+      "TASK-000001"
+    ]
+  },
+  {
+    "id": "CS-000001",
+    "type": "Customer Success",
+    "name": "Sarah Johnson Success Record",
+    "status": "Queued",
+    "owner": "Customer Success",
+    "health": "Strong",
+    "next_action": "Prepare review and referral request",
+    "related": [
+      "CLI-000001",
+      "REL-000001",
+      "TXN-000001"
+    ]
+  },
+  {
+    "id": "DRF-000001",
+    "type": "Contract Draft Request",
+    "name": "Garcia Amendment",
+    "status": "Waiting on Client",
+    "owner": "Contract Center",
+    "health": "Attention",
+    "next_action": "Get client approval",
+    "related": [
+      "REL-000002",
+      "TASK-000002"
+    ]
+  },
+  {
+    "id": "REL-000002",
+    "type": "Relationship",
+    "name": "Michael Garcia",
+    "status": "Proposal",
+    "owner": "CRM",
+    "health": "Developing",
+    "next_action": "Follow up on Realtor Support Plus",
+    "related": [
+      "DRF-000001"
+    ]
+  },
+  {
+    "id": "SHW-000001",
+    "type": "Showing Request",
+    "name": "Meadow View Showing",
+    "status": "Unassigned",
+    "owner": "Showing Center",
+    "health": "Critical",
+    "next_action": "Assign licensed provider",
+    "related": [
+      "PTY-000002",
+      "TASK-000003"
+    ]
+  },
+  {
+    "id": "PTY-000002",
+    "type": "Property",
+    "name": "7427 Meadow View",
+    "status": "Showing Requested",
+    "owner": "Showing Center",
+    "health": "Attention",
+    "next_action": "Assign provider",
+    "related": [
+      "SHW-000001"
+    ]
+  },
+  {
+    "id": "TASK-000002",
+    "type": "Task",
+    "name": "Garcia Amendment Approval Follow-Up",
+    "status": "Waiting on Client",
+    "owner": "Koinonia",
+    "health": "Attention",
+    "next_action": "Request approval",
+    "related": [
+      "DRF-000001"
+    ]
+  },
+  {
+    "id": "TASK-000003",
+    "type": "Task",
+    "name": "Assign Meadow View Showing Provider",
+    "status": "Due Now",
+    "owner": "Operations",
+    "health": "Critical",
+    "next_action": "Assign provider",
+    "related": [
+      "SHW-000001"
+    ]
+  }
+]

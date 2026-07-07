@@ -1,0 +1,88 @@
+Change ID,Area,Summary
+ROS-0001,Governance,"Established ROS governance, single source of truth, change pipeline, and architect role."
+ROS-0002,ROS Core 2.0,Created stronger permanent Brain structure.
+ROS-0003,Koinonia Foundation,"Added Koinonia foundational objects, services, workflows, SOPs, templates, automations, and dashboard feeds."
+ROS-0004,Merge Plan,Integrated spreadsheet branch work back into ROS Core baseline.
+ROS-0005,Koinonia Client Onboarding,Added client onboarding object set.
+ROS-0006,New Transaction Intake,Added new transaction intake system.
+ROS-0007,Contract-to-Close Engine,Added full transaction lifecycle workflow.
+ROS-0008,Communication Engine,Added communication object model and workflow.
+ROS-0009,Quality Assurance & Compliance Engine,"Added QA gates, exception system, and quality metrics."
+ROS-0010,Koinonia Executive Operations Dashboard,Added dashboard concept and widgets.
+ROS-0011,Koinonia Domain Model,Added canonical Koinonia data model.
+ROS-0012,Contract Drafting System,"Added contract drafting workflow, SOP, checklist, and template."
+ROS-0013,Licensed Showing Coverage System,"Added showing coverage workflow, SOP, checklist, and template."
+ROS-0014,Business Operations Support System,Added business operations support categories and workflow.
+ROS-0015,Sales Operating System,Added sales lifecycle and relationship object.
+ROS-0016,Master Data Model,Established shared master object rules.
+ROS-0017,Financial Operations,Added invoice/payment objects and financial lifecycle.
+ROS-0018,Customer Success,"Added client success lifecycle, health score, and KPIs."
+ROS-0019,Marketing & Growth Engine,"Added marketing channels, campaign object, and growth KPIs."
+ROS-0020,Production Repository Initiated,Established Service Catalog as first production master object.
+ROS-0021,Package Catalog,Added package catalog and primary Koinonia packages.
+ROS-0022,Pricing Rules Catalog,Added pricing rules catalog and approved pricing rules.
+ROS-0023,ROS Core Repository v4.0,Consolidated current work into one portable repository.
+ROS-0024,ROS Portal v1.0,Added standalone HTML portal interface replacing the missing Website Brain entry point.
+ROS-0034,Git Project Foundation,"Converted ROS Core Repository into a Git-ready software-style project with versioning, roadmap, release notes, and contribution rules."
+ROS-0025,Transaction Management Phase 1,Added business definition and service standards for OBJ-00000002.
+ROS-0026,Transaction Management Phase 2,Added operational delivery framework for OBJ-00000002.
+ROS-0027,Transaction Management Phase 3,Added Decision Playbooks and operational intelligence for OBJ-00000002.
+ROS-0028,Transaction Management Phase 4,Added communication and client experience system for OBJ-00000002.
+ROS-0029,Transaction Management Phase 5,"Added quality assurance, risk management, and compliance framework for OBJ-00000002."
+ROS-0030,Transaction Management Phase 6,"Added automation, KPIs, and executive intelligence for OBJ-00000002."
+ROS-0031,Transaction Management Phase 7,Certified OBJ-00000002 as first production object.
+ROS-0032,Production Object Standard,Added OBJ-STD-000001 Production Object Standard.
+ROS-0033,ROS Application Specification,Added ROS Application Specification v1.0.
+ROS-0035,Repository Merge v4.3,Merged ROS-0025 through ROS-0033 into Git project repository files.
+ROS-0036,Contract Preparation & Writing Service,Certified OBJ-00000003 as a production service object.
+ROS-0037,Licensed Showing Coverage Service,Certified OBJ-00000004 as a production service object.
+ROS-0038,Koinonia ERP Application Architecture,Added Koinonia ERP v1.0 enterprise application architecture.
+ROS-0039,Unified Data Model,"Added shared entity model, ownership rules, lifecycle standards, dashboard feed rules, and AI grounding rules."
+ROS-0040,Screen Blueprint,Added Koinonia ERP Screen Blueprint v1.0.
+ROS-0041,Home Dashboard UX Blueprint,Added Home Dashboard UX Blueprint v1.0.
+ROS-0042,ROS Design System,Added ROS Design System v1.0 and CSS design tokens.
+ROS-0043,Home Dashboard Prototype,Added first visual Koinonia ERP Home Dashboard HTML prototype.
+ROS-0044,ROS Component Library,Added ROS Component Library v1.0 spec and visual HTML component library.
+ROS-0045,CRM Screen Prototype,Added Koinonia ERP CRM Screen HTML prototype.
+ROS-0046,Transaction Screen Prototype,Added Koinonia ERP Transaction Screen HTML prototype.
+ROS-0047,Contract Center Prototype,Added Koinonia ERP Contract Center HTML prototype.
+ROS-0048,Showing Center Prototype,Added Koinonia ERP Showing Center HTML prototype.
+ROS-0049,Operations Work Queue Prototype,Added Koinonia ERP Operations Work Queue HTML prototype.
+ROS-0050,Interactive Application Shell,Added unified Koinonia ERP interactive app shell and promoted project to ROS v5.0.
+ROS-0051,Finance Module,Added full Finance module inside the interactive Koinonia ERP app shell.
+ROS-0052,Customer Success Module,Added full Customer Success module inside the interactive Koinonia ERP app shell.
+ROS-0053,Knowledge Module,Added full Knowledge module inside the interactive Koinonia ERP app shell.
+ROS-0054,Reports Module,Added full Reports and Repository Health module inside the interactive Koinonia ERP app shell.
+ROS-0055,ROS v6.0 Core Platform,"Added Core Platform architecture: Object Engine, Relationship Graph, Workflow Engine, Universal Timeline, AI Context Engine, Event Bus, Automation Rules, Permissions, Administration, and SDK foundation."
+ROS-0056,Sample Object Data Model,"Added sample shared object dataset, relationship graph, and universal timeline files."
+ROS-0057,Object Explorer,"Added interactive Object Explorer with filters, detail panels, relationship preview, and timeline panel."
+ROS-0058,Universal Timeline Module,"Added Universal Timeline module with event filters, event detail, and related object context."
+ROS-0059,Workflow Engine Explorer,"Added sample workflow dataset and interactive Workflow Explorer with stages, tasks, decisions, and exceptions."
+ROS-0060,Simulated Object Update Engine,Added simulated object updates and timeline event generation inside the interactive app shell.
+ROS-0061,Automation Rules Explorer,Added automation rules dataset and interactive Automation Rules Explorer.
+ROS-0062,ROS v7.0 Intelligent Operating System,"Added intelligence layer: command palette, AI Copilot, notifications, analytics engine, permission-aware navigation, workspaces, plugins, and API-first foundation."
+ROS-0063,Production Application Stack Plan,"Added production app stack plan, database model, API roadmap, and MVP build backlog."
+ROS-0064,Business Operations Support Certification,Certified OBJ-00000005 Business Operations Support Service and completed the four core Koinonia service catalog.
+ROS-0065,Production Codebase Scaffold,"Added ROS v8.0 production Next.js/TypeScript monorepo scaffold with Prisma schema, design system, core package, AI package, API stubs, Docker, CI, and developer docs."
+ROS-0066,Implementation Ticket Backlog,"Added implementation-ready MVP ticket backlog with 20 tickets, individual ticket docs, CSV export, and project board JSON."
+ROS-0067,Auth Scaffold and Seed Data,"Added auth package, permission guards, /api/me route, Prisma seed script, Koinonia workspace seed, owner user/role seed, sample object seed, and timeline seed."
+ROS-0068,Object API Persistence,"Connected Object API, Timeline API, and Relationship API to Prisma persistence with timeline event creation on object changes."
+ROS-0069,Database-Backed Object Explorer UI,"Added production /objects route, API-backed Object Explorer component, filters, detail panel, relationships, timeline, and archive action."
+ROS-0070,Running App Readiness Pass,"Added local setup docs, TypeScript configs, health route, smoke test, validation checklist, and convenience scripts."
+ROS-0071,Object Create/Edit Forms,Added create and edit object forms to the database-backed Object Explorer UI.
+ROS-0072,Object Search and Relationship UI,"Added client-side search, dropdown filters, object type controls, and relationship creation UI."
+ROS-0073,CRM MVP,"Added database-backed CRM page, relationship list/detail, task API, and follow-up task creation."
+ROS-0074,Transactions MVP,"Added database-backed Transactions page with transaction list/detail, status/health updates, task creation, relationships, timeline, and metrics."
+ROS-0075,Operations Queue MVP,"Added database-backed Operations Queue with task list, filters, create task, complete task, related object context, and timeline event creation."
+ROS-0076,Finance MVP,"Added database-backed Finance page, invoice APIs, create invoice, mark paid, revenue metrics, and timeline events."
+ROS-0077,Database Dashboard Metrics,"Added analytics dashboard API and database-backed dashboard metrics from objects, tasks, invoices, and timeline events."
+ROS-0078,Knowledge MVP,"Added database-backed Knowledge Center with service/workflow/template/playbook/SOP object loading, search, filters, detail, metadata, relationships, timeline, and seed service action."
+ROS-0079,Read-Only Copilot MVP,Added database-grounded read-only Copilot API and Copilot page with suggested questions and supporting references.
+ROS-0080,Notifications MVP,"Added database-backed Notifications page, notification APIs, filters, create/read/resolve actions, related object context, and timeline events."
+ROS-0081,Automatic Notification Generation,"Added notification generation API and Generate Alerts button for critical objects, high-priority tasks, and pending invoices."
+ROS-0082,Workflow Automation Engine MVP,"Added workflow APIs, workflow runs, start endpoint, workflow page, starter workflow seed action, and timeline event on workflow start."
+ROS-0083,Professional Software Project Consolidation,"Added authoritative BRAIN documentation, GitHub setup guide, app shell version guidance, current state summary, and consolidated repository handoff."
+ROS-0084,Repository-First Continuity Standard,"Added continuity package, AI development charter, real repository execution standard, website production workflow, Services & Pricing strategy specification, release readiness checklist, and preserved v7.2 shell as historical prototype."
+ROS-0085,2026-07-03,v11.2.0,Koinonia Contact Page Assembly,Completed /koinonia/contact production assembly and updated continuity files.
+ROS-0086,2026-07-03,v11.2.1,Koinonia Contact Configuration,Added centralized contact configuration and reusable Contact Actions component.
+ROS-0086,2026-07-04,11.3.1,Recovery Audit and Preservation Delta,Preserved v11.2.1 contact-config baseline and archived v11.3.0 Services & Pricing snapshot; marked repository as not-yet-Bible pending local validation and reconciliation.

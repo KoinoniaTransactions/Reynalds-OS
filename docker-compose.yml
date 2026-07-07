@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: reynalds_os_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: reynalds_os
+    ports:
+      - "5432:5432"
+    volumes:
+      - reynalds_os_pgdata:/var/lib/postgresql/data
+
+volumes:
+  reynalds_os_pgdata:

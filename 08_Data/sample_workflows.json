@@ -1,0 +1,164 @@
+[
+  {
+    "id": "WF-000001",
+    "name": "Transaction Management Workflow",
+    "status": "Active",
+    "owner": "Operations",
+    "related_service": "OBJ-00000002",
+    "trigger": "transaction.created",
+    "current_stage": "Closing Prep",
+    "health": "Attention",
+    "stages": [
+      "Intake",
+      "Compliance Review",
+      "Earnest Money",
+      "Inspection",
+      "Resolution",
+      "Appraisal",
+      "Loan",
+      "Title",
+      "Closing Prep",
+      "Closing",
+      "Post Closing",
+      "Archived"
+    ],
+    "tasks": [
+      "Create transaction object",
+      "Build deadline timeline",
+      "Run QA Gate 1",
+      "Monitor deadlines",
+      "Run pre-closing QA",
+      "Archive final file",
+      "Trigger Customer Success"
+    ],
+    "decision_points": [
+      "Is the file complete?",
+      "Is any deadline at risk?",
+      "Is closing ready?"
+    ],
+    "exceptions": [
+      "Missing document",
+      "Missed deadline",
+      "Closing delay",
+      "Commission confirmation missing"
+    ],
+    "completion_criteria": "Transaction closed, final QA complete, file archived, Customer Success handoff created."
+  },
+  {
+    "id": "WF-000002",
+    "name": "Contract Drafting Workflow",
+    "status": "Active",
+    "owner": "Contract Center",
+    "related_service": "OBJ-00000003",
+    "trigger": "draft.requested",
+    "current_stage": "Waiting on Client",
+    "health": "Attention",
+    "stages": [
+      "Requested",
+      "Waiting on Info",
+      "Drafting",
+      "Review",
+      "Waiting on Client",
+      "Revised",
+      "Finalized",
+      "Archived"
+    ],
+    "tasks": [
+      "Collect terms",
+      "Confirm form type",
+      "Prepare draft",
+      "Review draft",
+      "Send for approval",
+      "Track revisions",
+      "Archive final version"
+    ],
+    "decision_points": [
+      "Are required terms complete?",
+      "Is client approval received?",
+      "Is legal interpretation being requested?"
+    ],
+    "exceptions": [
+      "Missing required terms",
+      "Conflicting instructions",
+      "Urgent same-day draft",
+      "Legal interpretation requested"
+    ],
+    "completion_criteria": "Final approved document archived with version history."
+  },
+  {
+    "id": "WF-000003",
+    "name": "Licensed Showing Coverage Workflow",
+    "status": "Active",
+    "owner": "Showing Center",
+    "related_service": "OBJ-00000004",
+    "trigger": "showing.requested",
+    "current_stage": "Assigned",
+    "health": "Healthy",
+    "stages": [
+      "Requested",
+      "Waiting on Info",
+      "Assigned",
+      "Scheduled",
+      "Completed",
+      "Feedback Sent",
+      "Closed"
+    ],
+    "tasks": [
+      "Confirm property details",
+      "Verify access instructions",
+      "Assign provider",
+      "Confirm appointment",
+      "Complete showing",
+      "Send feedback",
+      "Close request"
+    ],
+    "decision_points": [
+      "Are access instructions complete?",
+      "Is a licensed provider available?",
+      "Are there safety concerns?"
+    ],
+    "exceptions": [
+      "Missing access instructions",
+      "No provider available",
+      "Same-day request",
+      "Safety concern"
+    ],
+    "completion_criteria": "Showing completed, feedback sent, request closed."
+  },
+  {
+    "id": "WF-000004",
+    "name": "Customer Success Handoff Workflow",
+    "status": "Planned",
+    "owner": "Customer Success",
+    "related_service": "CS-000001",
+    "trigger": "transaction.closed",
+    "current_stage": "Queued",
+    "health": "Healthy",
+    "stages": [
+      "Closing Complete",
+      "Thank You",
+      "Satisfaction Check",
+      "Review Request",
+      "Referral Opportunity",
+      "Relationship Nurture"
+    ],
+    "tasks": [
+      "Send thank-you",
+      "Check satisfaction",
+      "Request review",
+      "Identify referral opportunity",
+      "Schedule nurture touchpoint"
+    ],
+    "decision_points": [
+      "Was the experience positive?",
+      "Is client likely to refer?",
+      "Should testimonial be requested?"
+    ],
+    "exceptions": [
+      "Client dissatisfaction",
+      "No response",
+      "Delayed review request"
+    ],
+    "completion_criteria": "Review/referral path completed or nurture cadence scheduled."
+  }
+]

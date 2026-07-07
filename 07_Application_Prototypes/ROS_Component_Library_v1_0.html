@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ROS Component Library v1.0</title>
+  <style>
+    :root {
+      --ros-bg: #f7f1e8;
+      --ros-surface: #ffffff;
+      --ros-text: #161616;
+      --ros-muted: #5f5f5f;
+      --ros-gold: #b88a44;
+      --ros-border: rgba(184,138,68,0.28);
+      --ros-shadow: rgba(0,0,0,0.06);
+      --ros-green: #2e7d32;
+      --ros-yellow: #b8860b;
+      --ros-red: #b23b3b;
+      --ros-gray: #777777;
+      --ros-font-ui: Arial, Helvetica, sans-serif;
+      --ros-font-display: Georgia, 'Times New Roman', serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--ros-bg); color:var(--ros-text); font-family:var(--ros-font-ui); }
+    header { background:#161616; color:white; padding:42px 24px; }
+    .inner { max-width:1180px; margin:0 auto; }
+    .eyebrow { color:var(--ros-gold); text-transform:uppercase; letter-spacing:2px; font-size:12px; font-weight:700; margin-bottom:10px; }
+    h1 { font-family:var(--ros-font-display); font-size:clamp(36px, 6vw, 62px); margin:0; line-height:1; }
+    .sub { max-width:800px; color:#ddd; line-height:1.6; margin-top:16px; }
+    main { max-width:1180px; margin:0 auto; padding:34px 24px 70px; }
+    h2 { font-family:var(--ros-font-display); font-size:30px; margin:34px 0 16px; }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+    .card { background:white; border:1px solid var(--ros-border); border-radius:20px; padding:20px; box-shadow:0 14px 35px var(--ros-shadow); }
+    .card h3 { margin:0 0 8px; font-family:var(--ros-font-display); font-size:23px; }
+    .card p, .muted { color:var(--ros-muted); line-height:1.55; font-size:14px; }
+    .kpi .label { color:var(--ros-muted); font-size:12px; }
+    .kpi .value { font-family:var(--ros-font-display); font-size:34px; font-weight:700; margin-top:8px; }
+    .pill { display:inline-block; border-radius:999px; padding:6px 10px; font-size:12px; font-weight:700; margin:4px 4px 0 0; background:#f0e7dc; color:#543814; }
+    .pill.green { background:rgba(46,125,50,.12); color:var(--ros-green); }
+    .pill.yellow { background:rgba(184,134,11,.14); color:var(--ros-yellow); }
+    .pill.red { background:rgba(178,59,59,.12); color:var(--ros-red); }
+    .btn { display:inline-block; border:none; border-radius:999px; padding:11px 15px; font-weight:700; background:#161616; color:#fff; text-decoration:none; font-size:13px; margin:4px 6px 4px 0; }
+    .btn.gold { background:var(--ros-gold); }
+    .btn.outline { background:#fff; color:#161616; border:1px solid var(--ros-border); }
+    .btn.danger { background:var(--ros-red); }
+    .field { border:1px solid var(--ros-border); border-radius:14px; padding:12px 14px; background:#fff; color:var(--ros-muted); margin:8px 0; }
+    .row { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; padding:12px 0; border-top:1px solid #eee; }
+    .row:first-child { border-top:none; }
+    .row strong { display:block; font-size:14px; }
+    .row span { color:var(--ros-muted); font-size:13px; }
+    table { width:100%; border-collapse:collapse; overflow:hidden; border-radius:16px; background:white; }
+    th { text-align:left; background:#161616; color:white; padding:13px; font-size:13px; }
+    td { border-top:1px solid #eee; padding:12px 13px; color:#444; font-size:14px; }
+    .wide { grid-column:span 2; }
+    .command { border:1px solid var(--ros-border); border-radius:999px; padding:15px 18px; color:var(--ros-muted); background:white; box-shadow:0 14px 35px var(--ros-shadow); }
+    @media(max-width:900px){ .grid{grid-template-columns:1fr;} .wide{grid-column:span 1;} }
+  </style>
+</head>
+<body>
+<header>
+  <div class="inner">
+    <div class="eyebrow">ROS-0044</div>
+    <h1>ROS Component Library v1.0</h1>
+    <p class="sub">Reusable interface components for Koinonia ERP and the broader Reynalds OS platform. This page validates the visual language before future screens are assembled.</p>
+  </div>
+</header>
+
+<main>
+  <h2>Command & Navigation</h2>
+  <div class="grid">
+    <div class="card wide">
+      <h3>Command Palette</h3>
+      <div class="command">Type a command: open Smith transaction, create invoice, find inspection SOP...</div>
+      <p class="muted">Long-term natural-language interface for ROS.</p>
+    </div>
+    <div class="card">
+      <h3>Workspace Switcher</h3>
+      <span class="pill">Koinonia</span><span class="pill">Environmental</span><span class="pill">Family</span>
+    </div>
+  </div>
+
+  <h2>Dashboard Components</h2>
+  <div class="grid">
+    <div class="card kpi"><div class="label">Active Transactions</div><div class="value">18</div><p>3 need attention</p></div>
+    <div class="card kpi"><div class="label">Revenue This Month</div><div class="value">$7.8k</div><p>Forecast $12.4k</p></div>
+    <div class="card kpi"><div class="label">Client Health</div><div class="value">92%</div><p>Strong trend</p></div>
+    <div class="card">
+      <h3>Priority Card</h3>
+      <div class="row"><div><strong>Closing tomorrow</strong><span>Smith Transaction · final QA required</span></div><span class="pill red">Critical</span></div>
+      <div class="row"><div><strong>Inspection deadline</strong><span>Johnson · objection status needed</span></div><span class="pill yellow">Today</span></div>
+    </div>
+    <div class="card">
+      <h3>AI Recommendation</h3>
+      <p><strong>Review high-risk files first.</strong></p>
+      <p class="muted">Reason: one critical transaction and two deadlines within 24 hours.</p>
+      <span class="pill green">Confidence 86%</span>
+    </div>
+    <div class="card">
+      <h3>Activity Feed</h3>
+      <div class="row"><div><strong>New transaction opened</strong><span>123 Main · Transaction Management</span></div></div>
+      <div class="row"><div><strong>Payment received</strong><span>Transaction Coordination Plus · $389</span></div></div>
+    </div>
+  </div>
+
+  <h2>Buttons & Status</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Buttons</h3>
+      <a class="btn gold">Primary</a><a class="btn">Secondary</a><a class="btn outline">Outline</a><a class="btn danger">Danger</a>
+    </div>
+    <div class="card">
+      <h3>Status Badges</h3>
+      <span class="pill green">Healthy</span><span class="pill yellow">Attention</span><span class="pill red">Critical</span><span class="pill">Waiting</span><span class="pill">Certified</span>
+    </div>
+    <div class="card">
+      <h3>Object Card</h3>
+      <p><strong>OBJ-00000002</strong><br/>Transaction Management Service</p>
+      <span class="pill green">Production Certified</span>
+      <p class="muted">Next action: monitor future improvements.</p>
+    </div>
+  </div>
+
+  <h2>Forms</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Form Fields</h3>
+      <div class="field">Client Name</div>
+      <div class="field">Property Address</div>
+      <div class="field">Due Date</div>
+      <div class="field">Owner</div>
+    </div>
+    <div class="card">
+      <h3>Missing Data</h3>
+      <p class="muted">Forms should flag missing required fields clearly before the object can advance.</p>
+      <span class="pill red">Missing access instructions</span>
+    </div>
+    <div class="card">
+      <h3>Quick Create</h3>
+      <a class="btn gold">Create Transaction</a>
+      <a class="btn outline">Save Draft</a>
+    </div>
+  </div>
+
+  <h2>Tables</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Object</th><th>Status</th><th>Owner</th><th>Next Action</th></tr></thead>
+      <tbody>
+        <tr><td>Smith Transaction</td><td><span class="pill red">Critical</span></td><td>Jeremiah</td><td>Final QA</td></tr>
+        <tr><td>Garcia Draft</td><td><span class="pill yellow">Waiting</span></td><td>Koinonia</td><td>Client approval</td></tr>
+        <tr><td>Wilson Showing</td><td><span class="pill green">Complete</span></td><td>Showing Provider</td><td>Send feedback</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>

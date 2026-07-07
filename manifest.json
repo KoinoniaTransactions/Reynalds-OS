@@ -1,0 +1,48 @@
+{
+  "repository": "Reynalds OS",
+  "version": "11.3.1",
+  "created": "2026-07-02",
+  "baseline": "ROS Core v3.3 Architecture Baseline",
+  "current_change_id": "ROS-0086",
+  "status": "Recovery audit complete; latest website/contact work preserved but canonical Bible not yet declared",
+  "next_object": "OBJ-00000002 Transaction Management Service production expansion",
+  "object_count": 13,
+  "change_count": 23,
+  "portal": "ROS_Portal_v1_0.html",
+  "project_model": "Portable repository structured for Git version control",
+  "next_step": "Create GitHub repository and run local validation",
+  "certified_objects": [
+    "OBJ-00000002",
+    "OBJ-00000003",
+    "OBJ-00000004",
+    "OBJ-00000005"
+  ],
+  "major_release": "Workflow-driven operations foundation",
+  "supersedes": "Standalone static Dashboard/App Shell v7.2",
+  "primary_application": "apps/web",
+  "source_of_truth": "BRAIN/",
+  "current_state": "v11.2.1 contact configuration remains the safest working baseline; v11.3.0 Services & Pricing assembly is preserved as a recovery source snapshot pending integration review.",
+  "name": "Reynalds OS",
+  "release": "Recovery Audit and Preservation Delta",
+  "date": "2026-07-04",
+  "canonical_routes": [
+    "/",
+    "/koinonia",
+    "/koinonia/services",
+    "/koinonia/about",
+    "/koinonia/contact"
+  ],
+  "next_action": "Run local validation from recovered repository, then reconcile v11.3.0 Services & Pricing snapshot into the canonical app if needed.",
+  "repository_first": true,
+  "canonical_status": "PRE_BIBLE_RECOVERY_BASELINE",
+  "preserved_snapshots": [
+    "v11.3.0 Services & Pricing assembly snapshot under RECOVERY_AUDIT/source_snapshots/v11_3_0_services_pricing"
+  ],
+  "do_not_call_bible_until": [
+    "local install succeeds",
+    "build succeeds",
+    "routes verified",
+    "v11.3.0 services pricing snapshot reviewed",
+    "website/contact data verified"
+  ]
+}

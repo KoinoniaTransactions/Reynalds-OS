@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Koinonia ERP Transaction Screen Prototype</title>
+  <style>
+    :root {
+      --bg:#f7f1e8; --surface:#fff; --text:#161616; --muted:#5f5f5f;
+      --gold:#b88a44; --border:rgba(184,138,68,.28); --shadow:rgba(0,0,0,.06);
+      --green:#2e7d32; --yellow:#b8860b; --red:#b23b3b;
+      --font-ui:Arial,Helvetica,sans-serif; --font-display:Georgia,'Times New Roman',serif;
+    }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-ui)}
+    .app{min-height:100vh;display:grid;grid-template-columns:260px 1fr}
+    aside{background:#161616;color:#fff;padding:24px 18px;position:sticky;top:0;height:100vh}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+    .mark{width:42px;height:42px;border-radius:50%;background:var(--gold);display:grid;place-items:center;font-family:var(--font-display);font-size:24px;font-weight:700}
+    .brand strong{display:block;font-family:var(--font-display);font-size:22px}.brand span{color:#cfcfcf;font-size:12px}
+    nav a{display:block;color:#e6e6e6;text-decoration:none;padding:12px 14px;border-radius:14px;margin-bottom:6px;font-size:14px}
+    nav a.active,nav a:hover{background:rgba(184,138,68,.22);color:#fff}
+    main{padding:24px}
+    .topbar{display:grid;grid-template-columns:1fr auto auto auto;gap:14px;align-items:center;margin-bottom:22px}
+    .search{background:#fff;border:1px solid var(--border);border-radius:999px;padding:14px 18px;box-shadow:0 12px 30px var(--shadow);color:var(--muted)}
+    .btn{border:none;border-radius:999px;padding:13px 17px;background:#161616;color:#fff;font-weight:700;cursor:pointer;text-decoration:none;font-size:13px}
+    .btn.gold{background:var(--gold)}.btn.outline{background:#fff;color:#161616;border:1px solid var(--border)}
+    .icon{border:1px solid var(--border);background:#fff;border-radius:50%;width:44px;height:44px;box-shadow:0 12px 30px var(--shadow)}
+    .eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:1.8px;font-size:12px;font-weight:700;margin-bottom:8px}
+    h1{font-family:var(--font-display);font-size:clamp(34px,5vw,54px);line-height:1;margin:0}
+    .sub{color:var(--muted);margin-top:12px;font-size:16px;max-width:900px;line-height:1.55}
+    .grid{display:grid;gap:18px}.kpis{grid-template-columns:repeat(5,minmax(0,1fr));margin:22px 0}
+    .content{grid-template-columns:1fr 390px;align-items:start}.two{grid-template-columns:1fr 1fr;margin-top:18px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:0 14px 35px var(--shadow)}
+    .kpi .label{color:var(--muted);font-size:12px}.kpi .value{font-family:var(--font-display);font-size:31px;font-weight:700;margin-top:8px}.kpi .note{color:var(--muted);font-size:12px;margin-top:7px}
+    h2{font-family:var(--font-display);font-size:25px;margin:0}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .small{color:var(--gold);font-size:13px;font-weight:700}.muted{color:var(--muted);line-height:1.55;font-size:14px}
+    .pill{display:inline-block;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;background:#f0e7dc;color:#543814;white-space:nowrap}
+    .green{background:rgba(46,125,50,.12);color:var(--green)}.yellow{background:rgba(184,134,11,.14);color:var(--yellow)}.red{background:rgba(178,59,59,.12);color:var(--red)}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{padding:10px 13px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:13px;font-weight:700}.tab.active{background:#161616;color:#fff;border-color:#161616}
+    .row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:13px 0;border-top:1px solid #eee}.row:first-child{border-top:none}
+    .row strong{display:block;font-size:14px}.row span{color:var(--muted);font-size:13px}
+    .timeline{position:relative;padding-left:18px;border-left:2px solid #eadcc8}.event{margin-bottom:18px}.event strong{display:block;font-size:14px}.event span{color:var(--muted);font-size:13px}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden}th{text-align:left;background:#161616;color:#fff;padding:13px;font-size:13px}td{border-top:1px solid #eee;padding:12px 13px;color:#444;font-size:14px;vertical-align:top}
+    .progress{height:10px;background:#eee;border-radius:999px;overflow:hidden}.progress div{height:100%;width:68%;background:var(--gold)}
+    @media(max-width:1100px){.app{grid-template-columns:1fr}aside{position:relative;height:auto}nav{display:flex;overflow-x:auto;gap:8px}nav a{white-space:nowrap}.topbar,.content,.kpis,.two{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><div class="mark">K</div><div><strong>Koinonia</strong><span>Transaction Prototype</span></div></div>
+    <nav>
+      <a href="#">Dashboard</a><a href="#">CRM</a><a class="active" href="#">Transactions</a><a href="#">Contracts</a><a href="#">Showings</a><a href="#">Operations</a><a href="#">Finance</a><a href="#">Success</a><a href="#">Knowledge</a><a href="#">Reports</a><a href="#">ROS</a>
+    </nav>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="search">Search transactions, properties, clients, deadlines, documents...</div>
+      <button class="btn gold">+ New Transaction</button><button class="btn">AI Command</button><button class="icon">🔔</button>
+    </div>
+
+    <section>
+      <div class="eyebrow">Transactions · ROS-0046</div>
+      <h1>Smith Transaction</h1>
+      <p class="sub">123 Main Street · Transaction Management · Sarah Johnson · Closing tomorrow. This screen is designed to answer: where does the file stand, what is at risk, and what needs to happen next?</p>
+    </section>
+
+    <section class="grid kpis">
+      <div class="card kpi"><div class="label">Health</div><div class="value">Red</div><div class="note">final QA required</div></div>
+      <div class="card kpi"><div class="label">Current Phase</div><div class="value">Closing</div><div class="note">prep active</div></div>
+      <div class="card kpi"><div class="label">Deadlines</div><div class="value">2</div><div class="note">due within 24 hrs</div></div>
+      <div class="card kpi"><div class="label">Documents</div><div class="value">94%</div><div class="note">1 missing item</div></div>
+      <div class="card kpi"><div class="label">Revenue</div><div class="value">$389</div><div class="note">prepaid</div></div>
+    </section>
+
+    <div class="tabs">
+      <div class="tab active">Overview</div><div class="tab">Timeline</div><div class="tab">Deadlines</div><div class="tab">Documents</div><div class="tab">Communication</div><div class="tab">QA</div><div class="tab">Exceptions</div><div class="tab">Financials</div>
+    </div>
+
+    <section class="grid content">
+      <div>
+        <div class="card">
+          <div class="section-head"><h2>Next Actions</h2><span class="small">Priority ordered</span></div>
+          <div class="row"><div><strong>Complete final QA review</strong><span>Verify closing figures, required signatures, commission paperwork, and archive readiness.</span></div><span class="pill red">Critical</span></div>
+          <div class="row"><div><strong>Confirm possession terms</strong><span>Possession confirmation needed before closing communication goes out.</span></div><span class="pill yellow">Today</span></div>
+          <div class="row"><div><strong>Send closing reminder</strong><span>Prepare client-facing closing instructions after QA clears.</span></div><span class="pill">Ready after QA</span></div>
+        </div>
+
+        <div class="grid two">
+          <div class="card">
+            <div class="section-head"><h2>Timeline</h2><span class="small">Contract-to-close</span></div>
+            <div class="timeline">
+              <div class="event"><strong>Intake</strong><span>Completed · contract and disclosures received.</span></div>
+              <div class="event"><strong>Inspection</strong><span>Completed · resolution documented.</span></div>
+              <div class="event"><strong>Loan / Title</strong><span>Clear to close received · title package pending final review.</span></div>
+              <div class="event"><strong>Closing Prep</strong><span>Active · final QA blocking completion.</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Document Readiness</h2><span class="small">94%</span></div>
+            <p class="muted">Most required documents are complete. Final commission paperwork remains outstanding.</p>
+            <div class="progress"><div></div></div>
+            <div class="row"><div><strong>Missing Item</strong><span>Commission instruction confirmation</span></div><span class="pill yellow">Needed</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="section-head"><h2>Deadlines & Milestones</h2><span class="small">View all</span></div>
+          <table>
+            <thead><tr><th>Item</th><th>Due</th><th>Status</th><th>Owner</th></tr></thead>
+            <tbody>
+              <tr><td>Final QA Review</td><td>Today</td><td><span class="pill red">Critical</span></td><td>Koinonia</td></tr>
+              <tr><td>Closing Appointment</td><td>Tomorrow 10:00 AM</td><td><span class="pill yellow">Pending final reminder</span></td><td>Title</td></tr>
+              <tr><td>Customer Success Handoff</td><td>After closing</td><td><span class="pill">Queued</span></td><td>Koinonia</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="section-head"><h2>Transaction Summary</h2><span class="pill red">Critical</span></div>
+          <div class="row"><div><strong>Client</strong><span>Sarah Johnson · Parker Realty Group</span></div></div>
+          <div class="row"><div><strong>Package</strong><span>Transaction Coordination Plus</span></div></div>
+          <div class="row"><div><strong>Billing</strong><span>$389 prepaid · paid</span></div></div>
+          <div class="row"><div><strong>Waiting On</strong><span>Commission instruction confirmation</span></div></div>
+          <div class="row"><div><strong>Next Action</strong><span>Complete final QA review.</span></div></div>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>AI Recommendation</h2><span class="pill yellow">Action</span></div>
+          <p class="muted"><strong>Complete QA before sending final closing communication.</strong></p>
+          <p class="muted">Supporting data: health = red, current phase = closing prep, QA gate = incomplete, missing item = commission confirmation.</p>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>Communication Health</h2><span class="pill green">Current</span></div>
+          <div class="row"><div><strong>Last Client Update</strong><span>Yesterday · closing prep status</span></div></div>
+          <div class="row"><div><strong>Next Update</strong><span>Closing reminder after QA clears</span></div></div>
+          <div class="row"><div><strong>Open Responses</strong><span>1 · title confirmation</span></div></div>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>Open Exception</h2><span class="pill red">Blocking</span></div>
+          <p class="muted"><strong>Commission instruction confirmation missing.</strong></p>
+          <p class="muted">Resolution required before closing-ready status can be marked complete.</p>
+          <button class="btn gold">Open Exception</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

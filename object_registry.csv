@@ -1,0 +1,36 @@
+Object ID,Name,Type,Module,Status,Memory Level,Summary
+OBJ-00000001,Service Catalog,Master Object,Koinonia,Active,Foundational,Single source of truth for Koinonia services.
+OBJ-00000002,Transaction Management Service,Service,Koinonia,Production Certified,Institutional,Certified Transaction Management Service production object.
+OBJ-00000003,Contract Preparation & Writing Service,Service,Koinonia,Production Certified,Institutional,Certified Contract Preparation & Writing Service production object.
+OBJ-00000004,Licensed Showing Coverage Service,Service,Koinonia,Production Certified,Institutional,Certified Licensed Showing Coverage Service production object.
+OBJ-00000005,Business Operations Support Service,Service,Koinonia,Production Certified,Institutional,Certified Business Operations Support Service production object.
+OBJ-00000006,Package Catalog,Master Object,Koinonia,Active,Foundational,Single source of truth for bundled service packages.
+OBJ-00000007,Transaction Coordination Plus,Package,Koinonia,Active,Institutional,$389 prepaid transaction coordination package.
+OBJ-00000008,Realtor Support Plus,Package,Koinonia,Active,Institutional,Custom broader operations support package.
+OBJ-00000009,Pay-at-Closing Coordination,Package,Koinonia,Active,Institutional,$599 due at successful closing; no fee if transaction does not close.
+OBJ-00000010,Pricing Rules Catalog,Master Object,Koinonia,Active,Foundational,Single source of truth for Koinonia pricing rules.
+OBJ-00000011,Prepaid Pricing Rule,Pricing Rule,Koinonia,Active,Institutional,$389 due before work begins.
+OBJ-00000012,Pay-at-Closing Pricing Rule,Pricing Rule,Koinonia,Active,Institutional,$599 due at successful closing.
+OBJ-00000013,Custom Support Pricing Rule,Pricing Rule,Koinonia,Active,Institutional,Custom pricing documented by scope and support level.
+OBJ-STD-000001,Production Object Standard,Standard,Platform,Active,Foundational,Mandatory structure and certification process for all production objects.
+ROS-GOV-0001,Real Repository Execution Standard,Governance Standard,Platform,Active,Foundational,Defines that completion requires actual repository file changes and release packaging.
+ROS-GOV-0002,AI Development Charter,Governance Standard,Platform,Active,Foundational,"Defines AI/developer behavior for OS verification, approval, implementation, synchronization, and release."
+ROS-MEM-0001,Continuity Package,Project Memory,Platform,Active,Foundational,"START_HERE, CURRENT_STATE, PROJECT_MEMORY, NEXT_ACTION, and AI_DEVELOPMENT_CHARTER for chat-to-chat continuity."
+KOIN-WEB-0001,Koinonia Website System,Website System,Koinonia,Active,Foundational,Public Koinonia website architecture and production workflow.
+KOIN-WEB-0002,Services & Pricing Production Specification,Page Specification,Koinonia Website,Strategy Approved,Institutional,Approved Services & Pricing page strategy; implementation pending repository verification.
+KOIN-WEB-0003,Website Release Readiness Checklist,QA Standard,Koinonia Website,Active,Institutional,Reusable QA gates for website pages before production release.
+KOIN-CMP-0001,MOD-004 Universal Content Card,Component Pattern,Design System,Approved Concept,Institutional,"Reusable card pattern for services, support levels, process, features, team, and testimonials; source implementation pending verification."
+COMP-HERO-001,Primary Public Website Hero,Component,Website,Canonical,Institutional,Reusable Koinonia public website hero component.
+COMP-TRUST-001,Trust Pillars,Component,Website,Canonical,Institutional,Trust-building pillar section for public website pages.
+MOD-004,Universal Content Card,Component,Website,Canonical,Institutional,"Reusable content card powering services, support levels, values, and contact cards."
+COMP-CTA-001,Final Call to Action,Component,Website,Canonical,Institutional,Low-pressure conversion component for public pages.
+COMP-FAQ-001,FAQ Objection Resolution,Component,Website,Canonical,Institutional,FAQ component designed to remove visitor hesitation.
+COMP-FOOTER-001,Koinonia Footer,Component,Website,Canonical,Institutional,Canonical public site footer.
+KOIN-PAGE-HOME,Koinonia Home Page,Page,Website,Assembled,Institutional,Public Koinonia home page at /koinonia.
+KOIN-PAGE-SERVICES,Services & Pricing Page,Page,Website,Assembled,Institutional,Public Services & Pricing page at /koinonia/services.
+KOIN-PAGE-ABOUT,About Page,Page,Website,Assembled,Institutional,Public About page at /koinonia/about.
+KOIN-PAGE-CONTACT,Contact Page,Page,Website,Assembled,Institutional,Public Contact page assembled at /koinonia/contact.
+KOIN-GOV-REPO-FIRST,Repository-First Execution Standard,Governance,Reynalds OS,Active,Permanent,"Repository changes must be real, audited, and released before being called complete."
+KOINONIA-CONTACT,Koinonia Contact Page Assembly,Page Assembly,Website,Assembled,Institutional,Canonical Contact page assembly source for /koinonia/contact.
+COMP-CONTACT-ACTIONS-001,Contact Actions Component,Component,Website,Assembled / Launch Pending Values,Institutional,Reusable phone SMS and email action component driven by contact config.
+KOIN-CONTACT-CONFIG-001,Koinonia Contact Configuration,Configuration,Website,Active / Launch Pending Values,Institutional,Canonical contact data source for public Koinonia website.

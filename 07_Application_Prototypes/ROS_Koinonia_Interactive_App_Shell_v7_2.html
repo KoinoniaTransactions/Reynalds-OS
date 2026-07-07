@@ -1,0 +1,2133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reynalds OS v7.2 — Core Service Catalog Complete</title>
+  <style>
+    :root{
+      --bg:#f7f1e8;--surface:#fff;--text:#161616;--muted:#5f5f5f;
+      --gold:#b88a44;--border:rgba(184,138,68,.28);--shadow:rgba(0,0,0,.06);
+      --green:#2e7d32;--yellow:#b8860b;--red:#b23b3b;
+      --font-ui:Arial,Helvetica,sans-serif;--font-display:Georgia,'Times New Roman',serif;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-ui)}
+    .app{min-height:100vh;display:grid;grid-template-columns:270px 1fr}
+    aside{background:#161616;color:#fff;padding:24px 18px;position:sticky;top:0;height:100vh;overflow:auto}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+    .mark{width:42px;height:42px;border-radius:50%;background:var(--gold);display:grid;place-items:center;font-family:var(--font-display);font-size:24px;font-weight:700}
+    .brand strong{display:block;font-family:var(--font-display);font-size:22px}.brand span{color:#cfcfcf;font-size:12px}
+    nav button{display:block;width:100%;text-align:left;color:#e6e6e6;background:transparent;border:0;padding:12px 14px;border-radius:14px;margin-bottom:6px;font-size:14px;cursor:pointer}
+    nav button.active,nav button:hover{background:rgba(184,138,68,.22);color:#fff}
+    .version-card{border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px;margin-top:22px;background:rgba(255,255,255,.05);font-size:12px;color:#d8d8d8;line-height:1.45}
+    main{padding:24px;min-width:0}
+    .topbar{display:grid;grid-template-columns:1fr auto auto auto;gap:14px;align-items:center;margin-bottom:22px}
+    .search-wrap{position:relative}
+    .search{width:100%;background:#fff;border:1px solid var(--border);border-radius:999px;padding:14px 18px;box-shadow:0 12px 30px var(--shadow);color:var(--text);outline:none}
+    .search-results{display:none;position:absolute;z-index:10;top:52px;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 18px 45px rgba(0,0,0,.12);overflow:hidden}
+    .result{padding:13px 16px;border-top:1px solid #eee;cursor:pointer}.result:first-child{border-top:0}.result:hover{background:#fbf7f0}.result strong{display:block;font-size:14px}.result span{color:var(--muted);font-size:12px}
+    .btn{border:none;border-radius:999px;padding:12px 16px;background:#161616;color:#fff;font-weight:700;cursor:pointer;text-decoration:none;font-size:13px}
+    .btn.gold{background:var(--gold)}.btn.outline{background:#fff;color:#161616;border:1px solid var(--border)}
+    .icon{border:1px solid var(--border);background:#fff;border-radius:50%;width:44px;height:44px;box-shadow:0 12px 30px var(--shadow)}
+    .breadcrumbs{color:var(--muted);font-size:13px;margin-bottom:16px}
+    .eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:1.8px;font-size:12px;font-weight:700;margin-bottom:8px}
+    h1{font-family:var(--font-display);font-size:clamp(34px,5vw,54px);line-height:1;margin:0}.sub{color:var(--muted);margin-top:12px;font-size:16px;max-width:920px;line-height:1.55}
+    .grid{display:grid;gap:18px}.kpis{grid-template-columns:repeat(5,minmax(0,1fr));margin:22px 0}.kpis.six{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .content{grid-template-columns:1fr 390px;align-items:start}.two{grid-template-columns:1fr 1fr;margin-top:18px}.three{grid-template-columns:repeat(3,1fr)}
+    .card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:0 14px 35px var(--shadow)}
+    .kpi .label{color:var(--muted);font-size:12px}.kpi .value{font-family:var(--font-display);font-size:30px;font-weight:700;margin-top:8px}.kpi .note{color:var(--muted);font-size:12px;margin-top:7px}
+    h2{font-family:var(--font-display);font-size:25px;margin:0}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .small{color:var(--gold);font-size:13px;font-weight:700}.muted{color:var(--muted);line-height:1.55;font-size:14px}
+    .pill{display:inline-block;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;background:#f0e7dc;color:#543814;white-space:nowrap}
+    .green{background:rgba(46,125,50,.12);color:var(--green)}.yellow{background:rgba(184,134,11,.14);color:var(--yellow)}.red{background:rgba(178,59,59,.12);color:var(--red)}
+    .row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:13px 0;border-top:1px solid #eee}.row:first-child{border-top:none}
+    .row strong{display:block;font-size:14px}.row span{color:var(--muted);font-size:13px}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden}th{text-align:left;background:#161616;color:#fff;padding:13px;font-size:13px}td{border-top:1px solid #eee;padding:12px 13px;color:#444;font-size:14px;vertical-align:top}tr.clickable{cursor:pointer}tr.clickable:hover td{background:#fbf7f0}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{padding:10px 13px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:13px;font-weight:700}.tab.active{background:#161616;color:#fff;border-color:#161616}
+    .timeline{position:relative;padding-left:18px;border-left:2px solid #eadcc8}.event{margin-bottom:18px}.event strong{display:block;font-size:14px}.event span{color:var(--muted);font-size:13px}
+    .pipeline,.calendar,.queues{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}.calendar{grid-template-columns:repeat(3,1fr)}
+    .lane,.day,.queue{background:#fbf7f0;border:1px solid var(--border);border-radius:16px;padding:12px}.mini{background:#fff;border:1px solid #eee;border-radius:14px;padding:11px;margin-top:8px;font-size:13px}
+    .field{border:1px solid var(--border);border-radius:14px;padding:12px 14px;color:var(--muted);margin:8px 0;background:#fff}
+    .progress{height:10px;background:#eee;border-radius:999px;overflow:hidden;margin-top:8px}.progress div{height:100%;background:var(--gold)}
+    .page{display:none}.page.active{display:block}
+    .command-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.34);z-index:30;align-items:flex-start;justify-content:center;padding-top:10vh}
+    .command-box{width:min(720px,92vw);background:#fff;border-radius:24px;padding:20px;border:1px solid var(--border);box-shadow:0 30px 80px rgba(0,0,0,.22)}
+    .command-box input{width:100%;padding:16px 18px;border-radius:18px;border:1px solid var(--border);font-size:16px;outline:none}
+    .command-list{margin-top:12px}.command-item{padding:12px 8px;border-top:1px solid #eee;cursor:pointer}.command-item:hover{background:#fbf7f0}
+    @media(max-width:1100px){.app{grid-template-columns:1fr}aside{position:relative;height:auto}nav{display:flex;overflow-x:auto;gap:8px}nav button{white-space:nowrap}.topbar,.content,.kpis,.kpis.six,.two,.three,.pipeline,.calendar,.queues{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><div class="mark">R</div><div><strong>ROS</strong><span>Koinonia ERP · v7.2</span></div></div>
+    <nav id="nav">
+      <button data-page="dashboard" class="active">Dashboard</button>
+      <button data-page="crm">CRM</button>
+      <button data-page="transaction">Transactions</button>
+      <button data-page="contracts">Contracts</button>
+      <button data-page="showings">Showings</button>
+      <button data-page="operations">Operations</button>
+      <button data-page="finance">Finance</button>
+      <button data-page="success">Success</button>
+      <button data-page="knowledge">Knowledge</button>
+      <button data-page="reports">Reports</button>
+      <button data-page="admin">Administration</button>
+      <button data-page="objects">Object Explorer</button>
+      <button data-page="timeline">Timeline</button>
+      <button data-page="workflows">Workflows</button>
+      <button data-page="automations">Automations</button>
+      <button data-page="intelligence">Intelligence</button>
+      <button data-page="implementation">Build Plan</button>
+      <button data-page="ros">ROS</button>
+    </nav>
+    <div class="version-card">
+      <strong>ROS-0050</strong><br>
+      Interactive Application Shell<br>
+      Repository v7.2.0<br>
+      Connected prototype experience
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div class="search-wrap">
+        <input class="search" id="globalSearch" placeholder="Search agents, transactions, drafts, showings, SOPs, object IDs..." autocomplete="off"/>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <button class="btn gold" onclick="quickNew()">+ New</button>
+      <button class="btn" onclick="openCommand()">AI Command</button>
+      <button class="icon" onclick="alert('Notifications placeholder: 2 critical, 4 due today.')">🔔</button>
+    </div>
+
+    <div class="breadcrumbs" id="breadcrumbs">Koinonia ERP / Dashboard</div>
+
+    <section id="dashboard" class="page active">
+      <div class="eyebrow">Home Dashboard · ROS v5.0</div>
+      <h1>Today’s Executive Dashboard</h1>
+      <p class="sub">A unified application shell connecting the major Koinonia ERP modules into one navigable operating experience.</p>
+      <div class="grid kpis six">
+        <div class="card kpi"><div class="label">Active Transactions</div><div class="value">18</div><div class="note">3 need attention</div></div>
+        <div class="card kpi"><div class="label">Draft Requests</div><div class="value">6</div><div class="note">2 waiting client</div></div>
+        <div class="card kpi"><div class="label">Showings</div><div class="value">4</div><div class="note">1 feedback due</div></div>
+        <div class="card kpi"><div class="label">Revenue Month</div><div class="value">$7.8k</div><div class="note">forecast $12.4k</div></div>
+        <div class="card kpi"><div class="label">Tasks Due</div><div class="value">17</div><div class="note">4 critical</div></div>
+        <div class="card kpi"><div class="label">Capacity</div><div class="value">84%</div><div class="note">watch next week</div></div>
+      </div>
+      <div class="grid content">
+        <div class="card">
+          <div class="section-head"><h2>Priority Panel</h2><span class="small">AI ranked</span></div>
+          <div class="row"><div><strong>Closing tomorrow — Smith Transaction</strong><span>Final QA and closing figures need confirmation.</span></div><span class="pill red">Critical</span></div>
+          <div class="row"><div><strong>Inspection deadline today — Johnson</strong><span>Verify objection status and update communication log.</span></div><span class="pill yellow">Due Today</span></div>
+          <div class="row"><div><strong>Draft waiting on approval — Garcia</strong><span>Client has not approved revised amendment.</span></div><span class="pill yellow">Waiting</span></div>
+          <div class="row"><div><strong>Showing feedback overdue — Willow Creek</strong><span>Feedback should be sent before end of day.</span></div><span class="pill yellow">Follow-Up</span></div>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>AI Recommendation</h2><span class="pill yellow">Action</span></div>
+            <p class="muted"><strong>Open Operations first.</strong></p>
+            <p class="muted">Supporting data: two critical work items, one closing tomorrow, one same-day showing unassigned.</p>
+            <button class="btn gold" onclick="go('operations')">Open Operations</button>
+          </div>
+          <div class="card">
+            <div class="section-head"><h2>Recent Activity</h2><span class="small">Live feed</span></div>
+            <div class="row"><div><strong>New transaction opened</strong><span>123 Main · Transaction Management</span></div></div>
+            <div class="row"><div><strong>Draft completed</strong><span>Garcia amendment ready for review</span></div></div>
+            <div class="row"><div><strong>Payment received</strong><span>Transaction Coordination Plus · $389</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="crm" class="page">
+      <div class="eyebrow">CRM</div><h1>Relationship Command Center</h1>
+      <p class="sub">Leads, agents, brokerages, referral partners, clients, advocates, and follow-ups in one place.</p>
+      <div class="grid kpis"><div class="card kpi"><div class="label">Active Clients</div><div class="value">14</div><div class="note">4 high-value</div></div><div class="card kpi"><div class="label">Qualified Leads</div><div class="value">9</div><div class="note">3 consults</div></div><div class="card kpi"><div class="label">Follow-Ups Due</div><div class="value">7</div><div class="note">2 overdue</div></div><div class="card kpi"><div class="label">Referral Partners</div><div class="value">11</div><div class="note">3 strong</div></div><div class="card kpi"><div class="label">Pipeline Value</div><div class="value">$8.4k</div><div class="note">projected</div></div></div>
+      <div class="grid content">
+        <div class="card"><div class="section-head"><h2>Relationship List</h2><span class="small">Click Sarah to open transaction</span></div>
+          <table><thead><tr><th>Name</th><th>Type</th><th>Status</th><th>Next Action</th></tr></thead><tbody>
+            <tr class="clickable" onclick="go('transaction')"><td><strong>Sarah Johnson</strong><br><span class="muted">Parker Realty Group</span></td><td>Agent</td><td><span class="pill green">Active Client</span></td><td>Send transaction update</td></tr>
+            <tr><td><strong>Michael Garcia</strong><br><span class="muted">eXp Realty</span></td><td>Agent</td><td><span class="pill yellow">Proposal</span></td><td>Follow up on Realtor Support Plus</td></tr>
+            <tr><td><strong>KW Downtown Denver</strong></td><td>Brokerage</td><td><span class="pill">Relationship</span></td><td>Schedule office visit</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card"><h2>Selected Relationship</h2><p class="muted"><strong>Sarah Johnson</strong><br>Active Client · Transaction Coordination Plus</p><div class="row"><div><strong>Health</strong><span>Strong relationship and repeat engagement.</span></div><span class="pill green">Strong</span></div><button class="btn gold" onclick="go('transaction')">Open Smith Transaction</button></div>
+      </div>
+    </section>
+
+    <section id="transaction" class="page">
+      <div class="eyebrow">Transactions</div><h1>Smith Transaction</h1>
+      <p class="sub">123 Main Street · Sarah Johnson · Closing tomorrow. This screen answers where the file stands, what is at risk, and what needs to happen next.</p>
+      <div class="grid kpis"><div class="card kpi"><div class="label">Health</div><div class="value">Red</div><div class="note">final QA required</div></div><div class="card kpi"><div class="label">Phase</div><div class="value">Closing</div><div class="note">prep active</div></div><div class="card kpi"><div class="label">Deadlines</div><div class="value">2</div><div class="note">24 hrs</div></div><div class="card kpi"><div class="label">Documents</div><div class="value">94%</div><div class="note">1 missing</div></div><div class="card kpi"><div class="label">Revenue</div><div class="value">$389</div><div class="note">paid</div></div></div>
+      <div class="tabs"><div class="tab active">Overview</div><div class="tab">Timeline</div><div class="tab">Deadlines</div><div class="tab">Documents</div><div class="tab">Communication</div><div class="tab">QA</div></div>
+      <div class="grid content">
+        <div class="card"><div class="section-head"><h2>Next Actions</h2><span class="small">Priority ordered</span></div><div class="row"><div><strong>Complete final QA review</strong><span>Verify closing figures, signatures, commission paperwork, and archive readiness.</span></div><span class="pill red">Critical</span></div><div class="row"><div><strong>Confirm possession terms</strong><span>Needed before closing communication goes out.</span></div><span class="pill yellow">Today</span></div><button class="btn gold" onclick="simulateCompleteQA()">Complete QA</button> <button class="btn outline" onclick="go('operations')">Send to Queue</button></div>
+        <div class="grid"><div class="card"><h2>Open Exception</h2><p class="muted">Commission instruction confirmation missing.</p><span class="pill red">Blocking</span></div><div class="card"><h2>Related Work</h2><button class="btn outline" onclick="go('contracts')">Open Contract Center</button> <button class="btn outline" onclick="go('success')">Prepare Customer Success</button></div></div>
+      </div>
+    </section>
+
+    <section id="contracts" class="page">
+      <div class="eyebrow">Contract Center</div><h1>Drafting Command Center</h1><p class="sub">Manage offers, amendments, addenda, counters, notices, revisions, missing terms, approvals, and final versions.</p>
+      <div class="grid kpis"><div class="card kpi"><div class="label">Open Drafts</div><div class="value">6</div><div class="note">2 urgent</div></div><div class="card kpi"><div class="label">Waiting Client</div><div class="value">3</div><div class="note">missing terms</div></div><div class="card kpi"><div class="label">Due Today</div><div class="value">2</div><div class="note">same-day</div></div><div class="card kpi"><div class="label">Completed Week</div><div class="value">11</div><div class="note">avg 1.4 revisions</div></div><div class="card kpi"><div class="label">Completeness</div><div class="value">89%</div><div class="note">first-pass</div></div></div>
+      <div class="grid content"><div class="card"><h2>Draft Queue</h2><table><thead><tr><th>Request</th><th>Type</th><th>Status</th><th>Next Action</th></tr></thead><tbody><tr><td>Garcia Amendment</td><td>Amendment</td><td><span class="pill red">Urgent</span></td><td>Client approval needed</td></tr><tr><td>Wilson Offer</td><td>Offer</td><td><span class="pill yellow">Drafting</span></td><td>Complete financing terms</td></tr></tbody></table></div><div class="card"><h2>AI Recommendation</h2><p class="muted">Pause Wilson Offer until financing terms are confirmed.</p><button class="btn gold" onclick="simulateApproveDraft()">Mark Draft Approved</button></div></div>
+    </section>
+
+    <section id="showings" class="page">
+      <div class="eyebrow">Showing Center</div><h1>Licensed Showing Coverage</h1><p class="sub">Coordinate showing requests, assignments, access instructions, calendar windows, feedback, safety flags, and revenue.</p>
+      <div class="grid kpis"><div class="card kpi"><div class="label">Today’s Showings</div><div class="value">4</div><div class="note">1 unassigned</div></div><div class="card kpi"><div class="label">Feedback Due</div><div class="value">2</div><div class="note">1 overdue</div></div><div class="card kpi"><div class="label">Provider Capacity</div><div class="value">75%</div><div class="note">available</div></div><div class="card kpi"><div class="label">Same-Day</div><div class="value">1</div><div class="note">needs review</div></div><div class="card kpi"><div class="label">Revenue Week</div><div class="value">$420</div><div class="note">coverage</div></div></div>
+      <div class="grid content"><div class="card"><h2>Showing Queue</h2><table><thead><tr><th>Property</th><th>Time</th><th>Status</th><th>Next Action</th></tr></thead><tbody><tr><td>7427 Meadow View</td><td>Today 2:00 PM</td><td><span class="pill red">Unassigned</span></td><td>Assign provider</td></tr><tr><td>903 Willow Creek</td><td>Completed</td><td><span class="pill yellow">Feedback Due</span></td><td>Send feedback</td></tr></tbody></table></div><div class="card"><h2>AI Recommendation</h2><p class="muted">Assign Meadow View before confirming coverage.</p><button class="btn gold" onclick="simulateAssignShowing()">Assign Provider</button></div></div>
+    </section>
+
+    <section id="operations" class="page">
+      <div class="eyebrow">Operations</div><h1>Intelligent Work Queue</h1><p class="sub">Internal execution screen prioritized by deadline, risk, client impact, revenue impact, and capacity.</p>
+      <div class="grid kpis"><div class="card kpi"><div class="label">Due Now</div><div class="value">4</div><div class="note">2 critical</div></div><div class="card kpi"><div class="label">Due Today</div><div class="value">17</div><div class="note">8 files</div></div><div class="card kpi"><div class="label">Waiting</div><div class="value">11</div><div class="note">client/title/lender</div></div><div class="card kpi"><div class="label">QA Required</div><div class="value">5</div><div class="note">3 pre-closing</div></div><div class="card kpi"><div class="label">Capacity</div><div class="value">84%</div><div class="note">watch next week</div></div></div>
+      <div class="grid content"><div class="card"><h2>Prioritized Work</h2><table><thead><tr><th>Work Item</th><th>Object</th><th>Priority</th><th>Action</th></tr></thead><tbody><tr class="clickable" onclick="go('transaction')"><td>Complete final QA</td><td>Smith Transaction</td><td><span class="pill red">Critical</span></td><td>Open</td></tr><tr class="clickable" onclick="go('showings')"><td>Assign showing provider</td><td>Meadow View Showing</td><td><span class="pill red">Critical</span></td><td>Assign</td></tr><tr class="clickable" onclick="go('contracts')"><td>Confirm financing terms</td><td>Wilson Offer</td><td><span class="pill yellow">High</span></td><td>Request</td></tr></tbody></table></div><div class="card"><h2>Capacity</h2><p class="muted">Current workload is manageable, but next week shows compression from closings and draft requests.</p><div class="progress"><div style="width:84%"></div></div></div></div>
+    </section>
+
+    <section id="finance" class="page">
+      <div class="eyebrow">Finance · ROS-0051</div>
+      <h1>Financial Operations</h1>
+      <p class="sub">Track packages, invoices, payments, outstanding balances, revenue by service, forecasted revenue, and profitability signals from one financial command center.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Revenue Month</div><div class="value">$7.8k</div><div class="note">$12.4k forecast</div></div>
+        <div class="card kpi"><div class="label">Outstanding</div><div class="value">$2.2k</div><div class="note">5 invoices</div></div>
+        <div class="card kpi"><div class="label">Paid Invoices</div><div class="value">18</div><div class="note">this month</div></div>
+        <div class="card kpi"><div class="label">Avg Revenue</div><div class="value">$433</div><div class="note">per file</div></div>
+        <div class="card kpi"><div class="label">Pay-at-Close</div><div class="value">$1.8k</div><div class="note">pending closings</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>Invoice Center</h2><span class="small">Click Smith to open transaction</span></div>
+            <table>
+              <thead><tr><th>Invoice</th><th>Client</th><th>Package</th><th>Status</th><th>Amount</th><th>Next Action</th></tr></thead>
+              <tbody>
+                <tr class="clickable" onclick="go('transaction')"><td><strong>INV-1007</strong><br><span class="muted">Smith Transaction</span></td><td>Sarah Johnson</td><td>Transaction Coordination Plus</td><td><span class="pill green">Paid</span></td><td>$389</td><td>Archive financial record</td></tr>
+                <tr><td><strong>INV-1008</strong><br><span class="muted">Garcia Draft Support</span></td><td>Michael Garcia</td><td>Realtor Support Plus</td><td><span class="pill yellow">Pending</span></td><td>$475</td><td>Send reminder</td></tr>
+                <tr><td><strong>INV-1009</strong><br><span class="muted">Brown Closing</span></td><td>Emily Brown</td><td>Pay-at-Closing Coordination</td><td><span class="pill yellow">Closing Triggered</span></td><td>$599</td><td>Prepare due notice</td></tr>
+                <tr><td><strong>INV-1010</strong><br><span class="muted">Wilson Showing Coverage</span></td><td>Wilson Team</td><td>Realtor Support Plus</td><td><span class="pill">Draft</span></td><td>$140</td><td>Review provider cost</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid two">
+            <div class="card">
+              <div class="section-head"><h2>Revenue by Service</h2><span class="small">Month</span></div>
+              <div class="row"><div><strong>Transaction Management</strong><span>$5,835 collected</span></div><span class="pill green">75%</span></div>
+              <div class="row"><div><strong>Contract Preparation</strong><span>$1,325 collected</span></div><span class="pill">17%</span></div>
+              <div class="row"><div><strong>Showing Coverage</strong><span>$420 collected</span></div><span class="pill">5%</span></div>
+              <div class="row"><div><strong>Business Support</strong><span>$220 collected</span></div><span class="pill">3%</span></div>
+            </div>
+
+            <div class="card">
+              <div class="section-head"><h2>Package Performance</h2><span class="small">Current</span></div>
+              <div class="row"><div><strong>Transaction Coordination Plus</strong><span>15 active · prepaid model</span></div><span class="pill green">$389</span></div>
+              <div class="row"><div><strong>Pay-at-Closing Coordination</strong><span>3 pending closings</span></div><span class="pill yellow">$599</span></div>
+              <div class="row"><div><strong>Realtor Support Plus</strong><span>custom support plans</span></div><span class="pill">Custom</span></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head"><h2>Forecast</h2><span class="small">Next 30 days</span></div>
+            <table>
+              <thead><tr><th>Source</th><th>Expected</th><th>Confidence</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td>Scheduled Closings</td><td>$2,195</td><td><span class="pill green">High</span></td><td>Based on three pending closings.</td></tr>
+                <tr><td>Active Draft Requests</td><td>$650</td><td><span class="pill yellow">Medium</span></td><td>Depends on completion and approval.</td></tr>
+                <tr><td>Showing Coverage</td><td>$560</td><td><span class="pill yellow">Medium</span></td><td>Based on current weekly pace.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>Create Invoice</h2><span class="pill yellow">Sample</span></div>
+            <div class="field">Client</div>
+            <div class="field">Related Service</div>
+            <div class="field">Package</div>
+            <div class="field">Amount</div>
+            <div class="field">Due Date</div>
+            <button class="btn gold">Create Invoice</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>AI Recommendation</h2><span class="pill yellow">Action</span></div>
+            <p class="muted"><strong>Prepare pay-at-closing invoice notice for Brown.</strong></p>
+            <p class="muted">Supporting data: invoice status = Closing Triggered, package = Pay-at-Closing Coordination, closing date within 7 days.</p>
+            <button class="btn gold" onclick="go('operations')">Add to Work Queue</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Collections Health</h2><span class="pill green">Healthy</span></div>
+            <div class="row"><div><strong>Past Due</strong><span>No invoices past due.</span></div><span class="pill green">Clear</span></div>
+            <div class="row"><div><strong>Pending</strong><span>5 invoices awaiting payment or trigger.</span></div><span class="pill yellow">Monitor</span></div>
+            <div class="row"><div><strong>Reconciliation</strong><span>2 payments need final reconciliation.</span></div><span class="pill">Open</span></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Finance Rules</h2><span class="pill">Governance</span></div>
+            <p class="muted">Every dollar must trace back to a client, service, package, invoice, payment, and related work object when applicable.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="success" class="page">
+      <div class="eyebrow">Customer Success · ROS-0052</div>
+      <h1>Relationship Growth Center</h1>
+      <p class="sub">Turn completed transactions into reviews, testimonials, referrals, repeat business, and long-term relationship health.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Review Requests</div><div class="value">5</div><div class="note">3 ready</div></div>
+        <div class="card kpi"><div class="label">Testimonials</div><div class="value">8</div><div class="note">2 new this month</div></div>
+        <div class="card kpi"><div class="label">Referral Opportunities</div><div class="value">6</div><div class="note">2 high confidence</div></div>
+        <div class="card kpi"><div class="label">Client Health</div><div class="value">92%</div><div class="note">strong trend</div></div>
+        <div class="card kpi"><div class="label">Repeat Clients</div><div class="value">4</div><div class="note">active this quarter</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>Success Pipeline</h2><span class="small">Post-closing flow</span></div>
+            <table>
+              <thead><tr><th>Client</th><th>Recent File</th><th>Stage</th><th>Health</th><th>Next Action</th></tr></thead>
+              <tbody>
+                <tr class="clickable" onclick="go('transaction')"><td><strong>Sarah Johnson</strong><br><span class="muted">Parker Realty Group</span></td><td>Smith Transaction</td><td><span class="pill yellow">Closing Tomorrow</span></td><td><span class="pill green">Strong</span></td><td>Prepare review request</td></tr>
+                <tr><td><strong>Emily Brown</strong><br><span class="muted">Independent Realtor</span></td><td>Brown Closing</td><td><span class="pill green">Review Ready</span></td><td><span class="pill green">Strong</span></td><td>Send review request</td></tr>
+                <tr><td><strong>Michael Garcia</strong><br><span class="muted">eXp Realty</span></td><td>Draft Support</td><td><span class="pill yellow">Follow-Up</span></td><td><span class="pill yellow">Developing</span></td><td>Check satisfaction</td></tr>
+                <tr><td><strong>Wilson Team</strong><br><span class="muted">Showing Coverage</span></td><td>Willow Creek</td><td><span class="pill">Nurture</span></td><td><span class="pill">Neutral</span></td><td>Send service recap</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid two">
+            <div class="card">
+              <div class="section-head"><h2>Review & Testimonial Queue</h2><span class="small">Ready</span></div>
+              <div class="row"><div><strong>Emily Brown</strong><span>Successful closing completed. Positive experience likely.</span></div><span class="pill green">Send</span></div>
+              <div class="row"><div><strong>Sarah Johnson</strong><span>Prepare request after Smith closing confirms.</span></div><span class="pill yellow">Queued</span></div>
+              <div class="row"><div><strong>Premier Title Referral</strong><span>Possible partner testimonial after repeat files.</span></div><span class="pill">Monitor</span></div>
+            </div>
+
+            <div class="card">
+              <div class="section-head"><h2>Referral Opportunities</h2><span class="small">AI ranked</span></div>
+              <div class="row"><div><strong>Sarah Johnson</strong><span>Repeat engagement + strong relationship health.</span></div><span class="pill green">High</span></div>
+              <div class="row"><div><strong>KW Downtown Denver</strong><span>Brokerage relationship shows growth potential.</span></div><span class="pill yellow">Medium</span></div>
+              <div class="row"><div><strong>Premier Title</strong><span>Referral partner with recent successful handoffs.</span></div><span class="pill yellow">Medium</span></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head"><h2>Relationship Nurture Calendar</h2><span class="small">Upcoming</span></div>
+            <table>
+              <thead><tr><th>Touchpoint</th><th>Client</th><th>Due</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td>Thank-you message</td><td>Emily Brown</td><td>Today</td><td>Close relationship loop</td></tr>
+                <tr><td>Review request</td><td>Sarah Johnson</td><td>After closing</td><td>Capture positive experience</td></tr>
+                <tr><td>Quarterly check-in</td><td>Wilson Team</td><td>This week</td><td>Maintain relationship</td></tr>
+                <tr><td>Brokerage visit follow-up</td><td>KW Downtown Denver</td><td>Next week</td><td>Develop referral channel</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>Create Success Task</h2><span class="pill yellow">Sample</span></div>
+            <div class="field">Client</div>
+            <div class="field">Success Stage</div>
+            <div class="field">Touchpoint Type</div>
+            <div class="field">Due Date</div>
+            <div class="field">Notes</div>
+            <button class="btn gold">Create Task</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>AI Recommendation</h2><span class="pill yellow">Action</span></div>
+            <p class="muted"><strong>Prepare Sarah Johnson referral conversation after closing.</strong></p>
+            <p class="muted">Supporting data: relationship health = strong, repeat engagement = yes, closing date = tomorrow, satisfaction risk = low.</p>
+            <button class="btn gold" onclick="go('operations')">Add to Work Queue</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Customer Success Health</h2><span class="pill green">Strong</span></div>
+            <div class="row"><div><strong>Reviews Pending</strong><span>3 ready or queued.</span></div><span class="pill yellow">Action</span></div>
+            <div class="row"><div><strong>Relationships At Risk</strong><span>1 client has no contact in 21 days.</span></div><span class="pill yellow">Monitor</span></div>
+            <div class="row"><div><strong>Advocates</strong><span>4 strong referral candidates.</span></div><span class="pill green">Strong</span></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Success Rule</h2><span class="pill">Principle</span></div>
+            <p class="muted">Operations ends at closing. Relationship management begins after closing. The transaction is finite; the relationship is continuous.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="knowledge" class="page">
+      <div class="eyebrow">Knowledge · ROS-0053</div>
+      <h1>Knowledge & Repository Center</h1>
+      <p class="sub">Access the operational Brain: SOPs, certified objects, Decision Playbooks, templates, training, engineering principles, and repository documentation.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Certified Objects</div><div class="value">4</div><div class="note">core services complete</div></div>
+        <div class="card kpi"><div class="label">Playbooks</div><div class="value">14</div><div class="note">decision support</div></div>
+        <div class="card kpi"><div class="label">Templates</div><div class="value">18</div><div class="note">email + workflow</div></div>
+        <div class="card kpi"><div class="label">Principles</div><div class="value">28</div><div class="note">platform rules</div></div>
+        <div class="card kpi"><div class="label">Repository</div><div class="value">v5.3</div><div class="note">current release</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>Certified Object Library</h2><span class="small">Production assets</span></div>
+            <table>
+              <thead><tr><th>Object</th><th>Type</th><th>Status</th><th>Use</th><th>Open</th></tr></thead>
+              <tbody>
+                <tr class="clickable" onclick="go('transaction')"><td><strong>OBJ-00000002</strong><br><span class="muted">Transaction Management Service</span></td><td>Service</td><td><span class="pill green">Certified</span></td><td>Contract-to-close operations</td><td>Transaction</td></tr>
+                <tr class="clickable" onclick="go('contracts')"><td><strong>OBJ-00000003</strong><br><span class="muted">Contract Preparation & Writing</span></td><td>Service</td><td><span class="pill green">Certified</span></td><td>Drafting operations</td><td>Contracts</td></tr>
+                <tr class="clickable" onclick="go('showings')"><td><strong>OBJ-00000004</strong><br><span class="muted">Licensed Showing Coverage</span></td><td>Service</td><td><span class="pill green">Certified</span></td><td>Showing coverage operations</td><td>Showings</td></tr>
+                <tr><td><strong>OBJ-00000005</strong><br><span class="muted">Business Operations Support</span></td><td>Service</td><td><span class="pill green">Certified</span></td><td>Administrative and operational support</td><td>Operations</td></tr>
+                <tr><td><strong>OBJ-STD-000001</strong><br><span class="muted">Production Object Standard</span></td><td>Standard</td><td><span class="pill green">Active</span></td><td>Object certification rules</td><td>ROS</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid two">
+            <div class="card">
+              <div class="section-head"><h2>Decision Playbooks</h2><span class="small">Operational judgment</span></div>
+              <div class="row"><div><strong>Earnest Money Not Received</strong><span>Transaction risk response.</span></div><span class="pill red">Critical</span></div>
+              <div class="row"><div><strong>Inspection Resolution Delayed</strong><span>Deadline and negotiation monitoring.</span></div><span class="pill yellow">Common</span></div>
+              <div class="row"><div><strong>Missing Required Signatures</strong><span>QA and compliance response.</span></div><span class="pill yellow">Common</span></div>
+              <div class="row"><div><strong>Legal Interpretation Requested</strong><span>Contract drafting boundary response.</span></div><span class="pill red">Boundary</span></div>
+            </div>
+
+            <div class="card">
+              <div class="section-head"><h2>Template Library</h2><span class="small">Reusable</span></div>
+              <div class="row"><div><strong>Transaction Opened Email</strong><span>Opening communication for new files.</span></div><span class="pill">Email</span></div>
+              <div class="row"><div><strong>Draft Ready for Review</strong><span>Contract delivery template.</span></div><span class="pill">Email</span></div>
+              <div class="row"><div><strong>Showing Completed</strong><span>Showing feedback template.</span></div><span class="pill">Email</span></div>
+              <div class="row"><div><strong>Review Request</strong><span>Customer Success follow-up.</span></div><span class="pill">Success</span></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head"><h2>Engineering Principles</h2><span class="small">Selected</span></div>
+            <table>
+              <thead><tr><th>#</th><th>Principle</th><th>Applies To</th></tr></thead>
+              <tbody>
+                <tr><td>9</td><td>Every transaction should be understandable in less than 30 seconds.</td><td>Transactions</td></tr>
+                <tr><td>21</td><td>Communication is not the transfer of information. Communication is the transfer of confidence.</td><td>Client Experience</td></tr>
+                <tr><td>24</td><td>A service is production-ready only when it can be consistently understood, sold, delivered, measured, improved, and transferred.</td><td>Service Certification</td></tr>
+                <tr><td>28</td><td>If a UI pattern will appear more than twice, it should become a component.</td><td>Design System</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>Knowledge Search</h2><span class="pill yellow">Prototype</span></div>
+            <div class="field">Search SOPs, templates, playbooks, objects...</div>
+            <button class="btn gold" onclick="alert('Knowledge search placeholder: this will later search repository objects.')">Search Repository</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>AI Recommendation</h2><span class="pill yellow">Action</span></div>
+            <p class="muted"><strong>Convert repeated missing financing terms into an intake checklist improvement.</strong></p>
+            <p class="muted">Supporting data: Contract Center shows missing financing terms recurring in active drafts.</p>
+            <button class="btn gold" onclick="go('contracts')">Open Contract Center</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Training Paths</h2><span class="small">Available</span></div>
+            <div class="row"><div><strong>Transaction Coordinator</strong><span>Orientation → Operations → Independent Delivery → Senior Ops</span></div><span class="pill green">Ready</span></div>
+            <div class="row"><div><strong>Contract Drafting</strong><span>Boundary rules, intake, drafting, QA, delivery.</span></div><span class="pill green">Ready</span></div>
+            <div class="row"><div><strong>Showing Provider</strong><span>Licensing, access, safety, feedback, closeout.</span></div><span class="pill green">Ready</span></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Knowledge Rule</h2><span class="pill">Principle</span></div>
+            <p class="muted">The repository is not a file cabinet. It is institutional memory that should make future work easier, faster, and more consistent.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="reports" class="page">
+      <div class="eyebrow">Reports · ROS-0054</div>
+      <h1>Executive Reports & Repository Health</h1>
+      <p class="sub">View business performance, operational quality, capacity, revenue, client growth, and ROS repository maturity from one reporting center.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Monthly Revenue</div><div class="value">$7.8k</div><div class="note">$12.4k forecast</div></div>
+        <div class="card kpi"><div class="label">Active Files</div><div class="value">18</div><div class="note">3 high risk</div></div>
+        <div class="card kpi"><div class="label">QA Pass Rate</div><div class="value">91%</div><div class="note">improving</div></div>
+        <div class="card kpi"><div class="label">Capacity</div><div class="value">84%</div><div class="note">watch next week</div></div>
+        <div class="card kpi"><div class="label">Repo Health</div><div class="value">78%</div><div class="note">growing</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>Executive Report Center</h2><span class="small">Decision-focused</span></div>
+            <table>
+              <thead><tr><th>Report</th><th>Purpose</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Daily Executive Briefing</strong></td><td>Priorities, risks, recommendations</td><td><span class="pill green">Ready</span></td><td>Generate</td></tr>
+                <tr><td><strong>Weekly Operations Review</strong></td><td>Completed work, bottlenecks, capacity</td><td><span class="pill yellow">Due Friday</span></td><td>Prepare</td></tr>
+                <tr><td><strong>Monthly Business Review</strong></td><td>Revenue, growth, quality, strategy</td><td><span class="pill">Scheduled</span></td><td>Queue</td></tr>
+                <tr><td><strong>Repository Health Report</strong></td><td>Object maturity and documentation coverage</td><td><span class="pill green">Current</span></td><td>Open</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid two">
+            <div class="card">
+              <div class="section-head"><h2>Operational Trends</h2><span class="small">Current month</span></div>
+              <div class="row"><div><strong>Transactions opened</strong><span>9 new files this month.</span></div><span class="pill green">Up</span></div>
+              <div class="row"><div><strong>Exceptions created</strong><span>7 total, 5 resolved.</span></div><span class="pill yellow">Monitor</span></div>
+              <div class="row"><div><strong>Average days to close</strong><span>31 days average cycle time.</span></div><span class="pill">Stable</span></div>
+              <div class="row"><div><strong>Communication health</strong><span>88% current across active files.</span></div><span class="pill green">Good</span></div>
+            </div>
+
+            <div class="card">
+              <div class="section-head"><h2>Revenue Trends</h2><span class="small">Current month</span></div>
+              <div class="row"><div><strong>Transaction Management</strong><span>$5,835 collected.</span></div><span class="pill green">Lead</span></div>
+              <div class="row"><div><strong>Contract Preparation</strong><span>$1,325 collected.</span></div><span class="pill">Growing</span></div>
+              <div class="row"><div><strong>Showing Coverage</strong><span>$420 collected.</span></div><span class="pill">Support</span></div>
+              <div class="row"><div><strong>Forecasted revenue</strong><span>$12,400 projected.</span></div><span class="pill yellow">Watch</span></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head"><h2>Repository Health Dashboard</h2><span class="small">ROS maturity</span></div>
+            <table>
+              <thead><tr><th>Area</th><th>Current</th><th>Target</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Certified Production Objects</td><td>4</td><td>4 core services</td><td><span class="pill green">Complete</span></td></tr>
+                <tr><td>Application Modules</td><td>9</td><td>11 primary modules</td><td><span class="pill yellow">In progress</span></td></tr>
+                <tr><td>Design System</td><td>v1.0</td><td>Reusable components</td><td><span class="pill green">Active</span></td></tr>
+                <tr><td>Change Log</td><td>ROS-0054</td><td>Complete history</td><td><span class="pill green">Current</span></td></tr>
+                <tr><td>Object Registry</td><td>Active</td><td>Single source of truth</td><td><span class="pill green">Current</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>Generate Report</h2><span class="pill yellow">Sample</span></div>
+            <div class="field">Report Type</div>
+            <div class="field">Date Range</div>
+            <div class="field">Module</div>
+            <div class="field">Audience</div>
+            <button class="btn gold">Generate Report</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>AI Executive Insight</h2><span class="pill yellow">Action</span></div>
+            <p class="muted"><strong>Core Koinonia service catalog is now production certified.</strong></p>
+            <p class="muted">Supporting data: repository health shows 4 of 4 core service objects certified.</p>
+            <button class="btn gold" onclick="go('knowledge')">Open Knowledge</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Capacity Forecast</h2><span class="pill yellow">Watch</span></div>
+            <div class="row"><div><strong>Next week</strong><span>Closings and drafts compress workload.</span></div><span class="pill yellow">84%</span></div>
+            <div class="row"><div><strong>High-risk items</strong><span>2 critical items require early attention.</span></div><span class="pill red">2</span></div>
+            <div class="row"><div><strong>Recommended action</strong><span>Complete closing QA before lower-risk follow-ups.</span></div><span class="pill green">Clear</span></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Reporting Rule</h2><span class="pill">Principle</span></div>
+            <p class="muted">Every report should help make a decision. If a report only displays numbers without guiding action, it is incomplete.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="admin" class="page">
+      <div class="eyebrow">Administration · ROS-0055</div>
+      <h1>Administration Foundation</h1>
+      <p class="sub">Manage users, roles, permissions, packages, pricing, templates, automations, object registry settings, and workspace governance.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Users</div><div class="value">7</div><div class="note">sample roles</div></div>
+        <div class="card kpi"><div class="label">Roles</div><div class="value">8</div><div class="note">defined</div></div>
+        <div class="card kpi"><div class="label">Automations</div><div class="value">12</div><div class="note">planned</div></div>
+        <div class="card kpi"><div class="label">Templates</div><div class="value">18</div><div class="note">managed</div></div>
+        <div class="card kpi"><div class="label">Governance</div><div class="value">Active</div><div class="note">ROS rules</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>Role Matrix</h2><span class="small">Access by responsibility</span></div>
+            <table>
+              <thead><tr><th>Role</th><th>Primary Access</th><th>Permissions</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Owner / Executive</td><td>Full platform</td><td>View, edit, approve, administer</td><td><span class="pill green">Active</span></td></tr>
+                <tr><td>Operations Manager</td><td>Operations, transactions, QA</td><td>Assign, edit, approve</td><td><span class="pill green">Active</span></td></tr>
+                <tr><td>Transaction Coordinator</td><td>Assigned transactions</td><td>View, edit, complete tasks</td><td><span class="pill green">Active</span></td></tr>
+                <tr><td>Showing Provider</td><td>Assigned showings only</td><td>View instructions, submit feedback</td><td><span class="pill yellow">Limited</span></td></tr>
+                <tr><td>Finance</td><td>Invoices, payments, revenue</td><td>Create, edit, reconcile</td><td><span class="pill green">Active</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid two">
+            <div class="card">
+              <div class="section-head"><h2>Automation Rules</h2><span class="small">Planned</span></div>
+              <div class="row"><div><strong>transaction.created</strong><span>Create intake tasks and QA Gate 1.</span></div><span class="pill green">Ready</span></div>
+              <div class="row"><div><strong>deadline.due_soon</strong><span>Raise priority and notify owner.</span></div><span class="pill yellow">Review</span></div>
+              <div class="row"><div><strong>showing.unassigned</strong><span>Create critical alert for same-day showing.</span></div><span class="pill red">Critical</span></div>
+              <div class="row"><div><strong>invoice.paid</strong><span>Update finance dashboard and timeline.</span></div><span class="pill green">Ready</span></div>
+            </div>
+
+            <div class="card">
+              <div class="section-head"><h2>Workspace Settings</h2><span class="small">Koinonia</span></div>
+              <div class="row"><div><strong>Packages</strong><span>Transaction Coordination Plus, Realtor Support Plus, Pay-at-Closing.</span></div><span class="pill green">Active</span></div>
+              <div class="row"><div><strong>Pricing</strong><span>$389 prepaid, $599 pay-at-closing, custom support.</span></div><span class="pill green">Active</span></div>
+              <div class="row"><div><strong>Branding</strong><span>Cream, black, gold, professional executive style.</span></div><span class="pill green">Active</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>Create User</h2><span class="pill yellow">Sample</span></div>
+            <div class="field">Name</div>
+            <div class="field">Email</div>
+            <div class="field">Role</div>
+            <div class="field">Module Access</div>
+            <button class="btn gold">Create User</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Admin AI Recommendation</h2><span class="pill yellow">Action</span></div>
+            <p class="muted"><strong>Create a limited Showing Provider role before adding outside coverage providers.</strong></p>
+            <p class="muted">Supporting data: Showing Center uses provider assignments; access should match responsibility.</p>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Administration Rule</h2><span class="pill">Principle</span></div>
+            <p class="muted">Access should match responsibility. Users should only see and change the objects required for their role.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="objects" class="page">
+      <div class="eyebrow">Object Explorer · ROS-0057</div>
+      <h1>Shared Object Explorer</h1>
+      <p class="sub">Search, filter, open, and inspect the shared objects that power Koinonia ERP. This is the first object-level interface for the ROS Object Engine.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Objects Loaded</div><div class="value">20</div><div class="note">sample dataset</div></div>
+        <div class="card kpi"><div class="label">Critical</div><div class="value">5</div><div class="note">need action</div></div>
+        <div class="card kpi"><div class="label">Relationships</div><div class="value">41</div><div class="note">graph edges</div></div>
+        <div class="card kpi"><div class="label">Timeline Events</div><div class="value">5</div><div class="note">sample events</div></div>
+        <div class="card kpi"><div class="label">Platform</div><div class="value">v6.2</div><div class="note">object explorer</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>Object Registry View</h2><span class="small">Click any row</span></div>
+            <div class="tabs" style="margin-top:0;">
+              <div class="tab active" onclick="filterObjects('all', this)">All</div>
+              <div class="tab" onclick="filterObjects('Transaction', this)">Transactions</div>
+              <div class="tab" onclick="filterObjects('Relationship', this)">Relationships</div>
+              <div class="tab" onclick="filterObjects('Task', this)">Tasks</div>
+              <div class="tab" onclick="filterObjects('Invoice', this)">Finance</div>
+              <div class="tab" onclick="filterObjects('Service', this)">Services</div>
+            </div>
+            <table>
+              <thead><tr><th>Object</th><th>Type</th><th>Status</th><th>Health</th><th>Next Action</th></tr></thead>
+              <tbody id="objectRows"></tbody>
+            </table>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head"><h2>Relationship Graph Preview</h2><span class="small">Selected object</span></div>
+            <div id="relationshipGraph" class="muted">Select an object to view related objects.</div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>Object Detail Panel</h2><span class="pill yellow">Live sample</span></div>
+            <div id="objectDetail">
+              <p class="muted">Select an object from the table to inspect its details, relationships, and next action.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Related Timeline</h2><span class="small">Events</span></div>
+            <div id="objectTimeline" class="timeline">
+              <div class="event"><strong>No object selected</strong><span>Select an object to view related timeline events.</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Object Rule</h2><span class="pill">v6.2</span></div>
+            <p class="muted">Every screen should display shared objects, not duplicate local records. The Object Explorer is the first direct interface into that shared model.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="timeline" class="page">
+      <div class="eyebrow">Universal Timeline · ROS-0058</div>
+      <h1>System Event Timeline</h1>
+      <p class="sub">One chronological history for meaningful activity across CRM, transactions, contracts, showings, finance, customer success, operations, and the repository.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Events Loaded</div><div class="value">5</div><div class="note">sample timeline</div></div>
+        <div class="card kpi"><div class="label">Critical Events</div><div class="value">2</div><div class="note">exception + showing</div></div>
+        <div class="card kpi"><div class="label">Modules</div><div class="value">5</div><div class="note">connected</div></div>
+        <div class="card kpi"><div class="label">Audit Trail</div><div class="value">Active</div><div class="note">sample mode</div></div>
+        <div class="card kpi"><div class="label">Platform</div><div class="value">v6.3</div><div class="note">timeline module</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>Timeline Events</h2><span class="small">Click any event</span></div>
+            <div class="tabs" style="margin-top:0;">
+              <div class="tab active" onclick="filterTimeline('all', this)">All</div>
+              <div class="tab" onclick="filterTimeline('transaction', this)">Transactions</div>
+              <div class="tab" onclick="filterTimeline('qa', this)">QA</div>
+              <div class="tab" onclick="filterTimeline('exception', this)">Exceptions</div>
+              <div class="tab" onclick="filterTimeline('invoice', this)">Finance</div>
+              <div class="tab" onclick="filterTimeline('showing', this)">Showings</div>
+            </div>
+            <table>
+              <thead><tr><th>Time</th><th>Event</th><th>Object</th><th>Actor</th><th>Summary</th></tr></thead>
+              <tbody id="timelineRows"></tbody>
+            </table>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head"><h2>Chronological Audit Trail</h2><span class="small">System story</span></div>
+            <div class="timeline" id="timelineStory"></div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>Event Detail</h2><span class="pill yellow">Live sample</span></div>
+            <div id="eventDetail">
+              <p class="muted">Select an event to inspect the actor, related object, event type, and recommended follow-up.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Related Object</h2><span class="small">Context</span></div>
+            <div id="timelineObjectDetail">
+              <p class="muted">Related object context will appear here after selecting an event.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Timeline Rule</h2><span class="pill">v6.3</span></div>
+            <p class="muted">If an action matters later, it belongs on the timeline. This creates auditability, troubleshooting history, and AI context.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="workflows" class="page">
+      <div class="eyebrow">Workflow Engine · ROS-0059</div>
+      <h1>Workflow Explorer</h1>
+      <p class="sub">Inspect reusable workflows, stages, tasks, decision points, exceptions, triggers, and completion criteria. This is the first interface for turning SOPs into measurable operational movement.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Workflows</div><div class="value">4</div><div class="note">sample definitions</div></div>
+        <div class="card kpi"><div class="label">Active</div><div class="value">3</div><div class="note">service workflows</div></div>
+        <div class="card kpi"><div class="label">Stages</div><div class="value">32</div><div class="note">mapped</div></div>
+        <div class="card kpi"><div class="label">Decision Points</div><div class="value">12</div><div class="note">defined</div></div>
+        <div class="card kpi"><div class="label">Platform</div><div class="value">v6.4</div><div class="note">workflow explorer</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>Workflow Library</h2><span class="small">Click any workflow</span></div>
+            <div class="tabs" style="margin-top:0;">
+              <div class="tab active" onclick="filterWorkflows('all', this)">All</div>
+              <div class="tab" onclick="filterWorkflows('Active', this)">Active</div>
+              <div class="tab" onclick="filterWorkflows('Planned', this)">Planned</div>
+              <div class="tab" onclick="filterWorkflows('Operations', this)">Operations</div>
+              <div class="tab" onclick="filterWorkflows('Contract Center', this)">Contracts</div>
+              <div class="tab" onclick="filterWorkflows('Showing Center', this)">Showings</div>
+            </div>
+            <table>
+              <thead><tr><th>Workflow</th><th>Owner</th><th>Status</th><th>Current Stage</th><th>Health</th></tr></thead>
+              <tbody id="workflowRows"></tbody>
+            </table>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head"><h2>Stage Map</h2><span class="small">Selected workflow</span></div>
+            <div id="workflowStages" class="muted">Select a workflow to view stages.</div>
+          </div>
+
+          <div class="grid two">
+            <div class="card">
+              <div class="section-head"><h2>Tasks</h2><span class="small">Workflow work</span></div>
+              <div id="workflowTasks" class="muted">Select a workflow to view tasks.</div>
+            </div>
+            <div class="card">
+              <div class="section-head"><h2>Decision Points</h2><span class="small">Logic</span></div>
+              <div id="workflowDecisions" class="muted">Select a workflow to view decision points.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>Workflow Detail</h2><span class="pill yellow">Live sample</span></div>
+            <div id="workflowDetail">
+              <p class="muted">Select a workflow from the table to inspect trigger, owner, health, exceptions, and completion criteria.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Exceptions</h2><span class="small">Failure paths</span></div>
+            <div id="workflowExceptions" class="muted">Select a workflow to view exception paths.</div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Workflow Rule</h2><span class="pill">v6.4</span></div>
+            <p class="muted">An SOP explains how work is done. A workflow defines how work moves.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="automations" class="page">
+      <div class="eyebrow">Automation Rules · ROS-0061</div>
+      <h1>Automation Rules Explorer</h1>
+      <p class="sub">Inspect automation triggers, conditions, actions, human review requirements, target objects, and dashboard impact. Automation is observable before it becomes executable.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Rules</div><div class="value">6</div><div class="note">sample rules</div></div>
+        <div class="card kpi"><div class="label">Ready</div><div class="value">4</div><div class="note">defined</div></div>
+        <div class="card kpi"><div class="label">Human Review</div><div class="value">2</div><div class="note">required</div></div>
+        <div class="card kpi"><div class="label">Triggers</div><div class="value">6</div><div class="note">event bus</div></div>
+        <div class="card kpi"><div class="label">Platform</div><div class="value">v6.6</div><div class="note">automation</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>Automation Rule Library</h2><span class="small">Click any rule</span></div>
+            <div class="tabs" style="margin-top:0;">
+              <div class="tab active" onclick="filterAutomationRules('all', this)">All</div>
+              <div class="tab" onclick="filterAutomationRules('Ready', this)">Ready</div>
+              <div class="tab" onclick="filterAutomationRules('Planned', this)">Planned</div>
+              <div class="tab" onclick="filterAutomationRules('Yes', this)">Human Review</div>
+            </div>
+            <table>
+              <thead><tr><th>Rule</th><th>Trigger</th><th>Status</th><th>Review</th><th>Dashboard Impact</th></tr></thead>
+              <tbody id="automationRows"></tbody>
+            </table>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head"><h2>Rule Flow</h2><span class="small">Selected automation</span></div>
+            <div id="automationFlow" class="muted">Select an automation rule to view trigger → condition → action → dashboard impact.</div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>Rule Detail</h2><span class="pill yellow">Live sample</span></div>
+            <div id="automationDetail">
+              <p class="muted">Select a rule to inspect details and run available simulations.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Simulation</h2><span class="small">Test actions</span></div>
+            <button class="btn gold" onclick="simulateCompleteQA()">Run QA Completion</button>
+            <button class="btn outline" onclick="simulateAssignShowing()">Run Showing Assignment</button>
+            <button class="btn outline" onclick="simulateApproveDraft()">Run Draft Approval</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Automation Rule</h2><span class="pill">v6.6</span></div>
+            <p class="muted">Automation should increase confidence, not reduce visibility. Every automation must show trigger, condition, action, target, and dashboard impact.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="intelligence" class="page">
+      <div class="eyebrow">Intelligence · ROS-0062</div>
+      <h1>Intelligent Operating System</h1>
+      <p class="sub">The v7.0 intelligence layer: command palette, AI Copilot, notifications, analytics, permission-aware navigation, workspace customization, plugin architecture, and API-first foundation.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Commands</div><div class="value">12</div><div class="note">sample actions</div></div>
+        <div class="card kpi"><div class="label">AI Context</div><div class="value">8</div><div class="note">source types</div></div>
+        <div class="card kpi"><div class="label">Notifications</div><div class="value">9</div><div class="note">sample alerts</div></div>
+        <div class="card kpi"><div class="label">Analytics</div><div class="value">5</div><div class="note">domains</div></div>
+        <div class="card kpi"><div class="label">Platform</div><div class="value">v7.0</div><div class="note">intelligence</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>AI Copilot Console</h2><span class="small">Grounded prototype</span></div>
+            <div class="field" id="copilotPrompt">Ask: What should I work on next?</div>
+            <button class="btn gold" onclick="runCopilot('priority')">Ask Priority</button>
+            <button class="btn outline" onclick="runCopilot('blocking')">What is blocking closing?</button>
+            <button class="btn outline" onclick="runCopilot('followup')">Who needs follow-up?</button>
+            <div id="copilotAnswer" style="margin-top:14px;" class="muted">Copilot answers will appear here with supporting data.</div>
+          </div>
+
+          <div class="grid two">
+            <div class="card">
+              <div class="section-head"><h2>Notification Center</h2><span class="small">Priority-based</span></div>
+              <div class="row"><div><strong>Closing blocked</strong><span>Smith Transaction final QA incomplete.</span></div><span class="pill red">Critical</span></div>
+              <div class="row"><div><strong>Showing unassigned</strong><span>Meadow View showing today at 2:00 PM.</span></div><span class="pill red">Critical</span></div>
+              <div class="row"><div><strong>Draft waiting</strong><span>Garcia Amendment waiting on client approval.</span></div><span class="pill yellow">Important</span></div>
+              <div class="row"><div><strong>Invoice paid</strong><span>INV-1007 payment received.</span></div><span class="pill green">Info</span></div>
+            </div>
+
+            <div class="card">
+              <div class="section-head"><h2>Analytics Engine</h2><span class="small">Computed model</span></div>
+              <div class="row"><div><strong>Critical Objects</strong><span>Computed from object health = Critical.</span></div><span class="pill red">5</span></div>
+              <div class="row"><div><strong>Active Workflows</strong><span>Computed from workflow status = Active.</span></div><span class="pill green">3</span></div>
+              <div class="row"><div><strong>Timeline Events</strong><span>Computed from event log.</span></div><span class="pill">5+</span></div>
+              <div class="row"><div><strong>Automation Ready</strong><span>Computed from rule status = Ready.</span></div><span class="pill green">4</span></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head"><h2>Command Library</h2><span class="small">Examples</span></div>
+            <table>
+              <thead><tr><th>Command</th><th>Type</th><th>Result</th></tr></thead>
+              <tbody>
+                <tr><td>Open Smith Transaction</td><td>Navigate</td><td>Opens transaction module</td></tr>
+                <tr><td>Assign Meadow View Showing</td><td>Update</td><td>Assigns provider and creates event</td></tr>
+                <tr><td>Complete final QA</td><td>Workflow</td><td>Updates QA, exception, task, transaction</td></tr>
+                <tr><td>Show critical objects</td><td>Analyze</td><td>Filters Object Explorer</td></tr>
+                <tr><td>Generate daily briefing</td><td>Report</td><td>Summarizes priorities and risks</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>Workspace Switcher</h2><span class="pill yellow">Future</span></div>
+            <div class="row"><div><strong>Koinonia</strong><span>Real estate operations.</span></div><span class="pill green">Active</span></div>
+            <div class="row"><div><strong>Environmental</strong><span>Field operations and project delivery.</span></div><span class="pill">Planned</span></div>
+            <div class="row"><div><strong>Family</strong><span>Family operations and schedules.</span></div><span class="pill">Planned</span></div>
+            <div class="row"><div><strong>Executive</strong><span>Cross-workspace leadership view.</span></div><span class="pill">Planned</span></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Plugin Architecture</h2><span class="small">Extension model</span></div>
+            <div class="row"><div><strong>Module Plugin</strong><span>Add new business module.</span></div><span class="pill">Plugin</span></div>
+            <div class="row"><div><strong>Workflow Plugin</strong><span>Add reusable workflow.</span></div><span class="pill">Plugin</span></div>
+            <div class="row"><div><strong>AI Skill Plugin</strong><span>Add specialized Copilot skill.</span></div><span class="pill">Plugin</span></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>API Foundation</h2><span class="pill">Future build</span></div>
+            <p class="muted">The UI should consume platform APIs instead of owning business logic.</p>
+            <p class="muted">Core APIs: Object, Workflow, Timeline, Automation, Command, Copilot, Notification, Analytics, Workspace, Repository.</p>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>v7 Rule</h2><span class="pill">Principle</span></div>
+            <p class="muted">The system should not only store work. It should understand work, prioritize work, explain work, and guide action.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="implementation" class="page">
+      <div class="eyebrow">Implementation · ROS-0063</div>
+      <h1>Production Application Build Plan</h1>
+      <p class="sub">Translate the ROS prototype and architecture into a production software plan: frontend, backend, database, APIs, authentication, deployment, and MVP backlog.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Stack</div><div class="value">Next.js</div><div class="note">recommended</div></div>
+        <div class="card kpi"><div class="label">Database</div><div class="value">Postgres</div><div class="note">recommended</div></div>
+        <div class="card kpi"><div class="label">ORM</div><div class="value">Prisma</div><div class="note">recommended</div></div>
+        <div class="card kpi"><div class="label">MVP Epics</div><div class="value">12</div><div class="note">defined</div></div>
+        <div class="card kpi"><div class="label">Version</div><div class="value">v7.1</div><div class="note">build-ready</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>Recommended Production Stack</h2><span class="small">Build foundation</span></div>
+            <table>
+              <thead><tr><th>Layer</th><th>Recommendation</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td>Frontend</td><td>Next.js + React + TypeScript</td><td>SaaS application shell and modules</td></tr>
+                <tr><td>Styling</td><td>Design tokens / Tailwind-compatible system</td><td>Consistent ROS UI</td></tr>
+                <tr><td>Backend</td><td>Node.js / TypeScript API</td><td>Platform services and business logic</td></tr>
+                <tr><td>Database</td><td>PostgreSQL</td><td>Objects, relationships, workflows, events</td></tr>
+                <tr><td>ORM</td><td>Prisma</td><td>Typed schema and migrations</td></tr>
+                <tr><td>Auth</td><td>Managed auth first</td><td>Secure login and roles</td></tr>
+                <tr><td>Storage</td><td>S3-compatible storage</td><td>Documents and generated files</td></tr>
+                <tr><td>Jobs</td><td>Background job queue</td><td>Automations, notifications, AI summaries</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid two">
+            <div class="card">
+              <div class="section-head"><h2>MVP Scope</h2><span class="small">First production build</span></div>
+              <div class="row"><div><strong>Login + Workspace</strong><span>Authentication and Koinonia workspace.</span></div><span class="pill green">Core</span></div>
+              <div class="row"><div><strong>Object Engine</strong><span>Shared records and relationships.</span></div><span class="pill green">Core</span></div>
+              <div class="row"><div><strong>CRM + Transactions</strong><span>First operational modules.</span></div><span class="pill green">Core</span></div>
+              <div class="row"><div><strong>Tasks + Timeline</strong><span>Traceable work history.</span></div><span class="pill green">Core</span></div>
+              <div class="row"><div><strong>Finance Basic</strong><span>Invoices, payments, revenue.</span></div><span class="pill yellow">MVP</span></div>
+            </div>
+
+            <div class="card">
+              <div class="section-head"><h2>Do Not Build First</h2><span class="small">Avoid risk</span></div>
+              <div class="row"><div><strong>Destructive automations</strong><span>Manual trust comes first.</span></div><span class="pill red">Wait</span></div>
+              <div class="row"><div><strong>Complex AI writes</strong><span>Copilot should recommend before acting.</span></div><span class="pill red">Wait</span></div>
+              <div class="row"><div><strong>Too many modules</strong><span>Ship core workflow first.</span></div><span class="pill yellow">Limit</span></div>
+              <div class="row"><div><strong>Custom auth</strong><span>Use managed auth early.</span></div><span class="pill yellow">Avoid</span></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head"><h2>MVP Build Backlog</h2><span class="small">Epics</span></div>
+            <table>
+              <thead><tr><th>Epic</th><th>Focus</th><th>Priority</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Project Foundation</td><td><span class="pill red">First</span></td></tr>
+                <tr><td>2</td><td>Design System</td><td><span class="pill red">First</span></td></tr>
+                <tr><td>3</td><td>Authentication & Roles</td><td><span class="pill red">First</span></td></tr>
+                <tr><td>4</td><td>Object Engine</td><td><span class="pill red">First</span></td></tr>
+                <tr><td>5</td><td>Timeline</td><td><span class="pill yellow">MVP</span></td></tr>
+                <tr><td>6</td><td>CRM</td><td><span class="pill yellow">MVP</span></td></tr>
+                <tr><td>7</td><td>Transactions</td><td><span class="pill yellow">MVP</span></td></tr>
+                <tr><td>8</td><td>Operations Queue</td><td><span class="pill yellow">MVP</span></td></tr>
+                <tr><td>12</td><td>Copilot Foundation</td><td><span class="pill">Read-only first</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>Initial Database Model</h2><span class="pill yellow">Schema</span></div>
+            <div class="row"><div><strong>objects</strong><span>Central object registry.</span></div><span class="pill green">Core</span></div>
+            <div class="row"><div><strong>object_relationships</strong><span>Relationship graph edges.</span></div><span class="pill green">Core</span></div>
+            <div class="row"><div><strong>timeline_events</strong><span>Audit and AI context.</span></div><span class="pill green">Core</span></div>
+            <div class="row"><div><strong>workflows</strong><span>Workflow definitions.</span></div><span class="pill yellow">Platform</span></div>
+            <div class="row"><div><strong>automation_rules</strong><span>Trigger and action logic.</span></div><span class="pill">Later</span></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>API Groups</h2><span class="small">Foundation</span></div>
+            <div class="row"><div><strong>Object API</strong><span>Create, read, update, archive objects.</span></div><span class="pill green">MVP</span></div>
+            <div class="row"><div><strong>Timeline API</strong><span>Create and read events.</span></div><span class="pill green">MVP</span></div>
+            <div class="row"><div><strong>Task API</strong><span>Work queue and completion.</span></div><span class="pill green">MVP</span></div>
+            <div class="row"><div><strong>Copilot API</strong><span>Ask and draft with grounding.</span></div><span class="pill yellow">Read-only</span></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Build Rule</h2><span class="pill">v7.1</span></div>
+            <p class="muted">The first production version should prioritize correctness, traceability, and trust over speed or automation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ros" class="page">
+      <div class="eyebrow">ROS Platform · ROS-0055</div>
+      <h1>Core Platform Services</h1>
+      <p class="sub">The v6.0 platform layer underneath the Koinonia ERP interface: Object Engine, Relationship Graph, Workflow Engine, Universal Timeline, AI Context Engine, Event Bus, Automation Rules, Permissions, and SDK foundation.</p>
+
+      <div class="grid kpis">
+        <div class="card kpi"><div class="label">Platform Version</div><div class="value">6.0</div><div class="note">core platform</div></div>
+        <div class="card kpi"><div class="label">Core Services</div><div class="value">10</div><div class="note">defined</div></div>
+        <div class="card kpi"><div class="label">Objects</div><div class="value">20+</div><div class="note">core entities</div></div>
+        <div class="card kpi"><div class="label">Event Types</div><div class="value">9</div><div class="note">initial bus</div></div>
+        <div class="card kpi"><div class="label">Status</div><div class="value">v6.0</div><div class="note">architecture</div></div>
+      </div>
+
+      <div class="grid content">
+        <div>
+          <div class="card">
+            <div class="section-head"><h2>Core Platform Services</h2><span class="small">Foundation</span></div>
+            <table>
+              <thead><tr><th>Service</th><th>Purpose</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Unified Object Engine</td><td>Shared source of truth for all records.</td><td><span class="pill green">Defined</span></td></tr>
+                <tr><td>Relationship Graph</td><td>Connects clients, transactions, invoices, tasks, and repository objects.</td><td><span class="pill green">Defined</span></td></tr>
+                <tr><td>Workflow Engine</td><td>Turns SOPs into reusable, measurable workflows.</td><td><span class="pill green">Defined</span></td></tr>
+                <tr><td>Universal Timeline</td><td>One chronological history for every meaningful event.</td><td><span class="pill green">Defined</span></td></tr>
+                <tr><td>AI Context Engine</td><td>Grounds AI recommendations in objects, fields, events, and rules.</td><td><span class="pill green">Defined</span></td></tr>
+                <tr><td>Event Bus</td><td>Distributes system events to modules and automations.</td><td><span class="pill green">Defined</span></td></tr>
+                <tr><td>Automation Rules</td><td>Defines trigger, condition, action, review, and dashboard impact.</td><td><span class="pill green">Defined</span></td></tr>
+                <tr><td>Permissions & Roles</td><td>Controls access by responsibility.</td><td><span class="pill green">Defined</span></td></tr>
+                <tr><td>Administration</td><td>Manages users, roles, automations, packages, pricing, and governance.</td><td><span class="pill green">Defined</span></td></tr>
+                <tr><td>Developer SDK</td><td>Future interface for object, workflow, timeline, and AI APIs.</td><td><span class="pill yellow">Foundation</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          
+          <div class="card" style="margin-top:18px;">
+            <div class="section-head"><h2>Sample Object Graph</h2><span class="small">Shared dataset</span></div>
+            <table>
+              <thead><tr><th>Object</th><th>Type</th><th>Health</th><th>Next Action</th></tr></thead>
+              <tbody>
+                <tr class="clickable" onclick="go('crm')"><td>REL-000001 · Sarah Johnson</td><td>Relationship</td><td><span class="pill green">Strong</span></td><td>Send transaction update</td></tr>
+                <tr class="clickable" onclick="go('transaction')"><td>TXN-000001 · Smith Transaction</td><td>Transaction</td><td><span class="pill red">Critical</span></td><td>Complete final QA review</td></tr>
+                <tr class="clickable" onclick="go('operations')"><td>TASK-000001 · Complete final QA</td><td>Task</td><td><span class="pill red">Critical</span></td><td>Verify closing figures</td></tr>
+                <tr class="clickable" onclick="go('finance')"><td>INV-1007 · Smith Invoice</td><td>Invoice</td><td><span class="pill green">Healthy</span></td><td>Archive financial record</td></tr>
+                <tr class="clickable" onclick="go('showings')"><td>SHW-000001 · Meadow View Showing</td><td>Showing Request</td><td><span class="pill red">Critical</span></td><td>Assign licensed provider</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid two" style="margin-top:18px;">
+            <div class="card">
+              <div class="section-head"><h2>Universal Timeline Sample</h2><span class="small">Events</span></div>
+              <div class="timeline">
+                <div class="event"><strong>8:01 AM</strong><span>Smith Transaction opened.</span></div>
+                <div class="event"><strong>8:12 AM</strong><span>Pre-closing QA review created.</span></div>
+                <div class="event"><strong>8:47 AM</strong><span>Commission instruction exception opened.</span></div>
+                <div class="event"><strong>9:13 AM</strong><span>Smith invoice marked paid.</span></div>
+                <div class="event"><strong>10:40 AM</strong><span>Meadow View showing remains unassigned.</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="section-head"><h2>Data Files</h2><span class="pill green">Added</span></div>
+              <p class="muted">The repository now includes sample object, relationship, and timeline data in JSON and CSV formats under <strong>08_Data</strong>.</p>
+              <p class="muted">This creates the first bridge between the UI shell and the underlying Object Engine.</p>
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div class="card">
+              <div class="section-head"><h2>Object Engine Example</h2><span class="small">Shared data</span></div>
+              <div class="row"><div><strong>Transaction</strong><span>Client, property, agent, brokerage, tasks, deadlines, documents, communication, invoice.</span></div><span class="pill">Object</span></div>
+              <div class="row"><div><strong>Client</strong><span>Relationship profile, packages, transactions, invoices, success history.</span></div><span class="pill">Master</span></div>
+              <div class="row"><div><strong>Task</strong><span>Owner, priority, related object, due date, status, next action.</span></div><span class="pill">Work</span></div>
+            </div>
+
+            <div class="card">
+              <div class="section-head"><h2>Event Bus Examples</h2><span class="small">System events</span></div>
+              <div class="row"><div><strong>transaction.created</strong><span>Triggers intake workflow and QA Gate 1.</span></div><span class="pill green">Ready</span></div>
+              <div class="row"><div><strong>deadline.due_soon</strong><span>Raises priority and dashboard alert.</span></div><span class="pill yellow">Monitor</span></div>
+              <div class="row"><div><strong>invoice.paid</strong><span>Updates finance dashboard and timeline.</span></div><span class="pill green">Ready</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head"><h2>AI Context Engine</h2><span class="pill yellow">Core</span></div>
+            <p class="muted"><strong>Every recommendation must be grounded.</strong></p>
+            <p class="muted">Example: “Complete final QA first” is based on transaction health = red, closing date = tomorrow, QA gate = incomplete, and missing commission confirmation.</p>
+            <button class="btn gold" onclick="go('operations')">Open Related Work</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Relationship Graph</h2><span class="pill">Example</span></div>
+            <p class="muted">Sarah Johnson → Parker Realty Group → Smith Transaction → Invoice INV-1007 → Customer Success → Referral Opportunity.</p>
+            <button class="btn outline" onclick="go('crm')">Open CRM</button>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Platform Rule</h2><span class="pill">v6.0</span></div>
+            <p class="muted">No future screen should own isolated data. Every screen reads from and writes to shared platform objects.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="command-modal" id="commandModal" onclick="closeCommand(event)">
+  <div class="command-box" onclick="event.stopPropagation()">
+    <input id="commandInput" placeholder="Type a command: open Smith transaction, show CRM, go to operations..." onkeydown="handleCommand(event)" autofocus>
+    <div class="command-list">
+      <div class="command-item" onclick="goCommand('transaction')">Open Smith Transaction</div>
+      <div class="command-item" onclick="goCommand('operations')">Open Operations Work Queue</div>
+      <div class="command-item" onclick="goCommand('contracts')">Open Contract Center</div>
+      <div class="command-item" onclick="goCommand('crm')">Open CRM</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const pages = {
+  dashboard: "Dashboard", crm:"CRM", transaction:"Transactions / Smith Transaction", contracts:"Contract Center",
+  showings:"Showing Center", operations:"Operations Work Queue", finance:"Finance", success:"Customer Success",
+  knowledge:"Knowledge", reports:"Reports", admin:"Administration", objects:"Object Explorer", timeline:"Universal Timeline", workflows:"Workflow Explorer", automations:"Automation Rules", intelligence:"Intelligence", implementation:"Build Plan", ros:"ROS"
+};
+
+const searchItems = [
+  {label:"Smith Transaction", page:"transaction", type:"Transaction"},
+  {label:"Sarah Johnson", page:"crm", type:"Agent"},
+  {label:"Garcia Amendment", page:"contracts", type:"Draft Request"},
+  {label:"Meadow View Showing", page:"showings", type:"Showing Request"},
+  {label:"Final QA", page:"operations", type:"Work Item"},
+  {label:"OBJ-00000002 Transaction Management", page:"knowledge", type:"Certified Object"},
+  {label:"Operations Work Queue", page:"operations", type:"Module"},
+  {label:"Object Explorer", page:"objects", type:"Module"},
+  {label:"TXN-000001 Smith Transaction", page:"objects", type:"Object"},
+  {label:"REL-000001 Sarah Johnson", page:"objects", type:"Object"},
+  {label:"Universal Timeline", page:"timeline", type:"Module"},
+  {label:"EVT-000003 Commission exception", page:"timeline", type:"Timeline Event"},
+  {label:"Workflow Explorer", page:"workflows", type:"Module"},
+  {label:"WF-000001 Transaction Management Workflow", page:"workflows", type:"Workflow"},
+  {label:"Automation Rules", page:"automations", type:"Module"},
+  {label:"AUTO-000003 Same-Day Showing Unassigned", page:"automations", type:"Automation"},
+  {label:"AI Copilot", page:"intelligence", type:"Intelligence"},
+  {label:"Notification Center", page:"intelligence", type:"Intelligence"},
+  {label:"Production Build Plan", page:"implementation", type:"Implementation"},
+  {label:"Database Schema", page:"implementation", type:"Implementation"}
+];
+
+function go(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(page).classList.add('active');
+  const btn = document.querySelector(`nav button[data-page="${page}"]`);
+  if(btn) btn.classList.add('active');
+  document.getElementById('breadcrumbs').textContent = "Koinonia ERP / " + pages[page];
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.querySelectorAll('nav button').forEach(btn=>btn.addEventListener('click',()=>go(btn.dataset.page)));
+
+function quickNew(){ alert("Quick create placeholder: Relationship, Transaction, Draft, Showing, Task, Invoice."); }
+function openCommand(){ document.getElementById('commandModal').style.display='flex'; setTimeout(()=>document.getElementById('commandInput').focus(),50); }
+function closeCommand(e){ document.getElementById('commandModal').style.display='none'; }
+function goCommand(page){ document.getElementById('commandModal').style.display='none'; go(page); }
+function handleCommand(e){
+  if(e.key === 'Enter'){
+    const v = e.target.value.toLowerCase();
+    if(v.includes('smith') || v.includes('transaction')) goCommand('transaction');
+    else if(v.includes('operation') || v.includes('queue')) goCommand('operations');
+    else if(v.includes('contract') || v.includes('draft')) goCommand('contracts');
+    else if(v.includes('crm') || v.includes('sarah')) goCommand('crm');
+    else if(v.includes('show')) goCommand('showings');
+    else if(v.includes('critical') || v.includes('object')) goCommand('objects');
+    else if(v.includes('timeline') || v.includes('event')) goCommand('timeline');
+    else if(v.includes('workflow')) goCommand('workflows');
+    else if(v.includes('automation')) goCommand('automations');
+    else if(v.includes('copilot') || v.includes('intelligence') || v.includes('briefing')) goCommand('intelligence');
+    else goCommand('dashboard');
+  }
+  if(e.key === 'Escape') closeCommand();
+}
+
+const search = document.getElementById('globalSearch');
+const results = document.getElementById('searchResults');
+search.addEventListener('input',()=>{
+  const q = search.value.toLowerCase().trim();
+  if(!q){results.style.display='none'; results.innerHTML=''; return;}
+  const matches = searchItems.filter(i=>i.label.toLowerCase().includes(q) || i.type.toLowerCase().includes(q)).slice(0,6);
+  results.innerHTML = matches.map(m=>`<div class="result" onclick="selectSearch('${m.page}')"><strong>${m.label}</strong><span>${m.type}</span></div>`).join('');
+  results.style.display = matches.length ? 'block' : 'none';
+});
+function selectSearch(page){ results.style.display='none'; search.value=''; go(page); }
+document.addEventListener('keydown', e => {
+  if((e.metaKey || e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); openCommand(); }
+});
+const rosObjects = [
+  {
+    "id": "REL-000001",
+    "type": "Relationship",
+    "name": "Sarah Johnson",
+    "status": "Active Client",
+    "owner": "CRM",
+    "health": "Strong",
+    "next_action": "Send transaction update",
+    "related": [
+      "BRK-000001",
+      "CLI-000001",
+      "TXN-000001",
+      "INV-1007",
+      "CS-000001"
+    ]
+  },
+  {
+    "id": "CLI-000001",
+    "type": "Client",
+    "name": "Sarah Johnson Client Account",
+    "status": "Active",
+    "owner": "Koinonia",
+    "health": "Strong",
+    "next_action": "Prepare review request after closing",
+    "related": [
+      "REL-000001",
+      "PKG-000001",
+      "TXN-000001",
+      "INV-1007"
+    ]
+  },
+  {
+    "id": "BRK-000001",
+    "type": "Brokerage",
+    "name": "Parker Realty Group",
+    "status": "Active Relationship",
+    "owner": "CRM",
+    "health": "Good",
+    "next_action": "Monitor referral potential",
+    "related": [
+      "REL-000001"
+    ]
+  },
+  {
+    "id": "PTY-000001",
+    "type": "Property",
+    "name": "123 Main Street",
+    "status": "Under Contract",
+    "owner": "Operations",
+    "health": "Attention",
+    "next_action": "Confirm commission instructions",
+    "related": [
+      "TXN-000001",
+      "DOC-000001"
+    ]
+  },
+  {
+    "id": "TXN-000001",
+    "type": "Transaction",
+    "name": "Smith Transaction",
+    "status": "Closing Prep",
+    "owner": "Operations",
+    "health": "Critical",
+    "next_action": "Complete final QA review",
+    "related": [
+      "CLI-000001",
+      "REL-000001",
+      "PTY-000001",
+      "TASK-000001",
+      "EXC-000001",
+      "INV-1007",
+      "CS-000001"
+    ]
+  },
+  {
+    "id": "TASK-000001",
+    "type": "Task",
+    "name": "Complete final QA review",
+    "status": "Due Now",
+    "owner": "Jeremiah",
+    "health": "Critical",
+    "next_action": "Verify closing figures and commission paperwork",
+    "related": [
+      "TXN-000001",
+      "QA-000001",
+      "EXC-000001"
+    ]
+  },
+  {
+    "id": "QA-000001",
+    "type": "QA Review",
+    "name": "Smith Pre-Closing QA",
+    "status": "Incomplete",
+    "owner": "Operations",
+    "health": "Critical",
+    "next_action": "Complete QA checklist",
+    "related": [
+      "TXN-000001",
+      "TASK-000001",
+      "EXC-000001"
+    ]
+  },
+  {
+    "id": "EXC-000001",
+    "type": "Exception",
+    "name": "Commission instruction confirmation missing",
+    "status": "Open",
+    "owner": "Operations",
+    "health": "Critical",
+    "next_action": "Confirm commission instructions",
+    "related": [
+      "TXN-000001",
+      "TASK-000001",
+      "QA-000001"
+    ]
+  },
+  {
+    "id": "INV-1007",
+    "type": "Invoice",
+    "name": "Smith Transaction Invoice",
+    "status": "Paid",
+    "owner": "Finance",
+    "health": "Healthy",
+    "next_action": "Archive financial record",
+    "related": [
+      "TXN-000001",
+      "CLI-000001",
+      "PAY-000001",
+      "PKG-000001"
+    ]
+  },
+  {
+    "id": "PAY-000001",
+    "type": "Payment",
+    "name": "Payment for INV-1007",
+    "status": "Received",
+    "owner": "Finance",
+    "health": "Healthy",
+    "next_action": "Reconcile if needed",
+    "related": [
+      "INV-1007",
+      "CLI-000001"
+    ]
+  },
+  {
+    "id": "PKG-000001",
+    "type": "Package",
+    "name": "Transaction Coordination Plus",
+    "status": "Active",
+    "owner": "Koinonia",
+    "health": "Healthy",
+    "next_action": "Use prepaid pricing rule",
+    "related": [
+      "OBJ-00000002",
+      "INV-1007",
+      "CLI-000001"
+    ]
+  },
+  {
+    "id": "OBJ-00000002",
+    "type": "Service",
+    "name": "Transaction Management Service",
+    "status": "Production Certified",
+    "owner": "Repository",
+    "health": "Healthy",
+    "next_action": "Monitor improvement opportunities",
+    "related": [
+      "PKG-000001",
+      "TXN-000001",
+      "WF-000001"
+    ]
+  },
+  {
+    "id": "WF-000001",
+    "type": "Workflow",
+    "name": "Transaction Management Workflow",
+    "status": "Active",
+    "owner": "Platform",
+    "health": "Healthy",
+    "next_action": "Execute closing prep stage",
+    "related": [
+      "OBJ-00000002",
+      "TXN-000001",
+      "TASK-000001"
+    ]
+  },
+  {
+    "id": "CS-000001",
+    "type": "Customer Success",
+    "name": "Sarah Johnson Success Record",
+    "status": "Queued",
+    "owner": "Customer Success",
+    "health": "Strong",
+    "next_action": "Prepare review and referral request",
+    "related": [
+      "CLI-000001",
+      "REL-000001",
+      "TXN-000001"
+    ]
+  },
+  {
+    "id": "DRF-000001",
+    "type": "Contract Draft Request",
+    "name": "Garcia Amendment",
+    "status": "Waiting on Client",
+    "owner": "Contract Center",
+    "health": "Attention",
+    "next_action": "Get client approval",
+    "related": [
+      "REL-000002",
+      "TASK-000002"
+    ]
+  },
+  {
+    "id": "REL-000002",
+    "type": "Relationship",
+    "name": "Michael Garcia",
+    "status": "Proposal",
+    "owner": "CRM",
+    "health": "Developing",
+    "next_action": "Follow up on Realtor Support Plus",
+    "related": [
+      "DRF-000001"
+    ]
+  },
+  {
+    "id": "SHW-000001",
+    "type": "Showing Request",
+    "name": "Meadow View Showing",
+    "status": "Unassigned",
+    "owner": "Showing Center",
+    "health": "Critical",
+    "next_action": "Assign licensed provider",
+    "related": [
+      "PTY-000002",
+      "TASK-000003"
+    ]
+  },
+  {
+    "id": "PTY-000002",
+    "type": "Property",
+    "name": "7427 Meadow View",
+    "status": "Showing Requested",
+    "owner": "Showing Center",
+    "health": "Attention",
+    "next_action": "Assign provider",
+    "related": [
+      "SHW-000001"
+    ]
+  },
+  {
+    "id": "TASK-000002",
+    "type": "Task",
+    "name": "Garcia Amendment Approval Follow-Up",
+    "status": "Waiting on Client",
+    "owner": "Koinonia",
+    "health": "Attention",
+    "next_action": "Request approval",
+    "related": [
+      "DRF-000001"
+    ]
+  },
+,
+  {
+    "id": "OBJ-00000005",
+    "type": "Service",
+    "name": "Business Operations Support Service",
+    "status": "Production Certified",
+    "owner": "Repository",
+    "health": "Healthy",
+    "next_action": "Monitor service improvement opportunities",
+    "related": ["WF-000005"]
+  },
+  {
+    "id": "TASK-000003",
+    "type": "Task",
+    "name": "Assign Meadow View Showing Provider",
+    "status": "Due Now",
+    "owner": "Operations",
+    "health": "Critical",
+    "next_action": "Assign provider",
+    "related": [
+      "SHW-000001"
+    ]
+  }
+];
+const rosTimeline = [
+  {
+    "event_id": "EVT-000001",
+    "timestamp": "2026-07-02 08:01",
+    "actor": "ROS",
+    "event_type": "transaction.created",
+    "object_id": "TXN-000001",
+    "summary": "Smith Transaction opened."
+  },
+  {
+    "event_id": "EVT-000002",
+    "timestamp": "2026-07-02 08:12",
+    "actor": "Koinonia",
+    "event_type": "qa.created",
+    "object_id": "QA-000001",
+    "summary": "Pre-closing QA review created."
+  },
+  {
+    "event_id": "EVT-000003",
+    "timestamp": "2026-07-02 08:47",
+    "actor": "ROS",
+    "event_type": "exception.opened",
+    "object_id": "EXC-000001",
+    "summary": "Commission instruction confirmation missing."
+  },
+  {
+    "event_id": "EVT-000004",
+    "timestamp": "2026-07-02 09:13",
+    "actor": "Finance",
+    "event_type": "invoice.paid",
+    "object_id": "INV-1007",
+    "summary": "Smith Transaction invoice marked paid."
+  },
+  {
+    "event_id": "EVT-000005",
+    "timestamp": "2026-07-02 10:40",
+    "actor": "Operations",
+    "event_type": "showing.unassigned",
+    "object_id": "SHW-000001",
+    "summary": "Meadow View same-day showing remains unassigned."
+  }
+];
+let currentObjectFilter = 'all';
+
+function healthClass(health){
+  const h = String(health || '').toLowerCase();
+  if(h.includes('critical')) return 'red';
+  if(h.includes('attention') || h.includes('developing')) return 'yellow';
+  if(h.includes('healthy') || h.includes('strong') || h.includes('good')) return 'green';
+  return '';
+}
+
+function renderObjects(){
+  const tbody = document.getElementById('objectRows');
+  if(!tbody) return;
+  const filtered = rosObjects.filter(o => currentObjectFilter === 'all' || o.type === currentObjectFilter || (currentObjectFilter === 'Invoice' && ['Invoice','Payment','Package'].includes(o.type)));
+  tbody.innerHTML = filtered.map(o => `
+    <tr class="clickable" onclick="selectObject('${o.id}')">
+      <td><strong>${o.id}</strong><br><span class="muted">${o.name}</span></td>
+      <td>${o.type}</td>
+      <td><span class="pill">${o.status}</span></td>
+      <td><span class="pill ${healthClass(o.health)}">${o.health}</span></td>
+      <td>${o.next_action}</td>
+    </tr>
+  `).join('');
+}
+
+function filterObjects(type, el){
+  currentObjectFilter = type;
+  document.querySelectorAll('#objects .tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderObjects();
+}
+
+function selectObject(id){
+  const obj = rosObjects.find(o => o.id === id);
+  if(!obj) return;
+
+  document.getElementById('objectDetail').innerHTML = `
+    <p><strong>${obj.id}</strong></p>
+    <h2 style="margin-bottom:8px;">${obj.name}</h2>
+    <p class="muted">${obj.type} · Owner: ${obj.owner}</p>
+    <div class="row"><div><strong>Status</strong><span>${obj.status}</span></div><span class="pill">${obj.status}</span></div>
+    <div class="row"><div><strong>Health</strong><span>${obj.health}</span></div><span class="pill ${healthClass(obj.health)}">${obj.health}</span></div>
+    <div class="row"><div><strong>Next Action</strong><span>${obj.next_action}</span></div><span class="pill yellow">Action</span></div>
+    <button class="btn gold" onclick="routeObject('${obj.id}')">Open Related Module</button>
+  `;
+
+  const related = obj.related || [];
+  document.getElementById('relationshipGraph').innerHTML = related.length
+    ? related.map(r => {
+        const target = rosObjects.find(o => o.id === r);
+        return `<div class="row"><div><strong>${r}</strong><span>${target ? target.name + ' · ' + target.type : 'Referenced object'}</span></div><span class="pill">related</span></div>`;
+      }).join('')
+    : '<p class="muted">No related objects listed.</p>';
+
+  const events = rosTimeline.filter(e => e.object_id === id);
+  document.getElementById('objectTimeline').innerHTML = events.length
+    ? events.map(e => `<div class="event"><strong>${e.timestamp}</strong><span>${e.event_type} · ${e.summary}</span></div>`).join('')
+    : '<div class="event"><strong>No direct events</strong><span>No timeline events are linked directly to this object in the sample dataset.</span></div>';
+}
+
+function routeObject(id){
+  if(id.startsWith('TXN') || id.startsWith('QA') || id.startsWith('EXC')) go('transaction');
+  else if(id.startsWith('REL') || id.startsWith('CLI') || id.startsWith('BRK')) go('crm');
+  else if(id.startsWith('INV') || id.startsWith('PAY') || id.startsWith('PKG')) go('finance');
+  else if(id.startsWith('DRF')) go('contracts');
+  else if(id.startsWith('SHW')) go('showings');
+  else if(id.startsWith('TASK')) go('operations');
+  else if(id.startsWith('CS')) go('success');
+  else go('knowledge');
+}
+
+setTimeout(renderObjects, 100);
+
+let currentTimelineFilter = 'all';
+
+function renderTimeline(){
+  const tbody = document.getElementById('timelineRows');
+  const story = document.getElementById('timelineStory');
+  if(!tbody || !story || typeof rosTimeline === 'undefined') return;
+
+  const filtered = rosTimeline.filter(e => currentTimelineFilter === 'all' || e.event_type.includes(currentTimelineFilter));
+  tbody.innerHTML = filtered.map(e => `
+    <tr class="clickable" onclick="selectTimelineEvent('${e.event_id}')">
+      <td>${e.timestamp}</td>
+      <td><span class="pill">${e.event_type}</span></td>
+      <td>${e.object_id}</td>
+      <td>${e.actor}</td>
+      <td>${e.summary}</td>
+    </tr>
+  `).join('');
+
+  story.innerHTML = filtered.map(e => `
+    <div class="event"><strong>${e.timestamp}</strong><span>${e.event_type} · ${e.summary}</span></div>
+  `).join('');
+}
+
+function filterTimeline(type, el){
+  currentTimelineFilter = type;
+  document.querySelectorAll('#timeline .tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderTimeline();
+}
+
+function selectTimelineEvent(eventId){
+  const event = rosTimeline.find(e => e.event_id === eventId);
+  if(!event) return;
+  const obj = rosObjects.find(o => o.id === event.object_id);
+
+  document.getElementById('eventDetail').innerHTML = `
+    <p><strong>${event.event_id}</strong></p>
+    <h2 style="margin-bottom:8px;">${event.event_type}</h2>
+    <p class="muted">${event.summary}</p>
+    <div class="row"><div><strong>Timestamp</strong><span>${event.timestamp}</span></div><span class="pill">Time</span></div>
+    <div class="row"><div><strong>Actor</strong><span>${event.actor}</span></div><span class="pill">Actor</span></div>
+    <div class="row"><div><strong>Related Object</strong><span>${event.object_id}</span></div><span class="pill yellow">Object</span></div>
+    <button class="btn gold" onclick="routeObject('${event.object_id}')">Open Related Module</button>
+  `;
+
+  document.getElementById('timelineObjectDetail').innerHTML = obj ? `
+    <p><strong>${obj.id}</strong></p>
+    <h2 style="margin-bottom:8px;">${obj.name}</h2>
+    <p class="muted">${obj.type} · Owner: ${obj.owner}</p>
+    <div class="row"><div><strong>Status</strong><span>${obj.status}</span></div><span class="pill">${obj.status}</span></div>
+    <div class="row"><div><strong>Health</strong><span>${obj.health}</span></div><span class="pill ${healthClass(obj.health)}">${obj.health}</span></div>
+    <div class="row"><div><strong>Next Action</strong><span>${obj.next_action}</span></div><span class="pill yellow">Action</span></div>
+  ` : '<p class="muted">No related object found in the sample object dataset.</p>';
+}
+
+setTimeout(renderTimeline, 150);
+
+const rosWorkflows = [
+  {
+    "id": "WF-000001",
+    "name": "Transaction Management Workflow",
+    "status": "Active",
+    "owner": "Operations",
+    "related_service": "OBJ-00000002",
+    "trigger": "transaction.created",
+    "current_stage": "Closing Prep",
+    "health": "Attention",
+    "stages": [
+      "Intake",
+      "Compliance Review",
+      "Earnest Money",
+      "Inspection",
+      "Resolution",
+      "Appraisal",
+      "Loan",
+      "Title",
+      "Closing Prep",
+      "Closing",
+      "Post Closing",
+      "Archived"
+    ],
+    "tasks": [
+      "Create transaction object",
+      "Build deadline timeline",
+      "Run QA Gate 1",
+      "Monitor deadlines",
+      "Run pre-closing QA",
+      "Archive final file",
+      "Trigger Customer Success"
+    ],
+    "decision_points": [
+      "Is the file complete?",
+      "Is any deadline at risk?",
+      "Is closing ready?"
+    ],
+    "exceptions": [
+      "Missing document",
+      "Missed deadline",
+      "Closing delay",
+      "Commission confirmation missing"
+    ],
+    "completion_criteria": "Transaction closed, final QA complete, file archived, Customer Success handoff created."
+  },
+  {
+    "id": "WF-000002",
+    "name": "Contract Drafting Workflow",
+    "status": "Active",
+    "owner": "Contract Center",
+    "related_service": "OBJ-00000003",
+    "trigger": "draft.requested",
+    "current_stage": "Waiting on Client",
+    "health": "Attention",
+    "stages": [
+      "Requested",
+      "Waiting on Info",
+      "Drafting",
+      "Review",
+      "Waiting on Client",
+      "Revised",
+      "Finalized",
+      "Archived"
+    ],
+    "tasks": [
+      "Collect terms",
+      "Confirm form type",
+      "Prepare draft",
+      "Review draft",
+      "Send for approval",
+      "Track revisions",
+      "Archive final version"
+    ],
+    "decision_points": [
+      "Are required terms complete?",
+      "Is client approval received?",
+      "Is legal interpretation being requested?"
+    ],
+    "exceptions": [
+      "Missing required terms",
+      "Conflicting instructions",
+      "Urgent same-day draft",
+      "Legal interpretation requested"
+    ],
+    "completion_criteria": "Final approved document archived with version history."
+  },
+  {
+    "id": "WF-000003",
+    "name": "Licensed Showing Coverage Workflow",
+    "status": "Active",
+    "owner": "Showing Center",
+    "related_service": "OBJ-00000004",
+    "trigger": "showing.requested",
+    "current_stage": "Assigned",
+    "health": "Healthy",
+    "stages": [
+      "Requested",
+      "Waiting on Info",
+      "Assigned",
+      "Scheduled",
+      "Completed",
+      "Feedback Sent",
+      "Closed"
+    ],
+    "tasks": [
+      "Confirm property details",
+      "Verify access instructions",
+      "Assign provider",
+      "Confirm appointment",
+      "Complete showing",
+      "Send feedback",
+      "Close request"
+    ],
+    "decision_points": [
+      "Are access instructions complete?",
+      "Is a licensed provider available?",
+      "Are there safety concerns?"
+    ],
+    "exceptions": [
+      "Missing access instructions",
+      "No provider available",
+      "Same-day request",
+      "Safety concern"
+    ],
+    "completion_criteria": "Showing completed, feedback sent, request closed."
+  },
+  {
+    "id": "WF-000004",
+    "name": "Customer Success Handoff Workflow",
+    "status": "Planned",
+    "owner": "Customer Success",
+    "related_service": "CS-000001",
+    "trigger": "transaction.closed",
+    "current_stage": "Queued",
+    "health": "Healthy",
+    "stages": [
+      "Closing Complete",
+      "Thank You",
+      "Satisfaction Check",
+      "Review Request",
+      "Referral Opportunity",
+      "Relationship Nurture"
+    ],
+    "tasks": [
+      "Send thank-you",
+      "Check satisfaction",
+      "Request review",
+      "Identify referral opportunity",
+      "Schedule nurture touchpoint"
+    ],
+    "decision_points": [
+      "Was the experience positive?",
+      "Is client likely to refer?",
+      "Should testimonial be requested?"
+    ],
+    "exceptions": [
+      "Client dissatisfaction",
+      "No response",
+      "Delayed review request"
+    ],
+    "completion_criteria": "Review/referral path completed or nurture cadence scheduled."
+  }
+];
+let currentWorkflowFilter = 'all';
+
+function renderWorkflows(){
+  const tbody = document.getElementById('workflowRows');
+  if(!tbody) return;
+  const filtered = rosWorkflows.filter(wf => currentWorkflowFilter === 'all' || wf.status === currentWorkflowFilter || wf.owner === currentWorkflowFilter);
+  tbody.innerHTML = filtered.map(wf => `
+    <tr class="clickable" onclick="selectWorkflow('${wf.id}')">
+      <td><strong>${wf.id}</strong><br><span class="muted">${wf.name}</span></td>
+      <td>${wf.owner}</td>
+      <td><span class="pill">${wf.status}</span></td>
+      <td>${wf.current_stage}</td>
+      <td><span class="pill ${healthClass(wf.health)}">${wf.health}</span></td>
+    </tr>
+  `).join('');
+}
+
+function filterWorkflows(filter, el){
+  currentWorkflowFilter = filter;
+  document.querySelectorAll('#workflows .tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderWorkflows();
+}
+
+function listRows(items, cls=''){
+  return items.map(item => `<div class="row"><div><strong>${item}</strong><span>${cls}</span></div><span class="pill">Item</span></div>`).join('');
+}
+
+function selectWorkflow(id){
+  const wf = rosWorkflows.find(w => w.id === id);
+  if(!wf) return;
+
+  document.getElementById('workflowDetail').innerHTML = `
+    <p><strong>${wf.id}</strong></p>
+    <h2 style="margin-bottom:8px;">${wf.name}</h2>
+    <p class="muted">Owner: ${wf.owner} · Trigger: ${wf.trigger}</p>
+    <div class="row"><div><strong>Status</strong><span>${wf.status}</span></div><span class="pill">${wf.status}</span></div>
+    <div class="row"><div><strong>Current Stage</strong><span>${wf.current_stage}</span></div><span class="pill yellow">Stage</span></div>
+    <div class="row"><div><strong>Completion</strong><span>${wf.completion_criteria}</span></div><span class="pill green">Criteria</span></div>
+    <button class="btn gold" onclick="routeWorkflow('${wf.id}')">Open Related Module</button>
+  `;
+
+  document.getElementById('workflowStages').innerHTML = wf.stages.map((s,i) => `<span class="pill ${s===wf.current_stage ? 'yellow' : ''}">${i+1}. ${s}</span>`).join(' ');
+  document.getElementById('workflowTasks').innerHTML = listRows(wf.tasks);
+  document.getElementById('workflowDecisions').innerHTML = listRows(wf.decision_points);
+  document.getElementById('workflowExceptions').innerHTML = listRows(wf.exceptions);
+}
+
+function routeWorkflow(id){
+  if(id === 'WF-000001') go('transaction');
+  else if(id === 'WF-000002') go('contracts');
+  else if(id === 'WF-000003') go('showings');
+  else if(id === 'WF-000004') go('success');
+  else go('operations');
+}
+
+setTimeout(renderWorkflows, 200);
+
+function addTimelineEvent(eventType, objectId, summary){
+  if(typeof rosTimeline === 'undefined') return;
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const newEvent = {
+    event_id: 'EVT-' + String(rosTimeline.length + 1).padStart(6,'0'),
+    timestamp: `2026-07-02 ${hh}:${mm}`,
+    actor: 'User Simulation',
+    event_type: eventType,
+    object_id: objectId,
+    summary: summary
+  };
+  rosTimeline.unshift(newEvent);
+  renderTimeline();
+}
+
+function updateObject(id, updates){
+  const obj = rosObjects.find(o => o.id === id);
+  if(!obj) return;
+  Object.assign(obj, updates);
+  renderObjects();
+}
+
+function showSimNotice(message){
+  alert(message);
+}
+
+function simulateCompleteQA(){
+  updateObject('TXN-000001', {health:'Healthy', status:'Closing Ready', next_action:'Send final closing reminder'});
+  updateObject('TASK-000001', {health:'Healthy', status:'Complete', next_action:'No action needed'});
+  updateObject('QA-000001', {health:'Healthy', status:'Complete', next_action:'Archive QA record'});
+  updateObject('EXC-000001', {health:'Healthy', status:'Resolved', next_action:'Close exception'});
+  addTimelineEvent('qa.completed', 'QA-000001', 'Final QA completed and Smith Transaction marked closing ready.');
+  showSimNotice('Simulated update complete: Final QA marked complete, exception resolved, timeline event created.');
+}
+
+function simulateAssignShowing(){
+  updateObject('SHW-000001', {health:'Healthy', status:'Assigned', next_action:'Monitor showing completion'});
+  updateObject('TASK-000003', {health:'Healthy', status:'Complete', next_action:'No action needed'});
+  addTimelineEvent('showing.assigned', 'SHW-000001', 'Meadow View Showing assigned to licensed provider.');
+  showSimNotice('Simulated update complete: Showing provider assigned and timeline event created.');
+}
+
+function simulateApproveDraft(){
+  updateObject('DRF-000001', {health:'Healthy', status:'Approved', next_action:'Archive final approved version'});
+  updateObject('TASK-000002', {health:'Healthy', status:'Complete', next_action:'No action needed'});
+  addTimelineEvent('draft.approved', 'DRF-000001', 'Garcia Amendment approved and ready for archive.');
+  showSimNotice('Simulated update complete: Draft approved and timeline event created.');
+}
+
+const automationRules = [
+  {
+    "id": "AUTO-000001",
+    "name": "Transaction Intake Creation",
+    "trigger": "transaction.created",
+    "conditions": "Service package is active",
+    "action": "Create intake tasks and QA Gate 1",
+    "review": "No",
+    "target": "TXN-000001",
+    "dashboard": "Operations queue + QA widgets",
+    "status": "Ready"
+  },
+  {
+    "id": "AUTO-000002",
+    "name": "Deadline Due Soon Alert",
+    "trigger": "deadline.due_soon",
+    "conditions": "Due within 24 hours and incomplete",
+    "action": "Raise priority and notify owner",
+    "review": "No",
+    "target": "TASK",
+    "dashboard": "Priority Panel + Work Queue",
+    "status": "Ready"
+  },
+  {
+    "id": "AUTO-000003",
+    "name": "Same-Day Showing Unassigned",
+    "trigger": "showing.unassigned",
+    "conditions": "Showing date is today and provider is empty",
+    "action": "Create critical alert",
+    "review": "Yes",
+    "target": "SHW-000001",
+    "dashboard": "Showing Center + Operations",
+    "status": "Ready"
+  },
+  {
+    "id": "AUTO-000004",
+    "name": "Invoice Paid Update",
+    "trigger": "invoice.paid",
+    "conditions": "Payment received",
+    "action": "Update invoice, create timeline event, refresh finance metrics",
+    "review": "No",
+    "target": "INV-1007",
+    "dashboard": "Finance + Reports",
+    "status": "Ready"
+  },
+  {
+    "id": "AUTO-000005",
+    "name": "Closing Complete Success Handoff",
+    "trigger": "transaction.closed",
+    "conditions": "Final QA complete and file archived",
+    "action": "Create Customer Success task",
+    "review": "No",
+    "target": "CS-000001",
+    "dashboard": "Customer Success",
+    "status": "Planned"
+  },
+  {
+    "id": "AUTO-000006",
+    "name": "Draft Waiting Follow-Up",
+    "trigger": "draft.waiting_on_client",
+    "conditions": "Waiting longer than 1 business day",
+    "action": "Recommend follow-up message",
+    "review": "Yes",
+    "target": "DRF-000001",
+    "dashboard": "Contract Center + Operations",
+    "status": "Planned"
+  }
+];
+let currentAutomationFilter = 'all';
+
+function renderAutomationRules(){
+  const tbody = document.getElementById('automationRows');
+  if(!tbody) return;
+  const filtered = automationRules.filter(r => currentAutomationFilter === 'all' || r.status === currentAutomationFilter || r.review === currentAutomationFilter);
+  tbody.innerHTML = filtered.map(r => `
+    <tr class="clickable" onclick="selectAutomationRule('${r.id}')">
+      <td><strong>${r.id}</strong><br><span class="muted">${r.name}</span></td>
+      <td>${r.trigger}</td>
+      <td><span class="pill ${r.status === 'Ready' ? 'green' : 'yellow'}">${r.status}</span></td>
+      <td><span class="pill ${r.review === 'Yes' ? 'yellow' : 'green'}">${r.review}</span></td>
+      <td>${r.dashboard}</td>
+    </tr>
+  `).join('');
+}
+
+function filterAutomationRules(filter, el){
+  currentAutomationFilter = filter;
+  document.querySelectorAll('#automations .tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderAutomationRules();
+}
+
+function selectAutomationRule(id){
+  const r = automationRules.find(rule => rule.id === id);
+  if(!r) return;
+
+  document.getElementById('automationDetail').innerHTML = `
+    <p><strong>${r.id}</strong></p>
+    <h2 style="margin-bottom:8px;">${r.name}</h2>
+    <p class="muted">Target: ${r.target}</p>
+    <div class="row"><div><strong>Trigger</strong><span>${r.trigger}</span></div><span class="pill">Event</span></div>
+    <div class="row"><div><strong>Conditions</strong><span>${r.conditions}</span></div><span class="pill yellow">Condition</span></div>
+    <div class="row"><div><strong>Action</strong><span>${r.action}</span></div><span class="pill green">Action</span></div>
+    <div class="row"><div><strong>Human Review</strong><span>${r.review}</span></div><span class="pill ${r.review === 'Yes' ? 'yellow' : 'green'}">${r.review}</span></div>
+    <button class="btn gold" onclick="routeAutomation('${r.id}')">Open Related Module</button>
+  `;
+
+  document.getElementById('automationFlow').innerHTML = `
+    <div class="row"><div><strong>1. Trigger</strong><span>${r.trigger}</span></div><span class="pill">Start</span></div>
+    <div class="row"><div><strong>2. Conditions</strong><span>${r.conditions}</span></div><span class="pill yellow">Check</span></div>
+    <div class="row"><div><strong>3. Action</strong><span>${r.action}</span></div><span class="pill green">Run</span></div>
+    <div class="row"><div><strong>4. Dashboard Impact</strong><span>${r.dashboard}</span></div><span class="pill">Refresh</span></div>
+  `;
+}
+
+function routeAutomation(id){
+  if(id === 'AUTO-000001' || id === 'AUTO-000002') go('operations');
+  else if(id === 'AUTO-000003') go('showings');
+  else if(id === 'AUTO-000004') go('finance');
+  else if(id === 'AUTO-000005') go('success');
+  else if(id === 'AUTO-000006') go('contracts');
+  else go('ros');
+}
+
+setTimeout(renderAutomationRules, 250);
+
+function runCopilot(mode){
+  const answer = document.getElementById('copilotAnswer');
+  if(!answer) return;
+
+  if(mode === 'priority'){
+    answer.innerHTML = `
+      <div class="row"><div><strong>Recommendation</strong><span>Work the Operations queue first, starting with Smith final QA.</span></div><span class="pill red">Critical</span></div>
+      <p class="muted">Supporting data: TXN-000001 health = Critical; TASK-000001 due now; QA-000001 incomplete; closing is tomorrow; EXC-000001 open.</p>
+    `;
+  }
+
+  if(mode === 'blocking'){
+    answer.innerHTML = `
+      <div class="row"><div><strong>Blocking Item</strong><span>Smith Transaction is blocked by missing commission instruction confirmation.</span></div><span class="pill red">Blocking</span></div>
+      <p class="muted">Supporting data: EXC-000001 status = Open; QA-000001 status = Incomplete; transaction stage = Closing Prep.</p>
+    `;
+  }
+
+  if(mode === 'followup'){
+    answer.innerHTML = `
+      <div class="row"><div><strong>Follow-Up Needed</strong><span>Garcia Amendment is waiting on client approval.</span></div><span class="pill yellow">Important</span></div>
+      <p class="muted">Supporting data: DRF-000001 status = Waiting on Client; TASK-000002 next action = Request approval.</p>
+    `;
+  }
+}
+
+</script>
+</body>
+</html>

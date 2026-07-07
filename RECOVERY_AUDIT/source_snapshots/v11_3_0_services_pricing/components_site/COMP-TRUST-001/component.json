@@ -1,0 +1,19 @@
+{
+  "componentId": "COMP-TRUST-001",
+  "name": "Trust Pillar Section",
+  "status": "Canonical",
+  "owner": "Website System",
+  "usedBy": [
+    "Home",
+    "Services & Pricing",
+    "About"
+  ],
+  "variants": [
+    "Four Pillars",
+    "Compact"
+  ],
+  "purpose": "Answers why visitors should trust Koinonia before evaluating services.",
+  "version": "1.0.0",
+  "lastUpdated": "2026-07-03",
+  "source": "Repository-first component canonicalization sprint"
+}

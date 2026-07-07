@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Koinonia ERP Contract Center Prototype</title>
+  <style>
+    :root {
+      --bg:#f7f1e8; --surface:#fff; --text:#161616; --muted:#5f5f5f;
+      --gold:#b88a44; --border:rgba(184,138,68,.28); --shadow:rgba(0,0,0,.06);
+      --green:#2e7d32; --yellow:#b8860b; --red:#b23b3b;
+      --font-ui:Arial,Helvetica,sans-serif; --font-display:Georgia,'Times New Roman',serif;
+    }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-ui)}
+    .app{min-height:100vh;display:grid;grid-template-columns:260px 1fr}
+    aside{background:#161616;color:#fff;padding:24px 18px;position:sticky;top:0;height:100vh}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+    .mark{width:42px;height:42px;border-radius:50%;background:var(--gold);display:grid;place-items:center;font-family:var(--font-display);font-size:24px;font-weight:700}
+    .brand strong{display:block;font-family:var(--font-display);font-size:22px}.brand span{color:#cfcfcf;font-size:12px}
+    nav a{display:block;color:#e6e6e6;text-decoration:none;padding:12px 14px;border-radius:14px;margin-bottom:6px;font-size:14px}
+    nav a.active,nav a:hover{background:rgba(184,138,68,.22);color:#fff}
+    main{padding:24px}
+    .topbar{display:grid;grid-template-columns:1fr auto auto auto;gap:14px;align-items:center;margin-bottom:22px}
+    .search{background:#fff;border:1px solid var(--border);border-radius:999px;padding:14px 18px;box-shadow:0 12px 30px var(--shadow);color:var(--muted)}
+    .btn{border:none;border-radius:999px;padding:13px 17px;background:#161616;color:#fff;font-weight:700;cursor:pointer;text-decoration:none;font-size:13px}
+    .btn.gold{background:var(--gold)}.btn.outline{background:#fff;color:#161616;border:1px solid var(--border)}
+    .icon{border:1px solid var(--border);background:#fff;border-radius:50%;width:44px;height:44px;box-shadow:0 12px 30px var(--shadow)}
+    .eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:1.8px;font-size:12px;font-weight:700;margin-bottom:8px}
+    h1{font-family:var(--font-display);font-size:clamp(34px,5vw,54px);line-height:1;margin:0}
+    .sub{color:var(--muted);margin-top:12px;font-size:16px;max-width:900px;line-height:1.55}
+    .grid{display:grid;gap:18px}.kpis{grid-template-columns:repeat(5,minmax(0,1fr));margin:22px 0}
+    .content{grid-template-columns:1fr 380px;align-items:start}.two{grid-template-columns:1fr 1fr;margin-top:18px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:0 14px 35px var(--shadow)}
+    .kpi .label{color:var(--muted);font-size:12px}.kpi .value{font-family:var(--font-display);font-size:31px;font-weight:700;margin-top:8px}.kpi .note{color:var(--muted);font-size:12px;margin-top:7px}
+    h2{font-family:var(--font-display);font-size:25px;margin:0}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .small{color:var(--gold);font-size:13px;font-weight:700}.muted{color:var(--muted);line-height:1.55;font-size:14px}
+    .pill{display:inline-block;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;background:#f0e7dc;color:#543814;white-space:nowrap}
+    .green{background:rgba(46,125,50,.12);color:var(--green)}.yellow{background:rgba(184,134,11,.14);color:var(--yellow)}.red{background:rgba(178,59,59,.12);color:var(--red)}
+    .row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:13px 0;border-top:1px solid #eee}.row:first-child{border-top:none}
+    .row strong{display:block;font-size:14px}.row span{color:var(--muted);font-size:13px}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden}th{text-align:left;background:#161616;color:#fff;padding:13px;font-size:13px}td{border-top:1px solid #eee;padding:12px 13px;color:#444;font-size:14px;vertical-align:top}
+    tr:hover td{background:#fbf7f0}
+    .pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+    .lane{background:#fbf7f0;border:1px solid var(--border);border-radius:16px;padding:12px}
+    .lane strong{display:block;margin-bottom:8px}.mini{background:#fff;border:1px solid #eee;border-radius:14px;padding:11px;margin-top:8px;font-size:13px}
+    .form-field{border:1px solid var(--border);border-radius:14px;padding:12px 14px;color:var(--muted);margin:8px 0;background:#fff}
+    @media(max-width:1100px){.app{grid-template-columns:1fr}aside{position:relative;height:auto}nav{display:flex;overflow-x:auto;gap:8px}nav a{white-space:nowrap}.topbar,.content,.kpis,.two,.pipeline{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><div class="mark">K</div><div><strong>Koinonia</strong><span>Contract Center</span></div></div>
+    <nav>
+      <a href="#">Dashboard</a><a href="#">CRM</a><a href="#">Transactions</a><a class="active" href="#">Contracts</a><a href="#">Showings</a><a href="#">Operations</a><a href="#">Finance</a><a href="#">Success</a><a href="#">Knowledge</a><a href="#">Reports</a><a href="#">ROS</a>
+    </nav>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="search">Search draft requests, properties, clients, forms, versions...</div>
+      <button class="btn gold">+ New Draft</button><button class="btn">AI Command</button><button class="icon">🔔</button>
+    </div>
+
+    <section>
+      <div class="eyebrow">Contract Center · ROS-0047</div>
+      <h1>Drafting Command Center</h1>
+      <p class="sub">Manage offers, amendments, addenda, counters, notices, revisions, missing terms, client approvals, and final archived versions from one screen.</p>
+    </section>
+
+    <section class="grid kpis">
+      <div class="card kpi"><div class="label">Open Drafts</div><div class="value">6</div><div class="note">2 urgent</div></div>
+      <div class="card kpi"><div class="label">Waiting Client</div><div class="value">3</div><div class="note">missing terms</div></div>
+      <div class="card kpi"><div class="label">Due Today</div><div class="value">2</div><div class="note">same-day requests</div></div>
+      <div class="card kpi"><div class="label">Completed Week</div><div class="value">11</div><div class="note">avg 1.4 revisions</div></div>
+      <div class="card kpi"><div class="label">Completeness</div><div class="value">89%</div><div class="note">first-pass</div></div>
+    </section>
+
+    <section class="grid content">
+      <div>
+        <div class="card">
+          <div class="section-head"><h2>Draft Queue</h2><span class="small">Prioritized</span></div>
+          <table>
+            <thead><tr><th>Request</th><th>Type</th><th>Status</th><th>Due</th><th>Next Action</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Garcia Amendment</strong><br><span class="muted">456 Oak Street</span></td><td>Amendment</td><td><span class="pill red">Urgent</span></td><td>Today</td><td>Client approval needed</td></tr>
+              <tr><td><strong>Wilson Offer</strong><br><span class="muted">789 Pine Avenue</span></td><td>Offer</td><td><span class="pill yellow">Drafting</span></td><td>Today</td><td>Complete financing terms</td></tr>
+              <tr><td><strong>Brown Counter</strong><br><span class="muted">321 Cedar Lane</span></td><td>Counter</td><td><span class="pill">Waiting Info</span></td><td>Tomorrow</td><td>Confirm possession date</td></tr>
+              <tr><td><strong>Smith Addendum</strong><br><span class="muted">123 Main Street</span></td><td>Addendum</td><td><span class="pill green">Ready</span></td><td>Complete</td><td>Archive final version</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="section-head"><h2>Draft Pipeline</h2><span class="small">By status</span></div>
+          <div class="pipeline">
+            <div class="lane"><strong>Requested</strong><div class="mini">Brown Counter<br><span class="muted">Need terms</span></div></div>
+            <div class="lane"><strong>Drafting</strong><div class="mini">Wilson Offer<br><span class="muted">Financing terms</span></div></div>
+            <div class="lane"><strong>Waiting Client</strong><div class="mini">Garcia Amendment<br><span class="muted">Approval needed</span></div></div>
+            <div class="lane"><strong>Finalized</strong><div class="mini">Smith Addendum<br><span class="muted">Archive final</span></div></div>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="card">
+            <div class="section-head"><h2>Missing Terms</h2><span class="small">Blocking</span></div>
+            <div class="row"><div><strong>Possession date</strong><span>Brown Counter</span></div><span class="pill yellow">Needed</span></div>
+            <div class="row"><div><strong>Loan terms</strong><span>Wilson Offer</span></div><span class="pill red">Due Today</span></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Version Control</h2><span class="small">Recent</span></div>
+            <div class="row"><div><strong>Garcia Amendment v2</strong><span>Client requested repair language revision</span></div><span class="pill">Review</span></div>
+            <div class="row"><div><strong>Smith Addendum Final</strong><span>Ready to archive</span></div><span class="pill green">Final</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="section-head"><h2>Draft Request Intake</h2><span class="pill yellow">Sample</span></div>
+          <div class="form-field">Client Name</div>
+          <div class="form-field">Property Address</div>
+          <div class="form-field">Document Type</div>
+          <div class="form-field">Deadline</div>
+          <div class="form-field">Terms / Instructions</div>
+          <button class="btn gold">Create Draft Request</button>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>AI Recommendation</h2><span class="pill yellow">Action</span></div>
+          <p class="muted"><strong>Pause Wilson Offer until financing terms are confirmed.</strong></p>
+          <p class="muted">Supporting data: draft status = drafting, required loan fields missing, due date = today.</p>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>Quality Review</h2><span class="small">Checklist</span></div>
+          <div class="row"><div><strong>Correct form</strong><span>Required before delivery</span></div><span class="pill green">Pass</span></div>
+          <div class="row"><div><strong>Terms complete</strong><span>Required before delivery</span></div><span class="pill yellow">Review</span></div>
+          <div class="row"><div><strong>Client approval</strong><span>Required before use</span></div><span class="pill red">Pending</span></div>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>Service Boundary</h2><span class="pill">Rule</span></div>
+          <p class="muted">Koinonia prepares and organizes documents based on client-provided instructions. Final terms must be reviewed and approved by the client before use.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

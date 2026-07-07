@@ -1,0 +1,42 @@
+[
+  {
+    "event_id": "EVT-000001",
+    "timestamp": "2026-07-02 08:01",
+    "actor": "ROS",
+    "event_type": "transaction.created",
+    "object_id": "TXN-000001",
+    "summary": "Smith Transaction opened."
+  },
+  {
+    "event_id": "EVT-000002",
+    "timestamp": "2026-07-02 08:12",
+    "actor": "Koinonia",
+    "event_type": "qa.created",
+    "object_id": "QA-000001",
+    "summary": "Pre-closing QA review created."
+  },
+  {
+    "event_id": "EVT-000003",
+    "timestamp": "2026-07-02 08:47",
+    "actor": "ROS",
+    "event_type": "exception.opened",
+    "object_id": "EXC-000001",
+    "summary": "Commission instruction confirmation missing."
+  },
+  {
+    "event_id": "EVT-000004",
+    "timestamp": "2026-07-02 09:13",
+    "actor": "Finance",
+    "event_type": "invoice.paid",
+    "object_id": "INV-1007",
+    "summary": "Smith Transaction invoice marked paid."
+  },
+  {
+    "event_id": "EVT-000005",
+    "timestamp": "2026-07-02 10:40",
+    "actor": "Operations",
+    "event_type": "showing.unassigned",
+    "object_id": "SHW-000001",
+    "summary": "Meadow View same-day showing remains unassigned."
+  }
+]

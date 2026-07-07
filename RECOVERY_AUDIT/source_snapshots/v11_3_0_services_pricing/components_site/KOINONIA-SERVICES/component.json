@@ -1,0 +1,18 @@
+{
+  "id": "PAGE-KOINONIA-SERVICES",
+  "name": "Koinonia Services & Pricing Page Assembly",
+  "type": "page-assembly",
+  "route": "/koinonia/services",
+  "status": "assembled",
+  "version": "1.0.0",
+  "owner": "Koinonia Website",
+  "uses": [
+    "COMP-HERO-001",
+    "COMP-TRUST-001",
+    "COMP-CARD-004",
+    "COMP-FAQ-001",
+    "COMP-CTA-001",
+    "COMP-FOOTER-001"
+  ],
+  "notes": "Repository-first Services & Pricing route assembled from canonical components in v11.3.0."
+}

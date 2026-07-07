@@ -1,0 +1,7 @@
+id,name,trigger,conditions,action,review,target,dashboard,status
+AUTO-000001,Transaction Intake Creation,transaction.created,Service package is active,Create intake tasks and QA Gate 1,No,TXN-000001,Operations queue + QA widgets,Ready
+AUTO-000002,Deadline Due Soon Alert,deadline.due_soon,Due within 24 hours and incomplete,Raise priority and notify owner,No,TASK,Priority Panel + Work Queue,Ready
+AUTO-000003,Same-Day Showing Unassigned,showing.unassigned,Showing date is today and provider is empty,Create critical alert,Yes,SHW-000001,Showing Center + Operations,Ready
+AUTO-000004,Invoice Paid Update,invoice.paid,Payment received,"Update invoice, create timeline event, refresh finance metrics",No,INV-1007,Finance + Reports,Ready
+AUTO-000005,Closing Complete Success Handoff,transaction.closed,Final QA complete and file archived,Create Customer Success task,No,CS-000001,Customer Success,Planned
+AUTO-000006,Draft Waiting Follow-Up,draft.waiting_on_client,Waiting longer than 1 business day,Recommend follow-up message,Yes,DRF-000001,Contract Center + Operations,Planned

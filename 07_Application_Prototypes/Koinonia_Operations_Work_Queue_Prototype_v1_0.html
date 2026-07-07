@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Koinonia ERP Operations Work Queue Prototype</title>
+  <style>
+    :root{--bg:#f7f1e8;--surface:#fff;--text:#161616;--muted:#5f5f5f;--gold:#b88a44;--border:rgba(184,138,68,.28);--shadow:rgba(0,0,0,.06);--green:#2e7d32;--yellow:#b8860b;--red:#b23b3b;--font-ui:Arial,Helvetica,sans-serif;--font-display:Georgia,'Times New Roman',serif}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-ui)}
+    .app{min-height:100vh;display:grid;grid-template-columns:260px 1fr}
+    aside{background:#161616;color:#fff;padding:24px 18px;position:sticky;top:0;height:100vh}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}.mark{width:42px;height:42px;border-radius:50%;background:var(--gold);display:grid;place-items:center;font-family:var(--font-display);font-size:24px;font-weight:700}
+    .brand strong{display:block;font-family:var(--font-display);font-size:22px}.brand span{color:#cfcfcf;font-size:12px}
+    nav a{display:block;color:#e6e6e6;text-decoration:none;padding:12px 14px;border-radius:14px;margin-bottom:6px;font-size:14px}
+    nav a.active,nav a:hover{background:rgba(184,138,68,.22);color:#fff}
+    main{padding:24px}.topbar{display:grid;grid-template-columns:1fr auto auto auto;gap:14px;align-items:center;margin-bottom:22px}
+    .search{background:#fff;border:1px solid var(--border);border-radius:999px;padding:14px 18px;box-shadow:0 12px 30px var(--shadow);color:var(--muted)}
+    .btn{border:none;border-radius:999px;padding:11px 14px;background:#161616;color:#fff;font-weight:700;cursor:pointer;text-decoration:none;font-size:13px}.btn.gold{background:var(--gold)}.btn.outline{background:#fff;color:#161616;border:1px solid var(--border)}
+    .icon{border:1px solid var(--border);background:#fff;border-radius:50%;width:44px;height:44px;box-shadow:0 12px 30px var(--shadow)}
+    .eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:1.8px;font-size:12px;font-weight:700;margin-bottom:8px}
+    h1{font-family:var(--font-display);font-size:clamp(34px,5vw,54px);line-height:1;margin:0}.sub{color:var(--muted);margin-top:12px;font-size:16px;max-width:920px;line-height:1.55}
+    .grid{display:grid;gap:18px}.kpis{grid-template-columns:repeat(5,minmax(0,1fr));margin:22px 0}.content{grid-template-columns:1fr 390px;align-items:start}.two{grid-template-columns:1fr 1fr;margin-top:18px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:0 14px 35px var(--shadow)}
+    .kpi .label{color:var(--muted);font-size:12px}.kpi .value{font-family:var(--font-display);font-size:31px;font-weight:700;margin-top:8px}.kpi .note{color:var(--muted);font-size:12px;margin-top:7px}
+    h2{font-family:var(--font-display);font-size:25px;margin:0}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .small{color:var(--gold);font-size:13px;font-weight:700}.muted{color:var(--muted);line-height:1.55;font-size:14px}
+    .pill{display:inline-block;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;background:#f0e7dc;color:#543814;white-space:nowrap}.green{background:rgba(46,125,50,.12);color:var(--green)}.yellow{background:rgba(184,134,11,.14);color:var(--yellow)}.red{background:rgba(178,59,59,.12);color:var(--red)}
+    .row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:13px 0;border-top:1px solid #eee}.row:first-child{border-top:none}.row strong{display:block;font-size:14px}.row span{color:var(--muted);font-size:13px}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden}th{text-align:left;background:#161616;color:#fff;padding:13px;font-size:13px}td{border-top:1px solid #eee;padding:12px 13px;color:#444;font-size:14px;vertical-align:top}tr:hover td{background:#fbf7f0}
+    .queues{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}.queue{background:#fbf7f0;border:1px solid var(--border);border-radius:16px;padding:12px}.mini{background:#fff;border:1px solid #eee;border-radius:14px;padding:11px;margin-top:8px;font-size:13px}
+    .bar{height:10px;background:#eee;border-radius:999px;overflow:hidden;margin-top:8px}.bar div{height:100%;background:var(--gold)}
+    @media(max-width:1100px){.app{grid-template-columns:1fr}aside{position:relative;height:auto}nav{display:flex;overflow-x:auto;gap:8px}nav a{white-space:nowrap}.topbar,.content,.kpis,.two,.queues{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><div class="mark">K</div><div><strong>Koinonia</strong><span>Operations Queue</span></div></div>
+    <nav><a href="#">Dashboard</a><a href="#">CRM</a><a href="#">Transactions</a><a href="#">Contracts</a><a href="#">Showings</a><a class="active" href="#">Operations</a><a href="#">Finance</a><a href="#">Success</a><a href="#">Knowledge</a><a href="#">Reports</a><a href="#">ROS</a></nav>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="search">Search tasks, queues, owners, blockers, deadlines...</div>
+      <button class="btn gold">+ New Task</button><button class="btn">AI Command</button><button class="icon">🔔</button>
+    </div>
+
+    <section>
+      <div class="eyebrow">Operations · ROS-0049</div>
+      <h1>Intelligent Work Queue</h1>
+      <p class="sub">The Operations Work Queue is the internal execution screen. It prioritizes work across transactions, contracts, showings, QA, communication, and follow-ups so the team works by impact instead of memory.</p>
+    </section>
+
+    <section class="grid kpis">
+      <div class="card kpi"><div class="label">Due Now</div><div class="value">4</div><div class="note">2 critical</div></div>
+      <div class="card kpi"><div class="label">Due Today</div><div class="value">17</div><div class="note">across 8 files</div></div>
+      <div class="card kpi"><div class="label">Waiting</div><div class="value">11</div><div class="note">client/title/lender</div></div>
+      <div class="card kpi"><div class="label">QA Required</div><div class="value">5</div><div class="note">3 pre-closing</div></div>
+      <div class="card kpi"><div class="label">Capacity</div><div class="value">84%</div><div class="note">watch next week</div></div>
+    </section>
+
+    <section class="grid content">
+      <div>
+        <div class="card">
+          <div class="section-head"><h2>Prioritized Work</h2><span class="small">AI ranked</span></div>
+          <table>
+            <thead><tr><th>Work Item</th><th>Related Object</th><th>Priority</th><th>Owner</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Complete final QA</strong><br><span class="muted">Closing tomorrow</span></td><td>Smith Transaction</td><td><span class="pill red">Critical</span></td><td>Jeremiah</td><td><button class="btn gold">Open</button></td></tr>
+              <tr><td><strong>Assign showing provider</strong><br><span class="muted">Showing today at 2:00 PM</span></td><td>Meadow View Showing</td><td><span class="pill red">Critical</span></td><td>Ops</td><td><button class="btn gold">Assign</button></td></tr>
+              <tr><td><strong>Confirm financing terms</strong><br><span class="muted">Draft due today</span></td><td>Wilson Offer</td><td><span class="pill yellow">High</span></td><td>Koinonia</td><td><button class="btn outline">Request</button></td></tr>
+              <tr><td><strong>Send weekly update</strong><br><span class="muted">Client update cadence</span></td><td>Johnson Transaction</td><td><span class="pill">Normal</span></td><td>Jeremiah</td><td><button class="btn outline">Draft</button></td></tr>
+              <tr><td><strong>Archive final addendum</strong><br><span class="muted">Version complete</span></td><td>Smith Addendum</td><td><span class="pill green">Ready</span></td><td>Ops</td><td><button class="btn outline">Complete</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="section-head"><h2>Queue Lanes</h2><span class="small">Work status</span></div>
+          <div class="queues">
+            <div class="queue"><strong>Due Now</strong><div class="mini">Final QA<br><span class="muted">Smith</span></div><div class="mini">Assign provider<br><span class="muted">Meadow View</span></div></div>
+            <div class="queue"><strong>Waiting</strong><div class="mini">Client approval<br><span class="muted">Garcia</span></div><div class="mini">Title response<br><span class="muted">Smith</span></div></div>
+            <div class="queue"><strong>QA</strong><div class="mini">Pre-closing<br><span class="muted">3 files</span></div><div class="mini">Draft review<br><span class="muted">2 requests</span></div></div>
+            <div class="queue"><strong>Ready</strong><div class="mini">Archive addendum<br><span class="muted">Smith</span></div><div class="mini">Send feedback<br><span class="muted">Willow Creek</span></div></div>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="card">
+            <div class="section-head"><h2>Bottlenecks</h2><span class="small">System detected</span></div>
+            <div class="row"><div><strong>Client approvals</strong><span>4 items waiting on client response.</span></div><span class="pill yellow">Monitor</span></div>
+            <div class="row"><div><strong>Pre-closing QA</strong><span>3 files due before Friday.</span></div><span class="pill red">High</span></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Completed Today</h2><span class="small">Progress</span></div>
+            <div class="row"><div><strong>Draft delivered</strong><span>Garcia Amendment v2.</span></div><span class="pill green">Done</span></div>
+            <div class="row"><div><strong>Earnest money confirmed</strong><span>Johnson transaction.</span></div><span class="pill green">Done</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="section-head"><h2>Capacity</h2><span class="pill yellow">84%</span></div>
+          <p class="muted">Current workload is manageable, but next week shows compression from closings and draft requests.</p>
+          <div class="row"><div><strong>Jeremiah</strong><span>88% allocated</span><div class="bar"><div style="width:88%"></div></div></div><span class="pill yellow">High</span></div>
+          <div class="row"><div><strong>Ops Pool</strong><span>72% allocated</span><div class="bar"><div style="width:72%"></div></div></div><span class="pill green">OK</span></div>
+          <div class="row"><div><strong>Showing Providers</strong><span>65% allocated</span><div class="bar"><div style="width:65%"></div></div></div><span class="pill green">OK</span></div>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>AI Recommendation</h2><span class="pill yellow">Action</span></div>
+          <p class="muted"><strong>Handle closing QA before communication tasks.</strong></p>
+          <p class="muted">Supporting data: Smith health = red, closing = tomorrow, QA gate = incomplete, client communication depends on QA completion.</p>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>One-Click Actions</h2><span class="small">Workflow</span></div>
+          <button class="btn gold">Open Highest Priority</button>
+          <button class="btn outline">Draft Client Update</button>
+          <button class="btn outline">Assign Owner</button>
+          <button class="btn outline">Escalate Item</button>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>Operating Rule</h2><span class="pill">Principle</span></div>
+          <p class="muted">The queue should direct work by priority, risk, deadline, client impact, and capacity—not by whoever remembers the task first.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

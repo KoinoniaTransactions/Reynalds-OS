@@ -1,0 +1,621 @@
+:root {
+  --ros-bg: #f7f1e8;
+  --ros-surface: #ffffff;
+  --ros-text: #161616;
+  --ros-muted: #5f5f5f;
+  --ros-gold: #b88a44;
+  --ros-border: rgba(184,138,68,0.28);
+  --ros-shadow: rgba(0,0,0,0.06);
+  --ros-font-ui: Arial, Helvetica, sans-serif;
+  --ros-font-display: Georgia, 'Times New Roman', serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ros-bg);
+  color: var(--ros-text);
+  font-family: var(--ros-font-ui);
+}
+
+.ros-app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 270px 1fr;
+}
+
+.ros-sidebar {
+  background: #161616;
+  color: white;
+  padding: 24px 18px;
+}
+
+.ros-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.ros-brand strong {
+  display: block;
+  font-family: var(--ros-font-display);
+  font-size: 22px;
+}
+
+.ros-brand span {
+  color: #cfcfcf;
+  font-size: 12px;
+}
+
+.ros-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--ros-gold);
+  display: grid;
+  place-items: center;
+  font-family: var(--ros-font-display);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.ros-sidebar a {
+  display: block;
+  color: #e6e6e6;
+  text-decoration: none;
+  padding: 12px 14px;
+  border-radius: 14px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.ros-sidebar a.active,
+.ros-sidebar a:hover {
+  background: rgba(184,138,68,0.22);
+  color: white;
+}
+
+.ros-main {
+  padding: 24px;
+}
+
+.ros-topbar {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.ros-topbar input {
+  border: 1px solid var(--ros-border);
+  border-radius: 999px;
+  padding: 14px 18px;
+  box-shadow: 0 12px 30px var(--ros-shadow);
+}
+
+.ros-topbar button {
+  border: none;
+  border-radius: 999px;
+  padding: 13px 17px;
+  background: var(--ros-text);
+  color: white;
+  font-weight: 700;
+}
+
+.ros-eyebrow {
+  color: var(--ros-gold);
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+h1 {
+  font-family: var(--ros-font-display);
+  font-size: clamp(34px, 5vw, 54px);
+  line-height: 1;
+  margin: 0;
+}
+
+.ros-subtitle {
+  color: var(--ros-muted);
+  max-width: 860px;
+  line-height: 1.55;
+}
+
+.ros-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.ros-card {
+  background: var(--ros-surface);
+  border: 1px solid var(--ros-border);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 14px 35px var(--ros-shadow);
+}
+
+.ros-card span {
+  color: var(--ros-muted);
+  font-size: 12px;
+}
+
+.ros-card strong {
+  display: block;
+  font-family: var(--ros-font-display);
+  font-size: 31px;
+  margin-top: 8px;
+}
+
+.ros-card p {
+  color: var(--ros-muted);
+  font-size: 13px;
+}
+
+
+.ros-panel {
+  background: var(--ros-surface);
+  border: 1px solid var(--ros-border);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 14px 35px var(--ros-shadow);
+  margin-top: 24px;
+}
+
+.ros-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ros-filters button,
+.ros-filters input,
+.ros-card button {
+  border: 1px solid var(--ros-border);
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: white;
+  color: var(--ros-text);
+}
+
+.ros-filters button.active,
+.ros-card button {
+  background: var(--ros-text);
+  color: white;
+}
+
+.ros-object-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 18px;
+  margin-top: 18px;
+  align-items: start;
+}
+
+.ros-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+}
+
+.ros-table th {
+  text-align: left;
+  background: #161616;
+  color: white;
+  padding: 12px;
+  font-size: 13px;
+}
+
+.ros-table td {
+  border-top: 1px solid #eee;
+  padding: 12px;
+  vertical-align: top;
+  cursor: pointer;
+}
+
+.ros-table td span {
+  display: block;
+  color: var(--ros-muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.ros-table tr:hover td {
+  background: #fbf7f0;
+}
+
+.ros-error {
+  background: rgba(178, 59, 59, 0.1);
+  color: #b23b3b;
+  border: 1px solid rgba(178, 59, 59, 0.24);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+@media (max-width: 1100px) {
+  .ros-object-layout,
+  .ros-app,
+  .ros-grid,
+  .ros-topbar {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.ros-form {
+  display: grid;
+  gap: 10px;
+}
+
+.ros-form input {
+  border: 1px solid var(--ros-border);
+  border-radius: 14px;
+  padding: 11px 13px;
+  font: inherit;
+}
+
+.ros-form button {
+  width: fit-content;
+}
+
+.ros-form button:disabled,
+.ros-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+.ros-filters select,
+.ros-form select {
+  border: 1px solid var(--ros-border);
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: white;
+  color: var(--ros-text);
+  font: inherit;
+}
+
+.ros-form select {
+  border-radius: 14px;
+}
+
+
+.ros-button-link {
+  border: none;
+  border-radius: 999px;
+  padding: 13px 17px;
+  background: var(--ros-text);
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+}
+
+
+.ros-code {
+  background: #f6f1ea;
+  border: 1px solid var(--ros-border);
+  border-radius: 14px;
+  padding: 12px;
+  overflow: auto;
+  font-size: 12px;
+  color: var(--ros-text);
+}
+
+
+
+/* Koinonia public website components */
+.koinonia-site {
+  background: var(--ros-bg);
+  color: var(--ros-text);
+  font-family: var(--ros-font-ui);
+}
+
+.koinonia-section {
+  padding: clamp(56px, 7vw, 96px) clamp(20px, 5vw, 72px);
+}
+
+.koinonia-container {
+  width: min(1160px, 100%);
+  margin: 0 auto;
+}
+
+.koinonia-eyebrow {
+  color: var(--ros-gold);
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.koinonia-hero {
+  min-height: 72vh;
+  display: grid;
+  align-items: center;
+}
+
+.koinonia-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: clamp(28px, 5vw, 64px);
+  align-items: center;
+}
+
+.koinonia-title {
+  font-family: var(--ros-font-display);
+  font-size: clamp(42px, 7vw, 76px);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.koinonia-lead {
+  color: var(--ros-muted);
+  font-size: clamp(16px, 2vw, 20px);
+  line-height: 1.65;
+  max-width: 680px;
+  margin: 20px 0 0;
+}
+
+.koinonia-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.koinonia-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  border: 1px solid var(--ros-border);
+}
+
+.koinonia-button.primary {
+  background: var(--ros-text);
+  color: #fff;
+  border-color: var(--ros-text);
+}
+
+.koinonia-button.secondary {
+  background: #fff;
+  color: var(--ros-text);
+}
+
+.koinonia-visual {
+  background: linear-gradient(135deg, #ffffff 0%, #f2e6d5 100%);
+  border: 1px solid var(--ros-border);
+  border-radius: 30px;
+  min-height: 360px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.10);
+  position: relative;
+  overflow: hidden;
+}
+
+.koinonia-visual::before {
+  content: "";
+  position: absolute;
+  inset: 42px;
+  border-radius: 24px;
+  background: #161616;
+  box-shadow: 0 22px 44px rgba(0,0,0,0.22);
+}
+
+.koinonia-visual::after {
+  content: "K";
+  position: absolute;
+  right: 48px;
+  bottom: 42px;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ros-gold);
+  color: #fff;
+  font-family: var(--ros-font-display);
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.koinonia-section-header {
+  max-width: 780px;
+  margin-bottom: 34px;
+}
+
+.koinonia-section-header.center {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.koinonia-heading {
+  font-family: var(--ros-font-display);
+  font-size: clamp(31px, 4vw, 52px);
+  line-height: 1.03;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.koinonia-copy {
+  color: var(--ros-muted);
+  line-height: 1.7;
+  font-size: 16px;
+  margin-top: 14px;
+}
+
+.koinonia-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.koinonia-grid.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.koinonia-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.koinonia-grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.koinonia-card {
+  background: var(--ros-surface);
+  border: 1px solid var(--ros-border);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 14px 35px var(--ros-shadow);
+}
+
+.koinonia-card h3 {
+  margin: 0;
+  font-family: var(--ros-font-display);
+  font-size: 25px;
+  line-height: 1.1;
+}
+
+.koinonia-card p,
+.koinonia-card li {
+  color: var(--ros-muted);
+  line-height: 1.6;
+}
+
+.koinonia-card ul {
+  margin: 16px 0 0;
+  padding-left: 18px;
+}
+
+.koinonia-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: #f0e7dc;
+  color: var(--ros-gold);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+
+.koinonia-band {
+  background: #161616;
+  color: #fff;
+}
+
+.koinonia-band .koinonia-copy,
+.koinonia-band .koinonia-card p,
+.koinonia-band .koinonia-card li {
+  color: #d8d8d8;
+}
+
+.koinonia-band .koinonia-card {
+  background: rgba(255,255,255,.06);
+  border-color: rgba(184,138,68,.35);
+}
+
+.koinonia-cta {
+  text-align: center;
+  background: #161616;
+  color: #fff;
+  border-radius: 34px;
+  padding: clamp(36px, 6vw, 72px);
+}
+
+.koinonia-cta .koinonia-copy {
+  color: #d8d8d8;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.koinonia-footer {
+  padding: 34px clamp(20px, 5vw, 72px);
+  background: #111;
+  color: #fff;
+}
+
+.koinonia-footer-inner {
+  width: min(1160px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.koinonia-footer a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 16px;
+}
+
+@media (max-width: 980px) {
+  .koinonia-hero-grid,
+  .koinonia-grid.four,
+  .koinonia-grid.three,
+  .koinonia-grid.two {
+    grid-template-columns: 1fr;
+  }
+  .koinonia-hero {
+    min-height: auto;
+  }
+  .koinonia-visual {
+    min-height: 260px;
+  }
+}
+
+.koinonia-contact-card .koinonia-button {
+  margin-top: 16px;
+}
+
+.koinonia-button.disabled,
+.koinonia-button[aria-disabled="true"] {
+  opacity: 0.68;
+  cursor: not-allowed;
+}
+
+.koinonia-contact-note {
+  margin-top: 22px;
+  background: #fff;
+  border: 1px solid var(--ros-border);
+  border-radius: 20px;
+  padding: 18px 20px;
+  color: var(--ros-muted);
+  line-height: 1.6;
+  box-shadow: 0 14px 35px var(--ros-shadow);
+}
+
+.koinonia-footer-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.koinonia-footer-contact a {
+  margin-left: 0;
+  color: #d8d8d8;
+  font-size: 13px;
+}
+
+.koinonia-contact-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 22px;
+}

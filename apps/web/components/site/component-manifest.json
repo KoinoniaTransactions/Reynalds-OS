@@ -1,0 +1,112 @@
+{
+  "COMP-HERO-001": {
+    "name": "Primary Public Website Hero",
+    "owner": "Website System",
+    "status": "Canonical v1.0",
+    "used_by": [
+      "/koinonia",
+      "/koinonia/services",
+      "/koinonia/about",
+      "/koinonia/contact"
+    ],
+    "source": "apps/web/components/site/Hero/Hero.tsx",
+    "purpose": "Reusable page-opening hero for public Koinonia pages."
+  },
+  "COMP-TRUST-001": {
+    "name": "Trust Pillars",
+    "owner": "Website System",
+    "status": "Canonical v1.0",
+    "used_by": [
+      "/koinonia",
+      "/koinonia/services",
+      "/koinonia/about"
+    ],
+    "source": "apps/web/components/site/TrustPillars/TrustPillars.tsx",
+    "purpose": "Build confidence through organized processes, communication, partnership, and execution."
+  },
+  "MOD-004": {
+    "name": "Universal Content Card",
+    "owner": "Component Library",
+    "status": "Canonical v1.0",
+    "used_by": [
+      "/koinonia",
+      "/koinonia/services",
+      "/koinonia/about",
+      "/koinonia/contact"
+    ],
+    "source": "apps/web/components/site/UniversalCard/UniversalCard.tsx",
+    "purpose": "Reusable card component for services, support levels, process cards, values, and contact cards."
+  },
+  "COMP-CTA-001": {
+    "name": "Final Call to Action",
+    "owner": "Website System",
+    "status": "Canonical v1.0",
+    "used_by": [
+      "/koinonia",
+      "/koinonia/services",
+      "/koinonia/about",
+      "/koinonia/contact"
+    ],
+    "source": "apps/web/components/site/CTA/CTA.tsx",
+    "purpose": "Low-pressure final conversion block."
+  },
+  "COMP-FAQ-001": {
+    "name": "FAQ Objection Resolution",
+    "owner": "Website System",
+    "status": "Canonical v1.0",
+    "used_by": [
+      "/koinonia/services",
+      "/koinonia/contact"
+    ],
+    "source": "apps/web/components/site/FAQ/FAQ.tsx",
+    "purpose": "Resolve final hesitation before contact."
+  },
+  "COMP-FOOTER-001": {
+    "name": "Koinonia Footer",
+    "owner": "Website System",
+    "status": "Canonical v1.0",
+    "used_by": [
+      "/koinonia",
+      "/koinonia/services",
+      "/koinonia/about",
+      "/koinonia/contact"
+    ],
+    "source": "apps/web/components/site/Footer/Footer.tsx",
+    "purpose": "Consistent navigation and close for public site."
+  },
+  "KOINONIA-CONTACT": {
+    "name": "Koinonia Contact Page Assembly",
+    "owner": "Website System",
+    "status": "Assembled v1.0",
+    "used_by": [
+      "/koinonia/contact"
+    ],
+    "source": "apps/web/components/site/PageAssemblies/KoinoniaContact.tsx",
+    "purpose": "Public Contact page assembled from canonical Koinonia components."
+  },
+  "COMP-CONTACT-ACTIONS-001": {
+    "name": "Contact Actions",
+    "owner": "Website System",
+    "status": "Assembled v1.0 / Launch Pending Values",
+    "used_by": [
+      "/koinonia/contact",
+      "Footer"
+    ],
+    "source": "apps/web/components/site/ContactActions/ContactActions.tsx",
+    "data_source": "apps/web/config/contact.config.ts",
+    "purpose": "Reusable phone, SMS, and email action component for Koinonia contact surfaces."
+  },
+  "KOIN-CONTACT-CONFIG-001": {
+    "name": "Koinonia Contact Configuration",
+    "owner": "Website System",
+    "status": "Active / Launch Pending Values",
+    "used_by": [
+      "/koinonia/contact",
+      "CTA",
+      "Footer",
+      "ContactActions"
+    ],
+    "source": "apps/web/config/contact.config.ts",
+    "purpose": "Canonical contact data source for public Koinonia website."
+  }
+}

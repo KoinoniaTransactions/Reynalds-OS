@@ -1,0 +1,26 @@
+{
+  "componentId": "COMP-CARD-004",
+  "name": "MOD-004 Universal Content Card",
+  "status": "Canonical",
+  "owner": "Design System",
+  "usedBy": [
+    "Home",
+    "Services",
+    "Support Levels",
+    "Features",
+    "Team",
+    "Process"
+  ],
+  "variants": [
+    "Service",
+    "Support Level",
+    "Process",
+    "Feature",
+    "Team",
+    "Testimonial"
+  ],
+  "purpose": "Reusable content card for service, pricing, feature, process, and future website/application surfaces.",
+  "version": "1.0.1",
+  "lastUpdated": "2026-07-03",
+  "source": "Updated during v11.2.0 Home Page Assembly sprint"
+}

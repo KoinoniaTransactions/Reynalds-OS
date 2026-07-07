@@ -1,0 +1,272 @@
+[
+  {
+    "source": "REL-000001",
+    "target": "BRK-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "REL-000001",
+    "target": "CLI-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "REL-000001",
+    "target": "TXN-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "REL-000001",
+    "target": "INV-1007",
+    "relationship": "related_to"
+  },
+  {
+    "source": "REL-000001",
+    "target": "CS-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "CLI-000001",
+    "target": "REL-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "CLI-000001",
+    "target": "PKG-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "CLI-000001",
+    "target": "TXN-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "CLI-000001",
+    "target": "INV-1007",
+    "relationship": "related_to"
+  },
+  {
+    "source": "BRK-000001",
+    "target": "REL-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "PTY-000001",
+    "target": "TXN-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "PTY-000001",
+    "target": "DOC-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TXN-000001",
+    "target": "CLI-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TXN-000001",
+    "target": "REL-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TXN-000001",
+    "target": "PTY-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TXN-000001",
+    "target": "TASK-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TXN-000001",
+    "target": "EXC-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TXN-000001",
+    "target": "INV-1007",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TXN-000001",
+    "target": "CS-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TASK-000001",
+    "target": "TXN-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TASK-000001",
+    "target": "QA-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TASK-000001",
+    "target": "EXC-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "QA-000001",
+    "target": "TXN-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "QA-000001",
+    "target": "TASK-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "QA-000001",
+    "target": "EXC-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "EXC-000001",
+    "target": "TXN-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "EXC-000001",
+    "target": "TASK-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "EXC-000001",
+    "target": "QA-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "INV-1007",
+    "target": "TXN-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "INV-1007",
+    "target": "CLI-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "INV-1007",
+    "target": "PAY-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "INV-1007",
+    "target": "PKG-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "PAY-000001",
+    "target": "INV-1007",
+    "relationship": "related_to"
+  },
+  {
+    "source": "PAY-000001",
+    "target": "CLI-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "PKG-000001",
+    "target": "OBJ-00000002",
+    "relationship": "related_to"
+  },
+  {
+    "source": "PKG-000001",
+    "target": "INV-1007",
+    "relationship": "related_to"
+  },
+  {
+    "source": "PKG-000001",
+    "target": "CLI-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "OBJ-00000002",
+    "target": "PKG-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "OBJ-00000002",
+    "target": "TXN-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "OBJ-00000002",
+    "target": "WF-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "WF-000001",
+    "target": "OBJ-00000002",
+    "relationship": "related_to"
+  },
+  {
+    "source": "WF-000001",
+    "target": "TXN-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "WF-000001",
+    "target": "TASK-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "CS-000001",
+    "target": "CLI-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "CS-000001",
+    "target": "REL-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "CS-000001",
+    "target": "TXN-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "DRF-000001",
+    "target": "REL-000002",
+    "relationship": "related_to"
+  },
+  {
+    "source": "DRF-000001",
+    "target": "TASK-000002",
+    "relationship": "related_to"
+  },
+  {
+    "source": "REL-000002",
+    "target": "DRF-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "SHW-000001",
+    "target": "PTY-000002",
+    "relationship": "related_to"
+  },
+  {
+    "source": "SHW-000001",
+    "target": "TASK-000003",
+    "relationship": "related_to"
+  },
+  {
+    "source": "PTY-000002",
+    "target": "SHW-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TASK-000002",
+    "target": "DRF-000001",
+    "relationship": "related_to"
+  },
+  {
+    "source": "TASK-000003",
+    "target": "SHW-000001",
+    "relationship": "related_to"
+  }
+]

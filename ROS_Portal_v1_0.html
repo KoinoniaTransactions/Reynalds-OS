@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROS Portal v1.0</title>
+  <style>
+    :root {
+      --bg: #f7f1e8;
+      --panel: #ffffff;
+      --black: #161616;
+      --muted: #5f5f5f;
+      --gold: #b88a44;
+      --border: rgba(184,138,68,0.28);
+      --soft: rgba(0,0,0,0.06);
+      --green: #2e7d32;
+      --yellow: #b8860b;
+      --red: #b23b3b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--black);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #101010 0%, #202020 70%, #2b2115 100%);
+      color: #fff;
+      padding: 48px 24px 42px;
+    }
+
+    .hero-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      color: #e7e7e7;
+      font-size: 17px;
+      line-height: 1.65;
+      margin-top: 18px;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .status-card {
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 16px;
+      padding: 16px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .status-card .label {
+      color: #cfcfcf;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .status-card .value {
+      font-weight: 700;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+    }
+
+    .section-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 30px;
+      margin: 22px 0 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 14px 35px var(--soft);
+      min-height: 180px;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 23px;
+    }
+
+    .card p {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 15px;
+      margin: 0 0 18px;
+    }
+
+    .btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    a.btn {
+      display: inline-block;
+      text-decoration: none;
+      color: #fff;
+      background: var(--black);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    a.btn.gold {
+      background: var(--gold);
+    }
+
+    a.btn.light {
+      background: #f0e7dc;
+      color: var(--black);
+      border: 1px solid var(--border);
+    }
+
+    .wide {
+      grid-column: span 2;
+    }
+
+    .mini-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .table-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 14px 35px var(--soft);
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      text-align: left;
+      background: #161616;
+      color: #fff;
+      padding: 14px;
+      font-size: 13px;
+      letter-spacing: .4px;
+    }
+
+    td {
+      padding: 13px 14px;
+      border-top: 1px solid #eee;
+      color: #3f3f3f;
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #f0e7dc;
+      color: #573b17;
+    }
+
+    .footer {
+      background: #161616;
+      color: #d9d9d9;
+      padding: 30px 24px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .search {
+      width: 100%;
+      padding: 16px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 16px;
+      margin-bottom: 18px;
+      outline: none;
+      box-shadow: 0 10px 26px var(--soft);
+    }
+
+    .note {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+      margin-top: -8px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .status-row, .grid {
+        grid-template-columns: 1fr;
+      }
+      .wide {
+        grid-column: span 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Reynalds Operating System</div>
+      <h1>ROS Portal v1.0</h1>
+      <p class="subtitle">
+        The single entry point for the ROS Core Repository, Koinonia ERP, Website Brain, object registry, change log, and implementation roadmap.
+      </p>
+
+      <div class="status-row">
+        <div class="status-card">
+          <div class="label">Repository</div>
+          <div class="value">ROS Core v10.1</div>
+        </div>
+        <div class="status-card">
+          <div class="label">Baseline</div>
+          <div class="value">ROS Core v3.3</div>
+        </div>
+        <div class="status-card">
+          <div class="label">Current Change</div>
+          <div class="value">ROS-0083</div>
+        </div>
+        <div class="status-card">
+          <div class="label">Next Object</div>
+          <div class="value">Koinonia ERP</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <input class="search" id="searchBox" placeholder="Search visible portal items..." onkeyup="filterPortal()" />
+    <p class="note">
+      This portal is a local HTML interface. Links open files inside this repository folder after you unzip the download.
+    </p>
+
+    <h2 class="section-title">Primary Launch Points</h2>
+    <section class="grid searchable">
+      <div class="card">
+        <h3>Object Registry</h3>
+        <p>Master list of production objects, IDs, types, modules, status, and summaries.</p>
+        <div class="btns">
+          <a class="btn gold" href="object_registry.csv">Open Registry</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Change Log</h3>
+        <p>Versioned ROS change history from governance through the current portal integration.</p>
+        <div class="btns">
+          <a class="btn gold" href="05_Change_Log/change_log.csv">Open Change Log</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Repository README</h3>
+        <p>Current repository status, baseline, operating rule, and next implementation target.</p>
+        <div class="btns">
+          <a class="btn gold" href="README.md">Open README</a>
+        </div>
+      </div>
+    </section>
+
+    <h2 class="section-title">Koinonia ERP</h2>
+    <section class="grid searchable">
+      <div class="card">
+        <h3>Service Catalog</h3>
+        <p>The single source of truth for Koinonia's service structure.</p>
+        <div class="btns">
+          <a class="btn" href="02_Companies/Koinonia/00_Master_Objects/OBJ-00000001_Service_Catalog.md">Open</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Package Catalog</h3>
+        <p>Defines how services are bundled, sold, billed, delivered, and tracked.</p>
+        <div class="btns">
+          <a class="btn" href="02_Companies/Koinonia/02_Packages/OBJ-00000006_Package_Catalog.md">Open</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Pricing Rules</h3>
+        <p>Approved pricing rules for prepaid, pay-at-closing, and custom support.</p>
+        <div class="btns">
+          <a class="btn" href="02_Companies/Koinonia/03_Pricing/OBJ-00000010_Pricing_Rules_Catalog.md">Open</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Sales</h3>
+        <p>Relationship lifecycle, lead flow, consultation, proposal, and client conversion.</p>
+        <div class="btns">
+          <a class="btn light" href="02_Companies/Koinonia/04_Departments/Sales/README.md">Open</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Operations</h3>
+        <p>Transaction management, communication, QA, drafting, showing, and business support.</p>
+        <div class="btns">
+          <a class="btn light" href="02_Companies/Koinonia/04_Departments/Operations/README.md">Open</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Finance</h3>
+        <p>Invoices, payments, revenue, pricing, billing, and financial KPIs.</p>
+        <div class="btns">
+          <a class="btn light" href="02_Companies/Koinonia/04_Departments/Finance/README.md">Open</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Customer Success</h3>
+        <p>Relationship health, reviews, testimonials, referrals, and client retention.</p>
+        <div class="btns">
+          <a class="btn light" href="02_Companies/Koinonia/04_Departments/Customer_Success/README.md">Open</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Marketing</h3>
+        <p>Website, brokerage outreach, referrals, content, social, and email.</p>
+        <div class="btns">
+          <a class="btn light" href="02_Companies/Koinonia/04_Departments/Marketing/README.md">Open</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Website Brain</h3>
+        <p>Brand and website status, including Services & Pricing page structure.</p>
+        <div class="btns">
+          <a class="btn light" href="03_Knowledge/Website/website_status.md">Open</a>
+        </div>
+      </div>
+    </section>
+
+    <h2 class="section-title">Service Objects</h2>
+    <section class="grid searchable">
+      <div class="card">
+        <h3>Transaction Management</h3>
+        <p>Next production object. Contract-to-close service definition and operating model.</p>
+        <div class="btns">
+          <a class="btn gold" href="02_Companies/Koinonia/01_Services/OBJ-00000002_Transaction_Management_Service.md">Open Certified Object</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Contract Preparation & Writing</h3>
+        <p>Production-certified licensed contract drafting support and review workflow.</p>
+        <div class="btns">
+          <a class="btn" href="02_Companies/Koinonia/01_Services/OBJ-00000003_Contract_Preparation_Writing_Service.md">Open</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Licensed Showing Coverage</h3>
+        <p>Production-certified licensed backup showing support with feedback and accountability standards.</p>
+        <div class="btns">
+          <a class="btn" href="02_Companies/Koinonia/01_Services/OBJ-00000004_Licensed_Showing_Coverage_Service.md">Open</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Business Operations Support</h3>
+        <p>Backend admin and operations support for Realtors and teams.</p>
+        <div class="btns">
+          <a class="btn" href="02_Companies/Koinonia/01_Services/OBJ-00000005_Business_Operations_Support_Service.md">Open</a>
+        </div>
+      </div>
+    </section>
+
+    <h2 class="section-title">Platform Core</h2>
+    <section class="grid searchable">
+      <div class="card">
+        <h3>Governance</h3>
+        <p>Rules for how ROS evolves, including single-source-of-truth standards.</p>
+        <div class="btns">
+          <a class="btn" href="01_Platform/Governance/governance.md">Open</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Object Specification</h3>
+        <p>ROS-OS1: the object standard for every item in Reynalds OS.</p>
+        <div class="btns">
+          <a class="btn" href="01_Platform/Object_Specification/ROS-OS1.md">Open</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Engineering Principles</h3>
+        <p>The operating principles that guide platform design and implementation.</p>
+        <div class="btns">
+          <a class="btn" href="01_Platform/Engineering_Principles/engineering_principles.md">Open</a>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+      <div class="card">
+        <h3>Interactive App Shell v7.2 + Production Scaffold v8.0</h3>
+        <p>Repository now includes the ROS v10.1 professional software project consolidation and BRAIN.</p>
+        <div class="btns">
+          <a class="btn gold" href="07_Application_Prototypes/ROS_Koinonia_Interactive_App_Shell_v5_0.html">Launch App Shell</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Operations Work Queue Prototype</h3>
+        <p>Internal execution screen for prioritized tasks, bottlenecks, QA, capacity, and one-click actions.</p>
+        <div class="btns">
+          <a class="btn gold" href="07_Application_Prototypes/Koinonia_Operations_Work_Queue_Prototype_v1_0.html">Open Prototype</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Showing Center Prototype</h3>
+        <p>Licensed showing coverage screen for requests, provider assignment, calendar, feedback, and risk flags.</p>
+        <div class="btns">
+          <a class="btn gold" href="07_Application_Prototypes/Koinonia_Showing_Center_Prototype_v1_0.html">Open Prototype</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Contract Center Prototype</h3>
+        <p>Drafting command center for requests, missing terms, revisions, approvals, and final versions.</p>
+        <div class="btns">
+          <a class="btn gold" href="07_Application_Prototypes/Koinonia_Contract_Center_Prototype_v1_0.html">Open Prototype</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Transaction Screen Prototype</h3>
+        <p>Single transaction workspace for timeline, deadlines, documents, QA, exceptions, and next actions.</p>
+        <div class="btns">
+          <a class="btn gold" href="07_Application_Prototypes/Koinonia_Transaction_Screen_Prototype_v1_0.html">Open Prototype</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>CRM Screen Prototype</h3>
+        <p>Relationship command center for agents, brokerages, clients, and referral partners.</p>
+        <div class="btns">
+          <a class="btn gold" href="07_Application_Prototypes/Koinonia_CRM_Screen_Prototype_v1_0.html">Open Prototype</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Component Library</h3>
+        <p>Visual component library for assembling future ROS application screens.</p>
+        <div class="btns">
+          <a class="btn gold" href="07_Application_Prototypes/ROS_Component_Library_v1_0.html">Open Library</a>
+          <a class="btn light" href="01_Platform/Design_System/ROS_Component_Library_v1_0.md">Spec</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Home Dashboard Prototype</h3>
+        <p>The first visual Koinonia ERP application screen prototype.</p>
+        <div class="btns">
+          <a class="btn gold" href="07_Application_Prototypes/Koinonia_Home_Dashboard_Prototype_v1_0.html">Open Prototype</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>ROS Design System</h3>
+        <p>Reusable visual and interaction standards for every ROS screen.</p>
+        <div class="btns">
+          <a class="btn" href="01_Platform/Design_System/ROS_Design_System_v1_0.md">Open</a>
+          <a class="btn light" href="01_Platform/Design_System/ros-design-tokens.css">CSS Tokens</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Executive Briefing</h3>
+        <p>Daily briefing structure for focus, risks, priorities, and recommendations.</p>
+        <div class="btns">
+          <a class="btn" href="04_Intelligence/Executive_Briefing/executive_daily_briefing.md">Open</a>
+        </div>
+      </div>
+    </section>
+
+    <h2 class="section-title">Current Object Registry Preview</h2>
+    <div class="table-card searchable">
+      <table>
+        <thead>
+          <tr>
+            <th>Object ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>OBJ-00000001</td><td>Service Catalog</td><td><span class="pill">Master</span></td><td>Active</td></tr>
+          <tr><td>OBJ-00000006</td><td>Package Catalog</td><td><span class="pill">Master</span></td><td>Active</td></tr>
+          <tr><td>OBJ-00000010</td><td>Pricing Rules Catalog</td><td><span class="pill">Master</span></td><td>Active</td></tr>
+          <tr><td>OBJ-00000002</td><td>Transaction Management Service</td><td><span class="pill">Service</span></td><td>Next Build</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer class="footer">
+    ROS Portal v1.0 · Repository v10.1 · Change ID ROS-0049 · Koinonia is the first company implementation of Reynalds OS.
+  </footer>
+
+  <script>
+    function filterPortal() {
+      const q = document.getElementById('searchBox').value.toLowerCase();
+      const cards = document.querySelectorAll('.searchable .card, .searchable tr');
+      cards.forEach(el => {
+        const txt = el.innerText.toLowerCase();
+        el.style.display = txt.includes(q) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

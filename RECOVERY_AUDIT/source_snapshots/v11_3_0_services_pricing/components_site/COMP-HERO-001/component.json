@@ -1,0 +1,22 @@
+{
+  "componentId": "COMP-HERO-001",
+  "name": "Primary Hero",
+  "status": "Canonical",
+  "owner": "Website System",
+  "usedBy": [
+    "Home",
+    "Services & Pricing",
+    "About",
+    "Contact"
+  ],
+  "variants": [
+    "Standard",
+    "Services",
+    "About",
+    "Contact"
+  ],
+  "purpose": "Page-opening hero with eyebrow, headline, supporting copy, primary CTA, and optional visual panel.",
+  "version": "1.0.0",
+  "lastUpdated": "2026-07-03",
+  "source": "Repository-first component canonicalization sprint"
+}

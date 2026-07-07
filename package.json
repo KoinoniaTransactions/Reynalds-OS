@@ -1,0 +1,24 @@
+{
+  "name": "reynalds-os",
+  "version": "11.2.1",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter @reynalds-os/web dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "db:generate": "pnpm --filter @reynalds-os/database prisma generate",
+    "db:migrate": "pnpm --filter @reynalds-os/database prisma migrate dev",
+    "setup:local": "pnpm install && docker compose up -d && pnpm db:generate",
+    "verify:local": "pnpm test && pnpm build",
+    "db:seed": "pnpm --filter @reynalds-os/database db:seed"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

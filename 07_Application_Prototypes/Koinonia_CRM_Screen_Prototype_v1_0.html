@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Koinonia ERP CRM Screen Prototype</title>
+  <style>
+    :root {
+      --ros-bg:#f7f1e8; --ros-surface:#fff; --ros-text:#161616; --ros-muted:#5f5f5f;
+      --ros-gold:#b88a44; --ros-border:rgba(184,138,68,.28); --ros-shadow:rgba(0,0,0,.06);
+      --green:#2e7d32; --yellow:#b8860b; --red:#b23b3b;
+      --font-ui:Arial,Helvetica,sans-serif; --font-display:Georgia,'Times New Roman',serif;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--ros-bg);color:var(--ros-text);font-family:var(--font-ui)}
+    .app{min-height:100vh;display:grid;grid-template-columns:260px 1fr}
+    aside{background:#161616;color:#fff;padding:24px 18px;position:sticky;top:0;height:100vh}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+    .mark{width:42px;height:42px;border-radius:50%;background:var(--ros-gold);display:grid;place-items:center;font-family:var(--font-display);font-size:24px;font-weight:700}
+    .brand strong{display:block;font-family:var(--font-display);font-size:22px}.brand span{color:#cfcfcf;font-size:12px}
+    nav a{display:block;color:#e6e6e6;text-decoration:none;padding:12px 14px;border-radius:14px;margin-bottom:6px;font-size:14px}
+    nav a.active,nav a:hover{background:rgba(184,138,68,.22);color:#fff}
+    main{padding:24px}
+    .topbar{display:grid;grid-template-columns:1fr auto auto auto;gap:14px;align-items:center;margin-bottom:22px}
+    .search{background:#fff;border:1px solid var(--ros-border);border-radius:999px;padding:14px 18px;box-shadow:0 12px 30px var(--ros-shadow);color:var(--ros-muted)}
+    .btn{border:none;border-radius:999px;padding:13px 17px;background:#161616;color:#fff;font-weight:700;cursor:pointer;text-decoration:none;font-size:13px}
+    .btn.gold{background:var(--ros-gold)}.btn.outline{background:#fff;color:#161616;border:1px solid var(--ros-border)}
+    .icon{border:1px solid var(--ros-border);background:#fff;border-radius:50%;width:44px;height:44px;box-shadow:0 12px 30px var(--ros-shadow)}
+    .eyebrow{color:var(--ros-gold);text-transform:uppercase;letter-spacing:1.8px;font-size:12px;font-weight:700;margin-bottom:8px}
+    h1{font-family:var(--font-display);font-size:clamp(34px,5vw,54px);line-height:1;margin:0}
+    .sub{color:var(--ros-muted);margin-top:12px;font-size:16px;max-width:850px;line-height:1.55}
+    .grid{display:grid;gap:18px}.kpis{grid-template-columns:repeat(5,minmax(0,1fr));margin:22px 0}
+    .content{grid-template-columns:1fr 360px;align-items:start}
+    .card{background:#fff;border:1px solid var(--ros-border);border-radius:20px;padding:20px;box-shadow:0 14px 35px var(--ros-shadow)}
+    .kpi .label{color:var(--ros-muted);font-size:12px}.kpi .value{font-family:var(--font-display);font-size:31px;font-weight:700;margin-top:8px}.kpi .note{color:var(--ros-muted);font-size:12px;margin-top:7px}
+    h2{font-family:var(--font-display);font-size:25px;margin:0}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .small{color:var(--ros-gold);font-size:13px;font-weight:700}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden}
+    th{text-align:left;background:#161616;color:#fff;padding:13px;font-size:13px}
+    td{border-top:1px solid #eee;padding:13px;color:#444;font-size:14px;vertical-align:top}
+    tr:hover td{background:#fbf7f0}
+    .pill{display:inline-block;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;background:#f0e7dc;color:#543814;white-space:nowrap}
+    .green{background:rgba(46,125,50,.12);color:var(--green)}.yellow{background:rgba(184,134,11,.14);color:var(--yellow)}.red{background:rgba(178,59,59,.12);color:var(--red)}
+    .profile-title{font-family:var(--font-display);font-size:26px;margin-bottom:6px}.muted{color:var(--ros-muted);line-height:1.55;font-size:14px}
+    .profile-row{padding:12px 0;border-top:1px solid #eee}.profile-row:first-of-type{border-top:none}
+    .profile-row strong{display:block;font-size:13px}.profile-row span{color:var(--ros-muted);font-size:13px}
+    .timeline{border-left:2px solid #eadcc8;margin-left:8px;padding-left:16px}
+    .event{margin:0 0 16px}.event strong{display:block;font-size:14px}.event span{color:var(--ros-muted);font-size:13px}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+    @media(max-width:1100px){.app{grid-template-columns:1fr}aside{position:relative;height:auto}nav{display:flex;overflow-x:auto;gap:8px}nav a{white-space:nowrap}.topbar,.content,.kpis{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><div class="mark">K</div><div><strong>Koinonia</strong><span>CRM Prototype</span></div></div>
+    <nav>
+      <a href="#">Dashboard</a><a class="active" href="#">CRM</a><a href="#">Transactions</a><a href="#">Contracts</a><a href="#">Showings</a><a href="#">Operations</a><a href="#">Finance</a><a href="#">Success</a><a href="#">Knowledge</a><a href="#">Reports</a><a href="#">ROS</a>
+    </nav>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="search">Search leads, agents, brokerages, referral partners...</div>
+      <button class="btn gold">+ New Relationship</button><button class="btn">AI Command</button><button class="icon">🔔</button>
+    </div>
+
+    <section>
+      <div class="eyebrow">CRM · ROS-0045</div>
+      <h1>Relationship Command Center</h1>
+      <p class="sub">The CRM is the relationship engine for Koinonia: leads, agents, brokerages, referral partners, clients, advocates, and follow-ups in one place.</p>
+    </section>
+
+    <section class="grid kpis">
+      <div class="card kpi"><div class="label">Active Clients</div><div class="value">14</div><div class="note">4 high-value</div></div>
+      <div class="card kpi"><div class="label">Qualified Leads</div><div class="value">9</div><div class="note">3 consults pending</div></div>
+      <div class="card kpi"><div class="label">Follow-Ups Due</div><div class="value">7</div><div class="note">2 overdue</div></div>
+      <div class="card kpi"><div class="label">Referral Partners</div><div class="value">11</div><div class="note">3 strong</div></div>
+      <div class="card kpi"><div class="label">Pipeline Value</div><div class="value">$8.4k</div><div class="note">projected</div></div>
+    </section>
+
+    <section class="grid content">
+      <div class="card">
+        <div class="section-head"><h2>Relationship List</h2><span class="small">View pipeline</span></div>
+        <div class="filters">
+          <span class="pill">All</span><span class="pill green">Clients</span><span class="pill yellow">Prospects</span><span class="pill">Brokerages</span><span class="pill">Referral Partners</span>
+        </div>
+        <table>
+          <thead><tr><th>Name</th><th>Type</th><th>Status</th><th>Last Contact</th><th>Next Action</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Sarah Johnson</strong><br><span class="muted">Parker Realty Group</span></td><td>Agent</td><td><span class="pill green">Active Client</span></td><td>Today</td><td>Send transaction update</td></tr>
+            <tr><td><strong>Michael Garcia</strong><br><span class="muted">eXp Realty</span></td><td>Agent</td><td><span class="pill yellow">Proposal</span></td><td>2 days ago</td><td>Follow up on Realtor Support Plus</td></tr>
+            <tr><td><strong>KW Downtown Denver</strong><br><span class="muted">Brokerage office</span></td><td>Brokerage</td><td><span class="pill">Relationship</span></td><td>7 days ago</td><td>Schedule office visit</td></tr>
+            <tr><td><strong>Premier Title</strong><br><span class="muted">Title partner</span></td><td>Referral Partner</td><td><span class="pill green">Strong</span></td><td>Yesterday</td><td>Send thank-you note</td></tr>
+            <tr><td><strong>Emily Brown</strong><br><span class="muted">Independent Realtor</span></td><td>Agent</td><td><span class="pill red">Follow-up overdue</span></td><td>21 days ago</td><td>Reconnect</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="profile-title">Sarah Johnson</div>
+          <p class="muted">Active Client · Parker Realty Group · Transaction Coordination Plus</p>
+          <div class="profile-row"><strong>Relationship Health</strong><span class="pill green">Strong</span></div>
+          <div class="profile-row"><strong>Active Transactions</strong><span>2 open · 1 closing this month</span></div>
+          <div class="profile-row"><strong>Revenue</strong><span>$1,167 lifetime · $389 current month</span></div>
+          <div class="profile-row"><strong>Preferences</strong><span>Email updates, concise status summaries, Friday weekly recap</span></div>
+          <div class="profile-row"><strong>Next Action</strong><span>Send update on Smith inspection status today.</span></div>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>Relationship Timeline</h2><span class="small">Object history</span></div>
+          <div class="timeline">
+            <div class="event"><strong>Today</strong><span>Transaction update due for Smith file.</span></div>
+            <div class="event"><strong>Yesterday</strong><span>Earnest money confirmed on Johnson transaction.</span></div>
+            <div class="event"><strong>Last Week</strong><span>New transaction opened from referral source.</span></div>
+            <div class="event"><strong>Last Month</strong><span>Converted from referral to active client.</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-head"><h2>AI Recommendation</h2><span class="pill yellow">Action</span></div>
+          <p class="muted"><strong>Recommend referral conversation after next closing.</strong></p>
+          <p class="muted">Supporting data: strong relationship health, repeat engagement, successful current transaction, recent responsiveness.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

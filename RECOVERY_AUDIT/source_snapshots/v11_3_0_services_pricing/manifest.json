@@ -1,0 +1,24 @@
+{
+  "repository": "Reynalds OS",
+  "version": "10.1.0",
+  "created": "2026-07-02",
+  "baseline": "ROS Core v3.3 Architecture Baseline",
+  "current_change_id": "ROS-0083",
+  "status": "Professional software project consolidation complete",
+  "next_object": "OBJ-00000002 Transaction Management Service production expansion",
+  "object_count": 13,
+  "change_count": 23,
+  "portal": "ROS_Portal_v1_0.html",
+  "project_model": "Portable repository structured for Git version control",
+  "next_step": "Create GitHub repository and run local validation",
+  "certified_objects": [
+    "OBJ-00000002",
+    "OBJ-00000003",
+    "OBJ-00000004",
+    "OBJ-00000005"
+  ],
+  "major_release": "Workflow-driven operations foundation",
+  "supersedes": "Standalone static Dashboard/App Shell v7.2",
+  "primary_application": "apps/web",
+  "source_of_truth": "BRAIN/"
+}

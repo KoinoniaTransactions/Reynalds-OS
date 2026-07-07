@@ -1,0 +1,36 @@
+{
+  "version": "10.0.0",
+  "change_id": "ROS-0082",
+  "columns": {
+    "Backlog": [
+      "ROS-MVP-019"
+    ],
+    "Ready": [
+      "ROS-MVP-002",
+      "ROS-MVP-019"
+    ],
+    "In Progress": [
+      "ROS-MVP-004",
+      "ROS-MVP-005",
+      "ROS-MVP-020"
+    ],
+    "Done": [
+      "ROS-MVP-001",
+      "ROS-MVP-003",
+      "ROS-MVP-006",
+      "ROS-MVP-007",
+      "ROS-MVP-008",
+      "ROS-MVP-009",
+      "ROS-MVP-010",
+      "ROS-MVP-011",
+      "ROS-MVP-012",
+      "ROS-MVP-013",
+      "ROS-MVP-014",
+      "ROS-MVP-015",
+      "ROS-MVP-016",
+      "ROS-MVP-017",
+      "ROS-MVP-018"
+    ]
+  },
+  "Ready": []
+}

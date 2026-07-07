@@ -1,0 +1,18 @@
+{
+  "componentId": "COMP-FAQ-001",
+  "name": "FAQ / Objection Resolution Section",
+  "status": "Canonical",
+  "owner": "Website System",
+  "usedBy": [
+    "Services & Pricing",
+    "Contact"
+  ],
+  "variants": [
+    "Services FAQ",
+    "Contact FAQ"
+  ],
+  "purpose": "Removes final visitor hesitation before contact.",
+  "version": "1.0.0",
+  "lastUpdated": "2026-07-03",
+  "source": "Repository-first component canonicalization sprint"
+}

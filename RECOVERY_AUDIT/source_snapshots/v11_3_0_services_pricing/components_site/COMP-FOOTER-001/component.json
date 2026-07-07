@@ -1,0 +1,16 @@
+{
+  "componentId": "COMP-FOOTER-001",
+  "name": "Koinonia Footer",
+  "status": "Canonical",
+  "owner": "Website System",
+  "usedBy": [
+    "All public website pages"
+  ],
+  "variants": [
+    "Standard"
+  ],
+  "purpose": "Consistent closing area for contact, trust, and brand continuity.",
+  "version": "1.0.0",
+  "lastUpdated": "2026-07-03",
+  "source": "Repository-first component canonicalization sprint"
+}

@@ -1,0 +1,21 @@
+{
+  "componentId": "PAGE-KOINONIA-HOME",
+  "name": "Koinonia Public Home Page Assembly",
+  "status": "Assembled",
+  "owner": "Koinonia Website",
+  "route": "/koinonia",
+  "usedBy": [
+    "Public Koinonia website"
+  ],
+  "dependencies": [
+    "COMP-HERO-001",
+    "COMP-TRUST-001",
+    "COMP-CARD-004",
+    "COMP-CTA-001",
+    "COMP-FOOTER-001"
+  ],
+  "purpose": "Public Home page assembled from canonical website components while preserving the internal Reynalds OS dashboard at root.",
+  "version": "1.0.0",
+  "lastUpdated": "2026-07-03",
+  "source": "v11.2.0 Home Page Assembly sprint"
+}

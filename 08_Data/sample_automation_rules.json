@@ -1,0 +1,68 @@
+[
+  {
+    "id": "AUTO-000001",
+    "name": "Transaction Intake Creation",
+    "trigger": "transaction.created",
+    "conditions": "Service package is active",
+    "action": "Create intake tasks and QA Gate 1",
+    "review": "No",
+    "target": "TXN-000001",
+    "dashboard": "Operations queue + QA widgets",
+    "status": "Ready"
+  },
+  {
+    "id": "AUTO-000002",
+    "name": "Deadline Due Soon Alert",
+    "trigger": "deadline.due_soon",
+    "conditions": "Due within 24 hours and incomplete",
+    "action": "Raise priority and notify owner",
+    "review": "No",
+    "target": "TASK",
+    "dashboard": "Priority Panel + Work Queue",
+    "status": "Ready"
+  },
+  {
+    "id": "AUTO-000003",
+    "name": "Same-Day Showing Unassigned",
+    "trigger": "showing.unassigned",
+    "conditions": "Showing date is today and provider is empty",
+    "action": "Create critical alert",
+    "review": "Yes",
+    "target": "SHW-000001",
+    "dashboard": "Showing Center + Operations",
+    "status": "Ready"
+  },
+  {
+    "id": "AUTO-000004",
+    "name": "Invoice Paid Update",
+    "trigger": "invoice.paid",
+    "conditions": "Payment received",
+    "action": "Update invoice, create timeline event, refresh finance metrics",
+    "review": "No",
+    "target": "INV-1007",
+    "dashboard": "Finance + Reports",
+    "status": "Ready"
+  },
+  {
+    "id": "AUTO-000005",
+    "name": "Closing Complete Success Handoff",
+    "trigger": "transaction.closed",
+    "conditions": "Final QA complete and file archived",
+    "action": "Create Customer Success task",
+    "review": "No",
+    "target": "CS-000001",
+    "dashboard": "Customer Success",
+    "status": "Planned"
+  },
+  {
+    "id": "AUTO-000006",
+    "name": "Draft Waiting Follow-Up",
+    "trigger": "draft.waiting_on_client",
+    "conditions": "Waiting longer than 1 business day",
+    "action": "Recommend follow-up message",
+    "review": "Yes",
+    "target": "DRF-000001",
+    "dashboard": "Contract Center + Operations",
+    "status": "Planned"
+  }
+]

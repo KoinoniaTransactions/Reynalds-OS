@@ -1,0 +1,17 @@
+{
+  "componentId": "COMP-CTA-001",
+  "name": "Primary CTA Section",
+  "status": "Canonical",
+  "owner": "Website System",
+  "usedBy": [
+    "All public website pages"
+  ],
+  "variants": [
+    "Standard",
+    "Compact"
+  ],
+  "purpose": "Low-pressure closing invitation that makes the next step effortless.",
+  "version": "1.0.0",
+  "lastUpdated": "2026-07-03",
+  "source": "Repository-first component canonicalization sprint"
+}

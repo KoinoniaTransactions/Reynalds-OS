@@ -1,0 +1,21 @@
+id,type,name,status,owner,health,next_action,related
+REL-000001,Relationship,Sarah Johnson,Active Client,CRM,Strong,Send transaction update,BRK-000001;CLI-000001;TXN-000001;INV-1007;CS-000001
+CLI-000001,Client,Sarah Johnson Client Account,Active,Koinonia,Strong,Prepare review request after closing,REL-000001;PKG-000001;TXN-000001;INV-1007
+BRK-000001,Brokerage,Parker Realty Group,Active Relationship,CRM,Good,Monitor referral potential,REL-000001
+PTY-000001,Property,123 Main Street,Under Contract,Operations,Attention,Confirm commission instructions,TXN-000001;DOC-000001
+TXN-000001,Transaction,Smith Transaction,Closing Prep,Operations,Critical,Complete final QA review,CLI-000001;REL-000001;PTY-000001;TASK-000001;EXC-000001;INV-1007;CS-000001
+TASK-000001,Task,Complete final QA review,Due Now,Jeremiah,Critical,Verify closing figures and commission paperwork,TXN-000001;QA-000001;EXC-000001
+QA-000001,QA Review,Smith Pre-Closing QA,Incomplete,Operations,Critical,Complete QA checklist,TXN-000001;TASK-000001;EXC-000001
+EXC-000001,Exception,Commission instruction confirmation missing,Open,Operations,Critical,Confirm commission instructions,TXN-000001;TASK-000001;QA-000001
+INV-1007,Invoice,Smith Transaction Invoice,Paid,Finance,Healthy,Archive financial record,TXN-000001;CLI-000001;PAY-000001;PKG-000001
+PAY-000001,Payment,Payment for INV-1007,Received,Finance,Healthy,Reconcile if needed,INV-1007;CLI-000001
+PKG-000001,Package,Transaction Coordination Plus,Active,Koinonia,Healthy,Use prepaid pricing rule,OBJ-00000002;INV-1007;CLI-000001
+OBJ-00000002,Service,Transaction Management Service,Production Certified,Repository,Healthy,Monitor improvement opportunities,PKG-000001;TXN-000001;WF-000001
+WF-000001,Workflow,Transaction Management Workflow,Active,Platform,Healthy,Execute closing prep stage,OBJ-00000002;TXN-000001;TASK-000001
+CS-000001,Customer Success,Sarah Johnson Success Record,Queued,Customer Success,Strong,Prepare review and referral request,CLI-000001;REL-000001;TXN-000001
+DRF-000001,Contract Draft Request,Garcia Amendment,Waiting on Client,Contract Center,Attention,Get client approval,REL-000002;TASK-000002
+REL-000002,Relationship,Michael Garcia,Proposal,CRM,Developing,Follow up on Realtor Support Plus,DRF-000001
+SHW-000001,Showing Request,Meadow View Showing,Unassigned,Showing Center,Critical,Assign licensed provider,PTY-000002;TASK-000003
+PTY-000002,Property,7427 Meadow View,Showing Requested,Showing Center,Attention,Assign provider,SHW-000001
+TASK-000002,Task,Garcia Amendment Approval Follow-Up,Waiting on Client,Koinonia,Attention,Request approval,DRF-000001
+TASK-000003,Task,Assign Meadow View Showing Provider,Due Now,Operations,Critical,Assign provider,SHW-000001
