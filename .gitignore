@@ -10,3 +10,26 @@ Thumbs.db
 # Local exports
 exports/
 .local/
+
+# Node
+node_modules/
+**/node_modules/
+
+# Next.js
+.next/
+out/
+
+# Environment files
+.env
+.env.local
+packages/database/.env
+
+# Logs
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Prisma
+packages/database/prisma/dev.db
+packages/database/prisma/dev.db-journal
