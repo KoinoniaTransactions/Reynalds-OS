@@ -1,8 +1,11 @@
-export { Hero } from "./Hero/Hero";
-export { TrustPillars } from "./TrustPillars/TrustPillars";
-export { UniversalCard } from "./UniversalCard/UniversalCard";
-export { CTA } from "./CTA/CTA";
-export { FAQ } from "./FAQ/FAQ";
 export { Footer } from "./Footer/Footer";
-
+export { UniversalCard } from "./UniversalCard/UniversalCard";
+export { TrustPillars } from "./TrustPillars/TrustPillars";
+export { FAQ } from "./FAQ/FAQ";
+export { CTA } from "./CTA/CTA";
+export { KoinoniaHome } from "./PageAssemblies/KoinoniaHome";
+export { KoinoniaServices } from "./PageAssemblies/KoinoniaServices";
+export { KoinoniaContact } from "./PageAssemblies/KoinoniaContact";
+export { KoinoniaAbout } from "./PageAssemblies/KoinoniaAbout";
 export { ContactActions } from "./ContactActions/ContactActions";
+export { Hero } from "./Hero/Hero";
