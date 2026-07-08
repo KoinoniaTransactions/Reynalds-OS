@@ -65,7 +65,7 @@ export function requirePermission(user: AuthUser, permission: Permission): void 
 export function getMockUser(): AuthUser {
   return {
     id: "usr_owner",
-    workspaceId: "wks_koinonia",
+    workspaceId: process.env.ROS_MOCK_WORKSPACE_ID ?? "wks_koinonia",
     name: "Jeremiah Reynalds",
     email: "owner@example.com",
     role: "Owner",
