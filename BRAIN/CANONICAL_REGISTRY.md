@@ -21,6 +21,7 @@ Recover before reinventing.
 | Constitution | BRAIN/REYNALDS_OS_CONSTITUTION.md | Active |
 | Development Standards | BRAIN/DEVELOPMENT_STANDARDS.md | Active |
 | Design System Rules | BRAIN/DESIGN_SYSTEM_RULES.md | Active |
+| Repository Architecture | docs/ARCHITECTURE.md | Active |
 | Decision Log | BRAIN/DECISION_LOG.md | Active |
 | Current Priorities | BRAIN/CURRENT_PRIORITIES.md | Active |
 

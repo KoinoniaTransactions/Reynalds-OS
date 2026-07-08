@@ -232,3 +232,54 @@ Before writing new code:
 1. Read the Brain.
 2. Verify `pnpm build` passes.
 3. Continue with FAQ migration.
+
+---
+
+# Session Handoff — 2026-07-08 Repository Architecture Recovery
+
+## Status
+
+Repository recovery and architecture documentation update completed.
+
+## Completed
+
+- Confirmed branch: feature/app-shell-foundation.
+- Confirmed Koinonia content architecture commits are complete.
+- Confirmed existing architecture documentation already exists.
+- Updated docs/ARCHITECTURE.md instead of creating a duplicate architecture document.
+- Confirmed the canonical design system is packages/design-system.
+- Confirmed Koinonia website content lives in apps/web/content.
+
+## Current Architecture Understanding
+
+Reynalds OS consists of five primary layers:
+
+1. Governance Layer — START_HERE.md, BRAIN, standards, decisions, handoffs.
+2. Platform Layer — packages and apps/web/lib.
+3. Application Layer — apps/web/app and apps/web/components.
+4. Workspace Layer — Koinonia ERP as the first production workspace.
+5. Content Layer — apps/web/content.
+
+## Recent Koinonia Commits
+
+- a727d58 — Move FAQ copy to shared content
+- 4034cd2 — Add Koinonia brand content constants
+- 54643e4 — Use brand content for Hero defaults
+
+## Important Notes for Future AI
+
+- Do not create duplicate theme systems. Use packages/design-system.
+- Do not create duplicate architecture docs unless existing docs are insufficient and user approves.
+- Extend canonical files whenever possible.
+- Continue small change → build → commit.
+- Keep Koinonia website launch as the primary active track unless explicitly redirected.
+
+## Known Issues
+
+- START_HERE.md previously referenced missing BRAIN/ARCHITECTURE_PRINCIPLES.md.
+- Root package.json may not match Brain version 11.3.1.
+- Older docs may be historical and should not override current Brain documentation.
+
+## Recommended Next Step
+
+Commit the documentation updates, then resume Koinonia website content architecture work.

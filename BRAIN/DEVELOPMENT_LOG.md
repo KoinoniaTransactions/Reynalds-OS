@@ -63,3 +63,33 @@ using:
 
 Migrate FAQ content into the shared content architecture.
 
+
+---
+
+# 2026-07-08 — Repository Recovery and Architecture Documentation Update
+
+## Objective
+
+Improve future AI continuity by updating existing architecture documentation instead of creating duplicate docs.
+
+## Completed
+
+- Confirmed existing architecture documentation already exists.
+- Updated docs/ARCHITECTURE.md for current v11.3.1 structure.
+- Confirmed canonical design system is packages/design-system.
+- Confirmed Koinonia content architecture is apps/web/content.
+- Preserved the rule: recover before reinventing.
+
+## Known Issues
+
+- START_HERE.md references missing BRAIN/ARCHITECTURE_PRINCIPLES.md.
+- Root package.json may not match Brain version 11.3.1.
+- Some older docs are historical and should not override current Brain documentation.
+
+## Build Status
+
+No build required. Documentation-only update.
+
+## Recommended Next Step
+
+Commit documentation update, then continue Koinonia website content architecture work.
