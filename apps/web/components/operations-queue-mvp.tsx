@@ -131,6 +131,11 @@ export function OperationsQueueMvp() {
                 const state = String(data.state ?? "");
                 const serviceLine = String(data.serviceLine ?? "Service Line TBD");
                 const workType = String(data.workType ?? "Work Type TBD");
+                const workOrderNumber = String(data.workOrderNumber ?? "WO TBD");
+                const siteName = String(data.siteName ?? "");
+                const phase = String(data.phase ?? item.status);
+                const crewLead = String(data.crewLead ?? "Unassigned");
+                const invoiceStatus = String(data.invoiceStatus ?? "Not Ready");
 
                 return (
                   <article key={item.id} className="ros-card">
@@ -146,6 +151,18 @@ export function OperationsQueueMvp() {
                     <table className="ros-table">
                       <tbody>
                         <tr>
+                          <th>Work Order</th>
+                          <td>{workOrderNumber}</td>
+                        </tr>
+                        <tr>
+                          <th>Site</th>
+                          <td>{siteName || `${city}${city && state ? ", " : ""}${state}` || "Site TBD"}</td>
+                        </tr>
+                        <tr>
+                          <th>Phase</th>
+                          <td>{phase}</td>
+                        </tr>
+                        <tr>
                           <th>Status</th>
                           <td>{item.status}</td>
                         </tr>
@@ -154,8 +171,16 @@ export function OperationsQueueMvp() {
                           <td>{item.health}</td>
                         </tr>
                         <tr>
+                          <th>Crew Lead</th>
+                          <td>{crewLead}</td>
+                        </tr>
+                        <tr>
                           <th>Work Type</th>
                           <td>{workType}</td>
+                        </tr>
+                        <tr>
+                          <th>Invoice</th>
+                          <td>{invoiceStatus}</td>
                         </tr>
                         <tr>
                           <th>Next Action</th>
