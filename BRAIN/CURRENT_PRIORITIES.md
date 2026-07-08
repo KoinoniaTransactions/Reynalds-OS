@@ -97,3 +97,27 @@ After Koinonia launches:
 - Intelligence
 - Family
 - Personal
+---
+
+# Website Priority
+
+Continue migrating reusable website content into the centralized content architecture.
+
+Immediate targets:
+
+- FAQ
+- Hero
+- Universal Cards
+- Navigation
+- Metadata
+- Social Links
+- Brand Constants
+- Theme Constants
+
+Development rule:
+
+Every migration must:
+
+1. Compile successfully.
+2. Pass production build.
+3. Be committed immediately.
