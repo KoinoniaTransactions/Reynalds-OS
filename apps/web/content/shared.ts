@@ -48,5 +48,30 @@ export const sharedContent = {
           "Files are handled with consistency, care, and attention to the details that keep transactions moving."
       }
     ]
+  },
+
+  contactActions: {
+    cardsLabel: "Koinonia contact methods",
+    inlineLabel: "Koinonia contact actions",
+    actions: [
+      {
+        key: "phone",
+        eyebrow: "Call",
+        title: "Call Koinonia",
+        body: "Use phone when a transaction or timeline needs a direct conversation."
+      },
+      {
+        key: "sms",
+        eyebrow: "Text",
+        title: "Text Koinonia",
+        body: "Use SMS for quick questions, scheduling, or time-sensitive coordination."
+      },
+      {
+        key: "email",
+        eyebrow: "Email",
+        title: "Email Koinonia",
+        body: "Use email for new inquiries, transaction details, and organized written context."
+      }
+    ]
   }
 } as const;

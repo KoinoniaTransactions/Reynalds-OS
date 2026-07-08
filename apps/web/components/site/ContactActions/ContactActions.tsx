@@ -1,40 +1,46 @@
+import { sharedContent } from "@/content/shared";
 import { contactConfig, mailto } from "../../../config/contact.config";
 
 type ContactActionsProps = {
   variant?: "cards" | "inline";
 };
 
-const actions = [
-  {
-    eyebrow: "Call",
-    title: "Call Koinonia",
-    body: "Use phone when a transaction or timeline needs a direct conversation.",
-    label: contactConfig.phone.display,
-    href: contactConfig.phone.href,
-    placeholder: contactConfig.phone.isPlaceholder
-  },
-  {
-    eyebrow: "Text",
-    title: "Text Koinonia",
-    body: "Use SMS for quick questions, scheduling, or time-sensitive coordination.",
-    label: contactConfig.sms.display,
-    href: contactConfig.sms.href,
-    placeholder: contactConfig.sms.isPlaceholder
-  },
-  {
-    eyebrow: "Email",
-    title: "Email Koinonia",
-    body: "Use email for new inquiries, transaction details, and organized written context.",
+function getContactAction(action: (typeof sharedContent.contactActions.actions)[number]) {
+  if (action.key === "phone") {
+    return {
+      ...action,
+      label: contactConfig.phone.display,
+      href: contactConfig.phone.href,
+      placeholder: contactConfig.phone.isPlaceholder
+    };
+  }
+
+  if (action.key === "sms") {
+    return {
+      ...action,
+      label: contactConfig.sms.display,
+      href: contactConfig.sms.href,
+      placeholder: contactConfig.sms.isPlaceholder
+    };
+  }
+
+  return {
+    ...action,
     label: contactConfig.email,
     href: mailto(),
     placeholder: false
-  }
-];
+  };
+}
 
 export function ContactActions({ variant = "cards" }: ContactActionsProps) {
+  const actions = sharedContent.contactActions.actions.map(getContactAction);
+
   if (variant === "inline") {
     return (
-      <div className="koinonia-contact-inline" aria-label="Koinonia contact actions">
+      <div
+        className="koinonia-contact-inline"
+        aria-label={sharedContent.contactActions.inlineLabel}
+      >
         {actions.map((action) => (
           <a
             key={action.title}
@@ -50,7 +56,10 @@ export function ContactActions({ variant = "cards" }: ContactActionsProps) {
   }
 
   return (
-    <div className="koinonia-grid three koinonia-contact-actions" aria-label="Koinonia contact methods">
+    <div
+      className="koinonia-grid three koinonia-contact-actions"
+      aria-label={sharedContent.contactActions.cardsLabel}
+    >
       {actions.map((action) => (
         <article className="koinonia-card koinonia-contact-card" key={action.title}>
           <div className="koinonia-icon">{action.eyebrow}</div>
