@@ -2,16 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type Task = {
-  id: string;
-  relatedObjectId?: string | null;
-  title: string;
-  status: string;
-  priority: string;
-  dueAt?: string | null;
-  completedAt?: string | null;
-};
-
 type RosObject = {
   id: string;
   objectType: string;
@@ -19,231 +9,200 @@ type RosObject = {
   status: string;
   health: string;
   nextAction?: string | null;
+  data?: Record<string, unknown> | null;
 };
 
-const statuses = ["", "Open", "Due Now", "Waiting", "Complete"];
-const priorities = ["", "Low", "Normal", "High", "Critical"];
-
 export function OperationsQueueMvp() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [relatedObjects, setRelatedObjects] = useState<RosObject[]>([]);
-  const [status, setStatus] = useState("");
-  const [priority, setPriority] = useState("");
+  const [objects, setObjects] = useState<RosObject[]>([]);
   const [search, setSearch] = useState("");
-  const [newTaskTitle, setNewTaskTitle] = useState("");
   const [error, setError] = useState("");
 
-  const objectMap = useMemo(() => {
-    return new Map(relatedObjects.map((object) => [object.id, object]));
-  }, [relatedObjects]);
-
-  const filteredTasks = useMemo(() => {
-    const q = search.toLowerCase().trim();
-    if (!q) return tasks;
-    return tasks.filter((task) => {
-      const related = task.relatedObjectId ? objectMap.get(task.relatedObjectId) : undefined;
-      return [task.title, task.status, task.priority, related?.name ?? "", related?.objectType ?? ""]
-        .join(" ")
-        .toLowerCase()
-        .includes(q);
-    });
-  }, [tasks, search, objectMap]);
-
-  const openTasks = tasks.filter((task) => task.status !== "Complete");
-  const highPriorityTasks = tasks.filter((task) => ["High", "Critical"].includes(task.priority) && task.status !== "Complete");
-
-  async function loadTasks() {
+  async function loadObjects() {
     setError("");
-    const params = new URLSearchParams();
-    if (status) params.set("status", status);
-    if (priority) params.set("priority", priority);
 
     try {
-      const response = await fetch(`/api/tasks${params.toString() ? `?${params.toString()}` : ""}`);
-      if (!response.ok) throw new Error("Failed to load tasks.");
+      const response = await fetch("/api/objects?objectType=rb.work_item");
+      if (!response.ok) throw new Error("Failed to load Reynalds Brothers work items.");
       const data = await response.json();
-      setTasks(data.tasks ?? []);
-      setRelatedObjects(data.relatedObjects ?? []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error.");
-    }
-  }
-
-  async function completeTask(id: string) {
-    setError("");
-    try {
-      const response = await fetch(`/api/tasks/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "Complete" })
-      });
-
-      if (!response.ok) throw new Error("Failed to complete task.");
-      await loadTasks();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error.");
-    }
-  }
-
-  async function createTask(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!newTaskTitle.trim()) return;
-
-    try {
-      const response = await fetch("/api/tasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: newTaskTitle,
-          status: "Open",
-          priority: "Normal"
-        })
-      });
-
-      if (!response.ok) throw new Error("Failed to create task.");
-      setNewTaskTitle("");
-      await loadTasks();
+      setObjects(data.objects ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error.");
     }
   }
 
   useEffect(() => {
-    void loadTasks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, priority]);
+    void loadObjects();
+  }, []);
+
+  const workItems = useMemo(() => {
+    const q = search.toLowerCase().trim();
+
+    if (!q) return objects;
+
+    return objects.filter((item) =>
+      [item.name, item.status, item.health, item.nextAction ?? "", JSON.stringify(item.data ?? {})]
+        .join(" ")
+        .toLowerCase()
+        .includes(q)
+    );
+  }, [objects, search]);
+
+  const criticalItems = workItems.filter((item) => ["Critical", "Watch", "Attention"].includes(item.health));
+  const waitingItems = workItems.filter((item) => item.status.toLowerCase().includes("waiting"));
+  const planningItems = workItems.filter((item) => item.status.toLowerCase().includes("planning"));
+  const activeItems = workItems.filter((item) => !["Complete", "Closed", "Archived"].includes(item.status));
 
   return (
     <main className="ros-app">
       <aside className="ros-sidebar">
         <div className="ros-brand">
-          <div className="ros-mark">R</div>
+          <div className="ros-mark">RB</div>
           <div>
-            <strong>ROS</strong>
-            <span>Operations · v9.0</span>
+            <strong>Reynalds Brothers</strong>
+            <span>Operations Center</span>
           </div>
         </div>
+
         <nav>
-          <a href="/">Dashboard</a>
-          <a href="/crm">CRM</a>
-          <a href="/transactions">Transactions</a>
+          <a href="/">Command Center</a>
           <a href="/operations" className="active">Operations</a>
           <a href="/objects">Object Explorer</a>
+          <a href="/workflows">Workflows</a>
+          <a href="/copilot">AI Copilot</a>
         </nav>
       </aside>
 
       <section className="ros-main">
         <header className="ros-topbar">
-          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search tasks, objects, owners..." />
-          <button onClick={() => void loadTasks()}>Refresh</button>
-          <a className="ros-button-link" href="/objects">Open Objects</a>
+          <input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search jobs, stores, service lines, cities..."
+          />
+          <button onClick={() => void loadObjects()}>Refresh</button>
+          <a className="ros-button-link" href="/objects">Open Object Engine</a>
         </header>
 
-        <div className="ros-eyebrow">ROS-0075 · Operations Queue MVP</div>
-        <h1>Operations Work Queue</h1>
+        <div className="ros-eyebrow">RB-001 · Operational OS</div>
+        <h1>Reynalds Brothers Operations Center</h1>
         <p className="ros-subtitle">
-          Database-backed task queue for operational work, priorities, completion, and related object context.
+          Daily command console for active field work, job health, next actions, and operational attention.
         </p>
 
         {error ? <p className="ros-error">{error}</p> : null}
 
         <section className="ros-grid" style={{ marginBottom: 18 }}>
           <article className="ros-card">
-            <span>Open Tasks</span>
-            <strong>{openTasks.length}</strong>
-            <p>not complete</p>
+            <span>Active Jobs</span>
+            <strong>{activeItems.length}</strong>
+            <p>open work items</p>
           </article>
-          <article className="ros-card">
-            <span>High Priority</span>
-            <strong>{highPriorityTasks.length}</strong>
-            <p>high or critical</p>
-          </article>
-          <article className="ros-card">
-            <span>Total Tasks</span>
-            <strong>{tasks.length}</strong>
-            <p>current filter</p>
-          </article>
-          <article className="ros-card">
-            <span>Related Objects</span>
-            <strong>{relatedObjects.length}</strong>
-            <p>linked context</p>
-          </article>
-        </section>
 
-        <section className="ros-panel">
-          <div className="ros-filters">
-            <select value={status} onChange={(event) => setStatus(event.target.value)}>
-              {statuses.map((item) => <option key={item} value={item}>{item || "Any status"}</option>)}
-            </select>
-            <select value={priority} onChange={(event) => setPriority(event.target.value)}>
-              {priorities.map((item) => <option key={item} value={item}>{item || "Any priority"}</option>)}
-            </select>
-          </div>
+          <article className="ros-card">
+            <span>Needs Attention</span>
+            <strong>{criticalItems.length}</strong>
+            <p>watch, attention, or critical</p>
+          </article>
+
+          <article className="ros-card">
+            <span>Planning</span>
+            <strong>{planningItems.length}</strong>
+            <p>scope and preparation</p>
+          </article>
+
+          <article className="ros-card">
+            <span>Waiting</span>
+            <strong>{waitingItems.length}</strong>
+            <p>blocked or pending</p>
+          </article>
         </section>
 
         <section className="ros-object-layout">
           <article className="ros-card">
-            <h2>Create Standalone Task</h2>
-            <form className="ros-form" onSubmit={createTask}>
-              <input value={newTaskTitle} onChange={(event) => setNewTaskTitle(event.target.value)} placeholder="Task title" />
-              <button>Create Task</button>
-            </form>
+            <h2>Active Work Orders</h2>
+            {workItems.length === 0 ? <p>No Reynalds Brothers work items found.</p> : null}
 
-            <h2 style={{ marginTop: 24 }}>Work Queue</h2>
-            {filteredTasks.length === 0 ? <p>No tasks found.</p> : null}
+            <div style={{ display: "grid", gap: 14 }}>
+              {workItems.map((item) => {
+                const data = item.data ?? {};
+                const customer = String(data.customer ?? "Customer TBD");
+                const storeNumber = String(data.storeNumber ?? "");
+                const city = String(data.city ?? "");
+                const state = String(data.state ?? "");
+                const serviceLine = String(data.serviceLine ?? "Service Line TBD");
+                const workType = String(data.workType ?? "Work Type TBD");
 
-            <table className="ros-table">
-              <thead>
-                <tr>
-                  <th>Task</th>
-                  <th>Priority</th>
-                  <th>Status</th>
-                  <th>Related Object</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredTasks.map((task) => {
-                  const related = task.relatedObjectId ? objectMap.get(task.relatedObjectId) : undefined;
-                  return (
-                    <tr key={task.id}>
-                      <td>
-                        <strong>{task.title}</strong>
-                        <span>{task.id}</span>
-                      </td>
-                      <td>{task.priority}</td>
-                      <td>{task.status}</td>
-                      <td>{related ? `${related.name} · ${related.objectType}` : "None"}</td>
-                      <td>
-                        {task.status !== "Complete" ? (
-                          <button onClick={() => void completeTask(task.id)}>Complete</button>
-                        ) : (
-                          "Done"
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                return (
+                  <article key={item.id} className="ros-card">
+                    <div className="ros-eyebrow">{serviceLine}</div>
+                    <h3>{item.name}</h3>
+
+                    <p>
+                      <strong>{customer}</strong>
+                      {storeNumber ? ` · Store ${storeNumber}` : ""}
+                      {(city || state) ? ` · ${city}${city && state ? ", " : ""}${state}` : ""}
+                    </p>
+
+                    <table className="ros-table">
+                      <tbody>
+                        <tr>
+                          <th>Status</th>
+                          <td>{item.status}</td>
+                        </tr>
+                        <tr>
+                          <th>Health</th>
+                          <td>{item.health}</td>
+                        </tr>
+                        <tr>
+                          <th>Work Type</th>
+                          <td>{workType}</td>
+                        </tr>
+                        <tr>
+                          <th>Next Action</th>
+                          <td>{item.nextAction ?? "No next action set."}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <p style={{ marginTop: 12 }}>
+                      <a className="ros-button-link" href={`/objects?selected=${item.id}`}>
+                        Open Work Item
+                      </a>
+                    </p>
+                  </article>
+                );
+              })}
+            </div>
           </article>
 
           <aside className="ros-card">
-            <h2>Queue Guidance</h2>
+            <h2>Operational Alerts</h2>
+
+            {criticalItems.length === 0 ? (
+              <p>No critical operational alerts detected.</p>
+            ) : (
+              <ul>
+                {criticalItems.map((item) => (
+                  <li key={item.id}>
+                    <strong>{item.health}</strong>: {item.name}
+                    <br />
+                    <span>{item.nextAction ?? "Review this work item."}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <h2 style={{ marginTop: 24 }}>AI Operations Assistant</h2>
             <p>
-              Work high-priority and critical tasks first. Completing a task creates a timeline event on the related object when one is linked.
+              Next build: evaluate work items for missing photos, crew assignment, equipment assignment,
+              disposal documentation, invoice readiness, and customer update recommendations.
             </p>
 
-            <h3>Recommended Order</h3>
-            <ol>
-              <li>Critical transaction blockers</li>
-              <li>Same-day showing issues</li>
-              <li>Client follow-ups due today</li>
-              <li>Finance and archive cleanup</li>
-            </ol>
-
-            <h3>Next Build</h3>
-            <p>Add due dates, owner assignment, and task detail editing.</p>
+            <h3>Operating Rule</h3>
+            <p>
+              Reynalds Brothers should organize around work orders first. Tasks, photos, documents,
+              invoices, and communications support the work order.
+            </p>
           </aside>
         </section>
       </section>
