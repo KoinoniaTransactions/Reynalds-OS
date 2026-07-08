@@ -1,10 +1,10 @@
 export const brainState = {
   version: "11.3.1",
-  workspace: "Koinonia ERP",
+  workspace: "Reynalds OS",
   branch: "feature/app-shell-foundation",
   milestone: "ROS-0079 — Brain Command Center",
-  priority: "Transform the dashboard into the Reynalds OS Command Center.",
-  nextTask: "Wire the dashboard to shared Brain state.",
+  priority: "Operate multiple business workspaces from a single Reynalds OS platform.",
+  nextTask: "Implement the Reynalds Brothers Work Item engine.",
   documentationStatus: "Brain documentation established",
   objectEngineStatus: "Operational",
   databaseStatus: "Operational",

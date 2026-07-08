@@ -40,10 +40,10 @@ export const workspaces: WorkspaceSummary[] = [
     id: "reynalds-brothers",
     name: "Reynalds Brothers",
     category: "business",
-    status: "planned",
-    route: "#",
-    description: "Future workspace for environmental operations and field projects.",
-    primaryObjectTypes: ["company", "task", "workflow", "document"]
+    status: "active",
+    route: "/operations",
+    description: "Managed company workspace for field operations, Walmart tank work, pressure washing, plumbing, backflow, grease interceptors, and Zurn projects.",
+    primaryObjectTypes: ["work_item", "organization", "location", "communication", "document", "media", "financial_transaction"]
   }
 ];
 
