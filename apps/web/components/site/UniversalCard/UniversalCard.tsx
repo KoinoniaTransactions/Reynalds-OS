@@ -2,7 +2,7 @@ export type UniversalCardProps = {
   eyebrow?: string;
   title: string;
   body: string;
-  items?: string[];
+  items?: readonly string[];
   actionLabel?: string;
   actionHref?: string;
 };
