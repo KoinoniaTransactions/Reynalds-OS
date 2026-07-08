@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { assertPermission } from "../../../lib/auth";
 import { prisma } from "../../../lib/db";
 
@@ -19,7 +21,7 @@ export async function GET(request: Request) {
     orderBy: [{ dueAt: "asc" }, { createdAt: "desc" }]
   });
 
-  const relatedObjectIds = [...new Set(tasks.map((task) => task.relatedObjectId).filter(Boolean))] as string[];
+  const relatedObjectIds = [...new Set(tasks.map((task: { relatedObjectId: string | null }) => task.relatedObjectId).filter(Boolean))] as string[];
   const relatedObjects = await prisma.rosObject.findMany({
     where: {
       workspaceId: user.workspaceId,

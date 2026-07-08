@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { assertPermission } from "../../../lib/auth";
 import { prisma } from "../../../lib/db";
 
@@ -15,7 +17,7 @@ export async function GET() {
   });
 
   return NextResponse.json({
-    invoices: invoices.map((invoice) => ({
+    invoices: invoices.map((invoice: { amount: unknown }) => ({
       ...invoice,
       amount: toMoneyString(invoice.amount)
     }))

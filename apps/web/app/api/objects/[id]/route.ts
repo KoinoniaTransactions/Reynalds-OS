@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { assertPermission } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/db";
 import { validateObjectUpdate } from "../../../../lib/validation";

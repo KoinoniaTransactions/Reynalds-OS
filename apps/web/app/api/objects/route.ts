@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { assertPermission } from "../../../lib/auth";
 import { prisma } from "../../../lib/db";
+import type { Prisma } from "@reynalds-os/database";
 import { validateObjectCreate } from "../../../lib/validation";
 
 export async function GET(request: Request) {
@@ -37,7 +40,7 @@ export async function POST(request: Request) {
       health: input.health ?? "Healthy",
       ownerId: input.ownerId,
       nextAction: input.nextAction,
-      data: input.data
+      data: input.data as Prisma.InputJsonValue | undefined
     }
   });
 

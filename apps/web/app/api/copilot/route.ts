@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { assertPermission } from "../../../lib/auth";
 import { prisma } from "../../../lib/db";
 
@@ -86,11 +88,11 @@ export async function POST(request: Request) {
     requiresHumanReview: true,
     mode: "read_only",
     supportingReferences: {
-      criticalObjectIds: criticalObjects.map((item) => item.id),
-      openTaskIds: openTasks.map((item) => item.id),
-      pendingInvoiceIds: pendingInvoices.map((item) => item.id),
-      recentTimelineEventIds: recentEvents.map((item) => item.id),
-      knowledgeObjectIds: knowledgeItems.map((item) => item.id)
+      criticalObjectIds: criticalObjects.map((item: { id: string }) => item.id),
+      openTaskIds: openTasks.map((item: { id: string }) => item.id),
+      pendingInvoiceIds: pendingInvoices.map((item: { id: string }) => item.id),
+      recentTimelineEventIds: recentEvents.map((item: { id: string }) => item.id),
+      knowledgeObjectIds: knowledgeItems.map((item: { id: string }) => item.id)
     }
   });
 }

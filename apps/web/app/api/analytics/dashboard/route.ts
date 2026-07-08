@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 import { assertPermission } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/db";
+
+type DashboardInvoice = {
+  status: string;
+  amount: unknown;
+};
 
 function decimalToNumber(value: unknown): number {
   if (typeof value === "number") return value;
@@ -35,15 +42,21 @@ export async function GET() {
       where: { workspaceId: user.workspaceId }
     }),
     prisma.invoice.findMany({
-      where: { workspaceId: user.workspaceId }
+      where: { workspaceId: user.workspaceId },
+      select: {
+        status: true,
+        amount: true
+      }
     })
   ]);
 
-  const paidRevenue = invoices
+  const dashboardInvoices = invoices as DashboardInvoice[];
+
+  const paidRevenue = dashboardInvoices
     .filter((invoice) => invoice.status === "Paid")
     .reduce((sum, invoice) => sum + decimalToNumber(invoice.amount), 0);
 
-  const pendingRevenue = invoices
+  const pendingRevenue = dashboardInvoices
     .filter((invoice) => invoice.status !== "Paid")
     .reduce((sum, invoice) => sum + decimalToNumber(invoice.amount), 0);
 
