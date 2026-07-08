@@ -9,3 +9,4 @@ export { KoinoniaContact } from "./PageAssemblies/KoinoniaContact";
 export { KoinoniaAbout } from "./PageAssemblies/KoinoniaAbout";
 export { ContactActions } from "./ContactActions/ContactActions";
 export { Hero } from "./Hero/Hero";
+export { Section } from "./Section/Section";
