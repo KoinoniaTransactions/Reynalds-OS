@@ -1,5 +1,5 @@
 import { homeContent } from "@/content/home";
-import { CTA, Footer, Hero, TrustPillars, UniversalCard } from "../index";
+import { CTA, Footer, Hero, Section, TrustPillars, UniversalCard } from "../index";
 
 export function KoinoniaHome() {
   return (
@@ -16,27 +16,24 @@ export function KoinoniaHome() {
 
       <TrustPillars />
 
-      <section className="koinonia-section koinonia-band">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header">
-            <div className="koinonia-eyebrow">{homeContent.servicesIntro.eyebrow}</div>
-            <h2 className="koinonia-heading">{homeContent.servicesIntro.title}</h2>
-            <p className="koinonia-copy">{homeContent.servicesIntro.lead}</p>
-          </div>
-
-          <div className="koinonia-grid four">
-            {homeContent.services.map((service, index) => (
-              <UniversalCard
-                key={service.title}
-                eyebrow={`0${index + 1}`}
-                title={service.title}
-                body={service.body}
-                items={service.items}
-              />
-            ))}
-          </div>
+      <Section
+        variant="band"
+        eyebrow={homeContent.servicesIntro.eyebrow}
+        title={homeContent.servicesIntro.title}
+        lead={homeContent.servicesIntro.lead}
+      >
+        <div className="koinonia-grid four">
+          {homeContent.services.map((service, index) => (
+            <UniversalCard
+              key={service.title}
+              eyebrow={`0${index + 1}`}
+              title={service.title}
+              body={service.body}
+              items={service.items}
+            />
+          ))}
         </div>
-      </section>
+      </Section>
 
       <CTA />
       <Footer />
