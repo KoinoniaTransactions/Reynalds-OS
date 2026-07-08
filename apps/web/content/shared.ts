@@ -73,5 +73,33 @@ export const sharedContent = {
         body: "Use email for new inquiries, transaction details, and organized written context."
       }
     ]
+  },
+
+  faq: {
+    eyebrow: "Questions",
+    title: "Answers that remove uncertainty.",
+
+    items: [
+      {
+        question: "When should I bring Koinonia into a transaction?",
+        answer:
+          "As soon as the contract is signed. Early involvement helps deadlines, documents, communication, and next steps get organized from the beginning."
+      },
+      {
+        question: "Can I use only the services I need?",
+        answer:
+          "Yes. Koinonia is designed around support levels and operational needs, not one-size-fits-all packages."
+      },
+      {
+        question: "Will I still stay informed?",
+        answer:
+          "Yes. The goal is not to remove you from the transaction; it is to keep you supported, informed, and focused on your clients."
+      },
+      {
+        question: "How is billing handled?",
+        answer:
+          "Koinonia supports both prepaid and pay-at-close models depending on the service level and agreement."
+      }
+    ]
   }
 } as const;
