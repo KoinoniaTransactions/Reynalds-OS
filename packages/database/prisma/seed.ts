@@ -122,7 +122,18 @@ async function main() {
         city: "South Haven",
         state: "MI",
         sourceSystem: "manual_seed",
-        workType: "Lower Bay Pressure Washing"
+        workType: "Lower Bay Pressure Washing",
+        workOrderNumber: "RB-WO-1540-001",
+        siteName: "Walmart 1540",
+        phase: "Pre-Job Planning",
+        crewLead: "Jeremiah Reynalds",
+        crewMembers: ["Gavyn"],
+        equipmentRequired: ["Hot water pressure washer", "Vacuum truck", "Surface cleaner", "PPE"],
+        documentationRequired: ["Before photos", "After photos", "Disposal manifest", "Completion notes"],
+        operationalRisks: ["Disposal coordination", "Water volume control", "Overnight access window"],
+        scheduledStart: null,
+        scheduledEnd: null,
+        invoiceStatus: "Not Ready"
       }
     },
     {
@@ -139,7 +150,18 @@ async function main() {
         city: "Montgomery",
         state: "AL",
         sourceSystem: "manual_seed",
-        workType: "Used Cooking Oil Tank Replacement"
+        workType: "Used Cooking Oil Tank Replacement",
+        workOrderNumber: "RB-WO-4672-001",
+        siteName: "Walmart 4672",
+        phase: "Intake",
+        crewLead: null,
+        crewMembers: [],
+        equipmentRequired: ["UCO tank", "Install tools", "PPE"],
+        documentationRequired: ["Scope confirmation", "Before photos", "Install photos", "Completion notes"],
+        operationalRisks: ["Scope confirmation pending", "Material availability"],
+        scheduledStart: null,
+        scheduledEnd: null,
+        invoiceStatus: "Not Ready"
       }
     },
     {
@@ -153,7 +175,18 @@ async function main() {
         serviceLine: "Zurn",
         customer: "Zurn",
         sourceSystem: "manual_seed",
-        workType: "Grease Interceptor Alarm Installation"
+        workType: "Grease Interceptor Alarm Installation",
+        workOrderNumber: "RB-WO-ZURN-001",
+        siteName: "Zurn Sample Site",
+        phase: "Open",
+        crewLead: null,
+        crewMembers: [],
+        equipmentRequired: ["Alarm materials", "Install tools", "PPE"],
+        documentationRequired: ["Site contact confirmation", "Material list", "Completion photos"],
+        operationalRisks: ["Site contact not confirmed", "Material requirements pending"],
+        scheduledStart: null,
+        scheduledEnd: null,
+        invoiceStatus: "Not Ready"
       }
     }
   ];
