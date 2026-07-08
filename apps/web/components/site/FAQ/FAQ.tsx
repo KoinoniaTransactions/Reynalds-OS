@@ -6,7 +6,7 @@ type FAQItem = {
 };
 
 type FAQProps = {
-  items?: FAQItem[];
+  items?: readonly FAQItem[];
   eyebrow?: string;
   title?: string;
 };
