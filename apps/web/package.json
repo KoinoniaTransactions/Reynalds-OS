@@ -14,7 +14,7 @@
     "@reynalds-os/core": "workspace:*",
     "@reynalds-os/database": "workspace:*",
     "@reynalds-os/design-system": "workspace:*",
-    "next": "^15.5.4",
+    "next": "^15.5.20",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
