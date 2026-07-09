@@ -150,6 +150,7 @@ Recover before reinventing.
 Extend before creating.
 
 Inspect before recommending.
+
 ## 2026-07-09 — Koinonia Home Completion Handoff
 
 ### Current Status
