@@ -766,3 +766,21 @@ h1 {
     object-position: center right;
   }
 }
+
+/* Koinonia CTA button contrast polish */
+.koinonia-cta .koinonia-button.primary {
+  background: var(--ros-gold);
+  color: #111;
+  border-color: var(--ros-gold);
+}
+
+.koinonia-cta .koinonia-button.secondary {
+  background: #fff;
+  color: #111;
+  border-color: #fff;
+}
+
+.koinonia-cta .koinonia-button.primary:hover,
+.koinonia-cta .koinonia-button.secondary:hover {
+  transform: translateY(-1px);
+}

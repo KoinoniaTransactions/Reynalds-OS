@@ -2,13 +2,13 @@
 
 ## Status
 
-Draft for implementation.
+Production refinement in progress.
 
 ## Purpose
 
 The Home page answers: Can Koinonia help me?
 
-It should quickly communicate that Koinonia is a real estate operations partner for Realtors who need dependable support with transactions, contract preparation, licensed showing coverage, and business operations.
+It should quickly communicate that Koinonia is a trusted real estate operations partner for Realtors who need dependable support with transactions, contract preparation, licensed showing coverage, and daily business operations.
 
 ## Canonical Sources
 
@@ -24,7 +24,7 @@ It should quickly communicate that Koinonia is a real estate operations partner 
 1. Hero
 2. TrustPillars
 3. Services Overview
-4. How We Work
+4. Koinonia Experience
 5. Final CTA
 6. Footer
 
@@ -45,6 +45,23 @@ Explore Services
 Secondary CTA:
 Contact Koinonia
 
+## TrustPillars
+
+Section eyebrow:
+Why Realtors Choose Koinonia
+
+Heading:
+A trusted operations partner behind the moving parts.
+
+Supporting copy:
+Koinonia helps Realtors stay focused on clients while reliable systems, clear communication, and organized support keep transactions, contracts, showings, and daily business details moving behind the scenes.
+
+Pillars:
+- Organized Processes
+- Proactive Communication
+- Dependable Partnership
+- Detail-Driven Execution
+
 ## Services Overview
 
 Section eyebrow:
@@ -56,24 +73,44 @@ Support built around the way Realtors actually work.
 Purpose:
 Introduce the four core service lines without overexplaining them.
 
+Supporting copy:
+From active files to contract preparation, showing conflicts, and daily business organization, Koinonia provides calm, dependable support for the operational work that competes for a Realtor’s time.
+
 Services:
 - Transaction Management
 - Contract Preparation & Writing
 - Licensed Showing Coverage
 - Business Operations Support
 
-## How We Work
+## Koinonia Experience
 
 Section eyebrow:
 The Koinonia Experience
 
 Heading:
-Organized, calm, and easy to follow.
+Simple support. Clear process.
 
 Cards:
-- Connect
+- Clarify
 - Coordinate
-- Support
+- Keep Moving
+
+## Final CTA
+
+Eyebrow:
+Start the Conversation
+
+Heading:
+Ready for dependable real estate support?
+
+Supporting copy:
+When you are ready for organized, responsive support behind the scenes, Koinonia is ready to help.
+
+Primary CTA:
+Schedule a Consultation
+
+Secondary CTA:
+Email Koinonia
 
 ## SEO
 

@@ -14,42 +14,42 @@ export const homeContent = {
     eyebrow: "Real Estate Operations",
     title: "Support built around the way Realtors actually work.",
     lead:
-      "From active transactions to after-hours paperwork, showing conflicts, and daily business organization, Koinonia provides calm, dependable support behind the scenes."
+      "From active files to contract preparation, showing conflicts, and daily business organization, Koinonia provides calm, dependable support for the operational work that competes for a Realtor’s time."
   },
 
   services: [
     {
       title: "Transaction Management",
       body:
-        "For Realtors who need timelines, documents, communication, and deadlines kept organized from contract to close.",
+        "For Realtors who need timelines, documents, communication, and deadlines organized from contract to close.",
       items: ["Timeline coordination", "Deadline tracking", "Communication support"]
     },
     {
       title: "Contract Preparation & Writing",
       body:
-        "For Realtors who need accurate, timely document support without losing focus on clients and negotiations.",
+        "For Realtors who need accurate, timely document support without losing focus on clients, negotiations, and next steps.",
       items: ["Offer preparation", "Amendments and addenda", "Signature-ready files"]
     },
     {
       title: "Licensed Showing Coverage",
       body:
-        "For moments when your schedule is full, clients need access, and dependable licensed support matters.",
+        "For moments when your schedule is full, clients need access, and dependable licensed Realtor support matters.",
       items: ["Licensed support", "Access coordination", "Showing feedback"]
     },
     {
       title: "Business Operations Support",
       body:
-        "For growing Realtors who need more structure, clearer workflows, and organized client support.",
+        "For growing Realtors who need structure, workflow support, and practical help keeping daily business details organized.",
       items: ["Workflow support", "Client coordination", "Business organization"]
     }
   ],
 
   experience: {
     eyebrow: "The Koinonia Experience",
-    title: "Organized, calm, and easy to follow.",
+    title: "Simple support. Clear process.",
     cards: [
       {
-        title: "Connect",
+        title: "Clarify",
         body:
           "Start with a clear conversation about where support would make the biggest difference."
       },
@@ -59,9 +59,9 @@ export const homeContent = {
           "Koinonia organizes the details, deadlines, documents, communication, and next steps."
       },
       {
-        title: "Support",
+        title: "Keep Moving",
         body:
-          "You keep serving clients while the operational work stays visible, structured, and moving."
+          "You stay focused on clients while the operational work stays visible, structured, and moving forward."
       }
     ]
   }
