@@ -13,6 +13,8 @@ export function KoinoniaContact() {
         primaryHref={mailto(contactConfig.consultationSubject)}
         secondaryLabel={contactContent.hero.secondaryLabel}
         secondaryHref={contactContent.hero.secondaryHref}
+        visualDesktopSrc="/assets/images/koinonia/contact/contact-hero-desktop.png"
+        visualMobileSrc="/assets/images/koinonia/contact/contact-hero-mobile.png"
       />
 
       <section className="koinonia-section">

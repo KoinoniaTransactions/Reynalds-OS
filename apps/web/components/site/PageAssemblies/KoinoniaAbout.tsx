@@ -8,6 +8,8 @@ export function KoinoniaAbout() {
         eyebrow={aboutContent.hero.eyebrow}
         title={aboutContent.hero.title}
         lead={aboutContent.hero.lead}
+        visualDesktopSrc="/assets/images/koinonia/about/about-hero-desktop.png"
+        visualMobileSrc="/assets/images/koinonia/about/about-hero-mobile.png"
       />
 
       <section className="koinonia-section">

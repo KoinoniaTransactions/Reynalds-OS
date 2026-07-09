@@ -8,6 +8,8 @@ export function KoinoniaServices() {
         eyebrow={servicesContent.hero.eyebrow}
         title={servicesContent.hero.title}
         lead={servicesContent.hero.lead}
+        visualDesktopSrc="/assets/images/koinonia/services/services-hero-desktop.png"
+        visualMobileSrc="/assets/images/koinonia/services/services-hero-mobile.png"
       />
 
       <TrustPillars />
