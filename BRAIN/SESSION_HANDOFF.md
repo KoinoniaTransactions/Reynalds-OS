@@ -150,3 +150,43 @@ Recover before reinventing.
 Extend before creating.
 
 Inspect before recommending.
+## 2026-07-09 — Koinonia Home Completion Handoff
+
+### Current Status
+
+The Koinonia Home page is approved, build-passing, committed, and pushed.
+
+Latest confirmed commits:
+
+- `e124ca6` — Align Koinonia home page content
+- `85c907d` — Polish Koinonia home page presentation
+
+### Approved Home Design Rules
+
+- Hero remains a split composition:
+  - copy on the left
+  - visual image on the right
+- Home body section headers are centered as a complete header group.
+- Eyebrow, heading, and lead paragraph should align together.
+- The visible process section label is `The Koinonia Experience`.
+- The internal documentation label is `Koinonia Experience`.
+- CTA primary button should visually stand out as the primary action.
+- Footer remains unchanged.
+
+### Important Continuity Note
+
+Do not restart or redesign the Home page in the next session.
+
+The Home page is complete unless the user identifies a specific launch-blocking issue.
+
+### Recommended Next Step
+
+Begin the Koinonia Services page production pass using the existing content architecture and shared site components.
+
+Before editing Services, review:
+
+1. `START_HERE.md`
+2. `BRAIN/SESSION_HANDOFF.md`
+3. `BRAIN/DEVELOPMENT_LOG.md`
+4. `03_Knowledge/Website/WEBSITE_PRODUCTION_FRAMEWORK.md`
+5. Existing Services page files under `apps/web`

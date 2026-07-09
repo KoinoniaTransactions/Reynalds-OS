@@ -138,3 +138,42 @@ Production build passes after adding `_document.tsx`.
 ## Important Future Note
 
 Do not remove `apps/web/pages/_app.tsx`, `apps/web/pages/404.tsx`, or `apps/web/pages/_document.tsx` without intentionally migrating the project to App Router only and verifying all build/runtime behavior.
+
+## 2026-07-09 — Koinonia Home Page Completion Checkpoint
+
+### Summary
+
+The Koinonia Home page has been visually polished, build-validated, committed, and pushed to GitHub.
+
+### Confirmed Commits
+
+- `e124ca6` — Align Koinonia home page content
+- `85c907d` — Polish Koinonia home page presentation
+
+### Confirmed Home Page State
+
+- Hero headline: `Real Estate Operations. Elevated.`
+- Hero layout: left-aligned copy with right-side visual image.
+- Home body section headers are centered as a full group:
+  - eyebrow
+  - title
+  - supporting lead text
+- Visible process section label remains: `The Koinonia Experience`
+- Internal production documentation now refers to the same section as `Koinonia Experience`.
+- CTA primary button styling was corrected so `Schedule a Consultation` reads as the primary action.
+- Footer remains unchanged.
+
+### Build Verification
+
+The web app build passed after running:
+
+- `pnpm --filter @reynalds-os/database db:generate`
+- `cd apps/web`
+- `rm -rf .next`
+- `pnpm build`
+
+### Current Working Rule
+
+Do not rework the Home page unless a launch-blocking issue is found.
+
+The next production priority is the Koinonia Services page.
