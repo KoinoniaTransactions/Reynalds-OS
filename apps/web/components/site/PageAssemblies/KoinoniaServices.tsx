@@ -1,5 +1,5 @@
 import { servicesContent } from "@/content/services";
-import { CTA, FAQ, Footer, Hero, TrustPillars, UniversalCard } from "../index";
+import { CTA, FAQ, Footer, Hero, UniversalCard } from "../index";
 
 export function KoinoniaServices() {
   return (
@@ -8,17 +8,21 @@ export function KoinoniaServices() {
         eyebrow={servicesContent.hero.eyebrow}
         title={servicesContent.hero.title}
         lead={servicesContent.hero.lead}
+        primaryLabel={servicesContent.hero.primaryLabel}
+        primaryHref={servicesContent.hero.primaryHref}
+        secondaryLabel={servicesContent.hero.secondaryLabel}
+        secondaryHref={servicesContent.hero.secondaryHref}
         visualDesktopSrc="/assets/images/koinonia/services/services-hero-desktop.png"
         visualMobileSrc="/assets/images/koinonia/services/services-hero-mobile.png"
+        variant="fullBleed"
       />
-
-      <TrustPillars />
 
       <section className="koinonia-section">
         <div className="koinonia-container">
           <div className="koinonia-section-header">
             <div className="koinonia-eyebrow">{servicesContent.categories.eyebrow}</div>
             <h2 className="koinonia-heading">{servicesContent.categories.title}</h2>
+            <p className="koinonia-copy">{servicesContent.categories.lead}</p>
           </div>
 
           <div className="koinonia-grid four">
@@ -38,12 +42,33 @@ export function KoinoniaServices() {
       <section className="koinonia-section koinonia-band">
         <div className="koinonia-container">
           <div className="koinonia-section-header">
-            <div className="koinonia-eyebrow">How It Works</div>
-            <h2 className="koinonia-heading">A simple process built around you.</h2>
+            <div className="koinonia-eyebrow">{servicesContent.fit.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.fit.title}</h2>
+            <p className="koinonia-copy">{servicesContent.fit.lead}</p>
           </div>
 
-          <div className="koinonia-grid three">
-            {servicesContent.process.map((step, index) => (
+          <div className="koinonia-grid four">
+            {servicesContent.fit.cards.map((card, index) => (
+              <UniversalCard
+                key={card.title}
+                eyebrow={`0${index + 1}`}
+                title={card.title}
+                body={card.body}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header">
+            <div className="koinonia-eyebrow">{servicesContent.process.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.process.title}</h2>
+          </div>
+
+          <div className="koinonia-grid four">
+            {servicesContent.process.steps.map((step, index) => (
               <UniversalCard
                 key={step.title}
                 eyebrow={`0${index + 1}`}
@@ -55,18 +80,16 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section className="koinonia-section">
+      <section id="support-levels" className="koinonia-section koinonia-band">
         <div className="koinonia-container">
           <div className="koinonia-section-header">
-            <div className="koinonia-eyebrow">Support Levels</div>
-            <h2 className="koinonia-heading">Choose the support that fits your business.</h2>
-            <p className="koinonia-copy">
-              The conversation stays focused on support first. Pricing supports the decision rather than driving it.
-            </p>
+            <div className="koinonia-eyebrow">{servicesContent.supportLevels.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.supportLevels.title}</h2>
+            <p className="koinonia-copy">{servicesContent.supportLevels.lead}</p>
           </div>
 
           <div className="koinonia-grid three">
-            {servicesContent.supportLevels.map((level) => (
+            {servicesContent.supportLevels.levels.map((level) => (
               <UniversalCard
                 key={level.title}
                 title={level.title}
