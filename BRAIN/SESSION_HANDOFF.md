@@ -1,327 +1,179 @@
 # Reynalds OS Session Handoff
 
-## Startup Instruction
+## Purpose
 
-Before making recommendations or writing code, read:
+This document is the operational handoff for the next development session.
 
-1. BRAIN/README.md
-2. BRAIN/PROJECT_STATE.md
-3. BRAIN/PRODUCT_VISION.md
-4. BRAIN/ARCHITECTURE_PRINCIPLES.md
-5. BRAIN/DECISION_LOG.md
-6. BRAIN/ROADMAP.md
+It is intentionally current-focused.
 
-Do not invent architecture. Inspect the repository before proposing implementation.
+Historical information belongs in:
 
----
+- DEVELOPMENT_LOG.md
+- VERSION_HISTORY.md
+- DECISION_LOG.md
 
-## Current Project
-
-Reynalds OS is a long-term operating system platform built around a universal Object Engine and Brain.
-
-Koinonia ERP is the first operating workspace.
+This document should only describe the repository as it exists today.
 
 ---
 
-## Current Version
+# Repository Status
+
+Repository:
 
 Reynalds_OS_v11_3_1_Work
 
----
+Primary Workspace:
 
-## Current Branch
+Koinonia ERP
+
+Current Branch:
 
 feature/app-shell-foundation
 
----
+Production build:
 
-## Current Milestone
-
-ROS-0078 — Brain Consolidation & Project Intelligence
+Passing
 
 ---
 
-## What Happened This Session
+# Required Startup Workflow
 
-- Confirmed local repository access.
-- Opened Reynalds OS in VS Code.
-- Verified current branch.
-- Reviewed the Prisma schema.
-- Reviewed the Dashboard shell.
-- Reviewed the Koinonia website page assemblies.
-- Reviewed the shared Hero and UniversalCard components.
-- Reviewed the shared design system styles.
-- Confirmed the Object Engine is already central to the architecture.
-- Confirmed the BRAIN folder already exists as the authoritative engineering memory.
-- Created BRAIN/PROJECT_STATE.md.
+Before making recommendations or creating code, documentation, imagery, or architecture:
 
----
+1. Read START_HERE.md.
+2. Read BRAIN/README.md.
+3. Read BRAIN/CANONICAL_REGISTRY.md.
+4. Read PROJECT_STATE.md.
+5. Read CURRENT_PRIORITIES.md.
+6. Read DEVELOPMENT_STANDARDS.md.
+7. Read DECISION_LOG.md.
+8. Inspect the repository.
 
-## Key Decisions
-
-- BRAIN is the canonical engineering and AI knowledge base.
-- docs is for generated reports, audits, tickets, specifications, and release artifacts.
-- The Koinonia website should be finished before major Brain expansion.
-- The Brain should orchestrate the existing Object Engine instead of owning data.
-- Conversations are temporary. The repository is permanent.
+Do not begin implementation until the existing architecture is understood.
 
 ---
 
-## Next Recommended Task
+# Repository Maturity
 
-Create and maintain SESSION_HANDOFF.md as the startup document for future AI sessions.
+Reynalds OS is no longer an early-stage project.
 
-Then continue with:
+Many architectural systems, workflows, documentation structures, reusable components, and business models already exist.
 
-ROS-0079 — Koinonia Website Production Polish
+Assume the repository is more complete than your initial understanding.
+
+Search before recommending.
+
+Recover before reinventing.
+
+Extend before creating.
+
+Never recommend new architecture until you have verified that an equivalent solution does not already exist.
+
+---
+
+# Current Development Focus
 
 Primary objective:
 
-Finish the public Koinonia website using the existing reusable site components and design system.
+Complete the Koinonia production website.
+
+Platform expansion should occur only when it directly accelerates website production or solves a recurring architectural problem.
 
 ---
 
-## Future Startup Workflow
+# Koinonia Website Status
 
-A future ChatGPT session should begin by reading this file and PROJECT_STATE.md, then inspect the repository before recommending work.
-# Session Handoff — 2026-07-07
+Current website architecture is component-first.
 
-## Status
-Completed the first major architectural refactor of the Reynalds OS dashboard.
+Canonical sources include:
 
-## Completed This Session
+- Brand Core
+- Website Production Framework
+- Image System
+- Production Index
+- Page Specifications
 
-- Extracted dashboard into reusable components:
-  - Sidebar
-  - TopBar
-  - MissionCards
-  - WorkspaceRegistry
-  - BrainRuleCard
-  - MetricGrid
-- Created shared Brain libraries:
-  - brain.ts
-  - workspace.ts
-  - objectEngine.ts
-- Added dashboard barrel export (`components/dashboard/index.ts`).
-- Updated dashboard-shell.tsx to use the modular component architecture.
-- Successfully committed changes.
+Reusable content should live in the content architecture.
 
-Latest commit:
-`ca12547`
-
-Commit message:
-`v11.3.1 - Modular dashboard foundation`
-
-## Current Issue
-
-The application logic appears intact, but the local Next.js development server entered an inconsistent cache state after the refactor. Symptoms included:
-
-- ENOENT errors
-- Missing required error components
-- app/page.js not found
-- Development server switching ports
-
-Likely resolution:
-
-1. Delete `apps/web/.next`
-2. Restart `pnpm dev`
-3. Verify the dashboard loads normally before making additional changes.
-
-## Next Development Goal
-
-Begin construction of the Reynalds OS Brain Engine:
-
-1. Brain Service
-2. Object Registry
-3. Timeline Engine
-4. Universal Search
-5. AI Command Center
-
-## Notes
-
-The dashboard modularization is considered complete and is now the foundation for all future Reynalds OS development. Future work should build on this architecture rather than reverting to a monolithic dashboard.
----
-
-# Session Handoff — 2026-07-08
-
-## Status
-
-This session successfully stabilized the Next.js workspace after extensive build failures.
-
-### Build Status
-
-Production build passes successfully.
-
-Verified with:
-
-pnpm build
-
-from:
-
-apps/web
-
-No remaining build errors.
+Reusable presentation belongs in shared React components.
 
 ---
 
-## Major Accomplishments
+# Hero Production Standard
 
-### Infrastructure
+The Koinonia website follows a single visual system.
 
-- Upgraded Next.js from 15.5.4 to 15.5.20.
-- Regenerated Prisma client.
-- Resolved missing:
-  - middleware-manifest.json
-  - pages-manifest.json
-  - .nft.json
-  - .next/static
-- Removed temporary Prisma workaround after proper Prisma generation.
-- Verified clean production build.
+Every hero should:
 
-### Koinonia Architecture
+- use the same office
+- preserve permanent anchor elements
+- tell the story through objects
+- allow HTML to communicate the marketing message
+- follow the Hero Composition Standard
+- include separate desktop and mobile compositions
 
-Centralized reusable website content into:
+Previously approved heroes are the reference standard.
 
-apps/web/content/shared.ts
+Do not reinvent the visual language.
 
-Current centralized sections:
-
-- CTA
-- Footer
-- Trust Pillars
-- Contact Actions
-
-All corresponding UI components now consume shared content instead of hardcoded copy.
-
-Every architectural change was followed by a successful production build.
-
-## Current Branch
-
-feature/app-shell-foundation
-
-## Latest Commits
-
-760bd94 — Move Contact Actions copy to shared content
-
-61eb7ff — Move Trust Pillars copy to shared content
-
-13c3672 — Move Footer copy to shared content
-
-0fa65b3 — Move CTA copy to shared content
-
-## Immediate Next Objective
-
-Continue migrating reusable website copy into the shared content architecture.
-
-Recommended order:
-
-1. FAQ
-2. Hero Variants
-3. Universal Cards
-4. Navigation
-5. Metadata / SEO
-6. Brand Constants
-7. Theme Constants
-
-Goal:
-
-Every reusable marketing component should become a pure rendering component with no embedded copy.
-
-Before writing new code:
-
-1. Read the Brain.
-2. Verify `pnpm build` passes.
-3. Continue with FAQ migration.
+Extend it.
 
 ---
 
-# Session Handoff — 2026-07-08 Repository Architecture Recovery
+# Required Pre-Execution Validation
 
-## Status
+Before performing significant work:
 
-Repository recovery and architecture documentation update completed.
-
-## Completed
-
-- Confirmed branch: feature/app-shell-foundation.
-- Confirmed Koinonia content architecture commits are complete.
-- Confirmed existing architecture documentation already exists.
-- Updated docs/ARCHITECTURE.md instead of creating a duplicate architecture document.
-- Confirmed the canonical design system is packages/design-system.
-- Confirmed Koinonia website content lives in apps/web/content.
-
-## Current Architecture Understanding
-
-Reynalds OS consists of five primary layers:
-
-1. Governance Layer — START_HERE.md, BRAIN, standards, decisions, handoffs.
-2. Platform Layer — packages and apps/web/lib.
-3. Application Layer — apps/web/app and apps/web/components.
-4. Workspace Layer — Koinonia ERP as the first production workspace.
-5. Content Layer — apps/web/content.
-
-## Recent Koinonia Commits
-
-- a727d58 — Move FAQ copy to shared content
-- 4034cd2 — Add Koinonia brand content constants
-- 54643e4 — Use brand content for Hero defaults
-
-## Important Notes for Future AI
-
-- Do not create duplicate theme systems. Use packages/design-system.
-- Do not create duplicate architecture docs unless existing docs are insufficient and user approves.
-- Extend canonical files whenever possible.
-- Continue small change → build → commit.
-- Keep Koinonia website launch as the primary active track unless explicitly redirected.
-
-## Known Issues
-
-- START_HERE.md previously referenced missing BRAIN/ARCHITECTURE_PRINCIPLES.md.
-- Root package.json may not match Brain version 11.3.1.
-- Older docs may be historical and should not override current Brain documentation.
-
-## Recommended Next Step
-
-Commit the documentation updates, then resume Koinonia website content architecture work.
+1. Restate what you understand.
+2. Identify the governing repository standards.
+3. Explain any better approach.
+4. Explain exactly what will be executed.
+5. Wait for approval.
+6. Execute.
+7. Validate against the governing standard.
 
 ---
 
-# Session Handoff — 2026-07-08 Next.js Hybrid Routing Fix
+# Current Working Philosophy
 
-## Status
+The repository is the source of truth.
 
-Localhost rendering issue resolved.
+The Brain explains the repository.
 
-## Problem
+Conversation history is temporary.
 
-Koinonia pages appeared blank in localhost because Next.js development chunks were returning 404.
+Approved architectural decisions are considered closed unless intentionally reopened.
 
-The server was rendering an error payload showing that `.next/server/pages/_document.js` could not be found.
+Website launch takes priority over further platform expansion.
 
-## Cause
+---
 
-The project currently uses a hybrid Next.js routing setup:
+# Immediate Next Task
 
-- App Router under `apps/web/app`
-- Pages Router fallback under `apps/web/pages`
+Continue production of the Koinonia website.
 
-The Pages Router fallback requires:
+Follow the established page production workflow:
 
-- `apps/web/pages/_app.tsx`
-- `apps/web/pages/404.tsx`
-- `apps/web/pages/_document.tsx`
+1. Design review.
+2. Desktop hero.
+3. Mobile hero.
+4. Source assets.
+5. Production assets.
+6. React implementation.
+7. Local verification.
+8. Production build.
+9. Commit.
 
-## Fix
+Repeat for each remaining page until the website is complete.
 
-Added:
+---
 
-- `apps/web/pages/_document.tsx`
+# Final Reminder
 
-## Result
+Do not measure progress by how much new architecture is created.
 
-- Production build passes.
-- `/koinonia` loads on localhost again.
+Measure progress by how faithfully existing architecture is understood, extended, and brought to production.
 
-## Future AI Instruction
+The objective is not to redesign Reynalds OS.
 
-Do not delete the `apps/web/pages` fallback files unless deliberately converting the app to App Router only.
+The objective is to complete it.
