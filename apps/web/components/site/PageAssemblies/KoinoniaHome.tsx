@@ -14,6 +14,7 @@ export function KoinoniaHome() {
         secondaryHref={homeContent.hero.secondaryHref}
         visualDesktopSrc="/assets/images/koinonia/home/home-hero-desktop.png"
         visualMobileSrc="/assets/images/koinonia/home/home-hero-mobile.png"
+        variant="fullBleed"
       />
 
       <TrustPillars />
