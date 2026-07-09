@@ -784,3 +784,15 @@ h1 {
 .koinonia-cta .koinonia-button.secondary:hover {
   transform: translateY(-1px);
 }
+
+/* Koinonia Home section header alignment polish */
+.koinonia-site > .koinonia-section:not(.koinonia-hero) .koinonia-section-header {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.koinonia-site > .koinonia-section:not(.koinonia-hero) .koinonia-section-header .koinonia-section-lead {
+  margin-left: auto;
+  margin-right: auto;
+}
