@@ -12,6 +12,8 @@ export function KoinoniaHome() {
         primaryHref={homeContent.hero.primaryHref}
         secondaryLabel={homeContent.hero.secondaryLabel}
         secondaryHref={homeContent.hero.secondaryHref}
+        visualDesktopSrc="/assets/images/koinonia/home/home-hero-desktop.png"
+        visualMobileSrc="/assets/images/koinonia/home/home-hero-mobile.png"
       />
 
       <TrustPillars />

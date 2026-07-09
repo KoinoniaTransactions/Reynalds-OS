@@ -158,7 +158,6 @@ h1 {
   font-size: 13px;
 }
 
-
 .ros-panel {
   background: var(--ros-surface);
   border: 1px solid var(--ros-border);
@@ -247,7 +246,6 @@ h1 {
   }
 }
 
-
 .ros-form {
   display: grid;
   gap: 10px;
@@ -270,7 +268,6 @@ h1 {
   cursor: not-allowed;
 }
 
-
 .ros-filters select,
 .ros-form select {
   border: 1px solid var(--ros-border);
@@ -285,7 +282,6 @@ h1 {
   border-radius: 14px;
 }
 
-
 .ros-button-link {
   border: none;
   border-radius: 999px;
@@ -297,7 +293,6 @@ h1 {
   display: inline-block;
 }
 
-
 .ros-code {
   background: #f6f1ea;
   border: 1px solid var(--ros-border);
@@ -307,8 +302,6 @@ h1 {
   font-size: 12px;
   color: var(--ros-text);
 }
-
-
 
 /* Koinonia public website components */
 .koinonia-site {
@@ -395,39 +388,30 @@ h1 {
 }
 
 .koinonia-visual {
-  background: linear-gradient(135deg, #ffffff 0%, #f2e6d5 100%);
   border: 1px solid var(--ros-border);
   border-radius: 30px;
   min-height: 360px;
-  box-shadow: 0 24px 70px rgba(0,0,0,0.10);
-  position: relative;
   overflow: hidden;
+  position: relative;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.10);
+  background: #f7f1e8;
 }
 
-.koinonia-visual::before {
-  content: "";
-  position: absolute;
-  inset: 42px;
-  border-radius: 24px;
-  background: #161616;
-  box-shadow: 0 22px 44px rgba(0,0,0,0.22);
+.koinonia-visual picture,
+.koinonia-visual img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
-.koinonia-visual::after {
-  content: "K";
-  position: absolute;
-  right: 48px;
-  bottom: 42px;
-  width: 84px;
-  height: 84px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--ros-gold);
-  color: #fff;
-  font-family: var(--ros-font-display);
-  font-size: 48px;
-  font-weight: 700;
+.koinonia-visual img {
+  object-fit: cover;
+  object-position: center;
+}
+
+.koinonia-visual.has-image::before,
+.koinonia-visual.has-image::after {
+  display: none;
 }
 
 .koinonia-section-header {
@@ -570,11 +554,13 @@ h1 {
   .koinonia-grid.two {
     grid-template-columns: 1fr;
   }
+
   .koinonia-hero {
     min-height: auto;
   }
+
   .koinonia-visual {
-    min-height: 260px;
+    min-height: 320px;
   }
 }
 

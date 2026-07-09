@@ -8,6 +8,9 @@ export type HeroProps = {
   primaryHref?: string;
   secondaryLabel?: string;
   secondaryHref?: string;
+  visualDesktopSrc?: string;
+  visualMobileSrc?: string;
+  visualAlt?: string;
 };
 
 export function Hero({
@@ -17,7 +20,10 @@ export function Hero({
   primaryLabel = brandContent.cta.primaryLabel,
   primaryHref = brandContent.navigation.contact,
   secondaryLabel,
-  secondaryHref
+  secondaryHref,
+  visualDesktopSrc,
+  visualMobileSrc,
+  visualAlt = "Koinonia organized real estate operations workspace"
 }: HeroProps) {
   return (
     <section className="koinonia-section koinonia-hero">
@@ -40,10 +46,16 @@ export function Hero({
           </div>
         </div>
 
-        <div
-          className="koinonia-visual"
-          aria-label="Koinonia organized real estate operations workspace"
-        />
+        <div className={visualDesktopSrc ? "koinonia-visual has-image" : "koinonia-visual"}>
+          {visualDesktopSrc ? (
+            <picture>
+              {visualMobileSrc ? (
+                <source media="(max-width: 980px)" srcSet={visualMobileSrc} />
+              ) : null}
+              <img src={visualDesktopSrc} alt={visualAlt} />
+            </picture>
+          ) : null}
+        </div>
       </div>
     </section>
   );

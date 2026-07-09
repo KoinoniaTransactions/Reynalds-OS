@@ -1,67 +1,67 @@
 export const homeContent = {
   hero: {
-    eyebrow: "Real Estate Transaction Support",
-    title: "When the details start pulling you away from clients, Koinonia steps in.",
+    eyebrow: "Real Estate Operations Support",
+    title: "The operational partner behind every successful closing.",
     lead:
-      "Koinonia helps Realtors stay focused on relationships, negotiations, and closings by taking on the behind-the-scenes work that slows deals down: transaction timelines, contract paperwork, showing coverage, client coordination, and organized follow-through.",
-    primaryLabel: "See How Koinonia Helps",
+      "You focus on your clients. Koinonia helps keep the business running with transaction management, contract preparation, licensed showing coverage, and organized business support for Realtors.",
+    primaryLabel: "Explore Services",
     primaryHref: "/koinonia/services",
-    secondaryLabel: "Start a Conversation",
+    secondaryLabel: "Contact Koinonia",
     secondaryHref: "/koinonia/contact"
   },
 
   servicesIntro: {
-    eyebrow: "Problems We Help Solve",
-    title: "Support for the parts of real estate that are important, time-sensitive, and easy to let slip.",
+    eyebrow: "Real Estate Operations",
+    title: "Support built around the way Realtors actually work.",
     lead:
-      "Whether you are managing too many moving pieces, writing contracts after hours, needing showing help, or trying to keep your business organized, Koinonia gives you dependable support behind the scenes."
+      "From active transactions to after-hours paperwork, showing conflicts, and daily business organization, Koinonia provides calm, dependable support behind the scenes."
   },
 
   services: [
     {
-      title: "Transactions Feel Scattered",
+      title: "Transaction Management",
       body:
-        "When deadlines, documents, and communication are spread across too many places, Koinonia helps bring the transaction back into an organized path.",
-      items: ["Deadline tracking", "Document coordination", "Clear transaction follow-through"]
+        "For Realtors who need timelines, documents, communication, and deadlines kept organized from contract to close.",
+      items: ["Timeline coordination", "Deadline tracking", "Communication support"]
     },
     {
-      title: "Paperwork Takes Over Your Evenings",
+      title: "Contract Preparation & Writing",
       body:
-        "When contracts, amendments, and addenda start pulling time away from clients or family, Koinonia helps prepare clean, organized files.",
-      items: ["Offer preparation", "Amendments and addenda", "Signature-ready documents"]
+        "For Realtors who need accurate, timely document support without losing focus on clients and negotiations.",
+      items: ["Offer preparation", "Amendments and addenda", "Signature-ready files"]
     },
     {
-      title: "You Cannot Be Everywhere",
+      title: "Licensed Showing Coverage",
       body:
-        "When schedules overlap or a client needs access while you are already committed, Koinonia provides licensed showing support.",
-      items: ["Licensed showing coverage", "Access coordination", "Showing feedback"]
+        "For moments when your schedule is full, clients need access, and dependable licensed support matters.",
+      items: ["Licensed support", "Access coordination", "Showing feedback"]
     },
     {
-      title: "Your Business Needs More Structure",
+      title: "Business Operations Support",
       body:
-        "When the work keeps moving but the systems are unclear, Koinonia helps create more organized communication, workflows, and client support.",
-      items: ["Workflow support", "Client coordination", "Operational organization"]
+        "For growing Realtors who need more structure, clearer workflows, and organized client support.",
+      items: ["Workflow support", "Client coordination", "Business organization"]
     }
   ],
 
   experience: {
-    eyebrow: "How Koinonia Works",
-    title: "Simple support that makes the next step clear.",
+    eyebrow: "The Koinonia Experience",
+    title: "Organized, calm, and easy to follow.",
     cards: [
       {
-        title: "Identify the pressure point",
+        title: "Connect",
         body:
-          "We start by understanding what is slowing you down, creating risk, or taking time away from your clients."
+          "Start with a clear conversation about where support would make the biggest difference."
       },
       {
-        title: "Organize the moving pieces",
+        title: "Coordinate",
         body:
-          "Koinonia helps bring timelines, paperwork, communication, and next steps into a clearer process."
+          "Koinonia organizes the details, deadlines, documents, communication, and next steps."
       },
       {
-        title: "Keep the work moving",
+        title: "Support",
         body:
-          "You stay focused on the client relationship while the operational details are tracked and supported."
+          "You keep serving clients while the operational work stays visible, structured, and moving."
       }
     ]
   }
