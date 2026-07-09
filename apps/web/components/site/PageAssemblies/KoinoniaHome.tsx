@@ -37,6 +37,22 @@ export function KoinoniaHome() {
         </div>
       </Section>
 
+      <Section
+        eyebrow={homeContent.experience.eyebrow}
+        title={homeContent.experience.title}
+      >
+        <div className="koinonia-grid three">
+          {homeContent.experience.cards.map((card, index) => (
+            <UniversalCard
+              key={card.title}
+              eyebrow={`0${index + 1}`}
+              title={card.title}
+              body={card.body}
+            />
+          ))}
+        </div>
+      </Section>
+
       <CTA />
       <Footer />
     </main>
