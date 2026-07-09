@@ -2,122 +2,147 @@
 
 ## Active Phase
 
-Foundation Stabilization
+Koinonia Production Website
 
 ---
 
-## Current Objective
+# Primary Objective
 
-Transform Reynalds OS from a prototype into a production-ready platform.
+Complete and launch the Koinonia website as the first production application built on Reynalds OS.
 
----
-
-## Immediate Priorities
-
-1. Ensure the application runs locally without errors.
-2. Complete the Brain documentation.
-3. Connect dashboard metrics to live database data.
-4. Strengthen the shared Object Engine.
-5. Build the Brain orchestration module.
-6. Polish the Koinonia workspace.
-7. Prepare for first deployment.
+All development should support this objective unless a platform improvement directly accelerates website production.
 
 ---
 
-## Development Rules
+# Repository Status
 
-- Read the Brain before making architectural decisions.
-- Reuse existing modules whenever possible.
-- Prefer extending the Object Engine over creating isolated systems.
-- Update documentation before considering architectural work complete.
-- Explain proposed architectural changes and wait for approval before implementing them.
+Current State:
 
----
+Production website under active development.
 
-## Success Criteria
+Repository architecture is established.
 
-The next major milestone is a locally running Reynalds OS instance with:
+Core Brain documentation is established.
 
-- Shared navigation
-- Dashboard powered by live data
-- CRM
-- Transactions
-- Operations
-- Finance
-- Brain documentation fully established
-# Active Development Tracks
+GitHub workflow is established.
 
-## Track A — Koinonia (Highest Priority)
+Component architecture is established.
 
-Objective:
+Hero Image System is established.
 
-Launch the first production application built on Reynalds OS.
-
-Current work includes:
-
-- Home
-- Services
-- About
-- Contact
-- Pricing
-- Mobile optimization
-- QA
-- Launch preparation
-
-Development pauses only when additional operating system infrastructure is required.
+Current emphasis is implementation, refinement, and launch.
 
 ---
 
-## Track B — Reynalds OS Foundation
+# Current Production Milestones
 
-Develop shared infrastructure only when needed to support Koinonia.
+## ✅ Completed
 
-Examples:
-
-- Brain Engine
-- Object Registry
-- Universal Search
-- Timeline
-- Workspace Manager
-- Command Center
-
-The operating system should grow in response to real application needs rather than speculative architecture.
+- Repository architecture established
+- Brain documentation established
+- Canonical Registry established
+- Decision Log established
+- Development Standards established
+- Hero Composition Standard established
+- Koinonia Image System established
+- Shared content architecture established
+- Component-first website architecture established
+- Desktop and mobile hero system completed for:
+  - Home
+  - About
+  - Services
+  - Contact
+- Hero imagery implemented in React
+- Production build verified
+- GitHub workflow established and verified
 
 ---
 
-## Track C — Future Applications
+## Active Work
 
-After Koinonia launches:
+Complete the production pages.
 
-- CRM
-- Transactions
-- Finance
-- Operations
-- Knowledge
-- Intelligence
-- Family
-- Personal
+Current page order:
+
+1. Home
+2. Services
+3. About
+4. Contact
+5. Pricing
+6. FAQ
+7. Launch QA
+
 ---
 
-# Website Priority
+# Current Development Workflow
 
-Continue migrating reusable website content into the centralized content architecture.
+Every production task follows this sequence:
 
-Immediate targets:
+1. Understand the request.
+2. Review existing implementation.
+3. Recommend improvements if appropriate.
+4. Explain planned work.
+5. Wait for approval.
+6. Implement.
+7. Verify localhost.
+8. Verify production build.
+9. Commit.
+10. Push to GitHub.
+11. Update Brain only if a meaningful architectural discovery occurred.
 
-- FAQ
-- Hero
-- Universal Cards
-- Navigation
-- Metadata
-- Social Links
-- Brand Constants
-- Theme Constants
+---
 
-Development rule:
+# Development Philosophy
 
-Every migration must:
+The repository should grow through refinement rather than reinvention.
 
-1. Compile successfully.
-2. Pass production build.
-3. Be committed immediately.
+Always:
+
+- recover before reinventing
+- reuse before replacing
+- extend before creating
+
+The existing architecture should be strengthened, not restarted.
+
+---
+
+# Platform Development Rule
+
+Operating system work is now secondary.
+
+Platform improvements should occur only when they:
+
+- remove repeated work,
+- solve an architectural limitation,
+- accelerate Koinonia production, or
+- improve long-term maintainability.
+
+Do not interrupt website production for speculative platform development.
+
+---
+
+# Immediate Next Tasks
+
+1. Refine Home page sections.
+2. Complete Services page.
+3. Complete About page.
+4. Complete Contact page.
+5. Build Pricing page.
+6. Complete responsive polish.
+7. QA every page.
+8. Launch.
+
+---
+
+# Success Criteria
+
+The current milestone is achieved when:
+
+- Every public page is production quality.
+- Desktop and mobile experiences are complete.
+- All pages use the shared component architecture.
+- Hero system is consistent across the site.
+- Production build passes.
+- Changes are committed and pushed to GitHub.
+
+Only then should focus shift back toward broader Reynalds OS expansion.

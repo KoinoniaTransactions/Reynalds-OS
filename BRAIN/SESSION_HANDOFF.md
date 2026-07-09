@@ -2,9 +2,7 @@
 
 ## Purpose
 
-This document is the operational handoff for the next development session.
-
-It is intentionally current-focused.
+This document provides the operational state of the repository at the conclusion of the most recent development session.
 
 Historical information belongs in:
 
@@ -12,7 +10,7 @@ Historical information belongs in:
 - VERSION_HISTORY.md
 - DECISION_LOG.md
 
-This document should only describe the repository as it exists today.
+This document should describe only the current repository state and the immediate next work.
 
 ---
 
@@ -30,150 +28,125 @@ Current Branch:
 
 feature/app-shell-foundation
 
-Production build:
+GitHub Status:
 
-Passing
+Local branch synchronized with origin.
 
----
+Working Tree:
 
-# Required Startup Workflow
+Clean.
 
-Before making recommendations or creating code, documentation, imagery, or architecture:
+Production Build:
 
-1. Read START_HERE.md.
-2. Read BRAIN/README.md.
-3. Read BRAIN/CANONICAL_REGISTRY.md.
-4. Read PROJECT_STATE.md.
-5. Read CURRENT_PRIORITIES.md.
-6. Read DEVELOPMENT_STANDARDS.md.
-7. Read DECISION_LOG.md.
-8. Inspect the repository.
-
-Do not begin implementation until the existing architecture is understood.
+Passing.
 
 ---
 
 # Repository Maturity
 
-Reynalds OS is no longer an early-stage project.
+Reynalds OS is an actively developed production repository.
 
-Many architectural systems, workflows, documentation structures, reusable components, and business models already exist.
+It contains substantial existing architecture, reusable components, business logic, documentation, content systems, design standards, and operating rules.
 
-Assume the repository is more complete than your initial understanding.
+Future development should assume the repository is significantly more complete than it initially appears.
 
-Search before recommending.
-
-Recover before reinventing.
-
-Extend before creating.
-
-Never recommend new architecture until you have verified that an equivalent solution does not already exist.
+Never assume something is missing until the repository has been inspected.
 
 ---
 
-# Current Development Focus
+# Mandatory Startup Workflow
 
-Primary objective:
+Before recommending, creating, replacing, or redesigning anything:
 
-Complete the Koinonia production website.
+1. Read START_HERE.md.
+2. Read BRAIN/README.md.
+3. Read BRAIN/CANONICAL_REGISTRY.md.
+4. Read BRAIN/CURRENT_PRIORITIES.md.
+5. Read BRAIN/DEVELOPMENT_STANDARDS.md.
+6. Read BRAIN/DECISION_LOG.md.
+7. Inspect the repository structure.
+8. Search for existing implementations.
+9. Identify the governing canonical source.
+10. Only then recommend implementation.
 
-Platform expansion should occur only when it directly accelerates website production or solves a recurring architectural problem.
+Repository inspection is mandatory.
 
----
-
-# Koinonia Website Status
-
-Current website architecture is component-first.
-
-Canonical sources include:
-
-- Brand Core
-- Website Production Framework
-- Image System
-- Production Index
-- Page Specifications
-
-Reusable content should live in the content architecture.
-
-Reusable presentation belongs in shared React components.
+Conversation history is never a substitute for repository inspection.
 
 ---
 
-# Hero Production Standard
+# Current Development Phase
 
-The Koinonia website follows a single visual system.
+Launch preparation for the Koinonia production website.
 
-Every hero should:
-
-- use the same office
-- preserve permanent anchor elements
-- tell the story through objects
-- allow HTML to communicate the marketing message
-- follow the Hero Composition Standard
-- include separate desktop and mobile compositions
-
-Previously approved heroes are the reference standard.
-
-Do not reinvent the visual language.
-
-Extend it.
+Platform work should occur only when it directly accelerates website completion.
 
 ---
 
-# Required Pre-Execution Validation
+# Major Milestones Completed
 
-Before performing significant work:
-
-1. Restate what you understand.
-2. Identify the governing repository standards.
-3. Explain any better approach.
-4. Explain exactly what will be executed.
-5. Wait for approval.
-6. Execute.
-7. Validate against the governing standard.
-
----
-
-# Current Working Philosophy
-
-The repository is the source of truth.
-
-The Brain explains the repository.
-
-Conversation history is temporary.
-
-Approved architectural decisions are considered closed unless intentionally reopened.
-
-Website launch takes priority over further platform expansion.
+- Repository-first workflow established.
+- GitHub workflow established and verified.
+- Hero Image System established.
+- Hero Composition Standard established.
+- Shared content architecture established.
+- Component-first page architecture established.
+- Desktop/mobile hero system completed for:
+  - Home
+  - About
+  - Services
+  - Contact
+- Hero imagery integrated into React.
+- Production assets and source assets committed.
+- Production build verified.
+- All work committed and pushed to GitHub.
 
 ---
 
 # Immediate Next Task
 
-Continue production of the Koinonia website.
+Continue implementation of the Koinonia production website.
 
-Follow the established page production workflow:
+Next work begins immediately below the Home page hero.
 
-1. Design review.
-2. Desktop hero.
-3. Mobile hero.
-4. Source assets.
-5. Production assets.
-6. React implementation.
-7. Local verification.
-8. Production build.
-9. Commit.
+Recommended order:
 
-Repeat for each remaining page until the website is complete.
+1. Refine Home page sections.
+2. Complete Services page.
+3. Complete About page.
+4. Complete Contact page.
+5. Pricing.
+6. QA.
+7. Launch.
+
+Do not begin new operating system initiatives unless they directly accelerate these objectives.
+
+---
+
+# Pre-Execution Rule
+
+Before every meaningful implementation:
+
+1. Restate understanding.
+2. Identify governing standards.
+3. Recommend a better approach if one exists.
+4. Explain exactly what will be created.
+5. Wait for approval.
+6. Execute.
+7. Validate.
+8. Commit.
+9. Push.
 
 ---
 
 # Final Reminder
 
-Do not measure progress by how much new architecture is created.
+Progress is measured by production completion, not by architectural expansion.
 
-Measure progress by how faithfully existing architecture is understood, extended, and brought to production.
+The repository already contains far more capability than is immediately visible.
 
-The objective is not to redesign Reynalds OS.
+Recover before reinventing.
 
-The objective is to complete it.
+Extend before creating.
+
+Inspect before recommending.

@@ -2,55 +2,66 @@
 
 ## Welcome
 
-This document is the primary entry point for Reynalds OS.
+This is the mandatory entry point for every new development session.
 
-Future developers and AI sessions should begin here before making recommendations, writing code, creating documentation, generating imagery, or proposing architecture.
+Whether you are an AI assistant, GitHub Copilot, or a human developer, begin here before making recommendations, writing code, creating documentation, designing assets, or modifying the repository.
 
----
+This document is intentionally brief.
 
-# Repository Maturity Notice
-
-Reynalds OS is a mature, actively developed production repository.
-
-Many architectural systems, workflows, standards, reusable components, business models, and documentation already exist.
-
-Do not assume something is missing simply because it is not immediately visible.
-
-Before proposing:
-
-- new architecture
-- new documentation
-- new workflows
-- new design systems
-- new components
-- new Brain documents
-- new business structures
-
-first determine whether an equivalent canonical implementation already exists.
-
-The repository is likely more mature than your initial understanding.
-
-Recover before reinventing.
-
-Understand before recommending.
-
-Extend before creating.
+Its purpose is to establish the correct mindset and direct you to the canonical sources of truth.
 
 ---
 
-# Current Canonical Release
+# Repository Identity
 
-Version:
-
-11.3.1
-
-Workspace:
+Repository:
 
 Reynalds_OS_v11_3_1_Work
 
-Primary Production Workspace:
+Primary Production Application:
 
-Koinonia ERP
+Koinonia
+
+Current Development Phase:
+
+Production Website Completion
+
+---
+
+# Repository Maturity
+
+Reynalds OS is an actively developed production repository.
+
+It already contains:
+
+- established architecture
+- reusable React components
+- shared content systems
+- production design standards
+- business knowledge
+- documentation
+- operating rules
+- GitHub workflow
+- production image system
+
+Assume the repository contains significantly more capability than is immediately visible.
+
+Never assume something does not exist until you have searched the repository.
+
+---
+
+# Core Development Principles
+
+Always:
+
+- Understand before changing.
+- Recover before reinventing.
+- Extend before creating.
+- Inspect before recommending.
+
+The repository is the source of truth.
+
+Conversation history is not.
 
 ---
 
@@ -58,149 +69,80 @@ Koinonia ERP
 
 ## Phase 1 — Understand the Repository
 
-Read these documents completely before making recommendations.
-
 1. BRAIN/README.md
-2. BRAIN/CANONICAL_REGISTRY.md
-3. BRAIN/PRODUCT_VISION.md
-4. BRAIN/REYNALDS_OS_CONSTITUTION.md
+2. BRAIN/REYNALDS_OS_CONSTITUTION.md
+3. BRAIN/CANONICAL_REGISTRY.md
 
 ---
 
 ## Phase 2 — Understand Current Development
 
-5. BRAIN/PROJECT_STATE.md
-6. BRAIN/CURRENT_PRIORITIES.md
-7. BRAIN/DEVELOPMENT_STANDARDS.md
-8. BRAIN/DECISION_LOG.md
-9. BRAIN/SESSION_HANDOFF.md
+4. BRAIN/CURRENT_PRIORITIES.md
+5. BRAIN/SESSION_HANDOFF.md
+6. BRAIN/DEVELOPMENT_STANDARDS.md
+7. BRAIN/DECISION_LOG.md
 
 ---
 
-## Phase 3 — Understand Existing Implementation
+## Phase 3 — Inspect the Repository
 
-Before recommending architecture or creating new assets:
+Before recommending or implementing anything:
 
-- inspect the repository
-- inspect existing components
-- inspect existing documentation
-- inspect existing page implementations
+- Inspect the repository structure.
+- Search for existing implementations.
+- Identify the governing canonical source.
+- Review existing components and content.
 
-Do not rely on assumptions.
-
-Repository reality takes precedence over conversation history.
+Do not recommend creating architecture, documentation, components, or workflows until repository inspection has been completed.
 
 ---
 
-## Phase 4 — Historical Context
+# Required Communication Workflow
 
-Review historical documents only when additional context is required.
+Before every meaningful implementation:
 
-Examples:
+1. Restate your understanding of the request.
+2. Identify the governing repository standards.
+3. Recommend a better approach if one exists.
+4. Explain exactly what you intend to create or modify.
+5. Wait for approval.
+6. Execute.
+7. Validate.
+8. Commit.
+9. Push.
 
-- CURRENT_STATE.md
-- PROJECT_MEMORY.md
-- NEXT_ACTION.md
-- AI_DEVELOPMENT_CHARTER.md
-- ARCHITECT_HANDOFF.md
-
-History should explain previous decisions.
-
-It should not override current canonical documentation.
-
----
-
-# Pre-Execution Validation Workflow
-
-Before performing significant work:
-
-1. Restate what you understand.
-2. Identify the governing canonical documentation.
-3. Determine whether an equivalent implementation already exists.
-4. Explain any recommended improvements.
-5. Explain exactly what will be executed.
-6. Wait for approval.
-7. Execute.
-8. Validate the result against repository standards.
+This workflow is mandatory throughout the project.
 
 ---
 
-# Core Development Rule
+# Current Mission
 
-The repository is the authoritative source of truth.
+Complete the Koinonia production website.
 
-The Brain is the authoritative engineering documentation.
-
-Conversation history is temporary.
-
-Repository documentation is permanent.
-
-When repository documentation and previous chat history disagree:
-
-The repository wins.
+Platform work should only occur when it directly accelerates website completion or resolves a verified architectural issue.
 
 ---
 
-# Current Product
+# Definition of Success
 
-Platform:
+Progress is measured by production completion.
 
-Reynalds OS
+Not by:
 
-Primary Production Workspace:
+- creating new architecture,
+- writing additional documentation,
+- or redesigning existing systems.
 
-Koinonia ERP
-
-Mission:
-
-Create an intelligent operating system that helps run service businesses through shared objects, workflows, timelines, finance, operations, knowledge, automation, and AI-guided decision support.
+The repository should become increasingly refined—not increasingly complex.
 
 ---
 
-# Current Website Routes
+# Final Reminder
 
-Internal Platform
+The first responsibility of every development session is understanding what already exists.
 
-/
+Inspect first.
 
-Public Website
+Recommend second.
 
-/koinonia
-
-/koinonia/services
-
-/koinonia/about
-
-/koinonia/contact
-
----
-
-# Current Development Priority
-
-1. Complete the Koinonia production website.
-2. Preserve architectural continuity.
-3. Launch the production website.
-4. Expand Reynalds OS after launch.
-
-Website launch takes priority over platform expansion unless platform work directly accelerates launch.
-
----
-
-# Architectural Rules
-
-- Preserve existing architecture.
-- Recover before reinventing.
-- Review existing implementations before proposing new ones.
-- Reuse existing components whenever possible.
-- Extend canonical documentation instead of duplicating it.
-- Explain proposed work before implementation.
-- Wait for approval before significant work.
-- Treat approved architectural decisions as closed unless intentionally reopened.
-
----
-
-# Long-Term Vision
-
-Reynalds OS will become a universal operating system capable of managing businesses, ministries, organizations, projects, and personal workflows through a shared object model, intelligent automation, and AI-assisted orchestration.
-
-Every future enhancement should strengthen that vision without fragmenting existing architecture.
+Build third.
