@@ -177,3 +177,52 @@ The web app build passed after running:
 Do not rework the Home page unless a launch-blocking issue is found.
 
 The next production priority is the Koinonia Services page.
+
+## 2026-07-09 — Koinonia Services Page Pass 1 Checkpoint
+
+### Summary
+
+The Koinonia Services page was differentiated from the Home page, build-validated, visually reviewed, committed, and pushed to GitHub.
+
+### Confirmed Commit
+
+- `058c0a5` — Differentiate Koinonia services page from home
+
+### Confirmed Services Page Changes
+
+- Removed the repeated Home `TrustPillars` section from the Services page.
+- Added a second Services hero CTA:
+  - `Schedule a Consultation`
+  - `View Support Levels`
+- Updated the Services hero to use the full-bleed hero variant for better consistency with Home.
+- Expanded the four service category cards so Services provides more detail than the Home preview cards.
+- Added a new `Where Support Helps` section.
+- Reworked `How It Works` so the process applies to transactions, contracts, showing coverage, and business operations.
+- Kept `Support Levels` as support-fit guidance rather than a pricing table.
+- Centralized Services page section copy in `apps/web/content/services.ts`.
+- Updated `03_Knowledge/Website/services_pricing_production_spec.md` to match implementation.
+
+### Build Verification
+
+The web app build passed after running:
+
+- `pnpm --filter @reynalds-os/database db:generate`
+- `cd apps/web`
+- `rm -rf .next`
+- `pnpm build`
+
+### Recovery Note
+
+An accidental commit, `f9e1435`, briefly staged a large repository delete. It was recovered correctly.
+
+The active branch was reset and force-updated with `--force-with-lease` so the active Services commit is now the correct 3-file commit:
+
+- `058c0a5` — Differentiate Koinonia services page from home
+
+Do not restore or reuse `f9e1435`.
+
+### Current Working Rule
+
+Do not make Services a duplicate of Home.
+
+Services should explain practical support fit, service detail, process, and support levels.

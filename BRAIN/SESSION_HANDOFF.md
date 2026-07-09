@@ -191,3 +191,56 @@ Before editing Services, review:
 3. `BRAIN/DEVELOPMENT_LOG.md`
 4. `03_Knowledge/Website/WEBSITE_PRODUCTION_FRAMEWORK.md`
 5. Existing Services page files under `apps/web`
+
+## 2026-07-09 — Koinonia Services Pass 1 Handoff
+
+### Current Status
+
+The Koinonia Services page has completed Pass 1 and is approved, build-passing, committed, and pushed.
+
+Latest confirmed Services commit:
+
+- `058c0a5` — Differentiate Koinonia services page from home
+
+### Approved Services Direction
+
+Services should not repeat the Home page.
+
+Home introduces Koinonia.
+
+Services explains:
+
+- what Koinonia can do
+- where support fits
+- how the process works
+- which support level may fit the Realtor's business
+
+### Confirmed Services Implementation
+
+Services Pass 1 changed only these files:
+
+- `apps/web/content/services.ts`
+- `apps/web/components/site/PageAssemblies/KoinoniaServices.tsx`
+- `03_Knowledge/Website/services_pricing_production_spec.md`
+
+### Important Recovery Note
+
+A bad commit, `f9e1435`, briefly included a massive repository delete. It was replaced with the correct Services-only commit using `git push --force-with-lease`.
+
+Do not pull, restore, cherry-pick, or rely on `f9e1435`.
+
+The correct Services Pass 1 commit is:
+
+- `058c0a5`
+
+### Recommended Next Step
+
+Continue the Koinonia website production pass.
+
+Likely next options:
+
+1. Polish Services page further if the user identifies visual or content issues.
+2. Begin About page production pass.
+3. Begin Contact page production pass.
+
+Before editing the next page, inspect the existing page assembly, content file, production spec, and related Brain docs.
