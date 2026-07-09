@@ -37,7 +37,7 @@ Headline:
 Real Estate Operations. Elevated.
 
 Supporting copy:
-You focus on your clients. Koinonia helps keep the business running with transaction management, contract preparation, licensed showing coverage, and organized business support for Realtors.
+Koinonia gives Realtors a trusted operations partner for the work behind the client relationship—keeping transactions, contracts, licensed showing coverage, and daily business details organized, responsive, and moving forward.
 
 Primary CTA:
 Explore Services

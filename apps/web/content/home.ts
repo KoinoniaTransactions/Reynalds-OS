@@ -1,9 +1,9 @@
 export const homeContent = {
   hero: {
     eyebrow: "Real Estate Operations Support",
-    title: "The operational partner behind every successful closing.",
+    title: "Real Estate Operations. Elevated.",
     lead:
-      "You focus on your clients. Koinonia helps keep the business running with transaction management, contract preparation, licensed showing coverage, and organized business support for Realtors.",
+      "Koinonia gives Realtors a trusted operations partner for the work behind the client relationship—keeping transactions, contracts, licensed showing coverage, and daily business details organized, responsive, and moving forward.",
     primaryLabel: "Explore Services",
     primaryHref: "/koinonia/services",
     secondaryLabel: "Contact Koinonia",
