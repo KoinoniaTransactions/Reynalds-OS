@@ -283,3 +283,45 @@ Reynalds OS consists of five primary layers:
 ## Recommended Next Step
 
 Commit the documentation updates, then resume Koinonia website content architecture work.
+
+---
+
+# Session Handoff — 2026-07-08 Next.js Hybrid Routing Fix
+
+## Status
+
+Localhost rendering issue resolved.
+
+## Problem
+
+Koinonia pages appeared blank in localhost because Next.js development chunks were returning 404.
+
+The server was rendering an error payload showing that `.next/server/pages/_document.js` could not be found.
+
+## Cause
+
+The project currently uses a hybrid Next.js routing setup:
+
+- App Router under `apps/web/app`
+- Pages Router fallback under `apps/web/pages`
+
+The Pages Router fallback requires:
+
+- `apps/web/pages/_app.tsx`
+- `apps/web/pages/404.tsx`
+- `apps/web/pages/_document.tsx`
+
+## Fix
+
+Added:
+
+- `apps/web/pages/_document.tsx`
+
+## Result
+
+- Production build passes.
+- `/koinonia` loads on localhost again.
+
+## Future AI Instruction
+
+Do not delete the `apps/web/pages` fallback files unless deliberately converting the app to App Router only.

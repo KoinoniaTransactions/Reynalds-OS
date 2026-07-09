@@ -93,3 +93,48 @@ No build required. Documentation-only update.
 ## Recommended Next Step
 
 Commit documentation update, then continue Koinonia website content architecture work.
+
+---
+
+# 2026-07-08 — Next.js Hybrid Routing Stability Fix
+
+## Objective
+
+Restore stable localhost rendering and production build behavior for the Koinonia website.
+
+## Issue
+
+Koinonia routes were loading blank in localhost because Next.js development assets were returning 404.
+
+Observed symptoms included:
+
+- Blank localhost pages.
+- Missing `_next/static` development chunks.
+- Missing `.next/server/pages-manifest.json`.
+- Missing `.next/server/pages/_document.js`.
+- Build failures after otherwise successful compilation.
+
+## Cause
+
+The app uses a hybrid Next.js structure:
+
+- App Router: `apps/web/app`
+- Pages Router fallback files: `apps/web/pages`
+
+Because `apps/web/pages/_app.tsx` and `apps/web/pages/404.tsx` exist, Next.js expects a Pages Router document file.
+
+## Fix
+
+Added:
+
+- `apps/web/pages/_document.tsx`
+
+This restored stable Pages Router fallback generation while preserving App Router Koinonia routes.
+
+## Build Status
+
+Production build passes after adding `_document.tsx`.
+
+## Important Future Note
+
+Do not remove `apps/web/pages/_app.tsx`, `apps/web/pages/404.tsx`, or `apps/web/pages/_document.tsx` without intentionally migrating the project to App Router only and verifying all build/runtime behavior.

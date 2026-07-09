@@ -69,6 +69,25 @@ Use this workflow for meaningful changes:
 7. Commit focused changes.
 8. Update Brain documentation when architecture, workflow, or continuity changes.
 
+
+## Next.js Routing Model
+
+The web app currently uses a hybrid Next.js routing model.
+
+Primary application routes live in:
+
+- `apps/web/app`
+
+Pages Router fallback files live in:
+
+- `apps/web/pages/_app.tsx`
+- `apps/web/pages/404.tsx`
+- `apps/web/pages/_document.tsx`
+
+These Pages Router fallback files are required for stable Next.js build and localhost behavior while the app remains hybrid.
+
+Do not remove them unless intentionally migrating the project to App Router only and verifying production build plus localhost rendering.
+
 ## Known Issues
 
 - START_HERE.md references BRAIN/ARCHITECTURE_PRINCIPLES.md, but that file does not currently exist.
