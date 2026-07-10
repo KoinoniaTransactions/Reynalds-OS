@@ -10,8 +10,32 @@ export const homeContent = {
     secondaryHref: "/koinonia/contact"
   },
 
+  positioning: {
+    eyebrow: "Behind-the-Scenes Support",
+    title: "Built for the work that keeps real estate moving.",
+    lead:
+      "Realtors carry the client relationship, negotiations, deadlines, documents, appointments, and follow-through. Koinonia helps organize the operational work behind the scenes so the business keeps moving with clarity and care.",
+    highlights: [
+      {
+        title: "Clearer files",
+        body:
+          "Documents, deadlines, updates, and next steps stay organized instead of scattered across memory, inboxes, and separate systems."
+      },
+      {
+        title: "Less operational drag",
+        body:
+          "Koinonia helps absorb the moving parts that compete for a Realtor’s time during active files and busy client seasons."
+      },
+      {
+        title: "Better client momentum",
+        body:
+          "When details are tracked and communication is supported, Realtors can stay focused on relationships and service."
+      }
+    ]
+  },
+
   servicesIntro: {
-    eyebrow: "Real Estate Operations",
+    eyebrow: "Services Built Around Realtor Operations",
     title: "Support built around the way Realtors actually work.",
     lead:
       "From active files to contract preparation, showing conflicts, and daily business organization, Koinonia provides calm, dependable support for the operational work that competes for a Realtor’s time."
@@ -44,9 +68,35 @@ export const homeContent = {
     }
   ],
 
+  fit: {
+    eyebrow: "Who It Helps",
+    title: "For Realtors who need dependable support without adding complexity.",
+    lead:
+      "Koinonia is designed for real estate professionals who want organized follow-through, practical communication support, and a steady operations partner behind the client-facing work.",
+    cards: [
+      {
+        title: "Busy solo agents",
+        body:
+          "When your client load grows but you are not ready to build a full internal team, Koinonia helps create structure around the work that keeps slipping."
+      },
+      {
+        title: "Growing Realtor teams",
+        body:
+          "When multiple people, files, and tasks need coordination, Koinonia helps make the operational work more visible and repeatable."
+      },
+      {
+        title: "Client-focused Realtors",
+        body:
+          "When you want to stay present with clients instead of buried in details, Koinonia helps keep the behind-the-scenes work moving."
+      }
+    ]
+  },
+
   experience: {
-    eyebrow: "The Koinonia Experience",
+    eyebrow: "How It Works",
     title: "Simple support. Clear process.",
+    lead:
+      "The process is intentionally simple: clarify what support is needed, organize the work, and keep the next steps moving.",
     cards: [
       {
         title: "Clarify",

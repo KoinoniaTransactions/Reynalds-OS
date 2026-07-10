@@ -1297,3 +1297,58 @@ h1 {
     font-size: 17px;
   }
 }
+
+/* Koinonia Home Body Polish */
+.koinonia-home-positioning {
+  position: relative;
+}
+
+.koinonia-home-positioning::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 14% 10%, rgba(184, 138, 68, 0.12), transparent 34%),
+    radial-gradient(circle at 86% 18%, rgba(255, 255, 255, 0.72), transparent 30%);
+}
+
+.koinonia-home-positioning .koinonia-container {
+  position: relative;
+  z-index: 1;
+}
+
+.koinonia-home-positioning .koinonia-card,
+.koinonia-home-fit .koinonia-card,
+.koinonia-home-process .koinonia-card {
+  min-height: 100%;
+}
+
+.koinonia-home-fit {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(247, 241, 232, 0.18));
+}
+
+.koinonia-home-fit .koinonia-card {
+  border-color: rgba(184, 138, 68, 0.34);
+}
+
+.koinonia-home-process .koinonia-card {
+  background:
+    linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.72) 100%);
+}
+
+.koinonia-home-process .koinonia-card .koinonia-card-eyebrow,
+.koinonia-home-fit .koinonia-card .koinonia-card-eyebrow,
+.koinonia-home-positioning .koinonia-card .koinonia-card-eyebrow {
+  color: var(--ros-gold);
+}
+
+@media (max-width: 860px) {
+  .koinonia-home-positioning,
+  .koinonia-home-fit,
+  .koinonia-home-process {
+    padding-top: 54px;
+    padding-bottom: 54px;
+  }
+}
