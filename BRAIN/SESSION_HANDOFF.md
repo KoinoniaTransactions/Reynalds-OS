@@ -244,3 +244,47 @@ Likely next options:
 3. Begin Contact page production pass.
 
 Before editing the next page, inspect the existing page assembly, content file, production spec, and related Brain docs.
+
+## 2026-07-09 — Koinonia About Pass 1 Handoff
+
+### Current Status
+
+The Koinonia About page has completed Pass 1 and is committed and pushed.
+
+Latest confirmed About commit:
+
+- `3129da4` — Complete Koinonia about page pass one
+
+### Approved About Direction
+
+About should answer:
+
+`Can I trust Koinonia?`
+
+The page should build confidence in Koinonia as a trustworthy real estate operations partner. It should explain the meaning behind the name, Jeremiah's licensed real estate perspective, and the service values that guide the work.
+
+### Confirmed About Implementation
+
+About Pass 1 changed only these files:
+
+- `apps/web/content/about.ts`
+- `apps/web/components/site/PageAssemblies/KoinoniaAbout.tsx`
+- `docs/specifications/ABOUT_SPEC.md`
+
+### Important Continuity Note
+
+Do not re-add the shared Home `TrustPillars` section to About unless there is a specific approved reason.
+
+Do not turn About into a long personal biography.
+
+### Recommended Next Step
+
+Begin the Koinonia Contact page production pass.
+
+Before editing Contact, inspect:
+
+1. `apps/web/content/contact.ts`
+2. `apps/web/components/site/PageAssemblies/KoinoniaContact.tsx`
+3. `apps/web/app/koinonia/contact/page.tsx`
+4. `docs/specifications/CONTACT_SPEC.md`
+5. Existing shared contact/action components

@@ -226,3 +226,44 @@ Do not restore or reuse `f9e1435`.
 Do not make Services a duplicate of Home.
 
 Services should explain practical support fit, service detail, process, and support levels.
+
+## 2026-07-09 — Koinonia About Page Pass 1 Checkpoint
+
+### Summary
+
+The Koinonia About page completed Pass 1 and was committed and pushed to GitHub.
+
+### Confirmed Commit
+
+- `3129da4` — Complete Koinonia about page pass one
+
+### Confirmed About Page Changes
+
+- Added hero CTAs:
+  - `Schedule a Consultation`
+  - `View Services`
+- Updated About hero to use the full-bleed hero variant for consistency with Home and Services.
+- Removed the repeated shared Home `TrustPillars` section from About.
+- Added About-specific trust content focused on why Realtors can trust Koinonia.
+- Strengthened the Jeremiah founder section while keeping it professional and concise.
+- Added a service foundation section focused on:
+  - Clear Communication
+  - Organized Support
+  - Dependable Follow-Through
+- Updated `docs/specifications/ABOUT_SPEC.md` to match the production direction.
+
+### Recovery Note
+
+During the About pass, the staged-delete issue appeared again. It was corrected before commit by running `git reset`.
+
+The final About commit was clean and changed only these files:
+
+- `apps/web/content/about.ts`
+- `apps/web/components/site/PageAssemblies/KoinoniaAbout.tsx`
+- `docs/specifications/ABOUT_SPEC.md`
+
+### Current Working Rule
+
+Do not turn About into a long personal biography.
+
+About should answer: `Can I trust Koinonia?`
