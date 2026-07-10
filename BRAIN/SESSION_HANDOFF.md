@@ -483,3 +483,21 @@ The footer should remain shared across Home, Services, About, and Contact.
 
 Do not create duplicate page-specific footers. Footer/navigation/contact edits should be handled through the shared Footer component and shared content.
 
+
+---
+
+## Current Koinonia Website Checkpoint — Favicon and Metadata Added
+
+As of commit `8eb196a`, the Koinonia public website has branded favicon/icon support and updated metadata.
+
+### Files Added / Updated
+
+- `apps/web/app/icon.svg`
+- `apps/web/app/apple-icon.svg`
+- `apps/web/public/apple-icon.svg`
+- `apps/web/app/layout.tsx`
+
+### Current Standard
+
+The public site should display Koinonia branding in the browser title and favicon/icon system. The metadata should remain public-site appropriate, not generic Reynalds OS wording.
+

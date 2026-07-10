@@ -460,3 +460,41 @@ The footer should match the approved Koinonia visual system:
 
 The Koinonia footer is a shared sitewide component. Future footer changes should be made in the shared Footer component and shared content files, not separately page by page.
 
+
+---
+
+## 2026-07-10 — Koinonia Favicon and Metadata Added
+
+Commit: 8eb196a  
+Branch: feature/app-shell-foundation  
+Commit Message: Add Koinonia favicon and metadata
+
+The Koinonia public site now has branded favicon/icon support and updated metadata.
+
+### Scope
+
+- Added Koinonia `icon.svg`
+- Added Koinonia `apple-icon.svg`
+- Added public Apple icon fallback
+- Updated root metadata title and description
+
+### Approved Direction
+
+The favicon uses the Koinonia brand mark direction:
+
+- Black base
+- Gold K
+- Simple premium mark
+- Consistent with the header/footer Koinonia mark
+
+### Metadata
+
+The public-facing metadata now uses:
+
+- Title: Koinonia
+- Description: Real estate operations support for Realtors.
+
+### Important Future Rule
+
+Do not revert the public site metadata back to generic Reynalds OS wording for the Koinonia public website experience.
+
