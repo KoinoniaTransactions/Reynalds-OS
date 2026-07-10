@@ -452,3 +452,34 @@ Mobile header uses a hamburger menu. Do not revert mobile navigation back to alw
 
 Header/navigation edits should be handled through the shared Header component, not duplicated inside individual page assemblies.
 
+
+---
+
+## Current Koinonia Website Checkpoint — Footer Upgraded
+
+The Koinonia public website footer has been upgraded using the existing canonical Footer component.
+
+### Files Updated
+
+- `apps/web/components/site/Footer/Footer.tsx`
+- `apps/web/components/site/Footer/COMPONENT.md`
+- `apps/web/content/shared.ts`
+- `packages/design-system/styles.css`
+
+### Footer Standard
+
+The approved footer includes:
+
+- Koinonia brand block
+- Footer navigation
+- Email, call, and text actions
+- Schedule a Consultation CTA
+- Faith/value line
+- Legal/copyright line
+
+The footer should remain shared across Home, Services, About, and Contact.
+
+### Future Rule
+
+Do not create duplicate page-specific footers. Footer/navigation/contact edits should be handled through the shared Footer component and shared content.
+

@@ -419,3 +419,44 @@ Mobile:
 
 The Koinonia header is now a shared sitewide component. Future navigation changes should be made in the shared Header component, not separately page by page.
 
+
+---
+
+## 2026-07-10 — Koinonia Site Footer Upgraded
+
+The existing canonical Koinonia Footer component was upgraded and verified across the Home, Services, About, and Contact pages.
+
+### Footer Scope
+
+- Upgraded the shared Footer component
+- Updated Footer component documentation
+- Expanded shared footer content
+- Added footer styling in the design system
+- Preserved the shared footer pattern already used by all Koinonia pages
+
+### Approved Footer Structure
+
+The approved footer includes:
+
+- Koinonia brand mark, name, and tagline
+- Short company description
+- Footer navigation
+- Email, call, and text actions
+- Schedule a Consultation CTA
+- Faith/value line
+- Copyright/legal line
+
+### Approved Footer Direction
+
+The footer should match the approved Koinonia visual system:
+
+- Clean, premium, and intentional
+- Black/gold brand cues
+- Clear contact actions
+- Mobile-friendly stacked layout
+- Faith/value identity without overwhelming the page
+
+### Important Future Rule
+
+The Koinonia footer is a shared sitewide component. Future footer changes should be made in the shared Footer component and shared content files, not separately page by page.
+
