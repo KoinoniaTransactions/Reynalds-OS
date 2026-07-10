@@ -312,3 +312,76 @@ Production build passed before commit.
 Contact should answer: `How do I get started?`
 
 Contact should feel calm, direct, low-pressure, and conversion-focused.
+
+---
+
+## 2026-07-10 — Koinonia Production Hero Image System Finalized
+
+Commit: a12e03c  
+Branch: feature/app-shell-foundation  
+Commit Message: Refresh Koinonia production hero imagery
+
+The approved Koinonia production hero image system has been finalized, committed, pushed to GitHub, and verified locally.
+
+### Pages Updated
+
+- Home desktop hero
+- Home mobile hero
+- Services desktop hero
+- Services mobile hero
+- About desktop hero
+- About mobile hero
+- Contact desktop hero
+- Contact mobile hero
+- Shared hero/mobile CSS refinement
+
+### Approved Hero Direction
+
+The final approved hero imagery direction is:
+
+- Light, airy, clean, calm, and premium
+- Cream/white office environment with soft natural lighting
+- Black/gold Koinonia brand cues
+- Consistent Koinonia office setup across all pages
+- Page-specific desk props and visual story
+- Desktop and mobile versions of each page must match the same page story
+- No baked-in marketing headlines or sales copy inside the images
+- Page text must remain HTML/content-driven, not embedded inside artwork
+
+### Approved Shared Visual System
+
+Each page hero should feel like the same Koinonia workspace, using a consistent setup:
+
+- Cream/beige wall
+- Window with soft curtains
+- Gold-framed integrity poster
+- Koinonia laptop
+- Black Koinonia mug
+- Gold desk lamp
+- Potted plant
+- Books
+- Gold desk object
+- Organized paperwork/notebooks relevant to the page
+
+### Page-Specific Hero Notes
+
+Home:
+- Relationship-focused operations story
+- Desk materials include planning, partnership, relationship, and next-step cues
+
+Services:
+- Service-support story
+- Desk materials communicate transaction management, contract preparation, showing coverage, and business support
+
+About:
+- Trust and purpose story
+- Desk materials communicate mission, values, purpose, integrity, and stewardship
+
+Contact:
+- Consultation and next-step story
+- Desk materials include consultation notes, next steps, and phone/contact cues
+
+### Important Future Rule
+
+Do not replace or regenerate the approved production hero system unless the user explicitly requests a new hero system. Future improvements should preserve this visual direction and page-specific story structure.
+

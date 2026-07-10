@@ -355,3 +355,72 @@ QA should verify:
 - Footer contact links
 - Page-to-page navigation
 - Build status
+
+---
+
+## Current Koinonia Website Checkpoint — Production Hero System Approved
+
+As of commit `a12e03c`, the Koinonia production hero image system is complete, committed, pushed, and locally verified.
+
+### Current Status
+
+- Branch: `feature/app-shell-foundation`
+- Latest hero commit: `a12e03c`
+- Working tree was clean after push
+- Local preview may require restarting the Next server if the site cannot be reached
+
+### Approved Hero Standard
+
+The approved Koinonia hero system is light, airy, premium, and consistent across the Koinonia website. It uses the same branded office environment across Home, Services, About, and Contact, with page-specific desk props and messaging cues.
+
+Do not revert to dark/moody hero images. Do not generate unrelated hero images. Do not embed marketing copy inside hero artwork.
+
+### Approved Page Hero Files
+
+Home:
+- `apps/web/public/assets/images/koinonia/home/home-hero-desktop.png`
+- `apps/web/public/assets/images/koinonia/home/home-hero-mobile.png`
+
+Services:
+- `apps/web/public/assets/images/koinonia/services/services-hero-desktop.png`
+- `apps/web/public/assets/images/koinonia/services/services-hero-mobile.png`
+
+About:
+- `apps/web/public/assets/images/koinonia/about/about-hero-desktop.png`
+- `apps/web/public/assets/images/koinonia/about/about-hero-mobile.png`
+
+Contact:
+- `apps/web/public/assets/images/koinonia/contact/contact-hero-desktop.png`
+- `apps/web/public/assets/images/koinonia/contact/contact-hero-mobile.png`
+
+Shared styling:
+- `packages/design-system/styles.css`
+
+### Preview Commands
+
+Use the standard build/start flow:
+
+cd ~/Desktop/Reynalds_OS_v11_3_1_Work
+pnpm --filter @reynalds-os/database db:generate
+
+cd apps/web
+rm -rf .next
+pnpm build
+
+lsof -ti :3000 | xargs kill -9 2>/dev/null || true
+pnpm exec next start -H 0.0.0.0 -p 3000
+
+Desktop preview:
+- `http://localhost:3000/koinonia`
+- `http://localhost:3000/koinonia/services`
+- `http://localhost:3000/koinonia/about`
+- `http://localhost:3000/koinonia/contact`
+
+If mobile preview fails, confirm the Mac IP with:
+
+ipconfig getifaddr en0
+
+Then use:
+
+http://<MAC-IP>:3000/koinonia
+
