@@ -20,7 +20,7 @@ export function KoinoniaContact() {
         variant="fullBleed"
       />
 
-      <section className="koinonia-section">
+      <section className="koinonia-section koinonia-contact-reach">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">
@@ -38,17 +38,29 @@ export function KoinoniaContact() {
 
           <ContactActions />
 
-          <div className="koinonia-contact-note">
-            <strong>Response Time:</strong> {contactConfig.responseTime}
-            <br />
-            <strong>Availability:</strong> {contactConfig.businessHours}
+          <div className="koinonia-contact-detail-grid">
+            <div className="koinonia-contact-note">
+              <strong>Response Time:</strong> {contactConfig.responseTime}
+              <br />
+              <strong>Availability:</strong> {contactConfig.businessHours}
+            </div>
+
+            <article className="koinonia-contact-helpful">
+              <h3>{contactContent.reachOut.noteTitle}</h3>
+
+              <ul>
+                {contactContent.reachOut.noteItems.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
           </div>
         </div>
       </section>
 
-      <section className="koinonia-section koinonia-band">
+      <section className="koinonia-section koinonia-band koinonia-contact-next">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">
               {contactContent.nextSteps.eyebrow}
             </div>
@@ -63,9 +75,10 @@ export function KoinoniaContact() {
           </div>
 
           <div className="koinonia-grid three">
-            {contactContent.nextSteps.cards.map((card) => (
+            {contactContent.nextSteps.cards.map((card, index) => (
               <UniversalCard
                 key={card.title}
+                eyebrow={`0${index + 1}`}
                 title={card.title}
                 body={card.body}
               />

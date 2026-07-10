@@ -13,7 +13,14 @@ export const contactContent = {
     eyebrow: "How to Reach Out",
     title: "Choose the easiest way to start.",
     lead:
-      "Email, call, or text with a short summary of the support you need. If there is an active deadline, contract date, showing need, or document request, include that context so the first response can be useful."
+      "Email, call, or text with a short summary of the support you need. If there is an active deadline, contract date, showing need, or document request, include that context so the first response can be useful.",
+    noteTitle: "Helpful details to include",
+    noteItems: [
+      "The type of support you need",
+      "Any active deadline or timing concern",
+      "The best way to respond",
+      "Any documents or context that would help clarify the request"
+    ]
   },
 
   nextSteps: {
