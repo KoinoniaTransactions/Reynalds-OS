@@ -1,14 +1,14 @@
 # Contact Page Specification
 
 Route: `/koinonia/contact`  
-Status: Assembled  
+Status: Active production implementation  
 Owner: Website System
 
 ## Purpose
 
 Answer: "How do I get started?"
 
-The Contact page should make the next step clear, calm, and low-pressure. It should not oversell. The visitor has already moved through Home, Services, and/or About; Contact exists to remove friction.
+The Contact page should make the next step clear, calm, and low-pressure. It should not oversell. The visitor has already moved through Home, Services, and/or About; Contact exists to remove friction and make the first conversation easy.
 
 ## Current Implementation
 
@@ -16,50 +16,92 @@ Source: `apps/web/components/site/PageAssemblies/KoinoniaContact.tsx`
 
 Route file: `apps/web/app/koinonia/contact/page.tsx`
 
+Canonical contact source:
+
+`apps/web/config/contact.config.ts`
+
+Reusable contact component:
+
+`apps/web/components/site/ContactActions/ContactActions.tsx`
+
 ## Components Used
 
-- `COMP-HERO-001` Primary Public Website Hero
-- `MOD-004` Universal Content Card
-- `COMP-FAQ-001` FAQ Objection Resolution
-- `COMP-CTA-001` Final Call to Action
-- `COMP-FOOTER-001` Koinonia Footer
+- `Hero`
+- `ContactActions`
+- `UniversalCard`
+- `FAQ`
+- `CTA`
+- `Footer`
 
-## Contact Details
+## Production Contact Details
 
-Active verified repository contact:
+Email:
 
-- Email: `hello@koinoniatransactions.com`
+- `jeremiah@koinoniaadmin.com`
 
-Not found in repository and therefore not invented:
+Phone:
 
-- Final phone link
-- Final SMS link
+- `(719) 745-8497`
 
-These remain launch QA items.
+Text:
+
+- `(719) 745-8497`
 
 ## Page Sections
 
 1. Contact Hero
 2. How to Reach Out
-3. What Happens Next
-4. Contact FAQ
-5. Final CTA
-6. Footer
+3. Contact Actions
+4. What Happens Next
+5. Contact FAQ
+6. Final CTA
+7. Footer
+
+## Approved Hero
+
+Eyebrow:
+
+Contact Koinonia
+
+Headline:
+
+Start with a clear next step.
+
+Supporting copy:
+
+Reach out when you need dependable real estate operations support for a transaction, contract, showing conflict, or business workflow. Koinonia will help clarify the need and identify the right path forward.
+
+Primary CTA:
+
+Email Koinonia
+
+Secondary CTA:
+
+View Services
+
+## Core Messages
+
+- Contact should feel calm, direct, and low-pressure.
+- The visitor should know exactly how to reach Koinonia.
+- Email, phone, and text are all production-ready contact options.
+- The first contact is not a commitment.
+- The first response should help clarify fit and next steps.
+- Contact should function as the final conversion step after Home, Services, or About.
+
+## Implementation Rules
+
+- Keep contact values centralized in `apps/web/config/contact.config.ts`.
+- Do not hard-code email, phone, or SMS values directly inside page assemblies.
+- Do not reintroduce placeholder phone or SMS labels unless the production values change.
+- Keep Contact concise and conversion-focused.
+- Use the approved Koinonia hero image system.
+- Use the full-bleed hero style for consistency with Home, Services, and About.
+- Verify mobile tap targets before launch.
 
 ## Launch QA Items
 
-- Confirm final phone and SMS links.
-- Decide whether to connect a production contact form or keep email-driven intake at launch.
+- Verify phone link opens a call prompt on mobile.
+- Verify SMS link opens a text prompt on mobile.
+- Verify email link opens the correct address and subject.
 - Verify mobile spacing and tap targets.
 - Verify metadata and SEO title.
-
-
-## v11.2.1 Contact Configuration Update
-
-Canonical contact source: `apps/web/config/contact.config.ts`
-
-Reusable contact component: `apps/web/components/site/ContactActions/ContactActions.tsx`
-
-Current verified email: `hello@koinoniatransactions.com`
-
-Phone and SMS are intentionally placeholders until production values are supplied.

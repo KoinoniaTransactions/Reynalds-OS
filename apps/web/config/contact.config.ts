@@ -1,16 +1,16 @@
 export const contactConfig = {
   businessName: "Koinonia Transactions",
   displayName: "Koinonia",
-  email: "hello@koinoniatransactions.com",
+  email: "jeremiah@koinoniaadmin.com",
   phone: {
-    display: "Phone coming soon",
-    href: "#phone-coming-soon",
-    isPlaceholder: true
+    display: "(719) 745-8497",
+    href: "tel:+17197458497",
+    isPlaceholder: false
   },
   sms: {
-    display: "Text coming soon",
-    href: "#sms-coming-soon",
-    isPlaceholder: true
+    display: "(719) 745-8497",
+    href: "sms:+17197458497",
+    isPlaceholder: false
   },
   responseTime: "We typically respond within one business day.",
   businessHours: "By appointment and active transaction need.",

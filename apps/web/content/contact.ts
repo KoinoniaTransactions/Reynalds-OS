@@ -1,9 +1,9 @@
 export const contactContent = {
   hero: {
     eyebrow: "Contact Koinonia",
-    title: "Start the conversation with confidence.",
+    title: "Start with a clear next step.",
     lead:
-      "Whether you need support for an active transaction or want to build a more organized real estate workflow, Koinonia is ready to help you identify the right next step.",
+      "Reach out when you need dependable real estate operations support for a transaction, contract, showing conflict, or business workflow. Koinonia will help clarify the need and identify the right path forward.",
     primaryLabel: "Email Koinonia",
     secondaryLabel: "View Services",
     secondaryHref: "/koinonia/services"
@@ -13,29 +13,29 @@ export const contactContent = {
     eyebrow: "How to Reach Out",
     title: "Choose the easiest way to start.",
     lead:
-      "Koinonia keeps the first step simple. Send a message with the support you need, and the conversation can move from there."
+      "Email, call, or text with a short summary of the support you need. If there is an active deadline, contract date, showing need, or document request, include that context so the first response can be useful."
   },
 
   nextSteps: {
     eyebrow: "What Happens Next",
-    title: "A clear first step, then organized follow-through.",
+    title: "A simple intake process with organized follow-through.",
     lead:
-      "The contact process should feel like the rest of Koinonia: calm, professional, and easy to understand.",
+      "The first conversation should feel calm, professional, and practical. Koinonia will help turn the request into clear next steps.",
     cards: [
       {
-        title: "You reach out",
+        title: "You share the need",
         body:
-          "Share the support you need, whether by phone, text, or email, along with any important dates, documents, or context."
+          "Send the transaction, contract, showing, or business support request along with any important timing, documents, or context."
       },
       {
-        title: "We clarify the fit",
+        title: "Koinonia clarifies the fit",
         body:
-          "Koinonia reviews the need, confirms the right support path, and identifies any missing details."
+          "The request is reviewed, the right support path is identified, and any missing details are confirmed before work begins."
       },
       {
-        title: "You know the next step",
+        title: "You get a clear next step",
         body:
-          "The conversation turns into a clear plan for transaction, contract, showing, or business support."
+          "The conversation turns into an organized plan for support, communication, timing, and follow-through."
       }
     ]
   },
@@ -47,12 +47,12 @@ export const contactContent = {
       {
         question: "What should I include when I reach out?",
         answer:
-          "Share the type of support you need, whether there is an active contract or deadline, and the best way to contact you. Koinonia will help identify the right next step."
+          "Share the type of support you need, whether there is an active deadline, the best way to contact you, and any important context that would help Koinonia understand the request."
       },
       {
         question: "Can I ask about more than one service?",
         answer:
-          "Yes. Many Realtors need a mix of transaction management, contract preparation, showing coverage, or business support. The first conversation can clarify what fits your business."
+          "Yes. Many Realtors need a mix of transaction management, contract preparation, licensed showing coverage, or business operations support. The first conversation can clarify what fits."
       },
       {
         question: "Is reaching out a commitment?",

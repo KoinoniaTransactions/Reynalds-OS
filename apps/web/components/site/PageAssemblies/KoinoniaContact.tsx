@@ -15,6 +15,7 @@ export function KoinoniaContact() {
         secondaryHref={contactContent.hero.secondaryHref}
         visualDesktopSrc="/assets/images/koinonia/contact/contact-hero-desktop.png"
         visualMobileSrc="/assets/images/koinonia/contact/contact-hero-mobile.png"
+        variant="fullBleed"
       />
 
       <section className="koinonia-section">
