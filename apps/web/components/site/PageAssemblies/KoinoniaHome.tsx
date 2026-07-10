@@ -1,9 +1,11 @@
 import { homeContent } from "@/content/home";
-import { CTA, Footer, Hero, Section, TrustPillars, UniversalCard } from "../index";
+import { CTA, Footer, Header, Hero, Section, TrustPillars, UniversalCard } from "../index";
 
 export function KoinoniaHome() {
   return (
     <main className="koinonia-site">
+      <Header />
+
       <Hero
         eyebrow={homeContent.hero.eyebrow}
         title={homeContent.hero.title}

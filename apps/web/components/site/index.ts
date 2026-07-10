@@ -1,3 +1,4 @@
+export { Header } from "./Header/Header";
 export { Footer } from "./Footer/Footer";
 export { UniversalCard } from "./UniversalCard/UniversalCard";
 export { TrustPillars } from "./TrustPillars/TrustPillars";

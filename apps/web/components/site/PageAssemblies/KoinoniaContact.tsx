@@ -1,10 +1,12 @@
 import { contactContent } from "@/content/contact";
-import { CTA, ContactActions, FAQ, Footer, Hero, UniversalCard } from "../index";
+import { CTA, ContactActions, FAQ, Footer, Header, Hero, UniversalCard } from "../index";
 import { contactConfig, mailto } from "../../../config/contact.config";
 
 export function KoinoniaContact() {
   return (
     <main className="koinonia-site">
+      <Header />
+
       <Hero
         eyebrow={contactContent.hero.eyebrow}
         title={contactContent.hero.title}

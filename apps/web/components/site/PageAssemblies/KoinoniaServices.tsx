@@ -1,9 +1,11 @@
 import { servicesContent } from "@/content/services";
-import { CTA, FAQ, Footer, Hero, UniversalCard } from "../index";
+import { CTA, FAQ, Footer, Header, Hero, UniversalCard } from "../index";
 
 export function KoinoniaServices() {
   return (
     <main className="koinonia-site">
+      <Header />
+
       <Hero
         eyebrow={servicesContent.hero.eyebrow}
         title={servicesContent.hero.title}
