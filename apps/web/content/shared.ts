@@ -11,6 +11,17 @@ export const sharedContent = {
   footer: {
     companyName: "Koinonia",
     tagline: "Real estate operations support for Realtors.",
+    description:
+      "Dependable transaction, contract, showing, and business operations support for Colorado real estate professionals.",
+    navigationTitle: "Explore",
+    contactTitle: "Start the Conversation",
+    ctaLabel: "Schedule a Consultation",
+    legal: "© Koinonia. All rights reserved.",
+
+    verse: {
+      line: "Bear one another’s burdens. Work heartily, as for the Lord.",
+      reference: "Galatians 6:2 · Colossians 3:23"
+    },
 
     navigation: [
       { label: "Home", href: "/koinonia" },

@@ -1081,3 +1081,219 @@ h1 {
     font-size: 11px;
   }
 }
+
+/* Koinonia Footer v2 */
+.koinonia-footer {
+  background:
+    radial-gradient(circle at 14% 0%, rgba(184, 138, 68, 0.18), transparent 34%),
+    linear-gradient(180deg, #171717 0%, #0f0f0f 100%);
+  color: #ffffff;
+  padding: 64px 0 28px;
+  border-top: 1px solid rgba(184, 138, 68, 0.34);
+}
+
+.koinonia-footer-inner {
+  width: min(1180px, calc(100% - 44px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(260px, 1.4fr) minmax(170px, 0.7fr) minmax(230px, 0.9fr);
+  gap: 42px;
+  align-items: start;
+}
+
+.koinonia-footer-main {
+  display: grid;
+  gap: 18px;
+}
+
+.koinonia-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.koinonia-footer-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--ros-gold);
+  color: #111111;
+  font-family: var(--ros-font-display);
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28);
+}
+
+.koinonia-footer-brand strong {
+  display: block;
+  font-family: var(--ros-font-display);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.koinonia-footer-brand p {
+  margin: 5px 0 0;
+  color: #d9d2c8;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.koinonia-footer-description {
+  max-width: 430px;
+  margin: 0;
+  color: #d8d8d8;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.koinonia-footer-section {
+  display: grid;
+  gap: 14px;
+}
+
+.koinonia-footer-section h2 {
+  margin: 0;
+  color: var(--ros-gold);
+  font-size: 12px;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+}
+
+.koinonia-footer nav,
+.koinonia-footer-contact {
+  display: grid;
+  gap: 9px;
+}
+
+.koinonia-footer a {
+  color: #f2f2f2;
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.koinonia-footer a:hover,
+.koinonia-footer a:focus-visible {
+  color: var(--ros-gold);
+  outline: none;
+}
+
+.koinonia-footer-contact a {
+  display: inline-flex;
+  width: fit-content;
+}
+
+.koinonia-footer-cta {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--ros-gold);
+  color: #111111 !important;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
+}
+
+.koinonia-footer-cta:hover,
+.koinonia-footer-cta:focus-visible {
+  background: #d0a35c;
+  color: #000000 !important;
+}
+
+.koinonia-footer-bottom {
+  width: min(1180px, calc(100% - 44px));
+  margin: 42px auto 0;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  color: #cfcfcf;
+}
+
+.koinonia-footer-bottom p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.koinonia-footer-bottom span {
+  display: block;
+  color: #ffffff;
+  font-family: var(--ros-font-display);
+  font-size: 18px;
+}
+
+.koinonia-footer-bottom small {
+  display: block;
+  margin-top: 3px;
+  color: var(--ros-gold);
+  font-size: 12px;
+}
+
+@media (max-width: 860px) {
+  .koinonia-footer {
+    padding: 48px 0 24px;
+  }
+
+  .koinonia-footer-inner {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .koinonia-footer-section {
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .koinonia-footer nav,
+  .koinonia-footer-contact {
+    gap: 10px;
+  }
+
+  .koinonia-footer a {
+    font-size: 15px;
+  }
+
+  .koinonia-footer-cta {
+    width: 100%;
+  }
+
+  .koinonia-footer-bottom {
+    display: grid;
+    align-items: start;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 520px) {
+  .koinonia-footer-inner,
+  .koinonia-footer-bottom {
+    width: min(100% - 28px, 1180px);
+  }
+
+  .koinonia-footer-brand {
+    align-items: flex-start;
+  }
+
+  .koinonia-footer-brand strong {
+    font-size: 26px;
+  }
+
+  .koinonia-footer-description {
+    font-size: 14px;
+  }
+
+  .koinonia-footer-bottom span {
+    font-size: 17px;
+  }
+}
