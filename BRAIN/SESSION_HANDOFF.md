@@ -558,3 +558,31 @@ As of commit `2b154ba`, the Koinonia Services page body has been polished and co
 
 The Services page is allowed to be more detailed than Home. Do not remove useful Services sections merely to make it shorter. Keep each section purposeful and avoid adding new sections unless they answer a clear visitor question.
 
+
+---
+
+## Current Koinonia Website Checkpoint — About Page Body Polished
+
+As of commit `65762fb`, the Koinonia About page body has been polished and committed.
+
+### Files Updated
+
+- `apps/web/components/site/PageAssemblies/KoinoniaAbout.tsx`
+- `apps/web/content/about.ts`
+- `packages/design-system/styles.css`
+
+### Current About Page Flow
+
+- Header
+- Hero
+- The Meaning Behind the Name
+- Why Realtors Can Trust Koinonia
+- Meet Jeremiah
+- How Koinonia Serves
+- CTA
+- Footer
+
+### Future Rule
+
+The About page should stay trust-focused and professional. It should include Jeremiah’s licensed Realtor perspective, but should not become a long personal biography.
+

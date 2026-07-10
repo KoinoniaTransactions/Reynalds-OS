@@ -584,3 +584,44 @@ The Services page is intentionally longer than the Home page because it is the m
 
 Do not shorten the Services page simply because it is longer than Home. Services should remain the page where visitors can understand the full scope of support before contacting Koinonia.
 
+
+---
+
+## 2026-07-10 — Koinonia About Page Body Polished
+
+Commit: 65762fb  
+Branch: feature/app-shell-foundation  
+Commit Message: Polish Koinonia about page body
+
+The Koinonia About page body has been refined below the approved hero system.
+
+### Scope
+
+- Updated About page body structure
+- Center-aligned key section headers
+- Added About-specific section classes
+- Added About-specific body styling in the shared design system
+- Added a lead paragraph to the “How Koinonia Serves” section
+- Preserved the approved trust-focused About page journey
+
+### Approved About Page Flow
+
+The approved About page flow is now:
+
+- Header
+- Hero
+- The Meaning Behind the Name
+- Why Realtors Can Trust Koinonia
+- Meet Jeremiah
+- How Koinonia Serves
+- CTA
+- Footer
+
+### Expert Review
+
+The About page is not considered too biography-heavy. Only one body section directly focuses on Jeremiah, and that section remains business-relevant by explaining licensed Colorado Realtor experience, operational mindset, and service foundation.
+
+### Important Future Rule
+
+Do not turn the About page into a long personal biography. The page should continue to answer the visitor’s trust question: “Can I trust Koinonia to support my business and clients?”
+
