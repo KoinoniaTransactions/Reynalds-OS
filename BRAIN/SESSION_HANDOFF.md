@@ -288,3 +288,70 @@ Before editing Contact, inspect:
 3. `apps/web/app/koinonia/contact/page.tsx`
 4. `docs/specifications/CONTACT_SPEC.md`
 5. Existing shared contact/action components
+
+## 2026-07-09 — Koinonia Contact Pass 1 Handoff
+
+### Current Status
+
+The Koinonia Contact page has completed Pass 1 and is committed and pushed.
+
+Latest confirmed Contact commit:
+
+- `89238e9` — Complete Koinonia contact page pass one
+
+### Approved Contact Direction
+
+Contact should answer:
+
+`How do I get started?`
+
+The page should make the first step clear, calm, and low-pressure.
+
+### Production Contact Values
+
+Canonical source:
+
+- `apps/web/config/contact.config.ts`
+
+Confirmed production values:
+
+- Email: `jeremiah@koinoniaadmin.com`
+- Phone: `(719) 745-8497`
+- Text: `(719) 745-8497`
+
+### Confirmed Contact Implementation
+
+Contact Pass 1 changed these files:
+
+- `apps/web/config/contact.config.ts`
+- `apps/web/content/contact.ts`
+- `apps/web/components/site/PageAssemblies/KoinoniaContact.tsx`
+- `apps/web/components/site/ContactActions/COMPONENT.md`
+- `docs/specifications/CONTACT_SPEC.md`
+
+### Important Continuity Notes
+
+Do not reintroduce `Phone coming soon` or `Text coming soon` placeholders unless production values change.
+
+Do not hard-code email, phone, or SMS values inside page assemblies. Keep contact values centralized in `apps/web/config/contact.config.ts`.
+
+### Recommended Next Step
+
+Run a final full-site QA pass across:
+
+1. `/koinonia`
+2. `/koinonia/services`
+3. `/koinonia/about`
+4. `/koinonia/contact`
+
+QA should verify:
+
+- Desktop layout
+- Mobile layout
+- CTA links
+- Email link
+- Phone link
+- SMS link
+- Footer contact links
+- Page-to-page navigation
+- Build status
