@@ -385,3 +385,37 @@ Contact:
 
 Do not replace or regenerate the approved production hero system unless the user explicitly requests a new hero system. Future improvements should preserve this visual direction and page-specific story structure.
 
+
+---
+
+## 2026-07-10 — Koinonia Site Header Added
+
+The Koinonia public website header has been added and verified across the Home, Services, About, and Contact pages.
+
+### Header Scope
+
+- Added shared Header component
+- Exported Header through the site component index
+- Added Header to all public Koinonia page assemblies
+- Added desktop navigation
+- Added mobile hamburger menu
+- Added Header component documentation
+- Added shared header styling in the design system
+
+### Approved Header Behavior
+
+Desktop:
+- Koinonia brand mark and name
+- Main navigation links
+- Schedule a Consultation CTA
+
+Mobile:
+- Koinonia brand mark and name
+- Hamburger menu button
+- Expandable/collapsible navigation menu
+- Menu includes Home, Services, About, Contact, and Schedule a Consultation
+
+### Important Future Rule
+
+The Koinonia header is now a shared sitewide component. Future navigation changes should be made in the shared Header component, not separately page by page.
+

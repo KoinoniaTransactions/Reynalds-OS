@@ -424,3 +424,31 @@ Then use:
 
 http://<MAC-IP>:3000/koinonia
 
+
+---
+
+## Current Koinonia Website Checkpoint — Header Added
+
+The Koinonia public website now has a shared sitewide Header component.
+
+### Files Added / Updated
+
+- `apps/web/components/site/Header/Header.tsx`
+- `apps/web/components/site/Header/COMPONENT.md`
+- `apps/web/components/site/index.ts`
+- `apps/web/components/site/PageAssemblies/KoinoniaHome.tsx`
+- `apps/web/components/site/PageAssemblies/KoinoniaServices.tsx`
+- `apps/web/components/site/PageAssemblies/KoinoniaAbout.tsx`
+- `apps/web/components/site/PageAssemblies/KoinoniaContact.tsx`
+- `packages/design-system/styles.css`
+
+### Header Standard
+
+Desktop header shows the Koinonia brand, main navigation, and Schedule a Consultation CTA.
+
+Mobile header uses a hamburger menu. Do not revert mobile navigation back to always-visible stacked links unless the user explicitly requests that design.
+
+### Future Rule
+
+Header/navigation edits should be handled through the shared Header component, not duplicated inside individual page assemblies.
+
