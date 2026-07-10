@@ -1,9 +1,13 @@
 export const aboutContent = {
   hero: {
     eyebrow: "About Koinonia",
-    title: "Built to serve Realtors with clarity, care, and dependable support.",
+    title: "Built on trust, service, and organized support.",
     lead:
-      "Koinonia was created to bring organized real estate operations, clear communication, and reliable partnership to Realtors who want stronger support behind the scenes."
+      "Koinonia exists to help Realtors operate with more clarity, confidence, and consistency by providing dependable support behind the client relationship.",
+    primaryLabel: "Schedule a Consultation",
+    primaryHref: "/koinonia/contact",
+    secondaryLabel: "View Services",
+    secondaryHref: "/koinonia/services"
   },
 
   meaning: {
@@ -13,24 +17,48 @@ export const aboutContent = {
       "The business is built around the belief that strong support should feel like a trusted partnership. Realtors should not have to carry every operational detail alone while also serving clients, negotiating, showing homes, and growing their business.",
     cards: [
       {
-        title: "Why Koinonia Exists",
+        title: "Partnership",
         body:
-          "Koinonia exists to help Realtors operate with more confidence, consistency, and organization.",
+          "Koinonia is designed to work as an extension of a Realtor's business, not as a disconnected vendor.",
         items: [
-          "Support behind the scenes",
-          "Clearer client experience",
-          "Reliable systems and follow-through"
+          "Shared purpose",
+          "Clear communication",
+          "Support behind the scenes"
         ]
       },
       {
-        title: "How We Serve",
+        title: "Service",
         body:
-          "The work is practical, detail-driven, and relationship-focused. The goal is not to add complexity; it is to simplify the moving parts.",
+          "The goal is to make the work feel more organized, calm, and manageable so Realtors can stay focused on people.",
         items: [
-          "Professional communication",
-          "Organized execution",
-          "Calm support through busy seasons"
+          "Professional care",
+          "Practical help",
+          "Dependable follow-through"
         ]
+      }
+    ]
+  },
+
+  trust: {
+    eyebrow: "Why Realtors Can Trust Koinonia",
+    title: "Real estate support shaped by experience and structure.",
+    lead:
+      "Koinonia combines licensed real estate perspective with an operational mindset, giving Realtors support that understands both the client-facing pressure and the behind-the-scenes details.",
+    cards: [
+      {
+        title: "Licensed Perspective",
+        body:
+          "Koinonia is shaped by real estate experience and an understanding of the responsibility Realtors carry with clients, contracts, deadlines, and communication."
+      },
+      {
+        title: "Organized Execution",
+        body:
+          "Support is built around structure, visibility, and follow-through so important details are easier to track and act on."
+      },
+      {
+        title: "Clear Boundaries",
+        body:
+          "Koinonia supports Realtors with defined operational help while respecting professional, legal, brokerage, and client decision boundaries."
       }
     ]
   },
@@ -42,19 +70,41 @@ export const aboutContent = {
       "Jeremiah has been a licensed Colorado Realtor since 2020 and understands the pressure Realtors carry during active transactions. Koinonia was shaped from that experience: practical support, strong organization, clear communication, and a commitment to serving clients and agents well.",
     cards: [
       {
-        title: "Licensed Perspective",
+        title: "Realtor Experience",
         body:
-          "Support is shaped by real estate experience and an understanding of what Realtors are responsible for."
+          "The service model is grounded in what Realtors actually manage: clients, deadlines, paperwork, showings, communication, and follow-up."
       },
       {
         title: "Operational Mindset",
         body:
-          "The focus is on systems, consistency, deadlines, documentation, and communication."
+          "The focus is on repeatable systems, consistent communication, visible next steps, and fewer details falling through the cracks."
       },
       {
         title: "Service Foundation",
         body:
-          "The brand is grounded in serving others with professionalism, care, and dependability."
+          "Koinonia is built to serve with professionalism, calm support, and care for the people involved in each transaction or task."
+      }
+    ]
+  },
+
+  foundation: {
+    eyebrow: "How Koinonia Serves",
+    title: "Calm, clear, and dependable behind the scenes.",
+    cards: [
+      {
+        title: "Clear Communication",
+        body:
+          "Realtors should know what is happening, what is needed, and what comes next."
+      },
+      {
+        title: "Organized Support",
+        body:
+          "Files, tasks, documents, and workflows should be visible, structured, and easier to manage."
+      },
+      {
+        title: "Dependable Follow-Through",
+        body:
+          "Support should reduce uncertainty by keeping the moving parts active until the work is complete."
       }
     ]
   }
