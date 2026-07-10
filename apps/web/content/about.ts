@@ -41,7 +41,7 @@ export const aboutContent = {
 
   trust: {
     eyebrow: "Why Realtors Can Trust Koinonia",
-    title: "Real estate support shaped by experience and structure.",
+    title: "Support shaped by real estate experience and operational structure.",
     lead:
       "Koinonia combines licensed real estate perspective with an operational mindset, giving Realtors support that understands both the client-facing pressure and the behind-the-scenes details.",
     cards: [
@@ -90,6 +90,8 @@ export const aboutContent = {
   foundation: {
     eyebrow: "How Koinonia Serves",
     title: "Calm, clear, and dependable behind the scenes.",
+    lead:
+      "The work should feel steady, visible, and professional from the first conversation through the final follow-through.",
     cards: [
       {
         title: "Clear Communication",

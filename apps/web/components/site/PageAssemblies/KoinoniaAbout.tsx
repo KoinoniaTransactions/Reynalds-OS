@@ -19,9 +19,9 @@ export function KoinoniaAbout() {
         variant="fullBleed"
       />
 
-      <section className="koinonia-section">
+      <section className="koinonia-section koinonia-about-meaning">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">
               {aboutContent.meaning.eyebrow}
             </div>
@@ -48,9 +48,9 @@ export function KoinoniaAbout() {
         </div>
       </section>
 
-      <section className="koinonia-section koinonia-band">
+      <section className="koinonia-section koinonia-band koinonia-about-trust">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">
               {aboutContent.trust.eyebrow}
             </div>
@@ -65,9 +65,10 @@ export function KoinoniaAbout() {
           </div>
 
           <div className="koinonia-grid three">
-            {aboutContent.trust.cards.map((card) => (
+            {aboutContent.trust.cards.map((card, index) => (
               <UniversalCard
                 key={card.title}
+                eyebrow={`0${index + 1}`}
                 title={card.title}
                 body={card.body}
               />
@@ -76,9 +77,9 @@ export function KoinoniaAbout() {
         </div>
       </section>
 
-      <section className="koinonia-section">
+      <section className="koinonia-section koinonia-about-founder">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">
               {aboutContent.founder.eyebrow}
             </div>
@@ -93,9 +94,10 @@ export function KoinoniaAbout() {
           </div>
 
           <div className="koinonia-grid three">
-            {aboutContent.founder.cards.map((card) => (
+            {aboutContent.founder.cards.map((card, index) => (
               <UniversalCard
                 key={card.title}
+                eyebrow={`0${index + 1}`}
                 title={card.title}
                 body={card.body}
               />
@@ -104,9 +106,9 @@ export function KoinoniaAbout() {
         </div>
       </section>
 
-      <section className="koinonia-section koinonia-band">
+      <section className="koinonia-section koinonia-band koinonia-about-foundation">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">
               {aboutContent.foundation.eyebrow}
             </div>
@@ -114,12 +116,17 @@ export function KoinoniaAbout() {
             <h2 className="koinonia-heading">
               {aboutContent.foundation.title}
             </h2>
+
+            <p className="koinonia-copy">
+              {aboutContent.foundation.lead}
+            </p>
           </div>
 
           <div className="koinonia-grid three">
-            {aboutContent.foundation.cards.map((card) => (
+            {aboutContent.foundation.cards.map((card, index) => (
               <UniversalCard
                 key={card.title}
+                eyebrow={`0${index + 1}`}
                 title={card.title}
                 body={card.body}
               />
