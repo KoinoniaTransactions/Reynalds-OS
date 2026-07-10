@@ -1352,3 +1352,54 @@ h1 {
     padding-bottom: 54px;
   }
 }
+
+/* Koinonia Services Body Polish */
+.koinonia-services-core {
+  position: relative;
+}
+
+.koinonia-services-core::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(184, 138, 68, 0.1), transparent 32%),
+    radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.66), transparent 30%);
+}
+
+.koinonia-services-core .koinonia-container {
+  position: relative;
+  z-index: 1;
+}
+
+.koinonia-services-core .koinonia-card,
+.koinonia-services-fit .koinonia-card,
+.koinonia-services-process .koinonia-card,
+.koinonia-services-support .koinonia-card {
+  min-height: 100%;
+}
+
+.koinonia-services-fit .koinonia-card {
+  border-color: rgba(184, 138, 68, 0.34);
+}
+
+.koinonia-services-process .koinonia-card {
+  background:
+    linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.72) 100%);
+}
+
+.koinonia-services-support .koinonia-card {
+  border-color: rgba(184, 138, 68, 0.38);
+  box-shadow: 0 20px 46px rgba(0, 0, 0, 0.07);
+}
+
+@media (max-width: 860px) {
+  .koinonia-services-core,
+  .koinonia-services-fit,
+  .koinonia-services-process,
+  .koinonia-services-support {
+    padding-top: 54px;
+    padding-bottom: 54px;
+  }
+}

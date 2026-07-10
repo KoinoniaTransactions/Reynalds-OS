@@ -11,10 +11,10 @@ export const servicesContent = {
   },
 
   categories: {
-    eyebrow: "Service Categories",
+    eyebrow: "Core Services",
     title: "Support for the real work Realtors carry.",
     lead:
-      "Each service category is designed to give Realtors structured help with files, paperwork, licensed showing needs, and daily business operations without pulling attention away from clients."
+      "Koinonia provides structured support for the operational work that keeps real estate moving: active files, contract paperwork, licensed showing needs, and daily business follow-through."
   },
 
   services: [
@@ -65,10 +65,10 @@ export const servicesContent = {
   ],
 
   fit: {
-    eyebrow: "Where Support Helps",
-    title: "Use Koinonia when the details start competing with client service.",
+    eyebrow: "When To Use Koinonia",
+    title: "Use support when the details start competing with client service.",
     lead:
-      "The right support depends on what is slowing you down. Koinonia helps create structure around the work that needs to keep moving.",
+      "The right support depends on what is slowing you down. Koinonia helps create structure around the work that needs to stay organized, visible, and moving.",
     cards: [
       {
         title: "Active files need structure",
@@ -96,6 +96,8 @@ export const servicesContent = {
   process: {
     eyebrow: "How It Works",
     title: "A simple process built around the support you need.",
+    lead:
+      "Every engagement starts by clarifying the need, confirming the scope, and keeping the operational work visible as it moves forward.",
     steps: [
       {
         title: "You share the support need.",

@@ -19,9 +19,9 @@ export function KoinoniaServices() {
         variant="fullBleed"
       />
 
-      <section className="koinonia-section">
+      <section className="koinonia-section koinonia-services-core">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">{servicesContent.categories.eyebrow}</div>
             <h2 className="koinonia-heading">{servicesContent.categories.title}</h2>
             <p className="koinonia-copy">{servicesContent.categories.lead}</p>
@@ -41,9 +41,9 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section className="koinonia-section koinonia-band">
+      <section className="koinonia-section koinonia-band koinonia-services-fit">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">{servicesContent.fit.eyebrow}</div>
             <h2 className="koinonia-heading">{servicesContent.fit.title}</h2>
             <p className="koinonia-copy">{servicesContent.fit.lead}</p>
@@ -62,11 +62,12 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section className="koinonia-section">
+      <section className="koinonia-section koinonia-services-process">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">{servicesContent.process.eyebrow}</div>
             <h2 className="koinonia-heading">{servicesContent.process.title}</h2>
+            <p className="koinonia-copy">{servicesContent.process.lead}</p>
           </div>
 
           <div className="koinonia-grid four">
@@ -82,9 +83,9 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section id="support-levels" className="koinonia-section koinonia-band">
+      <section id="support-levels" className="koinonia-section koinonia-band koinonia-services-support">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">{servicesContent.supportLevels.eyebrow}</div>
             <h2 className="koinonia-heading">{servicesContent.supportLevels.title}</h2>
             <p className="koinonia-copy">{servicesContent.supportLevels.lead}</p>
