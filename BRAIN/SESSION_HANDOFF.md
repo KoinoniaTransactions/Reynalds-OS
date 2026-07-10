@@ -529,3 +529,32 @@ As of commit `d4d1d6a`, the Koinonia Home page body has been polished and commit
 
 Do not re-add TrustPillars to the Home page unless the user explicitly asks. The Home page was intentionally tightened to avoid feeling repetitive or overly long.
 
+
+---
+
+## Current Koinonia Website Checkpoint — Services Page Body Polished
+
+As of commit `2b154ba`, the Koinonia Services page body has been polished and committed.
+
+### Files Updated
+
+- `apps/web/components/site/PageAssemblies/KoinoniaServices.tsx`
+- `apps/web/content/services.ts`
+- `packages/design-system/styles.css`
+
+### Current Services Page Flow
+
+- Header
+- Hero
+- Core Services
+- When To Use Koinonia
+- How It Works
+- Support Levels
+- FAQ
+- CTA
+- Footer
+
+### Future Rule
+
+The Services page is allowed to be more detailed than Home. Do not remove useful Services sections merely to make it shorter. Keep each section purposeful and avoid adding new sections unless they answer a clear visitor question.
+

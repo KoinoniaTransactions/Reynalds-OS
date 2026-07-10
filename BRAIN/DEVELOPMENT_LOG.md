@@ -536,3 +536,51 @@ The approved Home page flow is now:
 
 The Home page should stay clear, direct, and premium. Avoid adding repetitive credibility sections or over-explaining the service. Trust-focused content can be used more intentionally on the About page or other supporting pages.
 
+
+---
+
+## 2026-07-10 — Koinonia Services Page Body Polished
+
+Commit: 2b154ba  
+Branch: feature/app-shell-foundation  
+Commit Message: Polish Koinonia services page body
+
+The Koinonia Services page body has been refined below the approved hero system.
+
+### Scope
+
+- Updated Services page body structure
+- Clarified section labels
+- Center-aligned key section headers
+- Added a process lead paragraph
+- Added Services-specific body styling in the shared design system
+- Preserved the existing Services page structure without overbuilding
+
+### Approved Services Page Flow
+
+The approved Services page flow is now:
+
+- Header
+- Hero
+- Core Services
+- When To Use Koinonia
+- How It Works
+- Support Levels
+- FAQ
+- CTA
+- Footer
+
+### Expert Review
+
+The Services page is intentionally longer than the Home page because it is the main detail/conversion page. The sections are not considered repetitive because each serves a distinct purpose:
+
+- Core Services explains what Koinonia offers
+- When To Use Koinonia explains real-world support situations
+- How It Works explains process
+- Support Levels helps visitors understand the buying/support structure
+- FAQ handles objections and clarification
+
+### Important Future Rule
+
+Do not shorten the Services page simply because it is longer than Home. Services should remain the page where visitors can understand the full scope of support before contacting Koinonia.
+
