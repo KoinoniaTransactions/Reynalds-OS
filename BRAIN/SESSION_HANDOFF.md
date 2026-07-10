@@ -586,3 +586,33 @@ As of commit `65762fb`, the Koinonia About page body has been polished and commi
 
 The About page should stay trust-focused and professional. It should include Jeremiah’s licensed Realtor perspective, but should not become a long personal biography.
 
+
+---
+
+## Current Koinonia Website Checkpoint — Contact Page Body Polished
+
+As of commit `5a796a2`, the Koinonia Contact page body has been polished and committed.
+
+### Files Updated
+
+- `apps/web/components/site/PageAssemblies/KoinoniaContact.tsx`
+- `apps/web/content/contact.ts`
+- `packages/design-system/styles.css`
+
+### Current Contact Page Flow
+
+- Header
+- Hero
+- How to Reach Out
+- Contact actions
+- Response Time / Availability
+- Helpful details to include
+- What Happens Next
+- Contact FAQ
+- CTA
+- Footer
+
+### Future Rule
+
+The Contact page should remain clear, calm, low-pressure, and easy to act on. Do not hard-code contact details outside `contact.config.ts`.
+

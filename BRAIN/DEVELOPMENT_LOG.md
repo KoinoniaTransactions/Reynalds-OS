@@ -625,3 +625,55 @@ The About page is not considered too biography-heavy. Only one body section dire
 
 Do not turn the About page into a long personal biography. The page should continue to answer the visitor’s trust question: “Can I trust Koinonia to support my business and clients?”
 
+
+---
+
+## 2026-07-10 — Koinonia Contact Page Body Polished
+
+Commit: 5a796a2  
+Branch: feature/app-shell-foundation  
+Commit Message: Polish Koinonia contact page body
+
+The Koinonia Contact page body has been refined below the approved hero system.
+
+### Scope
+
+- Updated Contact page body structure
+- Added Contact-specific section classes
+- Center-aligned key section headers
+- Added numbered next-step cards
+- Added a helpful-details section for first outreach
+- Improved response time / availability presentation
+- Added Contact-specific body styling in the shared design system
+- Preserved centralized contact values in `contact.config.ts`
+
+### Approved Contact Page Flow
+
+The approved Contact page flow is now:
+
+- Header
+- Hero
+- How to Reach Out
+- Contact actions
+- Response Time / Availability
+- Helpful details to include
+- What Happens Next
+- Contact FAQ
+- CTA
+- Footer
+
+### Expert Review
+
+The Contact page is clear, low-pressure, and not too busy. Each section answers a distinct visitor question:
+
+- How to Reach Out explains what to do first
+- Contact actions provide email, call, and text options
+- Response Time / Availability sets expectations
+- Helpful details helps the visitor send a useful first message
+- What Happens Next explains the intake process
+- FAQ removes hesitation before reaching out
+
+### Important Future Rule
+
+Keep the Contact page concise and conversion-focused. Contact values should remain centralized in `apps/web/config/contact.config.ts`; do not hard-code email, phone, or SMS values directly inside page assemblies.
+
