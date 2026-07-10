@@ -498,3 +498,41 @@ The public-facing metadata now uses:
 
 Do not revert the public site metadata back to generic Reynalds OS wording for the Koinonia public website experience.
 
+
+---
+
+## 2026-07-10 — Koinonia Home Page Body Polished
+
+Commit: d4d1d6a  
+Branch: feature/app-shell-foundation  
+Commit Message: Polish Koinonia home page body
+
+The Koinonia Home page body has been refined below the approved hero system.
+
+### Scope
+
+- Updated Home page body structure
+- Added a clearer positioning section
+- Added a more intentional services overview section
+- Added a focused “Who It Helps” section
+- Updated the process section wording
+- Removed TrustPillars from the Home page to reduce repetition
+- Added Home-specific body styling in the shared design system
+
+### Approved Home Page Flow
+
+The approved Home page flow is now:
+
+- Header
+- Hero
+- Behind-the-Scenes Support
+- Services Built Around Realtor Operations
+- Who It Helps
+- How It Works
+- CTA
+- Footer
+
+### Important Future Rule
+
+The Home page should stay clear, direct, and premium. Avoid adding repetitive credibility sections or over-explaining the service. Trust-focused content can be used more intentionally on the About page or other supporting pages.
+

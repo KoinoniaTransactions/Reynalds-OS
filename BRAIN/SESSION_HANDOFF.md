@@ -501,3 +501,31 @@ As of commit `8eb196a`, the Koinonia public website has branded favicon/icon sup
 
 The public site should display Koinonia branding in the browser title and favicon/icon system. The metadata should remain public-site appropriate, not generic Reynalds OS wording.
 
+
+---
+
+## Current Koinonia Website Checkpoint — Home Page Body Polished
+
+As of commit `d4d1d6a`, the Koinonia Home page body has been polished and committed.
+
+### Files Updated
+
+- `apps/web/components/site/PageAssemblies/KoinoniaHome.tsx`
+- `apps/web/content/home.ts`
+- `packages/design-system/styles.css`
+
+### Current Home Page Flow
+
+- Header
+- Hero
+- Behind-the-Scenes Support
+- Services Built Around Realtor Operations
+- Who It Helps
+- How It Works
+- CTA
+- Footer
+
+### Future Rule
+
+Do not re-add TrustPillars to the Home page unless the user explicitly asks. The Home page was intentionally tightened to avoid feeling repetitive or overly long.
+
