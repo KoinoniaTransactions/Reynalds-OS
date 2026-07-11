@@ -692,3 +692,60 @@ As of commit `754330e`, the Koinonia four-page public website has completed a fu
 
 The Koinonia site is now in a complete first production-pass state. Next steps should be QA, launch preparation, deployment planning, SEO/accessibility checks, or carefully scoped content refinements. Do not rework approved header, footer, hero system, or page structure without a clear reason.
 
+
+---
+
+## Current Koinonia Services Page Status
+
+As of commit `5860f07`, the Koinonia Services page has been updated to match the approved Services & Pricing Blueprint.
+
+### Current Services Page Structure
+
+The page now includes:
+
+- Core Service Paths
+- Monthly Operations Partnership
+- Pricing Snapshot
+- When To Use Koinonia
+- How It Works
+- Professional Scope / Boundaries
+- FAQ
+- CTA
+- Footer
+
+### Approved Service Paths
+
+- Transaction Support
+- Contract & Document Support
+- Licensed Showing Coverage
+- Monthly Operations Partnership
+
+### Monthly Tiers
+
+- Starter — $299/month
+- Growth — $599/month
+- Partner — $999/month
+
+### Pricing Snapshot
+
+- Transaction Support — starting at $389
+- Contract & Document Support — starting at $75
+- Licensed Showing Coverage — starting at $50
+- Monthly Operations Partnership — starting at $299/month
+
+### Notes
+
+Pricing badges were added to prevent awkward text wrapping in the monthly and pricing sections.
+
+The page builds successfully and the working tree was clean after pushing commit `5860f07`.
+
+### Future Work
+
+Next suggested work:
+
+- Refine Services page tone and copy
+- Decide whether pricing should remain public or consultation-based
+- Update Contact page intake language to include monthly support
+- Review Home page wording to mention monthly support more clearly
+- Make small visual edits only after content direction is stable
+

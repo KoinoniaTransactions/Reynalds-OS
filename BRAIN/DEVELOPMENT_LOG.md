@@ -773,3 +773,58 @@ Verified:
 
 Before adding new features or expanding the site, preserve the completed production foundation and avoid redesigning already-approved systems unless the user explicitly requests it.
 
+
+---
+
+## 2026-07-11 — Koinonia Services Offer Structure Implemented
+
+Commit: 5860f07  
+Branch: feature/app-shell-foundation  
+Commit Message: Update Koinonia services offer structure
+
+The Koinonia Services page was updated to reflect the approved Services & Pricing Blueprint.
+
+### Implemented Offer Structure
+
+The Services page now presents four clear service paths:
+
+- Transaction Support
+- Contract & Document Support
+- Licensed Showing Coverage
+- Monthly Operations Partnership
+
+### Monthly Services
+
+Monthly Operations Partnership is now treated as a major offer instead of a minor business-support mention.
+
+Monthly tiers added:
+
+- Starter — $299/month
+- Growth — $599/month
+- Partner — $999/month
+
+### Pricing Snapshot
+
+A light pricing snapshot was added to help Realtors quickly understand starting points:
+
+- Transaction Support — starting at $389
+- Contract & Document Support — starting at $75
+- Licensed Showing Coverage — starting at $50
+- Monthly Operations Partnership — starting at $299/month
+
+### Professional Boundaries
+
+A Professional Scope section was added to clarify what Koinonia supports and what remains with the Realtor and brokerage.
+
+### Design Fix
+
+Pricing labels were converted into proper price badges so the gold background wraps cleanly around monthly and starting-price values.
+
+### Build Status
+
+Production build passed after the Services page update.
+
+### Future Rule
+
+Future Services page edits should preserve the four-path offer structure unless the business model changes. Monthly Operations Partnership should remain a visible major offer.
+
