@@ -1541,3 +1541,40 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+.koinonia-pricing-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.koinonia-price-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 10px 13px;
+  border-radius: 14px;
+  background: rgba(184, 145, 77, 0.14);
+  color: var(--ros-gold);
+  line-height: 1;
+  margin-bottom: 18px;
+}
+
+.koinonia-price-badge-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.koinonia-price-badge-value {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}

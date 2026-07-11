@@ -1,25 +1,25 @@
 export const servicesContent = {
   hero: {
     eyebrow: "Services & Pricing",
-    title: "Operational support for the work behind the client relationship.",
+    title: "Real estate operations support built around how Realtors actually work.",
     lead:
-      "Koinonia helps Realtors protect client service by organizing the transactions, contracts, showing conflicts, and business details that compete for their time.",
+      "Koinonia helps Realtors protect client service by organizing active transactions, contract paperwork, showing conflicts, and recurring business follow-through.",
     primaryLabel: "Schedule a Consultation",
     primaryHref: "/koinonia/contact",
-    secondaryLabel: "View Support Levels",
-    secondaryHref: "/koinonia/services#support-levels"
+    secondaryLabel: "View Monthly Support",
+    secondaryHref: "/koinonia/services#monthly-support"
   },
 
   categories: {
-    eyebrow: "Core Services",
-    title: "Support for the real work Realtors carry.",
+    eyebrow: "Core Service Paths",
+    title: "Choose support for the work that is slowing you down.",
     lead:
-      "Koinonia provides structured support for the operational work that keeps real estate moving: active files, contract paperwork, licensed showing needs, and daily business follow-through."
+      "Koinonia is built around clear service paths: transaction support, contract and document support, licensed showing coverage, and monthly operations partnership."
   },
 
   services: [
     {
-      title: "Transaction Management",
+      title: "Transaction Support",
       body:
         "Contract-to-close coordination for active files, including timeline setup, deadline tracking, document follow-up, communication support, and closing preparation.",
       items: [
@@ -30,12 +30,12 @@ export const servicesContent = {
       ]
     },
     {
-      title: "Contract Preparation & Writing",
+      title: "Contract & Document Support",
       body:
         "Licensed document preparation support based on the Realtor’s instructions, with organized drafts, missing-information review, and signature-ready files.",
       items: [
         "Offer preparation support",
-        "Amendments and addenda",
+        "Amendments, addenda, and notices",
         "Required term organization",
         "Draft review before client approval"
       ]
@@ -52,17 +52,96 @@ export const servicesContent = {
       ]
     },
     {
-      title: "Business Operations Support",
+      title: "Monthly Operations Partnership",
       body:
-        "Defined operational help for recurring business tasks, client communication, CRM cleanup, workflow documentation, and follow-through.",
+        "Ongoing real estate operations support for Realtors who need more structure, consistency, and follow-through without hiring a full-time assistant.",
       items: [
-        "Administrative workflows",
-        "Client communication support",
         "CRM and task organization",
-        "Process and checklist support"
+        "Client follow-up tracking",
+        "Workflow and checklist support",
+        "Recurring business operations help"
       ]
     }
   ],
+
+  monthlySupport: {
+    eyebrow: "Monthly Operations Partnership",
+    title: "Ongoing support for the business behind the business.",
+    lead:
+      "Many Realtors do not only need help during active transactions. They need recurring structure, follow-up, and operational support between files so important details do not keep slipping.",
+    tiers: [
+      {
+        title: "Starter",
+        price: "$299/month",
+        body:
+          "Light operational support for Realtors who need help getting organized and creating more visible follow-through.",
+        items: [
+          "Up to 3 hours/month",
+          "Monthly operations check-in",
+          "CRM and task cleanup",
+          "Client follow-up list support",
+          "Basic checklist/template help"
+        ]
+      },
+      {
+        title: "Growth",
+        price: "$599/month",
+        body:
+          "Consistent operations support for busy Realtors who need help keeping tasks, clients, and business details moving.",
+        items: [
+          "Up to 7 hours/month",
+          "Biweekly operations support",
+          "CRM and pipeline organization",
+          "Client follow-up tracking",
+          "Workflow/checklist support",
+          "Discounted contract support add-ons"
+        ]
+      },
+      {
+        title: "Partner",
+        price: "$999/month",
+        body:
+          "A deeper operations partnership for producing Realtors or small teams that need dependable recurring support behind the business.",
+        items: [
+          "Up to 12 hours/month",
+          "Weekly operations support",
+          "CRM/pipeline management support",
+          "Workflow documentation",
+          "Priority scheduling",
+          "Monthly business operations review"
+        ]
+      }
+    ]
+  },
+
+  pricingSnapshot: {
+    eyebrow: "Pricing Snapshot",
+    title: "Simple starting points. Clearer scope after consultation.",
+    lead:
+      "Pricing depends on scope, urgency, distance, and the level of support needed. These starting points help Realtors quickly understand where support begins.",
+    prices: [
+      {
+        title: "Transaction Support",
+        price: "$389",
+        body: "Contract-to-close coordination for active transaction files."
+      },
+      {
+        title: "Contract & Document Support",
+        price: "$75",
+        body: "Document preparation support based on Realtor instructions."
+      },
+      {
+        title: "Licensed Showing Coverage",
+        price: "$50",
+        body: "Licensed showing help when schedules or distance create conflicts."
+      },
+      {
+        title: "Monthly Operations Partnership",
+        price: "$299/month",
+        body: "Recurring real estate operations support without hiring full-time staff."
+      }
+    ]
+  },
 
   fit: {
     eyebrow: "When To Use Koinonia",
@@ -122,41 +201,26 @@ export const servicesContent = {
     ]
   },
 
-  supportLevels: {
-    eyebrow: "Support Levels",
-    title: "Choose the support that fits your business.",
+  boundaries: {
+    eyebrow: "Professional Scope",
+    title: "Clear scope. Professional boundaries.",
     lead:
-      "The conversation stays focused on support first. Pricing supports the decision rather than driving it.",
-    levels: [
+      "Koinonia supports Realtors with operational execution, organization, communication support, and document preparation based on Realtor instructions.",
+    cards: [
       {
-        title: "Transaction Support",
+        title: "What Koinonia supports",
         body:
-          "Best for Realtors who need dependable contract-to-close coordination for active files.",
-        items: [
-          "Core transaction management",
-          "Deadline and document support",
-          "Communication assistance"
-        ]
+          "Operational organization, transaction support, document preparation from Realtor instructions, task visibility, client follow-up support, and workflow structure."
       },
       {
-        title: "Expanded Realtor Support",
+        title: "What remains with the Realtor",
         body:
-          "Best for Realtors who also need help with contract paperwork, showing conflicts, or additional operational tasks.",
-        items: [
-          "Transaction coordination",
-          "Contract preparation support",
-          "Licensed showing coverage options"
-        ]
+          "Client advice, negotiation decisions, brokerage compliance, legal questions, final approval, and professional judgment remain with the Realtor and their brokerage."
       },
       {
-        title: "Operations Partner",
+        title: "Why boundaries matter",
         body:
-          "Best for Realtors or teams looking for ongoing business support across multiple operational needs.",
-        items: [
-          "Custom support structure",
-          "Business workflow assistance",
-          "Long-term operational partnership"
-        ]
+          "Clear boundaries protect the client relationship, keep expectations honest, and make the support more dependable for everyone involved."
       }
     ]
   }

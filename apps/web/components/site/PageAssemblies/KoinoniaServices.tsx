@@ -41,6 +41,60 @@ export function KoinoniaServices() {
         </div>
       </section>
 
+      <section id="monthly-support" className="koinonia-section koinonia-band koinonia-services-support">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">{servicesContent.monthlySupport.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.monthlySupport.title}</h2>
+            <p className="koinonia-copy">{servicesContent.monthlySupport.lead}</p>
+          </div>
+
+          <div className="koinonia-grid three">
+            {servicesContent.monthlySupport.tiers.map((tier) => (
+              <article key={tier.title} className="koinonia-card koinonia-pricing-card">
+                <div className="koinonia-price-badge">
+                  <span className="koinonia-price-badge-label">Monthly</span>
+                  <span className="koinonia-price-badge-value">{tier.price}</span>
+                </div>
+
+                <h3>{tier.title}</h3>
+                <p>{tier.body}</p>
+
+                <ul>
+                  {tier.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section koinonia-services-pricing">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">{servicesContent.pricingSnapshot.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.pricingSnapshot.title}</h2>
+            <p className="koinonia-copy">{servicesContent.pricingSnapshot.lead}</p>
+          </div>
+
+          <div className="koinonia-grid four">
+            {servicesContent.pricingSnapshot.prices.map((price) => (
+              <article key={price.title} className="koinonia-card koinonia-pricing-card">
+                <div className="koinonia-price-badge">
+                  <span className="koinonia-price-badge-label">Starting at</span>
+                  <span className="koinonia-price-badge-value">{price.price}</span>
+                </div>
+
+                <h3>{price.title}</h3>
+                <p>{price.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="koinonia-section koinonia-band koinonia-services-fit">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
@@ -83,22 +137,17 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section id="support-levels" className="koinonia-section koinonia-band koinonia-services-support">
+      <section className="koinonia-section koinonia-band koinonia-services-boundaries">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.supportLevels.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.supportLevels.title}</h2>
-            <p className="koinonia-copy">{servicesContent.supportLevels.lead}</p>
+            <div className="koinonia-eyebrow">{servicesContent.boundaries.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.boundaries.title}</h2>
+            <p className="koinonia-copy">{servicesContent.boundaries.lead}</p>
           </div>
 
           <div className="koinonia-grid three">
-            {servicesContent.supportLevels.levels.map((level) => (
-              <UniversalCard
-                key={level.title}
-                title={level.title}
-                body={level.body}
-                items={level.items}
-              />
+            {servicesContent.boundaries.cards.map((card) => (
+              <UniversalCard key={card.title} title={card.title} body={card.body} />
             ))}
           </div>
         </div>
