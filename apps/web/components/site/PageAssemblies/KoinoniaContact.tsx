@@ -58,7 +58,36 @@ export function KoinoniaContact() {
         </div>
       </section>
 
-      <section className="koinonia-section koinonia-band koinonia-contact-next">
+      <section className="koinonia-section koinonia-band koinonia-contact-support">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">
+              {contactContent.supportOptions.eyebrow}
+            </div>
+
+            <h2 className="koinonia-heading">
+              {contactContent.supportOptions.title}
+            </h2>
+
+            <p className="koinonia-copy">
+              {contactContent.supportOptions.lead}
+            </p>
+          </div>
+
+          <div className="koinonia-grid four">
+            {contactContent.supportOptions.cards.map((card, index) => (
+              <UniversalCard
+                key={card.title}
+                eyebrow={`0${index + 1}`}
+                title={card.title}
+                body={card.body}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section koinonia-contact-next">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">
