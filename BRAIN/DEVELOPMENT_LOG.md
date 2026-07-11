@@ -725,3 +725,51 @@ Verified:
 
 Before adding new features or expanding the site, preserve the completed production foundation and avoid redesigning already-approved systems unless the user explicitly requests it.
 
+
+---
+
+## 2026-07-10 — Koinonia Full-Site QA Pass Completed
+
+Commit: 754330e  
+Branch: feature/app-shell-foundation  
+Commit Message: Fix CSS alignment warnings
+
+A full-site QA pass was completed after the four-page Koinonia public website production pass.
+
+### QA Scope
+
+Verified:
+
+- Home page
+- Services page
+- About page
+- Contact page
+- Header
+- Mobile hamburger menu
+- Footer
+- Hero image references
+- Favicon/icon routes
+- Contact links
+- Build status
+- Git status
+
+### QA Results
+
+- Visual inspection passed on desktop
+- Visual inspection passed on mobile
+- `/koinonia` returned 200
+- `/koinonia/services` returned 200
+- `/koinonia/about` returned 200
+- `/koinonia/contact` returned 200
+- `/icon.svg` returned 200
+- `/apple-icon.svg` returned 200
+- No temporary hero image references found
+- All page assemblies point to final production hero image paths
+- Production build completed successfully
+- CSS alignment warnings were resolved
+- Working tree clean after commit and push
+
+### Important Future Rule
+
+Before adding new features or expanding the site, preserve the completed production foundation and avoid redesigning already-approved systems unless the user explicitly requests it.
+
