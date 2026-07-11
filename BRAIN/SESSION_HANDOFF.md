@@ -616,3 +616,41 @@ As of commit `5a796a2`, the Koinonia Contact page body has been polished and com
 
 The Contact page should remain clear, calm, low-pressure, and easy to act on. Do not hard-code contact details outside `contact.config.ts`.
 
+
+---
+
+## Current Koinonia Website Checkpoint — Full-Site QA Completed
+
+As of commit `754330e`, the Koinonia four-page public website has completed a full local QA pass.
+
+### Completed Public Site Pages
+
+- `/koinonia`
+- `/koinonia/services`
+- `/koinonia/about`
+- `/koinonia/contact`
+
+### Completed Sitewide Systems
+
+- Approved production hero image system
+- Shared Header with mobile hamburger menu
+- Upgraded shared Footer
+- Koinonia favicon and metadata
+- Polished Home page body
+- Polished Services page body
+- Polished About page body
+- Polished Contact page body
+
+### QA Confirmed
+
+- Build passes cleanly
+- Route checks returned 200 for all four Koinonia pages
+- Icon checks returned 200 for `/icon.svg` and `/apple-icon.svg`
+- No temporary hero image references remain
+- Final hero image paths are used in all page assemblies
+- Git working tree clean after commit and push
+
+### Future Rule
+
+The Koinonia site is now in a complete first production-pass state. Next steps should be QA, launch preparation, deployment planning, SEO/accessibility checks, or carefully scoped content refinements. Do not rework approved header, footer, hero system, or page structure without a clear reason.
+
