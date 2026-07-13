@@ -68,13 +68,13 @@ export const servicesContent = {
     eyebrow: "Monthly Operations Partnership",
     title: "Ongoing support for the business behind the business.",
     lead:
-      "Many Realtors do not only need help during active transactions. They need recurring structure, follow-up, and operational support between files so important details do not keep slipping.",
+      "Many Realtors do not only need help during active transactions. They need recurring structure, follow-up, and operational support between files so the business stays organized even when client work gets busy.",
     tiers: [
       {
         title: "Starter",
         price: "$299/month",
         body:
-          "Light operational support for Realtors who need help getting organized and creating more visible follow-through.",
+          "A light recurring support layer for Realtors who want better organization, clearer follow-through, and a more consistent operating rhythm.",
         items: [
           "Up to 3 hours/month",
           "Monthly operations check-in",
@@ -87,7 +87,7 @@ export const servicesContent = {
         title: "Growth",
         price: "$599/month",
         body:
-          "Consistent operations support for busy Realtors who need help keeping tasks, clients, and business details moving.",
+          "A steady operations support rhythm for busy Realtors who need recurring help keeping tasks, clients, and business details moving.",
         items: [
           "Up to 7 hours/month",
           "Biweekly operations support",
@@ -101,7 +101,7 @@ export const servicesContent = {
         title: "Partner",
         price: "$999/month",
         body:
-          "A deeper operations partnership for producing Realtors or small teams that need dependable recurring support behind the business.",
+          "A deeper operations partnership for producing Realtors or small teams that need dependable recurring structure behind the business.",
         items: [
           "Up to 12 hours/month",
           "Weekly operations support",
@@ -118,7 +118,7 @@ export const servicesContent = {
     eyebrow: "Pricing Snapshot",
     title: "Simple starting points. Clearer scope after consultation.",
     lead:
-      "Pricing depends on scope, urgency, distance, and the level of support needed. These starting points help Realtors quickly understand where support begins.",
+      "Pricing is shown as a starting point so Realtors can understand where support begins. Final scope depends on timing, urgency, distance, and the level of operational support needed.",
     prices: [
       {
         title: "Transaction Support",
@@ -205,7 +205,7 @@ export const servicesContent = {
     eyebrow: "Professional Scope",
     title: "Clear scope. Professional boundaries.",
     lead:
-      "Koinonia supports Realtors with operational execution, organization, communication support, and document preparation based on Realtor instructions.",
+      "Koinonia supports Realtors with operational execution, organization, communication support, and document preparation based on Realtor instructions while keeping professional responsibilities clear.",
     cards: [
       {
         title: "What Koinonia supports",
