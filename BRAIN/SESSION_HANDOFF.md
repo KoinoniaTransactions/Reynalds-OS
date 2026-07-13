@@ -802,3 +802,38 @@ The Home page intentionally remains light and high-level. It should guide visito
 
 If service language changes again, update Home only lightly. Detailed service explanations, pricing, tiers, and professional boundaries belong on the Services page.
 
+
+---
+
+## Aligned Koinonia Public Pages QA Status
+
+As of commit `b2abf3d`, the Home, Services, and Contact pages have been aligned around the approved Koinonia service model and passed a focused local QA check.
+
+### Pages Verified
+
+- `/koinonia`
+- `/koinonia/services`
+- `/koinonia/contact`
+
+### Service Model Alignment
+
+The current public-facing service model includes:
+
+- Transaction Support
+- Contract & Document Support
+- Licensed Showing Coverage
+- Monthly Operations Partnership
+
+### QA Results
+
+- Production build passed
+- Home monthly support wording verified
+- Services tone/pricing wording verified
+- Contact intake paths verified
+- Local route checks returned 200 for Home, Services, and Contact
+- Working tree clean after QA
+
+### Recommended Next Work
+
+Next work should focus on small visual refinements, pricing confidence, final service-boundary decisions, or launch-readiness planning. Avoid major redesign unless a specific issue is identified.
+

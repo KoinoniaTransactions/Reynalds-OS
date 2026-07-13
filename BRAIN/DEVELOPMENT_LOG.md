@@ -905,3 +905,55 @@ Production build passed before commit.
 
 The Home page should continue to mention Monthly Operations Partnership at a high level, but detailed pricing, support tiers, boundaries, and service explanations should remain on the Services page.
 
+
+---
+
+## 2026-07-13 — Koinonia Aligned Pages QA Checkpoint
+
+Branch: feature/app-shell-foundation  
+Latest Verified Commit: b2abf3d  
+Checkpoint Scope: Home, Services, and Contact alignment after Services/Pricing Blueprint implementation
+
+A short QA pass was completed after aligning the Koinonia public pages around the approved service model.
+
+### Verified Content
+
+Home page:
+
+- Monthly Operations Partnership is present
+- Recurring support language is present
+- Business follow-through language is present
+
+Services page:
+
+- Monthly support tone was refined
+- Pricing remains framed as starting points
+- Professional responsibility boundaries remain clear
+
+Contact page:
+
+- Transaction Support intake path is present
+- Contract & Document Support intake path is present
+- Licensed Showing Coverage intake path is present
+- Monthly Operations Partnership intake path is present
+
+### Verified Build
+
+Production build passed successfully.
+
+### Verified Routes
+
+The following routes returned 200 locally:
+
+- `/koinonia`
+- `/koinonia/services`
+- `/koinonia/contact`
+
+### Git Status
+
+Working tree was clean after QA. Branch was synced with GitHub.
+
+### Future Rule
+
+Home should remain light and navigational. Services should carry pricing, tiers, scope, and professional boundaries. Contact should stay simple while clearly supporting the four approved intake paths.
+
