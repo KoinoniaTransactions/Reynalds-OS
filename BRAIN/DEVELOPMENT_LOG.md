@@ -866,3 +866,42 @@ Production build passed before commit.
 
 Future Contact page edits should preserve the clear intake path for Monthly Operations Partnership. Monthly support should remain visible as a major offer, not hidden under generic business workflow language.
 
+
+---
+
+## 2026-07-13 — Koinonia Home Services Aligned With Monthly Support
+
+Commit: 6943c67  
+Branch: feature/app-shell-foundation  
+Commit Message: Align Koinonia home services with monthly support
+
+The Koinonia Home page service card language was updated to align with the approved Services & Pricing Blueprint and the implemented Services/Contact page structure.
+
+### Change Made
+
+The Home page service card formerly titled:
+
+- Business Operations Support
+
+was updated to:
+
+- Monthly Operations Partnership
+
+### Purpose
+
+This keeps the Home page aligned with the current Koinonia service model while preserving Home as a light, high-level, navigational page.
+
+### Scope
+
+Only `apps/web/content/home.ts` was changed.
+
+No new sections, CSS, pricing cards, component changes, or layout changes were added.
+
+### Build Status
+
+Production build passed before commit.
+
+### Future Rule
+
+The Home page should continue to mention Monthly Operations Partnership at a high level, but detailed pricing, support tiers, boundaries, and service explanations should remain on the Services page.
+

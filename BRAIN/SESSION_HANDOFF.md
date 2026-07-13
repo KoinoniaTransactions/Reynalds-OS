@@ -780,3 +780,25 @@ Next suggested work:
 - Decide whether pricing should remain public or become consultation-based
 - Continue small visual refinements only after business/service language is stable
 
+
+---
+
+## Current Koinonia Home Page Status
+
+As of commit `6943c67`, the Home page service cards are aligned with the approved Koinonia service model.
+
+### Current Home Service Paths
+
+- Transaction Management
+- Contract Preparation & Writing
+- Licensed Showing Coverage
+- Monthly Operations Partnership
+
+### Notes
+
+The Home page intentionally remains light and high-level. It should guide visitors toward Services and Contact without becoming a pricing or package-detail page.
+
+### Future Work
+
+If service language changes again, update Home only lightly. Detailed service explanations, pricing, tiers, and professional boundaries belong on the Services page.
+
