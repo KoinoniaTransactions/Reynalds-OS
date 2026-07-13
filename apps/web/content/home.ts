@@ -61,10 +61,10 @@ export const homeContent = {
       items: ["Licensed support", "Access coordination", "Showing feedback"]
     },
     {
-      title: "Business Operations Support",
+      title: "Monthly Operations Partnership",
       body:
-        "For growing Realtors who need structure, workflow support, and practical help keeping daily business details organized.",
-      items: ["Workflow support", "Client coordination", "Business organization"]
+        "For growing Realtors who need recurring structure, workflow support, and practical help keeping business details organized between transactions.",
+      items: ["Recurring support", "Workflow structure", "Business follow-through"]
     }
   ],
 
