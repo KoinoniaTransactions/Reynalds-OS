@@ -957,3 +957,33 @@ Recommended next SEO steps:
 - Prepare Search Console and analytics setup
 - Confirm final production domain before deployment
 
+
+---
+
+## Koinonia Social Preview Metadata
+
+Social preview metadata has been added for the public Koinonia site.
+
+### Current Social Preview Asset
+
+- `apps/web/public/assets/images/koinonia/social-preview.png`
+- Size: 1200x630
+- Source: approved Koinonia home hero source artwork
+
+### Current Coverage
+
+The social preview image is included in Open Graph and Twitter metadata for:
+
+- `/`
+- `/services`
+- `/about`
+- `/contact`
+
+### Verified
+
+- Production build passed
+- Social image route returned 200
+- Public pages include `og:image`
+- Public pages include `twitter:image`
+- Public pages include `summary_large_image`
+

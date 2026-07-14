@@ -1077,3 +1077,34 @@ Added the first core SEO launch-readiness layer for the Koinonia public website.
 
 Continue launch SEO work from the current Next.js site. Do not reopen the Squarespace migration decision unless intentionally requested.
 
+
+---
+
+## 2026-07-13 — Koinonia Social Preview Metadata
+
+Branch: feature/app-shell-foundation
+
+Added social preview metadata for public Koinonia pages.
+
+### Added
+
+- Dedicated social preview image:
+  - `apps/web/public/assets/images/koinonia/social-preview.png`
+- Open Graph image metadata
+- Twitter image metadata
+- Shared social image settings in SEO config
+
+### Verified
+
+- Social preview image generated at 1200x630
+- Production build passed
+- Public routes returned 200
+- Social preview image route returned 200
+- `og:image` present on Home, Services, About, and Contact
+- `twitter:image` present on Home, Services, About, and Contact
+- `summary_large_image` present on Home, Services, About, and Contact
+
+### Direction
+
+Use the dedicated social preview image for public link sharing until a future branded campaign-specific preview image is intentionally approved.
+

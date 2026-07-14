@@ -22,12 +22,28 @@ export const metadata: Metadata = {
     url: absoluteUrl("/"),
     siteName: seoConfig.siteName,
     title: seoConfig.defaultTitle,
-    description: seoConfig.defaultDescription
+    description: seoConfig.defaultDescription,
+    images: [
+      {
+        url: absoluteUrl(seoConfig.socialPreviewPath),
+        width: seoConfig.socialPreviewWidth,
+        height: seoConfig.socialPreviewHeight,
+        alt: seoConfig.defaultTitle
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
     title: seoConfig.defaultTitle,
-    description: seoConfig.defaultDescription
+    description: seoConfig.defaultDescription,
+    images: [
+      {
+        url: absoluteUrl(seoConfig.socialPreviewPath),
+        width: seoConfig.socialPreviewWidth,
+        height: seoConfig.socialPreviewHeight,
+        alt: seoConfig.defaultTitle
+      }
+    ]
   },
   icons: {
     icon: "/icon.svg",

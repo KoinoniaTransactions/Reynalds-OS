@@ -11,11 +11,20 @@ export const metadata: Metadata = {
   openGraph: {
     title: seoConfig.publicRoutes[1].title,
     description: seoConfig.publicRoutes[1].description,
+    images: [
+      {
+        url: absoluteUrl(seoConfig.socialPreviewPath),
+        width: seoConfig.socialPreviewWidth,
+        height: seoConfig.socialPreviewHeight,
+        alt: seoConfig.publicRoutes[1].title
+      }
+    ],
     url: absoluteUrl("/services")
   },
   twitter: {
     title: seoConfig.publicRoutes[1].title,
-    description: seoConfig.publicRoutes[1].description
+    description: seoConfig.publicRoutes[1].description,
+    images: [absoluteUrl(seoConfig.socialPreviewPath)]
   }
 };
 

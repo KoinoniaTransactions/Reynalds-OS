@@ -7,6 +7,9 @@ export const seoConfig = {
   titleTemplate: "%s | Koinonia",
   defaultDescription:
     "Real estate operations support for Realtors, including transaction support, contract and document support, licensed showing coverage, and monthly operations partnership.",
+  socialPreviewPath: "/assets/images/koinonia/social-preview.png",
+  socialPreviewWidth: 1200,
+  socialPreviewHeight: 630,
   siteUrl,
   locale: "en_US",
   publicRoutes: [
