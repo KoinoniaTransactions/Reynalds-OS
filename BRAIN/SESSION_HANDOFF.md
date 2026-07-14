@@ -884,3 +884,41 @@ The internal dashboard has been preserved at `/dashboard`.
 
 For public website links, prefer root paths. Do not remove `/koinonia` aliases unless intentionally approved later.
 
+
+---
+
+## Launch Platform Decision Recorded
+
+The platform decision has been recorded.
+
+### Approved Decision
+
+Launch the current custom Next.js Koinonia site. Do not rebuild the site in Squarespace before launch.
+
+### Current Launch Direction
+
+- Public Koinonia website uses root paths:
+  - `/`
+  - `/services`
+  - `/about`
+  - `/contact`
+- Reynalds OS is preserved at `/dashboard`
+- Existing `/koinonia` routes remain as aliases
+- Use a deployment path such as Vercel
+- Complete SEO launch essentials before going live
+
+### Next Launch Work
+
+When the user says the platform decision has been recorded, proceed with:
+
+- Per-page metadata
+- Sitemap
+- Robots file
+- Open Graph/social preview metadata
+- Domain/deployment readiness
+- Search Console
+- Analytics
+- Google Business Profile review
+
+Do not suggest rebuilding in Squarespace unless the user explicitly asks to reconsider the platform strategy.
+

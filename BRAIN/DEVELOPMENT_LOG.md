@@ -1016,3 +1016,29 @@ The internal Reynalds OS dashboard remains preserved at:
 
 Use root paths for public Koinonia navigation going forward. Keep `/koinonia` routes available for continuity unless a future cleanup decision removes them intentionally.
 
+
+---
+
+## 2026-07-13 — Koinonia Launch Platform Decision
+
+Branch: feature/app-shell-foundation
+
+A launch platform decision was approved and documented.
+
+### Decision
+
+Koinonia should launch using the current custom Next.js site rather than rebuilding the site in Squarespace before launch.
+
+### Approved Direction
+
+- Keep the current Next.js website
+- Deploy using a platform such as Vercel
+- Keep public Koinonia pages on root paths
+- Preserve Reynalds OS at `/dashboard`
+- Keep `/koinonia` aliases available
+- Add SEO launch essentials before going live
+
+### Future Rule
+
+When launch planning resumes, do not reopen the Squarespace migration question unless intentionally requested. Continue from the recorded decision and move into SEO, deployment, domain, analytics, and launch readiness.
+
