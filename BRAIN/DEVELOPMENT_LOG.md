@@ -1246,3 +1246,39 @@ Completed the first below-hero body modernization pass for the public Koinonia w
 ### Direction
 
 Keep the softer modern card system, but avoid extra decorative gold lines across cards or section headers. Continue using restrained gold accents only where they support the brand without feeling repetitive.
+
+---
+
+## 2026-07-14 — Koinonia Compact Consultation Scheduler
+
+Branch: feature/app-shell-foundation
+
+Replaced consultation-card email behavior with a compact on-page scheduler CTA and popup intake form.
+
+### Updated
+
+- Added a ConsultationIntake popup component
+- Added a `/api/koinonia/consultation` route prepared for Resend email delivery
+- Set the default consultation recipient to jeremiah@koinoniaadmin.com
+- Replaced consultation-card `mailto` behavior with on-site popup form behavior
+- Moved support-type selection into the popup
+- Reduced the Contact page scheduler area to a compact CTA block
+- Removed the five large consultation cards from the visible Contact page
+- Removed the bulky availability/header treatment
+- Kept availability visible as Monday-Friday, 9:00 AM-5:00 PM
+- Added requested weekday date and time-window selection
+- Added form validation and client confirmation/error states
+- Added consultation intake documentation
+
+### Verified
+
+- Production build passed
+- `/contact` returned 200
+- `/koinonia/contact` returned 200
+- Contact page now imports and renders ConsultationSchedulerButton
+- Old ConsultationSchedulerSelector wiring was removed from the Contact page assembly
+- Popup scheduler was visually reviewed and approved
+
+### Production Requirement
+
+Live email delivery requires `RESEND_API_KEY` before production launch. Optional environment variables are `CONTACT_INTAKE_TO_EMAIL` and `CONTACT_INTAKE_FROM_EMAIL`.

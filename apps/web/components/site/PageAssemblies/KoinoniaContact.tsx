@@ -1,6 +1,7 @@
 import { contactContent } from "@/content/contact";
 import { CTA, ContactActions, FAQ, Footer, Header, Hero, UniversalCard } from "../index";
-import { contactConfig, mailto } from "../../../config/contact.config";
+import { contactConfig } from "../../../config/contact.config";
+import { ConsultationSchedulerButton } from "../ConsultationIntake/ConsultationIntake";
 
 export function KoinoniaContact() {
   return (
@@ -77,44 +78,16 @@ export function KoinoniaContact() {
             </p>
           </div>
 
-          <article className="koinonia-consultation-window">
-            <div>
-              <span>{contactContent.scheduleConsultation.availabilityLabel}</span>
-              <strong>{contactContent.scheduleConsultation.availability}</strong>
-            </div>
+          <ConsultationSchedulerButton
+            options={contactContent.scheduleConsultation.cards}
+            availability={contactContent.scheduleConsultation.availability}
+            title={contactContent.scheduleConsultation.title}
+            lead={contactContent.scheduleConsultation.lead}
+            selectorLabel={contactContent.scheduleConsultation.selectorLabel}
+            selectorHelper={contactContent.scheduleConsultation.selectorHelper}
+            buttonLabel={contactContent.scheduleConsultation.buttonLabel}
+          />
 
-            <p>{contactContent.scheduleConsultation.calendarNote}</p>
-          </article>
-
-          <div className="koinonia-consultation-grid">
-            {contactContent.scheduleConsultation.cards.map((card, index) => (
-              <article className="koinonia-consultation-card" key={card.title}>
-                <div className="koinonia-consultation-number">
-                  0{index + 1}
-                </div>
-
-                <h3>{card.title}</h3>
-                <p>{card.body}</p>
-
-                <div className="koinonia-consultation-detail-title">
-                  Helpful details to include
-                </div>
-
-                <ul>
-                  {card.details.map((detail) => (
-                    <li key={detail}>{detail}</li>
-                  ))}
-                </ul>
-
-                <a
-                  className="koinonia-button secondary"
-                  href={mailto(card.subject)}
-                >
-                  Request this consultation
-                </a>
-              </article>
-            ))}
-          </div>
         </div>
       </section>
 

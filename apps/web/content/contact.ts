@@ -27,72 +27,49 @@ export const contactContent = {
 
   scheduleConsultation: {
     eyebrow: "Schedule a Consultation",
-    title: "Choose what you want to talk through.",
+    title: "Need help choosing the right support?",
     lead:
-      "Start by choosing the type of support you need. You do not need to have every detail figured out — the goal is to clarify the need, timing, scope, and best next step.",
-    availabilityLabel: "Consultation Window",
-    availability: "Monday–Friday, 9:00 AM–5:00 PM",
-    calendarNote:
-      "A calendar scheduler can be connected later. For now, request the consultation type that fits best and Koinonia will confirm an available time within the consultation window.",
+      "Open the scheduler, choose the support type that fits your need, and request a weekday consultation time.",
+    availabilityLabel: "Availability",
+    availability: "Monday–Friday · 9:00 AM–5:00 PM",
+    buttonLabel: "Open Scheduler",
+    selectorLabel: "What do you need help with?",
+    selectorHelper:
+      "Choose the support type that fits your need before sending your consultation request.",
     cards: [
       {
-        title: "Transaction Support Consultation",
-        body:
-          "For an active or upcoming contract-to-close file that needs structure, deadline tracking, document follow-up, communication support, or closing preparation.",
-        details: [
-          "Contract date and closing date",
-          "Current file status",
-          "Important deadlines or concerns",
-          "Brokerage, lender, title, or client context"
-        ],
+        title: "Transaction Support",
+        body: "For active or upcoming contract-to-close support.",
+        bestWhen:
+          "Best when you already have a signed contract, accepted offer, or file that needs deadline and communication support.",
         subject: "Koinonia Transaction Support Consultation Request"
       },
       {
-        title: "Contract & Document Support Consultation",
-        body:
-          "For offers, amendments, addenda, notices, or other document preparation support based on Realtor instructions.",
-        details: [
-          "Document type needed",
-          "Deadline or offer timing",
-          "Client instructions or terms",
-          "Any missing information that needs to be clarified"
-        ],
+        title: "Contract & Document Support",
+        body: "For offers, amendments, addenda, notices, or paperwork help.",
+        bestWhen:
+          "Best when you know what needs to be prepared and want licensed document support based on your instructions.",
         subject: "Koinonia Contract and Document Support Consultation Request"
       },
       {
-        title: "Licensed Showing Coverage Consultation",
-        body:
-          "For schedule conflicts, distance challenges, buyer access needs, or situations where dependable licensed showing support is needed.",
-        details: [
-          "Property address or general area",
-          "Preferred showing date and time",
-          "Access instructions or showing requirements",
-          "Client needs, timing, and follow-up expectations"
-        ],
+        title: "Licensed Showing Coverage",
+        body: "For scheduling conflicts, distance issues, or buyer showing needs.",
+        bestWhen:
+          "Best when you need a licensed agent to help with access, showing coverage, or buyer follow-up.",
         subject: "Koinonia Licensed Showing Coverage Consultation Request"
       },
       {
-        title: "Monthly Operations Partnership Consultation",
-        body:
-          "For ongoing CRM organization, workflow structure, task tracking, client follow-up, systems support, and recurring business operations help.",
-        details: [
-          "What feels disorganized or keeps slipping",
-          "Current CRM, task, or workflow tools",
-          "Weekly or monthly support needs",
-          "Preferred rhythm for recurring support"
-        ],
+        title: "Monthly Operations Partnership",
+        body: "For recurring admin, CRM, follow-up, task cleanup, and backend business support.",
+        bestWhen:
+          "Best when you need ongoing operational help, not just one transaction or one document.",
         subject: "Koinonia Monthly Operations Partnership Consultation Request"
       },
       {
         title: "Not Sure Yet",
-        body:
-          "For Realtors who know they need support but are not sure which service path fits best yet.",
-        details: [
-          "What is currently taking too much time",
-          "Where follow-through is getting harder",
-          "What outcome would help most",
-          "Any timing pressure or upcoming client need"
-        ],
+        body: "For Realtors who know they need help but are not sure where to start.",
+        bestWhen:
+          "Best when you want a quick conversation to choose the right support path.",
         subject: "Koinonia General Consultation Request"
       }
     ]

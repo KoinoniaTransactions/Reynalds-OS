@@ -1108,3 +1108,27 @@ Do not reintroduce repeated gold top lines on cards or section headings. Use gol
 ### Next Recommended Step
 
 Review the site end-to-end on desktop and mobile, then decide whether to start the client portal foundation or continue page-specific visual refinements.
+
+---
+
+## Koinonia Compact Consultation Scheduler
+
+The Contact page consultation flow now uses a compact CTA block and popup scheduler instead of large consultation cards.
+
+### Current State
+
+- `/contact#schedule-consultation` remains the anchor used by Schedule a Consultation links
+- The Contact page shows one compact scheduler CTA
+- The popup contains the support-type dropdown
+- The popup collects name, email, phone, requested weekday date, requested time window, and notes
+- Submission route is `/api/koinonia/consultation`
+- Default email recipient is jeremiah@koinoniaadmin.com
+- Email delivery is prepared for Resend
+
+### Important Production Note
+
+Email delivery will not work live until `RESEND_API_KEY` is configured. The intended provider for this first version is Resend.
+
+### Design Rule
+
+Keep the Contact page scheduler area compact. Do not reintroduce the five large consultation cards or bulky availability header. Keep support-type selection inside the popup.
