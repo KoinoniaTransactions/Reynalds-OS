@@ -1220,3 +1220,29 @@ Completed a public-site visual and consultation-flow modernization batch.
 ### Direction
 
 Keep the modern header/mobile navigation direction. Keep the Contact page consultation section as the current scheduling destination until a calendar scheduler or client portal intake flow is added.
+
+---
+
+## 2026-07-13 — Koinonia Body Card Modernization
+
+Branch: feature/app-shell-foundation
+
+Completed the first below-hero body modernization pass for the public Koinonia website.
+
+### Updated
+
+- Modernized global section, card, button, band, pricing, and consultation-card styling
+- Improved card surface depth, spacing, border treatment, and hover polish
+- Preserved existing content and page structure
+- Removed the extra decorative gold card/section lines after visual review
+- Added body/card modernization notes under docs/specifications
+
+### Verified
+
+- Production build passed
+- Public routes returned 200
+- Body/card visual direction was reviewed and approved after removing the extra gold line treatment
+
+### Direction
+
+Keep the softer modern card system, but avoid extra decorative gold lines across cards or section headers. Continue using restrained gold accents only where they support the brand without feeling repetitive.

@@ -2234,3 +2234,254 @@ h1 {
     width: min(100% - 32px, 760px);
   }
 }
+
+/* Koinonia Body Card Modernization — 2026-07-13 */
+.koinonia-site {
+  background:
+    radial-gradient(circle at 10% 10%, rgba(184, 138, 68, 0.08), transparent 24%),
+    linear-gradient(180deg, #f8f4eb 0%, #fbf8f2 42%, #f7f1e8 100%);
+}
+
+.koinonia-section:not(.koinonia-hero):not(.koinonia-band) {
+  position: relative;
+  overflow: hidden;
+}
+
+.koinonia-section:not(.koinonia-hero):not(.koinonia-band)::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(1120px, calc(100% - 44px));
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184, 138, 68, 0.18), transparent);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.koinonia-section-header {
+  position: relative;
+  margin-bottom: clamp(30px, 4vw, 48px);
+}
+
+.koinonia-site > .koinonia-section:not(.koinonia-hero) .koinonia-section-header::after {
+  content: "";
+  display: block;
+  width: 54px;
+  height: 3px;
+  margin: 18px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(184, 138, 68, 0.18), rgba(184, 138, 68, 0.9), rgba(184, 138, 68, 0.18));
+}
+
+.koinonia-eyebrow {
+  letter-spacing: 0.105em;
+}
+
+.koinonia-copy {
+  max-width: 760px;
+}
+
+.koinonia-section-header.center .koinonia-copy,
+.koinonia-site > .koinonia-section:not(.koinonia-hero) .koinonia-section-header .koinonia-copy {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.koinonia-grid {
+  gap: clamp(18px, 2.2vw, 26px);
+}
+
+.koinonia-card {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(24px, 3vw, 32px);
+  border-radius: 30px;
+  border: 1px solid rgba(184, 138, 68, 0.22);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.68));
+  box-shadow:
+    0 22px 56px rgba(17, 17, 17, 0.065),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  overflow: hidden;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.koinonia-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: -1;
+  height: 5px;
+  background: linear-gradient(90deg, rgba(184, 138, 68, 0.72), rgba(184, 138, 68, 0.08));
+  opacity: 0.64;
+}
+
+.koinonia-card::after {
+  content: "";
+  position: absolute;
+  right: -52px;
+  top: -52px;
+  z-index: -1;
+  width: 148px;
+  height: 148px;
+  border-radius: 999px;
+  background: rgba(184, 138, 68, 0.06);
+  pointer-events: none;
+}
+
+.koinonia-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(184, 138, 68, 0.36);
+  box-shadow:
+    0 28px 72px rgba(17, 17, 17, 0.095),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.koinonia-card h3 {
+  letter-spacing: -0.025em;
+}
+
+.koinonia-card p {
+  margin-bottom: 0;
+}
+
+.koinonia-card ul {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.koinonia-card li {
+  padding-left: 2px;
+}
+
+.koinonia-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.7), transparent 34%),
+    rgba(184, 138, 68, 0.14);
+  border: 1px solid rgba(184, 138, 68, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.koinonia-button {
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.koinonia-button:hover,
+.koinonia-button:focus-visible {
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.koinonia-button.primary:hover,
+.koinonia-button.primary:focus-visible {
+  box-shadow: 0 16px 34px rgba(17, 17, 17, 0.14);
+}
+
+.koinonia-button.secondary:hover,
+.koinonia-button.secondary:focus-visible {
+  border-color: rgba(184, 138, 68, 0.42);
+  box-shadow: 0 14px 30px rgba(17, 17, 17, 0.08);
+}
+
+.koinonia-band {
+  position: relative;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(184, 138, 68, 0.18), transparent 32%),
+    linear-gradient(180deg, #181818 0%, #101010 100%);
+  overflow: hidden;
+}
+
+.koinonia-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent 38%, rgba(184, 138, 68, 0.08));
+}
+
+.koinonia-band .koinonia-container {
+  position: relative;
+  z-index: 1;
+}
+
+.koinonia-band .koinonia-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.045));
+  border-color: rgba(184, 138, 68, 0.28);
+  box-shadow:
+    0 26px 70px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.koinonia-home-services .koinonia-grid.four .koinonia-card:first-child,
+.koinonia-services-core .koinonia-grid.four .koinonia-card:first-child {
+  border-color: rgba(184, 138, 68, 0.42);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(184, 138, 68, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.72));
+}
+
+.koinonia-pricing-card {
+  border-radius: 30px;
+}
+
+.koinonia-price-badge {
+  border: 1px solid rgba(184, 138, 68, 0.22);
+  background:
+    linear-gradient(180deg, rgba(184, 145, 77, 0.16), rgba(184, 145, 77, 0.1));
+}
+
+@media (min-width: 981px) {
+  .koinonia-home-services .koinonia-grid.four,
+  .koinonia-services-core .koinonia-grid.four {
+    grid-template-columns: 1.15fr 0.95fr 0.95fr 0.95fr;
+  }
+
+  .koinonia-contact-schedule .koinonia-consultation-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .koinonia-contact-schedule .koinonia-consultation-card {
+    grid-column: span 3;
+  }
+
+  .koinonia-contact-schedule .koinonia-consultation-card:last-child {
+    grid-column: 2 / span 4;
+  }
+}
+
+@media (max-width: 980px) {
+  .koinonia-card {
+    border-radius: 26px;
+    padding: 24px;
+  }
+
+  .koinonia-card:hover {
+    transform: none;
+  }
+}
+
+/* Koinonia Body Card Gold Line Removal — 2026-07-13 */
+.koinonia-card::before {
+  display: none;
+}
+
+/* Koinonia Full Decorative Gold Line Removal — 2026-07-13 */
+.koinonia-card::before,
+.koinonia-consultation-card::before,
+.koinonia-site > .koinonia-section:not(.koinonia-hero) .koinonia-section-header::after {
+  display: none !important;
+}

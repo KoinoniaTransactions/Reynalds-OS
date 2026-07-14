@@ -1086,3 +1086,25 @@ A public-site modernization batch has been completed.
 ### Next Recommended Visual Step
 
 Modernize the below-hero section and card system so the body of the site feels as current as the header and footer.
+
+---
+
+## Koinonia Body Card Modernization
+
+The first below-hero body modernization pass has been completed.
+
+### Current State
+
+- Body sections and cards now use a softer, more modern visual system
+- Card surfaces, spacing, borders, shadows, and hover states have been improved
+- Existing content and page structure were preserved
+- The extra decorative gold card/section lines were removed after visual review
+- Body/card modernization notes live at docs/specifications/KOINONIA_BODY_CARD_MODERNIZATION.md
+
+### Design Rule
+
+Do not reintroduce repeated gold top lines on cards or section headings. Use gold accents sparingly and intentionally.
+
+### Next Recommended Step
+
+Review the site end-to-end on desktop and mobile, then decide whether to start the client portal foundation or continue page-specific visual refinements.
