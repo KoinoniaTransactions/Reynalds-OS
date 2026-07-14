@@ -12,7 +12,7 @@ export function KoinoniaContact() {
         title={contactContent.hero.title}
         lead={contactContent.hero.lead}
         primaryLabel={contactContent.hero.primaryLabel}
-        primaryHref={mailto(contactConfig.consultationSubject)}
+        primaryHref={contactContent.hero.primaryHref}
         secondaryLabel={contactContent.hero.secondaryLabel}
         secondaryHref={contactContent.hero.secondaryHref}
         visualDesktopSrc="/assets/images/koinonia/contact/contact-hero-desktop.png"
@@ -58,7 +58,67 @@ export function KoinoniaContact() {
         </div>
       </section>
 
-      <section className="koinonia-section koinonia-band koinonia-contact-support">
+      <section
+        className="koinonia-section koinonia-contact-schedule"
+        id="schedule-consultation"
+      >
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">
+              {contactContent.scheduleConsultation.eyebrow}
+            </div>
+
+            <h2 className="koinonia-heading">
+              {contactContent.scheduleConsultation.title}
+            </h2>
+
+            <p className="koinonia-copy">
+              {contactContent.scheduleConsultation.lead}
+            </p>
+          </div>
+
+          <article className="koinonia-consultation-window">
+            <div>
+              <span>{contactContent.scheduleConsultation.availabilityLabel}</span>
+              <strong>{contactContent.scheduleConsultation.availability}</strong>
+            </div>
+
+            <p>{contactContent.scheduleConsultation.calendarNote}</p>
+          </article>
+
+          <div className="koinonia-consultation-grid">
+            {contactContent.scheduleConsultation.cards.map((card, index) => (
+              <article className="koinonia-consultation-card" key={card.title}>
+                <div className="koinonia-consultation-number">
+                  0{index + 1}
+                </div>
+
+                <h3>{card.title}</h3>
+                <p>{card.body}</p>
+
+                <div className="koinonia-consultation-detail-title">
+                  Helpful details to include
+                </div>
+
+                <ul>
+                  {card.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+
+                <a
+                  className="koinonia-button secondary"
+                  href={mailto(card.subject)}
+                >
+                  Request this consultation
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section koinonia-contact-support">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">
@@ -75,10 +135,9 @@ export function KoinoniaContact() {
           </div>
 
           <div className="koinonia-grid four">
-            {contactContent.supportOptions.cards.map((card, index) => (
+            {contactContent.supportOptions.cards.map((card) => (
               <UniversalCard
                 key={card.title}
-                eyebrow={`0${index + 1}`}
                 title={card.title}
                 body={card.body}
               />
@@ -87,7 +146,7 @@ export function KoinoniaContact() {
         </div>
       </section>
 
-      <section className="koinonia-section koinonia-contact-next">
+      <section className="koinonia-section koinonia-band koinonia-contact-next">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">

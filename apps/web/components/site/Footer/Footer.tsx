@@ -59,7 +59,7 @@ export function Footer() {
 
           <a
             className="koinonia-footer-cta"
-            href={mailto(contactConfig.consultationSubject)}
+            href={footer.ctaHref}
           >
             {footer.ctaLabel}
           </a>

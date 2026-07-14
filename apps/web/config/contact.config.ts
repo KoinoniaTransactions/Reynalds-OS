@@ -14,6 +14,9 @@ export const contactConfig = {
   },
   responseTime: "We typically respond within one business day.",
   businessHours: "By appointment and active transaction need.",
+  consultationHours: "Consultation times are currently Monday–Friday, 9:00 AM–5:00 PM.",
+  calendarStatus:
+    "A calendar scheduler can be connected later. For now, choose the consultation type and Koinonia will confirm the best available time.",
   serviceArea: "Colorado real estate professionals",
   consultationSubject: "Koinonia Consultation Request",
   transactionSubject: "Active Transaction Support"

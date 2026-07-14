@@ -5,7 +5,7 @@ export const aboutContent = {
     lead:
       "Koinonia exists to help Realtors operate with more clarity, confidence, and consistency by providing dependable support behind the client relationship.",
     primaryLabel: "Schedule a Consultation",
-    primaryHref: "/contact",
+    primaryHref: "/contact#schedule-consultation",
     secondaryLabel: "View Services",
     secondaryHref: "/services"
   },

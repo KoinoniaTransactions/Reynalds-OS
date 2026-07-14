@@ -1,39 +1,45 @@
-# COMP-HEADER-001 — Koinonia Header
+# COMP-HEADER-001 — Koinonia Site Header
 
-Source: `apps/web/components/site/Header/Header.tsx`
+Status: Active production implementation
+Owner: Koinonia Website System
+Version: 1.1
 
 ## Purpose
 
-Provides the shared public Koinonia website header and primary navigation.
+Provide the global public website header for Koinonia.
 
-## Usage
+The header should feel modern, calm, premium, and app-ready while keeping navigation simple for Realtors.
 
-Used at the top of all public Koinonia page assemblies:
+## Current Behavior
 
-- Home
-- Services
-- About
-- Contact
+- Shows Koinonia brand mark, name, and tagline
+- Provides navigation to Home, Services, About, and Contact
+- Provides a primary consultation CTA
+- Uses a modern mobile navigation panel instead of a basic dropdown
+- Keeps large mobile tap targets for easier use
+- Uses a soft translucent header treatment that works with the light Koinonia hero system
 
-## Content Sources
-
-Uses `apps/web/content/brand.ts` for:
-
-- Company name
-- Company tagline
-- Navigation links
-- Primary CTA label
-
-## Current Navigation
+## Used By
 
 - Home
 - Services
 - About
 - Contact
-- Schedule a Consultation CTA
 
-## Design Notes
+## Design Direction
 
-The header should remain light, clean, premium, and consistent with the approved Koinonia hero system.
+The header should support both the public website and the future client portal visual language.
 
-The first version intentionally avoids JavaScript and mobile drawer behavior. Mobile layout uses responsive wrapping so the site remains stable and accessible before adding more interactive navigation.
+Avoid:
+
+- Generic dropdown menu behavior
+- Heavy/dark navigation
+- Overly flashy animation
+- Rebuilding the brand mark unless intentionally approved
+
+## Accessibility Notes
+
+- Mobile menu button uses aria-expanded
+- Mobile menu is controlled by aria-controls
+- Scrim button closes the menu
+- Navigation remains keyboard accessible

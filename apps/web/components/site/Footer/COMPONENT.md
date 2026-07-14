@@ -28,7 +28,7 @@ Uses:
 - Short company description
 - Footer navigation
 - Email, call, and text actions
-- Schedule a Consultation CTA
+- Schedule a Consultation CTA pointing to /contact#schedule-consultation
 - Verse/value line
 - Copyright/legal line
 
@@ -47,3 +47,9 @@ The footer should match the approved Koinonia visual system:
 This component is canonical. Reuse or extend it before creating a new component.
 
 Footer/navigation edits should be made here rather than separately inside individual page assemblies.
+
+## Footer Polish Notes
+
+- Email, Call, and Text should appear as clickable pill actions, not plain text links.
+- The Schedule a Consultation footer CTA should point to `/contact#schedule-consultation`.
+- The Bible verse, verse reference, and copyright should be centered in the footer bottom area.

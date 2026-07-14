@@ -4,7 +4,7 @@ export const sharedContent = {
     title: "Ready for dependable real estate support?",
     body: "When you are ready for organized, responsive support behind the scenes, Koinonia is ready to help.",
     primaryLabel: "Schedule a Consultation",
-    primaryHref: "/contact",
+    primaryHref: "/contact#schedule-consultation",
     secondaryLabel: "Email Koinonia"
   },
 
@@ -16,6 +16,7 @@ export const sharedContent = {
     navigationTitle: "Explore",
     contactTitle: "Start the Conversation",
     ctaLabel: "Schedule a Consultation",
+    ctaHref: "/contact#schedule-consultation",
     legal: "© Koinonia. All rights reserved.",
 
     verse: {

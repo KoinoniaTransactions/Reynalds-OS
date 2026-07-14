@@ -1065,3 +1065,24 @@ The Koinonia deployment readiness plan has been documented.
 - Add Google Search Console
 - Add analytics
 - Review Google Business Profile
+
+---
+
+## Koinonia Header Consultation Footer Modernization
+
+A public-site modernization batch has been completed.
+
+### Current State
+
+- Header and mobile navigation have been modernized
+- Mobile nav now uses a floating panel with larger link rows and a consultation CTA
+- Contact page now includes a real Schedule a Consultation section at /contact#schedule-consultation
+- Consultation options include Transaction Support, Contract & Document Support, Licensed Showing Coverage, Monthly Operations Partnership, and Not Sure Yet
+- Consultation availability is currently Monday-Friday, 9:00 AM-5:00 PM
+- Schedule a Consultation CTAs should point to /contact#schedule-consultation
+- Footer Email, Call, and Text links are styled as clickable pill actions
+- Footer verse, verse reference, and copyright are centered
+
+### Next Recommended Visual Step
+
+Modernize the below-hero section and card system so the body of the site feels as current as the header and footer.

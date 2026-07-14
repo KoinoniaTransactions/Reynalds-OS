@@ -1189,3 +1189,34 @@ Launch the current custom Next.js Koinonia site using a Vercel-style deployment 
 ### Direction
 
 Use the deployment readiness document before attempting launch. Do not commit production secrets. Confirm environment variables and domain settings before production deployment.
+
+---
+
+## 2026-07-13 — Koinonia Header Consultation Footer Modernization
+
+Branch: feature/app-shell-foundation
+
+Completed a public-site visual and consultation-flow modernization batch.
+
+### Updated
+
+- Modernized the Koinonia header and mobile navigation panel
+- Added a detailed Schedule a Consultation section to the Contact page
+- Added consultation types for transaction support, contract/document support, licensed showing coverage, monthly operations partnership, and unsure/general needs
+- Set consultation availability language to Monday-Friday, 9:00 AM-5:00 PM
+- Updated Schedule a Consultation CTAs to point to /contact#schedule-consultation
+- Updated the footer consultation CTA destination
+- Polished footer Email, Call, and Text actions so they read as clickable controls
+- Centered the footer Bible verse, verse reference, and copyright
+
+### Verified
+
+- Production build passed
+- Public routes returned 200
+- Schedule a Consultation anchors point to /contact#schedule-consultation
+- Consultation section HTML checks passed
+- Footer alignment was visually approved
+
+### Direction
+
+Keep the modern header/mobile navigation direction. Keep the Contact page consultation section as the current scheduling destination until a calendar scheduler or client portal intake flow is added.

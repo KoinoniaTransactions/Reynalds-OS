@@ -6,31 +6,35 @@ import { brandContent } from "@/content/brand";
 const navigationItems = [
   {
     label: "Home",
-    href: brandContent.navigation.home
+    href: brandContent.navigation.home,
+    description: "Start with the overview"
   },
   {
     label: "Services",
-    href: brandContent.navigation.services
+    href: brandContent.navigation.services,
+    description: "Explore support options"
   },
   {
     label: "About",
-    href: brandContent.navigation.about
+    href: brandContent.navigation.about,
+    description: "Learn the purpose"
   },
   {
     label: "Contact",
-    href: brandContent.navigation.contact
+    href: brandContent.navigation.contact,
+    description: "Start the conversation"
   }
 ] as const;
 
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const closeMenu = () => {
-    setIsOpen(false);
+    setIsMenuOpen(false);
   };
 
   return (
-    <header className="koinonia-header">
+    <header className={`koinonia-header${isMenuOpen ? " menu-open" : ""}`}>
       <div className="koinonia-header-inner">
         <a
           className="koinonia-header-brand"
@@ -38,7 +42,9 @@ export function Header() {
           aria-label="Koinonia home"
           onClick={closeMenu}
         >
-          <span className="koinonia-header-mark">K</span>
+          <span className="koinonia-header-mark" aria-hidden="true">
+            K
+          </span>
 
           <span className="koinonia-header-brand-text">
             <strong>{brandContent.company.name}</strong>
@@ -49,10 +55,10 @@ export function Header() {
         <button
           className="koinonia-header-menu-button"
           type="button"
-          aria-label={isOpen ? "Close Koinonia navigation menu" : "Open Koinonia navigation menu"}
-          aria-expanded={isOpen}
+          aria-label={isMenuOpen ? "Close Koinonia navigation" : "Open Koinonia navigation"}
+          aria-expanded={isMenuOpen}
           aria-controls="koinonia-header-menu"
-          onClick={() => setIsOpen((current) => !current)}
+          onClick={() => setIsMenuOpen((current) => !current)}
         >
           <span aria-hidden="true" />
           <span aria-hidden="true" />
@@ -60,26 +66,40 @@ export function Header() {
         </button>
 
         <div
+          className={`koinonia-header-menu${isMenuOpen ? " open" : ""}`}
           id="koinonia-header-menu"
-          className={`koinonia-header-menu${isOpen ? " open" : ""}`}
         >
-          <nav className="koinonia-header-nav" aria-label="Koinonia main navigation">
+          <nav className="koinonia-header-nav" aria-label="Koinonia navigation">
             {navigationItems.map((item) => (
               <a key={item.href} href={item.href} onClick={closeMenu}>
-                {item.label}
+                <span className="koinonia-header-nav-label">{item.label}</span>
+                <span className="koinonia-header-nav-description">
+                  {item.description}
+                </span>
               </a>
             ))}
           </nav>
 
           <a
             className="koinonia-header-cta"
-            href={brandContent.navigation.contact}
+            href={brandContent.cta.primaryHref}
             onClick={closeMenu}
           >
-            {brandContent.cta.primaryLabel}
+            <span>{brandContent.cta.primaryLabel}</span>
+            <span className="koinonia-header-cta-detail">
+              Start with a clear next step
+            </span>
           </a>
         </div>
       </div>
+
+      <button
+        className="koinonia-header-scrim"
+        type="button"
+        aria-label="Close Koinonia navigation"
+        hidden={!isMenuOpen}
+        onClick={closeMenu}
+      />
     </header>
   );
 }

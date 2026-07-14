@@ -30,6 +30,7 @@ export const brandContent = {
 
   cta: {
     primaryLabel: "Schedule a Consultation",
+    primaryHref: "/contact#schedule-consultation",
     secondaryLabel: "Email Koinonia"
   },
 

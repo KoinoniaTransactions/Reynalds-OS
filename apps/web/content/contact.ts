@@ -4,7 +4,8 @@ export const contactContent = {
     title: "Start with a clear next step.",
     lead:
       "Reach out when you need dependable real estate operations support as a Colorado Realtor for a transaction, contract, showing conflict, or monthly business support. Koinonia will help clarify the need and identify the right path forward.",
-    primaryLabel: "Email Koinonia",
+    primaryLabel: "Schedule a Consultation",
+    primaryHref: "/contact#schedule-consultation",
     secondaryLabel: "View Services",
     secondaryHref: "/services"
   },
@@ -21,6 +22,79 @@ export const contactContent = {
       "Any active deadline or timing concern",
       "The best way to respond",
       "Any documents or context that would help clarify the request"
+    ]
+  },
+
+  scheduleConsultation: {
+    eyebrow: "Schedule a Consultation",
+    title: "Choose what you want to talk through.",
+    lead:
+      "Start by choosing the type of support you need. You do not need to have every detail figured out — the goal is to clarify the need, timing, scope, and best next step.",
+    availabilityLabel: "Consultation Window",
+    availability: "Monday–Friday, 9:00 AM–5:00 PM",
+    calendarNote:
+      "A calendar scheduler can be connected later. For now, request the consultation type that fits best and Koinonia will confirm an available time within the consultation window.",
+    cards: [
+      {
+        title: "Transaction Support Consultation",
+        body:
+          "For an active or upcoming contract-to-close file that needs structure, deadline tracking, document follow-up, communication support, or closing preparation.",
+        details: [
+          "Contract date and closing date",
+          "Current file status",
+          "Important deadlines or concerns",
+          "Brokerage, lender, title, or client context"
+        ],
+        subject: "Koinonia Transaction Support Consultation Request"
+      },
+      {
+        title: "Contract & Document Support Consultation",
+        body:
+          "For offers, amendments, addenda, notices, or other document preparation support based on Realtor instructions.",
+        details: [
+          "Document type needed",
+          "Deadline or offer timing",
+          "Client instructions or terms",
+          "Any missing information that needs to be clarified"
+        ],
+        subject: "Koinonia Contract and Document Support Consultation Request"
+      },
+      {
+        title: "Licensed Showing Coverage Consultation",
+        body:
+          "For schedule conflicts, distance challenges, buyer access needs, or situations where dependable licensed showing support is needed.",
+        details: [
+          "Property address or general area",
+          "Preferred showing date and time",
+          "Access instructions or showing requirements",
+          "Client needs, timing, and follow-up expectations"
+        ],
+        subject: "Koinonia Licensed Showing Coverage Consultation Request"
+      },
+      {
+        title: "Monthly Operations Partnership Consultation",
+        body:
+          "For ongoing CRM organization, workflow structure, task tracking, client follow-up, systems support, and recurring business operations help.",
+        details: [
+          "What feels disorganized or keeps slipping",
+          "Current CRM, task, or workflow tools",
+          "Weekly or monthly support needs",
+          "Preferred rhythm for recurring support"
+        ],
+        subject: "Koinonia Monthly Operations Partnership Consultation Request"
+      },
+      {
+        title: "Not Sure Yet",
+        body:
+          "For Realtors who know they need support but are not sure which service path fits best yet.",
+        details: [
+          "What is currently taking too much time",
+          "Where follow-through is getting harder",
+          "What outcome would help most",
+          "Any timing pressure or upcoming client need"
+        ],
+        subject: "Koinonia General Consultation Request"
+      }
     ]
   },
 
@@ -60,9 +134,9 @@ export const contactContent = {
       "The first conversation should feel calm, professional, and practical. Koinonia will help turn the request into clear next steps.",
     cards: [
       {
-        title: "You share the need",
+        title: "You choose the consultation need",
         body:
-          "Send the transaction, contract, showing, or monthly operations support request along with any important timing, documents, or context."
+          "Start with the type of support that best matches the transaction, document, showing, monthly operations, or general question."
       },
       {
         title: "Koinonia clarifies the fit",
@@ -72,7 +146,7 @@ export const contactContent = {
       {
         title: "You get a clear next step",
         body:
-          "The conversation turns into an organized plan for support, communication, timing, and follow-through."
+          "The conversation turns into an organized plan for support, communication, timing, consultation scheduling, and follow-through."
       }
     ]
   },
