@@ -987,3 +987,26 @@ The social preview image is included in Open Graph and Twitter metadata for:
 - Public pages include `twitter:image`
 - Public pages include `summary_large_image`
 
+
+---
+
+## Koinonia Web Manifest
+
+A web manifest has been added for the public Koinonia site.
+
+### Current Manifest Route
+
+- `/manifest.webmanifest`
+
+### Files
+
+- `apps/web/app/manifest.ts`
+- `apps/web/app/layout.tsx`
+
+### Verified
+
+- Production build passed
+- Manifest route returned 200
+- Public HTML includes the manifest link
+- Manifest includes Koinonia Transactions, Koinonia, icons, and standalone display behavior
+

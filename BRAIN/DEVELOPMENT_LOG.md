@@ -1108,3 +1108,25 @@ Added social preview metadata for public Koinonia pages.
 
 Use the dedicated social preview image for public link sharing until a future branded campaign-specific preview image is intentionally approved.
 
+
+---
+
+## 2026-07-13 — Koinonia Web Manifest
+
+Branch: feature/app-shell-foundation
+
+Added a web manifest for the Koinonia public site.
+
+### Added
+
+- `apps/web/app/manifest.ts`
+- Manifest metadata for site name, short name, description, start URL, scope, display behavior, theme color, background color, icons, and business/productivity categories
+- Manifest reference in global layout metadata
+
+### Verified
+
+- Production build passed
+- `/manifest.webmanifest` returned 200
+- Manifest link was present in public HTML
+- Manifest included Koinonia name, icons, and standalone display behavior
+
