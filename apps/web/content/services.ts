@@ -143,6 +143,35 @@ export const servicesContent = {
     ]
   },
 
+  scopeNotes: {
+    eyebrow: "How Scope Works",
+    title: "Clear expectations before work begins.",
+    lead:
+      "Koinonia keeps support flexible while making sure timing, scope, and responsibilities are clear before work starts.",
+    notes: [
+      {
+        title: "Monthly support has a rhythm",
+        body:
+          "Monthly Operations Partnership is designed for steady recurring support, not unlimited assistant access."
+      },
+      {
+        title: "Rush work depends on availability",
+        body:
+          "Same-day or urgent requests may be available depending on timing, complexity, and current capacity."
+      },
+      {
+        title: "Showing coverage is confirmed first",
+        body:
+          "Licensed Showing Coverage starts with simple local support, while distance, timing, access details, or extended showing needs may affect final scope."
+      },
+      {
+        title: "Document support follows Realtor direction",
+        body:
+          "Contract and document preparation is completed from Realtor instructions while the Realtor remains responsible for advice, compliance, negotiation decisions, and final approval."
+      }
+    ]
+  },
+
   fit: {
     eyebrow: "When To Use Koinonia",
     title: "Use support when the details start competing with client service.",

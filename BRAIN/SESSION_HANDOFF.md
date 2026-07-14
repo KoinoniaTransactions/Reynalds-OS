@@ -837,3 +837,21 @@ The current public-facing service model includes:
 
 Next work should focus on small visual refinements, pricing confidence, final service-boundary decisions, or launch-readiness planning. Avoid major redesign unless a specific issue is identified.
 
+
+---
+
+## Koinonia Services Scope Notes
+
+The Services page now includes a public-facing "How Scope Works" section after the pricing snapshot.
+
+### Current Public Scope Notes
+
+- Monthly support has a rhythm
+- Rush work depends on availability
+- Showing coverage is confirmed first
+- Document support follows Realtor direction
+
+### Important Boundary
+
+Do not publish the detailed internal service-boundary rules unless intentionally approved later. Keep detailed rush premiums, showing radius, additional hourly rates, and exception formulas inside the Brain for now.
+

@@ -957,3 +957,27 @@ Working tree was clean after QA. Branch was synced with GitHub.
 
 Home should remain light and navigational. Services should carry pricing, tiers, scope, and professional boundaries. Contact should stay simple while clearly supporting the four approved intake paths.
 
+
+---
+
+## 2026-07-13 — Koinonia Services Scope Notes
+
+Branch: feature/app-shell-foundation
+
+Added a light public-facing "How Scope Works" section to the Koinonia Services page after the pricing snapshot.
+
+### Purpose
+
+The section communicates service expectations without exposing detailed internal business rules.
+
+### Public Notes Added
+
+- Monthly support has a rhythm
+- Rush work depends on availability
+- Showing coverage is confirmed first
+- Document support follows Realtor direction
+
+### Direction
+
+The public website should explain scope calmly and professionally while keeping detailed exception rules, rush pricing, distance formulas, and internal operating details inside the Brain.
+

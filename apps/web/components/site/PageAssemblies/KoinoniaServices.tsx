@@ -95,6 +95,22 @@ export function KoinoniaServices() {
         </div>
       </section>
 
+      <section className="koinonia-section koinonia-services-scope">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">{servicesContent.scopeNotes.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.scopeNotes.title}</h2>
+            <p className="koinonia-copy">{servicesContent.scopeNotes.lead}</p>
+          </div>
+
+          <div className="koinonia-grid two">
+            {servicesContent.scopeNotes.notes.map((note) => (
+              <UniversalCard key={note.title} title={note.title} body={note.body} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="koinonia-section koinonia-band koinonia-services-fit">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
