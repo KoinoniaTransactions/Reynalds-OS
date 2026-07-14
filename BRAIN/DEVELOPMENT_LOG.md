@@ -1157,3 +1157,35 @@ Refined public-facing copy and SEO descriptions to improve local and service key
 
 Keep SEO language natural and service-focused. Avoid keyword stuffing, exaggerated claims, or “best/guaranteed ranking” language.
 
+
+---
+
+## 2026-07-13 — Koinonia Deployment Readiness Plan
+
+Branch: feature/app-shell-foundation
+
+A deployment readiness plan was documented for the Koinonia public website.
+
+### Decision
+
+Launch the current custom Next.js Koinonia site using a Vercel-style deployment path.
+
+### Deployment Direction
+
+- Repository: KoinoniaTransactions/Reynalds-OS
+- Deployable app: apps/web
+- Public site root: /
+- Internal dashboard: /dashboard
+- Public domain target: https://koinoniatransactions.com
+- Do not rebuild in Squarespace before launch
+
+### Verified Build Path
+
+- pnpm install --frozen-lockfile
+- pnpm --filter @reynalds-os/database db:generate
+- cd apps/web
+- pnpm build
+
+### Direction
+
+Use the deployment readiness document before attempting launch. Do not commit production secrets. Confirm environment variables and domain settings before production deployment.

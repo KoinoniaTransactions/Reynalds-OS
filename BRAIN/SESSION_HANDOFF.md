@@ -1032,3 +1032,36 @@ Use natural language around:
 
 Do not stuff keywords or add exaggerated SEO claims. Keep the tone calm, professional, and service-based.
 
+
+---
+
+## Koinonia Deployment Readiness Plan
+
+The Koinonia deployment readiness plan has been documented.
+
+### Current Deployment Direction
+
+- Launch the current Next.js site
+- Use a Vercel-style deployment path
+- Deployable app is apps/web
+- Public routes are /, /services, /about, /contact
+- Reynalds OS remains available at /dashboard
+- /koinonia routes remain as aliases
+- Do not rebuild in Squarespace before launch
+
+### Recommended Vercel Settings
+
+- Root Directory: apps/web
+- Install Command: cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @reynalds-os/database db:generate
+- Build Command: pnpm build
+
+### Required Launch Follow-Up
+
+- Add production environment variables
+- Confirm NEXT_PUBLIC_SITE_URL
+- Deploy preview
+- Verify public routes and SEO routes
+- Connect domain
+- Add Google Search Console
+- Add analytics
+- Review Google Business Profile
