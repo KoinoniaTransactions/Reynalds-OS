@@ -6,7 +6,7 @@ export const seoConfig = {
   defaultTitle: "Koinonia | Real Estate Operations Support",
   titleTemplate: "%s | Koinonia",
   defaultDescription:
-    "Real estate operations support for Realtors, including transaction support, contract and document support, licensed showing coverage, and monthly operations partnership.",
+    "Real estate operations support for Colorado Realtors, including transaction coordination, contract and document support, licensed showing coverage, and monthly operations partnership.",
   socialPreviewPath: "/assets/images/koinonia/social-preview.png",
   socialPreviewWidth: 1200,
   socialPreviewHeight: 630,
@@ -17,13 +17,13 @@ export const seoConfig = {
       path: "/",
       title: "Koinonia | Real Estate Operations Support",
       description:
-        "Koinonia gives Realtors a trusted operations partner for the work behind the client relationship."
+        "Koinonia gives Colorado Realtors a trusted operations partner for transaction coordination, contract support, showing coverage, and monthly real estate operations support."
     },
     {
       path: "/services",
       title: "Services & Pricing",
       description:
-        "Explore Koinonia services for transaction support, contract and document support, licensed showing coverage, and monthly operations partnership."
+        "Explore Koinonia services for transaction coordination, contract and document support, licensed showing coverage, and monthly real estate operations partnership."
     },
     {
       path: "/about",
@@ -35,7 +35,7 @@ export const seoConfig = {
       path: "/contact",
       title: "Contact Koinonia",
       description:
-        "Contact Koinonia for real estate operations support, transaction support, contract support, showing coverage, or monthly business support."
+        "Contact Koinonia for Colorado real estate operations support, transaction coordination, contract support, showing coverage, or monthly business support."
     }
   ]
 } as const;

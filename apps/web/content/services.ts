@@ -3,7 +3,7 @@ export const servicesContent = {
     eyebrow: "Services & Pricing",
     title: "Real estate operations support built around how Realtors actually work.",
     lead:
-      "Koinonia helps Realtors protect client service by organizing active transactions, contract paperwork, showing conflicts, and recurring business follow-through.",
+      "Koinonia helps Realtors protect client service with transaction coordination, contract paperwork support, showing conflict coverage, and recurring business follow-through.",
     primaryLabel: "Schedule a Consultation",
     primaryHref: "/contact",
     secondaryLabel: "View Monthly Support",
@@ -21,7 +21,7 @@ export const servicesContent = {
     {
       title: "Transaction Support",
       body:
-        "Contract-to-close coordination for active files, including timeline setup, deadline tracking, document follow-up, communication support, and closing preparation.",
+        "Real estate transaction coordination for active files, including contract-to-close timeline setup, deadline tracking, document follow-up, communication support, and closing preparation.",
       items: [
         "Contract-to-close timelines",
         "Deadline and document tracking",

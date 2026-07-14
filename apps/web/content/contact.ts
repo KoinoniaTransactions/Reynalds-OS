@@ -3,7 +3,7 @@ export const contactContent = {
     eyebrow: "Contact Koinonia",
     title: "Start with a clear next step.",
     lead:
-      "Reach out when you need dependable real estate operations support for a transaction, contract, showing conflict, or monthly business support. Koinonia will help clarify the need and identify the right path forward.",
+      "Reach out when you need dependable real estate operations support as a Colorado Realtor for a transaction, contract, showing conflict, or monthly business support. Koinonia will help clarify the need and identify the right path forward.",
     primaryLabel: "Email Koinonia",
     secondaryLabel: "View Services",
     secondaryHref: "/services"

@@ -1010,3 +1010,25 @@ A web manifest has been added for the public Koinonia site.
 - Public HTML includes the manifest link
 - Manifest includes Koinonia Transactions, Koinonia, icons, and standalone display behavior
 
+
+---
+
+## Koinonia Local SEO Copy Refinement
+
+Public Koinonia copy has been lightly refined for local/service SEO.
+
+### Current SEO Copy Direction
+
+Use natural language around:
+
+- Colorado Realtors
+- Real estate operations support
+- Transaction coordination
+- Contract and document support
+- Licensed showing coverage
+- Monthly real estate operations support
+
+### Important Rule
+
+Do not stuff keywords or add exaggerated SEO claims. Keep the tone calm, professional, and service-based.
+

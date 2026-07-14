@@ -3,7 +3,7 @@ export const homeContent = {
     eyebrow: "Real Estate Operations Support",
     title: "Real Estate Operations. Elevated.",
     lead:
-      "Koinonia gives Realtors a trusted operations partner for the work behind the client relationship—keeping transactions, contracts, licensed showing coverage, and daily business details organized, responsive, and moving forward.",
+      "Koinonia gives Colorado Realtors a trusted operations partner for the work behind the client relationship—keeping transactions, contracts, licensed showing coverage, and daily business details organized, responsive, and moving forward.",
     primaryLabel: "Explore Services",
     primaryHref: "/services",
     secondaryLabel: "Contact Koinonia",

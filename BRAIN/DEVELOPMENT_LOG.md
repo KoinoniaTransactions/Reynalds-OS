@@ -1130,3 +1130,30 @@ Added a web manifest for the Koinonia public site.
 - Manifest link was present in public HTML
 - Manifest included Koinonia name, icons, and standalone display behavior
 
+
+---
+
+## 2026-07-13 — Koinonia Local SEO Copy Refinement
+
+Branch: feature/app-shell-foundation
+
+Refined public-facing copy and SEO descriptions to improve local and service keyword clarity without keyword stuffing.
+
+### Updated Language
+
+- Added light Colorado Realtor language to Home and Contact
+- Added transaction coordination language to Services
+- Clarified real estate transaction coordination in the Transaction Support card
+- Updated SEO descriptions with Colorado Realtors, transaction coordination, showing coverage, contract support, and monthly real estate operations support
+
+### Verified
+
+- Production build passed
+- Public routes returned 200
+- Local SEO copy checks passed
+- Spam/overuse check remained clean
+
+### Direction
+
+Keep SEO language natural and service-focused. Avoid keyword stuffing, exaggerated claims, or “best/guaranteed ranking” language.
+
