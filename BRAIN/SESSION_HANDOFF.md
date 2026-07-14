@@ -922,3 +922,38 @@ When the user says the platform decision has been recorded, proceed with:
 
 Do not suggest rebuilding in Squarespace unless the user explicitly asks to reconsider the platform strategy.
 
+
+---
+
+## Koinonia Core SEO Metadata
+
+The first core SEO launch-readiness layer has been added to the current Next.js Koinonia site.
+
+### Current SEO Additions
+
+- Shared SEO config: `apps/web/config/seo.config.ts`
+- Global metadata updated in `apps/web/app/layout.tsx`
+- Page metadata added for:
+  - `/`
+  - `/services`
+  - `/about`
+  - `/contact`
+- Sitemap added at `/sitemap.xml`
+- Robots file added at `/robots.txt`
+
+### Verified
+
+- Production build passed
+- Sitemap and robots routes returned 200
+- HTML metadata checks passed for public root pages
+
+### Next SEO Work
+
+Recommended next SEO steps:
+
+- Add Open Graph/social preview image support
+- Add manifest if needed
+- Review local/service keyword copy
+- Prepare Search Console and analytics setup
+- Confirm final production domain before deployment
+

@@ -1042,3 +1042,38 @@ Koinonia should launch using the current custom Next.js site rather than rebuild
 
 When launch planning resumes, do not reopen the Squarespace migration question unless intentionally requested. Continue from the recorded decision and move into SEO, deployment, domain, analytics, and launch readiness.
 
+
+---
+
+## 2026-07-13 — Koinonia Core SEO Metadata
+
+Branch: feature/app-shell-foundation
+
+Added the first core SEO launch-readiness layer for the Koinonia public website.
+
+### Added
+
+- Shared SEO configuration
+- Improved global metadata
+- Per-page metadata for:
+  - `/`
+  - `/services`
+  - `/about`
+  - `/contact`
+- Canonical URLs
+- Open Graph metadata
+- Twitter metadata
+- Sitemap route
+- Robots route
+
+### Verified
+
+- Production build passed
+- `/sitemap.xml` returned 200
+- `/robots.txt` returned 200
+- Public page metadata checks passed for Home, Services, About, and Contact
+
+### Direction
+
+Continue launch SEO work from the current Next.js site. Do not reopen the Squarespace migration decision unless intentionally requested.
+
