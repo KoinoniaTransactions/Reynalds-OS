@@ -1,6 +1,6 @@
 # Koinonia Service Boundary Decisions
 
-Status: Draft v1  
+Status: Finalized Working Defaults v1  
 Owner: Koinonia Transactions  
 Purpose: Define the working boundaries for Koinonia services before additional website pricing, package, or visual refinements are made.
 
@@ -289,33 +289,88 @@ Contact page:
 
 ---
 
-## 14. Open Decisions To Finalize
+## 14. Finalized Working Defaults v1
 
-These decisions still need final approval:
+The following decisions are approved as working defaults for launch planning and service operations.
 
-- Whether monthly hours ever roll over
-- Additional monthly hour rate
-- Rush request fee
-- Local showing coverage radius
-- Mileage policy
-- Extended-distance showing pricing
-- Minimum showing request notice
-- Whether Partner tier includes any contract support or only discounts/priority
-- Whether public website should mention non-rollover policy
-- Whether public website should mention rush pricing or keep it consultation-based
+### Monthly Rollover
+
+Monthly support hours do not roll over by default.
+
+Unused monthly capacity expires at the end of the month unless separately agreed in writing.
+
+### Additional Monthly Hours
+
+Additional monthly support is billed at $85/hour when accepted.
+
+Additional work must be approved before it begins and remains subject to availability.
+
+### Rush Requests
+
+Rush requests are subject to availability and are never guaranteed.
+
+When accepted, rush work may include a 50% premium with a minimum rush premium of $50.
+
+### Showing Coverage Radius
+
+Standard local showing coverage starts at $50 within a 20-mile operating radius.
+
+The operating base should be treated as an internal business reference and does not need to be published as a precise address.
+
+### Extended Showing Coverage
+
+Showing coverage outside the standard local radius should be custom quoted based on:
+
+- Drive time
+- Mileage
+- Timing
+- Urgency
+- Access complexity
+- Expected showing duration
+
+### Minimum Showing Notice
+
+Preferred minimum notice for showing coverage is 24 hours.
+
+Same-day requests may be accepted when capacity allows and may be treated as rush requests.
+
+### Partner Tier Contract Support
+
+Partner clients receive priority scheduling and preferred pricing for contract/document support.
+
+Partner tier does not include unlimited contract writing.
+
+Working default:
+
+- Partner clients receive 20% preferred pricing on standard contract/document support when capacity allows
+- Contract/document work remains subject to scope, timing, and availability
+- Urgent contract/document work may still be treated as rush work
+
+### Public Website Posture
+
+The public website should continue to show starting prices and monthly tier pricing.
+
+Detailed exception rules, rush pricing, distance adjustments, and mileage formulas should remain consultation-based for now.
 
 ---
 
-## 15. Current Recommended Defaults
+## 15. Current Operating Defaults
 
-Until changed, use these working defaults:
+Use these defaults unless later changed by a documented business decision.
 
 - Monthly hours do not roll over by default
-- Additional monthly work is subject to availability
-- Rush requests are subject to availability and may include a premium fee
-- Showing coverage starts at $50 but may vary by distance, urgency, and complexity
+- Additional monthly work is billed at $85/hour when accepted
+- Additional monthly work must be approved before work begins
+- Rush requests are subject to availability
+- Accepted rush requests may include a 50% premium with a $50 minimum rush premium
+- Standard local showing coverage starts at $50 within a 20-mile operating radius
+- Showing coverage outside the standard local radius is custom quoted
+- Preferred showing notice is 24 hours
+- Same-day showing requests may be treated as rush requests
 - Contract/document support is based on Realtor instructions only
-- Partner tier receives priority and preferred pricing, not unlimited contract writing
+- Partner tier receives priority scheduling and 20% preferred pricing on standard contract/document support when capacity allows
+- Partner tier does not include unlimited contract writing
 - Public pricing should remain as starting points
 - Final scope should be confirmed through consultation
+- Detailed exception rules should remain consultation-based for now
 
