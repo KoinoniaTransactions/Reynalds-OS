@@ -6,7 +6,7 @@ export const contactContent = {
       "Reach out when you need dependable real estate operations support for a transaction, contract, showing conflict, or monthly business support. Koinonia will help clarify the need and identify the right path forward.",
     primaryLabel: "Email Koinonia",
     secondaryLabel: "View Services",
-    secondaryHref: "/koinonia/services"
+    secondaryHref: "/services"
   },
 
   reachOut: {

@@ -5,9 +5,9 @@ export const homeContent = {
     lead:
       "Koinonia gives Realtors a trusted operations partner for the work behind the client relationship—keeping transactions, contracts, licensed showing coverage, and daily business details organized, responsive, and moving forward.",
     primaryLabel: "Explore Services",
-    primaryHref: "/koinonia/services",
+    primaryHref: "/services",
     secondaryLabel: "Contact Koinonia",
-    secondaryHref: "/koinonia/contact"
+    secondaryHref: "/contact"
   },
 
   positioning: {

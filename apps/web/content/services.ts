@@ -5,9 +5,9 @@ export const servicesContent = {
     lead:
       "Koinonia helps Realtors protect client service by organizing active transactions, contract paperwork, showing conflicts, and recurring business follow-through.",
     primaryLabel: "Schedule a Consultation",
-    primaryHref: "/koinonia/contact",
+    primaryHref: "/contact",
     secondaryLabel: "View Monthly Support",
-    secondaryHref: "/koinonia/services#monthly-support"
+    secondaryHref: "/services#monthly-support"
   },
 
   categories: {

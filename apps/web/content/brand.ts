@@ -22,10 +22,10 @@ export const brandContent = {
   },
 
   navigation: {
-    home: "/koinonia",
-    services: "/koinonia/services",
-    about: "/koinonia/about",
-    contact: "/koinonia/contact"
+    home: "/",
+    services: "/services",
+    about: "/about",
+    contact: "/contact"
   },
 
   cta: {

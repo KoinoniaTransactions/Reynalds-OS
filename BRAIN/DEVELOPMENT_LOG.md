@@ -981,3 +981,38 @@ The section communicates service expectations without exposing detailed internal
 
 The public website should explain scope calmly and professionally while keeping detailed exception rules, rush pricing, distance formulas, and internal operating details inside the Brain.
 
+
+---
+
+## 2026-07-13 — Koinonia Root Link Migration
+
+Branch: feature/app-shell-foundation
+
+Public-facing Koinonia navigation and CTA links were migrated from nested `/koinonia` paths to clean root launch paths.
+
+### Public Launch Paths
+
+- `/`
+- `/services`
+- `/about`
+- `/contact`
+
+### Backward-Compatible Alias Paths
+
+The existing nested Koinonia routes remain available:
+
+- `/koinonia`
+- `/koinonia/services`
+- `/koinonia/about`
+- `/koinonia/contact`
+
+### Internal Dashboard
+
+The internal Reynalds OS dashboard remains preserved at:
+
+- `/dashboard`
+
+### Direction
+
+Use root paths for public Koinonia navigation going forward. Keep `/koinonia` routes available for continuity unless a future cleanup decision removes them intentionally.
+

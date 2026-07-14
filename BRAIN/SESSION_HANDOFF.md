@@ -855,3 +855,32 @@ The Services page now includes a public-facing "How Scope Works" section after t
 
 Do not publish the detailed internal service-boundary rules unless intentionally approved later. Keep detailed rush premiums, showing radius, additional hourly rates, and exception formulas inside the Brain for now.
 
+
+---
+
+## Koinonia Root Link Migration
+
+Public Koinonia navigation and CTA links now use clean root launch paths.
+
+### Current Public Paths
+
+- `/`
+- `/services`
+- `/about`
+- `/contact`
+
+### Alias Paths Still Working
+
+- `/koinonia`
+- `/koinonia/services`
+- `/koinonia/about`
+- `/koinonia/contact`
+
+### Internal Dashboard
+
+The internal dashboard has been preserved at `/dashboard`.
+
+### Future Rule
+
+For public website links, prefer root paths. Do not remove `/koinonia` aliases unless intentionally approved later.
+

@@ -4,7 +4,7 @@ export const sharedContent = {
     title: "Ready for dependable real estate support?",
     body: "When you are ready for organized, responsive support behind the scenes, Koinonia is ready to help.",
     primaryLabel: "Schedule a Consultation",
-    primaryHref: "/koinonia/contact",
+    primaryHref: "/contact",
     secondaryLabel: "Email Koinonia"
   },
 
@@ -24,10 +24,10 @@ export const sharedContent = {
     },
 
     navigation: [
-      { label: "Home", href: "/koinonia" },
-      { label: "Services", href: "/koinonia/services" },
-      { label: "About", href: "/koinonia/about" },
-      { label: "Contact", href: "/koinonia/contact" }
+      { label: "Home", href: "/" },
+      { label: "Services", href: "/services" },
+      { label: "About", href: "/about" },
+      { label: "Contact", href: "/contact" }
     ]
   },
 
