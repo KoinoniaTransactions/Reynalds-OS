@@ -1,5 +1,5 @@
-import { DashboardShell } from "../components/dashboard-shell";
+import { KoinoniaHome } from "../components/site/PageAssemblies/KoinoniaHome";
 
 export default function Page() {
-  return <DashboardShell />;
+  return <KoinoniaHome />;
 }
