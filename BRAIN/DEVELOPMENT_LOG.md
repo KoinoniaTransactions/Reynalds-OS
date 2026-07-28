@@ -1282,3 +1282,38 @@ Replaced consultation-card email behavior with a compact on-page scheduler CTA a
 ### Production Requirement
 
 Live email delivery requires `RESEND_API_KEY` before production launch. Optional environment variables are `CONTACT_INTAKE_TO_EMAIL` and `CONTACT_INTAKE_FROM_EMAIL`.
+
+---
+
+## 2026-07-27 — Koinonia Consultation Email Delivery Verified
+
+### Summary
+
+The Koinonia consultation scheduler email delivery path was configured and verified locally using Resend.
+
+### Completed
+
+- Added Resend DNS sending records for `koinoniatransactions.com` through Squarespace DNS.
+- Verified the domain in Resend.
+- Added local-only environment variables in `apps/web/.env.local`.
+- Confirmed `apps/web/.env.local` is ignored by Git.
+- Ran a live POST test against `/api/koinonia/consultation`.
+- Confirmed the API returned success.
+- Confirmed the test consultation email was received at `jeremiah@koinoniaadmin.com`.
+
+### Security Notes
+
+- The Resend API key must never be committed to GitHub.
+- The local API key lives only in `apps/web/.env.local`.
+- Production deployment will require adding the same environment variable names inside the hosting platform environment settings.
+
+### Required Production Environment Variables
+
+- `RESEND_API_KEY`
+- `CONTACT_INTAKE_TO_EMAIL`
+- `CONTACT_INTAKE_FROM_EMAIL`
+
+### Current Status
+
+Koinonia consultation email delivery is locally verified and ready for production environment setup during deployment.
+

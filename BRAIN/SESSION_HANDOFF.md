@@ -1132,3 +1132,29 @@ Email delivery will not work live until `RESEND_API_KEY` is configured. The inte
 ### Design Rule
 
 Keep the Contact page scheduler area compact. Do not reintroduce the five large consultation cards or bulky availability header. Keep support-type selection inside the popup.
+
+---
+
+## 2026-07-27 — Koinonia Resend Email Delivery Checkpoint
+
+The Koinonia consultation scheduler has been connected to Resend for outgoing email delivery.
+
+Verified status:
+
+- Resend domain `koinoniatransactions.com` is verified.
+- Squarespace DNS contains the required Resend sending records.
+- Receiving records were intentionally not enabled because the website only needs outbound consultation-form email.
+- Local `.env.local` contains the Resend environment variables and is ignored by Git.
+- Live local API test returned success.
+- Test email was received at `jeremiah@koinoniaadmin.com`.
+
+Do not commit or expose the Resend API key.
+
+Production deployment note:
+
+Add these environment variables to the hosting platform before testing the deployed consultation form:
+
+- `RESEND_API_KEY`
+- `CONTACT_INTAKE_TO_EMAIL`
+- `CONTACT_INTAKE_FROM_EMAIL`
+
