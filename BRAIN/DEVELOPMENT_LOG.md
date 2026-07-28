@@ -1350,3 +1350,26 @@ The Koinonia public website was visually reviewed locally after the consultation
 
 The public Koinonia website is visually approved locally and ready for launch-preparation work.
 
+---
+
+## 2026-07-27 — Koinonia Launch Contact Values Finalized
+
+### Summary
+
+Public launch contact values were added to the shared Koinonia brand content.
+
+### Public Contact Values
+
+- Phone: `719-745-8497`
+- Text: `719-745-8497`
+- Email: `jeremiah@koinoniaadmin.com`
+- Website: `https://koinoniatransactions.com`
+
+### SEO Path Clarification
+
+The active SEO configuration file is `apps/web/config/seo.config.ts`.
+
+### Current Status
+
+The public site now has launch-ready call, text, email, and website contact values in shared brand content.
+

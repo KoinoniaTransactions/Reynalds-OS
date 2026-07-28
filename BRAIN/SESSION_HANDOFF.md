@@ -1186,3 +1186,18 @@ Recommended next step:
 
 Move into launch preparation, final contact/legal/copy review, or deployment prep. Do not start client portal work until the public website launch path is fully confirmed.
 
+---
+
+## 2026-07-27 — Koinonia Launch Contact Values
+
+Public launch contact values are now set in `apps/web/content/brand.ts`.
+
+- Phone: `719-745-8497`
+- Text: `719-745-8497`
+- Email: `jeremiah@koinoniaadmin.com`
+- Website: `https://koinoniatransactions.com`
+
+The active SEO config file is `apps/web/config/seo.config.ts`, not `apps/web/lib/seo.config.ts`.
+
+Before deployment, make sure production environment variables are set on the host and do not commit `.env.local`.
+

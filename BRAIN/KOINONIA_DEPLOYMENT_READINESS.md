@@ -181,3 +181,17 @@ When launch resumes, do not reopen the Squarespace vs custom-site decision unles
 Recorded launch decision:
 
 Launch the current custom Next.js Koinonia site using a Vercel-style deployment path.
+
+---
+
+## Public Contact Values
+
+Launch public contact values are set in `apps/web/content/brand.ts`.
+
+- Phone: `719-745-8497`
+- Text: `719-745-8497`
+- Email: `jeremiah@koinoniaadmin.com`
+- Website: `https://koinoniatransactions.com`
+
+The active SEO configuration file is `apps/web/config/seo.config.ts`.
+

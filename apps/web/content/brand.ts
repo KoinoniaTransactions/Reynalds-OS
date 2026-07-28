@@ -8,10 +8,10 @@ export const brandContent = {
   },
 
   contact: {
-    phone: "",
-    sms: "",
-    email: "",
-    website: ""
+    phone: "719-745-8497",
+    sms: "719-745-8497",
+    email: "jeremiah@koinoniaadmin.com",
+    website: "https://koinoniatransactions.com"
   },
 
   social: {
