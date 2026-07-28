@@ -120,3 +120,15 @@ Recommended first location:
 
 This should be added after the materials phase so the site and printed/digital materials stay aligned.
 
+## Website Meaning Implementation
+
+The approved website placement for the Koinonia pronunciation and definition treatment is the About page.
+
+Decision:
+
+- Do not place the full treatment in the header.
+- Do not overload the footer.
+- Keep the footer Bible verse as the primary footer faith/value line.
+- Use the About page as the primary home for the full word/pronunciation/definition treatment.
+- Consider a lighter Home page version later only after reviewing the About page implementation.
+

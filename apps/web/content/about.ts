@@ -109,5 +109,14 @@ export const aboutContent = {
           "Support should reduce uncertainty by keeping the moving parts active until the work is complete."
       }
     ]
+  },
+
+  wordMeaning: {
+    eyebrow: "What Koinonia Means",
+    word: "Koinonia",
+    pronunciation: "/koy-noh-NEE-uh/",
+    definition: "fellowship · joint participation · sharing in common",
+    body:
+      "The name is not decoration. Koinonia reflects the heart of the work: steady support, shared responsibility, and service behind the client relationship."
   }
 } as const;

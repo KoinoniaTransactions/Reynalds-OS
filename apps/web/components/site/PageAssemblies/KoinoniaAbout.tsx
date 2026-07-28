@@ -19,6 +19,38 @@ export function KoinoniaAbout() {
         variant="fullBleed"
       />
 
+      <section className="koinonia-section koinonia-about-word-meaning">
+        <div className="koinonia-container">
+          <article className="koinonia-word-meaning-card">
+            <div className="koinonia-word-meaning-mark" aria-hidden="true">
+              K
+            </div>
+
+            <div className="koinonia-word-meaning-content">
+              <div className="koinonia-eyebrow">
+                {aboutContent.wordMeaning.eyebrow}
+              </div>
+
+              <h2 className="koinonia-word-meaning-title">
+                {aboutContent.wordMeaning.word}
+              </h2>
+
+              <p className="koinonia-word-meaning-pronunciation">
+                {aboutContent.wordMeaning.pronunciation}
+              </p>
+
+              <p className="koinonia-word-meaning-definition">
+                {aboutContent.wordMeaning.definition}
+              </p>
+
+              <p className="koinonia-copy">
+                {aboutContent.wordMeaning.body}
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section className="koinonia-section koinonia-about-meaning">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">

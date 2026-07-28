@@ -3012,3 +3012,102 @@ body.koinonia-modal-open {
     width: 100%;
   }
 }
+
+/* Koinonia About Word Meaning Section — 2026-07-28 */
+.koinonia-about-word-meaning {
+  position: relative;
+  padding-top: clamp(56px, 7vw, 88px);
+  padding-bottom: clamp(56px, 7vw, 88px);
+  background:
+    radial-gradient(circle at 12% 12%, rgba(184, 138, 68, 0.1), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(247, 241, 232, 0.1));
+}
+
+.koinonia-about-word-meaning .koinonia-container {
+  position: relative;
+  z-index: 1;
+}
+
+.koinonia-word-meaning-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(20px, 4vw, 36px);
+  align-items: center;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: clamp(26px, 5vw, 44px);
+  border: 1px solid rgba(184, 138, 68, 0.26);
+  border-radius: 34px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.72));
+  box-shadow:
+    0 26px 70px rgba(17, 17, 17, 0.075),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.koinonia-word-meaning-mark {
+  width: clamp(72px, 9vw, 104px);
+  height: clamp(72px, 9vw, 104px);
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(184, 138, 68, 0.5);
+  border-radius: 28px;
+  color: #111111;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.78), transparent 34%),
+    rgba(184, 138, 68, 0.12);
+  font-family: var(--ros-font-display);
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
+}
+
+.koinonia-word-meaning-title {
+  margin: 0;
+  font-family: var(--ros-font-display);
+  font-size: clamp(42px, 7vw, 76px);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  color: #111111;
+}
+
+.koinonia-word-meaning-pronunciation {
+  margin: 10px 0 0;
+  color: rgba(17, 17, 17, 0.58);
+  font-size: clamp(15px, 1.8vw, 18px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.koinonia-word-meaning-definition {
+  margin: 16px 0 14px;
+  color: var(--ros-gold);
+  font-size: clamp(13px, 1.6vw, 15px);
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.koinonia-word-meaning-content .koinonia-copy {
+  max-width: 680px;
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .koinonia-word-meaning-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .koinonia-word-meaning-mark {
+    margin: 0 auto;
+  }
+
+  .koinonia-word-meaning-content .koinonia-copy {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
