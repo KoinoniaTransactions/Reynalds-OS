@@ -195,3 +195,32 @@ Launch public contact values are set in `apps/web/content/brand.ts`.
 
 The active SEO configuration file is `apps/web/config/seo.config.ts`.
 
+---
+
+## Public Launch Verified
+
+The public Koinonia website launch was verified on 2026-07-27.
+
+### Production Domain
+
+- Primary domain: `https://www.koinoniatransactions.com`
+- Apex redirect: `https://koinoniatransactions.com` → `https://www.koinoniatransactions.com`
+
+### Vercel Deployment
+
+- Project: `reynalds-os-web`
+- Production branch: `main`
+- Launch commit: `ebb9fb8`
+- Launch commit message: `Finalize Koinonia launch contact values`
+
+### Verified Services
+
+- Public pages load.
+- Scheduler route loads.
+- Real-domain scheduler form sends through Resend.
+- Email receipt confirmed at `jeremiah@koinoniaadmin.com`.
+
+### DNS Management Note
+
+Squarespace is still involved in the active DNS management path. Do not cancel or disconnect Squarespace until all DNS records have been inventoried and intentionally migrated.
+

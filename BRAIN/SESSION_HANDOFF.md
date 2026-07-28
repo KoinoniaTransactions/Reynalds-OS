@@ -1201,3 +1201,40 @@ The active SEO config file is `apps/web/config/seo.config.ts`, not `apps/web/lib
 
 Before deployment, make sure production environment variables are set on the host and do not commit `.env.local`.
 
+---
+
+## 2026-07-27 — Koinonia Public Launch Verified
+
+The Koinonia public website is live and verified.
+
+### Live URLs
+
+- Primary: `https://www.koinoniatransactions.com`
+- Apex redirect: `https://koinoniatransactions.com`
+- Scheduler: `https://www.koinoniatransactions.com/contact#schedule-consultation`
+
+### Confirmed Working
+
+- Public pages load on the real domain.
+- Apex domain redirects to `www`.
+- Scheduler form works on the real domain.
+- Resend email delivery from the real domain was confirmed by receipt in `jeremiah@koinoniaadmin.com`.
+
+### Current Deployment
+
+- Vercel project: `reynalds-os-web`
+- Production branch: `main`
+- Approved launch commit: `ebb9fb8`
+- Feature branch also contains the approved launch work: `feature/app-shell-foundation`
+
+### DNS / Squarespace Warning
+
+Squarespace DNS was used for the launch DNS changes and should not be canceled yet. Before discontinuing Squarespace, inventory and migrate all needed DNS records:
+
+- Vercel website records
+- Resend DKIM/SPF/MX sending records
+- DMARC/security records
+- Any remaining domain connection or registrar records
+
+Do not remove Resend records during any future DNS migration.
+

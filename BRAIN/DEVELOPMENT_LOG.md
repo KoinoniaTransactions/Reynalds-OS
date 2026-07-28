@@ -1373,3 +1373,40 @@ The active SEO configuration file is `apps/web/config/seo.config.ts`.
 
 The public site now has launch-ready call, text, email, and website contact values in shared brand content.
 
+---
+
+## 2026-07-27 — Koinonia Public Website Launch Verified
+
+### Summary
+
+Koinonia public website deployment was verified on the real production domain.
+
+### Verified Production URLs
+
+- `https://www.koinoniatransactions.com`
+- `https://koinoniatransactions.com` redirects to `https://www.koinoniatransactions.com`
+- `https://www.koinoniatransactions.com/contact#schedule-consultation`
+
+### Deployment Platform
+
+- Host: Vercel
+- Project: `reynalds-os-web`
+- Production branch: `main`
+- Approved launch commit: `ebb9fb8`
+- Launch commit message: `Finalize Koinonia launch contact values`
+
+### Email Delivery
+
+The real-domain consultation scheduler was tested from the live public domain. The scheduler request was delivered successfully to `jeremiah@koinoniaadmin.com`.
+
+### DNS Status
+
+Website DNS was pointed from Squarespace website defaults to Vercel.
+
+Current known website records:
+
+- `www` CNAME points to Vercel DNS.
+- Apex/root domain points to Vercel and redirects to `www`.
+
+Important: Squarespace remains part of the current DNS management path until DNS/registrar records are intentionally migrated later. Do not cancel Squarespace until Vercel website records, Resend records, and email/security records are fully inventoried and recreated wherever DNS will live long-term.
+
