@@ -58,3 +58,26 @@ Materials must preserve the approved boundaries:
 - No client decision-making replacement.
 - No unlimited assistant positioning.
 - No unsupported address, hours, reviews, or legal-entity claims.
+
+## Branded Materials Specs
+
+The branded material spec layer defines how the working copy should become consistent visual assets.
+
+Spec files:
+
+- `branded_materials_design_standard.md`
+- `business_card_design_spec.md`
+- `service_sheet_design_spec.md`
+- `brochure_design_spec.md`
+- `invoice_visual_standard.md`
+- `google_video_materials_setup.md`
+
+These files should be extended before creating disconnected Canva, PDF, print, or design-tool versions.
+
+## Current Execution Order
+
+1. Create branded materials.
+2. Use real branded materials to support Google Business Profile verification.
+3. Create the longer-term legal structure later.
+4. Update public/legal claims only after the legal structure is actually filed and confirmed.
+
