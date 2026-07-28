@@ -103,3 +103,20 @@ Spec files:
 - `invoice_visual_standard.md`
 - `google_video_materials_setup.md`
 
+## Website Follow-Up: Koinonia Meaning
+
+After branded materials are finished, add the Koinonia pronunciation and definition treatment to the public website.
+
+Preferred treatment:
+
+Koinonia  
+/koy-noh-NEE-uh/  
+
+fellowship · joint participation · sharing in common
+
+Recommended first location:
+
+- About page.
+
+This should be added after the materials phase so the site and printed/digital materials stay aligned.
+

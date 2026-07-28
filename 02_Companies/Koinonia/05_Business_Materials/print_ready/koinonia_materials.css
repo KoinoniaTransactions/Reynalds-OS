@@ -1,0 +1,582 @@
+/* Koinonia Print/Digital Material System v1 */
+
+:root {
+  --koinonia-black: #111111;
+  --koinonia-charcoal: #252525;
+  --koinonia-muted: #6f6a60;
+  --koinonia-soft: #f7f3ea;
+  --koinonia-paper: #fffdf8;
+  --koinonia-line: #e8dfcf;
+  --koinonia-gold: #b7892f;
+  --koinonia-gold-soft: #ead7a8;
+  --koinonia-white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: #ece6d8;
+  color: var(--koinonia-black);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+body {
+  padding: 32px;
+}
+
+.material-page {
+  width: 8.5in;
+  min-height: 11in;
+  margin: 0 auto 32px;
+  padding: 0.55in;
+  background:
+    linear-gradient(135deg, rgba(183, 137, 47, 0.08), transparent 32%),
+    var(--koinonia-paper);
+  border: 1px solid var(--koinonia-line);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+  position: relative;
+}
+
+.material-page.compact {
+  min-height: auto;
+}
+
+.k-mark {
+  width: 0.52in;
+  height: 0.52in;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--koinonia-gold);
+  color: var(--koinonia-black);
+  font-size: 0.28in;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-name {
+  margin: 0;
+  font-size: 0.28in;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+}
+
+.brand-tagline {
+  margin: 4px 0 0;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.095in;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gold-line {
+  height: 2px;
+  width: 100%;
+  margin: 22px 0;
+  background: linear-gradient(90deg, var(--koinonia-gold), rgba(183, 137, 47, 0.05));
+}
+
+h1 {
+  margin: 0;
+  font-size: 0.42in;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 0.22in;
+  line-height: 1.15;
+}
+
+h3 {
+  margin: 0 0 7px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.108in;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+p {
+  margin: 0 0 10px;
+  color: var(--koinonia-charcoal);
+  font-size: 0.125in;
+  line-height: 1.45;
+}
+
+.lead {
+  max-width: 6.9in;
+  color: var(--koinonia-charcoal);
+  font-size: 0.165in;
+  line-height: 1.45;
+}
+
+.small {
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.09in;
+  line-height: 1.45;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--koinonia-gold);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.09in;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.grid-2,
+.grid-4 {
+  display: grid;
+  gap: 14px;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.card {
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--koinonia-line);
+}
+
+.card strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.15in;
+}
+
+.card .price {
+  display: inline-block;
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  border: 1px solid var(--koinonia-gold-soft);
+  color: var(--koinonia-black);
+  background: rgba(234, 215, 168, 0.24);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.09in;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+li {
+  margin: 0 0 5px;
+  color: var(--koinonia-charcoal);
+  font-size: 0.108in;
+  line-height: 1.35;
+}
+
+.contact-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--koinonia-line);
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.095in;
+}
+
+.footer-note {
+  position: absolute;
+  left: 0.55in;
+  right: 0.55in;
+  bottom: 0.38in;
+  padding-top: 12px;
+  border-top: 1px solid var(--koinonia-line);
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.08in;
+  line-height: 1.35;
+}
+
+.business-card-page {
+  width: 7.6in;
+  margin: 0 auto 32px;
+  display: grid;
+  gap: 24px;
+}
+
+.business-card {
+  width: 3.5in;
+  height: 2in;
+  padding: 0.18in;
+  background: var(--koinonia-paper);
+  border: 1px solid var(--koinonia-line);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  position: relative;
+}
+
+.business-card.front {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.business-card.back {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.business-card .k-mark {
+  width: 0.36in;
+  height: 0.36in;
+  font-size: 0.19in;
+}
+
+.business-card .brand-name {
+  font-size: 0.18in;
+}
+
+.business-card .brand-tagline {
+  font-size: 0.055in;
+}
+
+.business-card .person {
+  margin-top: 0.18in;
+}
+
+.business-card .person strong {
+  display: block;
+  font-size: 0.17in;
+}
+
+.business-card .person span {
+  display: block;
+  margin-top: 4px;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.07in;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.business-card .card-contact {
+  display: grid;
+  gap: 3px;
+  color: var(--koinonia-charcoal);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.073in;
+}
+
+.business-card .backline {
+  margin: 0 auto 0.12in;
+  width: 1.1in;
+  height: 2px;
+  background: var(--koinonia-gold);
+}
+
+.business-card .promise {
+  margin: 0 0 0.13in;
+  font-size: 0.17in;
+  line-height: 1.16;
+}
+
+.business-card .service-list {
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.073in;
+  letter-spacing: 0.07em;
+  line-height: 1.65;
+  text-transform: uppercase;
+}
+
+.preview-links {
+  max-width: 8.5in;
+  margin: 0 auto;
+  padding: 32px;
+  background: var(--koinonia-paper);
+  border: 1px solid var(--koinonia-line);
+}
+
+.preview-links a {
+  display: block;
+  margin: 10px 0;
+  color: var(--koinonia-black);
+  font-size: 20px;
+}
+
+@media print {
+  body {
+    padding: 0;
+    background: white;
+  }
+
+  .material-page,
+  .business-card,
+  .preview-links {
+    box-shadow: none;
+  }
+
+  .material-page {
+    margin: 0;
+    border: none;
+    page-break-after: always;
+  }
+
+  .business-card-page {
+    margin: 0;
+    padding: 0.25in;
+    page-break-after: always;
+  }
+
+  .business-card {
+    box-shadow: none;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+.koinonia-definition {
+  margin-top: 24px;
+  padding: 18px 20px;
+  background: rgba(234, 215, 168, 0.18);
+  border-left: 3px solid var(--koinonia-gold);
+}
+
+.definition-word {
+  font-size: 0.24in;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.definition-pronunciation {
+  margin-top: 5px;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.095in;
+  letter-spacing: 0.08em;
+}
+
+.definition-meaning {
+  margin-top: 8px;
+  color: var(--koinonia-black);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.092in;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-definition p {
+  margin: 10px 0 0;
+  color: var(--koinonia-charcoal);
+  font-size: 0.12in;
+}
+
+.scripture-footer {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid var(--koinonia-line);
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.078in;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.scripture-footer span {
+  display: block;
+  margin-top: 3px;
+  color: var(--koinonia-gold);
+  font-size: 0.072in;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.business-card .definition-mini {
+  margin: 0.11in 0 0.1in;
+  text-align: center;
+}
+
+.business-card .definition-mini strong {
+  display: block;
+  font-size: 0.13in;
+  line-height: 1;
+}
+
+.business-card .definition-mini span {
+  display: block;
+  margin-top: 3px;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.057in;
+  letter-spacing: 0.06em;
+}
+
+.business-card .definition-mini em {
+  display: block;
+  margin-top: 4px;
+  color: var(--koinonia-charcoal);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.055in;
+  font-style: normal;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+}
+
+.business-card .card-scripture {
+  position: absolute;
+  left: 0.16in;
+  right: 0.16in;
+  bottom: 0.12in;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.047in;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.business-card .card-scripture span {
+  display: block;
+  margin-top: 2px;
+  color: var(--koinonia-gold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Business card refinement: pronunciation belongs on front, definition/verse stays calm on back. */
+.business-card .card-pronunciation {
+  margin: 2px 0 3px;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.06in;
+  letter-spacing: 0.06em;
+}
+
+.business-card.back {
+  padding: 0.16in 0.18in;
+}
+
+.business-card .promise {
+  margin: 0 0 0.09in;
+  font-size: 0.155in;
+  line-height: 1.14;
+}
+
+.business-card .definition-back {
+  margin: 0 0 0.11in;
+  color: var(--koinonia-charcoal);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.064in;
+  letter-spacing: 0.055em;
+  line-height: 1.25;
+}
+
+.business-card .service-list.compact {
+  margin-bottom: 0.18in;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.062in;
+  letter-spacing: 0.055em;
+  line-height: 1.55;
+  text-transform: uppercase;
+}
+
+.business-card .card-scripture {
+  position: absolute;
+  left: 0.16in;
+  right: 0.16in;
+  bottom: 0.105in;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.043in;
+  line-height: 1.22;
+  text-align: center;
+}
+
+.business-card .card-scripture span {
+  display: block;
+  margin-top: 2px;
+  color: var(--koinonia-gold);
+  font-size: 0.041in;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+/* Business card refinement v2: keep word/pronunciation/definition together on front. */
+.business-card .card-definition-front {
+  margin: 3px 0 5px;
+  color: var(--koinonia-charcoal);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.056in;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+}
+
+.business-card.front .brand-tagline {
+  margin-top: 5px;
+}
+
+.business-card.back {
+  padding: 0.17in 0.18in;
+}
+
+.business-card .promise {
+  margin: 0 0 0.16in;
+  font-size: 0.165in;
+  line-height: 1.15;
+}
+
+.business-card .service-list.compact {
+  margin-bottom: 0.22in;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.066in;
+  letter-spacing: 0.055em;
+  line-height: 1.65;
+  text-transform: uppercase;
+}
+
+.business-card .card-scripture {
+  position: absolute;
+  left: 0.16in;
+  right: 0.16in;
+  bottom: 0.12in;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.052in;
+  line-height: 1.28;
+  text-align: center;
+}
+
+.business-card .card-scripture span {
+  display: block;
+  margin-top: 3px;
+  color: var(--koinonia-gold);
+  font-size: 0.049in;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+

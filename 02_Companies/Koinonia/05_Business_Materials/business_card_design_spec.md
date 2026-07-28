@@ -30,10 +30,10 @@ Primary content:
 
 Koinonia Transactions
 
-Real Estate Operations Support
+Support Partner
 
 Jeremiah Reynalds  
-Real Estate Operations Support
+Support Partner
 
 Phone/Text: 719-745-8497  
 Email: jeremiah@koinoniaadmin.com  

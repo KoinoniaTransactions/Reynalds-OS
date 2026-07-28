@@ -153,3 +153,44 @@ This standard governs:
 ## Continuity Rule
 
 Future sessions should extend these specs before redesigning from scratch.
+
+## Koinonia Definition / Pronunciation Treatment
+
+The preferred treatment is:
+
+Koinonia  
+/koy-noh-NEE-uh/  
+
+fellowship · joint participation · sharing in common
+
+This is preferred over repeatedly saying “Koinonia means...” because the pronunciation line naturally invites the definition while keeping the tone premium and restrained.
+
+Use the treatment:
+
+- Prominently on service sheets and flyers.
+- Subtly on business cards.
+- Lightly on invoices and operational documents.
+- On the website after the branded materials are finished.
+
+## Scripture Footer Treatment
+
+Use the current website footer verse as a quiet footer value line:
+
+Bear one another’s burdens. Work heartily, as for the Lord.  
+Galatians 6:2 · Colossians 3:23
+
+This should be present but not visually dominant.
+
+## Website Follow-Up
+
+After the branded materials are finished, add the Koinonia pronunciation and definition treatment to the website.
+
+Recommended first location:
+
+- About page.
+
+Possible later locations:
+
+- Home page, as a subtle brand-foundation section.
+- Footer or near-footer, only if it remains clean and not repetitive.
+

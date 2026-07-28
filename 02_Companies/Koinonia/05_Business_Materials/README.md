@@ -81,3 +81,38 @@ These files should be extended before creating disconnected Canva, PDF, print, o
 3. Create the longer-term legal structure later.
 4. Update public/legal claims only after the legal structure is actually filed and confirmed.
 
+## Print-Ready Source Files
+
+The first working branded material source files live in:
+
+`02_Companies/Koinonia/05_Business_Materials/print_ready/`
+
+Files:
+
+- `index.html`
+- `koinonia_materials.css`
+- `business_card.html`
+- `service_sheet.html`
+- `invoice_estimate.html`
+- `one_page_flyer.html`
+
+These are browser-openable source files that can be reviewed, printed, shown digitally during Google verification, or exported to PDF.
+
+## Koinonia Definition / Pronunciation
+
+Preferred branded treatment:
+
+Koinonia  
+/koy-noh-NEE-uh/  
+
+fellowship · joint participation · sharing in common
+
+This should be used as a meaningful brand element without overpowering the practical service offering.
+
+## Scripture Footer Standard
+
+Branded materials should include the current Koinonia website footer verse in a quiet footer position:
+
+Bear one another’s burdens. Work heartily, as for the Lord.  
+Galatians 6:2 · Colossians 3:23
+
