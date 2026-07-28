@@ -1158,3 +1158,31 @@ Add these environment variables to the hosting platform before testing the deplo
 - `CONTACT_INTAKE_TO_EMAIL`
 - `CONTACT_INTAKE_FROM_EMAIL`
 
+---
+
+## 2026-07-27 — Koinonia Public Site Visual Approval
+
+The Koinonia public website has been visually reviewed and approved locally after Resend email setup.
+
+Approved local preview areas:
+
+- Home
+- Services
+- About
+- Contact
+- Contact scheduler
+- Desktop layout
+- Mobile layout
+
+Current status:
+
+- Website routes pass local QA.
+- Consultation scheduler works locally.
+- Resend email delivery has been tested and received.
+- `.env.local` is ignored and must not be committed.
+- GitHub was current at the Resend verification checkpoint before this documentation update.
+
+Recommended next step:
+
+Move into launch preparation, final contact/legal/copy review, or deployment prep. Do not start client portal work until the public website launch path is fully confirmed.
+

@@ -1317,3 +1317,36 @@ The Koinonia consultation scheduler email delivery path was configured and verif
 
 Koinonia consultation email delivery is locally verified and ready for production environment setup during deployment.
 
+---
+
+## 2026-07-27 — Koinonia Public Website Visual Approval Checkpoint
+
+### Summary
+
+The Koinonia public website was visually reviewed locally after the consultation scheduler and Resend email delivery setup.
+
+### Reviewed Locally
+
+- Home page
+- Services page
+- About page
+- Contact page
+- Contact scheduler anchor
+- Desktop preview
+- Mobile preview
+
+### Verified Before Approval
+
+- Public routes returned successful responses.
+- Contact scheduler loaded at `/contact#schedule-consultation`.
+- Consultation API guard behavior remained correct.
+- Resend live email delivery was tested successfully.
+- Test consultation email was received at `jeremiah@koinoniaadmin.com`.
+- `.env.local` remained ignored by Git.
+- No Resend API key pattern was found in tracked source files.
+- GitHub was current after the Resend documentation commit.
+
+### Current Status
+
+The public Koinonia website is visually approved locally and ready for launch-preparation work.
+
