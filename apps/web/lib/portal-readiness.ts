@@ -17,6 +17,12 @@ export type PortalDatabaseReadiness = {
 
 export type PortalReadinessInput = {
   aiProviderConfigured?: boolean;
+  aiReviewAuditLoggingEnabled?: boolean;
+  aiReviewCitationsRequired?: boolean;
+  aiReviewEnabled?: boolean;
+  aiReviewHumanApprovalRequired?: boolean;
+  aiReviewPrivacyRulesApproved?: boolean;
+  aiReviewPromptsApproved?: boolean;
   authProvider?: string;
   clerkPublishableKey?: string;
   clerkSecretKey?: string;
@@ -619,22 +625,43 @@ function getPaymentWebhookReadiness(input: PortalReadinessInput): PortalReadines
 }
 
 function getAiReadiness(input: PortalReadinessInput): PortalReadinessItem {
-  if (input.aiProviderConfigured) {
+  if (!input.aiReviewEnabled) {
     return attentionItem(
       "ai-review",
       "AI staff review",
-      "AI provider configuration is present, but checklist-specific prompts and approval policy still need a production pass.",
-      "The staff review center is rules-based and the current Copilot is read-only.",
-      "Add checklist-specific AI review prompts, citations, audit events, and approval gates."
+      "AI can help staff prioritize missed deadlines, missing documents, billing gaps, showing access issues, and unsigned approvals after the rules-based review center is proven.",
+      "KOINONIA_AI_REVIEW_ENABLED is not true.",
+      "Keep AI read-only until model configuration, privacy rules, citations, audit events, and human approval gates are verified."
     );
   }
 
-  return attentionItem(
+  if (!input.aiProviderConfigured) {
+    return blockedItem(
+      "ai-review",
+      "AI staff review",
+      "AI review is marked enabled, but no AI provider configuration is present.",
+      "OPENAI_API_KEY or AI_PROVIDER is missing.",
+      "Configure the approved AI provider before enabling staff AI review."
+    );
+  }
+
+  const missingControls = getMissingAiReviewControls(input);
+
+  if (missingControls.length > 0) {
+    return blockedItem(
+      "ai-review",
+      "AI staff review",
+      "AI review is marked enabled, but launch controls are incomplete.",
+      `Missing: ${missingControls.join(", ")}.`,
+      "Approve checklist prompts, privacy rules, citations, audit logging, and human approval before enabling AI review."
+    );
+  }
+
+  return readyItem(
     "ai-review",
     "AI staff review",
-    "AI can help staff prioritize missed deadlines, missing documents, billing gaps, showing access issues, and unsigned approvals after the rules-based review center is proven.",
-    "The staff review center is active without sending portal data to an AI provider.",
-    "Keep AI read-only until model configuration, privacy rules, citations, audit events, and human approval gates are verified."
+    "AI review has provider configuration and required launch controls.",
+    "Provider, prompts, privacy rules, citations, audit logging, and human approval are marked ready."
   );
 }
 
@@ -774,4 +801,16 @@ function getSocialLoginProviderLabel(provider: string): string {
   if (provider === "google") return "Google";
   if (provider === "microsoft") return "Microsoft";
   return provider;
+}
+
+function getMissingAiReviewControls(input: PortalReadinessInput): string[] {
+  return [
+    [input.aiReviewPromptsApproved, "approved checklist prompts"],
+    [input.aiReviewPrivacyRulesApproved, "privacy rules"],
+    [input.aiReviewCitationsRequired, "source citations"],
+    [input.aiReviewAuditLoggingEnabled, "audit logging"],
+    [input.aiReviewHumanApprovalRequired, "human approval"]
+  ]
+    .filter(([ready]) => !ready)
+    .map(([, label]) => label as string);
 }

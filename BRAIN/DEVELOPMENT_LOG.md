@@ -14,6 +14,26 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — AI Review Launch Controls Added
+
+### Summary
+
+Koinonia AI review now has explicit readiness controls so staff-assistive AI cannot be marked ready without provider configuration, approved prompts, privacy rules, citations, audit logging, and human approval.
+
+### Implemented
+
+- Added AI review launch-control fields to the shared portal readiness report.
+- Updated `/employee/readiness` to read AI control flags from production environment settings.
+- Updated `pnpm verify:portal` so optional AI review stays non-blocking when off, but blocks if enabled without required safeguards.
+- Added readiness tests for blocked and ready AI review states.
+- Updated the auth production-readiness specification.
+
+### Current Status
+
+The Staff Review Center remains rules-based. AI review should stay disabled until Koinonia has approved prompts, privacy boundaries, source citations, audit events, and human approval policy for staff-facing recommendations.
+
+---
+
 ## 2026-07-29 — Reynalds Brothers Job Checklists Added
 
 ### Summary

@@ -32,6 +32,12 @@ export default async function EmployeePortalReadinessPage() {
   const database = await getPortalDatabaseReadiness(readinessWorkspaceId);
   const report = buildPortalReadinessReport({
     aiProviderConfigured: Boolean(process.env.OPENAI_API_KEY || process.env.AI_PROVIDER),
+    aiReviewAuditLoggingEnabled: process.env.KOINONIA_AI_AUDIT_LOGGING_ENABLED === "true",
+    aiReviewCitationsRequired: process.env.KOINONIA_AI_CITATIONS_REQUIRED === "true",
+    aiReviewEnabled: process.env.KOINONIA_AI_REVIEW_ENABLED === "true",
+    aiReviewHumanApprovalRequired: process.env.KOINONIA_AI_HUMAN_APPROVAL_REQUIRED === "true",
+    aiReviewPrivacyRulesApproved: process.env.KOINONIA_AI_PRIVACY_RULES_APPROVED === "true",
+    aiReviewPromptsApproved: process.env.KOINONIA_AI_REVIEW_PROMPTS_APPROVED === "true",
     authProvider: process.env.AUTH_PROVIDER,
     clerkPublishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     clerkSecretKey: process.env.CLERK_SECRET_KEY,

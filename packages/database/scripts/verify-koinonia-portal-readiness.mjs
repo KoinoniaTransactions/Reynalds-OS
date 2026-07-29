@@ -96,6 +96,47 @@ if (socialLoginConfigured) {
   );
 }
 
+const aiReviewEnabled = process.env.KOINONIA_AI_REVIEW_ENABLED === "true";
+
+if (aiReviewEnabled) {
+  recordCheck(
+    "AI review provider is configured",
+    isPresent(process.env.OPENAI_API_KEY) || isConfiguredValue(process.env.AI_PROVIDER),
+    "AI review must have an approved provider before it can review staff work"
+  );
+  recordCheck(
+    "AI review prompts are approved",
+    process.env.KOINONIA_AI_REVIEW_PROMPTS_APPROVED === "true",
+    "checklist-specific prompts must be approved before AI review is enabled"
+  );
+  recordCheck(
+    "AI privacy rules are approved",
+    process.env.KOINONIA_AI_PRIVACY_RULES_APPROVED === "true",
+    "client data handling rules must be approved before AI review is enabled"
+  );
+  recordCheck(
+    "AI review citations are required",
+    process.env.KOINONIA_AI_CITATIONS_REQUIRED === "true",
+    "AI findings must cite the source records or checklist rules they rely on"
+  );
+  recordCheck(
+    "AI review audit logging is enabled",
+    process.env.KOINONIA_AI_AUDIT_LOGGING_ENABLED === "true",
+    "AI review actions must be auditable"
+  );
+  recordCheck(
+    "AI review requires human approval",
+    process.env.KOINONIA_AI_HUMAN_APPROVAL_REQUIRED === "true",
+    "AI should recommend, not approve client-facing or billing actions"
+  );
+} else {
+  recordCheck(
+    "AI review optional gate is not enabled",
+    true,
+    "set KOINONIA_AI_REVIEW_ENABLED=true only after privacy, citation, audit, and approval controls are ready"
+  );
+}
+
 if (skipDatabase) {
   recordCheck("document upload storage check skipped", true, "remove --skip-database for production verification");
   recordCheck("document malware scanner check skipped", true, "remove --skip-database for production verification");

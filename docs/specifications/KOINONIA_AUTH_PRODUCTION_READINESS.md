@@ -111,6 +111,12 @@ KOINONIA_PAYMENT_WEBHOOK_SECRET=
 KOINONIA_SOCIAL_LOGIN_CONFIGURED=false
 KOINONIA_SOCIAL_LOGIN_PROVIDERS=
 KOINONIA_SOCIAL_LOGIN_INVITE_MATCHING_VERIFIED=false
+KOINONIA_AI_REVIEW_ENABLED=false
+KOINONIA_AI_REVIEW_PROMPTS_APPROVED=false
+KOINONIA_AI_PRIVACY_RULES_APPROVED=false
+KOINONIA_AI_CITATIONS_REQUIRED=false
+KOINONIA_AI_AUDIT_LOGGING_ENABLED=false
+KOINONIA_AI_HUMAN_APPROVAL_REQUIRED=false
 ROS_ALLOW_MOCK_AUTH=false
 ```
 
@@ -183,6 +189,21 @@ Social login must stay invitation-gated:
 - The database role remains the source of truth for permissions.
 - Staff social login still requires MFA before internal client, document, assignment, billing, or audit views are considered production-ready.
 - If social login is enabled, readiness requires `KOINONIA_SOCIAL_LOGIN_PROVIDERS` to list only approved providers (`google`, `microsoft`) and `KOINONIA_SOCIAL_LOGIN_INVITE_MATCHING_VERIFIED=true` after real invited client and staff social-login tests.
+
+---
+
+## 5B. AI Review Launch Controls
+
+AI should help staff notice missing documents, deadline risk, billing gaps, showing-access blockers, unsigned approvals, and stale work. It should not approve client-facing action, billing, contract language, or access changes by itself.
+
+AI review is optional for base portal launch. If `KOINONIA_AI_REVIEW_ENABLED=true`, readiness requires:
+
+- An approved AI provider configuration.
+- Checklist-specific prompts approved by Koinonia.
+- Privacy rules approved for client, transaction, document, billing, and access-request data.
+- Source citations on AI findings so staff can verify why something was flagged.
+- Audit logging for AI review activity.
+- Human approval before AI recommendations change client-facing or billing state.
 
 ---
 
@@ -272,7 +293,7 @@ Before the portal accepts real data:
 - The target environment has `PORTAL_DOCUMENT_UPLOAD_DIR` configured as an absolute private storage path before live document uploads are enabled.
 - The target environment has `PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND` configured to an absolute executable scanner path before live document uploads are enabled.
 - If social login is enabled, it is configured through the managed auth provider and verified against invitation matching, database role source-of-truth checks, and staff MFA.
-- AI review remains read-only until checklist prompts, privacy boundaries, source citations, audit events, and staff approval gates are verified.
+- AI review remains read-only until provider configuration, checklist prompts, privacy boundaries, source citations, audit events, and staff approval gates are verified.
 
 Run this before accepting real portal data:
 
@@ -294,7 +315,7 @@ CI runs the source-only verifier with placeholder Clerk values. Production accep
 
 The managed provider package is installed and wired. Production login is still blocked by deployment and account configuration, not by source scaffolding.
 
-Do not mark login production-ready until Clerk production variables are configured, staff MFA is enabled, upload storage is configured, client/staff invitation flows exist, one client invite and one staff invite have been accepted, any enabled social login has passed invite-matching verification, and the verification checklist passes with real provider users.
+Do not mark login production-ready until Clerk production variables are configured, staff MFA is enabled, upload storage is configured, client/staff invitation flows exist, one client invite and one staff invite have been accepted, any enabled social login has passed invite-matching verification, any enabled AI review has passed privacy/citation/audit/human-approval verification, and the verification checklist passes with real provider users.
 
 ---
 

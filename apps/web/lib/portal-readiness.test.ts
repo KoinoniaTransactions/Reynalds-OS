@@ -81,6 +81,39 @@ describe("portal readiness report", () => {
     expect(aiReview?.status).toBe("attention");
   });
 
+  it("blocks enabled AI review until provider and launch controls are ready", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        aiProviderConfigured: true,
+        aiReviewEnabled: true,
+        aiReviewHumanApprovalRequired: true
+      })
+    );
+    const aiReview = report.groups.flatMap((group) => group.items).find((item) => item.id === "ai-review");
+
+    expect(aiReview?.status).toBe("blocked");
+    expect(aiReview?.proof).toContain("privacy rules");
+    expect(aiReview?.proof).toContain("source citations");
+  });
+
+  it("marks AI review ready when provider and required launch controls are configured", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        aiProviderConfigured: true,
+        aiReviewAuditLoggingEnabled: true,
+        aiReviewCitationsRequired: true,
+        aiReviewEnabled: true,
+        aiReviewHumanApprovalRequired: true,
+        aiReviewPrivacyRulesApproved: true,
+        aiReviewPromptsApproved: true
+      })
+    );
+    const aiReview = report.groups.flatMap((group) => group.items).find((item) => item.id === "ai-review");
+
+    expect(aiReview?.status).toBe("ready");
+    expect(aiReview?.proof).toContain("human approval");
+  });
+
   it("blocks production readiness when mock auth is enabled in production", () => {
     const report = buildPortalReadinessReport(getReadyInput({ rosAllowMockAuth: "true" }));
     const mockAuth = report.groups.flatMap((group) => group.items).find((item) => item.id === "mock-auth");
