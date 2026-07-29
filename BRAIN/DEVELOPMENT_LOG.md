@@ -1462,3 +1462,29 @@ The Koinonia portal auth scaffold was advanced from provider-ready to provider-w
 ### Current Status
 
 Source scaffolding for managed auth is wired. Login is still not production-ready until Clerk production keys are configured, staff MFA is enforced, invitation/onboarding flows exist, and real client/staff users are tested.
+
+---
+
+## 2026-07-29 — Portal Identity Schema Added
+
+### Summary
+
+The database schema was extended so managed portal login can map provider users to Koinonia users, invitations, roles, and audit history.
+
+### Implemented
+
+- Added user fields for `authProvider`, `authProviderUserId`, `mfaRequired`, `portalAccessStatus`, `lastLoginAt`, `invitedAt`, and `deactivatedAt`.
+- Added `PortalInvitation` for client and staff invite tracking.
+- Added `AuditEvent` for sensitive auth and portal access events.
+- Added migration `20260729062200_portal_auth_identity`.
+
+### Verified
+
+- Prisma schema formatted.
+- Prisma client generated.
+- Database package build passed.
+- Web production build passed.
+
+### Current Status
+
+The schema foundation exists, but invitation APIs, Clerk invitation creation, staff MFA enforcement, and real-provider user testing still remain before production login can accept real client or staff access.
