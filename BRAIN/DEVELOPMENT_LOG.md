@@ -1591,3 +1591,20 @@ Managed-provider sign-in can now bridge a matching Koinonia invitation into an a
 ### Current Status
 
 This bridge compiles, but it still needs a running database and live Clerk user acceptance test before production login is marked ready.
+
+---
+
+## 2026-07-29 — Pending Clerk Sessions Treated as Signed Out
+
+### Summary
+
+Server-side Clerk auth now explicitly treats pending sessions as signed out, supporting production Clerk tasks such as required MFA setup.
+
+### Implemented
+
+- Updated server auth lookup to pass `treatPendingAsSignedOut: true`.
+- Documented that staff MFA still must be configured in Clerk before real employee portal access is enabled.
+
+### Current Status
+
+The source is ready to respect pending-session blocking, but real MFA enforcement still depends on Clerk production policy configuration and live verification.

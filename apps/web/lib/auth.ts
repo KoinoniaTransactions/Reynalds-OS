@@ -18,6 +18,10 @@ type ClerkAuthResult = {
   userId?: string | null;
 };
 
+type ClerkAuthOptions = {
+  treatPendingAsSignedOut?: boolean;
+};
+
 type ClerkUser = {
   id: string;
   emailAddresses?: Array<{ emailAddress?: string | null }> | null;
@@ -30,7 +34,7 @@ type ClerkUser = {
 };
 
 type ClerkServerModule = {
-  auth: () => ClerkAuthResult | Promise<ClerkAuthResult>;
+  auth: (options?: ClerkAuthOptions) => ClerkAuthResult | Promise<ClerkAuthResult>;
   currentUser: () => ClerkUser | null | Promise<ClerkUser | null>;
 };
 
@@ -130,7 +134,7 @@ async function getClerkAuthUser(): Promise<AuthUser> {
   }
 
   const clerk = await loadClerkServerModule();
-  const session = await Promise.resolve(clerk.auth());
+  const session = await Promise.resolve(clerk.auth({ treatPendingAsSignedOut: true }));
 
   if (!session.userId) {
     throw new AuthenticationRequiredError();

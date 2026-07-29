@@ -32,6 +32,7 @@ The current web app includes:
   - `/employee/documents`
   - `/employee/billing`
 - Async session lookup in `apps/web/lib/auth.ts`.
+- Clerk session lookup explicitly treats pending sessions as signed out.
 - Route-level permission guards in `apps/web/lib/portal-auth.ts`.
 - Role normalization and provider-user construction in `packages/auth`.
 - Portal identity fields on `User` for auth provider IDs, MFA requirement, access status, and login timing.
@@ -121,6 +122,8 @@ Koinonia internal users should require multi-factor authentication before access
 
 Client MFA can be evaluated later, but staff MFA is a production requirement.
 
+The source now calls Clerk auth with pending sessions treated as signed out. In production, Clerk must still be configured to require the `setup-mfa` session task for staff users or an equivalent MFA policy before staff portal access is considered ready.
+
 ---
 
 ## 6. Invitation Flow Requirement
@@ -158,6 +161,7 @@ Before the portal accepts real data:
 - Only Owner or Operations can reach `/employee/access`.
 - Staff user can reach only role-appropriate employee tools.
 - Staff user requires MFA.
+- Pending Clerk sessions cannot access protected portal routes.
 - Signed-out user is redirected to `/sign-in`.
 - Unknown role becomes Viewer and cannot see portal data.
 - `/api/me` returns the real provider-backed user.
