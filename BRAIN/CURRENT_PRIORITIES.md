@@ -60,6 +60,10 @@ Current emphasis is implementation, refinement, and launch.
 
 ## Active Work
 
+Current source focus:
+
+Portal login production readiness for client and employee access has been advanced locally, but remains pre-live until Clerk production keys, staff MFA, database-backed invitation tests, and real provider user verification are complete.
+
 Complete the production pages.
 
 Current page order:

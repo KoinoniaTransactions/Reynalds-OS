@@ -24,6 +24,12 @@ Reynalds_OS_v11_3_1_Work
 
 The local development environment is operational.
 
+2026-07-29 portal-auth note:
+
+- Portal login source work has advanced to Clerk provider wiring, invitation records, optional provider invite handoff, and first-login invitation acceptance.
+- Local branch `feature/app-shell-foundation` is ahead of GitHub and must not be pushed without Jeremiah's explicit approval.
+- Local Docker/Postgres was not available during the portal-auth work, so live database invite testing remains incomplete.
+
 Completed:
 
 - GitHub connected

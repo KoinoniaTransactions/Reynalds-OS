@@ -7,6 +7,59 @@ Primary Business Priority: Koinonia Transactions website launch and client-acqui
 
 ---
 
+# 2026-07-29 Current Session Update — Portal Login Production Readiness
+
+Status: Source scaffold advanced / not production-live
+Branch: `feature/app-shell-foundation`
+Local state: ahead of `origin/feature/app-shell-foundation` by 12 commits
+Push state: do not push without Jeremiah explicitly approving the exact commit hashes
+
+## Completed In This Session
+
+- Added Clerk-managed auth wiring, provider-aware login, and protected portal routes.
+- Added portal identity schema fields, `PortalInvitation`, and `AuditEvent`.
+- Added `/employee/access` as a protected staff access workspace preview.
+- Added `/api/portal/invitations` for invitation record list/create.
+- Added clean JSON auth/configuration failures for portal APIs.
+- Added optional Clerk provider invitation handoff through `sendProviderInvitation`.
+- Added first-login invitation acceptance that can create the Koinonia user from an approved invitation.
+- Explicitly treats pending Clerk sessions as signed out.
+- Seeds all approved Koinonia portal role names.
+
+## Local Commits Not Yet Pushed
+
+- `e6406b9` Seed Koinonia portal roles
+- `f6e8cb4` Treat pending Clerk sessions as signed out
+- `8f2d0e2` Accept portal invitations on first login
+- `0e341b2` Scaffold portal provider invitations
+- `ae90889` Standardize portal API auth errors
+- `386cc89` Add employee portal access preview
+- `f1b0b3d` Test portal invitation validation
+- `266180b` Add portal invitation API scaffold
+- `3feeebb` Resolve provider users through portal records
+- `84a28ce` Add portal auth identity schema
+- `56cfaae` Wire Clerk portal auth provider
+- `3928bbc` Add portal production auth scaffold
+
+## Verified Locally
+
+- `pnpm --filter @reynalds-os/auth test`
+- `pnpm --filter @reynalds-os/web exec vitest run`
+- `pnpm --filter @reynalds-os/database build`
+- `pnpm --filter @reynalds-os/web build`
+- Production preview route check for `/employee/access` with mock auth allowed returned 200.
+- Production preview with mock auth disabled returned clean 503 JSON from `/api/me` and `/api/portal/invitations`.
+
+## Still Not Production Ready
+
+- Live Clerk production keys are not configured in deployment.
+- Staff MFA must be enabled and verified in Clerk.
+- Docker/Postgres was unavailable locally, so full invitation create/list/send/acceptance could not be tested against a live database.
+- A real Clerk invite email must be sent and accepted by a test client and a test staff user.
+- No real client documents, billing setup, staff assignments, or internal notes should be accepted until the real-provider checklist passes.
+
+---
+
 # 1. Start Here
 
 The Reynalds OS Brain is already an advanced and intentionally developed operating system.
