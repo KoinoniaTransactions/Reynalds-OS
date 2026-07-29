@@ -116,3 +116,17 @@ Branded materials should include the current Koinonia website footer verse in a 
 Bear one another’s burdens. Work heartily, as for the Lord.  
 Galatians 6:2 · Colossians 3:23
 
+## Koinonia Brand & Marketing System v2
+
+Canonical marketing direction:
+
+- `KOINONIA_BRAND_MARKETING_SYSTEM_V2.md`
+- `brokerage_introduction_sheet_v2.md`
+- `print_ready/brokerage_introduction_sheet_v2.html`
+
+The Brokerage Introduction Sheet is the primary leave-behind for brokerage introductions.
+
+Detailed pricing should remain on a separate Service Guide or Pricing Insert so the primary introduction sheet stays current longer.
+
+The one-page introduction sheet must be completed and approved before creating a tri-fold brochure.
+

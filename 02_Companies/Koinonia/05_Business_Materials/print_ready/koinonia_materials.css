@@ -580,3 +580,328 @@ li {
   text-transform: uppercase;
 }
 
+/* Koinonia Brokerage Introduction Sheet v2 */
+.brokerage-introduction-v2 {
+  min-height: 11in;
+  padding: 0.48in 0.54in 0.42in;
+  background:
+    radial-gradient(circle at 96% 2%, rgba(183, 137, 47, 0.12), transparent 19%),
+    linear-gradient(145deg, rgba(183, 137, 47, 0.055), transparent 30%),
+    var(--koinonia-paper);
+}
+
+.brokerage-intro-header {
+  display: flex;
+  align-items: center;
+  gap: 0.18in;
+}
+
+.brokerage-intro-mark {
+  width: 0.64in;
+  height: 0.64in;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 2px solid var(--koinonia-gold);
+  border-radius: 50%;
+  color: var(--koinonia-gold);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.31in;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.brokerage-intro-company {
+  margin: 0;
+  color: var(--koinonia-black);
+  font-size: 0.27in;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.brokerage-intro-tagline {
+  margin: 5px 0 0;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.09in;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.brokerage-intro-rule {
+  width: 100%;
+  height: 2px;
+  margin: 0.21in 0 0.27in;
+  background: linear-gradient(90deg, var(--koinonia-gold), rgba(183, 137, 47, 0.08));
+}
+
+.brokerage-intro-hero {
+  max-width: 7.15in;
+}
+
+.brokerage-intro-hero h1 {
+  max-width: 7.1in;
+  font-size: 0.43in;
+  line-height: 1.04;
+}
+
+.brokerage-intro-hero .lead {
+  max-width: 6.8in;
+  margin-top: 0.13in;
+  font-size: 0.145in;
+}
+
+.brokerage-intro-problem {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 0.3in;
+  align-items: start;
+  margin-top: 0.28in;
+  padding: 0.22in 0.24in;
+  border-left: 3px solid var(--koinonia-gold);
+  background: rgba(234, 215, 168, 0.14);
+}
+
+.brokerage-intro-problem h2 {
+  margin: 0;
+  font-size: 0.2in;
+}
+
+.brokerage-intro-problem p:last-child {
+  margin: 0;
+  font-size: 0.112in;
+  line-height: 1.48;
+}
+
+.brokerage-intro-services {
+  margin-top: 0.28in;
+}
+
+.brokerage-intro-service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.13in;
+}
+
+.brokerage-intro-service-grid article {
+  min-height: 1.23in;
+  padding: 0.17in;
+  border: 1px solid var(--koinonia-line);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.brokerage-intro-service-grid article > span {
+  display: block;
+  margin-bottom: 0.06in;
+  color: var(--koinonia-gold);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.075in;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.brokerage-intro-service-grid h3 {
+  margin-bottom: 0.06in;
+  color: var(--koinonia-black);
+  font-size: 0.102in;
+}
+
+.brokerage-intro-service-grid p {
+  margin: 0;
+  font-size: 0.094in;
+  line-height: 1.4;
+}
+
+.brokerage-intro-lower {
+  display: grid;
+  grid-template-columns: 0.84fr 1.16fr;
+  gap: 0.16in;
+  margin-top: 0.22in;
+}
+
+.brokerage-intro-why,
+.brokerage-intro-definition {
+  padding: 0.17in 0.19in;
+  border: 1px solid var(--koinonia-line);
+}
+
+.brokerage-intro-why ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.045in 0.14in;
+  margin: 0;
+  padding-left: 0.16in;
+}
+
+.brokerage-intro-why li {
+  margin: 0;
+  font-size: 0.086in;
+}
+
+.brokerage-intro-definition {
+  background: rgba(234, 215, 168, 0.14);
+}
+
+.brokerage-intro-definition .definition-word,
+.brokerage-intro-definition .definition-pronunciation,
+.brokerage-intro-definition .definition-meaning {
+  margin-bottom: 0;
+}
+
+.brokerage-intro-definition .definition-word {
+  font-size: 0.21in;
+}
+
+.brokerage-intro-definition .definition-pronunciation {
+  margin-top: 4px;
+  font-size: 0.08in;
+}
+
+.brokerage-intro-definition .definition-meaning {
+  margin-top: 5px;
+  font-size: 0.073in;
+}
+
+.brokerage-intro-definition > p:last-child {
+  margin: 8px 0 0;
+  font-size: 0.09in;
+}
+
+.brokerage-intro-contact {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr 0.88in;
+  gap: 0.16in;
+  align-items: center;
+  margin-top: 0.21in;
+  padding: 0.14in 0.17in;
+  color: var(--koinonia-white);
+  background: var(--koinonia-black);
+}
+
+.brokerage-intro-contact-person,
+.brokerage-intro-cta {
+  display: grid;
+  gap: 0.035in;
+}
+
+.brokerage-intro-contact strong {
+  color: var(--koinonia-white);
+  font-size: 0.12in;
+}
+
+.brokerage-intro-contact span,
+.brokerage-intro-contact p {
+  color: rgba(255, 255, 255, 0.82);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.077in;
+  line-height: 1.35;
+}
+
+.brokerage-intro-contact p {
+  margin: 0;
+}
+
+.brokerage-intro-contact-person span:first-of-type,
+.brokerage-intro-cta-label {
+  color: var(--koinonia-gold-soft);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.brokerage-intro-contact-person span:not(:first-of-type) {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.brokerage-intro-cta h2 {
+  margin: 0;
+  color: var(--koinonia-white);
+  font-size: 0.145in;
+  line-height: 1.16;
+}
+
+.brokerage-intro-cta strong {
+  display: block;
+  color: var(--koinonia-gold-soft);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.078in;
+  letter-spacing: 0.03em;
+}
+
+.brokerage-intro-qr {
+  display: grid;
+  gap: 0.035in;
+  justify-items: center;
+  margin: 0;
+}
+
+.brokerage-intro-qr img {
+  width: 0.78in;
+  height: 0.78in;
+  padding: 0.04in;
+  background: var(--koinonia-white);
+}
+
+.brokerage-intro-qr figcaption {
+  color: rgba(255, 255, 255, 0.78);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.052in;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.brokerage-intro-boundary {
+  margin: 0.12in auto 0;
+  max-width: 7.1in;
+  color: var(--koinonia-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.067in;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.brokerage-intro-scripture {
+  margin-top: 0.12in;
+  padding-top: 0.1in;
+  border-top: 1px solid var(--koinonia-line);
+  text-align: center;
+}
+
+.brokerage-intro-scripture span,
+.brokerage-intro-scripture small {
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.brokerage-intro-scripture span {
+  color: var(--koinonia-charcoal);
+  font-size: 0.078in;
+}
+
+.brokerage-intro-scripture small {
+  margin-top: 3px;
+  color: var(--koinonia-gold);
+  font-size: 0.065in;
+  font-weight: 700;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+@media print {
+  @page {
+    size: letter;
+    margin: 0;
+  }
+
+  .brokerage-introduction-v2 {
+    width: 8.5in;
+    height: 11in;
+    min-height: 11in;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+    overflow: hidden;
+  }
+}
