@@ -37,6 +37,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - Added social login readiness gates for approved Clerk OAuth providers and social invite-matching verification.
 - Added AI review readiness gates for provider configuration, approved prompts, privacy rules, citations, audit logging, and human approval.
 - Added `/employee/launch` as a protected staff launch checklist for provider setup, database access, service workflow QA, document handling, billing/payment setup, optional social login, optional AI review, and final dry-run proof.
+- Connected `/employee/launch` to the live readiness report so technical gates show Ready, Needs Attention, Blocked, or Manual Proof Needed from the same source as `/employee/readiness`.
 
 ## Recent Pushed Commits
 
@@ -69,6 +70,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - If social login is enabled, full readiness verification blocks until approved providers are listed and social invite matching is marked verified.
 - If AI review is enabled, full readiness verification blocks until provider, prompts, privacy, citations, audit logging, and human approval controls are marked verified.
 - Staff should use `/employee/launch` alongside `/employee/readiness` before deciding that real client portal activity can start.
+- `/employee/launch` now shows live readiness-derived status for technical gates, but service workflow QA and end-to-end dry-run completion still require staff proof.
 - The Staff Review Center is rules-based. AI summarization should stay read-only until privacy controls, citations, audit events, and human approval gates are verified.
 - No real client documents, billing setup, staff assignments, or internal notes should be accepted until the real-provider checklist passes.
 

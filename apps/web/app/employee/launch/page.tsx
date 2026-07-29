@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { Footer, Header } from "../../../components/site";
 import { absoluteUrl } from "../../../config/seo.config";
 import {
-  getPortalLaunchChecklistPhases,
-  getPortalLaunchChecklistSummary,
-  type PortalLaunchChecklistItem
+  buildPortalLaunchChecklistReport,
+  type PortalLaunchChecklistItemStatus,
+  type PortalLaunchChecklistStatus
 } from "../../../lib/portal-launch-checklist";
 import { requirePortalPermission } from "../../../lib/portal-auth";
+import { buildCurrentPortalReadinessReport } from "../../../lib/portal-readiness-runtime";
 
 export const dynamic = "force-dynamic";
 
@@ -26,8 +27,8 @@ export const metadata: Metadata = {
 export default async function EmployeePortalLaunchPage() {
   await requirePortalPermission("employee-portal:view", "/employee/launch");
 
-  const phases = getPortalLaunchChecklistPhases();
-  const summary = getPortalLaunchChecklistSummary();
+  const readinessReport = await buildCurrentPortalReadinessReport();
+  const launchReport = buildPortalLaunchChecklistReport(readinessReport);
 
   return (
     <main className="koinonia-site koinonia-readiness koinonia-launch">
@@ -59,23 +60,19 @@ export default async function EmployeePortalLaunchPage() {
             </a>
           </div>
 
+          <div className="koinonia-readiness-status-row">
+            <LaunchStatusBadge label="Launch" status={launchReport.overallStatus} />
+            <span>Workspace: {launchReport.workspaceId}</span>
+            <span>Updated: {formatDateTime(launchReport.generatedAt)}</span>
+          </div>
+
           <div className="koinonia-readiness-summary-grid">
-            <article className="koinonia-readiness-summary-card">
-              <span>Phases</span>
-              <strong>{summary.phaseCount}</strong>
-            </article>
-            <article className="koinonia-readiness-summary-card">
-              <span>Total Checks</span>
-              <strong>{summary.itemCount}</strong>
-            </article>
-            <article className="koinonia-readiness-summary-card">
-              <span>Required</span>
-              <strong>{summary.requiredCount}</strong>
-            </article>
-            <article className="koinonia-readiness-summary-card">
-              <span>Optional</span>
-              <strong>{summary.optionalCount}</strong>
-            </article>
+            {launchReport.summary.map((card) => (
+              <article className="koinonia-readiness-summary-card" key={card.label}>
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -92,7 +89,7 @@ export default async function EmployeePortalLaunchPage() {
           </div>
 
           <div className="koinonia-readiness-grid koinonia-launch-grid">
-            {phases.map((phase) => (
+            {launchReport.phases.map((phase) => (
               <section className="koinonia-readiness-panel" key={phase.id}>
                 <div className="koinonia-readiness-panel-heading">
                   <p className="koinonia-eyebrow">{phase.title}</p>
@@ -115,14 +112,17 @@ export default async function EmployeePortalLaunchPage() {
   );
 }
 
-function LaunchChecklistItem({ item }: { item: PortalLaunchChecklistItem }) {
+function LaunchChecklistItem({ item }: { item: PortalLaunchChecklistItemStatus }) {
   return (
-    <article className="koinonia-launch-item">
+    <article className={`koinonia-launch-item ${item.status}`}>
       <div className="koinonia-launch-item-heading">
         <h2>{item.title}</h2>
-        <span className={`koinonia-launch-badge ${item.required ? "required" : "optional"}`}>
-          {item.required ? "Required" : "Optional"}
-        </span>
+        <div className="koinonia-launch-badge-stack">
+          <LaunchStatusBadge status={item.status} />
+          <span className={`koinonia-launch-badge ${item.required ? "required" : "optional"}`}>
+            {item.required ? "Required" : "Optional"}
+          </span>
+        </div>
       </div>
 
       <p>{item.detail}</p>
@@ -139,8 +139,9 @@ function LaunchChecklistItem({ item }: { item: PortalLaunchChecklistItem }) {
       </dl>
 
       <div className="koinonia-launch-proof">
-        <span>Proof Needed</span>
+        <span>{item.status === "manual" ? "Proof Needed" : "Current Signal"}</span>
         <p>{item.proof}</p>
+        <strong>{item.statusDetail}</strong>
       </div>
 
       {item.link ? (
@@ -150,4 +151,39 @@ function LaunchChecklistItem({ item }: { item: PortalLaunchChecklistItem }) {
       ) : null}
     </article>
   );
+}
+
+function LaunchStatusBadge({
+  label,
+  status
+}: {
+  label?: string;
+  status: PortalLaunchChecklistStatus;
+}) {
+  return (
+    <span className={`koinonia-readiness-badge ${status}`}>
+      {label ? `${label}: ` : ""}
+      {getStatusLabel(status)}
+    </span>
+  );
+}
+
+function getStatusLabel(status: PortalLaunchChecklistStatus): string {
+  switch (status) {
+    case "blocked":
+      return "Blocked";
+    case "attention":
+      return "Needs Attention";
+    case "manual":
+      return "Manual Proof Needed";
+    case "ready":
+      return "Ready";
+  }
+}
+
+function formatDateTime(isoDate: string): string {
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short"
+  }).format(new Date(isoDate));
 }

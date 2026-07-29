@@ -14,6 +14,26 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Launch Checklist Live Status Added
+
+### Summary
+
+The portal launch checklist now pulls from the same live readiness report as `/employee/readiness`, so staff can distinguish automated Ready, Needs Attention, Blocked, and Manual Proof Needed launch items.
+
+### Implemented
+
+- Extracted current portal readiness loading into a shared server helper.
+- Updated `/employee/readiness` and `/employee/launch` to use the same readiness source.
+- Added live status mapping for provider, database, document storage, billing/payment, social login, and AI gates.
+- Kept service workflow QA, full verifier proof, and end-to-end dry-run proof as manual staff evidence.
+- Added focused tests for live status mapping and blocked readiness propagation.
+
+### Current Status
+
+The checklist is now a better oversight surface for testing, but production launch still requires real environment configuration and staff-recorded proof for dry runs and service workflow validation.
+
+---
+
 ## 2026-07-29 — Portal Launch Checklist Added
 
 ### Summary

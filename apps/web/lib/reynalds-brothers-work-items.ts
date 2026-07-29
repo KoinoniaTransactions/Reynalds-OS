@@ -7,6 +7,7 @@ export type ReynaldsBrothersWorkItemData = {
   jobType?: string | null;
   approvalStatus?: string | null;
   approvedBy?: string | null;
+  approvalDecisionAt?: string | null;
   storeNumber?: string | null;
   city?: string | null;
   state?: string | null;
@@ -82,6 +83,15 @@ export type ReynaldsBrothersMetrics = {
   missingCrew: number;
   missingDocumentation: number;
   redFlags: number;
+};
+
+export type ReynaldsBrothersRouteBatch = {
+  region: string;
+  workItems: ReynaldsBrothersWorkItem[];
+  readyCount: number;
+  blockedCount: number;
+  redFlagCount: number;
+  nextAction: string;
 };
 
 export type ReynaldsBrothersWorkItemCreateInput = {
@@ -468,6 +478,45 @@ export function getWorkItemMetrics(items: ReynaldsBrothersWorkItem[]): ReynaldsB
   };
 }
 
+export function getRouteBatches(items: ReynaldsBrothersWorkItem[]): ReynaldsBrothersRouteBatch[] {
+  const groups = new Map<string, ReynaldsBrothersWorkItem[]>();
+
+  items
+    .filter((item) => !["Complete", "Closed", "Archived"].includes(item.status))
+    .filter((item) => getWorkItemData(item).approvalStatus !== "Needs Approval")
+    .forEach((item) => {
+      const data = getWorkItemData(item);
+      const region = data.region ?? data.state ?? "Region TBD";
+      groups.set(region, [...(groups.get(region) ?? []), item]);
+    });
+
+  return [...groups.entries()]
+    .map(([region, workItems]) => {
+      const redFlagCount = workItems.reduce((count, item) => count + getWorkItemAlerts(item).length, 0);
+      const blockedCount = workItems.filter((item) => getWorkItemAlerts(item).length > 0).length;
+      const readyCount = workItems.length - blockedCount;
+
+      return {
+        region,
+        workItems,
+        readyCount,
+        blockedCount,
+        redFlagCount,
+        nextAction: getRouteBatchNextAction(region, workItems.length, readyCount, blockedCount)
+      };
+    })
+    .sort((first, second) => second.workItems.length - first.workItems.length || first.region.localeCompare(second.region));
+}
+
+function getRouteBatchNextAction(region: string, total: number, readyCount: number, blockedCount: number): string {
+  if (readyCount >= 2 && blockedCount === 0) return `Schedule ${readyCount} ${region} jobs together.`;
+  if (readyCount >= 2) return `Hold ${region} route until ${blockedCount} blocked job${blockedCount === 1 ? "" : "s"} clear.`;
+  if (readyCount === 1 && total > 1) return `Clear blockers so this ${region} run can be batched.`;
+  if (readyCount === 1) return `Single ${region} job can schedule when crew and route timing are set.`;
+
+  return `Clear blockers before scheduling ${region}.`;
+}
+
 export function isInvoiceReadyStatus(invoiceStatus: unknown): boolean {
   const normalizedStatus = String(invoiceStatus ?? "").trim().toLowerCase();
 
@@ -647,6 +696,18 @@ export function getPhaseTrackForJobType(jobType: string): string[] {
   return [];
 }
 
+export function getActivationPhaseForJobType(jobType?: string | null): string {
+  const normalizedJobType = String(jobType ?? "");
+
+  if (normalizedJobType.includes("Pressure Washing")) return "Planning";
+  if (normalizedJobType.includes("UCO")) return "Planning";
+  if (normalizedJobType.includes("ACC Level 2")) return "Level 2 Triage";
+  if (normalizedJobType.includes("ACC Tank Replacement") || normalizedJobType.includes("DIY")) return "Permitting";
+  if (normalizedJobType.includes("ACC")) return "Level 1 Triage";
+
+  return "Planning";
+}
+
 export function getOpenChecklistItems(item: ReynaldsBrothersWorkItem): ReynaldsBrothersChecklistItem[] {
   const completed = new Set(getWorkItemData(item).checklistCompleted ?? []);
 
@@ -740,6 +801,7 @@ function getWorkItemPayloadData(value: Record<string, unknown>): ReynaldsBrother
     jobType: getOptionalString(sourceData.jobType),
     approvalStatus: getOptionalString(sourceData.approvalStatus),
     approvedBy: getOptionalString(sourceData.approvedBy),
+    approvalDecisionAt: getOptionalString(sourceData.approvalDecisionAt),
     storeNumber: getOptionalString(sourceData.storeNumber),
     city: getOptionalString(sourceData.city),
     state: getOptionalString(sourceData.state),

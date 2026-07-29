@@ -696,6 +696,55 @@ h1 {
   text-transform: uppercase;
 }
 
+.rb-approval-panel {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(166, 109, 33, 0.28);
+  border-radius: 14px;
+  padding: 14px;
+  background: #fff9ed;
+  margin: 14px 0;
+}
+
+.rb-approval-panel span {
+  color: #8a5a18;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.rb-approval-panel p {
+  margin: 5px 0 0;
+  color: var(--ros-muted);
+  line-height: 1.5;
+}
+
+.rb-approval-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rb-approval-actions button {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 13px;
+  background: var(--ros-text);
+  color: white;
+  font-weight: 700;
+}
+
+.rb-approval-actions button + button {
+  background: white;
+  color: #8a5a18;
+  border: 1px solid rgba(166, 109, 33, 0.3);
+}
+
+.rb-approval-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .rb-email-form {
   display: grid;
   grid-template-columns: minmax(180px, 0.6fr) minmax(220px, 1fr) minmax(280px, 1.2fr) auto;
@@ -827,6 +876,70 @@ h1 {
   font-size: 13px;
 }
 
+.rb-route-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.rb-route-batch {
+  border: 1px solid var(--ros-border);
+  border-radius: 16px;
+  background: #fff;
+  padding: 14px;
+}
+
+.rb-route-batch-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rb-route-batch-heading span,
+.rb-route-batch-heading small {
+  color: var(--ros-gold);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.rb-route-batch-heading strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 22px;
+}
+
+.rb-route-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.rb-route-stats span {
+  border: 1px solid var(--ros-border);
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: var(--ros-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rb-route-batch p,
+.rb-route-batch li {
+  color: var(--ros-muted);
+  line-height: 1.5;
+}
+
+.rb-route-batch ul {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
 @media (max-width: 1180px) {
   .rb-command-strip,
   .rb-email-form,
@@ -834,6 +947,7 @@ h1 {
   .rb-inline-form,
   .rb-layout,
   .rb-module-grid,
+  .rb-route-grid,
   .rb-two-column {
     grid-template-columns: 1fr;
   }
@@ -3731,6 +3845,12 @@ h1 {
   color: #8e2d2d;
 }
 
+.koinonia-readiness-badge.manual {
+  background: rgba(25, 92, 96, 0.08);
+  border-color: rgba(25, 92, 96, 0.22);
+  color: #195c60;
+}
+
 .koinonia-readiness-next {
   display: grid;
   gap: 18px;
@@ -3782,11 +3902,32 @@ h1 {
   padding: 16px;
 }
 
+.koinonia-launch-item.ready {
+  border-color: rgba(83, 112, 76, 0.28);
+}
+
+.koinonia-launch-item.attention,
+.koinonia-launch-item.manual {
+  border-color: rgba(184, 138, 68, 0.34);
+}
+
+.koinonia-launch-item.blocked {
+  border-color: rgba(178, 59, 59, 0.26);
+}
+
 .koinonia-launch-item-heading {
   align-items: flex-start;
   display: flex;
   gap: 12px;
   justify-content: space-between;
+}
+
+.koinonia-launch-badge-stack {
+  align-items: flex-end;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .koinonia-launch-item h2 {
@@ -3863,6 +4004,12 @@ h1 {
 .koinonia-launch-proof {
   display: grid;
   gap: 7px;
+}
+
+.koinonia-launch-proof strong {
+  color: var(--ros-text);
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .koinonia-staff-review-hero {

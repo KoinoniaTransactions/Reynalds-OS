@@ -62,6 +62,7 @@ The current web app includes:
 - `/employee/access` includes protected action controls for revoking unaccepted invitations and deactivating active portal users.
 - `/employee/readiness` gives staff a live readiness view for login, database, portal workflow, document, oversight, social login, and AI gates.
 - `/employee/launch` gives staff a protected launch checklist for production provider setup, database access, service workflow QA, document handling, billing/payment setup, optional social login, optional AI review, and final dry-run proof.
+- `/employee/launch` uses the same current readiness report as `/employee/readiness` for technical launch gates, while service workflow QA and end-to-end dry-run checks remain manual proof items.
 - `/employee/review` gives staff a protected rules-based review queue for missing assignments, document gaps, billing setup gaps, access needs, showing authorization, and stale work.
 - Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
 - First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
@@ -266,6 +267,7 @@ Before the portal accepts real data:
 - Staff can review recent portal access audit history from `/employee/access`.
 - Staff can review current production readiness gates from `/employee/readiness`.
 - Staff can review the production launch checklist from `/employee/launch` before accepting real client data.
+- Staff can use `/employee/launch` to distinguish automated readiness status from manual proof items.
 - Clients can create and review their own showing requests.
 - Employee users with assigned-work access can review the showing request queue.
 - Client dashboard current-work cards can read `RosObject` work records owned by the signed-in client.

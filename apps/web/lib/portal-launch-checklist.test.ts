@@ -1,8 +1,39 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildPortalLaunchChecklistReport,
   getPortalLaunchChecklistPhases,
   getPortalLaunchChecklistSummary
 } from "./portal-launch-checklist";
+import { buildPortalReadinessReport, type PortalReadinessInput } from "./portal-readiness";
+
+function getReadyInput(overrides: Partial<PortalReadinessInput> = {}): PortalReadinessInput {
+  return {
+    aiProviderConfigured: false,
+    authProvider: "clerk",
+    clerkPublishableKey: "pk_live_livevalue",
+    clerkSecretKey: "sk_live_livevalue",
+    documentMalwareScanCommand: "/bin/sh",
+    documentUploadDir: "/tmp/koinonia-portal-documents",
+    hostedSignInUrl: "/sign-in",
+    nodeEnv: "production",
+    paymentProcessorProvider: "stripe",
+    paymentProcessorSetupUrl: "https://payments.koinoniatransactions.com/setup",
+    paymentProcessorWebhookSecret: "whsec_livevalue",
+    rosAllowMockAuth: "false",
+    socialLoginConfigured: false,
+    workspaceId: "wks_koinonia",
+    database: {
+      acceptedClientInvitationCount: 1,
+      acceptedStaffInvitationCount: 1,
+      activeOwnerCount: 1,
+      connected: true,
+      missingRoles: [],
+      staffWithoutMfaCount: 0,
+      workspaceExists: true
+    },
+    ...overrides
+  };
+}
 
 describe("portal launch checklist", () => {
   it("keeps the full verifier as a required launch gate", () => {
@@ -44,5 +75,34 @@ describe("portal launch checklist", () => {
     expect(summary.phaseCount).toBe(phases.length);
     expect(summary.itemCount).toBe(items.length);
     expect(summary.requiredCount + summary.optionalCount).toBe(items.length);
+  });
+
+  it("maps linked launch checks to the live readiness report", () => {
+    const launchReport = buildPortalLaunchChecklistReport(
+      buildPortalReadinessReport(getReadyInput())
+    );
+    const items = launchReport.phases.flatMap((phase) => phase.items);
+
+    expect(items.find((item) => item.id === "clerk-production-auth")?.status).toBe("ready");
+    expect(items.find((item) => item.id === "workspace-role-seed")?.status).toBe("ready");
+    expect(items.find((item) => item.id === "end-to-end-client-dry-run")?.status).toBe("manual");
+    expect(launchReport.summary.find((item) => item.label === "Manual Proof")?.value).toBe("7");
+  });
+
+  it("blocks launch checks when any linked readiness item is blocked", () => {
+    const launchReport = buildPortalLaunchChecklistReport(
+      buildPortalReadinessReport(
+        getReadyInput({
+          clerkPublishableKey: "pk_test_placeholder",
+          clerkSecretKey: "placeholder"
+        })
+      )
+    );
+    const loginCheck = launchReport.phases
+      .flatMap((phase) => phase.items)
+      .find((item) => item.id === "clerk-production-auth");
+
+    expect(loginCheck?.status).toBe("blocked");
+    expect(loginCheck?.statusDetail).toContain("Add production Clerk keys");
   });
 });

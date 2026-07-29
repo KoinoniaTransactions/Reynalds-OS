@@ -116,6 +116,8 @@ ACC work may move as one connected job through Level 1 triage, Level 2 triage, a
 
 Pressure washing is a standalone workflow.
 
+Approved active Work Items may be grouped into route batches by region or state so office users can see which jobs should be scheduled together and which blockers must clear before a run can be built.
+
 ---
 
 ## Division Checklist Templates
@@ -154,6 +156,14 @@ Checklist completion may also update related status fields automatically:
 The job detail screen also exposes editable job controls for approval, Lucernex, PO, permits, tank status, coordinated oil removal, CompanyCam, pressure-washing vendors, completion date, billing approval, and next action.
 
 ACC tank replacement is treated as one connected chain that may include Level 1 triage, Level 2 triage, and final replacement work.
+
+Approved drafted jobs activate into the first working phase for their job type:
+
+- ACC Level 1 Triage activates into Level 1 Triage.
+- ACC Level 2 Triage activates into Level 2 Triage.
+- ACC Tank Replacement and DIY Only activate into Permitting.
+- UCO Tank Replacement activates into Planning.
+- Pressure Washing activates into Planning.
 
 ---
 

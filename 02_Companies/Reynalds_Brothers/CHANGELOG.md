@@ -22,3 +22,5 @@
 - Added smart checklist automation so completed checklist items can update PO, permit, tank, oil-removal, pressure-washing vendor, media, billing, and phase status fields.
 - Expanded the Work Item update panel so office users can edit approval, Lucernex, PO, permit, tank, oil-removal, CompanyCam, pressure-washing vendor, completion, and billing approval fields directly.
 - Added email intake action controls so classified emails can create Needs Approval jobs, file to matched job timelines, or remain visible in the unmatched review queue.
+- Added approval action controls that let the current approver activate a drafted job into its correct first working phase or hold it for review.
+- Added route-batch planning that groups approved active jobs by region and highlights ready versus blocked scheduling candidates.

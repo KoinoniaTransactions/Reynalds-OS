@@ -3,8 +3,10 @@ import {
   REYNALDS_BROTHERS_WORK_ITEM_TYPE,
   applyChecklistAutomation,
   getChecklistProgress,
+  getActivationPhaseForJobType,
   getOpenChecklistItems,
   getPhaseTrackForJobType,
+  getRouteBatches,
   getWorkItemAlerts,
   getWorkItemChecklist,
   getWorkItemLane,
@@ -26,6 +28,15 @@ describe("Reynalds Brothers work item engine", () => {
     expect(metrics.redFlags).toBeGreaterThan(0);
     expect(metrics.missingCrew).toBe(4);
     expect(metrics.missingDocumentation).toBe(4);
+  });
+
+  it("groups approved active work into route batches", () => {
+    const batches = getRouteBatches(reynaldsBrothersFallbackWorkItems);
+    const louisiana = batches.find((batch) => batch.region === "Louisiana");
+
+    expect(louisiana?.workItems.map((item) => item.name)).toContain("WM-331 Sulphur, Louisiana - ACC Level 1 Triage");
+    expect(louisiana?.workItems.map((item) => item.name)).not.toContain("WM-450 Shreveport, Louisiana - Pressure Washing");
+    expect(louisiana?.blockedCount).toBeGreaterThan(0);
   });
 
   it("derives lanes from work status and phase", () => {
@@ -64,6 +75,14 @@ describe("Reynalds Brothers work item engine", () => {
     expect(getPhaseTrackForJobType("Pressure Washing")).toContain("Vac Truck Secured");
     expect(getPhaseTrackForJobType("UCO Tank Replacement")).toContain("Tank Received");
     expect(getPhaseTrackForJobType("ACC Level 1 Triage")).toContain("Level 2 Triage");
+  });
+
+  it("activates approved jobs into their first working phase", () => {
+    expect(getActivationPhaseForJobType("ACC Level 1 Triage")).toBe("Level 1 Triage");
+    expect(getActivationPhaseForJobType("ACC Level 2 Triage")).toBe("Level 2 Triage");
+    expect(getActivationPhaseForJobType("ACC Tank Replacement")).toBe("Permitting");
+    expect(getActivationPhaseForJobType("UCO Tank Replacement")).toBe("Planning");
+    expect(getActivationPhaseForJobType("Pressure Washing")).toBe("Planning");
   });
 
   it("automates related status fields from completed checklist items", () => {
@@ -162,6 +181,7 @@ describe("Reynalds Brothers work item engine", () => {
         checklistCompleted: ["pw_vac_truck_secured"],
         sourceSystem: "email",
         sourceReferenceId: "gmail_preview_new_uco_9001",
+        approvalDecisionAt: "2026-07-29T17:00:00.000Z",
         intakeReasons: ["Email appears to describe new work."]
       }
     });
@@ -171,6 +191,7 @@ describe("Reynalds Brothers work item engine", () => {
     expect(update.data?.poNumber).toBe("PO-123");
     expect(update.data?.checklistCompleted).toEqual(["pw_vac_truck_secured"]);
     expect(update.data?.sourceReferenceId).toBe("gmail_preview_new_uco_9001");
+    expect(update.data?.approvalDecisionAt).toBe("2026-07-29T17:00:00.000Z");
     expect(update.data?.intakeReasons).toEqual(["Email appears to describe new work."]);
   });
 });

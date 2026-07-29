@@ -1,3 +1,9 @@
+import type {
+  PortalReadinessItem,
+  PortalReadinessReport,
+  PortalReadinessStatus
+} from "./portal-readiness";
+
 export type PortalLaunchChecklistPhaseId =
   | "provider"
   | "database"
@@ -19,9 +25,19 @@ export type PortalLaunchChecklistItem = {
   owner: string;
   phase: PortalLaunchChecklistPhaseId;
   proof: string;
+  readinessItemIds?: string[];
   readinessGate: string;
   required: boolean;
   title: string;
+};
+
+export type PortalLaunchChecklistStatus = PortalReadinessStatus | "manual";
+
+export type PortalLaunchChecklistItemStatus = PortalLaunchChecklistItem & {
+  readinessItems: PortalReadinessItem[];
+  status: PortalLaunchChecklistStatus;
+  statusDetail: string;
+  statusLabel: string;
 };
 
 export type PortalLaunchChecklistPhase = {
@@ -30,11 +46,28 @@ export type PortalLaunchChecklistPhase = {
   title: string;
 };
 
+export type PortalLaunchChecklistPhaseStatus = {
+  id: PortalLaunchChecklistPhaseId;
+  items: PortalLaunchChecklistItemStatus[];
+  title: string;
+};
+
 export type PortalLaunchChecklistSummary = {
   itemCount: number;
   optionalCount: number;
   phaseCount: number;
   requiredCount: number;
+};
+
+export type PortalLaunchChecklistReport = {
+  generatedAt: string;
+  overallStatus: PortalLaunchChecklistStatus;
+  phases: PortalLaunchChecklistPhaseStatus[];
+  summary: Array<{
+    label: string;
+    value: string;
+  }>;
+  workspaceId: string;
 };
 
 export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
@@ -51,6 +84,7 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
         phase: "provider",
         proof:
           "Readiness shows managed auth, production Clerk keys, hosted login, and mock auth as ready.",
+        readinessItemIds: ["auth-provider", "clerk-keys", "hosted-login", "mock-auth"],
         readinessGate: "AUTH_PROVIDER=clerk with production Clerk keys and ROS_ALLOW_MOCK_AUTH=false.",
         required: true,
         title: "Production login is provider-backed"
@@ -63,6 +97,7 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
         owner: "Owner / Operations",
         phase: "provider",
         proof: "Access workspace and readiness checks show zero active staff users missing MFA.",
+        readinessItemIds: ["staff-mfa"],
         readinessGate: "Staff MFA is enforced in Clerk and reflected on active portal users.",
         required: true,
         title: "Staff MFA policy is verified"
@@ -82,6 +117,7 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
         phase: "database",
         proof:
           "Readiness and access workspace show the workspace, roles, permissions, and active Owner account as ready.",
+        readinessItemIds: ["database", "workspace", "roles", "owner"],
         readinessGate: "Production database is reachable and seeded with approved Koinonia portal roles.",
         required: true,
         title: "Workspace and roles are seeded"
@@ -95,6 +131,7 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
         phase: "database",
         proof:
           "Readiness reports at least one accepted client invitation and one accepted staff invitation.",
+        readinessItemIds: ["invite-acceptance"],
         readinessGate: "Invite acceptance works for both Client and staff roles before public launch.",
         required: true,
         title: "Client and staff invitation acceptance is proven"
@@ -168,6 +205,7 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
         phase: "documents",
         proof:
           "Readiness shows absolute private upload storage, scanner command, and authorized download checks as ready.",
+        readinessItemIds: ["document-storage", "document-scanner", "document-downloads"],
         readinessGate:
           "PORTAL_DOCUMENT_UPLOAD_DIR and PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND are production-safe.",
         required: true,
@@ -200,6 +238,7 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
         phase: "billing",
         proof:
           "Billing workspace shows request status, billing model, consent status, service context, and staff next action.",
+        readinessItemIds: ["billing-metadata"],
         readinessGate: "Billing setup requests keep payment metadata separate from raw payment credentials.",
         required: true,
         title: "Client billing setup is file-level"
@@ -213,6 +252,7 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
         phase: "billing",
         proof:
           "Readiness shows payment provider, public HTTPS setup URL, and webhook secret as configured.",
+        readinessItemIds: ["payment-processor", "payment-setup-url", "payment-webhook-secret"],
         readinessGate: "Processor-hosted payment capture is ready before billing requests are sent to clients.",
         required: true,
         title: "Payment capture stays processor-hosted"
@@ -232,6 +272,7 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
         phase: "social-ai",
         proof:
           "Readiness shows approved social providers and invite matching verified when social login is enabled.",
+        readinessItemIds: ["social-login"],
         readinessGate:
           "KOINONIA_SOCIAL_LOGIN_INVITE_MATCHING_VERIFIED=true only after real invited-account testing.",
         required: false,
@@ -246,6 +287,7 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
         phase: "social-ai",
         proof:
           "Readiness shows AI review ready only if all launch-control flags and provider configuration are present.",
+        readinessItemIds: ["ai-review"],
         readinessGate: "AI is optional for base launch and must stay read-only until all controls pass.",
         required: false,
         title: "AI staff assist remains controlled"
@@ -297,5 +339,104 @@ export function getPortalLaunchChecklistSummary(): PortalLaunchChecklistSummary 
     optionalCount: items.length - requiredCount,
     phaseCount: portalLaunchChecklistPhases.length,
     requiredCount
+  };
+}
+
+export function buildPortalLaunchChecklistReport(
+  readinessReport: PortalReadinessReport
+): PortalLaunchChecklistReport {
+  const readinessItemsById = new Map(
+    readinessReport.groups.flatMap((group) => group.items).map((item) => [item.id, item])
+  );
+  const phases = portalLaunchChecklistPhases.map((phase) => ({
+    ...phase,
+    items: phase.items.map((item) => getChecklistItemStatus(item, readinessItemsById))
+  }));
+  const items = phases.flatMap((phase) => phase.items);
+  const readyCount = items.filter((item) => item.status === "ready").length;
+  const attentionCount = items.filter((item) => item.status === "attention").length;
+  const blockedCount = items.filter((item) => item.status === "blocked").length;
+  const manualCount = items.filter((item) => item.status === "manual").length;
+  const staticSummary = getPortalLaunchChecklistSummary();
+
+  return {
+    generatedAt: readinessReport.generatedAt,
+    overallStatus:
+      blockedCount > 0
+        ? "blocked"
+        : attentionCount > 0
+          ? "attention"
+          : manualCount > 0
+            ? "manual"
+            : "ready",
+    phases,
+    summary: [
+      { label: "Ready", value: String(readyCount) },
+      { label: "Needs Attention", value: String(attentionCount) },
+      { label: "Blocked", value: String(blockedCount) },
+      { label: "Manual Proof", value: String(manualCount) },
+      { label: "Required", value: String(staticSummary.requiredCount) },
+      { label: "Optional", value: String(staticSummary.optionalCount) }
+    ],
+    workspaceId: readinessReport.workspaceId
+  };
+}
+
+function getChecklistItemStatus(
+  item: PortalLaunchChecklistItem,
+  readinessItemsById: Map<string, PortalReadinessItem>
+): PortalLaunchChecklistItemStatus {
+  const readinessItems = (item.readinessItemIds ?? [])
+    .map((id) => readinessItemsById.get(id))
+    .filter((readinessItem): readinessItem is PortalReadinessItem => Boolean(readinessItem));
+
+  if (!item.readinessItemIds || item.readinessItemIds.length === 0) {
+    return {
+      ...item,
+      readinessItems,
+      status: "manual",
+      statusDetail: "Staff must complete and record this proof outside the automated readiness checks.",
+      statusLabel: "Manual Proof Needed"
+    };
+  }
+
+  if (readinessItems.length !== item.readinessItemIds.length) {
+    return {
+      ...item,
+      readinessItems,
+      status: "attention",
+      statusDetail: "One or more linked readiness checks could not be found.",
+      statusLabel: "Needs Attention"
+    };
+  }
+
+  const blockedItem = readinessItems.find((readinessItem) => readinessItem.status === "blocked");
+  if (blockedItem) {
+    return {
+      ...item,
+      readinessItems,
+      status: "blocked",
+      statusDetail: blockedItem.nextAction ?? blockedItem.proof,
+      statusLabel: "Blocked"
+    };
+  }
+
+  const attentionItem = readinessItems.find((readinessItem) => readinessItem.status === "attention");
+  if (attentionItem) {
+    return {
+      ...item,
+      readinessItems,
+      status: "attention",
+      statusDetail: attentionItem.nextAction ?? attentionItem.proof,
+      statusLabel: "Needs Attention"
+    };
+  }
+
+  return {
+    ...item,
+    readinessItems,
+    status: "ready",
+    statusDetail: "Linked readiness checks are currently ready.",
+    statusLabel: "Ready"
   };
 }

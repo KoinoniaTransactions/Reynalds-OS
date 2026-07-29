@@ -8,8 +8,10 @@ import {
 } from "../../lib/reynalds-brothers-email-intake";
 import {
   applyChecklistAutomation,
+  getActivationPhaseForJobType,
   getChecklistProgress,
   getPhaseProgress,
+  getRouteBatches,
   getPhaseTrackForJobType,
   getWorkItemData,
   getWorkItemAlerts,
@@ -122,6 +124,7 @@ export function ReynaldsBrothersOperationsSystem() {
   const [manualEmailBody, setManualEmailBody] = useState("");
   const [emailActionPendingId, setEmailActionPendingId] = useState("");
   const [emailActionMessage, setEmailActionMessage] = useState("");
+  const [approvalActionPending, setApprovalActionPending] = useState("");
 
   async function loadWorkItems() {
     setError("");
@@ -171,6 +174,7 @@ export function ReynaldsBrothersOperationsSystem() {
   }, [search, workItems]);
 
   const metrics = getWorkItemMetrics(filtered);
+  const routeBatches = getRouteBatches(filtered);
   const selected = filtered.find((item) => item.id === selectedId) ?? filtered[0] ?? workItems[0];
   const selectedData = selected ? getWorkItemData(selected) : {};
 
@@ -348,6 +352,82 @@ export function ReynaldsBrothersOperationsSystem() {
       if (payload.workItem?.id) setSelectedId(payload.workItem.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Work Item could not be updated.");
+    }
+  }
+
+  async function approveSelectedWorkItem() {
+    if (!selected) return;
+
+    setError("");
+    setApprovalActionPending("approve");
+
+    const activationPhase = getActivationPhaseForJobType(selectedData.jobType ?? selectedData.workType ?? selectedData.serviceLine);
+
+    try {
+      const response = await fetch(`/api/reynalds-brothers/work-items/${selected.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: activationPhase,
+          health: selected.health === "Critical" ? "Attention" : selected.health,
+          nextAction: getApprovalNextAction(selectedData.jobType ?? selectedData.serviceLine),
+          data: {
+            ...selectedData,
+            approvalStatus: "Approved",
+            approvedBy: "Jeremiah Reynalds",
+            approvalDecisionAt: new Date().toISOString(),
+            phase: activationPhase,
+            customerUpdateStatus: "Approved; ready for office workflow."
+          }
+        })
+      });
+
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Work Item could not be approved.");
+
+      await loadWorkItems();
+      if (payload.workItem?.id) setSelectedId(payload.workItem.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Work Item could not be approved.");
+    } finally {
+      setApprovalActionPending("");
+    }
+  }
+
+  async function holdSelectedWorkItem() {
+    if (!selected) return;
+
+    setError("");
+    setApprovalActionPending("hold");
+
+    try {
+      const response = await fetch(`/api/reynalds-brothers/work-items/${selected.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: "Needs Approval",
+          health: "Attention",
+          nextAction: "Review intake details before activating this job.",
+          data: {
+            ...selectedData,
+            approvalStatus: "On Hold",
+            approvedBy: "Jeremiah Reynalds",
+            approvalDecisionAt: new Date().toISOString(),
+            phase: "Needs Approval",
+            customerUpdateStatus: "Approval held; intake needs office review."
+          }
+        })
+      });
+
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Work Item could not be placed on hold.");
+
+      await loadWorkItems();
+      if (payload.workItem?.id) setSelectedId(payload.workItem.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Work Item could not be placed on hold.");
+    } finally {
+      setApprovalActionPending("");
     }
   }
 
@@ -573,6 +653,39 @@ export function ReynaldsBrothersOperationsSystem() {
           </article>
         </section>
 
+        <section className="rb-section rb-route-planner">
+          <div className="rb-section-heading">
+            <div>
+              <div className="ros-eyebrow">Route planning</div>
+              <h2>Suggested regional batches</h2>
+            </div>
+          </div>
+          <div className="rb-route-grid">
+            {routeBatches.length === 0 ? <p className="rb-empty">No approved active jobs available for routing.</p> : null}
+            {routeBatches.map((batch) => (
+              <article className="rb-route-batch" key={batch.region}>
+                <div className="rb-route-batch-heading">
+                  <div>
+                    <span>{batch.region}</span>
+                    <strong>{batch.workItems.length} job{batch.workItems.length === 1 ? "" : "s"}</strong>
+                  </div>
+                  <small>{batch.redFlagCount} red flag{batch.redFlagCount === 1 ? "" : "s"}</small>
+                </div>
+                <div className="rb-route-stats">
+                  <span>{batch.readyCount} ready</span>
+                  <span>{batch.blockedCount} blocked</span>
+                </div>
+                <p>{batch.nextAction}</p>
+                <ul>
+                  {batch.workItems.slice(0, 3).map((item) => (
+                    <li key={item.id}>{item.name}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="rb-layout">
           <div className="rb-board" aria-label="Work item lanes">
             {reynaldsBrothersBoardLanes.map((lane) => {
@@ -634,10 +747,31 @@ export function ReynaldsBrothersOperationsSystem() {
                   <span className={`rb-health ${selected.health.toLowerCase()}`}>{selected.health}</span>
                 </div>
 
+                {selectedData.approvalStatus === "Needs Approval" || selectedData.approvalStatus === "On Hold" ? (
+                  <section className="rb-approval-panel">
+                    <div>
+                      <span>Approval required</span>
+                      <p>Jeremiah currently has approval authority. Approval activates the job into its first working phase.</p>
+                    </div>
+                    <div className="rb-approval-actions">
+                      <button disabled={approvalActionPending !== ""} onClick={() => void approveSelectedWorkItem()} type="button">
+                        {approvalActionPending === "approve" ? "Approving..." : "Approve Job"}
+                      </button>
+                      <button disabled={approvalActionPending !== ""} onClick={() => void holdSelectedWorkItem()} type="button">
+                        {approvalActionPending === "hold" ? "Holding..." : "Hold for Review"}
+                      </button>
+                    </div>
+                  </section>
+                ) : null}
+
                 <dl className="rb-detail-grid">
                   <div>
                     <dt>Approval</dt>
                     <dd>{selectedData.approvalStatus ?? "Approved"}</dd>
+                  </div>
+                  <div>
+                    <dt>Approved By</dt>
+                    <dd>{selectedData.approvedBy ?? "Not recorded"}</dd>
                   </div>
                   <div>
                     <dt>Customer</dt>
@@ -1105,4 +1239,16 @@ function getServiceLineFromJobType(jobType: string): string {
   if (jobType.includes("UCO")) return "UCO";
   if (jobType.includes("Pressure")) return "Pressure Washing";
   return "";
+}
+
+function getApprovalNextAction(jobType?: string | null): string {
+  const normalizedJobType = String(jobType ?? "");
+
+  if (normalizedJobType.includes("Pressure Washing")) return "Secure vac truck company and disposal facility for scheduling.";
+  if (normalizedJobType.includes("UCO")) return "Start permitting and confirm Frontline LLC tank order.";
+  if (normalizedJobType.includes("ACC Level 2")) return "Dispatch technician for tank photos, vacuum tests, and field findings.";
+  if (normalizedJobType.includes("ACC Tank Replacement") || normalizedJobType.includes("DIY")) return "Start permitting, PO tracking, tank assignment, and Lucernex follow-up.";
+  if (normalizedJobType.includes("ACC")) return "Call store manager and complete Level 1 triage.";
+
+  return "Begin office planning workflow.";
 }
