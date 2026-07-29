@@ -159,7 +159,10 @@ describe("Reynalds Brothers work item engine", () => {
         disposalFacility: "Shreveport Disposal",
         completionDate: "2026-08-01",
         billingApprovalStatus: "Needs Shay Review",
-        checklistCompleted: ["pw_vac_truck_secured"]
+        checklistCompleted: ["pw_vac_truck_secured"],
+        sourceSystem: "email",
+        sourceReferenceId: "gmail_preview_new_uco_9001",
+        intakeReasons: ["Email appears to describe new work."]
       }
     });
 
@@ -167,5 +170,7 @@ describe("Reynalds Brothers work item engine", () => {
     expect(update.data?.lucernexUrl).toContain("lucernex");
     expect(update.data?.poNumber).toBe("PO-123");
     expect(update.data?.checklistCompleted).toEqual(["pw_vac_truck_secured"]);
+    expect(update.data?.sourceReferenceId).toBe("gmail_preview_new_uco_9001");
+    expect(update.data?.intakeReasons).toEqual(["Email appears to describe new work."]);
   });
 });

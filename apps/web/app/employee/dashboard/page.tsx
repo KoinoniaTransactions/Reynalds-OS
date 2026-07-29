@@ -442,6 +442,18 @@ export default async function EmployeeDashboardPreviewPage() {
               </section>
 
               <section className="koinonia-employee-request-card">
+                <p className="koinonia-eyebrow">Launch Checklist</p>
+                <p>
+                  Track the provider, database, service-workflow, document,
+                  billing, optional AI, optional social-login, and final
+                  dry-run proof needed before real client activity starts.
+                </p>
+                <a className="koinonia-document-link employee" href="/employee/launch">
+                  Open Launch Checklist
+                </a>
+              </section>
+
+              <section className="koinonia-employee-request-card">
                 <p className="koinonia-eyebrow">Billing Readiness</p>
                 <p>
                   Staff should see payment setup needs, prepaid blocks,

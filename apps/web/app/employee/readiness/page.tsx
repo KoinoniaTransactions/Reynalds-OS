@@ -151,6 +151,9 @@ export default async function EmployeePortalReadinessPage() {
                   Keep this page as the oversight surface for launch checks,
                   staff QA, and provider configuration readiness.
                 </p>
+                <a className="koinonia-document-link employee" href="/employee/launch">
+                  Open Launch Checklist
+                </a>
               </article>
             </div>
           </div>

@@ -120,6 +120,8 @@ export function ReynaldsBrothersOperationsSystem() {
   const [manualEmailSubject, setManualEmailSubject] = useState("");
   const [manualEmailFrom, setManualEmailFrom] = useState("");
   const [manualEmailBody, setManualEmailBody] = useState("");
+  const [emailActionPendingId, setEmailActionPendingId] = useState("");
+  const [emailActionMessage, setEmailActionMessage] = useState("");
 
   async function loadWorkItems() {
     setError("");
@@ -352,6 +354,7 @@ export function ReynaldsBrothersOperationsSystem() {
   async function analyzeManualEmail(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setEmailActionMessage("");
 
     try {
       const response = await fetch("/api/reynalds-brothers/email-intake", {
@@ -385,6 +388,49 @@ export function ReynaldsBrothersOperationsSystem() {
       setManualEmailBody("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Email could not be analyzed.");
+    }
+  }
+
+  async function processEmailCandidate(
+    email: ReynaldsBrothersEmailCandidate,
+    action: "create_work_item" | "file_to_existing"
+  ) {
+    setError("");
+    setEmailActionMessage("");
+    setEmailActionPendingId(email.id);
+
+    try {
+      const response = await fetch("/api/reynalds-brothers/email-intake", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action,
+          email: {
+            providerMessageId: email.providerMessageId ?? email.id,
+            from: email.from,
+            to: email.to,
+            subject: email.subject,
+            receivedAt: email.receivedAt,
+            snippet: email.snippet,
+            body: email.body
+          },
+          workItemId: email.classification.matchedWorkItemId
+        })
+      });
+
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Email action could not be completed.");
+
+      await loadWorkItems();
+      await loadEmailCandidates();
+      if (payload.workItemId) setSelectedId(payload.workItemId);
+      setEmailActionMessage(action === "create_work_item"
+        ? "Email-created job added to Needs Approval and the email was filed to its timeline."
+        : "Email filed to the matched job timeline.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Email action could not be completed.");
+    } finally {
+      setEmailActionPendingId("");
     }
   }
 
@@ -933,6 +979,8 @@ export function ReynaldsBrothersOperationsSystem() {
             <button type="submit">Analyze Email</button>
           </form>
 
+          {emailActionMessage ? <p className="rb-action-message">{emailActionMessage}</p> : null}
+
           <div className="rb-email-grid">
             {(emailCandidates.length > 0 ? emailCandidates : getPreviewEmailCandidates()).map((email) => (
               <article className="rb-email-card" key={email.id}>
@@ -955,6 +1003,38 @@ export function ReynaldsBrothersOperationsSystem() {
                   <p><strong>Review:</strong> Multiple stores detected: {email.classification.extractedStoreNumbers?.join(", ")}</p>
                 ) : null}
                 <p><strong>Next:</strong> {email.classification.suggestedNextAction}</p>
+                {email.classification.reasons.length > 0 ? (
+                  <ul className="rb-email-reasons">
+                    {email.classification.reasons.map((reason) => (
+                      <li key={reason}>{reason}</li>
+                    ))}
+                  </ul>
+                ) : null}
+                <div className="rb-email-actions">
+                  {email.classification.action === "create_work_item" ? (
+                    <button
+                      className="rb-secondary-button"
+                      disabled={emailActionPendingId === email.id}
+                      onClick={() => void processEmailCandidate(email, "create_work_item")}
+                      type="button"
+                    >
+                      {emailActionPendingId === email.id ? "Creating..." : "Create Approval Job"}
+                    </button>
+                  ) : null}
+                  {email.classification.action === "link_to_work_item" ? (
+                    <button
+                      className="rb-secondary-button"
+                      disabled={emailActionPendingId === email.id}
+                      onClick={() => void processEmailCandidate(email, "file_to_existing")}
+                      type="button"
+                    >
+                      {emailActionPendingId === email.id ? "Filing..." : "File Email"}
+                    </button>
+                  ) : null}
+                  {email.classification.action === "needs_review" ? (
+                    <span className="rb-review-note">Unmatched queue</span>
+                  ) : null}
+                </div>
               </article>
             ))}
           </div>

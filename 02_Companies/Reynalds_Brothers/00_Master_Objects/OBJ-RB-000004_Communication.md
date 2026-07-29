@@ -69,10 +69,12 @@ Initial supported actions:
 - Analyze email
 - Suggest Work Item match
 - Suggest new Work Item
+- Show classification reasons to the office user
 - Create Communication object
 - Link Communication to Work Item
 - Create Work Item from email
 - Add timeline event to the Work Item
+- Keep ambiguous emails in an unmatched review queue
 
 ---
 

@@ -14,6 +14,27 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Launch Checklist Added
+
+### Summary
+
+Koinonia staff now have a protected launch checklist that translates the production login, service workflow, document, billing, optional social-login, optional AI, and live-verification requirements into one review surface.
+
+### Implemented
+
+- Added a shared portal launch checklist model with required and optional launch gates.
+- Added `/employee/launch` as a protected staff-only launch checklist page.
+- Linked the checklist from the employee entry, employee dashboard, and readiness view.
+- Added checklist coverage for Transaction Support, Contract & Document Support, Licensed Showing Coverage, and Monthly Operations Partnership workflows.
+- Added focused tests for required verifier coverage, optional AI/social gates, service workflow coverage, and summary counts.
+- Updated the auth production-readiness specification and robots exclusions.
+
+### Current Status
+
+This gives staff a clearer launch runbook, but production launch still depends on real Clerk configuration, production database verification, private document storage, processor-hosted payment capture, accepted client/staff invites, and an end-to-end dry run.
+
+---
+
 ## 2026-07-29 — Reynalds Brothers Job Controls Expanded
 
 ### Summary

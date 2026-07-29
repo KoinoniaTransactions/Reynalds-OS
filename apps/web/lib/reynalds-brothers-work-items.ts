@@ -45,6 +45,9 @@ export type ReynaldsBrothersWorkItemData = {
   billingApprovalStatus?: string | null;
   customerUpdateStatus?: string | null;
   mediaStatus?: string | null;
+  sourceSystem?: string | null;
+  sourceReferenceId?: string | null;
+  intakeReasons?: string[];
 };
 
 export type ReynaldsBrothersChecklistItem = {
@@ -774,7 +777,10 @@ function getWorkItemPayloadData(value: Record<string, unknown>): ReynaldsBrother
     invoiceStatus: getOptionalString(sourceData.invoiceStatus) ?? "Not Ready",
     billingApprovalStatus: getOptionalString(sourceData.billingApprovalStatus),
     customerUpdateStatus: getOptionalString(sourceData.customerUpdateStatus),
-    mediaStatus: getOptionalString(sourceData.mediaStatus)
+    mediaStatus: getOptionalString(sourceData.mediaStatus),
+    sourceSystem: getOptionalString(sourceData.sourceSystem),
+    sourceReferenceId: getOptionalString(sourceData.sourceReferenceId),
+    intakeReasons: getStringList(sourceData.intakeReasons)
   };
 }
 
