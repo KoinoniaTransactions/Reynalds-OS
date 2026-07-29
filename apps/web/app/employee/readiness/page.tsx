@@ -45,6 +45,9 @@ export default async function EmployeePortalReadinessPage() {
     paymentProcessorWebhookSecret: process.env.KOINONIA_PAYMENT_WEBHOOK_SECRET,
     rosAllowMockAuth: process.env.ROS_ALLOW_MOCK_AUTH,
     socialLoginConfigured: process.env.KOINONIA_SOCIAL_LOGIN_CONFIGURED === "true",
+    socialLoginInviteMatchingVerified:
+      process.env.KOINONIA_SOCIAL_LOGIN_INVITE_MATCHING_VERIFIED === "true",
+    socialLoginProviders: getSocialLoginProviders(process.env.KOINONIA_SOCIAL_LOGIN_PROVIDERS),
     workspaceId: readinessWorkspaceId,
     database
   });
@@ -184,6 +187,13 @@ function formatDateTime(isoDate: string): string {
     dateStyle: "medium",
     timeStyle: "short"
   }).format(new Date(isoDate));
+}
+
+function getSocialLoginProviders(value: string | undefined): string[] {
+  return (value ?? "")
+    .split(",")
+    .map((provider) => provider.trim())
+    .filter(Boolean);
 }
 
 async function getPortalDatabaseReadiness(workspaceId: string): Promise<PortalDatabaseReadiness> {

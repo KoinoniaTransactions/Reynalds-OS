@@ -14,6 +14,25 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Social Login Readiness Gate Added
+
+### Summary
+
+Koinonia can support Google or Microsoft social login through Clerk, but enabled OAuth providers now require explicit invite-matching verification before launch.
+
+### Implemented
+
+- Added approved-provider and invite-matching checks to the live readiness page.
+- Updated `pnpm verify:portal` so optional social login stays non-blocking when off, but becomes blocking if enabled without approved providers or tested invite matching.
+- Added readiness tests for half-configured social login and verified social login.
+- Documented the required social-login environment flags.
+
+### Current Status
+
+Social login is still appropriate for Realtor clients and staff, but it should stay off until Clerk OAuth setup is complete and one invited client plus one invited staff user have tested social sign-in.
+
+---
+
 ## 2026-07-29 — Portal Invite Acceptance Gate Added
 
 ### Summary

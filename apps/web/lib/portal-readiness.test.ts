@@ -43,6 +43,34 @@ describe("portal readiness report", () => {
     expect(socialLogin?.detail).toContain("invitation-gated");
   });
 
+  it("blocks enabled social login until approved providers and invite matching are verified", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        socialLoginConfigured: true,
+        socialLoginInviteMatchingVerified: false,
+        socialLoginProviders: []
+      })
+    );
+    const socialLogin = report.groups.flatMap((group) => group.items).find((item) => item.id === "social-login");
+
+    expect(socialLogin?.status).toBe("blocked");
+    expect(socialLogin?.proof).toContain("No approved");
+  });
+
+  it("marks social login ready when approved providers and invite matching are verified", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        socialLoginConfigured: true,
+        socialLoginInviteMatchingVerified: true,
+        socialLoginProviders: ["google", "microsoft"]
+      })
+    );
+    const socialLogin = report.groups.flatMap((group) => group.items).find((item) => item.id === "social-login");
+
+    expect(socialLogin?.status).toBe("ready");
+    expect(socialLogin?.proof).toContain("Google, Microsoft");
+  });
+
   it("tracks the staff review center separately from AI provider readiness", () => {
     const report = buildPortalReadinessReport(getReadyInput());
     const items = report.groups.flatMap((group) => group.items);

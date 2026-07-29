@@ -108,6 +108,9 @@ PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND=
 KOINONIA_PAYMENT_PROCESSOR_PROVIDER=
 KOINONIA_PAYMENT_SETUP_URL=
 KOINONIA_PAYMENT_WEBHOOK_SECRET=
+KOINONIA_SOCIAL_LOGIN_CONFIGURED=false
+KOINONIA_SOCIAL_LOGIN_PROVIDERS=
+KOINONIA_SOCIAL_LOGIN_INVITE_MATCHING_VERIFIED=false
 ROS_ALLOW_MOCK_AUTH=false
 ```
 
@@ -179,6 +182,7 @@ Social login must stay invitation-gated:
 - The signed-in email must match an approved Koinonia invitation or active database user.
 - The database role remains the source of truth for permissions.
 - Staff social login still requires MFA before internal client, document, assignment, billing, or audit views are considered production-ready.
+- If social login is enabled, readiness requires `KOINONIA_SOCIAL_LOGIN_PROVIDERS` to list only approved providers (`google`, `microsoft`) and `KOINONIA_SOCIAL_LOGIN_INVITE_MATCHING_VERIFIED=true` after real invited client and staff social-login tests.
 
 ---
 
@@ -267,7 +271,7 @@ Before the portal accepts real data:
 - The target environment has at least one active Owner portal user and no active staff users missing MFA requirement.
 - The target environment has `PORTAL_DOCUMENT_UPLOAD_DIR` configured as an absolute private storage path before live document uploads are enabled.
 - The target environment has `PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND` configured to an absolute executable scanner path before live document uploads are enabled.
-- Social login is enabled through the managed auth provider and verified against invitation matching, database role source-of-truth checks, and staff MFA.
+- If social login is enabled, it is configured through the managed auth provider and verified against invitation matching, database role source-of-truth checks, and staff MFA.
 - AI review remains read-only until checklist prompts, privacy boundaries, source citations, audit events, and staff approval gates are verified.
 
 Run this before accepting real portal data:
@@ -290,7 +294,7 @@ CI runs the source-only verifier with placeholder Clerk values. Production accep
 
 The managed provider package is installed and wired. Production login is still blocked by deployment and account configuration, not by source scaffolding.
 
-Do not mark login production-ready until Clerk production variables are configured, staff MFA is enabled, upload storage is configured, client/staff invitation flows exist, one client invite and one staff invite have been accepted, and the verification checklist passes with real provider users.
+Do not mark login production-ready until Clerk production variables are configured, staff MFA is enabled, upload storage is configured, client/staff invitation flows exist, one client invite and one staff invite have been accepted, any enabled social login has passed invite-matching verification, and the verification checklist passes with real provider users.
 
 ---
 

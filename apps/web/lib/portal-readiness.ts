@@ -29,6 +29,8 @@ export type PortalReadinessInput = {
   paymentProcessorWebhookSecret?: string;
   rosAllowMockAuth?: string;
   socialLoginConfigured?: boolean;
+  socialLoginInviteMatchingVerified?: boolean;
+  socialLoginProviders?: string[];
   workspaceId: string;
   database: PortalDatabaseReadiness;
 };
@@ -70,6 +72,8 @@ export const portalReadinessRequiredRoles = [
   "Viewer",
   "Client"
 ] as const;
+
+const approvedSocialLoginProviders = ["google", "microsoft"] as const;
 
 export function buildPortalReadinessReport(input: PortalReadinessInput): PortalReadinessReport {
   const groups: PortalReadinessGroup[] = [
@@ -291,21 +295,45 @@ function getMockAuthReadiness(input: PortalReadinessInput): PortalReadinessItem 
 }
 
 function getSocialLoginReadiness(input: PortalReadinessInput): PortalReadinessItem {
-  if (input.socialLoginConfigured) {
-    return readyItem(
+  const configuredProviders = getApprovedSocialLoginProviders(input.socialLoginProviders ?? []);
+  const unsupportedProviders = getUnsupportedSocialLoginProviders(input.socialLoginProviders ?? []);
+  const providerProof = getSocialLoginProviderProof(configuredProviders, unsupportedProviders);
+
+  if (!input.socialLoginConfigured) {
+    return attentionItem(
       "social-login",
       "Social login",
-      "Social login is marked configured for the auth provider.",
-      "External provider configuration has been marked ready."
+      "Google and Microsoft login are appropriate for Realtor clients and staff, but must stay invitation-gated.",
+      "KOINONIA_SOCIAL_LOGIN_CONFIGURED is not true.",
+      "Enable selected OAuth providers in Clerk, then verify invite matching, role assignment, and staff MFA."
     );
   }
 
-  return attentionItem(
+  if (configuredProviders.length === 0 || unsupportedProviders.length > 0) {
+    return blockedItem(
+      "social-login",
+      "Social login",
+      "Social login is marked enabled, but the approved provider list is missing or unsupported.",
+      providerProof,
+      "Set KOINONIA_SOCIAL_LOGIN_PROVIDERS to google, microsoft, or both after enabling those providers in Clerk."
+    );
+  }
+
+  if (!input.socialLoginInviteMatchingVerified) {
+    return blockedItem(
+      "social-login",
+      "Social login",
+      "Social login is enabled, but OAuth invite matching has not been verified.",
+      `${providerProof} Invite matching test is not marked verified.`,
+      "Accept one invited client login and one invited staff login through the enabled social provider before launch."
+    );
+  }
+
+  return readyItem(
     "social-login",
     "Social login",
-    "Google and Microsoft login are appropriate for Realtor clients and staff, but must stay invitation-gated.",
-    "Provider configuration is outside this codebase and has not been marked ready.",
-    "Enable selected OAuth providers in Clerk, then verify invite matching, role assignment, and staff MFA."
+    "Approved Clerk social login providers are configured and invite matching has been verified.",
+    `${providerProof} Invite matching test is verified.`
   );
 }
 
@@ -712,4 +740,38 @@ function isPublicHttpsUrl(value: string): boolean {
   } catch {
     return false;
   }
+}
+
+function getApprovedSocialLoginProviders(providers: string[]): string[] {
+  return providers
+    .map(normalizeSocialLoginProvider)
+    .filter((provider) => approvedSocialLoginProviders.includes(provider as typeof approvedSocialLoginProviders[number]));
+}
+
+function getUnsupportedSocialLoginProviders(providers: string[]): string[] {
+  return providers
+    .map(normalizeSocialLoginProvider)
+    .filter((provider) => !approvedSocialLoginProviders.includes(provider as typeof approvedSocialLoginProviders[number]));
+}
+
+function normalizeSocialLoginProvider(provider: string): string {
+  return provider.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+function getSocialLoginProviderProof(approvedProviders: string[], unsupportedProviders: string[]): string {
+  if (unsupportedProviders.length > 0) {
+    return `Unsupported provider(s): ${unsupportedProviders.join(", ")}.`;
+  }
+
+  if (approvedProviders.length === 0) {
+    return "No approved social login providers are listed.";
+  }
+
+  return `Approved provider(s): ${approvedProviders.map(getSocialLoginProviderLabel).join(", ")}.`;
+}
+
+function getSocialLoginProviderLabel(provider: string): string {
+  if (provider === "google") return "Google";
+  if (provider === "microsoft") return "Microsoft";
+  return provider;
 }

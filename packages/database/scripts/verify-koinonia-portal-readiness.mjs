@@ -13,6 +13,7 @@ const requiredRoles = [
   "Viewer",
   "Client"
 ];
+const approvedSocialLoginProviders = ["google", "microsoft"];
 
 const args = new Set(process.argv.slice(2));
 const skipDatabase = args.has("--skip-database");
@@ -67,6 +68,33 @@ recordCheck(
   isConfiguredValue(process.env.KOINONIA_PAYMENT_WEBHOOK_SECRET),
   "verified processor events are required before trusting payment status"
 );
+
+const socialLoginConfigured = process.env.KOINONIA_SOCIAL_LOGIN_CONFIGURED === "true";
+const socialLoginProviders = parseList(process.env.KOINONIA_SOCIAL_LOGIN_PROVIDERS).map(
+  normalizeProviderName
+);
+const unsupportedSocialLoginProviders = socialLoginProviders.filter(
+  (provider) => !approvedSocialLoginProviders.includes(provider)
+);
+
+if (socialLoginConfigured) {
+  recordCheck(
+    "social login providers are approved",
+    socialLoginProviders.length > 0 && unsupportedSocialLoginProviders.length === 0,
+    getSocialLoginProviderDetail(socialLoginProviders, unsupportedSocialLoginProviders)
+  );
+  recordCheck(
+    "social login invite matching test is verified",
+    process.env.KOINONIA_SOCIAL_LOGIN_INVITE_MATCHING_VERIFIED === "true",
+    "OAuth sign-in must be tested against invited client and staff users"
+  );
+} else {
+  recordCheck(
+    "social login optional gate is not enabled",
+    true,
+    "set KOINONIA_SOCIAL_LOGIN_CONFIGURED=true only after Clerk OAuth setup is ready"
+  );
+}
 
 if (skipDatabase) {
   recordCheck("document upload storage check skipped", true, "remove --skip-database for production verification");
@@ -278,6 +306,31 @@ function isProductionClerkKey(value, prefix) {
 
 function isConfiguredValue(value) {
   return isPresent(value) && !isPlaceholderCredential(value);
+}
+
+function parseList(value) {
+  if (!isPresent(value)) return [];
+
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizeProviderName(value) {
+  return value.toLowerCase().replace(/\s+/g, "-");
+}
+
+function getSocialLoginProviderDetail(providers, unsupportedProviders) {
+  if (unsupportedProviders.length > 0) {
+    return `unsupported provider(s): ${unsupportedProviders.join(", ")}`;
+  }
+
+  if (providers.length === 0) {
+    return "no providers listed";
+  }
+
+  return `approved provider(s): ${providers.join(", ")}`;
 }
 
 function isPlaceholderCredential(value) {

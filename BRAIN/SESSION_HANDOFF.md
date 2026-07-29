@@ -34,6 +34,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - Hardened document upload readiness so live uploads require an absolute private storage path.
 - Added payment processor readiness gates for provider name, public HTTPS setup URL, and webhook secret.
 - Added invite acceptance readiness gates requiring one accepted client invite and one accepted staff invite before login is treated as production-ready.
+- Added social login readiness gates for approved Clerk OAuth providers and social invite-matching verification.
 
 ## Recent Pushed Commits
 
@@ -63,6 +64,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - Docker/Postgres was unavailable locally, so full invitation create/list/send/acceptance could not be tested against a live database.
 - A real Clerk invite email must be sent and accepted by a test client and a test staff user.
 - Full readiness verification now blocks until those accepted client/staff invitations are present in the production database.
+- If social login is enabled, full readiness verification blocks until approved providers are listed and social invite matching is marked verified.
 - The Staff Review Center is rules-based. AI summarization should stay read-only until privacy controls, citations, audit events, and human approval gates are verified.
 - No real client documents, billing setup, staff assignments, or internal notes should be accepted until the real-provider checklist passes.
 
