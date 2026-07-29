@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { isAbsolute, resolve } from "node:path";
 import { PrismaClient } from "@prisma/client";
 
 const requiredRoles = [
@@ -45,8 +45,23 @@ recordCheck(
 
 if (skipDatabase) {
   recordCheck("document upload storage check skipped", true, "remove --skip-database for production verification");
+  recordCheck("document malware scanner check skipped", true, "remove --skip-database for production verification");
 } else {
   recordCheck("PORTAL_DOCUMENT_UPLOAD_DIR is set", isPresent(process.env.PORTAL_DOCUMENT_UPLOAD_DIR));
+  recordCheck(
+    "PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND is set",
+    isPresent(process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND)
+  );
+  recordCheck(
+    "PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND is absolute",
+    !isPresent(process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND) ||
+      isAbsolute(process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND.trim())
+  );
+  recordCheck(
+    "PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND exists",
+    !isPresent(process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND) ||
+      existsSync(process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND.trim())
+  );
 }
 
 if (!skipDatabase && checks.every((check) => check.ok)) {

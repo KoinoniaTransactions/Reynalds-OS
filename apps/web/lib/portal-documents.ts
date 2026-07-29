@@ -1,3 +1,5 @@
+import { isAbsolute } from "node:path";
+
 export const portalDocumentMaxUploadBytes = 25 * 1024 * 1024;
 
 const allowedMimeTypes = new Set([
@@ -156,6 +158,22 @@ export function validatePortalDocumentStorageKey(storageKey: unknown): string {
 
 export function buildPortalDocumentContentDisposition(fileName: string): string {
   return `attachment; filename="${sanitizeDocumentFileName(fileName)}"`;
+}
+
+export function validatePortalDocumentScannerCommand(command: unknown): string {
+  const scannerCommand = optionalString(command);
+
+  if (!scannerCommand) {
+    throw new PortalDocumentValidationError("Document malware scanner is not configured.");
+  }
+
+  if (!isAbsolute(scannerCommand)) {
+    throw new PortalDocumentValidationError(
+      "Document malware scanner command must be an absolute path."
+    );
+  }
+
+  return scannerCommand;
 }
 
 function validatePortalDocumentFile(file: unknown): PortalDocumentSubmission["file"] {

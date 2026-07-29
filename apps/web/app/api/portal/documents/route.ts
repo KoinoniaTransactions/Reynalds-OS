@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { execFile } from "node:child_process";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
+import { promisify } from "node:util";
 import { PermissionDeniedError, type AuthUser, type Permission } from "@reynalds-os/auth";
 import { NextResponse } from "next/server";
 import { getAuthErrorResponse } from "../../../../lib/api-auth";
@@ -9,11 +11,14 @@ import { prisma } from "../../../../lib/db";
 import {
   buildPortalDocumentDisplayName,
   PortalDocumentValidationError,
+  validatePortalDocumentScannerCommand,
   validatePortalDocumentSubmission
 } from "../../../../lib/portal-documents";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+
+const execFileAsync = promisify(execFile);
 
 type StoredPortalDocument = {
   fileUrl: string;
@@ -63,6 +68,15 @@ export async function POST(request: Request) {
       );
     }
 
+    const scannerCommand = getConfiguredScannerCommand();
+
+    if (!scannerCommand) {
+      return NextResponse.json(
+        { error: "Document malware scanning is not configured for uploads." },
+        { status: 503 }
+      );
+    }
+
     const formData = await request.formData();
     const file = getFormFile(formData, "file");
     const input = validatePortalDocumentSubmission({
@@ -99,6 +113,7 @@ export async function POST(request: Request) {
       file,
       uploadRoot
     });
+    await scanPortalDocumentFile(storedDocument.localPath, scannerCommand);
 
     const document = await prisma.document.create({
       data: {
@@ -200,6 +215,14 @@ function getConfiguredUploadRoot(): string | null {
   return resolve(configuredRoot);
 }
 
+function getConfiguredScannerCommand(): string | null {
+  try {
+    return validatePortalDocumentScannerCommand(process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND);
+  } catch {
+    return null;
+  }
+}
+
 function getFormFile(formData: FormData, fieldName: string): File {
   const file = formData.get(fieldName);
 
@@ -248,6 +271,20 @@ async function removeStoredFileQuietly(filePath: string) {
   }
 }
 
+async function scanPortalDocumentFile(filePath: string, scannerCommand: string) {
+  try {
+    await execFileAsync(scannerCommand, [filePath], { timeout: 30_000 });
+  } catch (error) {
+    if (isScannerUnavailableError(error)) {
+      throw new PortalDocumentScanUnavailableError(
+        "Document malware scanning is temporarily unavailable."
+      );
+    }
+
+    throw new PortalDocumentScanFailedError("Uploaded document did not pass malware scanning.");
+  }
+}
+
 function handlePortalDocumentError(error: unknown) {
   const authResponse = getAuthErrorResponse(error);
 
@@ -259,11 +296,43 @@ function handlePortalDocumentError(error: unknown) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
+  if (error instanceof PortalDocumentScanUnavailableError) {
+    return NextResponse.json({ error: error.message }, { status: 503 });
+  }
+
+  if (error instanceof PortalDocumentScanFailedError) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
   if (isDatabaseUnavailableError(error)) {
     return NextResponse.json({ error: "Document storage is temporarily unavailable." }, { status: 503 });
   }
 
   throw error;
+}
+
+class PortalDocumentScanFailedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PortalDocumentScanFailedError";
+  }
+}
+
+class PortalDocumentScanUnavailableError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PortalDocumentScanUnavailableError";
+  }
+}
+
+function isScannerUnavailableError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    "code" in error &&
+    ((error as { code?: unknown }).code === "ENOENT" ||
+      (error as { code?: unknown }).code === "EACCES" ||
+      (error as { signal?: unknown }).signal === "SIGTERM")
+  );
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {

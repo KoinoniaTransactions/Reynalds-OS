@@ -204,9 +204,9 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
 
             <p className="koinonia-lead">
               Upload intake can use protected storage once the production
-              database and upload location are configured. Editing, signature
-              routing, send packages, and archive delivery still need approved
-              production integrations.
+              database, upload location, and malware scanner are configured.
+              Editing, signature routing, send packages, and archive delivery
+              still need approved production integrations.
             </p>
           </div>
 

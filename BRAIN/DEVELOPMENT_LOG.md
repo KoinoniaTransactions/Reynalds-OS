@@ -1986,3 +1986,25 @@ Koinonia now has an authorized document download path so uploaded portal files c
 ### Current Status
 
 Authorized downloads compile and are covered by helper tests. Live verification still requires reachable database storage, configured upload storage, and real provider-backed users. Malware scanning, document replacement/versioning, approval records, e-signature delivery, and final archive delivery remain future production slices.
+
+---
+
+## 2026-07-29 — Portal Document Malware Scan Gate Added
+
+### Summary
+
+Koinonia document uploads now fail closed unless an approved malware scanner command is configured, preventing the portal from accepting live transaction files into private storage without a scan step.
+
+### Implemented
+
+- Added `PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND` as a production upload requirement.
+- Requires the scanner command to be an absolute executable path.
+- Runs the configured scanner command against the stored upload before creating the document record.
+- Removes the stored file if scanning, database persistence, or audit creation fails before the document is persisted.
+- Keeps the client upload form disabled until both private storage and malware scanning are configured.
+- Updated the production readiness verifier to check the scanner command in live verification mode.
+- Updated client portal, auth readiness, and document workspace specifications.
+
+### Current Status
+
+Scanner-gated uploads compile and are covered by helper tests. Live verification still requires a configured scanner executable, reachable database storage, configured upload storage, and real provider-backed users. Document replacement/versioning, approval records, e-signature delivery, and final archive delivery remain future production slices.

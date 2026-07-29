@@ -6,6 +6,7 @@ import {
   getHumanDocumentStatus,
   PortalDocumentValidationError,
   sanitizeDocumentFileName,
+  validatePortalDocumentScannerCommand,
   validatePortalDocumentStorageKey,
   validatePortalDocumentSubmission
 } from "./portal-documents";
@@ -104,6 +105,18 @@ describe("portal document helpers", () => {
     );
     expect(() => validatePortalDocumentStorageKey("")).toThrow(
       "Document file reference is missing."
+    );
+  });
+
+  it("requires an absolute malware scanner command before live uploads", () => {
+    expect(validatePortalDocumentScannerCommand("/usr/local/bin/clamscan")).toBe(
+      "/usr/local/bin/clamscan"
+    );
+    expect(() => validatePortalDocumentScannerCommand("clamscan")).toThrow(
+      "Document malware scanner command must be an absolute path."
+    );
+    expect(() => validatePortalDocumentScannerCommand("")).toThrow(
+      "Document malware scanner is not configured."
     );
   });
 });

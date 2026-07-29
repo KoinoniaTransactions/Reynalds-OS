@@ -87,7 +87,7 @@ type ClientDocumentView = {
   documents: ClientDocumentItem[];
   isLiveData: boolean;
   notice?: string;
-  storageReady: boolean;
+  uploadReady: boolean;
 };
 
 const sampleUploadedDocuments: ClientDocumentItem[] = [
@@ -176,9 +176,9 @@ export default async function ClientDocumentCenterPreviewPage() {
 
             <p className="koinonia-lead">
               Document intake can use protected upload storage when the
-              production database and storage location are configured. Draft
-              editing, send packages, and final archive delivery still need
-              their own production passes.
+              production database, storage location, and malware scanner are
+              configured. Draft editing, send packages, and final archive
+              delivery still need their own production passes.
             </p>
           </div>
 
@@ -288,7 +288,7 @@ export default async function ClientDocumentCenterPreviewPage() {
 
             <aside className="koinonia-document-side-panel" aria-label="Document actions">
               <PortalDocumentUploadForm
-                storageReady={documentView.isLiveData && documentView.storageReady}
+                storageReady={documentView.isLiveData && documentView.uploadReady}
               />
 
               <section className="koinonia-document-panel">
@@ -336,7 +336,7 @@ async function getClientDocumentView(
   ownerId: string
 ): Promise<ClientDocumentView> {
   try {
-    const storageReady = isDocumentStorageConfigured();
+    const downloadReady = isDocumentStorageConfigured();
     const documents = await prisma.document.findMany({
       where: {
         workspaceId,
@@ -348,9 +348,9 @@ async function getClientDocumentView(
     });
 
     return {
-      documents: documents.map((document) => mapDocumentRecord(document, storageReady)),
+      documents: documents.map((document) => mapDocumentRecord(document, downloadReady)),
       isLiveData: true,
-      storageReady
+      uploadReady: isDocumentUploadConfigured()
     };
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
@@ -358,7 +358,7 @@ async function getClientDocumentView(
         documents: sampleUploadedDocuments,
         isLiveData: false,
         notice: "Document storage is not reachable in this preview, so sample uploads are shown.",
-        storageReady: false
+        uploadReady: false
       };
     }
 
@@ -386,6 +386,13 @@ function mapDocumentRecord(
 
 function isDocumentStorageConfigured(): boolean {
   return Boolean(process.env.PORTAL_DOCUMENT_UPLOAD_DIR?.trim());
+}
+
+function isDocumentUploadConfigured(): boolean {
+  return Boolean(
+    process.env.PORTAL_DOCUMENT_UPLOAD_DIR?.trim() &&
+      process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND?.trim()
+  );
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {

@@ -16,7 +16,7 @@ export function PortalDocumentUploadForm({ storageReady }: PortalDocumentUploadF
 
     if (!storageReady) {
       setStatus("error");
-      setMessage("Document upload storage is not configured yet.");
+      setMessage("Document upload storage and malware scanning are not fully configured yet.");
       return;
     }
 
@@ -114,7 +114,7 @@ export function PortalDocumentUploadForm({ storageReady }: PortalDocumentUploadF
 
         {!storageReady ? (
           <p className="koinonia-document-security-note">
-            Storage must be configured before live document uploads are enabled.
+            Storage and malware scanning must be configured before live document uploads are enabled.
           </p>
         ) : null}
 

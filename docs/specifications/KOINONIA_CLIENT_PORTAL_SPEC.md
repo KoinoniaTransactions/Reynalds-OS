@@ -335,7 +335,7 @@ Do not allow executable, script, archive, or unknown file types in the MVP.
 
 Current implementation note:
 
-`/api/portal/documents` accepts PDF, Word, Excel, JPG, and PNG uploads only when `PORTAL_DOCUMENT_UPLOAD_DIR` is configured. It writes generated storage keys, creates `Document` records with owner/upload metadata, records portal audit events, and keeps uploads out of public web paths. `/api/portal/documents/[id]/download` serves stored files only after portal permission, workspace, ownership, storage-key, and private-storage checks pass, and it records a download audit event. It does not yet provide malware scanning, replacement/version controls, approval records, or e-signature delivery.
+`/api/portal/documents` accepts PDF, Word, Excel, JPG, and PNG uploads only when `PORTAL_DOCUMENT_UPLOAD_DIR` and `PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND` are configured. It writes generated storage keys, runs the configured scanner command against the stored file before saving the document record, creates `Document` records with owner/upload metadata, records portal audit events, and keeps uploads out of public web paths. `/api/portal/documents/[id]/download` serves stored files only after portal permission, workspace, ownership, storage-key, and private-storage checks pass, and it records a download audit event. It does not yet provide replacement/version controls, approval records, or e-signature delivery.
 
 ---
 
@@ -484,7 +484,7 @@ Build the portal in safe slices:
 9. Client billing center with protected billing setup request API, client setup form, employee queue visibility, and safe preview fallback.
 10. Database schema additions. — Portal identity fields, `PortalInvitation`, and `AuditEvent` scaffolded in Prisma.
 11. Authenticated read-only dashboard connected to real work items. — Preview routes now require portal permissions but still use sample data only.
-12. Secure file upload and document request flow. — Guarded upload intake and authorized download route added; version/replacement/scanning still required.
+12. Secure file upload and document request flow. — Guarded upload intake, scanner-gated uploads, and authorized download route added; version/replacement still required.
 13. Access request tracking without credential storage. — First protected access request create/list API, client update form, employee queue, and credential-note rejection added.
 14. Portal messaging or notes.
 15. Audit logs. — `AuditEvent` model scaffolded; invitation creation writes audit event.
@@ -492,7 +492,7 @@ Build the portal in safe slices:
 
 Do not begin with file upload or credential fields.
 
-The `/client/dashboard` preview is not a complete production dashboard. It has protected showing request support, while documents now have a guarded upload-intake path and billing now has a metadata-only setup request path. Do not accept full real client document exchange until storage, download, scanning, approval, and archive controls are configured and verified. Do not accept live payment methods until the approved processor-hosted setup flow and payment processor integration are configured and verified.
+The `/client/dashboard` preview is not a complete production dashboard. It has protected showing request support, while documents now have a scanner-gated upload-intake path and authorized download route, and billing now has a metadata-only setup request path. Do not accept full real client document exchange until storage, download, scanning, approval, and archive controls are configured and verified. Do not accept live payment methods until the approved processor-hosted setup flow and payment processor integration are configured and verified.
 
 ---
 

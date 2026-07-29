@@ -49,7 +49,7 @@ The current web app includes:
 - `/api/portal/users/:id/deactivate` for deactivating accepted portal users with audit history.
 - `/api/portal/audit` for protected portal access audit history review.
 - `/api/portal/showing-requests` for protected showing request create/list workflows.
-- `/api/portal/documents` for protected document upload intake and document queue listing.
+- `/api/portal/documents` for protected scanner-gated document upload intake and document queue listing.
 - `/api/portal/documents/[id]/download` for protected document downloads through configured private storage.
 - `/api/portal/access-requests` for protected external access request create/list workflows without storing credentials.
 - `/api/portal/billing-setup-requests` for protected billing setup request create/list workflows without storing card data.
@@ -63,7 +63,7 @@ The current web app includes:
 - `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 
-Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, showing requests now have a protected object-backed workflow, documents now have guarded upload-intake and authorized download workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Broader dashboard work tracking, invoice/payment processing, payment processor integration, document version/replacement/scanning, and client workspaces still need real workflow storage before production use.
+Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake and authorized download workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Broader dashboard work tracking, invoice/payment processing, payment processor integration, document version/replacement, and client workspaces still need real workflow storage before production use.
 
 ---
 
@@ -98,6 +98,7 @@ NEXT_PUBLIC_AUTH_SIGN_IN_URL=
 NEXT_PUBLIC_AUTH_SIGN_OUT_URL=
 ROS_DEFAULT_WORKSPACE_ID=
 PORTAL_DOCUMENT_UPLOAD_DIR=
+PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND=
 ROS_ALLOW_MOCK_AUTH=false
 ```
 
@@ -225,6 +226,7 @@ Before the portal accepts real data:
 - `pnpm verify:portal` passes against the target production environment.
 - The target environment has at least one active Owner portal user and no active staff users missing MFA requirement.
 - The target environment has `PORTAL_DOCUMENT_UPLOAD_DIR` configured before live document uploads are enabled.
+- The target environment has `PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND` configured to an absolute executable scanner path before live document uploads are enabled.
 
 Run this before accepting real portal data:
 

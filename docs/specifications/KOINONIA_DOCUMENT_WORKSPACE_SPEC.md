@@ -311,7 +311,7 @@ Build the document workspace in safe slices:
 5. Work item detail document panel using sample data only.
 6. Database schema for document checklist, draft, version, approval, and send package records.
 7. Authenticated read-only document center connected to real transaction files.
-8. Secure upload/download with allowlisted files, scanning, storage outside public webroot, and audit logs.
+8. Secure upload/download with allowlisted files, scanner-gated uploads, storage outside public webroot, and audit logs.
 9. Approval request and revision workflow.
 10. Send package status tracking.
 11. E-signature/email integration through approved delegated access or service accounts.
