@@ -14,6 +14,28 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Work Assignment Updates Added
+
+### Summary
+
+Koinonia Operations can now assign live portal work items to a primary and backup staff member from the employee dashboard, closing a key production-readiness gap for staff workload routing.
+
+### Implemented
+
+- Added safe assignment validation for portal work item updates.
+- Added `/api/portal/work-items/[id]/assignment` with staff-only permission checks.
+- Assignment updates validate active same-workspace staff users before saving.
+- Assignment changes write timeline and audit events.
+- Updated `/employee/dashboard` to load live portal work items and active staff options when storage is reachable.
+- Added assignment controls to live dashboard work cards and kept sample preview rows display-only.
+- Added focused tests for assignment validation and unsafe note rejection.
+
+### Current Status
+
+Live assignment updates are ready once production storage is reachable. Local preview can still fall back to sample data when Postgres is unavailable.
+
+---
+
 ## 2026-07-29 — Portal Launch Proof Recording Added
 
 ### Summary

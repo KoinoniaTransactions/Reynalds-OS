@@ -3609,6 +3609,60 @@ h1 {
   font-weight: 700;
 }
 
+.koinonia-work-assignment-form {
+  display: grid;
+  gap: 8px;
+  justify-items: stretch;
+  min-width: 220px;
+  text-align: left;
+}
+
+.koinonia-work-assignment-form label {
+  display: grid;
+  gap: 5px;
+  color: var(--ros-text);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.koinonia-work-assignment-form select,
+.koinonia-work-assignment-form textarea {
+  width: 100%;
+  border: 1px solid rgba(25, 92, 96, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ros-text);
+  font: inherit;
+  font-size: 13px;
+  min-height: 38px;
+  padding: 9px 10px;
+}
+
+.koinonia-work-assignment-form textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.koinonia-work-assignment-status {
+  border: 1px solid rgba(25, 92, 96, 0.16);
+  border-radius: 8px;
+  display: block;
+  font-weight: 700;
+  padding: 8px 9px;
+}
+
+.koinonia-work-assignment-status.error {
+  background: rgba(178, 59, 59, 0.08);
+  border-color: rgba(178, 59, 59, 0.22);
+  color: #8e2d2d;
+}
+
+.koinonia-work-assignment-status.success {
+  background: rgba(83, 112, 76, 0.1);
+  border-color: rgba(83, 112, 76, 0.24);
+  color: #3f6539;
+}
+
 .koinonia-employee-table-wrap {
   overflow-x: auto;
 }
@@ -5169,6 +5223,11 @@ h1 {
   .koinonia-employee-capacity {
     justify-items: start;
     text-align: left;
+  }
+
+  .koinonia-work-assignment-form {
+    min-width: 0;
+    width: 100%;
   }
 
   .koinonia-document-work-item,

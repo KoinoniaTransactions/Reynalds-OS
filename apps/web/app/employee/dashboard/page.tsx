@@ -1,8 +1,19 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
+import {
+  PortalWorkAssignmentForm,
+  type PortalWorkAssignmentStaffOption
+} from "../../../components/employee/PortalWorkAssignmentForm";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
+import {
+  buildPortalWorkSummaryCounts,
+  clientPortalWorkObjectTypes,
+  getPortalWorkDueLabel,
+  getPortalWorkItemTypeLabel,
+  getPortalWorkStatusBucket
+} from "../../../lib/portal-work-items";
 import {
   getHumanShowingStatus,
   getShowingNoteLabels,
@@ -25,7 +36,38 @@ export const metadata: Metadata = {
   }
 };
 
-const assignmentSummary = [
+type EmployeeSummaryCard = {
+  body: string;
+  label: string;
+  value: string;
+};
+
+type EmployeeAssignmentQueueItem = {
+  backupStaff: string;
+  backupStaffUserId?: string | null;
+  client: string;
+  due: string;
+  id: string;
+  isAssignable: boolean;
+  primaryStaff: string;
+  primaryStaffUserId?: string | null;
+  priority: string;
+  reason: string;
+  service: string;
+  status: string;
+  work: string;
+};
+
+type EmployeeAssignmentView = {
+  canAssign: boolean;
+  isLiveData: boolean;
+  notice?: string;
+  queue: EmployeeAssignmentQueueItem[];
+  staffOptions: PortalWorkAssignmentStaffOption[];
+  summaryCards: EmployeeSummaryCard[];
+};
+
+const sampleAssignmentSummary: EmployeeSummaryCard[] = [
   {
     label: "Unassigned Clients",
     value: "2",
@@ -46,7 +88,7 @@ const assignmentSummary = [
     value: "4",
     body: "Work items need internal notes before another staff member can pick them up."
   }
-] as const;
+];
 
 const staffMembers = [
   {
@@ -94,46 +136,62 @@ const staffMembers = [
     status: "Follow-up block",
     focus: "Check-ins, reviews, referrals, onboarding touchpoints"
   }
-] as const;
+];
 
-const assignmentQueue = [
+const sampleAssignmentQueue: EmployeeAssignmentQueueItem[] = [
   {
+    backupStaff: "Jeremiah Reynalds",
     client: "Bright Homes Team",
+    due: "Today",
+    id: "sample-smith-contract-to-close",
+    isAssignable: false,
+    primaryStaff: "Unassigned",
     work: "Smith Contract-to-Close",
     service: "Transaction Coordination Plus",
     status: "New Intake",
     priority: "High",
-    recommended: "Maya Torres",
     reason: "Transaction file with deadline tracking and title coordination."
   },
   {
+    backupStaff: "Erin Blake",
     client: "Wilson Realty Group",
+    due: "Today",
+    id: "sample-buyer-offer-package",
+    isAssignable: false,
+    primaryStaff: "Unassigned",
     work: "Buyer Offer Package",
     service: "Contract & Document Support",
     status: "Ready for Staff",
     priority: "High",
-    recommended: "Luis Carter",
     reason: "Drafting support is needed from Realtor instructions."
   },
   {
+    backupStaff: "No backup",
     client: "Northgate Partners",
+    due: "Same-day request",
+    id: "sample-west-ridge-showing",
+    isAssignable: false,
+    primaryStaff: "Unassigned",
     work: "West Ridge Showing Coverage",
     service: "Licensed Showing Coverage",
     status: "Waiting on Access",
     priority: "Rush",
-    recommended: "Tasha Reed",
     reason: "Same-day showing request needs licensed coverage and access notes."
   },
   {
+    backupStaff: "Maya Torres",
     client: "Summit Line Realty",
+    due: "Friday",
+    id: "sample-monthly-crm-cleanup",
+    isAssignable: false,
+    primaryStaff: "Erin Blake",
     work: "Monthly CRM Cleanup",
     service: "Monthly Operations Partnership",
     status: "Scope Needed",
     priority: "Normal",
-    recommended: "Erin Blake",
     reason: "Client relationship follow-up and recurring operations support."
   }
-] as const;
+];
 
 type EmployeeShowingRequestItem = {
   id: string;
@@ -238,6 +296,7 @@ const assignmentRules = [
 
 export default async function EmployeeDashboardPreviewPage() {
   const actor = await requirePortalPermission("employee-portal:view", "/employee/dashboard");
+  const assignmentView = await getEmployeeAssignmentView(actor);
   const showingRequestView = await getEmployeeShowingRequestView(actor);
 
   return (
@@ -247,21 +306,27 @@ export default async function EmployeeDashboardPreviewPage() {
       <section className="koinonia-section koinonia-employee-dashboard-hero">
         <div className="koinonia-container">
           <div className="koinonia-section-header">
-            <p className="koinonia-eyebrow">Employee Dashboard Preview</p>
+            <p className="koinonia-eyebrow">
+              {assignmentView.isLiveData ? "Employee Dashboard" : "Employee Dashboard Preview"}
+            </p>
 
             <h1 className="koinonia-title">
               One operating view for staff, clients, and assigned work.
             </h1>
 
             <p className="koinonia-lead">
-              This preview uses sample data only. Real employee access should
-              wait for production authentication, role checks, audit logging,
-              and staff-specific visibility rules.
+              {assignmentView.isLiveData
+                ? "Live work items can now be assigned to primary and backup staff with audit history."
+                : "This workspace is ready for live assignments, but it is showing sample data until production storage is reachable."}
             </p>
           </div>
 
+          {assignmentView.notice ? (
+            <p className="koinonia-employee-security-note">{assignmentView.notice}</p>
+          ) : null}
+
           <div className="koinonia-employee-summary-grid">
-            {assignmentSummary.map((card) => (
+            {assignmentView.summaryCards.map((card) => (
               <article className="koinonia-employee-summary-card" key={card.label}>
                 <span>{card.label}</span>
                 <strong>{card.value}</strong>
@@ -286,8 +351,8 @@ export default async function EmployeeDashboardPreviewPage() {
                 </div>
 
                 <div className="koinonia-employee-assignment-list">
-                  {assignmentQueue.map((item) => (
-                    <article className="koinonia-employee-assignment-item" key={item.work}>
+                  {assignmentView.queue.map((item) => (
+                    <article className="koinonia-employee-assignment-item" key={item.id}>
                       <div>
                         <span>{item.service}</span>
                         <h3>{item.work}</h3>
@@ -298,8 +363,16 @@ export default async function EmployeeDashboardPreviewPage() {
                             <dd>{item.client}</dd>
                           </div>
                           <div>
-                            <dt>Recommended</dt>
-                            <dd>{item.recommended}</dd>
+                            <dt>Primary</dt>
+                            <dd>{item.primaryStaff}</dd>
+                          </div>
+                          <div>
+                            <dt>Backup</dt>
+                            <dd>{item.backupStaff}</dd>
+                          </div>
+                          <div>
+                            <dt>Due</dt>
+                            <dd>{item.due}</dd>
                           </div>
                         </dl>
                       </div>
@@ -307,6 +380,15 @@ export default async function EmployeeDashboardPreviewPage() {
                       <div className="koinonia-employee-work-meta">
                         <strong>{item.priority}</strong>
                         <span>{item.status}</span>
+                        {assignmentView.isLiveData && item.isAssignable ? (
+                          <PortalWorkAssignmentForm
+                            backupStaffUserId={item.backupStaffUserId}
+                            canAssign={assignmentView.canAssign}
+                            primaryStaffUserId={item.primaryStaffUserId}
+                            staffOptions={assignmentView.staffOptions}
+                            workItemId={item.id}
+                          />
+                        ) : null}
                       </div>
                     </article>
                   ))}
@@ -489,6 +571,242 @@ export default async function EmployeeDashboardPreviewPage() {
   );
 }
 
+async function getEmployeeAssignmentView(actor: {
+  permissions: string[];
+  workspaceId: string;
+}): Promise<EmployeeAssignmentView> {
+  if (!actor.permissions.includes("employee-portal:assigned-work:view")) {
+    return {
+      canAssign: false,
+      isLiveData: false,
+      notice: "Assignment queue requires assigned-work access.",
+      queue: [
+        {
+          backupStaff: "Restricted",
+          client: "Koinonia",
+          due: "Access limited",
+          id: "restricted-employee-assignment-queue",
+          isAssignable: false,
+          primaryStaff: "Restricted",
+          priority: "Restricted",
+          reason: "Ask an Owner or Operations user to review work assignments.",
+          service: "Assignment Queue",
+          status: "Restricted",
+          work: "Assignment queue restricted"
+        }
+      ],
+      staffOptions: [],
+      summaryCards: [
+        {
+          label: "Assignments",
+          value: "Restricted",
+          body: "This role cannot view staff assignment queues."
+        }
+      ]
+    };
+  }
+
+  try {
+    const [workItems, staffUsers] = await Promise.all([
+      prisma.rosObject.findMany({
+        where: {
+          workspaceId: actor.workspaceId,
+          objectType: {
+            in: [...clientPortalWorkObjectTypes]
+          },
+          archivedAt: null
+        },
+        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+        take: 25
+      }),
+      prisma.user.findMany({
+        where: {
+          workspaceId: actor.workspaceId,
+          status: "active",
+          portalAccessStatus: "active"
+        },
+        include: {
+          role: true
+        },
+        orderBy: [{ name: "asc" }],
+        take: 100
+      })
+    ]);
+    const staffOptions = staffUsers
+      .filter((staffUser) => isAssignableStaffRole(staffUser.role?.name))
+      .map((staffUser) => ({
+        id: staffUser.id,
+        name: staffUser.name,
+        role: staffUser.role?.name ?? "Staff"
+      }));
+    const staffNameById = new Map(staffOptions.map((staff) => [staff.id, staff.name]));
+
+    return {
+      canAssign: actor.permissions.includes("employee-portal:assignments:update"),
+      isLiveData: true,
+      queue: withEmptyEmployeeAssignmentQueue(
+        workItems.map((workItem) => ({
+          backupStaff: getStaffName(staffNameById, workItem.backupStaffUserId, "No backup"),
+          backupStaffUserId: workItem.backupStaffUserId,
+          client: getWorkClientLabel(workItem.data, workItem.clientUserId, workItem.clientObjectId),
+          due: getPortalWorkDueLabel(workItem.data),
+          id: workItem.id,
+          isAssignable: true,
+          primaryStaff: getStaffName(staffNameById, workItem.assignedStaffUserId, "Unassigned"),
+          primaryStaffUserId: workItem.assignedStaffUserId,
+          priority: getWorkPriorityLabel(workItem.health, workItem.data),
+          reason: workItem.nextAction ?? "Assign staff and record the next client update.",
+          service: getPortalWorkItemTypeLabel(workItem.objectType),
+          status: workItem.status,
+          work: workItem.name
+        }))
+      ),
+      staffOptions,
+      summaryCards: buildEmployeeAssignmentSummaryCards(workItems, staffOptions.length)
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    return {
+      canAssign: false,
+      isLiveData: false,
+      notice:
+        "Employee assignment storage is not reachable in this preview, so sample assignment data is shown.",
+      queue: sampleAssignmentQueue,
+      staffOptions: [],
+      summaryCards: sampleAssignmentSummary
+    };
+  }
+}
+
+function buildEmployeeAssignmentSummaryCards(
+  workItems: Array<{
+    assignedStaffUserId?: string | null;
+    backupStaffUserId?: string | null;
+    status: string;
+  }>,
+  staffOptionCount: number
+): EmployeeSummaryCard[] {
+  const summaryCounts = buildPortalWorkSummaryCounts(workItems);
+  const openWorkItems = workItems.filter(
+    (workItem) => getPortalWorkStatusBucket(workItem.status) !== "completed"
+  );
+  const unassignedCount = openWorkItems.filter((workItem) => !workItem.assignedStaffUserId).length;
+  const backupNeededCount = openWorkItems.filter(
+    (workItem) => workItem.assignedStaffUserId && !workItem.backupStaffUserId
+  ).length;
+
+  return [
+    {
+      label: "Unassigned Work",
+      value: String(unassignedCount),
+      body: "Open work that still needs a primary staff owner."
+    },
+    {
+      label: "Active Work",
+      value: String(summaryCounts.active),
+      body: "Work currently moving through Koinonia operations."
+    },
+    {
+      label: "Waiting/Blocked",
+      value: String(summaryCounts.waiting),
+      body: "Items that need client input, access, payment setup, or escalation."
+    },
+    {
+      label: "Backup Needed",
+      value: String(backupNeededCount),
+      body: `${staffOptionCount} active staff users are available for primary or backup assignment.`
+    }
+  ];
+}
+
+function withEmptyEmployeeAssignmentQueue(
+  queue: EmployeeAssignmentQueueItem[]
+): EmployeeAssignmentQueueItem[] {
+  if (queue.length > 0) {
+    return queue;
+  }
+
+  return [
+    {
+      backupStaff: "No backup needed",
+      client: "Koinonia",
+      due: "No active due date",
+      id: "empty-employee-assignment-queue",
+      isAssignable: false,
+      primaryStaff: "No owner needed",
+      priority: "Ready",
+      reason: "New work items will appear here when clients or staff create portal work.",
+      service: "Assignment Queue",
+      status: "Clear",
+      work: "No work items in queue"
+    }
+  ];
+}
+
+function getStaffName(
+  staffNameById: Map<string, string>,
+  staffUserId: string | null,
+  fallback: string
+): string {
+  if (!staffUserId) {
+    return fallback;
+  }
+
+  return staffNameById.get(staffUserId) ?? "Staff user unavailable";
+}
+
+function getWorkClientLabel(
+  data: unknown,
+  clientUserId?: string | null,
+  clientObjectId?: string | null
+): string {
+  const value = toRecord(data);
+
+  for (const key of ["clientName", "customerName", "requestedByEmail", "clientEmail"]) {
+    const candidate = value[key];
+
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate.trim();
+    }
+  }
+
+  if (clientUserId) {
+    return "Linked client user";
+  }
+
+  if (clientObjectId) {
+    return "Linked client file";
+  }
+
+  return "Client link needed";
+}
+
+function getWorkPriorityLabel(health: string, data: unknown): string {
+  const value = toRecord(data);
+  const priority = value.priority;
+
+  if (typeof priority === "string" && priority.trim()) {
+    return priority.trim();
+  }
+
+  if (/critical|blocked/i.test(health)) {
+    return "High";
+  }
+
+  if (/attention|watch/i.test(health)) {
+    return "Watch";
+  }
+
+  return "Normal";
+}
+
+function isAssignableStaffRole(roleName: string | null | undefined): boolean {
+  return Boolean(roleName && roleName !== "Client" && roleName !== "Viewer");
+}
+
 async function getEmployeeShowingRequestView(actor: {
   permissions: string[];
   workspaceId: string;
@@ -571,11 +889,7 @@ function withEmptyEmployeeShowingRequests(
 }
 
 function getRequestedByLabel(data: unknown): string {
-  if (!data || typeof data !== "object" || Array.isArray(data)) {
-    return "Client request";
-  }
-
-  const value = data as Record<string, unknown>;
+  const value = toRecord(data);
 
   for (const key of ["clientName", "requestedByEmail"]) {
     const candidate = value[key];
@@ -586,6 +900,12 @@ function getRequestedByLabel(data: unknown): string {
   }
 
   return "Client request";
+}
+
+function toRecord(data: unknown): Record<string, unknown> {
+  return data && typeof data === "object" && !Array.isArray(data)
+    ? (data as Record<string, unknown>)
+    : {};
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {

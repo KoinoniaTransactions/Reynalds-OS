@@ -3,7 +3,10 @@ import {
   buildPortalWorkSummaryCounts,
   getPortalWorkDueLabel,
   getPortalWorkItemTypeLabel,
-  getPortalWorkStatusBucket
+  getPortalWorkStatusBucket,
+  isClientPortalWorkObjectType,
+  PortalWorkAssignmentValidationError,
+  validatePortalWorkAssignmentInput
 } from "./portal-work-items";
 
 describe("portal work item helpers", () => {
@@ -11,6 +14,8 @@ describe("portal work item helpers", () => {
     expect(getPortalWorkItemTypeLabel("Transaction")).toBe("Transaction Support");
     expect(getPortalWorkItemTypeLabel("ShowingRequest")).toBe("Showing Request");
     expect(getPortalWorkItemTypeLabel("BillingSetupRequest")).toBe("Billing Setup");
+    expect(isClientPortalWorkObjectType("Transaction")).toBe(true);
+    expect(isClientPortalWorkObjectType("PortalLaunchProof")).toBe(false);
   });
 
   it("groups statuses into client dashboard buckets", () => {
@@ -44,5 +49,47 @@ describe("portal work item helpers", () => {
       review: 1,
       waiting: 1
     });
+  });
+
+  it("validates safe work assignment updates", () => {
+    expect(
+      validatePortalWorkAssignmentInput({
+        assignedStaffUserId: "usr_staff_primary",
+        assignmentNote: "Assigned for transaction deadline tracking and next client update.",
+        backupStaffUserId: "usr_staff_backup"
+      })
+    ).toEqual({
+      assignedStaffUserId: "usr_staff_primary",
+      assignmentNote: "Assigned for transaction deadline tracking and next client update.",
+      backupStaffUserId: "usr_staff_backup"
+    });
+  });
+
+  it("requires a primary owner or an unassigned explanation", () => {
+    expect(() =>
+      validatePortalWorkAssignmentInput({
+        assignedStaffUserId: "",
+        backupStaffUserId: ""
+      })
+    ).toThrow(PortalWorkAssignmentValidationError);
+  });
+
+  it("rejects the same person as primary and backup", () => {
+    expect(() =>
+      validatePortalWorkAssignmentInput({
+        assignedStaffUserId: "usr_staff_primary",
+        backupStaffUserId: "usr_staff_primary"
+      })
+    ).toThrow("Primary and backup staff must be different people.");
+  });
+
+  it("rejects sensitive assignment notes", () => {
+    expect(() =>
+      validatePortalWorkAssignmentInput({
+        assignedStaffUserId: "usr_staff_primary",
+        assignmentNote: "Client sent the MLS password and brokerage password here.",
+        backupStaffUserId: ""
+      })
+    ).toThrow("Do not include passwords");
   });
 });
