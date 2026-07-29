@@ -37,7 +37,16 @@ export type Permission =
   | "document-workspace:templates:view"
   | "document-workspace:templates:update"
   | "document-workspace:audit:view"
-  | "client-portal:documents:approve";
+  | "client-portal:documents:approve"
+  | "client-portal:billing:view"
+  | "client-portal:billing:setup"
+  | "billing-workspace:view"
+  | "billing-workspace:profiles:update"
+  | "billing-workspace:payment-methods:request"
+  | "billing-workspace:invoices:create"
+  | "billing-workspace:payments:process"
+  | "billing-workspace:pay-at-close:update"
+  | "billing-workspace:audit:view";
 
 export type AuthUser = {
   id: string;
@@ -88,7 +97,16 @@ export const rolePermissions: Record<string, Permission[]> = {
     "document-workspace:templates:view",
     "document-workspace:templates:update",
     "document-workspace:audit:view",
-    "client-portal:documents:approve"
+    "client-portal:documents:approve",
+    "client-portal:billing:view",
+    "client-portal:billing:setup",
+    "billing-workspace:view",
+    "billing-workspace:profiles:update",
+    "billing-workspace:payment-methods:request",
+    "billing-workspace:invoices:create",
+    "billing-workspace:payments:process",
+    "billing-workspace:pay-at-close:update",
+    "billing-workspace:audit:view"
   ],
   Operations: [
     "objects:view",
@@ -121,7 +139,12 @@ export const rolePermissions: Record<string, Permission[]> = {
     "document-workspace:approval:record",
     "document-workspace:send",
     "document-workspace:templates:view",
-    "document-workspace:audit:view"
+    "document-workspace:audit:view",
+    "client-portal:billing:view",
+    "billing-workspace:view",
+    "billing-workspace:payment-methods:request",
+    "billing-workspace:pay-at-close:update",
+    "billing-workspace:audit:view"
   ],
   "Transaction Coordinator": [
     "objects:view",
@@ -144,7 +167,8 @@ export const rolePermissions: Record<string, Permission[]> = {
     "document-workspace:approval:request",
     "document-workspace:send",
     "document-workspace:templates:view",
-    "document-workspace:audit:view"
+    "document-workspace:audit:view",
+    "billing-workspace:view"
   ],
   "Contract Support": [
     "objects:view",
@@ -201,7 +225,15 @@ export const rolePermissions: Record<string, Permission[]> = {
     "finance:view",
     "finance:update",
     "employee-portal:view",
-    "employee-portal:clients:view"
+    "employee-portal:clients:view",
+    "client-portal:billing:view",
+    "billing-workspace:view",
+    "billing-workspace:profiles:update",
+    "billing-workspace:payment-methods:request",
+    "billing-workspace:invoices:create",
+    "billing-workspace:payments:process",
+    "billing-workspace:pay-at-close:update",
+    "billing-workspace:audit:view"
   ],
   Viewer: ["objects:view", "timeline:view"],
   Client: [
@@ -210,7 +242,9 @@ export const rolePermissions: Record<string, Permission[]> = {
     "client-portal:documents:view",
     "client-portal:documents:upload",
     "client-portal:documents:approve",
-    "client-portal:access:view"
+    "client-portal:access:view",
+    "client-portal:billing:view",
+    "client-portal:billing:setup"
   ]
 };
 

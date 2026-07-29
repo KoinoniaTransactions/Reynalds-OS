@@ -76,6 +76,7 @@ Expected dashboard sections:
 - Unassigned Clients
 - Unassigned Work
 - Document Workspace
+- Billing Workspace
 - Staff Workload
 - Assigned Clients
 - Active Work Queue
@@ -115,6 +116,36 @@ Rules:
 - Final document sending requires recorded Realtor approval or a documented approved workflow.
 - Showing providers should not see transaction document drafts unless a showing-specific document is assigned.
 - The portal should not store third-party forms, brokerage, MLS, or e-signature passwords.
+
+### Employee Billing Workspace
+
+Route:
+
+`/employee/billing`
+
+Purpose:
+
+Give Koinonia staff one place to see customer billing profiles, payment setup needs, prepaid invoice status, pay-at-closing triggers, monthly/custom billing terms, failed payment follow-up, and safe payment method metadata.
+
+Expected sections:
+
+- Customer billing profiles
+- Payment setup needed
+- Prepaid invoices due before work begins
+- Pay-at-closing billing watch
+- Monthly/custom billing
+- Failed payment follow-up
+- Refund/adjustment notes
+- Revenue by service
+- Billing audit trail
+
+Rules:
+
+- Staff should not see or store full card numbers or CVV/CVC.
+- Payment setup should happen through an approved processor-hosted flow.
+- Prepaid work should not start until paid or an exception is approved.
+- Pay-at-closing billing should trigger only after successful closing.
+- Recurring or future charges require clear consent and billing terms.
 
 ---
 
@@ -300,13 +331,14 @@ Build the employee portal in safe slices:
 3. Publicly hidden `/employee` entry page with no real client data.
 4. `/employee/dashboard` sample-data preview.
 5. `/employee/documents` sample-data document workspace preview.
-6. Work item detail assignment panel using mocked/sample data.
-7. Staff roster and capacity schema.
-8. Assignment event audit trail.
-9. Authenticated read-only employee dashboard connected to real objects.
-10. Assignment update actions with permission checks.
-11. Staff-specific views for assigned transaction, contract, showing, and operations work.
-12. Production security review before exposing real client files or internal staff notes.
+6. `/employee/billing` sample-data billing workspace preview.
+7. Work item detail assignment panel using mocked/sample data.
+8. Staff roster and capacity schema.
+9. Assignment event audit trail.
+10. Authenticated read-only employee dashboard connected to real objects.
+11. Assignment update actions with permission checks.
+12. Staff-specific views for assigned transaction, contract, showing, and operations work.
+13. Production security review before exposing real client files, internal staff notes, or payment method setup.
 
 ---
 

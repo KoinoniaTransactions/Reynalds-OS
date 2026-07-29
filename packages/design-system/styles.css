@@ -3160,6 +3160,246 @@ h1 {
   border-color: rgba(25, 92, 96, 0.34);
 }
 
+.koinonia-billing-hero {
+  padding-top: clamp(96px, 11vw, 140px);
+  padding-bottom: clamp(42px, 6vw, 72px);
+}
+
+.koinonia-billing-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 22px);
+  margin-top: clamp(28px, 4vw, 42px);
+}
+
+.koinonia-billing-summary-card,
+.koinonia-billing-panel {
+  border: 1px solid rgba(83, 112, 76, 0.22);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 251, 247, 0.76));
+  box-shadow:
+    0 22px 56px rgba(17, 17, 17, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.koinonia-billing-summary-card.employee,
+.koinonia-billing-panel.employee {
+  border-color: rgba(25, 92, 96, 0.2);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(247, 252, 251, 0.76));
+}
+
+.koinonia-billing-summary-card {
+  padding: 22px;
+}
+
+.koinonia-billing-summary-card span,
+.koinonia-billing-work-item span,
+.koinonia-billing-status-list article > span {
+  color: #53704c;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.105em;
+  text-transform: uppercase;
+}
+
+.koinonia-billing-summary-card.employee span,
+.koinonia-billing-work-item.employee span {
+  color: #195c60;
+}
+
+.koinonia-billing-summary-card strong {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--ros-font-display);
+  font-size: clamp(34px, 4vw, 48px);
+  line-height: 0.95;
+}
+
+.koinonia-billing-summary-card p,
+.koinonia-billing-work-item p,
+.koinonia-billing-panel p,
+.koinonia-billing-panel li,
+.koinonia-billing-status-list p {
+  color: var(--ros-muted);
+  line-height: 1.55;
+}
+
+.koinonia-billing-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 390px);
+  gap: clamp(18px, 3vw, 30px);
+  align-items: start;
+}
+
+.koinonia-billing-main-stack,
+.koinonia-billing-side-panel,
+.koinonia-billing-card-list,
+.koinonia-billing-status-list {
+  display: grid;
+  gap: 14px;
+}
+
+.koinonia-billing-panel {
+  padding: clamp(20px, 3vw, 30px);
+}
+
+.koinonia-billing-panel-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.koinonia-billing-panel-heading h2,
+.koinonia-billing-work-item h3 {
+  margin: 0;
+  font-family: var(--ros-font-display);
+  letter-spacing: -0.02em;
+}
+
+.koinonia-billing-panel-heading h2 {
+  font-size: clamp(28px, 3vw, 38px);
+}
+
+.koinonia-billing-work-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(130px, auto);
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid rgba(83, 112, 76, 0.16);
+  background: rgba(250, 252, 248, 0.72);
+}
+
+.koinonia-billing-work-item.employee {
+  border-color: rgba(25, 92, 96, 0.14);
+  background: rgba(250, 253, 252, 0.72);
+}
+
+.koinonia-billing-work-item h3 {
+  margin-top: 8px;
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.koinonia-billing-work-meta {
+  display: grid;
+  align-content: start;
+  justify-items: end;
+  gap: 8px;
+  text-align: right;
+}
+
+.koinonia-billing-work-meta strong {
+  max-width: 170px;
+  padding: 7px 10px;
+  border: 1px solid rgba(83, 112, 76, 0.24);
+  background: rgba(83, 112, 76, 0.12);
+  color: var(--ros-text);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.koinonia-billing-work-meta.employee strong {
+  border-color: rgba(25, 92, 96, 0.2);
+  background: rgba(25, 92, 96, 0.1);
+}
+
+.koinonia-billing-work-meta span {
+  color: var(--ros-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.koinonia-billing-list {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.koinonia-billing-table-wrap {
+  overflow-x: auto;
+}
+
+.koinonia-billing-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+}
+
+.koinonia-billing-table th,
+.koinonia-billing-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(83, 112, 76, 0.14);
+  text-align: left;
+  vertical-align: top;
+}
+
+.koinonia-billing-table th {
+  color: #53704c;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.koinonia-employee-billing .koinonia-billing-table th {
+  color: #195c60;
+}
+
+.koinonia-billing-table td {
+  color: var(--ros-text);
+  font-size: 14px;
+}
+
+.koinonia-billing-status-list article {
+  padding: 16px;
+  border: 1px solid rgba(25, 92, 96, 0.14);
+  background: rgba(250, 253, 252, 0.72);
+}
+
+.koinonia-billing-status-list strong {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--ros-font-display);
+  font-size: 21px;
+  line-height: 1.1;
+}
+
+.koinonia-billing-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin-top: 18px;
+  padding: 10px 12px;
+  border: 1px solid rgba(83, 112, 76, 0.24);
+  background: rgba(83, 112, 76, 0.11);
+  color: var(--ros-text);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.koinonia-billing-link.employee {
+  border-color: rgba(25, 92, 96, 0.22);
+  background: rgba(25, 92, 96, 0.1);
+}
+
+.koinonia-billing-boundary-card {
+  border-color: rgba(83, 112, 76, 0.38);
+}
+
+.koinonia-billing-panel.employee.koinonia-billing-boundary-card {
+  border-color: rgba(25, 92, 96, 0.34);
+}
+
 @media (max-width: 720px) {
   .koinonia-client-work-item {
     grid-template-columns: 1fr;
@@ -3188,6 +3428,15 @@ h1 {
   }
 
   .koinonia-document-work-meta {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .koinonia-billing-work-item {
+    grid-template-columns: 1fr;
+  }
+
+  .koinonia-billing-work-meta {
     justify-items: start;
     text-align: left;
   }
@@ -3308,7 +3557,9 @@ h1 {
   .koinonia-employee-dashboard-layout,
   .koinonia-document-summary-grid,
   .koinonia-document-layout,
-  .koinonia-document-tool-grid {
+  .koinonia-document-tool-grid,
+  .koinonia-billing-summary-grid,
+  .koinonia-billing-layout {
     grid-template-columns: 1fr;
   }
 

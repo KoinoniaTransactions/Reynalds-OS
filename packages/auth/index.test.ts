@@ -66,4 +66,29 @@ describe("auth permissions", () => {
     expect(permissions).not.toContain("document-workspace:drafts:create");
     expect(permissions).not.toContain("document-workspace:send");
   });
+
+  it("allows clients to view and set up their billing profile", () => {
+    const client = getMockClientUser();
+
+    expect(can(client, "client-portal:billing:view")).toBe(true);
+    expect(can(client, "client-portal:billing:setup")).toBe(true);
+    expect(can(client, "billing-workspace:payments:process")).toBe(false);
+  });
+
+  it("allows finance to manage billing and process payments", () => {
+    const permissions = rolePermissions.Finance;
+
+    expect(permissions).toContain("billing-workspace:view");
+    expect(permissions).toContain("billing-workspace:profiles:update");
+    expect(permissions).toContain("billing-workspace:invoices:create");
+    expect(permissions).toContain("billing-workspace:payments:process");
+  });
+
+  it("keeps showing providers out of payment records", () => {
+    const permissions = rolePermissions["Showing Provider"];
+
+    expect(permissions).not.toContain("client-portal:billing:view");
+    expect(permissions).not.toContain("billing-workspace:view");
+    expect(permissions).not.toContain("billing-workspace:payments:process");
+  });
 });

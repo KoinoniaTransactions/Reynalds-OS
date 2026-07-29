@@ -230,6 +230,17 @@ export default function ClientDashboardPreviewPage() {
                 </div>
               </section>
 
+              <section className="koinonia-client-request-card">
+                <p className="koinonia-eyebrow">Billing</p>
+                <p>
+                  Payment method setup, prepaid invoices, and pay-at-closing
+                  billing status should live on the customer file.
+                </p>
+                <a className="koinonia-billing-link" href="/client/billing">
+                  Open Billing Center
+                </a>
+              </section>
+
               <section className="koinonia-client-request-card koinonia-client-boundary-card">
                 <p className="koinonia-eyebrow">Security Boundary</p>
                 <p>

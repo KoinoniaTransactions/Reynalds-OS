@@ -338,6 +338,18 @@ export default function EmployeeDashboardPreviewPage() {
                 </div>
               </section>
 
+              <section className="koinonia-employee-request-card">
+                <p className="koinonia-eyebrow">Billing Readiness</p>
+                <p>
+                  Staff should see payment setup needs, prepaid blocks,
+                  pay-at-closing triggers, and ready-to-process invoices before
+                  work moves too far ahead.
+                </p>
+                <a className="koinonia-billing-link employee" href="/employee/billing">
+                  Open Billing Workspace
+                </a>
+              </section>
+
               <section className="koinonia-employee-request-card koinonia-employee-boundary-card">
                 <p className="koinonia-eyebrow">Assignment Rules</p>
                 <ul>

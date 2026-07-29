@@ -108,6 +108,10 @@ export default function ClientPortalPage() {
                 <a className="koinonia-button secondary" href="/client/documents">
                   View Document Center
                 </a>
+
+                <a className="koinonia-button secondary" href="/client/billing">
+                  View Billing Center
+                </a>
               </div>
             </div>
 

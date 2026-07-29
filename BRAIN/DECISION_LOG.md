@@ -84,3 +84,11 @@ Decision: Koinonia's portal should include a transaction document workspace for 
 Reason: A transaction management company is judged by whether documents, deadlines, approvals, and communication stay organized. Document preparation and sending are high-trust workflows, so Koinonia needs clear version control, explicit Realtor approval, role-based access, and an audit trail before live client documents move through the portal.
 
 Canonical specification: `docs/specifications/KOINONIA_DOCUMENT_WORKSPACE_SPEC.md`
+
+## D-014 — Billing Profiles Use Processor References, Not Raw Card Storage
+
+Decision: Koinonia customer files should include billing profiles, service billing models, invoice status, pay-at-closing triggers, and payment setup state, but the portal should not store raw credit card numbers or CVV/CVC codes.
+
+Reason: Koinonia needs to bill prepaid, pay-at-closing, monthly, showing, and custom service work without turning the portal into a high-risk cardholder data vault. Payment details should be collected through an approved payment processor, and Koinonia should store only safe processor references, payment method metadata, consent history, invoice state, and audit events.
+
+Canonical specification: `docs/specifications/KOINONIA_BILLING_PAYMENT_SPEC.md`

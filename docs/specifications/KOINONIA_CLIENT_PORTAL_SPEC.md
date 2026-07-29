@@ -114,6 +114,7 @@ Expected dashboard sections:
 - Waiting on You
 - Pending Review
 - Document Center
+- Billing Center
 - Showing Requests
 - Completed Work
 - Recently Uploaded Documents
@@ -166,6 +167,33 @@ Rules:
 - Client users should see only documents tied to their own account, work item, or transaction file.
 - Draft approvals must record who approved, when approval occurred, and what version was approved.
 - Clients should not see internal staff notes, template administration, unrelated client files, or internal send-package controls.
+
+### Billing Center
+
+Route:
+
+`/client/billing`
+
+Purpose:
+
+Give Realtor clients a safe place to view selected services, service billing model, invoices, payment method setup status, pay-at-closing status, and payment history.
+
+Expected sections:
+
+- Billing profile
+- Services selected
+- Payment method setup
+- Open invoices
+- Pay-at-closing status
+- Monthly/custom billing status
+- Payment history
+
+Rules:
+
+- Client users should not enter raw card numbers or CVV/CVC into Koinonia portal fields.
+- Payment setup should happen through an approved processor-hosted flow.
+- The portal may show safe metadata such as brand, last four digits, expiration, payment setup status, and consent history.
+- Each service activation should clearly show whether billing is prepaid, pay-at-closing, monthly, per showing, or custom.
 
 ### Showing Request Section
 
@@ -402,13 +430,14 @@ Build the portal in safe slices:
 6. Work item detail shell using mocked/sample data only.
 7. Showing request section using mocked/sample data only.
 8. Client document center using mocked/sample data only.
-9. Database schema additions.
-10. Authenticated read-only dashboard connected to real work items.
-11. Secure file upload and document request flow.
-12. Access request tracking without credential storage.
-13. Portal messaging or notes.
-14. Audit logs.
-15. Production security review before accepting real client documents.
+9. Client billing center using mocked/sample data only.
+10. Database schema additions.
+11. Authenticated read-only dashboard connected to real work items.
+12. Secure file upload and document request flow.
+13. Access request tracking without credential storage.
+14. Portal messaging or notes.
+15. Audit logs.
+16. Production security review before accepting real client documents or payment methods.
 
 Do not begin with file upload or credential fields.
 
