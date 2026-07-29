@@ -59,6 +59,11 @@ if (skipDatabase) {
 } else {
   recordCheck("PORTAL_DOCUMENT_UPLOAD_DIR is set", isPresent(process.env.PORTAL_DOCUMENT_UPLOAD_DIR));
   recordCheck(
+    "PORTAL_DOCUMENT_UPLOAD_DIR is absolute",
+    !isPresent(process.env.PORTAL_DOCUMENT_UPLOAD_DIR) ||
+      isAbsolute(process.env.PORTAL_DOCUMENT_UPLOAD_DIR.trim())
+  );
+  recordCheck(
     "PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND is set",
     isPresent(process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND)
   );

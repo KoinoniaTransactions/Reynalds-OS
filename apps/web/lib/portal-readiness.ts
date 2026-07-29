@@ -433,12 +433,14 @@ function getStaffMfaReadiness(database: PortalDatabaseReadiness): PortalReadines
 }
 
 function getDocumentStorageReadiness(input: PortalReadinessInput): PortalReadinessItem {
-  if (isPresent(input.documentUploadDir)) {
+  const uploadDir = input.documentUploadDir?.trim();
+
+  if (uploadDir && isAbsolute(uploadDir)) {
     return readyItem(
       "document-storage",
       "Private document storage",
       "Document upload storage is configured.",
-      "PORTAL_DOCUMENT_UPLOAD_DIR is present."
+      "PORTAL_DOCUMENT_UPLOAD_DIR is present and absolute."
     );
   }
 
@@ -446,8 +448,8 @@ function getDocumentStorageReadiness(input: PortalReadinessInput): PortalReadine
     "document-storage",
     "Private document storage",
     "Clients cannot upload real files until private storage is configured.",
-    "Upload directory is missing.",
-    "Set PORTAL_DOCUMENT_UPLOAD_DIR on the production host."
+    uploadDir ? "Upload directory must be an absolute path." : "Upload directory is missing.",
+    "Set PORTAL_DOCUMENT_UPLOAD_DIR to an absolute private storage path on the production host."
   );
 }
 

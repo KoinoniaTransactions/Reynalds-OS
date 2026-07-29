@@ -8,7 +8,9 @@ import { prisma } from "../../../lib/db";
 import {
   formatDocumentFileSize,
   getDocumentSubmittedLabel,
-  getHumanDocumentStatus
+  getHumanDocumentStatus,
+  validatePortalDocumentScannerCommand,
+  validatePortalDocumentUploadRoot
 } from "../../../lib/portal-documents";
 
 export const dynamic = "force-dynamic";
@@ -385,14 +387,22 @@ function mapDocumentRecord(
 }
 
 function isDocumentStorageConfigured(): boolean {
-  return Boolean(process.env.PORTAL_DOCUMENT_UPLOAD_DIR?.trim());
+  try {
+    validatePortalDocumentUploadRoot(process.env.PORTAL_DOCUMENT_UPLOAD_DIR);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function isDocumentUploadConfigured(): boolean {
-  return Boolean(
-    process.env.PORTAL_DOCUMENT_UPLOAD_DIR?.trim() &&
-      process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND?.trim()
-  );
+  try {
+    validatePortalDocumentUploadRoot(process.env.PORTAL_DOCUMENT_UPLOAD_DIR);
+    validatePortalDocumentScannerCommand(process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {

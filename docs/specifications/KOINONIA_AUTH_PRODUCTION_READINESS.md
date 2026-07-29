@@ -109,6 +109,8 @@ ROS_ALLOW_MOCK_AUTH=false
 
 Production Clerk values must be real production keys. Placeholder values, example values, and test-key prefixes should fail readiness checks.
 
+`PORTAL_DOCUMENT_UPLOAD_DIR` must be an absolute private storage path outside public web assets.
+
 Then configure Clerk user metadata for Koinonia:
 
 ```json
@@ -255,7 +257,7 @@ Before the portal accepts real data:
 - No brokerage passwords, MLS passwords, raw usernames, access codes, raw card numbers, CVV fields, bank details, routing numbers, account numbers, payment passwords, processor secrets, or API keys are accepted.
 - `pnpm verify:portal` passes against the target production environment.
 - The target environment has at least one active Owner portal user and no active staff users missing MFA requirement.
-- The target environment has `PORTAL_DOCUMENT_UPLOAD_DIR` configured before live document uploads are enabled.
+- The target environment has `PORTAL_DOCUMENT_UPLOAD_DIR` configured as an absolute private storage path before live document uploads are enabled.
 - The target environment has `PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND` configured to an absolute executable scanner path before live document uploads are enabled.
 - Social login is enabled through the managed auth provider and verified against invitation matching, database role source-of-truth checks, and staff MFA.
 - AI review remains read-only until checklist prompts, privacy boundaries, source citations, audit events, and staff approval gates are verified.

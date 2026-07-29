@@ -11,6 +11,7 @@ import { prisma } from "../../../../lib/db";
 import {
   buildPortalDocumentDisplayName,
   PortalDocumentValidationError,
+  validatePortalDocumentUploadRoot,
   validatePortalDocumentScannerCommand,
   validatePortalDocumentSubmission
 } from "../../../../lib/portal-documents";
@@ -206,13 +207,11 @@ function canViewAllDocuments(actor: AuthUser): boolean {
 }
 
 function getConfiguredUploadRoot(): string | null {
-  const configuredRoot = process.env.PORTAL_DOCUMENT_UPLOAD_DIR;
-
-  if (!configuredRoot?.trim()) {
+  try {
+    return resolve(validatePortalDocumentUploadRoot(process.env.PORTAL_DOCUMENT_UPLOAD_DIR));
+  } catch {
     return null;
   }
-
-  return resolve(configuredRoot);
 }
 
 function getConfiguredScannerCommand(): string | null {

@@ -14,6 +14,26 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Upload Storage Path Hardened
+
+### Summary
+
+Koinonia document uploads now require an absolute private storage path before live upload controls are treated as configured.
+
+### Implemented
+
+- Added shared validation for `PORTAL_DOCUMENT_UPLOAD_DIR`.
+- Updated the document upload API to reject missing or relative upload roots.
+- Updated client and employee document workspaces to use the same storage readiness check.
+- Updated the live readiness page and `pnpm verify:portal` to require an absolute upload directory.
+- Added tests for document upload root validation and readiness blocking.
+
+### Current Status
+
+Document uploads still require a real private storage location and malware scanner on the production host before Koinonia should accept real client files.
+
+---
+
 ## 2026-07-29 — Clerk Production Key Readiness Hardened
 
 ### Summary

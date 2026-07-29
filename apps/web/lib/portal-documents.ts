@@ -156,6 +156,20 @@ export function validatePortalDocumentStorageKey(storageKey: unknown): string {
   return normalizedKey;
 }
 
+export function validatePortalDocumentUploadRoot(uploadRoot: unknown): string {
+  const root = optionalString(uploadRoot);
+
+  if (!root) {
+    throw new PortalDocumentValidationError("Document upload storage is not configured.");
+  }
+
+  if (!isAbsolute(root)) {
+    throw new PortalDocumentValidationError("Document upload storage must use an absolute path.");
+  }
+
+  return root;
+}
+
 export function buildPortalDocumentContentDisposition(fileName: string): string {
   return `attachment; filename="${sanitizeDocumentFileName(fileName)}"`;
 }

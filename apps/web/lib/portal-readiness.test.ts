@@ -106,4 +106,18 @@ describe("portal readiness report", () => {
     expect(roles?.status).toBe("blocked");
     expect(roles?.proof).toContain("Operations");
   });
+
+  it("blocks relative document upload storage paths", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        documentUploadDir: "portal-documents"
+      })
+    );
+    const storage = report.groups
+      .flatMap((group) => group.items)
+      .find((item) => item.id === "document-storage");
+
+    expect(storage?.status).toBe("blocked");
+    expect(storage?.proof).toContain("absolute");
+  });
 });

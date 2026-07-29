@@ -8,6 +8,7 @@ import {
   sanitizeDocumentFileName,
   validatePortalDocumentScannerCommand,
   validatePortalDocumentStorageKey,
+  validatePortalDocumentUploadRoot,
   validatePortalDocumentSubmission
 } from "./portal-documents";
 
@@ -117,6 +118,18 @@ describe("portal document helpers", () => {
     );
     expect(() => validatePortalDocumentScannerCommand("")).toThrow(
       "Document malware scanner is not configured."
+    );
+  });
+
+  it("requires an absolute private document upload root", () => {
+    expect(validatePortalDocumentUploadRoot("/private/portal-documents")).toBe(
+      "/private/portal-documents"
+    );
+    expect(() => validatePortalDocumentUploadRoot("portal-documents")).toThrow(
+      "Document upload storage must use an absolute path."
+    );
+    expect(() => validatePortalDocumentUploadRoot("")).toThrow(
+      "Document upload storage is not configured."
     );
   });
 });

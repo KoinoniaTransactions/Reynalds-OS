@@ -8,7 +8,8 @@ import { prisma } from "../../../lib/db";
 import {
   formatDocumentFileSize,
   getDocumentSubmittedLabel,
-  getHumanDocumentStatus
+  getHumanDocumentStatus,
+  validatePortalDocumentUploadRoot
 } from "../../../lib/portal-documents";
 
 export const dynamic = "force-dynamic";
@@ -415,7 +416,12 @@ function mapDocumentRecord(
 }
 
 function isDocumentStorageConfigured(): boolean {
-  return Boolean(process.env.PORTAL_DOCUMENT_UPLOAD_DIR?.trim());
+  try {
+    validatePortalDocumentUploadRoot(process.env.PORTAL_DOCUMENT_UPLOAD_DIR);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {
