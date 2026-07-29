@@ -9,7 +9,9 @@ describe("portal invitation validation", () => {
         email: " Realtor@Example.COM ",
         name: " Realtor Client ",
         providerInvitationId: " inv_123 ",
+        redirectUrl: "/sign-in",
         roleName: " Client ",
+        sendProviderInvitation: false,
         serviceContext: { package: "Transaction Coordination Plus" }
       })
     ).toEqual({
@@ -17,7 +19,9 @@ describe("portal invitation validation", () => {
       email: "realtor@example.com",
       name: "Realtor Client",
       providerInvitationId: "inv_123",
+      redirectUrl: "/sign-in",
       roleName: "Client",
+      sendProviderInvitation: false,
       serviceContext: { package: "Transaction Coordination Plus" }
     });
   });
@@ -47,5 +51,40 @@ describe("portal invitation validation", () => {
         serviceContext: ["unexpected"]
       }).serviceContext
     ).toBeUndefined();
+  });
+
+  it("allows provider invitation sending when no provider id is supplied", () => {
+    expect(
+      validateInvitationInput({
+        email: "client@example.com",
+        roleName: "Client",
+        sendProviderInvitation: true
+      })
+    ).toMatchObject({
+      email: "client@example.com",
+      roleName: "Client",
+      sendProviderInvitation: true
+    });
+  });
+
+  it("rejects unsafe redirect URLs", () => {
+    expect(() =>
+      validateInvitationInput({
+        email: "client@example.com",
+        roleName: "Client",
+        redirectUrl: "javascript:alert(1)"
+      })
+    ).toThrow("redirectUrl must be an http(s) URL or same-site path.");
+  });
+
+  it("rejects sending a provider invitation with an existing provider id", () => {
+    expect(() =>
+      validateInvitationInput({
+        email: "client@example.com",
+        providerInvitationId: "inv_existing",
+        roleName: "Client",
+        sendProviderInvitation: true
+      })
+    ).toThrow("providerInvitationId cannot be supplied when sendProviderInvitation is true.");
   });
 });

@@ -4,7 +4,9 @@ export type InvitationInput = {
   expiresAt?: string;
   name?: string;
   providerInvitationId?: string;
+  redirectUrl?: string;
   roleName: string;
+  sendProviderInvitation?: boolean;
   serviceContext?: Record<string, unknown>;
 };
 
@@ -32,14 +34,34 @@ export function validateInvitationInput(input: unknown): InvitationInput {
     throw new InvitationValidationError("roleName is required.");
   }
 
+  const providerInvitationId =
+    typeof value.providerInvitationId === "string" && value.providerInvitationId.trim()
+      ? value.providerInvitationId.trim()
+      : undefined;
+  const sendProviderInvitation = value.sendProviderInvitation === true;
+
+  if (providerInvitationId && sendProviderInvitation) {
+    throw new InvitationValidationError(
+      "providerInvitationId cannot be supplied when sendProviderInvitation is true."
+    );
+  }
+
+  const redirectUrl =
+    typeof value.redirectUrl === "string" && value.redirectUrl.trim()
+      ? value.redirectUrl.trim()
+      : undefined;
+
+  if (redirectUrl && !isAllowedRedirectUrl(redirectUrl)) {
+    throw new InvitationValidationError("redirectUrl must be an http(s) URL or same-site path.");
+  }
+
   return {
     email,
     roleName,
     name: typeof value.name === "string" && value.name.trim() ? value.name.trim() : undefined,
-    providerInvitationId:
-      typeof value.providerInvitationId === "string" && value.providerInvitationId.trim()
-        ? value.providerInvitationId.trim()
-        : undefined,
+    providerInvitationId,
+    redirectUrl,
+    sendProviderInvitation,
     clientObjectId:
       typeof value.clientObjectId === "string" && value.clientObjectId.trim()
         ? value.clientObjectId.trim()
@@ -54,4 +76,17 @@ export function validateInvitationInput(input: unknown): InvitationInput {
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isAllowedRedirectUrl(url: string): boolean {
+  if (url.startsWith("/") && !url.startsWith("//")) {
+    return true;
+  }
+
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+  } catch {
+    return false;
+  }
 }

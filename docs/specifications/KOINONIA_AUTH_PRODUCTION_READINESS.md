@@ -39,6 +39,7 @@ The current web app includes:
 - `AuditEvent` for sensitive auth and portal access history.
 - Provider users resolve through the Koinonia database when available; database role and access status control portal permissions.
 - `/api/portal/invitations` for internal invitation record creation and review.
+- Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
 - Permission tests for provider role mapping and typed denial behavior.
 
@@ -137,6 +138,13 @@ Before accepting real clients, build an owner/admin invitation flow that records
 
 Invitations should assign `koinoniaRole=Client` and the correct workspace before the user signs in.
 
+`/api/portal/invitations` now supports the internal record and provider invitation handoff:
+
+- `sendProviderInvitation: false` or omitted creates the Koinonia invitation record only.
+- `sendProviderInvitation: true` creates the Koinonia record, then asks Clerk to send the provider invitation email.
+- Provider invitation metadata includes `koinoniaRole`, `koinoniaWorkspaceId`, optional client object ID, and service context.
+- If the provider send fails after the Koinonia record is created, the invitation is marked `provider_error` for staff review.
+
 ---
 
 ## 7. Production Verification Checklist
@@ -155,6 +163,7 @@ Before the portal accepts real data:
 - Audit logging exists for sensitive actions.
 - Portal invitation records exist before client/staff access is granted.
 - Invitation record creation writes an audit event.
+- Provider invitation creation writes a sent or provider-error audit event.
 - Portal API auth failures return clear JSON status responses, not generic crashes.
 - No brokerage passwords, MLS passwords, raw card numbers, or CVV fields are accepted.
 

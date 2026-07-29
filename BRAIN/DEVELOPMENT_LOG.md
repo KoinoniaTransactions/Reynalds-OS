@@ -1551,3 +1551,24 @@ Portal API auth and configuration failures now return clear JSON responses inste
 ### Current Status
 
 Invitation creation still requires a live database and the future managed-provider invitation-sending integration before it can be used for real client or staff onboarding.
+
+---
+
+## 2026-07-29 — Clerk Provider Invitation Handoff Scaffolded
+
+### Summary
+
+The portal invitation API can now bridge an approved Koinonia invitation record to Clerk's invitation email flow when explicitly requested.
+
+### Implemented
+
+- Added provider invitation payload construction with Koinonia role, workspace, client object, and service metadata.
+- Added optional `sendProviderInvitation` support to `/api/portal/invitations`.
+- Kept the Koinonia invitation record as the first source of truth before attempting provider email delivery.
+- Added provider sent and provider error audit events.
+- Marked invitations as `provider_pending`, provider status, or `provider_error` depending on the send outcome.
+- Added unit coverage for provider invitation payloads and expanded invitation validation.
+
+### Current Status
+
+The provider handoff compiles and is covered at the payload/validation level. It still needs live Clerk keys and a running database before a real invitation email can be sent end to end.
