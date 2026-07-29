@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
+  type ReynaldsBrothersEmailClassification,
+  type ReynaldsBrothersEmailCandidate,
+  reynaldsBrothersFallbackEmails
+} from "../../lib/reynalds-brothers-email-intake";
+import {
   getWorkItemData,
   getWorkItemLane,
   getWorkItemLocation,
@@ -55,6 +60,11 @@ type ApiPayload = {
   warning?: string;
 };
 
+type EmailApiPayload = {
+  candidates?: ReynaldsBrothersEmailCandidate[];
+  warning?: string;
+};
+
 const defaultCreateForm = {
   name: "",
   serviceLine: "",
@@ -77,6 +87,10 @@ export function ReynaldsBrothersOperationsSystem() {
   const [crewLeadUpdate, setCrewLeadUpdate] = useState("");
   const [invoiceStatusUpdate, setInvoiceStatusUpdate] = useState("Not Ready");
   const [customerUpdateStatus, setCustomerUpdateStatus] = useState("");
+  const [emailCandidates, setEmailCandidates] = useState<ReynaldsBrothersEmailCandidate[]>([]);
+  const [manualEmailSubject, setManualEmailSubject] = useState("");
+  const [manualEmailFrom, setManualEmailFrom] = useState("");
+  const [manualEmailBody, setManualEmailBody] = useState("");
 
   async function loadWorkItems() {
     setError("");
@@ -99,7 +113,19 @@ export function ReynaldsBrothersOperationsSystem() {
 
   useEffect(() => {
     void loadWorkItems();
+    void loadEmailCandidates();
   }, []);
+
+  async function loadEmailCandidates() {
+    try {
+      const response = await fetch("/api/reynalds-brothers/email-intake");
+      if (!response.ok) throw new Error("Email intake requires live workspace access.");
+      const payload = (await response.json()) as EmailApiPayload;
+      setEmailCandidates(payload.candidates ?? []);
+    } catch {
+      setEmailCandidates([]);
+    }
+  }
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -196,6 +222,45 @@ export function ReynaldsBrothersOperationsSystem() {
       if (payload.workItem?.id) setSelectedId(payload.workItem.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Work Item could not be updated.");
+    }
+  }
+
+  async function analyzeManualEmail(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    try {
+      const response = await fetch("/api/reynalds-brothers/email-intake", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "analyze_only",
+          email: {
+            from: manualEmailFrom,
+            subject: manualEmailSubject,
+            body: manualEmailBody
+          }
+        })
+      });
+
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Email could not be analyzed.");
+
+      setEmailCandidates((current) => [
+        {
+          id: `manual_${Date.now()}`,
+          from: manualEmailFrom,
+          subject: manualEmailSubject,
+          body: manualEmailBody,
+          classification: payload.classification
+        },
+        ...current
+      ]);
+      setManualEmailSubject("");
+      setManualEmailFrom("");
+      setManualEmailBody("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Email could not be analyzed.");
     }
   }
 
@@ -474,6 +539,67 @@ export function ReynaldsBrothersOperationsSystem() {
         <section className="rb-section">
           <div className="rb-section-heading">
             <div>
+              <div className="ros-eyebrow">Email intake</div>
+              <h2>File communication under the right job</h2>
+            </div>
+            <button className="rb-secondary-button" onClick={() => void loadEmailCandidates()} type="button">
+              Refresh Email Queue
+            </button>
+          </div>
+
+          <p className="ros-subtitle">
+            Incoming email should either create a Work Item, file under an existing Work Item, or wait for review.
+            Long planning cycles stay organized when every email becomes evidence on the job timeline.
+          </p>
+
+          <form className="rb-email-form" onSubmit={analyzeManualEmail}>
+            <input
+              required
+              value={manualEmailFrom}
+              onChange={(event) => setManualEmailFrom(event.target.value)}
+              placeholder="From"
+            />
+            <input
+              required
+              value={manualEmailSubject}
+              onChange={(event) => setManualEmailSubject(event.target.value)}
+              placeholder="Email subject"
+            />
+            <textarea
+              value={manualEmailBody}
+              onChange={(event) => setManualEmailBody(event.target.value)}
+              placeholder="Paste email body or notes"
+            />
+            <button type="submit">Analyze Email</button>
+          </form>
+
+          <div className="rb-email-grid">
+            {(emailCandidates.length > 0 ? emailCandidates : getPreviewEmailCandidates()).map((email) => (
+              <article className="rb-email-card" key={email.id}>
+                <div className="rb-email-card-heading">
+                  <span className={`rb-email-action ${email.classification.action}`}>
+                    {email.classification.action.replaceAll("_", " ")}
+                  </span>
+                  <span>{email.classification.confidence}</span>
+                </div>
+                <h3>{email.subject}</h3>
+                <p>{email.from}</p>
+                <p>{email.snippet ?? email.body ?? "No preview text."}</p>
+                {email.classification.matchedWorkItemName ? (
+                  <p><strong>Files under:</strong> {email.classification.matchedWorkItemName}</p>
+                ) : null}
+                {email.classification.suggestedWorkItemName ? (
+                  <p><strong>Suggested job:</strong> {email.classification.suggestedWorkItemName}</p>
+                ) : null}
+                <p><strong>Next:</strong> {email.classification.suggestedNextAction}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="rb-section">
+          <div className="rb-section-heading">
+            <div>
               <div className="ros-eyebrow">Build-out map</div>
               <h2>What Reynalds Brothers needs inside Reynalds OS</h2>
             </div>
@@ -517,4 +643,17 @@ export function ReynaldsBrothersOperationsSystem() {
       </section>
     </main>
   );
+}
+
+function getPreviewEmailCandidates(): ReynaldsBrothersEmailCandidate[] {
+  return reynaldsBrothersFallbackEmails.map((email, index) => ({
+    ...email,
+    id: email.providerMessageId ?? `email_preview_${index}`,
+    classification: {
+      action: "needs_review",
+      confidence: "low",
+      suggestedNextAction: "Connect email intake to review filing recommendation.",
+      reasons: ["Preview queue shown until authenticated email intake is available."]
+    } satisfies ReynaldsBrothersEmailClassification
+  }));
 }

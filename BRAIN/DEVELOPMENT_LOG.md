@@ -14,6 +14,28 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Koinonia Portal Readiness View Added
+
+### Summary
+
+Koinonia staff now have a protected live readiness view for monitoring portal production progress across login, database, document handling, workflow safety, social login readiness, and AI review gates.
+
+### Implemented
+
+- Added `/employee/readiness` as a staff-only portal oversight page.
+- Added a shared readiness report builder with ready, attention, and blocked status groups.
+- Added current environment and database readiness checks without exposing secret values.
+- Added social login guidance as an invitation-gated Clerk configuration gate.
+- Added AI review guidance that keeps Copilot read-only until privacy, citation, audit, and approval safeguards are verified.
+- Added unit tests for readiness status logic.
+- Linked the readiness page from the employee portal entry and module map.
+
+### Current Status
+
+The readiness view is a live source-and-environment oversight surface. True production readiness still requires real Clerk production keys, OAuth provider setup, full database verifier pass, private document storage, malware scanner configuration, real client/staff invite testing, and AI checklist reviewer implementation.
+
+---
+
 # 2026-07-29 — Reynalds Brothers Operations Workspace
 
 ## Objective
@@ -26,6 +48,8 @@ Promote Reynalds Brothers from a simple dashboard concept into a distinct compan
 - Added a dedicated Work Item API at `/api/reynalds-brothers/work-items`.
 - Added Work Item create/update actions and timeline events for company-scoped Work Items.
 - Added Work Item intake and selected-item update controls to the Reynalds Brothers workspace.
+- Added email intake classification for filing emails under Work Items, creating new Work Items from email, or holding ambiguous emails for review.
+- Added Communication object documentation and email intake API/UI.
 - Added a Work Item engine helper for lanes, metrics, location formatting, crew readiness, and documentation readiness.
 - Added focused tests for the Work Item engine.
 - Updated the Reynalds OS workspace registry to point Reynalds Brothers to its own company route.
@@ -33,12 +57,12 @@ Promote Reynalds Brothers from a simple dashboard concept into a distinct compan
 
 ## Known Issues
 
-- This is the first operations workspace slice. Media uploads, document storage, customer communication logging, task assignment, and billing closeout actions still need live workflows.
+- This is the first operations workspace slice. Gmail/Outlook ingestion, media uploads, document storage, task assignment, and billing closeout actions still need live workflows.
 - The repository had unrelated active Koinonia portal changes during this work; avoid mixing those changes into a Reynalds Brothers commit unless intentionally bundling a larger checkpoint.
 
 ## Recommended Next Step
 
-Connect tasks, documents/media, and billing readiness to the existing Object Engine instead of leaving them as display-only signals.
+Connect Gmail or Outlook ingestion to `/api/reynalds-brothers/email-intake`, then add monitoring for stale email threads, unanswered customer/vendor questions, and Work Items stuck in planning.
 
 ---
 

@@ -21,6 +21,7 @@ Reynalds Brothers objects use the prefix:
 | Object ID | Object Name | Status | Purpose |
 |---|---|---|---|
 | OBJ-RB-000001 | Work Item | Active | Central operational object for all Reynalds Brothers work. |
+| OBJ-RB-000004 | Communication | Active | Email, call, text, or message related to work. |
 
 ---
 
@@ -30,7 +31,6 @@ Reynalds Brothers objects use the prefix:
 |---|---|---|
 | OBJ-RB-000002 | Organization | Customer, vendor, partner, or agency. |
 | OBJ-RB-000003 | Location | Physical work location, such as a Walmart store. |
-| OBJ-RB-000004 | Communication | Email, call, text, or message related to work. |
 | OBJ-RB-000005 | Document | Formal file such as PO, NOC, permit, invoice, or PDF. |
 | OBJ-RB-000006 | Media | CompanyCam photos, videos, markups, and completion visuals. |
 | OBJ-RB-000007 | Financial Transaction | Expense, receipt, reimbursement, or purchase. |

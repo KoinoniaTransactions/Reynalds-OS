@@ -539,6 +539,8 @@ h1 {
 }
 
 .rb-inline-form input,
+.rb-email-form input,
+.rb-email-form textarea,
 .rb-update-form input,
 .rb-update-form select {
   width: 100%;
@@ -551,6 +553,8 @@ h1 {
 }
 
 .rb-inline-form button,
+.rb-email-form button,
+.rb-secondary-button,
 .rb-update-form button {
   border: none;
   border-radius: 999px;
@@ -558,6 +562,12 @@ h1 {
   background: var(--ros-text);
   color: white;
   font-weight: 700;
+}
+
+.rb-secondary-button {
+  background: white;
+  color: var(--ros-text);
+  border: 1px solid var(--ros-border);
 }
 
 .rb-update-form {
@@ -574,6 +584,73 @@ h1 {
   color: var(--ros-muted);
   font-size: 12px;
   font-weight: 700;
+}
+
+.rb-email-form {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.6fr) minmax(220px, 1fr) minmax(280px, 1.2fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin-top: 16px;
+}
+
+.rb-email-form textarea {
+  min-height: 45px;
+  resize: vertical;
+}
+
+.rb-email-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.rb-email-card {
+  background: white;
+  border: 1px solid var(--ros-border);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.rb-email-card h3 {
+  margin: 10px 0 8px;
+}
+
+.rb-email-card p {
+  color: var(--ros-muted);
+  line-height: 1.5;
+}
+
+.rb-email-card-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rb-email-action {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: var(--rb-surface-muted);
+  border: 1px solid var(--ros-border);
+  color: var(--ros-text);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.rb-email-action.create_work_item {
+  color: var(--rb-ready);
+}
+
+.rb-email-action.needs_review {
+  color: #a66d21;
+}
+
+.rb-email-action.link_to_work_item {
+  color: var(--ros-gold);
 }
 
 .rb-module-grid {
@@ -602,6 +679,8 @@ h1 {
 
 @media (max-width: 1180px) {
   .rb-command-strip,
+  .rb-email-form,
+  .rb-email-grid,
   .rb-inline-form,
   .rb-layout,
   .rb-module-grid,
@@ -3349,6 +3428,174 @@ h1 {
   padding-left: 18px;
 }
 
+.koinonia-readiness-hero {
+  padding-top: clamp(96px, 11vw, 138px);
+  padding-bottom: clamp(34px, 5vw, 64px);
+}
+
+.koinonia-readiness-status-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.koinonia-readiness-status-row span {
+  color: var(--ros-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.koinonia-readiness-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.koinonia-readiness-summary-card,
+.koinonia-readiness-panel,
+.koinonia-readiness-item,
+.koinonia-readiness-next article {
+  border: 1px solid rgba(25, 92, 96, 0.16);
+  border-radius: 8px;
+  background: rgba(250, 253, 252, 0.8);
+}
+
+.koinonia-readiness-summary-card {
+  min-height: 114px;
+  padding: 18px;
+}
+
+.koinonia-readiness-summary-card span,
+.koinonia-readiness-panel-heading .koinonia-eyebrow,
+.koinonia-readiness-item small {
+  color: #195c60;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-readiness-summary-card strong {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--ros-font-display);
+  font-size: clamp(34px, 4vw, 48px);
+  line-height: 1;
+}
+
+.koinonia-readiness-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.koinonia-readiness-panel {
+  padding: clamp(18px, 3vw, 24px);
+}
+
+.koinonia-readiness-panel-heading,
+.koinonia-readiness-item-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.koinonia-readiness-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.koinonia-readiness-item {
+  display: grid;
+  gap: 9px;
+  padding: 16px;
+}
+
+.koinonia-readiness-item.ready {
+  border-color: rgba(83, 112, 76, 0.28);
+}
+
+.koinonia-readiness-item.attention {
+  border-color: rgba(184, 138, 68, 0.34);
+}
+
+.koinonia-readiness-item.blocked {
+  border-color: rgba(178, 59, 59, 0.26);
+}
+
+.koinonia-readiness-item h2,
+.koinonia-readiness-next h3 {
+  margin: 0;
+  font-family: var(--ros-font-display);
+  font-size: 22px;
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+.koinonia-readiness-item p,
+.koinonia-readiness-item strong,
+.koinonia-readiness-next p {
+  margin: 0;
+  color: var(--ros-muted);
+  line-height: 1.5;
+}
+
+.koinonia-readiness-item strong {
+  color: var(--ros-text);
+}
+
+.koinonia-readiness-badge {
+  align-items: center;
+  border: 1px solid rgba(25, 92, 96, 0.14);
+  border-radius: 999px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.koinonia-readiness-badge.ready {
+  background: rgba(83, 112, 76, 0.11);
+  border-color: rgba(83, 112, 76, 0.26);
+  color: #3f6539;
+}
+
+.koinonia-readiness-badge.attention {
+  background: rgba(184, 138, 68, 0.12);
+  border-color: rgba(184, 138, 68, 0.32);
+  color: #8a6225;
+}
+
+.koinonia-readiness-badge.blocked {
+  background: rgba(178, 59, 59, 0.1);
+  border-color: rgba(178, 59, 59, 0.24);
+  color: #8e2d2d;
+}
+
+.koinonia-readiness-next {
+  display: grid;
+  gap: 18px;
+}
+
+.koinonia-readiness-next-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.koinonia-readiness-next article {
+  padding: 18px;
+}
+
 .koinonia-access-form {
   display: grid;
   gap: 12px;
@@ -4187,6 +4434,17 @@ h1 {
   .koinonia-billing-work-meta {
     justify-items: start;
     text-align: left;
+  }
+
+  .koinonia-readiness-summary-grid,
+  .koinonia-readiness-grid,
+  .koinonia-readiness-next-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .koinonia-readiness-panel-heading,
+  .koinonia-readiness-item-heading {
+    display: grid;
   }
 }
 

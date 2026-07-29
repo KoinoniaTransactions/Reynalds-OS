@@ -27,6 +27,10 @@ The Reynalds Brothers operations system should answer:
 
 Is this work item ready, moving, completed, documented, and billable?
 
+Because most work comes in through email and planning can last from one week to six months, the system must also answer:
+
+Has every important email been filed under the right Work Item, and has the job next action been updated?
+
 The first app slice lives at:
 
 `/reynalds-brothers`
@@ -43,9 +47,11 @@ The first API slice lives at:
 - Crew, equipment, vehicle, and material readiness
 - Media and documentation intake
 - Customer communication timeline
+- Email intake, classification, and filing
 - Billing readiness and closeout
 - Playbooks by service line
 - AI review for missing evidence and next actions
+- AI monitoring for stalled email threads and long planning cycles
 
 ## Boundary
 

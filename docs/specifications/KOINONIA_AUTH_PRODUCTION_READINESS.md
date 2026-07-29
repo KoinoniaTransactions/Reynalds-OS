@@ -33,6 +33,7 @@ The current web app includes:
   - `/employee/access`
   - `/employee/documents`
   - `/employee/billing`
+  - `/employee/readiness`
 - Async session lookup in `apps/web/lib/auth.ts`.
 - Clerk session lookup explicitly treats pending sessions as signed out.
 - Route-level permission guards in `apps/web/lib/portal-auth.ts`.
@@ -57,6 +58,7 @@ The current web app includes:
 - `/employee/access` can read portal users and portal invitation records for staff access readiness, with safe preview fallback when storage is unavailable.
 - `/employee/access` includes a protected invitation form for creating portal invitations through the existing API.
 - `/employee/access` includes protected action controls for revoking unaccepted invitations and deactivating active portal users.
+- `/employee/readiness` gives staff a live readiness view for login, database, portal workflow, document, oversight, social login, and AI gates.
 - Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
 - First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
@@ -150,6 +152,24 @@ The app hosts Clerk's `TaskSetupMFA` component at `/session-tasks/setup-mfa` and
 
 ---
 
+## 5A. Social Login Recommendation
+
+Social login is appropriate for the portal because many Realtor clients and staff already rely on Google or Microsoft identities.
+
+Production social login must be configured through Clerk, not custom password handling inside Reynalds OS. The first recommended provider set is:
+
+- Google for Gmail / Google Workspace users.
+- Microsoft for Outlook / Microsoft 365 users.
+
+Social login must stay invitation-gated:
+
+- A provider login cannot create broad portal access by itself.
+- The signed-in email must match an approved Koinonia invitation or active database user.
+- The database role remains the source of truth for permissions.
+- Staff social login still requires MFA before internal client, document, assignment, billing, or audit views are considered production-ready.
+
+---
+
 ## 6. Invitation Flow Requirement
 
 Before accepting real clients, build an owner/admin invitation flow that records:
@@ -202,6 +222,7 @@ Before the portal accepts real data:
 - Staff can create portal invitation records from `/employee/access`.
 - Staff can revoke unaccepted invitations and deactivate active portal users from `/employee/access`.
 - Staff can review recent portal access audit history from `/employee/access`.
+- Staff can review current production readiness gates from `/employee/readiness`.
 - Clients can create and review their own showing requests.
 - Employee users with assigned-work access can review the showing request queue.
 - Client dashboard current-work cards can read `RosObject` work records owned by the signed-in client.
@@ -230,6 +251,8 @@ Before the portal accepts real data:
 - The target environment has at least one active Owner portal user and no active staff users missing MFA requirement.
 - The target environment has `PORTAL_DOCUMENT_UPLOAD_DIR` configured before live document uploads are enabled.
 - The target environment has `PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND` configured to an absolute executable scanner path before live document uploads are enabled.
+- Social login is enabled through the managed auth provider and verified against invitation matching, database role source-of-truth checks, and staff MFA.
+- AI review remains read-only until checklist prompts, privacy boundaries, source citations, audit events, and staff approval gates are verified.
 
 Run this before accepting real portal data:
 

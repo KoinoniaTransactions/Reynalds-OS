@@ -26,6 +26,7 @@
 | Koinonia Employee Access Workspace | `/employee/access` | Auth-guarded portal user, invitation, MFA, client access readiness, and external access request workspace with safe preview fallback |
 | Koinonia Employee Document Workspace Preview | `/employee/documents` | Auth-guarded upload intake queue with live document metadata and sample fallback; drafting/send/archive still preview only |
 | Koinonia Employee Billing Workspace Preview | `/employee/billing` | Auth-guarded billing setup request queue with live metadata list and sample fallback; invoices/payment processing still preview only |
+| Koinonia Employee Readiness View | `/employee/readiness` | Auth-guarded live portal production readiness view for login, database, documents, social login, AI review, and launch gates |
 
 ## Primary APIs
 
@@ -41,6 +42,7 @@
 | `/api/analytics/dashboard` | Dashboard metrics |
 | `/api/reynalds-brothers/work-items` | Reynalds Brothers Work Item list and operational metrics scoped to the company workspace |
 | `/api/reynalds-brothers/work-items/:id` | Reynalds Brothers Work Item operational update |
+| `/api/reynalds-brothers/email-intake` | Reynalds Brothers email classification, Communication creation, Work Item filing, and new-job creation |
 | `/api/copilot` | Read-only Copilot |
 | `/api/notifications` | Notification list/create |
 | `/api/notifications/:id` | Notification update |
