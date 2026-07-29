@@ -40,6 +40,7 @@ The current web app includes:
 - Provider users resolve through the Koinonia database when available; database role and access status control portal permissions.
 - `/api/portal/invitations` for internal invitation record creation and review.
 - Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
+- First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
 - Permission tests for provider role mapping and typed denial behavior.
 
@@ -144,6 +145,7 @@ Invitations should assign `koinoniaRole=Client` and the correct workspace before
 - `sendProviderInvitation: true` creates the Koinonia record, then asks Clerk to send the provider invitation email.
 - Provider invitation metadata includes `koinoniaRole`, `koinoniaWorkspaceId`, optional client object ID, and service context.
 - If the provider send fails after the Koinonia record is created, the invitation is marked `provider_error` for staff review.
+- When an invited email signs in and no Koinonia user exists yet, the auth layer can accept the matching invitation, create the user, require staff MFA for non-client roles, and mark the invitation accepted.
 
 ---
 
@@ -164,6 +166,7 @@ Before the portal accepts real data:
 - Portal invitation records exist before client/staff access is granted.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
+- Invitation acceptance writes an audit event and creates the portal user from the approved invitation.
 - Portal API auth failures return clear JSON status responses, not generic crashes.
 - No brokerage passwords, MLS passwords, raw card numbers, or CVV fields are accepted.
 

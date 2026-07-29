@@ -1,5 +1,6 @@
 import {
   createAuthUser,
+  getPermissionsForRole,
   getMockUser,
   normalizeRoleName,
   requirePermission,
@@ -227,6 +228,12 @@ async function resolveClerkDatabaseUser(providerUser: AuthUser): Promise<AuthUse
   });
 
   if (!dbUser || dbUser.status !== "active" || dbUser.portalAccessStatus !== "active") {
+    const invitedUser = !dbUser ? await acceptPortalInvitationForProviderUser(providerUser) : null;
+
+    if (invitedUser) {
+      return invitedUser;
+    }
+
     return createAuthUser({
       id: providerUser.id,
       workspaceId: providerUser.workspaceId,
@@ -251,6 +258,100 @@ async function resolveClerkDatabaseUser(providerUser: AuthUser): Promise<AuthUse
     name: dbUser.name,
     email: dbUser.email,
     role: dbUser.role?.name ?? "Viewer"
+  });
+}
+
+async function acceptPortalInvitationForProviderUser(providerUser: AuthUser): Promise<AuthUser | null> {
+  const now = new Date();
+  const invitation = await prisma.portalInvitation.findFirst({
+    where: {
+      provider: "clerk",
+      email: providerUser.email,
+      revokedAt: null,
+      status: { in: ["pending", "provider_pending", "accepted"] },
+      OR: [{ expiresAt: null }, { expiresAt: { gt: now } }]
+    },
+    orderBy: { createdAt: "desc" }
+  });
+
+  if (!invitation) {
+    return null;
+  }
+
+  const roleName = normalizeRoleName(invitation.roleName, "Viewer");
+  const role = await ensureWorkspaceRole(invitation.workspaceId, roleName);
+
+  const dbUser = await prisma.user.create({
+    data: {
+      workspaceId: invitation.workspaceId,
+      name: firstString(invitation.name, providerUser.name, providerUser.email) ?? providerUser.email,
+      email: providerUser.email,
+      roleId: role.id,
+      status: "active",
+      authProvider: "clerk",
+      authProviderUserId: providerUser.id,
+      mfaRequired: roleName !== "Client",
+      portalAccessStatus: "active",
+      invitedAt: invitation.createdAt,
+      lastLoginAt: now
+    },
+    include: {
+      role: true
+    }
+  });
+
+  await prisma.portalInvitation.update({
+    where: { id: invitation.id },
+    data: {
+      status: "accepted",
+      acceptedAt: now
+    }
+  });
+
+  await prisma.auditEvent.create({
+    data: {
+      workspaceId: invitation.workspaceId,
+      actorId: dbUser.id,
+      actorEmail: dbUser.email,
+      action: "portal.invitation.accepted",
+      subjectType: "PortalInvitation",
+      subjectId: invitation.id,
+      summary: `Portal invitation accepted by ${dbUser.email}`,
+      metadata: {
+        roleName,
+        provider: "clerk",
+        authProviderUserId: providerUser.id
+      }
+    }
+  });
+
+  return createAuthUser({
+    id: dbUser.id,
+    workspaceId: dbUser.workspaceId,
+    name: dbUser.name,
+    email: dbUser.email,
+    role: dbUser.role?.name ?? roleName
+  });
+}
+
+async function ensureWorkspaceRole(workspaceId: string, roleName: RoleName) {
+  const existingRole = await prisma.role.findFirst({
+    where: {
+      workspaceId,
+      name: roleName
+    }
+  });
+
+  if (existingRole) {
+    return existingRole;
+  }
+
+  return prisma.role.create({
+    data: {
+      workspaceId,
+      name: roleName,
+      permissions: getPermissionsForRole(roleName)
+    }
   });
 }
 

@@ -1572,3 +1572,22 @@ The portal invitation API can now bridge an approved Koinonia invitation record 
 ### Current Status
 
 The provider handoff compiles and is covered at the payload/validation level. It still needs live Clerk keys and a running database before a real invitation email can be sent end to end.
+
+---
+
+## 2026-07-29 — Invitation Acceptance Bridge Added
+
+### Summary
+
+Managed-provider sign-in can now bridge a matching Koinonia invitation into an active portal user record on first login.
+
+### Implemented
+
+- When a Clerk user has no existing Koinonia user record, auth checks for a pending, provider-pending, or accepted invitation with the same email.
+- Matching invitations can create the Koinonia `User`, attach the approved workspace role, require MFA for staff roles, and mark the invitation accepted.
+- Missing workspace roles are created from the approved Koinonia role permission map.
+- Invitation acceptance writes an `AuditEvent`.
+
+### Current Status
+
+This bridge compiles, but it still needs a running database and live Clerk user acceptance test before production login is marked ready.
