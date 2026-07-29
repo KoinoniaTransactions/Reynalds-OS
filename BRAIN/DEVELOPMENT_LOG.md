@@ -1682,3 +1682,24 @@ Koinonia can now revoke unaccepted portal invitation records through a protected
 ### Current Status
 
 The route compiles and the status logic is covered. Live database verification still requires reachable Postgres.
+
+---
+
+## 2026-07-29 — Portal User Deactivation API Added
+
+### Summary
+
+Koinonia can now deactivate accepted portal users through a protected API route, giving the login system a revocation path after invitation acceptance.
+
+### Implemented
+
+- Added `/api/portal/users/:id/deactivate`.
+- Sets user `status` to inactive, `portalAccessStatus` to deactivated, and records `deactivatedAt`.
+- Blocks self-deactivation.
+- Returns already-inactive users idempotently.
+- Writes a `portal.user.deactivated` audit event.
+- Added unit coverage for deactivation guard behavior.
+
+### Current Status
+
+The route compiles and guard behavior is covered. Live database verification still requires reachable Postgres.
