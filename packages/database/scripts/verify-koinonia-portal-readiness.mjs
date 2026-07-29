@@ -14,6 +14,15 @@ const requiredRoles = [
   "Client"
 ];
 const approvedSocialLoginProviders = ["google", "microsoft"];
+const portalLaunchProofObjectType = "PortalLaunchProof";
+const requiredLaunchProofItems = [
+  { id: "transaction-support-qa", title: "Transaction Support workflow" },
+  { id: "contract-document-support-qa", title: "Contract and document support workflow" },
+  { id: "showing-request-qa", title: "Showing request flow" },
+  { id: "monthly-operations-qa", title: "Monthly Operations Partnership workflow" },
+  { id: "document-sensitive-note-filter", title: "Document sensitive-note filter" },
+  { id: "end-to-end-client-dry-run", title: "End-to-end client dry run" }
+];
 
 const args = new Set(process.argv.slice(2));
 const skipDatabase = args.has("--skip-database");
@@ -317,6 +326,31 @@ async function runDatabaseChecks() {
         ? `${acceptedStaffInvitations.length} accepted staff invite(s)`
         : "no accepted staff invite found"
     );
+
+    const launchProofObjects = await prisma.rosObject.findMany({
+      where: {
+        archivedAt: null,
+        objectType: portalLaunchProofObjectType,
+        workspaceId
+      },
+      select: {
+        data: true
+      }
+    });
+    const completedLaunchProofItemIds = new Set(
+      launchProofObjects.map((proof) => getCompletedLaunchProofItemId(proof.data)).filter(Boolean)
+    );
+    const missingLaunchProofItems = requiredLaunchProofItems.filter(
+      (item) => !completedLaunchProofItemIds.has(item.id)
+    );
+
+    recordCheck(
+      "required launch proof records are complete",
+      missingLaunchProofItems.length === 0,
+      missingLaunchProofItems.length
+        ? `missing proof for ${missingLaunchProofItems.map((item) => item.title).join(", ")}`
+        : `${requiredLaunchProofItems.length} required proof record(s) complete`
+    );
   } catch (error) {
     recordCheck(
       "database readiness checks",
@@ -326,6 +360,20 @@ async function runDatabaseChecks() {
   } finally {
     await prisma.$disconnect();
   }
+}
+
+function getCompletedLaunchProofItemId(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  if (value.status !== "Completed" || typeof value.checklistItemId !== "string") {
+    return null;
+  }
+
+  const checklistItemId = value.checklistItemId.trim();
+
+  return checklistItemId.length > 0 ? checklistItemId : null;
 }
 
 function loadEnvFiles(paths) {

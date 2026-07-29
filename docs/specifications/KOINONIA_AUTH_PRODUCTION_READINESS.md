@@ -85,7 +85,7 @@ The current web app includes:
 - Hosted sign-in links and return destinations are limited to same-site portal paths or public HTTPS managed-auth URLs.
 - Permission tests for provider role mapping and typed denial behavior.
 - Portal API permission denials return a clean 403 response without exposing internal permission names.
-- `pnpm verify:portal` checks production auth env, hosted login URL safety, upload storage env, mock-auth safety, database connectivity, workspace presence, seeded portal roles, and stored role permission lists.
+- `pnpm verify:portal` checks production auth env, hosted login URL safety, upload storage env, mock-auth safety, database connectivity, workspace presence, seeded portal roles, stored role permission lists, and required launch proof records.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 - The verifier and `/employee/readiness` require at least one accepted client invitation and one accepted staff invitation before login can be treated as production-ready.
 
@@ -295,6 +295,7 @@ Before the portal accepts real data:
 - Staff can use `/employee/launch` to distinguish automated readiness status from manual proof items.
 - Staff can record launch proof for manual checklist items from `/employee/launch`; proof records must remain metadata-only and safe for audit review.
 - Staff can review required launch blockers and phase-level remaining counts from `/employee/launch` while test clients and staff work through dry runs.
+- The full `pnpm verify:portal` database-backed run requires completed launch proof for service workflow QA, document safety QA, and the end-to-end client dry run before production readiness can pass.
 - Authorized staff can assign or reassign live portal work items to primary and backup staff from `/employee/dashboard`.
 - Work assignment updates write timeline and audit history, and assignment notes must remain free of credentials, card data, bank details, API keys, and private login details.
 - Clients can open scoped work detail pages for their own work items from `/client/dashboard`.
