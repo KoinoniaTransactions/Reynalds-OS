@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
+import type { Document as PortalDocumentRecord } from "@reynalds-os/database";
 import { absoluteUrl } from "../../../config/seo.config";
+import { PortalDocumentUploadForm } from "../../../components/client/PortalDocumentUploadForm";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
+import { prisma } from "../../../lib/db";
+import {
+  formatDocumentFileSize,
+  getDocumentSubmittedLabel,
+  getHumanDocumentStatus
+} from "../../../lib/portal-documents";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +73,41 @@ const documentRequests = [
   }
 ] as const;
 
+type ClientDocumentItem = {
+  detail: string;
+  fileName: string;
+  id: string;
+  status: string;
+  submitted: string;
+  title: string;
+};
+
+type ClientDocumentView = {
+  documents: ClientDocumentItem[];
+  isLiveData: boolean;
+  notice?: string;
+  storageReady: boolean;
+};
+
+const sampleUploadedDocuments: ClientDocumentItem[] = [
+  {
+    id: "sample-seller-disclosure",
+    title: "Seller Property Disclosure",
+    status: "Uploaded",
+    detail: "Sample upload waiting for Koinonia review.",
+    fileName: "seller-disclosure.pdf",
+    submitted: "Today"
+  },
+  {
+    id: "sample-lender-contact",
+    title: "Lender Contact Sheet",
+    status: "In Review",
+    detail: "Sample document tied to buyer offer preparation.",
+    fileName: "lender-contact-sheet.pdf",
+    submitted: "Yesterday"
+  }
+];
+
 const approvalQueue = [
   {
     title: "Buyer Offer Package v2",
@@ -114,7 +157,8 @@ const clientTools = [
 ] as const;
 
 export default async function ClientDocumentCenterPreviewPage() {
-  await requirePortalPermission("client-portal:documents:view", "/client/documents");
+  const actor = await requirePortalPermission("client-portal:documents:view", "/client/documents");
+  const documentView = await getClientDocumentView(actor.workspaceId, actor.id);
 
   return (
     <main className="koinonia-site koinonia-document-center koinonia-client-documents">
@@ -130,9 +174,10 @@ export default async function ClientDocumentCenterPreviewPage() {
             </h1>
 
             <p className="koinonia-lead">
-              This preview uses sample data only. Real document access must
-              wait for production authentication, secure storage, upload
-              controls, and audit logging.
+              Document intake can use protected upload storage when the
+              production database and storage location are configured. Draft
+              editing, send packages, and final archive delivery still need
+              their own production passes.
             </p>
           </div>
 
@@ -199,9 +244,47 @@ export default async function ClientDocumentCenterPreviewPage() {
                   ))}
                 </div>
               </section>
+
+              <section className="koinonia-document-panel" aria-labelledby="recent-uploads-title">
+                <div className="koinonia-document-panel-heading">
+                  <p className="koinonia-eyebrow">Uploads</p>
+                  <h2 id="recent-uploads-title">Recent Uploads</h2>
+                </div>
+
+                <div className="koinonia-document-card-list">
+                  {documentView.notice ? (
+                    <p className="koinonia-document-security-note">{documentView.notice}</p>
+                  ) : null}
+
+                  {documentView.documents.length ? (
+                    documentView.documents.map((item) => (
+                      <article className="koinonia-document-work-item" key={item.id}>
+                        <div>
+                          <span>{item.fileName}</span>
+                          <h3>{item.title}</h3>
+                          <p>{item.detail}</p>
+                        </div>
+
+                        <div className="koinonia-document-work-meta">
+                          <strong>{item.status}</strong>
+                          <span>{item.submitted}</span>
+                        </div>
+                      </article>
+                    ))
+                  ) : (
+                    <p className="koinonia-document-security-note">
+                      No documents have been uploaded through the portal yet.
+                    </p>
+                  )}
+                </div>
+              </section>
             </div>
 
             <aside className="koinonia-document-side-panel" aria-label="Document actions">
+              <PortalDocumentUploadForm
+                storageReady={documentView.isLiveData && documentView.storageReady}
+              />
+
               <section className="koinonia-document-panel">
                 <p className="koinonia-eyebrow">Client Tools</p>
                 <ul className="koinonia-document-tool-list">
@@ -239,5 +322,65 @@ export default async function ClientDocumentCenterPreviewPage() {
 
       <Footer />
     </main>
+  );
+}
+
+async function getClientDocumentView(
+  workspaceId: string,
+  ownerId: string
+): Promise<ClientDocumentView> {
+  try {
+    const documents = await prisma.document.findMany({
+      where: {
+        workspaceId,
+        ownerId,
+        archivedAt: null
+      },
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      take: 20
+    });
+
+    return {
+      documents: documents.map(mapDocumentRecord),
+      isLiveData: true,
+      storageReady: isDocumentStorageConfigured()
+    };
+  } catch (error) {
+    if (isDatabaseUnavailableError(error)) {
+      return {
+        documents: sampleUploadedDocuments,
+        isLiveData: false,
+        notice: "Document storage is not reachable in this preview, so sample uploads are shown.",
+        storageReady: false
+      };
+    }
+
+    throw error;
+  }
+}
+
+function mapDocumentRecord(document: PortalDocumentRecord): ClientDocumentItem {
+  const fileSize = formatDocumentFileSize(document.fileSizeBytes);
+
+  return {
+    id: document.id,
+    title: document.documentType,
+    status: getHumanDocumentStatus(document.status),
+    detail: document.requestedAction ?? "Koinonia can review this uploaded document.",
+    fileName: `${document.fileName} - ${fileSize}`,
+    submitted: getDocumentSubmittedLabel(document.createdAt)
+  };
+}
+
+function isDocumentStorageConfigured(): boolean {
+  return Boolean(process.env.PORTAL_DOCUMENT_UPLOAD_DIR?.trim());
+}
+
+function isDatabaseUnavailableError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "PrismaClientInitializationError" ||
+      error.message.includes("Can't reach database server") ||
+      error.message.includes("ECONNREFUSED"))
   );
 }

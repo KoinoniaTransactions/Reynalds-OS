@@ -43,6 +43,12 @@ recordCheck(
   "mock auth must stay disabled for production portal data"
 );
 
+if (skipDatabase) {
+  recordCheck("document upload storage check skipped", true, "remove --skip-database for production verification");
+} else {
+  recordCheck("PORTAL_DOCUMENT_UPLOAD_DIR is set", isPresent(process.env.PORTAL_DOCUMENT_UPLOAD_DIR));
+}
+
 if (!skipDatabase && checks.every((check) => check.ok)) {
   await runDatabaseChecks();
 } else if (skipDatabase) {

@@ -1899,3 +1899,24 @@ Koinonia now has a protected showing request workflow for client scheduling and 
 ### Current Status
 
 The showing request workflow compiles and is covered by helper tests. Live mutation verification still requires reachable database storage and real provider-backed users.
+
+---
+
+## 2026-07-29 — Portal Document Upload Intake Added
+
+### Summary
+
+Koinonia now has a guarded document upload intake path for client-submitted transaction documents and staff review.
+
+### Implemented
+
+- Extended document records with owner, uploader, storage, file metadata, requested action, notes, access level, update, and archive fields.
+- Added `/api/portal/documents`.
+- Added upload validation for allowed document/image types, 25 MB size limit, generated storage names, and credential-note rejection.
+- Added a client document upload form to `/client/documents`.
+- Connected client recent uploads and employee upload intake queue to live document records with sample fallback.
+- Updated the production readiness verifier to require `PORTAL_DOCUMENT_UPLOAD_DIR` for live document uploads.
+
+### Current Status
+
+The first document intake slice is source-backed and guarded. Live upload verification still requires reachable database storage, a configured upload directory, and real provider-backed users. Secure download handlers, malware scanning, version replacement, draft approval, send-package routing, and final archive delivery remain future production slices.

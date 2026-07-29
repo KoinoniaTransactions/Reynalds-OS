@@ -18,12 +18,12 @@
 | Koinonia Secure Login Entry | `/sign-in` | Managed-auth entry scaffold |
 | Koinonia Staff MFA Setup Task | `/session-tasks/setup-mfa` | Clerk setup-mfa task route |
 | Koinonia Client Dashboard Preview | `/client/dashboard` | Auth-guarded preview with live showing request path and sample fallback |
-| Koinonia Client Document Center Preview | `/client/documents` | Auth-guarded sample-data document review and approval preview only |
+| Koinonia Client Document Center Preview | `/client/documents` | Auth-guarded document intake upload form with storage/database guard, live submitted-document list, and sample fallback |
 | Koinonia Client Billing Center Preview | `/client/billing` | Auth-guarded sample-data billing setup, invoices, and pay-at-close preview only |
 | Koinonia Employee Portal Entry | `/employee` | Internal entry shell, no real client data |
 | Koinonia Employee Dashboard Preview | `/employee/dashboard` | Auth-guarded staff assignment preview with live showing request queue and sample fallback |
 | Koinonia Employee Access Workspace | `/employee/access` | Auth-guarded portal user, invitation, MFA, and client access readiness workspace with safe preview fallback |
-| Koinonia Employee Document Workspace Preview | `/employee/documents` | Auth-guarded sample-data drafting, approval, send, and archive preview only |
+| Koinonia Employee Document Workspace Preview | `/employee/documents` | Auth-guarded upload intake queue with live document metadata and sample fallback; drafting/send/archive still preview only |
 | Koinonia Employee Billing Workspace Preview | `/employee/billing` | Auth-guarded sample-data billing profiles, payment setup, and pay-at-close preview only |
 
 ## Primary APIs
@@ -51,3 +51,4 @@
 | `/api/portal/users/:id/deactivate` | Portal user deactivation and audit |
 | `/api/portal/audit` | Portal access audit history |
 | `/api/portal/showing-requests` | Portal showing request list/create |
+| `/api/portal/documents` | Portal document upload intake list/create |

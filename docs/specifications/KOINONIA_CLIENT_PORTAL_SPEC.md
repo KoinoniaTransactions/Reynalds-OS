@@ -160,6 +160,7 @@ Expected sections:
 - Drafts ready for review
 - Approval requests
 - Sent/signature status
+- Recent uploads
 - Completed document archive
 
 Rules:
@@ -167,6 +168,10 @@ Rules:
 - Client users should see only documents tied to their own account, work item, or transaction file.
 - Draft approvals must record who approved, when approval occurred, and what version was approved.
 - Clients should not see internal staff notes, template administration, unrelated client files, or internal send-package controls.
+- The first document intake slice stores upload metadata and file references through `/api/portal/documents` when both the production database and `PORTAL_DOCUMENT_UPLOAD_DIR` are configured.
+- Client users can create and review their own submitted document records.
+- Employee users with document-workspace access can review the workspace upload intake queue.
+- Upload notes must not include passwords, lockbox codes, gate codes, MLS login details, e-signature login details, or other access secrets.
 
 ### Billing Center
 
@@ -303,7 +308,7 @@ Clients should be able to upload:
 - DOCX
 - JPG
 - PNG
-- CSV
+- XLS
 - XLSX
 
 Initial upload rules:
@@ -311,7 +316,7 @@ Initial upload rules:
 - Authenticated users only.
 - Workspace-scoped access only.
 - Work-item-scoped file ownership.
-- File size limit.
+- File size limit: 25 MB for the first production slice.
 - Allowlist file types.
 - Generated storage filenames.
 - Original filename stored only as metadata.
@@ -321,6 +326,10 @@ Initial upload rules:
 - Virus/malware scanning added before production use with real client documents.
 
 Do not allow executable, script, archive, or unknown file types in the MVP.
+
+Current implementation note:
+
+`/api/portal/documents` accepts PDF, Word, Excel, JPG, and PNG uploads only when `PORTAL_DOCUMENT_UPLOAD_DIR` is configured. It writes generated storage keys, creates `Document` records with owner/upload metadata, records portal audit events, and keeps uploads out of public web paths. It does not yet provide secure download handlers, malware scanning, replacement/version controls, approval records, or e-signature delivery.
 
 ---
 
@@ -422,11 +431,11 @@ Build the portal in safe slices:
 5. Client dashboard shell using mocked/sample data only. — Preview route added at `/client/dashboard`
 6. Work item detail shell using mocked/sample data only.
 7. Showing request section with protected create/list API, client request form, employee queue visibility, and safe preview fallback.
-8. Client document center using mocked/sample data only.
+8. Client document center with protected upload intake API, client upload form, employee intake queue visibility, and safe preview fallback.
 9. Client billing center using mocked/sample data only.
 10. Database schema additions. — Portal identity fields, `PortalInvitation`, and `AuditEvent` scaffolded in Prisma.
 11. Authenticated read-only dashboard connected to real work items. — Preview routes now require portal permissions but still use sample data only.
-12. Secure file upload and document request flow.
+12. Secure file upload and document request flow. — First guarded upload-intake slice added; secure download/version/replacement/scanning still required.
 13. Access request tracking without credential storage.
 14. Portal messaging or notes.
 15. Audit logs. — `AuditEvent` model scaffolded; invitation creation writes audit event.
@@ -434,7 +443,7 @@ Build the portal in safe slices:
 
 Do not begin with file upload or credential fields.
 
-The `/client/dashboard` preview is not a production dashboard. It uses sample data only and must not receive real client documents, passwords, or confidential transaction details.
+The `/client/dashboard` preview is not a complete production dashboard. It has protected showing request support, while documents now have a guarded upload-intake path. Do not accept full real client document exchange until storage, download, scanning, approval, and archive controls are configured and verified.
 
 ---
 

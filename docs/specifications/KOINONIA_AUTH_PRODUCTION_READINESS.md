@@ -49,6 +49,7 @@ The current web app includes:
 - `/api/portal/users/:id/deactivate` for deactivating accepted portal users with audit history.
 - `/api/portal/audit` for protected portal access audit history review.
 - `/api/portal/showing-requests` for protected showing request create/list workflows.
+- `/api/portal/documents` for protected document upload intake and document queue listing.
 - `/employee/access` can read portal users and portal invitation records for staff access readiness, with safe preview fallback when storage is unavailable.
 - `/employee/access` includes a protected invitation form for creating portal invitations through the existing API.
 - `/employee/access` includes protected action controls for revoking unaccepted invitations and deactivating active portal users.
@@ -56,10 +57,10 @@ The current web app includes:
 - First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
 - Permission tests for provider role mapping and typed denial behavior.
-- `pnpm verify:portal` checks production auth env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
+- `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 
-Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, and showing requests now have a protected object-backed workflow. Document, billing, broader dashboard, and client workspaces still need real workflow storage before production use.
+Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, showing requests now have a protected object-backed workflow, and documents now have a guarded upload-intake workflow. Billing, broader dashboard work tracking, document download/version/replacement/scanning, and client workspaces still need real workflow storage before production use.
 
 ---
 
@@ -93,6 +94,7 @@ NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_AUTH_SIGN_IN_URL=
 NEXT_PUBLIC_AUTH_SIGN_OUT_URL=
 ROS_DEFAULT_WORKSPACE_ID=
+PORTAL_DOCUMENT_UPLOAD_DIR=
 ROS_ALLOW_MOCK_AUTH=false
 ```
 
@@ -197,6 +199,10 @@ Before the portal accepts real data:
 - Staff can review recent portal access audit history from `/employee/access`.
 - Clients can create and review their own showing requests.
 - Employee users with assigned-work access can review the showing request queue.
+- Clients can upload allowed document files only after upload storage is configured.
+- Client users can review only their own submitted document records.
+- Employee users with document-workspace access can review the document upload intake queue.
+- Document upload notes reject passwords and access-code language.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
 - Invitation acceptance writes an audit event and creates the portal user from the approved invitation.
@@ -206,6 +212,7 @@ Before the portal accepts real data:
 - No brokerage passwords, MLS passwords, raw card numbers, or CVV fields are accepted.
 - `pnpm verify:portal` passes against the target production environment.
 - The target environment has at least one active Owner portal user and no active staff users missing MFA requirement.
+- The target environment has `PORTAL_DOCUMENT_UPLOAD_DIR` configured before live document uploads are enabled.
 
 Run this before accepting real portal data:
 
@@ -227,7 +234,7 @@ CI runs the source-only verifier with placeholder Clerk values. Production accep
 
 The managed provider package is installed and wired. Production login is still blocked by deployment and account configuration, not by source scaffolding.
 
-Do not mark login production-ready until Clerk production variables are configured, staff MFA is enabled, client/staff invitation flows exist, and the verification checklist passes with real provider users.
+Do not mark login production-ready until Clerk production variables are configured, staff MFA is enabled, upload storage is configured, client/staff invitation flows exist, and the verification checklist passes with real provider users.
 
 ---
 

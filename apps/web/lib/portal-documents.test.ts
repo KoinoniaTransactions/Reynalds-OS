@@ -1,0 +1,85 @@
+import { describe, expect, it } from "vitest";
+import {
+  buildPortalDocumentDisplayName,
+  formatDocumentFileSize,
+  getHumanDocumentStatus,
+  PortalDocumentValidationError,
+  sanitizeDocumentFileName,
+  validatePortalDocumentSubmission
+} from "./portal-documents";
+
+describe("portal document helpers", () => {
+  it("validates a client document upload submission", () => {
+    const submission = validatePortalDocumentSubmission({
+      documentType: "Seller Property Disclosure",
+      file: {
+        name: "seller disclosure.pdf",
+        size: 512_000,
+        type: "application/pdf"
+      },
+      requestedAction: "Review for transaction file",
+      transactionName: "Smith Contract-to-Close"
+    });
+
+    expect(submission).toMatchObject({
+      documentType: "Seller Property Disclosure",
+      requestedAction: "Review for transaction file",
+      transactionName: "Smith Contract-to-Close",
+      file: {
+        cleanName: "seller-disclosure.pdf",
+        extension: "pdf",
+        mimeType: "application/pdf"
+      }
+    });
+    expect(buildPortalDocumentDisplayName(submission)).toBe(
+      "Smith Contract-to-Close - Seller Property Disclosure"
+    );
+  });
+
+  it("rejects unsafe file types and oversize uploads", () => {
+    expect(() =>
+      validatePortalDocumentSubmission({
+        documentType: "Source File",
+        file: {
+          name: "malware.exe",
+          size: 100,
+          type: "application/x-msdownload"
+        }
+      })
+    ).toThrow(PortalDocumentValidationError);
+
+    expect(() =>
+      validatePortalDocumentSubmission({
+        documentType: "Too Large",
+        file: {
+          name: "large.pdf",
+          size: 26 * 1024 * 1024,
+          type: "application/pdf"
+        }
+      })
+    ).toThrow("25 MB or smaller");
+  });
+
+  it("blocks credentials in notes", () => {
+    expect(() =>
+      validatePortalDocumentSubmission({
+        documentType: "Access Notes",
+        file: {
+          name: "notes.pdf",
+          size: 100,
+          type: "application/pdf"
+        },
+        notes: "The password is available here."
+      })
+    ).toThrow("Do not include passwords");
+  });
+
+  it("formats display helpers", () => {
+    expect(sanitizeDocumentFileName(" Seller Disclosure Final!!.pdf ")).toBe(
+      "Seller-Disclosure-Final.pdf"
+    );
+    expect(formatDocumentFileSize(1024)).toBe("1 KB");
+    expect(formatDocumentFileSize(2.5 * 1024 * 1024)).toBe("2.5 MB");
+    expect(getHumanDocumentStatus("Ready for Client Review")).toBe("Ready for Review");
+  });
+});

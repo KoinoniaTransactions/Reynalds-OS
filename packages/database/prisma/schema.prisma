@@ -174,11 +174,26 @@ model Document {
   id              String   @id @default(cuid())
   workspaceId     String
   relatedObjectId String?
+  ownerId          String?
+  uploadedByUserId String?
   fileName        String
   fileUrl         String
+  storageKey      String?
+  fileSizeBytes   Int?
+  mimeType        String?
   documentType    String
   status          String
+  requestedAction String?
+  notes           String?
+  accessLevel     String   @default("client_and_staff")
   createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  archivedAt      DateTime?
+
+  @@index([workspaceId, status])
+  @@index([workspaceId, ownerId])
+  @@index([workspaceId, documentType])
+  @@index([relatedObjectId])
 }
 
 model Invoice {

@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
+import type { AuthUser } from "@reynalds-os/auth";
+import type { Document as PortalDocumentRecord } from "@reynalds-os/database";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
+import { prisma } from "../../../lib/db";
+import {
+  formatDocumentFileSize,
+  getDocumentSubmittedLabel,
+  getHumanDocumentStatus
+} from "../../../lib/portal-documents";
 
 export const dynamic = "force-dynamic";
 
@@ -72,6 +80,43 @@ const draftQueue = [
   }
 ] as const;
 
+type EmployeeDocumentItem = {
+  detail: string;
+  fileInfo: string;
+  id: string;
+  requestedBy: string;
+  status: string;
+  submitted: string;
+  title: string;
+};
+
+type EmployeeDocumentView = {
+  documents: EmployeeDocumentItem[];
+  isLiveData: boolean;
+  notice?: string;
+};
+
+const sampleUploadIntake: EmployeeDocumentItem[] = [
+  {
+    id: "sample-intake-disclosure",
+    title: "Seller Property Disclosure",
+    requestedBy: "Portal upload",
+    status: "Uploaded",
+    detail: "Sample client upload waiting for document review.",
+    fileInfo: "seller-disclosure.pdf - 500 KB",
+    submitted: "Today"
+  },
+  {
+    id: "sample-intake-inspection",
+    title: "Inspection Instructions",
+    requestedBy: "Portal upload",
+    status: "In Review",
+    detail: "Sample upload tied to terms review.",
+    fileInfo: "inspection-instructions.pdf - 220 KB",
+    submitted: "Yesterday"
+  }
+];
+
 const toolSuite = [
   {
     title: "Template Library",
@@ -140,7 +185,8 @@ const workflowSteps = [
 ] as const;
 
 export default async function EmployeeDocumentWorkspacePreviewPage() {
-  await requirePortalPermission("document-workspace:view", "/employee/documents");
+  const actor = await requirePortalPermission("document-workspace:view", "/employee/documents");
+  const documentView = await getEmployeeDocumentView(actor);
 
   return (
     <main className="koinonia-site koinonia-document-center koinonia-employee-documents">
@@ -156,9 +202,10 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
             </h1>
 
             <p className="koinonia-lead">
-              This preview uses sample data only. Real document editing and
-              sending must wait for production authentication, storage,
-              permissions, audit logging, and approved delivery integrations.
+              Upload intake can use protected storage once the production
+              database and upload location are configured. Editing, signature
+              routing, send packages, and archive delivery still need approved
+              production integrations.
             </p>
           </div>
 
@@ -199,6 +246,41 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
                       </div>
                     </article>
                   ))}
+                </div>
+              </section>
+
+              <section className="koinonia-document-panel employee" aria-labelledby="upload-intake-title">
+                <div className="koinonia-document-panel-heading">
+                  <p className="koinonia-eyebrow">Intake</p>
+                  <h2 id="upload-intake-title">Upload Intake Queue</h2>
+                </div>
+
+                <div className="koinonia-document-card-list">
+                  {documentView.notice ? (
+                    <p className="koinonia-document-security-note employee">{documentView.notice}</p>
+                  ) : null}
+
+                  {documentView.documents.length ? (
+                    documentView.documents.map((item) => (
+                      <article className="koinonia-document-work-item employee" key={item.id}>
+                        <div>
+                          <span>{item.requestedBy}</span>
+                          <h3>{item.title}</h3>
+                          <p>{item.detail}</p>
+                          <p>{item.fileInfo}</p>
+                        </div>
+
+                        <div className="koinonia-document-work-meta employee">
+                          <strong>{item.status}</strong>
+                          <span>{item.submitted}</span>
+                        </div>
+                      </article>
+                    ))
+                  ) : (
+                    <p className="koinonia-document-security-note employee">
+                      No client documents have been uploaded through the portal yet.
+                    </p>
+                  )}
                 </div>
               </section>
 
@@ -277,5 +359,54 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
 
       <Footer />
     </main>
+  );
+}
+
+async function getEmployeeDocumentView(actor: AuthUser): Promise<EmployeeDocumentView> {
+  try {
+    const documents = await prisma.document.findMany({
+      where: {
+        workspaceId: actor.workspaceId,
+        archivedAt: null
+      },
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      take: 25
+    });
+
+    return {
+      documents: documents.map(mapDocumentRecord),
+      isLiveData: true
+    };
+  } catch (error) {
+    if (isDatabaseUnavailableError(error)) {
+      return {
+        documents: sampleUploadIntake,
+        isLiveData: false,
+        notice: "Document storage is not reachable in this preview, so sample uploads are shown."
+      };
+    }
+
+    throw error;
+  }
+}
+
+function mapDocumentRecord(document: PortalDocumentRecord): EmployeeDocumentItem {
+  return {
+    id: document.id,
+    title: document.documentType,
+    requestedBy: document.uploadedByUserId ? "Portal user upload" : "Portal upload",
+    status: getHumanDocumentStatus(document.status),
+    detail: document.requestedAction ?? "Review uploaded document for the client file.",
+    fileInfo: `${document.fileName} - ${formatDocumentFileSize(document.fileSizeBytes)}`,
+    submitted: getDocumentSubmittedLabel(document.createdAt)
+  };
+}
+
+function isDatabaseUnavailableError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "PrismaClientInitializationError" ||
+      error.message.includes("Can't reach database server") ||
+      error.message.includes("ECONNREFUSED"))
   );
 }

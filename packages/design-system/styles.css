@@ -3230,6 +3230,86 @@ h1 {
   padding: clamp(20px, 3vw, 30px);
 }
 
+.koinonia-document-upload-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.koinonia-document-upload-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--ros-text);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.koinonia-document-upload-form input,
+.koinonia-document-upload-form select,
+.koinonia-document-upload-form textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(89, 105, 118, 0.2);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ros-text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+
+.koinonia-document-upload-form input,
+.koinonia-document-upload-form select {
+  min-height: 44px;
+  padding: 10px 12px;
+}
+
+.koinonia-document-upload-form textarea {
+  resize: vertical;
+  padding: 12px;
+}
+
+.koinonia-document-upload-form input:disabled,
+.koinonia-document-upload-form select:disabled,
+.koinonia-document-upload-form textarea:disabled {
+  color: rgba(36, 36, 36, 0.58);
+  background: rgba(244, 244, 242, 0.84);
+}
+
+.koinonia-document-file-input {
+  padding: 9px 10px;
+}
+
+.koinonia-document-upload-form .koinonia-button {
+  width: 100%;
+}
+
+.koinonia-document-security-note,
+.koinonia-document-form-status {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid rgba(184, 138, 68, 0.22);
+  background: rgba(184, 138, 68, 0.1);
+  color: var(--ros-muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.koinonia-document-security-note.employee,
+.koinonia-document-form-status.success {
+  border-color: rgba(25, 92, 96, 0.2);
+  background: rgba(25, 92, 96, 0.09);
+}
+
+.koinonia-document-form-status.error {
+  border-color: rgba(151, 74, 54, 0.28);
+  background: rgba(151, 74, 54, 0.11);
+}
+
 .koinonia-document-panel-heading {
   display: flex;
   align-items: flex-end;
