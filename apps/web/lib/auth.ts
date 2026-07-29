@@ -8,6 +8,7 @@ import {
   type Permission,
   type RoleName
 } from "@reynalds-os/auth";
+import type { Prisma } from "@reynalds-os/database";
 import { prisma } from "./db";
 
 export type AuthProvider = "mock" | "clerk";
@@ -222,17 +223,7 @@ function getRequiredClerkEmail(clerkUser: ClerkUser | null): string {
 
 async function resolveClerkDatabaseUser(providerUser: AuthUser): Promise<AuthUser> {
   const dbUser = await prisma.user.findFirst({
-    where: {
-      OR: [
-        {
-          authProvider: "clerk",
-          authProviderUserId: providerUser.id
-        },
-        {
-          email: providerUser.email
-        }
-      ]
-    },
+    where: getClerkDatabaseUserWhere(providerUser),
     include: {
       role: true
     }
@@ -275,13 +266,7 @@ async function resolveClerkDatabaseUser(providerUser: AuthUser): Promise<AuthUse
 async function acceptPortalInvitationForProviderUser(providerUser: AuthUser): Promise<AuthUser | null> {
   const now = new Date();
   const invitation = await prisma.portalInvitation.findFirst({
-    where: {
-      provider: "clerk",
-      email: providerUser.email,
-      revokedAt: null,
-      status: { in: ["pending", "provider_pending"] },
-      OR: [{ expiresAt: null }, { expiresAt: { gt: now } }]
-    },
+    where: getPortalInvitationAcceptanceWhere(providerUser, now),
     orderBy: { createdAt: "desc" }
   });
 
@@ -343,6 +328,35 @@ async function acceptPortalInvitationForProviderUser(providerUser: AuthUser): Pr
     email: dbUser.email,
     role: dbUser.role?.name ?? roleName
   });
+}
+
+export function getClerkDatabaseUserWhere(providerUser: AuthUser): Prisma.UserWhereInput {
+  return {
+    OR: [
+      {
+        authProvider: "clerk",
+        authProviderUserId: providerUser.id
+      },
+      {
+        workspaceId: providerUser.workspaceId,
+        email: providerUser.email
+      }
+    ]
+  };
+}
+
+export function getPortalInvitationAcceptanceWhere(
+  providerUser: AuthUser,
+  now = new Date()
+): Prisma.PortalInvitationWhereInput {
+  return {
+    provider: "clerk",
+    workspaceId: providerUser.workspaceId,
+    email: providerUser.email,
+    revokedAt: null,
+    status: { in: ["pending", "provider_pending"] },
+    OR: [{ expiresAt: null }, { expiresAt: { gt: now } }]
+  };
 }
 
 async function ensureWorkspaceRole(workspaceId: string, roleName: RoleName) {

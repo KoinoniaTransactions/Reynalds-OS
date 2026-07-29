@@ -78,7 +78,8 @@ The current web app includes:
 - `/employee/review` gives staff a protected rules-based review queue for missing assignments, document gaps, billing setup gaps, access needs, showing authorization, and stale work.
 - Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
 - Provider invitation redirects are limited to same-site portal paths, `NEXT_PUBLIC_SITE_URL`, or explicit public-HTTPS origins in `KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS`.
-- First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
+- First provider login can accept a matching Koinonia invitation for the same workspace, create the portal user, attach the approved role, and audit acceptance.
+- Provider email fallback matching is scoped to the provider workspace before attaching a login to an existing Koinonia user.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
 - Permission tests for provider role mapping and typed denial behavior.
 - `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, seeded portal roles, and stored role permission lists.
@@ -250,7 +251,7 @@ Invitations should assign `koinoniaRole=Client` and the correct workspace before
 - Provider invitation metadata includes `koinoniaRole`, `koinoniaWorkspaceId`, optional client object ID, and service context.
 - If the provider send fails after the Koinonia record is created, the invitation is marked `provider_error` for staff review.
 - Provider invite redirects should use same-site portal paths by default. Absolute redirect URLs must match the configured production site URL or the explicit auth redirect allowlist.
-- When an invited email signs in and no Koinonia user exists yet, the auth layer can accept the matching invitation, create the user, require staff MFA for non-client roles, and mark the invitation accepted.
+- When an invited email signs in and no Koinonia user exists yet, the auth layer can accept the matching same-workspace invitation, create the user, require staff MFA for non-client roles, and mark the invitation accepted.
 - Already-accepted invitations do not create new users; they must match an existing active Koinonia user record.
 - Pending, provider-pending, and provider-error invitations can be revoked before acceptance.
 - Accepted portal users can be deactivated, but users cannot deactivate their own access.
@@ -320,7 +321,7 @@ Before the portal accepts real data:
 - Payment readiness requires an approved provider name, a public HTTPS processor-hosted setup URL, and a webhook secret before payment status should be treated as production-ready.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
-- Invitation acceptance writes an audit event and creates the portal user from the approved invitation.
+- Invitation acceptance writes an audit event and creates the portal user from the approved same-workspace invitation.
 - Invitation revocation writes an audit event and blocks later first-login acceptance.
 - Portal user deactivation writes an audit event and blocks future portal permissions.
 - Portal API auth failures return clear JSON status responses, not generic crashes.
