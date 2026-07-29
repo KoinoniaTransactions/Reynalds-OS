@@ -4,6 +4,8 @@ import { isAbsolute } from "node:path";
 export type PortalReadinessStatus = "attention" | "blocked" | "ready";
 
 export type PortalDatabaseReadiness = {
+  acceptedClientInvitationCount?: number;
+  acceptedStaffInvitationCount?: number;
   activeOwnerCount?: number;
   connected: boolean;
   detail?: string;
@@ -90,7 +92,8 @@ export function buildPortalReadinessReport(input: PortalReadinessInput): PortalR
         getWorkspaceReadiness(input.database, input.workspaceId),
         getRoleSeedReadiness(input.database),
         getOwnerReadiness(input.database),
-        getStaffMfaReadiness(input.database)
+        getStaffMfaReadiness(input.database),
+        getInvitationAcceptanceReadiness(input.database)
       ]
     },
     {
@@ -447,6 +450,38 @@ function getStaffMfaReadiness(database: PortalDatabaseReadiness): PortalReadines
     "Staff MFA is required before production client files or billing work are accepted.",
     `${staffWithoutMfaCount} active staff user(s) missing MFA requirement.`,
     "Require MFA for every active non-client portal user."
+  );
+}
+
+function getInvitationAcceptanceReadiness(database: PortalDatabaseReadiness): PortalReadinessItem {
+  if (!database.connected) {
+    return blockedItem(
+      "invite-acceptance",
+      "Invite acceptance test",
+      "The invitation acceptance check could not run.",
+      "Invite acceptance check did not complete.",
+      "Run the full readiness verifier with a production DATABASE_URL."
+    );
+  }
+
+  const clientCount = database.acceptedClientInvitationCount ?? 0;
+  const staffCount = database.acceptedStaffInvitationCount ?? 0;
+
+  if (clientCount > 0 && staffCount > 0) {
+    return readyItem(
+      "invite-acceptance",
+      "Invite acceptance test",
+      "At least one client invitation and one staff invitation have been accepted.",
+      `${clientCount} client invite(s) and ${staffCount} staff invite(s) accepted.`
+    );
+  }
+
+  return blockedItem(
+    "invite-acceptance",
+    "Invite acceptance test",
+    "Production login needs a real accepted invite test for both client and staff access.",
+    `${clientCount} client invite(s) and ${staffCount} staff invite(s) accepted.`,
+    "Send and accept one real client invite and one real staff invite before production launch."
   );
 }
 

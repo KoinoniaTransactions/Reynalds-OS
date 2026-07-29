@@ -67,6 +67,7 @@ The current web app includes:
 - Permission tests for provider role mapping and typed denial behavior.
 - `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, seeded portal roles, and stored role permission lists.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
+- The verifier and `/employee/readiness` require at least one accepted client invitation and one accepted staff invitation before login can be treated as production-ready.
 
 Most protected portal screens still use sample fallback data when production storage is unavailable. `/employee/access` now has a database-backed access-readiness path, `/employee/review` can review live work/document records for staff oversight, the client dashboard current-work list can read owned `RosObject` records, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake and authorized download workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Work-item detail pages, employee assignment mutation, invoice/payment processing, payment processor integration, document version/replacement, and client workspaces still need production passes.
 
@@ -229,6 +230,7 @@ Before the portal accepts real data:
 - Portal APIs use real session identity, not mock identity.
 - Audit logging exists for sensitive actions.
 - Portal invitation records exist before client/staff access is granted.
+- A real client invitation and a real staff invitation have both been accepted and recorded.
 - Staff can review active and inactive portal users through a protected API.
 - Staff can review `/employee/review` findings for assignment, document, billing, access, showing, and stale-work gaps.
 - Staff can review portal users, portal invitations, MFA readiness, and client access readiness in `/employee/access`.
@@ -288,7 +290,7 @@ CI runs the source-only verifier with placeholder Clerk values. Production accep
 
 The managed provider package is installed and wired. Production login is still blocked by deployment and account configuration, not by source scaffolding.
 
-Do not mark login production-ready until Clerk production variables are configured, staff MFA is enabled, upload storage is configured, client/staff invitation flows exist, and the verification checklist passes with real provider users.
+Do not mark login production-ready until Clerk production variables are configured, staff MFA is enabled, upload storage is configured, client/staff invitation flows exist, one client invite and one staff invite have been accepted, and the verification checklist passes with real provider users.
 
 ---
 

@@ -22,6 +22,8 @@ function getReadyInput(overrides: Partial<PortalReadinessInput> = {}): PortalRea
     socialLoginConfigured: false,
     workspaceId: "wks_koinonia",
     database: {
+      acceptedClientInvitationCount: 1,
+      acceptedStaffInvitationCount: 1,
       activeOwnerCount: 1,
       connected: true,
       missingRoles: [],
@@ -95,6 +97,8 @@ describe("portal readiness report", () => {
     const report = buildPortalReadinessReport(
       getReadyInput({
         database: {
+          acceptedClientInvitationCount: 1,
+          acceptedStaffInvitationCount: 1,
           activeOwnerCount: 1,
           connected: true,
           missingRoles: [],
@@ -108,6 +112,28 @@ describe("portal readiness report", () => {
 
     expect(roles?.status).toBe("blocked");
     expect(roles?.proof).toContain("Operations");
+  });
+
+  it("blocks readiness until client and staff invite acceptance are verified", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        database: {
+          acceptedClientInvitationCount: 1,
+          acceptedStaffInvitationCount: 0,
+          activeOwnerCount: 1,
+          connected: true,
+          missingRoles: [],
+          staffWithoutMfaCount: 0,
+          workspaceExists: true
+        }
+      })
+    );
+    const inviteAcceptance = report.groups
+      .flatMap((group) => group.items)
+      .find((item) => item.id === "invite-acceptance");
+
+    expect(inviteAcceptance?.status).toBe("blocked");
+    expect(inviteAcceptance?.proof).toContain("0 staff");
   });
 
   it("blocks relative document upload storage paths", () => {

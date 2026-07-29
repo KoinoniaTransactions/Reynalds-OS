@@ -185,6 +185,39 @@ async function runDatabaseChecks() {
         ? `missing MFA requirement for ${staffWithoutMfa.map((user) => user.email).join(", ")}`
         : "all active staff users require MFA"
     );
+
+    const acceptedInvitations = await prisma.portalInvitation.findMany({
+      where: {
+        acceptedAt: { not: null },
+        status: "accepted",
+        workspaceId
+      },
+      select: {
+        roleName: true
+      }
+    });
+    const acceptedClientInvitations = acceptedInvitations.filter(
+      (invitation) => invitation.roleName === "Client"
+    );
+    const acceptedStaffInvitations = acceptedInvitations.filter(
+      (invitation) => invitation.roleName !== "Client"
+    );
+
+    recordCheck(
+      "accepted client invite test exists",
+      acceptedClientInvitations.length > 0,
+      acceptedClientInvitations.length
+        ? `${acceptedClientInvitations.length} accepted client invite(s)`
+        : "no accepted client invite found"
+    );
+
+    recordCheck(
+      "accepted staff invite test exists",
+      acceptedStaffInvitations.length > 0,
+      acceptedStaffInvitations.length
+        ? `${acceptedStaffInvitations.length} accepted staff invite(s)`
+        : "no accepted staff invite found"
+    );
   } catch (error) {
     recordCheck(
       "database readiness checks",

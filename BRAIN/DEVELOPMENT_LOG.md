@@ -14,6 +14,26 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Invite Acceptance Gate Added
+
+### Summary
+
+Koinonia login readiness now requires proof that both client and staff invitation paths have worked with real accepted invites.
+
+### Implemented
+
+- Added accepted client and accepted staff invitation counts to the live readiness page.
+- Added an invite acceptance readiness gate to the Data group on `/employee/readiness`.
+- Updated `pnpm verify:portal` to fail full production verification until one client invite and one staff invite have been accepted.
+- Added a readiness test for missing staff invite acceptance.
+- Updated auth production-readiness documentation.
+
+### Current Status
+
+This keeps the portal from being called login-ready based only on environment variables and seeded roles. A production launch still needs real Clerk invite emails accepted by one client test user and one staff test user.
+
+---
+
 ## 2026-07-29 — Payment Processor Readiness Gate Added
 
 ### Summary

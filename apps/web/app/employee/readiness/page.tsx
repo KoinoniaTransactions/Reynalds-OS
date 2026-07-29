@@ -190,7 +190,7 @@ async function getPortalDatabaseReadiness(workspaceId: string): Promise<PortalDa
   try {
     await prisma.$queryRaw`SELECT 1`;
 
-    const [workspace, roles, users] = await Promise.all([
+    const [workspace, roles, users, invitations] = await Promise.all([
       prisma.workspace.findUnique({
         where: { id: workspaceId },
         select: { id: true }
@@ -216,6 +216,16 @@ async function getPortalDatabaseReadiness(workspaceId: string): Promise<PortalDa
             }
           }
         }
+      }),
+      prisma.portalInvitation.findMany({
+        where: {
+          acceptedAt: { not: null },
+          status: "accepted",
+          workspaceId
+        },
+        select: {
+          roleName: true
+        }
       })
     ]);
 
@@ -230,8 +240,16 @@ async function getPortalDatabaseReadiness(workspaceId: string): Promise<PortalDa
     const staffWithoutMfaCount = users.filter(
       (user) => user.role?.name !== "Client" && user.portalAccessStatus === "active" && !user.mfaRequired
     ).length;
+    const acceptedClientInvitationCount = invitations.filter(
+      (invitation) => invitation.roleName === "Client"
+    ).length;
+    const acceptedStaffInvitationCount = invitations.filter(
+      (invitation) => invitation.roleName !== "Client"
+    ).length;
 
     return {
+      acceptedClientInvitationCount,
+      acceptedStaffInvitationCount,
       activeOwnerCount,
       connected: true,
       detail: "Database connection check passed.",
