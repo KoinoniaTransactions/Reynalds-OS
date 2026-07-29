@@ -17,7 +17,15 @@ export type Permission =
   | "client-portal:documents:view"
   | "client-portal:documents:upload"
   | "client-portal:access:view"
-  | "client-portal:access:update";
+  | "client-portal:access:update"
+  | "employee-portal:view"
+  | "employee-portal:clients:view"
+  | "employee-portal:work:view"
+  | "employee-portal:assigned-work:view"
+  | "employee-portal:assigned-work:update"
+  | "employee-portal:assignments:update"
+  | "employee-portal:staff:view"
+  | "employee-portal:capacity:view";
 
 export type AuthUser = {
   id: string;
@@ -48,7 +56,15 @@ export const rolePermissions: Record<string, Permission[]> = {
     "client-portal:documents:view",
     "client-portal:documents:upload",
     "client-portal:access:view",
-    "client-portal:access:update"
+    "client-portal:access:update",
+    "employee-portal:view",
+    "employee-portal:clients:view",
+    "employee-portal:work:view",
+    "employee-portal:assigned-work:view",
+    "employee-portal:assigned-work:update",
+    "employee-portal:assignments:update",
+    "employee-portal:staff:view",
+    "employee-portal:capacity:view"
   ],
   Operations: [
     "objects:view",
@@ -63,9 +79,80 @@ export const rolePermissions: Record<string, Permission[]> = {
     "client-portal:work:view",
     "client-portal:documents:view",
     "client-portal:access:view",
-    "client-portal:access:update"
+    "client-portal:access:update",
+    "employee-portal:view",
+    "employee-portal:clients:view",
+    "employee-portal:work:view",
+    "employee-portal:assigned-work:view",
+    "employee-portal:assigned-work:update",
+    "employee-portal:assignments:update",
+    "employee-portal:staff:view",
+    "employee-portal:capacity:view"
   ],
-  Finance: ["objects:view", "timeline:view", "finance:view", "finance:update"],
+  "Transaction Coordinator": [
+    "objects:view",
+    "objects:update",
+    "timeline:view",
+    "timeline:create",
+    "tasks:view",
+    "tasks:update",
+    "client-portal:work:view",
+    "client-portal:documents:view",
+    "client-portal:access:view",
+    "employee-portal:view",
+    "employee-portal:clients:view",
+    "employee-portal:work:view",
+    "employee-portal:assigned-work:view",
+    "employee-portal:assigned-work:update"
+  ],
+  "Contract Support": [
+    "objects:view",
+    "objects:update",
+    "timeline:view",
+    "timeline:create",
+    "tasks:view",
+    "tasks:update",
+    "client-portal:work:view",
+    "client-portal:documents:view",
+    "client-portal:access:view",
+    "employee-portal:view",
+    "employee-portal:clients:view",
+    "employee-portal:work:view",
+    "employee-portal:assigned-work:view",
+    "employee-portal:assigned-work:update"
+  ],
+  "Showing Provider": [
+    "objects:view",
+    "timeline:view",
+    "timeline:create",
+    "tasks:view",
+    "tasks:update",
+    "employee-portal:view",
+    "employee-portal:assigned-work:view",
+    "employee-portal:assigned-work:update"
+  ],
+  "Customer Success": [
+    "objects:view",
+    "objects:update",
+    "timeline:view",
+    "timeline:create",
+    "tasks:view",
+    "tasks:update",
+    "client-portal:work:view",
+    "employee-portal:view",
+    "employee-portal:clients:view",
+    "employee-portal:work:view",
+    "employee-portal:assigned-work:view",
+    "employee-portal:assigned-work:update"
+  ],
+  Finance: [
+    "objects:view",
+    "timeline:view",
+    "finance:view",
+    "finance:update",
+    "employee-portal:view",
+    "employee-portal:clients:view"
+  ],
   Viewer: ["objects:view", "timeline:view"],
   Client: [
     "client-portal:view",
@@ -105,5 +192,16 @@ export function getMockClientUser(): AuthUser {
     email: "client@example.com",
     role: "Client",
     permissions: rolePermissions.Client
+  };
+}
+
+export function getMockEmployeeUser(): AuthUser {
+  return {
+    id: "usr_employee_preview",
+    workspaceId: process.env.ROS_MOCK_WORKSPACE_ID ?? "wks_koinonia",
+    name: "Koinonia Employee Preview",
+    email: "employee@example.com",
+    role: "Operations",
+    permissions: rolePermissions.Operations
   };
 }

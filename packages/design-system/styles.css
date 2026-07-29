@@ -2622,12 +2622,331 @@ h1 {
   border-color: rgba(184, 138, 68, 0.36);
 }
 
+.koinonia-employee-portal-entry,
+.koinonia-employee-dashboard-hero {
+  padding-top: clamp(96px, 11vw, 140px);
+  padding-bottom: clamp(42px, 6vw, 72px);
+}
+
+.koinonia-employee-portal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: clamp(26px, 5vw, 58px);
+  align-items: center;
+}
+
+.koinonia-employee-portal-copy .koinonia-title {
+  max-width: 820px;
+}
+
+.koinonia-employee-portal-panel,
+.koinonia-employee-summary-card,
+.koinonia-employee-work-panel,
+.koinonia-employee-request-card {
+  border: 1px solid rgba(25, 92, 96, 0.2);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(247, 252, 251, 0.76));
+  box-shadow:
+    0 22px 56px rgba(17, 17, 17, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.koinonia-employee-portal-panel {
+  padding: clamp(22px, 3vw, 32px);
+}
+
+.koinonia-employee-portal-panel-header {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.koinonia-employee-portal-panel-header span,
+.koinonia-employee-status-list article > span,
+.koinonia-employee-summary-card span,
+.koinonia-employee-assignment-item span,
+.koinonia-employee-staff-list article span,
+.koinonia-employee-handoff-list article > span {
+  color: #195c60;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.105em;
+  text-transform: uppercase;
+}
+
+.koinonia-employee-portal-panel-header strong {
+  font-family: var(--ros-font-display);
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1;
+}
+
+.koinonia-employee-status-list {
+  display: grid;
+  gap: 12px;
+}
+
+.koinonia-employee-status-list article {
+  padding: 16px;
+  border: 1px solid rgba(25, 92, 96, 0.14);
+  background: rgba(250, 253, 252, 0.72);
+}
+
+.koinonia-employee-status-list strong {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--ros-font-display);
+  font-size: 22px;
+  line-height: 1.05;
+}
+
+.koinonia-employee-status-list p,
+.koinonia-employee-summary-card p,
+.koinonia-employee-assignment-item p,
+.koinonia-employee-request-card p,
+.koinonia-employee-request-card li,
+.koinonia-employee-handoff-list p,
+.koinonia-employee-capacity span,
+.koinonia-employee-capacity small {
+  color: var(--ros-muted);
+  line-height: 1.55;
+}
+
+.koinonia-employee-security-note {
+  max-width: 880px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.koinonia-employee-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 22px);
+  margin-top: clamp(28px, 4vw, 42px);
+}
+
+.koinonia-employee-summary-card {
+  padding: 22px;
+}
+
+.koinonia-employee-summary-card strong {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--ros-font-display);
+  font-size: clamp(34px, 4vw, 48px);
+  line-height: 0.95;
+}
+
+.koinonia-employee-dashboard-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  gap: clamp(18px, 3vw, 30px);
+  align-items: start;
+}
+
+.koinonia-employee-main-stack,
+.koinonia-employee-side-panel,
+.koinonia-employee-assignment-list,
+.koinonia-employee-staff-list,
+.koinonia-employee-handoff-list {
+  display: grid;
+  gap: 14px;
+}
+
+.koinonia-employee-work-panel,
+.koinonia-employee-request-card {
+  padding: clamp(20px, 3vw, 30px);
+}
+
+.koinonia-employee-panel-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.koinonia-employee-panel-heading h2,
+.koinonia-employee-assignment-item h3 {
+  margin: 0;
+  font-family: var(--ros-font-display);
+  letter-spacing: -0.02em;
+}
+
+.koinonia-employee-panel-heading h2 {
+  font-size: clamp(28px, 3vw, 38px);
+}
+
+.koinonia-employee-assignment-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(120px, auto);
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid rgba(25, 92, 96, 0.14);
+  background: rgba(250, 253, 252, 0.72);
+}
+
+.koinonia-employee-assignment-item h3 {
+  margin-top: 8px;
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.koinonia-employee-assignment-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0 0;
+}
+
+.koinonia-employee-assignment-meta div {
+  padding: 10px;
+  border: 1px solid rgba(25, 92, 96, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.koinonia-employee-assignment-meta dt {
+  color: #195c60;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-employee-assignment-meta dd {
+  margin: 6px 0 0;
+  color: var(--ros-text);
+  font-weight: 700;
+}
+
+.koinonia-employee-work-meta {
+  display: grid;
+  align-content: start;
+  justify-items: end;
+  gap: 8px;
+  text-align: right;
+}
+
+.koinonia-employee-work-meta strong {
+  padding: 7px 10px;
+  border: 1px solid rgba(25, 92, 96, 0.2);
+  background: rgba(25, 92, 96, 0.1);
+  color: var(--ros-text);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-employee-work-meta span {
+  color: var(--ros-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.koinonia-employee-table-wrap {
+  overflow-x: auto;
+}
+
+.koinonia-employee-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.koinonia-employee-table th,
+.koinonia-employee-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(25, 92, 96, 0.12);
+  text-align: left;
+  vertical-align: top;
+}
+
+.koinonia-employee-table th {
+  color: #195c60;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.koinonia-employee-table td {
+  color: var(--ros-text);
+  font-size: 14px;
+}
+
+.koinonia-employee-staff-list article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(96px, auto);
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid rgba(25, 92, 96, 0.14);
+  background: rgba(250, 253, 252, 0.72);
+}
+
+.koinonia-employee-staff-list strong,
+.koinonia-employee-handoff-list strong {
+  display: block;
+  margin-top: 7px;
+  font-family: var(--ros-font-display);
+  font-size: 21px;
+  line-height: 1.1;
+}
+
+.koinonia-employee-capacity {
+  display: grid;
+  justify-items: end;
+  gap: 5px;
+  text-align: right;
+}
+
+.koinonia-employee-capacity b {
+  color: #195c60;
+  font-family: var(--ros-font-display);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.koinonia-employee-handoff-list article {
+  padding: 16px;
+  border: 1px solid rgba(25, 92, 96, 0.14);
+  background: rgba(250, 253, 252, 0.72);
+}
+
+.koinonia-employee-handoff-list small {
+  display: block;
+  margin-top: 10px;
+  color: var(--ros-text);
+  font-weight: 700;
+}
+
+.koinonia-employee-request-card ul {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.koinonia-employee-boundary-card {
+  border-color: rgba(25, 92, 96, 0.34);
+}
+
 @media (max-width: 720px) {
   .koinonia-client-work-item {
     grid-template-columns: 1fr;
   }
 
   .koinonia-client-work-meta {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .koinonia-employee-assignment-item,
+  .koinonia-employee-staff-list article,
+  .koinonia-employee-assignment-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .koinonia-employee-work-meta,
+  .koinonia-employee-capacity {
     justify-items: start;
     text-align: left;
   }
@@ -2737,12 +3056,15 @@ h1 {
 }
 
 @media (max-width: 980px) {
-  .koinonia-client-portal-grid {
+  .koinonia-client-portal-grid,
+  .koinonia-employee-portal-grid {
     grid-template-columns: 1fr;
   }
 
   .koinonia-client-summary-grid,
-  .koinonia-client-dashboard-layout {
+  .koinonia-client-dashboard-layout,
+  .koinonia-employee-summary-grid,
+  .koinonia-employee-dashboard-layout {
     grid-template-columns: 1fr;
   }
 

@@ -68,3 +68,11 @@ Decision: The Koinonia client portal may track access needs, document uploads, w
 Reason: Client credentials are high-risk secrets. Koinonia should use delegated access, team or assistant accounts, transaction coordinator permissions, broker-approved workflows, or an approved external encrypted password manager/secrets platform instead of turning the website into an unreviewed credential vault.
 
 Canonical specification: `docs/specifications/KOINONIA_CLIENT_PORTAL_SPEC.md`
+
+## D-012 — Employee Portal Assigns Clients and Work by Role
+
+Decision: The Koinonia employee portal should track staff assignment, client ownership, work ownership, capacity, handoffs, and escalation state using role-based visibility.
+
+Reason: Koinonia cannot scale beyond owner-operated support unless every client and work item has a clear internal owner, backup path, and capacity-aware assignment history. Showing providers, contract support, transaction coordinators, finance, customer success, operations, and owner roles should only see the internal information needed for their responsibility.
+
+Canonical specification: `docs/specifications/KOINONIA_EMPLOYEE_PORTAL_SPEC.md`
