@@ -1,9 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   can,
+  createAuthUser,
+  getPermissionsForRole,
   getMockClientUser,
   getMockEmployeeUser,
   getMockUser,
+  normalizeRoleName,
+  PermissionDeniedError,
+  requirePermission,
   rolePermissions
 } from "./index";
 
@@ -90,5 +95,40 @@ describe("auth permissions", () => {
     expect(permissions).not.toContain("client-portal:billing:view");
     expect(permissions).not.toContain("billing-workspace:view");
     expect(permissions).not.toContain("billing-workspace:payments:process");
+  });
+
+  it("maps provider role metadata to the matching portal permissions", () => {
+    const user = createAuthUser({
+      id: "usr_provider_client",
+      workspaceId: "wks_koinonia",
+      name: "Provider Client",
+      email: "client@example.com",
+      role: "Client"
+    });
+
+    expect(user.role).toBe("Client");
+    expect(can(user, "client-portal:view")).toBe(true);
+    expect(can(user, "employee-portal:view")).toBe(false);
+  });
+
+  it("falls unknown provider roles back to viewer permissions", () => {
+    const user = createAuthUser({
+      id: "usr_unknown",
+      workspaceId: "wks_koinonia",
+      name: "Unknown Role",
+      email: "unknown@example.com",
+      role: "External Admin"
+    });
+
+    expect(normalizeRoleName("External Admin")).toBe("Viewer");
+    expect(user.role).toBe("Viewer");
+    expect(getPermissionsForRole("External Admin")).toEqual(rolePermissions.Viewer);
+    expect(can(user, "client-portal:view")).toBe(false);
+  });
+
+  it("throws a typed denial when a role lacks a permission", () => {
+    expect(() => requirePermission(getMockClientUser(), "employee-portal:view")).toThrow(
+      PermissionDeniedError
+    );
   });
 });

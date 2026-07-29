@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
+import { requirePortalPermission } from "../../../lib/portal-auth";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Client Document Center Preview",
@@ -110,7 +113,9 @@ const clientTools = [
   "Download final archive"
 ] as const;
 
-export default function ClientDocumentCenterPreviewPage() {
+export default async function ClientDocumentCenterPreviewPage() {
+  await requirePortalPermission("client-portal:documents:view", "/client/documents");
+
   return (
     <main className="koinonia-site koinonia-document-center koinonia-client-documents">
       <Header />

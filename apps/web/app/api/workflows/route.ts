@@ -20,7 +20,7 @@ const defaultDefinition = {
 };
 
 export async function GET() {
-  const user = assertPermission("objects:view");
+  const user = await assertPermission("objects:view");
 
   const workflows = await prisma.workflow.findMany({
     where: { workspaceId: user.workspaceId },
@@ -31,7 +31,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const user = assertPermission("objects:update");
+  const user = await assertPermission("objects:update");
   const body = await request.json();
 
   if (!body.name || !body.triggerEvent) {

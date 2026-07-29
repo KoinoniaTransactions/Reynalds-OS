@@ -9,7 +9,7 @@ type Params = {
 };
 
 export async function PATCH(request: Request, { params }: Params) {
-  const user = assertPermission("finance:update");
+  const user = await assertPermission("finance:update");
   const { id } = await params;
   const body = await request.json();
 

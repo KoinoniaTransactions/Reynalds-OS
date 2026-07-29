@@ -5,7 +5,7 @@ import { assertPermission } from "../../../lib/auth";
 import { prisma } from "../../../lib/db";
 
 export async function POST(request: Request) {
-  const user = assertPermission("copilot:ask");
+  const user = await assertPermission("copilot:ask");
   const body = await request.json();
   const question = String(body.question ?? "").toLowerCase();
 

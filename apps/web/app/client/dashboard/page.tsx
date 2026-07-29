@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
+import { requirePortalPermission } from "../../../lib/portal-auth";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Client Dashboard Preview",
@@ -113,7 +116,9 @@ const accessRequests = [
   }
 ] as const;
 
-export default function ClientDashboardPreviewPage() {
+export default async function ClientDashboardPreviewPage() {
+  await requirePortalPermission("client-portal:view", "/client/dashboard");
+
   return (
     <main className="koinonia-site koinonia-client-dashboard">
       <Header />

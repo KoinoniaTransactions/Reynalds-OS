@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
+import { requirePortalPermission } from "../../../lib/portal-auth";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Employee Dashboard Preview",
@@ -189,7 +192,9 @@ const assignmentRules = [
   "Client credentials are never stored in the portal."
 ] as const;
 
-export default function EmployeeDashboardPreviewPage() {
+export default async function EmployeeDashboardPreviewPage() {
+  await requirePortalPermission("employee-portal:view", "/employee/dashboard");
+
   return (
     <main className="koinonia-site koinonia-employee-dashboard">
       <Header />

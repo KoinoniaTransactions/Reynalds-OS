@@ -1410,3 +1410,25 @@ Current known website records:
 
 Important: Squarespace remains part of the current DNS management path until DNS/registrar records are intentionally migrated later. Do not cancel Squarespace until Vercel website records, Resend records, and email/security records are fully inventoried and recreated wherever DNS will live long-term.
 
+---
+
+## 2026-07-28 — Koinonia Portal Auth Foundation Scaffolded
+
+### Summary
+
+The Koinonia client and employee portal preview routes were moved behind an authentication and permission boundary. The public `/client` and `/employee` entry pages remain visible, while dashboard, document, and billing preview routes now require the appropriate client or employee portal permission before rendering.
+
+### Implemented
+
+- Added `/sign-in` secure login entry.
+- Replaced synchronous mock-only web auth with async provider-aware session lookup.
+- Added Clerk-ready user mapping for provider metadata.
+- Added route-level portal permission guards.
+- Updated portal APIs to await session-backed permission checks.
+- Added role normalization, typed permission denial, and provider-user construction helpers.
+- Added auth tests for provider role mapping and unknown role downgrade.
+- Documented production auth setup in `docs/specifications/KOINONIA_AUTH_PRODUCTION_READINESS.md`.
+
+### Current Status
+
+The login boundary is scaffolded and guarded, but login is not production-complete. The managed auth package still needs to be installed, deployment variables must be configured, staff MFA must be enabled, and portal routes must be verified with real provider users before real client data is accepted.

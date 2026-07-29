@@ -57,7 +57,7 @@ export type AuthUser = {
   permissions: Permission[];
 };
 
-export const rolePermissions: Record<string, Permission[]> = {
+export const rolePermissions = {
   Owner: [
     "objects:view",
     "objects:create",
@@ -246,47 +246,88 @@ export const rolePermissions: Record<string, Permission[]> = {
     "client-portal:billing:view",
     "client-portal:billing:setup"
   ]
+} satisfies Record<string, Permission[]>;
+
+export type RoleName = keyof typeof rolePermissions;
+
+export const defaultRoleName: RoleName = "Viewer";
+
+export function isKnownRoleName(role: string | null | undefined): role is RoleName {
+  return typeof role === "string" && Object.prototype.hasOwnProperty.call(rolePermissions, role);
+}
+
+export function normalizeRoleName(
+  role: string | null | undefined,
+  fallback: RoleName = defaultRoleName
+): RoleName {
+  return isKnownRoleName(role) ? role : fallback;
+}
+
+export function getPermissionsForRole(role: string | null | undefined): Permission[] {
+  return rolePermissions[normalizeRoleName(role)];
+}
+
+export type AuthUserInput = Omit<AuthUser, "permissions" | "role"> & {
+  role?: string | null;
+  permissions?: Permission[];
 };
+
+export function createAuthUser(input: AuthUserInput): AuthUser {
+  const role = normalizeRoleName(input.role);
+
+  return {
+    ...input,
+    role,
+    permissions: input.permissions ?? getPermissionsForRole(role)
+  };
+}
 
 export function can(user: AuthUser, permission: Permission): boolean {
   return user.permissions.includes(permission);
 }
 
+export class PermissionDeniedError extends Error {
+  permission: Permission;
+
+  constructor(permission: Permission) {
+    super(`Permission denied: ${permission}`);
+    this.name = "PermissionDeniedError";
+    this.permission = permission;
+  }
+}
+
 export function requirePermission(user: AuthUser, permission: Permission): void {
   if (!can(user, permission)) {
-    throw new Error(`Permission denied: ${permission}`);
+    throw new PermissionDeniedError(permission);
   }
 }
 
 export function getMockUser(): AuthUser {
-  return {
+  return createAuthUser({
     id: "usr_owner",
     workspaceId: process.env.ROS_MOCK_WORKSPACE_ID ?? "wks_koinonia",
     name: "Jeremiah Reynalds",
     email: "owner@example.com",
-    role: "Owner",
-    permissions: rolePermissions.Owner
-  };
+    role: "Owner"
+  });
 }
 
 export function getMockClientUser(): AuthUser {
-  return {
+  return createAuthUser({
     id: "usr_client_preview",
     workspaceId: process.env.ROS_MOCK_WORKSPACE_ID ?? "wks_koinonia",
     name: "Realtor Client Preview",
     email: "client@example.com",
-    role: "Client",
-    permissions: rolePermissions.Client
-  };
+    role: "Client"
+  });
 }
 
 export function getMockEmployeeUser(): AuthUser {
-  return {
+  return createAuthUser({
     id: "usr_employee_preview",
     workspaceId: process.env.ROS_MOCK_WORKSPACE_ID ?? "wks_koinonia",
     name: "Koinonia Employee Preview",
     email: "employee@example.com",
-    role: "Operations",
-    permissions: rolePermissions.Operations
-  };
+    role: "Operations"
+  });
 }

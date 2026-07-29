@@ -93,7 +93,11 @@ export default function ClientPortalPage() {
               </p>
 
               <div className="koinonia-actions">
-                <a className="koinonia-button primary" href="/contact#schedule-consultation">
+                <a className="koinonia-button primary" href="/sign-in?return_to=%2Fclient%2Fdashboard">
+                  Client Login
+                </a>
+
+                <a className="koinonia-button secondary" href="/contact#schedule-consultation">
                   Request Portal Access
                 </a>
 

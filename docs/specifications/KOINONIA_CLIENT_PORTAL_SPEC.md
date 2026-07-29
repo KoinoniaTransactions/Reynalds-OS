@@ -424,7 +424,7 @@ Build the portal in safe slices:
 
 1. Client portal specification and security decision. — Complete
 2. Public `/client` login entry page with no sensitive forms. — Complete
-3. Real auth provider selection and implementation plan.
+3. Real auth provider selection and implementation plan. — Clerk-ready scaffold documented in `docs/specifications/KOINONIA_AUTH_PRODUCTION_READINESS.md`
 4. Portal roles and permissions. — Scaffolded in `packages/auth`
 5. Client dashboard shell using mocked/sample data only. — Preview route added at `/client/dashboard`
 6. Work item detail shell using mocked/sample data only.
@@ -432,7 +432,7 @@ Build the portal in safe slices:
 8. Client document center using mocked/sample data only.
 9. Client billing center using mocked/sample data only.
 10. Database schema additions.
-11. Authenticated read-only dashboard connected to real work items.
+11. Authenticated read-only dashboard connected to real work items. — Preview routes now require portal permissions but still use sample data only.
 12. Secure file upload and document request flow.
 13. Access request tracking without credential storage.
 14. Portal messaging or notes.

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
+import { requirePortalPermission } from "../../../lib/portal-auth";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Employee Billing Workspace Preview",
@@ -120,7 +123,9 @@ const billingRules = [
   "Payment method metadata may show brand, last four, expiration, and processor reference only."
 ] as const;
 
-export default function EmployeeBillingWorkspacePreviewPage() {
+export default async function EmployeeBillingWorkspacePreviewPage() {
+  await requirePortalPermission("billing-workspace:view", "/employee/billing");
+
   return (
     <main className="koinonia-site koinonia-billing-center koinonia-employee-billing">
       <Header />

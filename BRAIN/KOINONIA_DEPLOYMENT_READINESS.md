@@ -118,9 +118,16 @@ Minimum recommended production environment variables:
 
 - NEXT_PUBLIC_SITE_URL=https://koinoniatransactions.com
 - NEXT_PUBLIC_APP_NAME=Koinonia
-- AUTH_PROVIDER=mock
-- ROS_MOCK_WORKSPACE_ID=production-safe value
+- AUTH_PROVIDER=managed for public preview, or AUTH_PROVIDER=clerk before real portal login
+- ROS_DEFAULT_WORKSPACE_ID=production workspace value
 - DATABASE_URL=production or placeholder database URL
+
+Additional portal-login variables before accepting real client or staff data:
+
+- NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+- CLERK_SECRET_KEY
+- NEXT_PUBLIC_AUTH_SIGN_IN_URL
+- NEXT_PUBLIC_AUTH_SIGN_OUT_URL
 
 Important:
 
@@ -128,6 +135,7 @@ Important:
 - Do not blindly copy local .env secrets into Vercel
 - Add only variables required for public launch
 - Treat dashboard and API variables separately from the public website launch
+- Do not enable ROS_ALLOW_MOCK_AUTH on any deployment that can receive real portal data
 
 ---
 
@@ -223,4 +231,3 @@ The public Koinonia website launch was verified on 2026-07-27.
 ### DNS Management Note
 
 Squarespace is still involved in the active DNS management path. Do not cancel or disconnect Squarespace until all DNS records have been inventoried and intentionally migrated.
-

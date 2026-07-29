@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
+import { requirePortalPermission } from "../../../lib/portal-auth";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Employee Document Workspace Preview",
@@ -136,7 +139,9 @@ const workflowSteps = [
   "Archived"
 ] as const;
 
-export default function EmployeeDocumentWorkspacePreviewPage() {
+export default async function EmployeeDocumentWorkspacePreviewPage() {
+  await requirePortalPermission("document-workspace:view", "/employee/documents");
+
   return (
     <main className="koinonia-site koinonia-document-center koinonia-employee-documents">
       <Header />

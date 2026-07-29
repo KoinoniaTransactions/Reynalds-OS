@@ -9,7 +9,7 @@ type Params = {
 };
 
 export async function POST(request: Request, { params }: Params) {
-  const user = assertPermission("objects:update");
+  const user = await assertPermission("objects:update");
   const { id } = await params;
   const body = await request.json();
 

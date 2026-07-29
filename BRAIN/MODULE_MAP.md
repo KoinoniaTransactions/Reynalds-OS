@@ -15,13 +15,14 @@
 | Notifications | `/notifications` | Notification MVP |
 | Workflows | `/workflows` | Workflow MVP |
 | Koinonia Client Portal Entry | `/client` | Public entry shell, no sensitive forms |
-| Koinonia Client Dashboard Preview | `/client/dashboard` | Sample-data preview only, not production auth |
-| Koinonia Client Document Center Preview | `/client/documents` | Sample-data document review and approval preview only |
-| Koinonia Client Billing Center Preview | `/client/billing` | Sample-data billing setup, invoices, and pay-at-close preview only |
+| Koinonia Secure Login Entry | `/sign-in` | Managed-auth entry scaffold |
+| Koinonia Client Dashboard Preview | `/client/dashboard` | Auth-guarded sample-data preview only |
+| Koinonia Client Document Center Preview | `/client/documents` | Auth-guarded sample-data document review and approval preview only |
+| Koinonia Client Billing Center Preview | `/client/billing` | Auth-guarded sample-data billing setup, invoices, and pay-at-close preview only |
 | Koinonia Employee Portal Entry | `/employee` | Internal entry shell, no real client data |
-| Koinonia Employee Dashboard Preview | `/employee/dashboard` | Sample-data staff assignment preview only, not production auth |
-| Koinonia Employee Document Workspace Preview | `/employee/documents` | Sample-data drafting, approval, send, and archive preview only |
-| Koinonia Employee Billing Workspace Preview | `/employee/billing` | Sample-data billing profiles, payment setup, and pay-at-close preview only |
+| Koinonia Employee Dashboard Preview | `/employee/dashboard` | Auth-guarded sample-data staff assignment preview only |
+| Koinonia Employee Document Workspace Preview | `/employee/documents` | Auth-guarded sample-data drafting, approval, send, and archive preview only |
+| Koinonia Employee Billing Workspace Preview | `/employee/billing` | Auth-guarded sample-data billing profiles, payment setup, and pay-at-close preview only |
 
 ## Primary APIs
 

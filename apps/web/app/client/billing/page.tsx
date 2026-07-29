@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
+import { requirePortalPermission } from "../../../lib/portal-auth";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Client Billing Center Preview",
@@ -97,7 +100,9 @@ const consentItems = [
   "Monthly/custom billing only when authorized by agreement"
 ] as const;
 
-export default function ClientBillingCenterPreviewPage() {
+export default async function ClientBillingCenterPreviewPage() {
+  await requirePortalPermission("client-portal:billing:view", "/client/billing");
+
   return (
     <main className="koinonia-site koinonia-billing-center koinonia-client-billing">
       <Header />

@@ -92,3 +92,11 @@ Decision: Koinonia customer files should include billing profiles, service billi
 Reason: Koinonia needs to bill prepaid, pay-at-closing, monthly, showing, and custom service work without turning the portal into a high-risk cardholder data vault. Payment details should be collected through an approved payment processor, and Koinonia should store only safe processor references, payment method metadata, consent history, invoice state, and audit events.
 
 Canonical specification: `docs/specifications/KOINONIA_BILLING_PAYMENT_SPEC.md`
+
+## D-015 — Portal Login Uses Managed Auth Before Real Data
+
+Decision: Koinonia client and employee portal routes must use managed authentication before accepting real client documents, billing setup, internal notes, staff assignments, or access requests.
+
+Reason: Portal users include Realtor clients, Koinonia staff, finance, operations, contract support, showing providers, and owner/admin users. These roles require unique identity, workspace scoping, role-based permissions, staff MFA, session expiration, secure invitation, and audit logging. Mock auth may remain only for local preview and must fail closed in production portal routes unless explicitly allowed for a non-data preview.
+
+Canonical specification: `docs/specifications/KOINONIA_AUTH_PRODUCTION_READINESS.md`

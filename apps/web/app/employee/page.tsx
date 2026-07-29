@@ -92,8 +92,8 @@ export default function EmployeePortalPage() {
               </p>
 
               <div className="koinonia-actions">
-                <a className="koinonia-button primary" href="/employee/dashboard">
-                  View Staff Dashboard
+                <a className="koinonia-button primary" href="/sign-in?return_to=%2Femployee%2Fdashboard">
+                  Staff Login
                 </a>
 
                 <a className="koinonia-button secondary" href="/client/dashboard">
