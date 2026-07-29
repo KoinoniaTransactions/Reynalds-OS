@@ -113,6 +113,7 @@ Expected dashboard sections:
 - Active Work
 - Waiting on You
 - Pending Review
+- Showing Requests
 - Completed Work
 - Recently Uploaded Documents
 - Access Needed
@@ -140,6 +141,67 @@ Expected sections:
 - Internal status history visible to Koinonia
 - Client-facing status history visible to the Realtor
 
+### Showing Request Section
+
+The portal should include a dedicated showing request section because showing coverage is time-sensitive and different from ordinary document exchange.
+
+Client-facing labels may include:
+
+- Request Showing Coverage
+- Schedule Client Showing
+- Showing Requests
+
+Primary use cases:
+
+- A Realtor asks Koinonia to cover one showing.
+- A Realtor asks Koinonia to schedule a client for one or more showings.
+- A Realtor asks Koinonia to coordinate showing details before a licensed provider is assigned.
+- A Realtor reviews showing confirmation, completion notes, and feedback.
+
+The showing request form should collect:
+
+- Request type: coverage needed, scheduling help needed, or both.
+- Realtor/client account.
+- Buyer or client name.
+- Buyer/client phone or email, if Koinonia is approved to coordinate directly.
+- Property address.
+- MLS number or listing link, if available.
+- Requested showing date.
+- Preferred showing time or time window.
+- Alternate time windows.
+- Access method and access instructions.
+- Showing service or platform used, if applicable.
+- Appointment confirmation status.
+- Client instructions.
+- Safety notes.
+- Pets, occupancy, gate, parking, alarm, lockbox, or access constraints.
+- Whether the Realtor has authorized Koinonia to contact the buyer/client for scheduling.
+- Preferred feedback format.
+- Follow-up requested after showing.
+- Rush or same-day flag.
+- Distance or custom-pricing flag.
+
+The showing request should show these client-facing statuses:
+
+- Intake Needed
+- Waiting on Client
+- Checking Availability
+- Scheduling Requested
+- Showing Scheduled
+- Licensed Provider Assigned
+- Showing Confirmed
+- Showing Completed
+- Feedback Sent
+- Closed
+- Unable to Cover
+
+Rules:
+
+- No showing should be marked confirmed until access instructions and licensed coverage are confirmed.
+- Same-day requests should be flagged as rush and accepted only if capacity allows.
+- If Koinonia is scheduling directly with a buyer/client, the Realtor's authorization should be recorded before contact occurs.
+- Showing providers should only receive the assigned showing details, access instructions, safety notes, and feedback form needed for that showing.
+
 ---
 
 ## 5. Work Status Model
@@ -160,7 +222,32 @@ Internal status details may be more granular, but the client-facing dashboard sh
 
 ---
 
-## 6. File Exchange Requirements
+## 6. Service-Specific Intake Model
+
+The portal should collect a shared intake core first, then service-specific details.
+
+Shared intake:
+
+- Requested service or package.
+- Work item name.
+- Priority.
+- Desired deadline.
+- Main point of contact.
+- Files or instructions needed.
+- Approval/authorization status.
+- Notes.
+
+Service-specific flows:
+
+- Transaction Coordination Plus and Pay-at-Closing Coordination should collect contract-to-close dates, parties, deadlines, title/lender/broker contacts, documents, and payment model.
+- Contract and Document Support should collect document type, Realtor instructions, transaction terms, property details, supporting files, access needs, and final approval status.
+- Licensed Showing Coverage should use the showing request section described above.
+- Monthly Operations Partnership should collect plan tier, recurring tasks, systems involved, monthly priorities, hours used, hours remaining, and check-in cadence.
+- Realtor Support Plus should allow the Realtor to open transaction, contract, showing, and operations requests from the same account workspace.
+
+---
+
+## 7. File Exchange Requirements
 
 Clients should be able to upload:
 
@@ -190,7 +277,7 @@ Do not allow executable, script, archive, or unknown file types in the MVP.
 
 ---
 
-## 7. Access Coordination Model
+## 8. Access Coordination Model
 
 The portal should create an `AccessRequest`, not a password field.
 
@@ -226,7 +313,7 @@ Koinonia needs access to prepare this document. Please grant access through your
 
 ---
 
-## 8. Authentication Requirements
+## 9. Authentication Requirements
 
 The current repository uses mock auth.
 
@@ -249,13 +336,14 @@ The portal should not go live with mock auth.
 
 ---
 
-## 9. Recommended Data Model Additions
+## 10. Recommended Data Model Additions
 
 These models should be refined before implementation:
 
 - `ClientAccount`
 - `ClientPortalMembership`
 - `WorkItem`
+- `ShowingRequest`
 - `WorkItemParticipant`
 - `ClientDocument`
 - `DocumentRequest`
@@ -276,7 +364,7 @@ The preferred implementation should extend the Object Engine instead of creating
 
 ---
 
-## 10. MVP Build Order
+## 11. MVP Build Order
 
 Build the portal in safe slices:
 
@@ -286,13 +374,14 @@ Build the portal in safe slices:
 4. Portal roles and permissions. — Scaffolded in `packages/auth`
 5. Client dashboard shell using mocked/sample data only. — Preview route added at `/client/dashboard`
 6. Work item detail shell using mocked/sample data only.
-7. Database schema additions.
-8. Authenticated read-only dashboard connected to real work items.
-9. Secure file upload and document request flow.
-10. Access request tracking without credential storage.
-11. Portal messaging or notes.
-12. Audit logs.
-13. Production security review before accepting real client documents.
+7. Showing request section using mocked/sample data only.
+8. Database schema additions.
+9. Authenticated read-only dashboard connected to real work items.
+10. Secure file upload and document request flow.
+11. Access request tracking without credential storage.
+12. Portal messaging or notes.
+13. Audit logs.
+14. Production security review before accepting real client documents.
 
 Do not begin with file upload or credential fields.
 
@@ -300,7 +389,7 @@ The `/client/dashboard` preview is not a production dashboard. It uses sample da
 
 ---
 
-## 11. Launch Classification
+## 12. Launch Classification
 
 This is not required for the public marketing website launch unless Jeremiah intentionally changes the launch scope.
 
@@ -314,7 +403,7 @@ The public Koinonia site and consultation flow can launch without a full portal.
 
 ---
 
-## 12. External Security References
+## 13. External Security References
 
 Use these as implementation guardrails:
 

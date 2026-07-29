@@ -69,10 +69,35 @@ const workItems = [
   }
 ] as const;
 
+const showingRequests = [
+  {
+    title: "Schedule Northgate Buyer Tour",
+    status: "Scheduling Requested",
+    nextAction: "Koinonia is checking requested showing windows and buyer availability.",
+    timing: "Thu afternoon",
+    notes: ["Client contact authorized", "Friday morning is the backup window"]
+  },
+  {
+    title: "West Ridge Showing Coverage",
+    status: "Waiting on Client",
+    nextAction: "Access instructions and safety notes are needed before coverage can be confirmed.",
+    timing: "Same-day request",
+    notes: ["Rush review needed", "Access details pending"]
+  },
+  {
+    title: "Northgate Showing Follow-Up",
+    status: "Feedback Sent",
+    nextAction: "Showing notes were delivered. Follow-up remains open if the Realtor requests it.",
+    timing: "Complete",
+    notes: ["Buyer feedback delivered", "No immediate issue flagged"]
+  }
+] as const;
+
 const documentRequests = [
   "Executed listing agreement",
   "Seller property disclosure",
-  "Inspection objection instructions"
+  "Inspection objection instructions",
+  "Showing access notes for West Ridge"
 ] as const;
 
 const accessRequests = [
@@ -124,29 +149,60 @@ export default function ClientDashboardPreviewPage() {
       <section className="koinonia-section">
         <div className="koinonia-container">
           <div className="koinonia-client-dashboard-layout">
-            <section className="koinonia-client-work-panel" aria-labelledby="client-work-title">
-              <div className="koinonia-client-panel-heading">
-                <p className="koinonia-eyebrow">Work</p>
-                <h2 id="client-work-title">Current Support</h2>
-              </div>
+            <div className="koinonia-client-main-stack">
+              <section className="koinonia-client-work-panel" aria-labelledby="client-work-title">
+                <div className="koinonia-client-panel-heading">
+                  <p className="koinonia-eyebrow">Work</p>
+                  <h2 id="client-work-title">Current Support</h2>
+                </div>
 
-              <div className="koinonia-client-work-list">
-                {workItems.map((item) => (
-                  <article className="koinonia-client-work-item" key={item.title}>
-                    <div>
-                      <span>{item.type}</span>
-                      <h3>{item.title}</h3>
-                      <p>{item.nextAction}</p>
-                    </div>
+                <div className="koinonia-client-work-list">
+                  {workItems.map((item) => (
+                    <article className="koinonia-client-work-item" key={item.title}>
+                      <div>
+                        <span>{item.type}</span>
+                        <h3>{item.title}</h3>
+                        <p>{item.nextAction}</p>
+                      </div>
 
-                    <div className="koinonia-client-work-meta">
-                      <strong>{item.status}</strong>
-                      <span>{item.due}</span>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
+                      <div className="koinonia-client-work-meta">
+                        <strong>{item.status}</strong>
+                        <span>{item.due}</span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section className="koinonia-client-work-panel" aria-labelledby="client-showings-title">
+                <div className="koinonia-client-panel-heading">
+                  <p className="koinonia-eyebrow">Showings</p>
+                  <h2 id="client-showings-title">Showing Requests</h2>
+                </div>
+
+                <div className="koinonia-client-work-list">
+                  {showingRequests.map((request) => (
+                    <article className="koinonia-client-work-item" key={request.title}>
+                      <div>
+                        <span>Request Showing Coverage</span>
+                        <h3>{request.title}</h3>
+                        <p>{request.nextAction}</p>
+                        <ul className="koinonia-client-showing-notes">
+                          {request.notes.map((note) => (
+                            <li key={note}>{note}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="koinonia-client-work-meta">
+                        <strong>{request.status}</strong>
+                        <span>{request.timing}</span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            </div>
 
             <aside className="koinonia-client-side-panel" aria-label="Client requests">
               <section className="koinonia-client-request-card">

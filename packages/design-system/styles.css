@@ -2504,6 +2504,11 @@ h1 {
   align-items: start;
 }
 
+.koinonia-client-main-stack {
+  display: grid;
+  gap: clamp(18px, 3vw, 30px);
+}
+
 .koinonia-client-work-panel,
 .koinonia-client-request-card {
   padding: clamp(22px, 3vw, 30px);
@@ -2579,6 +2584,24 @@ h1 {
   gap: 9px;
   margin: 0;
   padding-left: 18px;
+}
+
+.koinonia-client-showing-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.koinonia-client-showing-notes li {
+  padding: 6px 9px;
+  border: 1px solid rgba(184, 138, 68, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ros-muted);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .koinonia-client-access-list article {
