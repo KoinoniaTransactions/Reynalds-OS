@@ -345,6 +345,9 @@ export default function EmployeeDashboardPreviewPage() {
                     <li key={rule}>{rule}</li>
                   ))}
                 </ul>
+                <a className="koinonia-document-link employee" href="/employee/documents">
+                  Open Document Workspace
+                </a>
               </section>
             </aside>
           </div>

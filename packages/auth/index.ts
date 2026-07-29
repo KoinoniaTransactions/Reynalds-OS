@@ -25,7 +25,19 @@ export type Permission =
   | "employee-portal:assigned-work:update"
   | "employee-portal:assignments:update"
   | "employee-portal:staff:view"
-  | "employee-portal:capacity:view";
+  | "employee-portal:capacity:view"
+  | "document-workspace:view"
+  | "document-workspace:checklists:update"
+  | "document-workspace:drafts:create"
+  | "document-workspace:drafts:update"
+  | "document-workspace:versions:view"
+  | "document-workspace:approval:request"
+  | "document-workspace:approval:record"
+  | "document-workspace:send"
+  | "document-workspace:templates:view"
+  | "document-workspace:templates:update"
+  | "document-workspace:audit:view"
+  | "client-portal:documents:approve";
 
 export type AuthUser = {
   id: string;
@@ -64,7 +76,19 @@ export const rolePermissions: Record<string, Permission[]> = {
     "employee-portal:assigned-work:update",
     "employee-portal:assignments:update",
     "employee-portal:staff:view",
-    "employee-portal:capacity:view"
+    "employee-portal:capacity:view",
+    "document-workspace:view",
+    "document-workspace:checklists:update",
+    "document-workspace:drafts:create",
+    "document-workspace:drafts:update",
+    "document-workspace:versions:view",
+    "document-workspace:approval:request",
+    "document-workspace:approval:record",
+    "document-workspace:send",
+    "document-workspace:templates:view",
+    "document-workspace:templates:update",
+    "document-workspace:audit:view",
+    "client-portal:documents:approve"
   ],
   Operations: [
     "objects:view",
@@ -87,7 +111,17 @@ export const rolePermissions: Record<string, Permission[]> = {
     "employee-portal:assigned-work:update",
     "employee-portal:assignments:update",
     "employee-portal:staff:view",
-    "employee-portal:capacity:view"
+    "employee-portal:capacity:view",
+    "document-workspace:view",
+    "document-workspace:checklists:update",
+    "document-workspace:drafts:create",
+    "document-workspace:drafts:update",
+    "document-workspace:versions:view",
+    "document-workspace:approval:request",
+    "document-workspace:approval:record",
+    "document-workspace:send",
+    "document-workspace:templates:view",
+    "document-workspace:audit:view"
   ],
   "Transaction Coordinator": [
     "objects:view",
@@ -103,7 +137,14 @@ export const rolePermissions: Record<string, Permission[]> = {
     "employee-portal:clients:view",
     "employee-portal:work:view",
     "employee-portal:assigned-work:view",
-    "employee-portal:assigned-work:update"
+    "employee-portal:assigned-work:update",
+    "document-workspace:view",
+    "document-workspace:checklists:update",
+    "document-workspace:versions:view",
+    "document-workspace:approval:request",
+    "document-workspace:send",
+    "document-workspace:templates:view",
+    "document-workspace:audit:view"
   ],
   "Contract Support": [
     "objects:view",
@@ -119,7 +160,16 @@ export const rolePermissions: Record<string, Permission[]> = {
     "employee-portal:clients:view",
     "employee-portal:work:view",
     "employee-portal:assigned-work:view",
-    "employee-portal:assigned-work:update"
+    "employee-portal:assigned-work:update",
+    "document-workspace:view",
+    "document-workspace:checklists:update",
+    "document-workspace:drafts:create",
+    "document-workspace:drafts:update",
+    "document-workspace:versions:view",
+    "document-workspace:approval:request",
+    "document-workspace:send",
+    "document-workspace:templates:view",
+    "document-workspace:audit:view"
   ],
   "Showing Provider": [
     "objects:view",
@@ -159,6 +209,7 @@ export const rolePermissions: Record<string, Permission[]> = {
     "client-portal:work:view",
     "client-portal:documents:view",
     "client-portal:documents:upload",
+    "client-portal:documents:approve",
     "client-portal:access:view"
   ]
 };

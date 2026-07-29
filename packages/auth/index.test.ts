@@ -42,4 +42,28 @@ describe("auth permissions", () => {
     expect(permissions).not.toContain("employee-portal:assignments:update");
     expect(permissions).not.toContain("employee-portal:clients:view");
   });
+
+  it("allows contract support to draft and request approval", () => {
+    const permissions = rolePermissions["Contract Support"];
+
+    expect(permissions).toContain("document-workspace:drafts:create");
+    expect(permissions).toContain("document-workspace:drafts:update");
+    expect(permissions).toContain("document-workspace:approval:request");
+    expect(permissions).not.toContain("document-workspace:templates:update");
+  });
+
+  it("allows clients to approve portal documents without staff document tools", () => {
+    const client = getMockClientUser();
+
+    expect(can(client, "client-portal:documents:approve")).toBe(true);
+    expect(can(client, "document-workspace:view")).toBe(false);
+    expect(can(client, "document-workspace:send")).toBe(false);
+  });
+
+  it("keeps showing providers out of transaction document drafting", () => {
+    const permissions = rolePermissions["Showing Provider"];
+
+    expect(permissions).not.toContain("document-workspace:drafts:create");
+    expect(permissions).not.toContain("document-workspace:send");
+  });
 });

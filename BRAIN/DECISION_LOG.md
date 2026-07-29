@@ -76,3 +76,11 @@ Decision: The Koinonia employee portal should track staff assignment, client own
 Reason: Koinonia cannot scale beyond owner-operated support unless every client and work item has a clear internal owner, backup path, and capacity-aware assignment history. Showing providers, contract support, transaction coordinators, finance, customer success, operations, and owner roles should only see the internal information needed for their responsibility.
 
 Canonical specification: `docs/specifications/KOINONIA_EMPLOYEE_PORTAL_SPEC.md`
+
+## D-013 — Document Workspace Requires Approval, Versioning, and Send Trail
+
+Decision: Koinonia's portal should include a transaction document workspace for client uploads, missing document requests, drafting support, version history, Realtor approval, send package tracking, signature status, and final archive.
+
+Reason: A transaction management company is judged by whether documents, deadlines, approvals, and communication stay organized. Document preparation and sending are high-trust workflows, so Koinonia needs clear version control, explicit Realtor approval, role-based access, and an audit trail before live client documents move through the portal.
+
+Canonical specification: `docs/specifications/KOINONIA_DOCUMENT_WORKSPACE_SPEC.md`

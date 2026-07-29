@@ -212,6 +212,9 @@ export default function ClientDashboardPreviewPage() {
                     <li key={request}>{request}</li>
                   ))}
                 </ul>
+                <a className="koinonia-document-link" href="/client/documents">
+                  Open Document Center
+                </a>
               </section>
 
               <section className="koinonia-client-request-card">

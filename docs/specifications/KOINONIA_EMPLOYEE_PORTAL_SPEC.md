@@ -75,6 +75,7 @@ Expected dashboard sections:
 - Assignment Overview
 - Unassigned Clients
 - Unassigned Work
+- Document Workspace
 - Staff Workload
 - Assigned Clients
 - Active Work Queue
@@ -82,6 +83,38 @@ Expected dashboard sections:
 - Handoff Needed
 - Escalations
 - Capacity Watch
+
+### Employee Document Workspace
+
+Route:
+
+`/employee/documents`
+
+Purpose:
+
+Give Koinonia staff the operational tools needed to manage drafting, document requests, missing terms, version history, Realtor approval, send packages, signature status, and final archive.
+
+Expected sections:
+
+- Draft queue
+- Missing terms
+- Template library
+- Version history
+- Quality review
+- Approval requests
+- Send queue
+- Signature tracking
+- Final archive
+- Audit trail
+
+Rules:
+
+- Staff access should follow role and assignment.
+- Contract support may draft and version assigned documents.
+- Operations may prepare send packages and rebalance document workload.
+- Final document sending requires recorded Realtor approval or a documented approved workflow.
+- Showing providers should not see transaction document drafts unless a showing-specific document is assigned.
+- The portal should not store third-party forms, brokerage, MLS, or e-signature passwords.
 
 ---
 
@@ -266,13 +299,14 @@ Build the employee portal in safe slices:
 2. Employee auth permissions and limited staff roles. — Scaffolded in `packages/auth`
 3. Publicly hidden `/employee` entry page with no real client data.
 4. `/employee/dashboard` sample-data preview.
-5. Work item detail assignment panel using mocked/sample data.
-6. Staff roster and capacity schema.
-7. Assignment event audit trail.
-8. Authenticated read-only employee dashboard connected to real objects.
-9. Assignment update actions with permission checks.
-10. Staff-specific views for assigned transaction, contract, showing, and operations work.
-11. Production security review before exposing real client files or internal staff notes.
+5. `/employee/documents` sample-data document workspace preview.
+6. Work item detail assignment panel using mocked/sample data.
+7. Staff roster and capacity schema.
+8. Assignment event audit trail.
+9. Authenticated read-only employee dashboard connected to real objects.
+10. Assignment update actions with permission checks.
+11. Staff-specific views for assigned transaction, contract, showing, and operations work.
+12. Production security review before exposing real client files or internal staff notes.
 
 ---
 

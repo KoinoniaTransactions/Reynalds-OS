@@ -113,6 +113,7 @@ Expected dashboard sections:
 - Active Work
 - Waiting on You
 - Pending Review
+- Document Center
 - Showing Requests
 - Completed Work
 - Recently Uploaded Documents
@@ -140,6 +141,31 @@ Expected sections:
 - Access requests
 - Internal status history visible to Koinonia
 - Client-facing status history visible to the Realtor
+
+### Document Center
+
+Route:
+
+`/client/documents`
+
+Purpose:
+
+Give Realtor clients a focused place to upload requested files, review prepared drafts, approve or request revisions, track sent/signature status, and download final archived documents.
+
+Expected sections:
+
+- Documents needed
+- Missing terms
+- Drafts ready for review
+- Approval requests
+- Sent/signature status
+- Completed document archive
+
+Rules:
+
+- Client users should see only documents tied to their own account, work item, or transaction file.
+- Draft approvals must record who approved, when approval occurred, and what version was approved.
+- Clients should not see internal staff notes, template administration, unrelated client files, or internal send-package controls.
 
 ### Showing Request Section
 
@@ -375,13 +401,14 @@ Build the portal in safe slices:
 5. Client dashboard shell using mocked/sample data only. — Preview route added at `/client/dashboard`
 6. Work item detail shell using mocked/sample data only.
 7. Showing request section using mocked/sample data only.
-8. Database schema additions.
-9. Authenticated read-only dashboard connected to real work items.
-10. Secure file upload and document request flow.
-11. Access request tracking without credential storage.
-12. Portal messaging or notes.
-13. Audit logs.
-14. Production security review before accepting real client documents.
+8. Client document center using mocked/sample data only.
+9. Database schema additions.
+10. Authenticated read-only dashboard connected to real work items.
+11. Secure file upload and document request flow.
+12. Access request tracking without credential storage.
+13. Portal messaging or notes.
+14. Audit logs.
+15. Production security review before accepting real client documents.
 
 Do not begin with file upload or credential fields.
 

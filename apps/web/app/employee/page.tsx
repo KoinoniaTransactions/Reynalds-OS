@@ -99,6 +99,10 @@ export default function EmployeePortalPage() {
                 <a className="koinonia-button secondary" href="/client/dashboard">
                   View Client Dashboard
                 </a>
+
+                <a className="koinonia-button secondary" href="/employee/documents">
+                  View Document Workspace
+                </a>
               </div>
             </div>
 

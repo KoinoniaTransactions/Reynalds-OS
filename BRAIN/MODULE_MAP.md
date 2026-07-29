@@ -16,8 +16,10 @@
 | Workflows | `/workflows` | Workflow MVP |
 | Koinonia Client Portal Entry | `/client` | Public entry shell, no sensitive forms |
 | Koinonia Client Dashboard Preview | `/client/dashboard` | Sample-data preview only, not production auth |
+| Koinonia Client Document Center Preview | `/client/documents` | Sample-data document review and approval preview only |
 | Koinonia Employee Portal Entry | `/employee` | Internal entry shell, no real client data |
 | Koinonia Employee Dashboard Preview | `/employee/dashboard` | Sample-data staff assignment preview only, not production auth |
+| Koinonia Employee Document Workspace Preview | `/employee/documents` | Sample-data drafting, approval, send, and archive preview only |
 
 ## Primary APIs
 
