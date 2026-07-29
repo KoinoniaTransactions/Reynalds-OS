@@ -7,6 +7,7 @@ import {
   type Permission,
   type RoleName
 } from "@reynalds-os/auth";
+import { prisma } from "./db";
 
 export type AuthProvider = "mock" | "clerk";
 
@@ -154,7 +155,7 @@ async function getClerkAuthUser(): Promise<AuthUser> {
     "Viewer"
   );
 
-  return createAuthUser({
+  const providerUser = createAuthUser({
     id: session.userId,
     workspaceId:
       firstString(
@@ -171,6 +172,8 @@ async function getClerkAuthUser(): Promise<AuthUser> {
     email: getClerkEmail(clerkUser),
     role
   });
+
+  return resolveClerkDatabaseUser(providerUser);
 }
 
 async function loadClerkServerModule(): Promise<ClerkServerModule> {
@@ -203,6 +206,52 @@ function getClerkEmail(clerkUser: ClerkUser | null): string {
       clerkUser?.emailAddresses?.[0]?.emailAddress
     ) ?? "unknown@example.com"
   );
+}
+
+async function resolveClerkDatabaseUser(providerUser: AuthUser): Promise<AuthUser> {
+  const dbUser = await prisma.user.findFirst({
+    where: {
+      OR: [
+        {
+          authProvider: "clerk",
+          authProviderUserId: providerUser.id
+        },
+        {
+          email: providerUser.email
+        }
+      ]
+    },
+    include: {
+      role: true
+    }
+  });
+
+  if (!dbUser || dbUser.status !== "active" || dbUser.portalAccessStatus !== "active") {
+    return createAuthUser({
+      id: providerUser.id,
+      workspaceId: providerUser.workspaceId,
+      name: providerUser.name,
+      email: providerUser.email,
+      role: "Viewer"
+    });
+  }
+
+  await prisma.user.update({
+    where: { id: dbUser.id },
+    data: {
+      authProvider: "clerk",
+      authProviderUserId: providerUser.id,
+      lastLoginAt: new Date()
+    }
+  });
+
+  return createAuthUser({
+    id: dbUser.id,
+    workspaceId: dbUser.workspaceId,
+    name: dbUser.name,
+    email: dbUser.email,
+    role: dbUser.role?.name ?? "Viewer"
+  });
 }
 
 function toRecord(value: unknown): Record<string, unknown> {

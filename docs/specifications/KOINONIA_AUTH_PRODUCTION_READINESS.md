@@ -36,6 +36,7 @@ The current web app includes:
 - Portal identity fields on `User` for auth provider IDs, MFA requirement, access status, and login timing.
 - `PortalInvitation` for client and staff invitation status.
 - `AuditEvent` for sensitive auth and portal access history.
+- Provider users resolve through the Koinonia database when available; database role and access status control portal permissions.
 - Permission tests for provider role mapping and typed denial behavior.
 
 The protected routes still use sample data only. They are guarded screens, not production data workflows.
@@ -96,6 +97,8 @@ Valid `koinoniaRole` values come from `packages/auth`:
 - Client
 
 Unknown provider roles are downgraded to Viewer.
+
+Provider metadata can identify the intended workspace and role during setup, but a matched database user record is the source of truth for production portal permissions. Unknown, inactive, or blocked users are downgraded to Viewer.
 
 ---
 
