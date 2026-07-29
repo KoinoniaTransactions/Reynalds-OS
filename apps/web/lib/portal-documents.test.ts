@@ -4,9 +4,12 @@ import {
   buildPortalDocumentDisplayName,
   formatDocumentFileSize,
   getHumanDocumentStatus,
+  getNextPortalDocumentVersionNumber,
+  getPortalDocumentVersionLabel,
   PortalDocumentValidationError,
   sanitizeDocumentFileName,
   validatePortalDocumentClientApprovalInput,
+  validatePortalDocumentReplacementSubmission,
   validatePortalDocumentScannerCommand,
   validatePortalDocumentStatusUpdateInput,
   validatePortalDocumentStorageKey,
@@ -88,6 +91,11 @@ describe("portal document helpers", () => {
     expect(formatDocumentFileSize(2.5 * 1024 * 1024)).toBe("2.5 MB");
     expect(getHumanDocumentStatus("Ready for Client Review")).toBe("Ready for Review");
     expect(getHumanDocumentStatus("Revision Requested")).toBe("Revision Requested");
+    expect(getHumanDocumentStatus("Superseded")).toBe("Superseded");
+    expect(getNextPortalDocumentVersionNumber(2)).toBe(3);
+    expect(getNextPortalDocumentVersionNumber(null)).toBe(2);
+    expect(getPortalDocumentVersionLabel(3, "Broker Review")).toBe("Broker Review");
+    expect(getPortalDocumentVersionLabel(3)).toBe("v3");
   });
 
   it("validates staff document status updates", () => {
@@ -147,6 +155,49 @@ describe("portal document helpers", () => {
       validatePortalDocumentClientApprovalInput({
         action: "approve",
         notes: "The gate code is 1234."
+      })
+    ).toThrow("Do not include passwords");
+  });
+
+  it("validates staff document replacement uploads", () => {
+    expect(
+      validatePortalDocumentReplacementSubmission({
+        file: {
+          name: "buyer-offer-v2.pdf",
+          size: 512_000,
+          type: "application/pdf"
+        },
+        replacementReason: "Corrected closing date",
+        requestedAction: "Review corrected version",
+        versionLabel: "v2"
+      })
+    ).toMatchObject({
+      replacementReason: "Corrected closing date",
+      requestedAction: "Review corrected version",
+      versionLabel: "v2",
+      file: {
+        cleanName: "buyer-offer-v2.pdf"
+      }
+    });
+
+    expect(() =>
+      validatePortalDocumentReplacementSubmission({
+        file: {
+          name: "buyer-offer.exe",
+          size: 100,
+          type: "application/x-msdownload"
+        }
+      })
+    ).toThrow("Upload a PDF");
+
+    expect(() =>
+      validatePortalDocumentReplacementSubmission({
+        file: {
+          name: "buyer-offer-v2.pdf",
+          size: 512_000,
+          type: "application/pdf"
+        },
+        notes: "The bank account is noted here."
       })
     ).toThrow("Do not include passwords");
   });

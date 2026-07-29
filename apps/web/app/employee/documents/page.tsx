@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { AuthUser } from "@reynalds-os/auth";
 import type { Document as PortalDocumentRecord } from "@reynalds-os/database";
+import { PortalDocumentReplacementForm } from "../../../components/employee/PortalDocumentReplacementForm";
 import { PortalDocumentStatusForm } from "../../../components/employee/PortalDocumentStatusForm";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
@@ -10,6 +11,8 @@ import {
   formatDocumentFileSize,
   getDocumentSubmittedLabel,
   getHumanDocumentStatus,
+  getNextPortalDocumentVersionNumber,
+  getPortalDocumentVersionLabel,
   validatePortalDocumentUploadRoot
 } from "../../../lib/portal-documents";
 
@@ -87,11 +90,14 @@ type EmployeeDocumentItem = {
   downloadHref?: string;
   fileInfo: string;
   id: string;
+  nextVersionLabel: string;
   requestedAction?: string | null;
   requestedBy: string;
+  replacementReady: boolean;
   status: string;
   submitted: string;
   title: string;
+  versionLabel: string;
   workflowStatus: string;
 };
 
@@ -109,7 +115,10 @@ const sampleUploadIntake: EmployeeDocumentItem[] = [
     status: "Uploaded",
     detail: "Sample client upload waiting for document review.",
     fileInfo: "seller-disclosure.pdf - 500 KB",
+    nextVersionLabel: "v2",
+    replacementReady: false,
     submitted: "Today",
+    versionLabel: "v1",
     workflowStatus: "Uploaded"
   },
   {
@@ -119,7 +128,10 @@ const sampleUploadIntake: EmployeeDocumentItem[] = [
     status: "In Review",
     detail: "Sample upload tied to terms review.",
     fileInfo: "inspection-instructions.pdf - 220 KB",
+    nextVersionLabel: "v3",
+    replacementReady: false,
     submitted: "Yesterday",
+    versionLabel: "v2",
     workflowStatus: "In Review"
   }
 ];
@@ -274,7 +286,9 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
                           <span>{item.requestedBy}</span>
                           <h3>{item.title}</h3>
                           <p>{item.detail}</p>
-                          <p>{item.fileInfo}</p>
+                          <p>
+                            {item.fileInfo} - {item.versionLabel}
+                          </p>
                           {item.downloadHref ? (
                             <a className="koinonia-document-link employee" href={item.downloadHref}>
                               Download Upload
@@ -292,6 +306,11 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
                           currentStatus={item.workflowStatus}
                           disabled={!documentView.isLiveData}
                           documentId={item.id}
+                        />
+                        <PortalDocumentReplacementForm
+                          disabled={!documentView.isLiveData || !item.replacementReady}
+                          documentId={item.id}
+                          nextVersionLabel={item.nextVersionLabel}
                         />
                       </article>
                     ))
@@ -423,8 +442,11 @@ function mapDocumentRecord(
     downloadHref:
       storageReady && document.storageKey ? `/api/portal/documents/${document.id}/download` : undefined,
     fileInfo: `${document.fileName} - ${formatDocumentFileSize(document.fileSizeBytes)}`,
+    nextVersionLabel: `v${getNextPortalDocumentVersionNumber(document.versionNumber)}`,
     requestedAction: document.requestedAction,
+    replacementReady: !document.supersededByDocumentId && document.status !== "Superseded" && document.status !== "Archived",
     submitted: getDocumentSubmittedLabel(document.createdAt),
+    versionLabel: getPortalDocumentVersionLabel(document.versionNumber, document.versionLabel),
     workflowStatus: document.status
   };
 }

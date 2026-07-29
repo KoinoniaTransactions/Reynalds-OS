@@ -54,7 +54,7 @@ export function getPortalWorkStatusBucket(status: string): PortalWorkStatusBucke
   const normalizedStatus = status.toLowerCase();
 
   if (
-    /\b(completed?|archived|closed|sent|approved)\b/.test(normalizedStatus)
+    /\b(completed?|archived|closed|sent|approved|superseded)\b/.test(normalizedStatus)
   ) {
     return "completed";
   }

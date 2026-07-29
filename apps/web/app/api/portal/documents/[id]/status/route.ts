@@ -22,6 +22,7 @@ const statusPermissionMap: Record<PortalDocumentWorkflowStatus, Permission> = {
   "Ready for Client Review": "document-workspace:approval:request",
   "Revision Requested": "document-workspace:drafts:update",
   Sent: "document-workspace:send",
+  Superseded: "document-workspace:drafts:update",
   Uploaded: "document-workspace:drafts:update"
 };
 

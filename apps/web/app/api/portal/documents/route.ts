@@ -1,31 +1,27 @@
-import { randomUUID } from "node:crypto";
-import { execFile } from "node:child_process";
-import { mkdir, unlink, writeFile } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
-import { promisify } from "node:util";
 import { PermissionDeniedError, type AuthUser, type Permission } from "@reynalds-os/auth";
 import { NextResponse } from "next/server";
 import { getAuthErrorResponse } from "../../../../lib/api-auth";
 import { assertPermission } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/db";
 import {
+  getConfiguredPortalDocumentScannerCommand,
+  getConfiguredPortalDocumentUploadRoot,
+  getPortalDocumentFormFile,
+  persistPortalDocumentFile,
+  PortalDocumentScanFailedError,
+  PortalDocumentScanUnavailableError,
+  removeStoredFileQuietly,
+  scanPortalDocumentFile,
+  type StoredPortalDocument
+} from "../../../../lib/portal-document-storage";
+import {
   buildPortalDocumentDisplayName,
   PortalDocumentValidationError,
-  validatePortalDocumentUploadRoot,
-  validatePortalDocumentScannerCommand,
   validatePortalDocumentSubmission
 } from "../../../../lib/portal-documents";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-const execFileAsync = promisify(execFile);
-
-type StoredPortalDocument = {
-  fileUrl: string;
-  localPath: string;
-  storageKey: string;
-};
 
 export async function GET() {
   try {
@@ -60,7 +56,7 @@ export async function POST(request: Request) {
       "client-portal:documents:upload",
       "document-workspace:drafts:create"
     ]);
-    const uploadRoot = getConfiguredUploadRoot();
+    const uploadRoot = getConfiguredPortalDocumentUploadRoot();
 
     if (!uploadRoot) {
       return NextResponse.json(
@@ -69,7 +65,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const scannerCommand = getConfiguredScannerCommand();
+    const scannerCommand = getConfiguredPortalDocumentScannerCommand();
 
     if (!scannerCommand) {
       return NextResponse.json(
@@ -79,7 +75,7 @@ export async function POST(request: Request) {
     }
 
     const formData = await request.formData();
-    const file = getFormFile(formData, "file");
+    const file = getPortalDocumentFormFile(formData, "file");
     const input = validatePortalDocumentSubmission({
       documentType: formData.get("documentType"),
       file: {
@@ -206,84 +202,6 @@ function canViewAllDocuments(actor: AuthUser): boolean {
   return actor.role !== "Client" && actor.permissions.includes("document-workspace:view");
 }
 
-function getConfiguredUploadRoot(): string | null {
-  try {
-    return resolve(validatePortalDocumentUploadRoot(process.env.PORTAL_DOCUMENT_UPLOAD_DIR));
-  } catch {
-    return null;
-  }
-}
-
-function getConfiguredScannerCommand(): string | null {
-  try {
-    return validatePortalDocumentScannerCommand(process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND);
-  } catch {
-    return null;
-  }
-}
-
-function getFormFile(formData: FormData, fieldName: string): File {
-  const file = formData.get(fieldName);
-
-  if (!(file instanceof File)) {
-    throw new PortalDocumentValidationError("A document file is required.");
-  }
-
-  return file;
-}
-
-async function persistPortalDocumentFile({
-  actor,
-  cleanName,
-  file,
-  uploadRoot
-}: {
-  actor: AuthUser;
-  cleanName: string;
-  file: File;
-  uploadRoot: string;
-}): Promise<StoredPortalDocument> {
-  const workspaceSegment = getSafeStorageSegment(actor.workspaceId);
-  const storageFileName = `${randomUUID()}-${cleanName}`;
-  const storageKey = `${workspaceSegment}/${storageFileName}`;
-  const localPath = join(uploadRoot, workspaceSegment, storageFileName);
-
-  await mkdir(dirname(localPath), { recursive: true });
-  await writeFile(localPath, Buffer.from(await file.arrayBuffer()), { mode: 0o600 });
-
-  return {
-    fileUrl: `portal-document://${storageKey}`,
-    localPath,
-    storageKey
-  };
-}
-
-function getSafeStorageSegment(value: string): string {
-  return value.replace(/[^A-Za-z0-9_-]+/g, "_").slice(0, 80) || "workspace";
-}
-
-async function removeStoredFileQuietly(filePath: string) {
-  try {
-    await unlink(filePath);
-  } catch {
-    // Best-effort cleanup only; the request still returns the real failure.
-  }
-}
-
-async function scanPortalDocumentFile(filePath: string, scannerCommand: string) {
-  try {
-    await execFileAsync(scannerCommand, [filePath], { timeout: 30_000 });
-  } catch (error) {
-    if (isScannerUnavailableError(error)) {
-      throw new PortalDocumentScanUnavailableError(
-        "Document malware scanning is temporarily unavailable."
-      );
-    }
-
-    throw new PortalDocumentScanFailedError("Uploaded document did not pass malware scanning.");
-  }
-}
-
 function handlePortalDocumentError(error: unknown) {
   const authResponse = getAuthErrorResponse(error);
 
@@ -308,30 +226,6 @@ function handlePortalDocumentError(error: unknown) {
   }
 
   throw error;
-}
-
-class PortalDocumentScanFailedError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "PortalDocumentScanFailedError";
-  }
-}
-
-class PortalDocumentScanUnavailableError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "PortalDocumentScanUnavailableError";
-  }
-}
-
-function isScannerUnavailableError(error: unknown): boolean {
-  return (
-    error instanceof Error &&
-    "code" in error &&
-    ((error as { code?: unknown }).code === "ENOENT" ||
-      (error as { code?: unknown }).code === "EACCES" ||
-      (error as { signal?: unknown }).signal === "SIGTERM")
-  );
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {

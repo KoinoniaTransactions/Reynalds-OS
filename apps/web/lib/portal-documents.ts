@@ -9,6 +9,7 @@ export const portalDocumentWorkflowStatuses = [
   "Revision Requested",
   "Approved",
   "Sent",
+  "Superseded",
   "Archived"
 ] as const;
 
@@ -60,6 +61,24 @@ export type PortalDocumentClientApprovalAction = "approve" | "request_revision";
 export type PortalDocumentClientApprovalInput = {
   action: PortalDocumentClientApprovalAction;
   notes?: string;
+};
+
+export type PortalDocumentReplacementSubmissionInput = {
+  file: PortalDocumentFileInput;
+  notes?: string;
+  replacementReason?: string;
+  requestedAction?: string;
+  versionLabel?: string;
+};
+
+export type PortalDocumentReplacementSubmission = PortalDocumentReplacementSubmissionInput & {
+  file: PortalDocumentFileInput & {
+    cleanName: string;
+    extension: string;
+    mimeType: string;
+  };
+  replacementReason: string;
+  requestedAction: string;
 };
 
 export class PortalDocumentValidationError extends Error {
@@ -142,6 +161,39 @@ export function validatePortalDocumentStatusUpdateInput(
   };
 }
 
+export function validatePortalDocumentReplacementSubmission(
+  input: unknown
+): PortalDocumentReplacementSubmission {
+  if (!input || typeof input !== "object") {
+    throw new PortalDocumentValidationError("Document replacement must be an object.");
+  }
+
+  const value = input as Record<string, unknown>;
+  const file = validatePortalDocumentFile(value.file);
+  const notes = boundedOptionalString(value.notes, "notes", 1_500);
+  const replacementReason =
+    boundedOptionalString(value.replacementReason, "replacementReason", 220) ??
+    "Replacement version uploaded";
+  const requestedAction =
+    boundedOptionalString(value.requestedAction, "requestedAction", 220) ??
+    "Review replacement document version";
+  const versionLabel = boundedOptionalString(value.versionLabel, "versionLabel", 80);
+
+  if (notes && containsCredentialLanguage(notes)) {
+    throw new PortalDocumentValidationError(
+      "Do not include passwords, card numbers, access codes, or private login details in document notes."
+    );
+  }
+
+  return {
+    file,
+    notes,
+    replacementReason,
+    requestedAction,
+    versionLabel
+  };
+}
+
 export function buildPortalDocumentDisplayName(input: PortalDocumentSubmission): string {
   const transactionName = input.transactionName ? `${input.transactionName} - ` : "";
 
@@ -162,6 +214,8 @@ export function getHumanDocumentStatus(status: string): string {
       return "Approved";
     case "Sent":
       return "Sent";
+    case "Superseded":
+      return "Superseded";
     case "Archived":
       return "Archived";
     default:
@@ -196,6 +250,27 @@ export function getDocumentSubmittedLabel(createdAt: Date | string | null | unde
     month: "short",
     day: "numeric"
   });
+}
+
+export function getNextPortalDocumentVersionNumber(
+  versionNumber: number | null | undefined
+): number {
+  return Number.isFinite(versionNumber) && Number(versionNumber) >= 1
+    ? Math.floor(Number(versionNumber)) + 1
+    : 2;
+}
+
+export function getPortalDocumentVersionLabel(
+  versionNumber: number | null | undefined,
+  versionLabel?: string | null
+): string {
+  const label = optionalString(versionLabel);
+  const normalizedVersionNumber =
+    Number.isFinite(versionNumber) && Number(versionNumber) >= 1
+      ? Math.floor(Number(versionNumber))
+      : 1;
+
+  return label ?? `v${normalizedVersionNumber}`;
 }
 
 export function sanitizeDocumentFileName(fileName: string): string {

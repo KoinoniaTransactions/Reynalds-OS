@@ -4962,6 +4962,19 @@ h1 {
   gap: 10px;
 }
 
+.koinonia-document-replacement {
+  grid-column: 1 / -1;
+}
+
+.koinonia-document-replacement summary {
+  cursor: pointer;
+  color: #195c60;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
 .koinonia-document-security-note,
 .koinonia-document-form-status {
   margin: 0;

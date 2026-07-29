@@ -23,6 +23,7 @@ describe("portal work item helpers", () => {
     expect(getPortalWorkStatusBucket("Consent Needed")).toBe("waiting");
     expect(getPortalWorkStatusBucket("Ready for Client Review")).toBe("review");
     expect(getPortalWorkStatusBucket("Completed")).toBe("completed");
+    expect(getPortalWorkStatusBucket("Superseded")).toBe("completed");
     expect(getPortalWorkStatusBucket("Active")).toBe("active");
   });
 

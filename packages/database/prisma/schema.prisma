@@ -194,14 +194,22 @@ model Document {
   status          String
   requestedAction String?
   notes           String?
-  accessLevel     String   @default("client_and_staff")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  archivedAt      DateTime?
+  accessLevel            String    @default("client_and_staff")
+  versionNumber          Int       @default(1)
+  versionLabel           String?
+  previousDocumentId     String?
+  supersededByDocumentId String?
+  replacementReason      String?
+  supersededAt           DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  archivedAt             DateTime?
 
   @@index([workspaceId, status])
   @@index([workspaceId, ownerId])
   @@index([workspaceId, documentType])
+  @@index([workspaceId, previousDocumentId])
+  @@index([workspaceId, supersededByDocumentId])
   @@index([relatedObjectId])
 }
 

@@ -14,6 +14,28 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Document Version Replacement Added
+
+### Summary
+
+Koinonia staff can now upload a replacement version for an existing portal document while preserving the prior document record for history, audit, and client-file continuity.
+
+### Implemented
+
+- Extended `Document` records with version number, version label, previous-document links, superseded-by links, replacement reason, and superseded timestamp fields.
+- Added `/api/portal/documents/[id]/replacement` for staff-only replacement uploads.
+- Replacement uploads reuse the private storage and malware-scan gate before any new document record is created.
+- Replacing a document marks the old record `Superseded` and creates a new `In Review` record with the next version number.
+- Replacement actions write audit history and related work-item timeline history when the document is tied to a work item.
+- Added replacement controls to `/employee/documents` for live document records.
+- Added focused tests for replacement validation, version-label helpers, and superseded status bucket behavior.
+
+### Current Status
+
+The replacement workflow compiles into the production build and is covered by focused tests. Live replacement verification still requires reachable database storage, configured private upload storage, configured malware scanning, and real provider-backed staff users. In-browser editing, e-signature routing, and final archive delivery remain separate production passes.
+
+---
+
 ## 2026-07-29 — Portal Client Document Approval Added
 
 ### Summary
