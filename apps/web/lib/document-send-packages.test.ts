@@ -2,10 +2,14 @@ import { describe, expect, it } from "vitest";
 import {
   buildDocumentSendPackageName,
   buildDocumentSendPackageNextAction,
+  buildDocumentSendPackageStatusNextAction,
+  documentSendPackageStatusRequiresApproval,
   DocumentSendPackageValidationError,
   getDocumentSendPackageDetail,
   getDocumentSendPackageHealth,
   getDocumentSendPackageMetaLabels,
+  isDocumentSendPackageApprovalConfirmed,
+  validateDocumentSendPackageStatusUpdateInput,
   validateDocumentSendPackageInput
 } from "./document-send-packages";
 
@@ -96,5 +100,29 @@ describe("document send package helpers", () => {
       "2 documents",
       "Before inspection deadline"
     ]);
+  });
+
+  it("validates safe send package status updates", () => {
+    const input = validateDocumentSendPackageStatusUpdateInput({
+      deliveryConfirmation: "Sent through approved e-signature provider queue.",
+      notes: "Monitor signature completion before the inspection deadline.",
+      status: "Signature Monitoring"
+    });
+
+    expect(input.status).toBe("Signature Monitoring");
+    expect(buildDocumentSendPackageStatusNextAction(input.status, true)).toContain(
+      "Monitor signature"
+    );
+    expect(documentSendPackageStatusRequiresApproval(input.status)).toBe(true);
+    expect(isDocumentSendPackageApprovalConfirmed({ approvalConfirmed: true })).toBe(true);
+  });
+
+  it("rejects unsafe send package status update notes", () => {
+    expect(() =>
+      validateDocumentSendPackageStatusUpdateInput({
+        notes: "The brokerage password is saved in the e-signature note.",
+        status: "Sent"
+      })
+    ).toThrow(DocumentSendPackageValidationError);
   });
 });

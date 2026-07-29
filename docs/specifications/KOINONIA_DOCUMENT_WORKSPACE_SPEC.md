@@ -219,7 +219,7 @@ No final send package should move to `Approved to Send` unless Realtor approval 
 - Delivery channel.
 - Signature platform status.
 
-The portal should integrate with approved email/e-signature systems later. Until then, the MVP should record sending state and approval state without storing third-party platform passwords.
+The portal should integrate with approved email/e-signature systems later. Until then, the MVP should record sending state, delivery confirmation, signature monitoring status, approval state, audit history, and timeline history without storing third-party platform passwords.
 
 ### Archive Tools
 

@@ -33,6 +33,12 @@ export type DocumentSendPackageInput = {
   status: DocumentSendPackageStatus;
 };
 
+export type DocumentSendPackageStatusUpdateInput = {
+  deliveryConfirmation?: string;
+  notes?: string;
+  status: DocumentSendPackageStatus;
+};
+
 export class DocumentSendPackageValidationError extends Error {
   constructor(message: string) {
     super(message);
@@ -81,14 +87,52 @@ export function validateDocumentSendPackageInput(input: unknown): DocumentSendPa
   };
 }
 
+export function validateDocumentSendPackageStatusUpdateInput(
+  input: unknown
+): DocumentSendPackageStatusUpdateInput {
+  if (!input || typeof input !== "object") {
+    throw new DocumentSendPackageValidationError("Document send package update body must be an object.");
+  }
+
+  const value = input as Record<string, unknown>;
+  const deliveryConfirmation = boundedOptionalString(
+    value.deliveryConfirmation,
+    "deliveryConfirmation",
+    500
+  );
+  const notes = boundedOptionalString(value.notes, "notes", 1_000);
+
+  if (
+    (deliveryConfirmation && containsSensitiveDeliveryLanguage(deliveryConfirmation)) ||
+    (notes && containsSensitiveDeliveryLanguage(notes))
+  ) {
+    throw new DocumentSendPackageValidationError(
+      "Do not include passwords, card numbers, access codes, or private login details in send package updates."
+    );
+  }
+
+  return {
+    deliveryConfirmation,
+    notes,
+    status: normalizeRequiredSendPackageStatus(value.status)
+  };
+}
+
 export function buildDocumentSendPackageName(input: DocumentSendPackageInput): string {
   return `Send Package - ${input.packageName}`;
 }
 
 export function buildDocumentSendPackageNextAction(input: DocumentSendPackageInput): string {
-  switch (input.status) {
+  return buildDocumentSendPackageStatusNextAction(input.status, input.signatureRequired);
+}
+
+export function buildDocumentSendPackageStatusNextAction(
+  status: DocumentSendPackageStatus,
+  signatureRequired = false
+): string {
+  switch (status) {
     case "Ready to Send":
-      return input.signatureRequired
+      return signatureRequired
         ? "Route through the approved e-signature workflow after final staff check."
         : "Send the approved document package through the selected delivery channel.";
     case "Sent":
@@ -163,6 +207,21 @@ export function getDocumentSendPackageMetaLabels(data: unknown): string[] {
   return labels;
 }
 
+export function isDocumentSendPackageApprovalConfirmed(data: unknown): boolean {
+  return Boolean(
+    data &&
+      typeof data === "object" &&
+      !Array.isArray(data) &&
+      (data as Record<string, unknown>).approvalConfirmed === true
+  );
+}
+
+export function documentSendPackageStatusRequiresApproval(
+  status: DocumentSendPackageStatus
+): boolean {
+  return ["Ready to Send", "Sent", "Signature Monitoring", "Completed"].includes(status);
+}
+
 function normalizeSendPackageStatus(
   value: unknown,
   approvalConfirmed: boolean
@@ -185,6 +244,22 @@ function normalizeSendPackageStatus(
   ) {
     throw new DocumentSendPackageValidationError(
       "Realtor approval must be confirmed before a package can be marked ready, sent, or complete."
+    );
+  }
+
+  return status as DocumentSendPackageStatus;
+}
+
+function normalizeRequiredSendPackageStatus(value: unknown): DocumentSendPackageStatus {
+  const status = optionalString(value);
+
+  if (!status) {
+    throw new DocumentSendPackageValidationError("status is required.");
+  }
+
+  if (!documentSendPackageStatuses.includes(status as DocumentSendPackageStatus)) {
+    throw new DocumentSendPackageValidationError(
+      "status must match an approved document send package status."
     );
   }
 

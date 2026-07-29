@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
 import type { AuthUser } from "@reynalds-os/auth";
-import type { Document as PortalDocumentRecord } from "@reynalds-os/database";
+import type { Document as PortalDocumentRecord, RosObject } from "@reynalds-os/database";
 import { PortalDocumentReplacementForm } from "../../../components/employee/PortalDocumentReplacementForm";
+import { PortalDocumentSendPackageForm } from "../../../components/employee/PortalDocumentSendPackageForm";
+import { PortalDocumentSendPackageStatusForm } from "../../../components/employee/PortalDocumentSendPackageStatusForm";
 import { PortalDocumentStatusForm } from "../../../components/employee/PortalDocumentStatusForm";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
+import {
+  documentSendPackageObjectType,
+  getDocumentSendPackageDetail,
+  getDocumentSendPackageMetaLabels,
+  getHumanDocumentSendPackageStatus
+} from "../../../lib/document-send-packages";
 import {
   formatDocumentFileSize,
   getDocumentSubmittedLabel,
@@ -101,10 +109,21 @@ type EmployeeDocumentItem = {
   workflowStatus: string;
 };
 
+type EmployeeSendPackageItem = {
+  detail: string;
+  gate: string;
+  id: string;
+  metaLabels: string[];
+  name: string;
+  status: string;
+  workflowStatus: string;
+};
+
 type EmployeeDocumentView = {
   documents: EmployeeDocumentItem[];
   isLiveData: boolean;
   notice?: string;
+  sendPackages: EmployeeSendPackageItem[];
 };
 
 const sampleUploadIntake: EmployeeDocumentItem[] = [
@@ -163,26 +182,35 @@ const toolSuite = [
   }
 ] as const;
 
-const sendPackages = [
+const sampleSendPackages: EmployeeSendPackageItem[] = [
   {
+    id: "sample-send-offer",
     name: "Buyer Offer Signature Package",
     status: "Waiting on Realtor Approval",
     gate: "Approval required",
-    detail: "Prepared but blocked from sending until final Realtor approval is recorded."
+    detail: "Prepared but blocked from sending until final Realtor approval is recorded.",
+    metaLabels: ["Approval needed", "Signature required"],
+    workflowStatus: "Approval Needed"
   },
   {
+    id: "sample-send-counter",
     name: "Counterproposal Addendum",
     status: "Approved to Send",
     gate: "Ready",
-    detail: "Version notes complete; approved recipient list is attached."
+    detail: "Version notes complete; approved recipient list is attached.",
+    metaLabels: ["Approval recorded", "No signature required"],
+    workflowStatus: "Ready to Send"
   },
   {
+    id: "sample-send-inspection",
     name: "Inspection Resolution",
     status: "Sent for Signature",
     gate: "Monitor",
-    detail: "Signature package is pending completion and follow-up."
+    detail: "Signature package is pending completion and follow-up.",
+    metaLabels: ["Approval recorded", "Signature required"],
+    workflowStatus: "Signature Monitoring"
   }
-] as const;
+];
 
 const missingTerms = [
   "Confirm earnest money deadline for Wilson offer.",
@@ -206,6 +234,11 @@ const workflowSteps = [
 export default async function EmployeeDocumentWorkspacePreviewPage() {
   const actor = await requirePortalPermission("document-workspace:view", "/employee/documents");
   const documentView = await getEmployeeDocumentView(actor);
+  const sendPackageDocumentOptions = documentView.documents.map((document) => ({
+    id: document.id,
+    label: `${document.title} ${document.versionLabel}`,
+    status: document.status
+  }));
 
   return (
     <main className="koinonia-site koinonia-document-center koinonia-employee-documents">
@@ -345,18 +378,30 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
                 </div>
 
                 <div className="koinonia-document-card-list">
-                  {sendPackages.map((item) => (
-                    <article className="koinonia-document-work-item employee" key={item.name}>
+                  <PortalDocumentSendPackageForm
+                    disabled={!documentView.isLiveData}
+                    documents={sendPackageDocumentOptions}
+                  />
+
+                  {documentView.sendPackages.map((item) => (
+                    <article className="koinonia-document-work-item employee" key={item.id}>
                       <div>
                         <span>{item.gate}</span>
                         <h3>{item.name}</h3>
                         <p>{item.detail}</p>
+                        <p>{item.metaLabels.join(" - ")}</p>
                       </div>
 
                       <div className="koinonia-document-work-meta employee">
                         <strong>{item.status}</strong>
                         <span>Send gate</span>
                       </div>
+
+                      <PortalDocumentSendPackageStatusForm
+                        currentStatus={item.workflowStatus}
+                        disabled={!documentView.isLiveData}
+                        sendPackageId={item.id}
+                      />
                     </article>
                   ))}
                 </div>
@@ -403,30 +448,57 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
 async function getEmployeeDocumentView(actor: AuthUser): Promise<EmployeeDocumentView> {
   try {
     const storageReady = isDocumentStorageConfigured();
-    const documents = await prisma.document.findMany({
-      where: {
-        workspaceId: actor.workspaceId,
-        archivedAt: null
-      },
-      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-      take: 25
-    });
+    const [documents, sendPackageObjects] = await Promise.all([
+      prisma.document.findMany({
+        where: {
+          workspaceId: actor.workspaceId,
+          archivedAt: null
+        },
+        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+        take: 25
+      }),
+      prisma.rosObject.findMany({
+        where: {
+          workspaceId: actor.workspaceId,
+          archivedAt: null,
+          objectType: documentSendPackageObjectType
+        },
+        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+        take: 25
+      })
+    ]);
 
     return {
       documents: documents.map((document) => mapDocumentRecord(document, storageReady)),
-      isLiveData: true
+      isLiveData: true,
+      sendPackages: sendPackageObjects.map(mapDocumentSendPackageRecord)
     };
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
       return {
         documents: sampleUploadIntake,
         isLiveData: false,
-        notice: "Document storage is not reachable in this preview, so sample uploads are shown."
+        notice: "Document storage is not reachable in this preview, so sample uploads are shown.",
+        sendPackages: sampleSendPackages
       };
     }
 
     throw error;
   }
+}
+
+function mapDocumentSendPackageRecord(sendPackage: RosObject): EmployeeSendPackageItem {
+  const metaLabels = getDocumentSendPackageMetaLabels(sendPackage.data);
+
+  return {
+    detail: getDocumentSendPackageDetail(sendPackage.data),
+    gate: metaLabels[0] ?? "Send gate",
+    id: sendPackage.id,
+    metaLabels,
+    name: sendPackage.name,
+    status: getHumanDocumentSendPackageStatus(sendPackage.status),
+    workflowStatus: sendPackage.status
+  };
 }
 
 function mapDocumentRecord(
