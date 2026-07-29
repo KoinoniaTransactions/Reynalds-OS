@@ -24,7 +24,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - Added optional Clerk provider invitation handoff through `sendProviderInvitation`.
 - Added first-login invitation acceptance that can create the Koinonia user from an approved invitation.
 - Explicitly treats pending Clerk sessions as signed out.
-- Seeds all approved Koinonia portal role names.
+- Seeds all approved Koinonia portal role names and shared permission lists.
 - Added scanner-gated portal document uploads and authorized private document downloads.
 - Added protected showing, external access, and billing setup request workflows.
 - Added explicit client/staff assignment fields to `RosObject`.

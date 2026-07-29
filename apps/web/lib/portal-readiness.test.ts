@@ -74,4 +74,23 @@ describe("portal readiness report", () => {
     expect(roles?.status).toBe("blocked");
     expect(roles?.proof).toContain("Finance");
   });
+
+  it("reports seeded roles without stored permissions", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        database: {
+          activeOwnerCount: 1,
+          connected: true,
+          missingRoles: [],
+          rolesMissingPermissions: ["Operations"],
+          staffWithoutMfaCount: 0,
+          workspaceExists: true
+        }
+      })
+    );
+    const roles = report.groups.flatMap((group) => group.items).find((item) => item.id === "roles");
+
+    expect(roles?.status).toBe("blocked");
+    expect(roles?.proof).toContain("Operations");
+  });
 });

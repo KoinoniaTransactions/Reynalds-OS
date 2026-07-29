@@ -1,7 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": "../..",
     "noEmit": true,
+    "paths": {
+      "@/*": ["apps/web/*"],
+      "@reynalds-os/auth": ["packages/auth/index.ts"]
+    },
     "types": ["vitest/globals"]
   },
   "include": ["**/*.ts"],

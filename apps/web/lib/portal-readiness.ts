@@ -8,6 +8,7 @@ export type PortalDatabaseReadiness = {
   connected: boolean;
   detail?: string;
   missingRoles?: string[];
+  rolesMissingPermissions?: string[];
   staffWithoutMfaCount?: number;
   workspaceExists?: boolean;
 };
@@ -337,13 +338,14 @@ function getWorkspaceReadiness(database: PortalDatabaseReadiness, workspaceId: s
 
 function getRoleSeedReadiness(database: PortalDatabaseReadiness): PortalReadinessItem {
   const missingRoles = database.missingRoles ?? [];
+  const rolesMissingPermissions = database.rolesMissingPermissions ?? [];
 
-  if (missingRoles.length === 0 && database.connected) {
+  if (missingRoles.length === 0 && rolesMissingPermissions.length === 0 && database.connected) {
     return readyItem(
       "roles",
       "Portal roles",
-      "All approved Koinonia portal roles are seeded.",
-      `${portalReadinessRequiredRoles.length} required roles are present.`
+      "All approved Koinonia portal roles and permission lists are seeded.",
+      `${portalReadinessRequiredRoles.length} required roles are present with permissions.`
     );
   }
 
@@ -351,9 +353,21 @@ function getRoleSeedReadiness(database: PortalDatabaseReadiness): PortalReadines
     "roles",
     "Portal roles",
     "One or more required portal roles are missing.",
-    missingRoles.length ? `Missing: ${missingRoles.join(", ")}` : "Role check did not complete.",
+    getRoleReadinessProof(missingRoles, rolesMissingPermissions),
     "Run the database seed and full readiness verifier."
   );
+}
+
+function getRoleReadinessProof(missingRoles: string[], rolesMissingPermissions: string[]): string {
+  if (missingRoles.length > 0) {
+    return `Missing: ${missingRoles.join(", ")}`;
+  }
+
+  if (rolesMissingPermissions.length > 0) {
+    return `Missing permissions: ${rolesMissingPermissions.join(", ")}`;
+  }
+
+  return "Role check did not complete.";
 }
 
 function getOwnerReadiness(database: PortalDatabaseReadiness): PortalReadinessItem {

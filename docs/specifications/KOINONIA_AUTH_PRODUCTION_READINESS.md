@@ -39,7 +39,7 @@ The current web app includes:
 - Clerk session lookup explicitly treats pending sessions as signed out.
 - Route-level permission guards in `apps/web/lib/portal-auth.ts`.
 - Role normalization and provider-user construction in `packages/auth`.
-- Database seed creates all approved Koinonia role names for portal assignment.
+- Database seed creates all approved Koinonia role names and their shared permission lists for portal assignment.
 - Portal identity fields on `User` for auth provider IDs, MFA requirement, access status, and login timing.
 - Portal assignment fields on `RosObject` for client visibility, client account context, assigned staff owner, and backup staff owner.
 - `PortalInvitation` for client and staff invitation status.
@@ -65,7 +65,7 @@ The current web app includes:
 - First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
 - Permission tests for provider role mapping and typed denial behavior.
-- `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
+- `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, seeded portal roles, and stored role permission lists.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 
 Most protected portal screens still use sample fallback data when production storage is unavailable. `/employee/access` now has a database-backed access-readiness path, `/employee/review` can review live work/document records for staff oversight, the client dashboard current-work list can read owned `RosObject` records, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake and authorized download workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Work-item detail pages, employee assignment mutation, invoice/payment processing, payment processor integration, document version/replacement, and client workspaces still need production passes.

@@ -197,7 +197,7 @@ async function getPortalDatabaseReadiness(workspaceId: string): Promise<PortalDa
           workspaceId,
           name: { in: [...portalReadinessRequiredRoles] }
         },
-        select: { name: true }
+        select: { name: true, permissions: true }
       }),
       prisma.user.findMany({
         where: {
@@ -218,6 +218,9 @@ async function getPortalDatabaseReadiness(workspaceId: string): Promise<PortalDa
 
     const seededRoles = new Set(roles.map((role) => role.name));
     const missingRoles = portalReadinessRequiredRoles.filter((role) => !seededRoles.has(role));
+    const rolesMissingPermissions = roles
+      .filter((role) => !Array.isArray(role.permissions) || role.permissions.length === 0)
+      .map((role) => role.name);
     const activeOwnerCount = users.filter(
       (user) => user.role?.name === "Owner" && user.portalAccessStatus === "active"
     ).length;
@@ -230,6 +233,7 @@ async function getPortalDatabaseReadiness(workspaceId: string): Promise<PortalDa
       connected: true,
       detail: "Database connection check passed.",
       missingRoles,
+      rolesMissingPermissions,
       staffWithoutMfaCount,
       workspaceExists: Boolean(workspace)
     };

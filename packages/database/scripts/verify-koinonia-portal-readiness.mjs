@@ -95,15 +95,26 @@ async function runDatabaseChecks() {
         workspaceId,
         name: { in: requiredRoles }
       },
-      select: { name: true }
+      select: { name: true, permissions: true }
     });
     const existingRoles = new Set(roles.map((role) => role.name));
     const missingRoles = requiredRoles.filter((role) => !existingRoles.has(role));
+    const rolesMissingPermissions = roles
+      .filter((role) => !Array.isArray(role.permissions) || role.permissions.length === 0)
+      .map((role) => role.name);
 
     recordCheck(
       "approved portal roles are seeded",
       missingRoles.length === 0,
       missingRoles.length ? `missing ${missingRoles.join(", ")}` : `${requiredRoles.length} roles found`
+    );
+
+    recordCheck(
+      "portal role permissions are seeded",
+      missingRoles.length === 0 && rolesMissingPermissions.length === 0,
+      rolesMissingPermissions.length
+        ? `missing permissions for ${rolesMissingPermissions.join(", ")}`
+        : "role permission lists are present"
     );
 
     const users = await prisma.user.findMany({

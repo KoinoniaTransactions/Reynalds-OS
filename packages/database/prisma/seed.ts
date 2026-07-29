@@ -1,3 +1,4 @@
+import { getPermissionsForRole } from "@reynalds-os/auth";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -38,12 +39,14 @@ async function main() {
       where: { id: role.id },
       update: {
         name: role.name,
+        permissions: getPermissionsForRole(role.name),
         workspaceId: workspace.id
       },
       create: {
         id: role.id,
         workspaceId: workspace.id,
-        name: role.name
+        name: role.name,
+        permissions: getPermissionsForRole(role.name)
       }
     });
 

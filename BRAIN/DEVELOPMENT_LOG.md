@@ -14,6 +14,25 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Role Permission Seed Hardened
+
+### Summary
+
+Koinonia portal role seed data now stores each approved role's permission list, and readiness checks can flag roles that exist without permissions.
+
+### Implemented
+
+- Updated the database seed to write permissions from the shared auth package.
+- Added the auth package as the database package's local workspace dependency.
+- Strengthened `pnpm verify:portal` to check seeded role permission lists.
+- Extended the live readiness view and tests to report missing role permissions.
+
+### Current Status
+
+This improves production verification for role-based access. A real database seed and full verifier run are still required in the production environment before live portal login.
+
+---
+
 ## 2026-07-29 — Koinonia Staff Review Center Added
 
 ### Summary
