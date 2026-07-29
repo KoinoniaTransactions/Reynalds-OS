@@ -17,7 +17,7 @@
 | Koinonia Client Portal Entry | `/client` | Public entry shell, no sensitive forms |
 | Koinonia Secure Login Entry | `/sign-in` | Managed-auth entry scaffold |
 | Koinonia Staff MFA Setup Task | `/session-tasks/setup-mfa` | Clerk setup-mfa task route |
-| Koinonia Client Dashboard Preview | `/client/dashboard` | Auth-guarded preview with live showing request path, live access request path, and sample fallback |
+| Koinonia Client Dashboard Preview | `/client/dashboard` | Auth-guarded current-work list from owned RosObject records, live showing/access request paths, and sample fallback |
 | Koinonia Client Document Center Preview | `/client/documents` | Auth-guarded document intake upload form with storage/database guard, live submitted-document list, and sample fallback |
 | Koinonia Client Billing Center Preview | `/client/billing` | Auth-guarded billing setup request form with live metadata list and sample fallback; invoices/payment processing still preview only |
 | Koinonia Employee Portal Entry | `/employee` | Internal entry shell, no real client data |

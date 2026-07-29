@@ -63,7 +63,7 @@ The current web app includes:
 - `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 
-Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake and authorized download workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Broader dashboard work tracking, invoice/payment processing, payment processor integration, document version/replacement, and client workspaces still need real workflow storage before production use.
+Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, the client dashboard current-work list can read owned `RosObject` records, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake and authorized download workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Work-item detail pages, employee assignment mutation, invoice/payment processing, payment processor integration, document version/replacement, and client workspaces still need production passes.
 
 ---
 
@@ -203,6 +203,7 @@ Before the portal accepts real data:
 - Staff can review recent portal access audit history from `/employee/access`.
 - Clients can create and review their own showing requests.
 - Employee users with assigned-work access can review the showing request queue.
+- Client dashboard current-work cards can read `RosObject` work records owned by the signed-in client.
 - Clients can upload allowed document files only after upload storage is configured.
 - Client users can review only their own submitted document records.
 - Employee users with document-workspace access can review the document upload intake queue.

@@ -483,7 +483,7 @@ Build the portal in safe slices:
 8. Client document center with protected upload intake API, client upload form, employee intake queue visibility, and safe preview fallback.
 9. Client billing center with protected billing setup request API, client setup form, employee queue visibility, and safe preview fallback.
 10. Database schema additions. — Portal identity fields, `PortalInvitation`, and `AuditEvent` scaffolded in Prisma.
-11. Authenticated read-only dashboard connected to real work items. — Preview routes now require portal permissions but still use sample data only.
+11. Authenticated read-only dashboard connected to real work items. — Client dashboard current-work list reads owned `RosObject` records with sample fallback; detail routes and broader workspace assignment still need production passes.
 12. Secure file upload and document request flow. — Guarded upload intake, scanner-gated uploads, and authorized download route added; version/replacement still required.
 13. Access request tracking without credential storage. — First protected access request create/list API, client update form, employee queue, and credential-note rejection added.
 14. Portal messaging or notes.

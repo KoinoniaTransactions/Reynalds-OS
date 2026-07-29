@@ -2008,3 +2008,23 @@ Koinonia document uploads now fail closed unless an approved malware scanner com
 ### Current Status
 
 Scanner-gated uploads compile and are covered by helper tests. Live verification still requires a configured scanner executable, reachable database storage, configured upload storage, and real provider-backed users. Document replacement/versioning, approval records, e-signature delivery, and final archive delivery remain future production slices.
+
+---
+
+## 2026-07-29 — Client Dashboard Work Items Connected
+
+### Summary
+
+The client dashboard current-work list now has a live read path for client-owned work records instead of relying only on sample support cards.
+
+### Implemented
+
+- Added client-facing work item display helpers for object type labels, status buckets, due labels, and summary counts.
+- Added helper tests for work item labels, status buckets, due labels, and dashboard summary counts.
+- Connected `/client/dashboard` current support cards to owned `RosObject` work records when database storage is reachable.
+- Kept sample fallback when storage is unavailable.
+- Updated dashboard copy, module map, client portal specification, and auth readiness notes.
+
+### Current Status
+
+Client dashboard work-item reads compile and are covered by helper tests. Live verification still requires reachable database storage and real provider-backed users with client-owned work objects. Work-item detail pages, client-visible history, staff assignment mutation, and employee assignment queue persistence remain future production slices.

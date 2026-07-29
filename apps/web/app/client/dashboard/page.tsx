@@ -17,6 +17,12 @@ import {
   getShowingTimingLabel,
   showingRequestObjectType
 } from "../../../lib/showing-requests";
+import {
+  buildPortalWorkSummaryCounts,
+  clientPortalWorkObjectTypes,
+  getPortalWorkDueLabel,
+  getPortalWorkItemTypeLabel
+} from "../../../lib/portal-work-items";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +39,29 @@ export const metadata: Metadata = {
   }
 };
 
-const summaryCards = [
+type ClientSummaryCard = {
+  body: string;
+  label: string;
+  value: string;
+};
+
+type ClientWorkItem = {
+  due: string;
+  id: string;
+  nextAction: string;
+  status: string;
+  title: string;
+  type: string;
+};
+
+type ClientWorkView = {
+  isLiveData: boolean;
+  items: ClientWorkItem[];
+  notice?: string;
+  summaryCards: ClientSummaryCard[];
+};
+
+const sampleSummaryCards: ClientSummaryCard[] = [
   {
     label: "Waiting on You",
     value: "2",
@@ -54,10 +82,11 @@ const summaryCards = [
     value: "8",
     body: "Recently completed work and closed-out support."
   }
-] as const;
+];
 
-const workItems = [
+const sampleWorkItems: ClientWorkItem[] = [
   {
+    id: "sample-buyer-offer",
     title: "Buyer Offer Package",
     type: "Contract & Document Support",
     status: "Waiting on You",
@@ -65,6 +94,7 @@ const workItems = [
     due: "Today"
   },
   {
+    id: "sample-smith-close",
     title: "Smith Contract-to-Close",
     type: "Transaction Support",
     status: "Active",
@@ -72,6 +102,7 @@ const workItems = [
     due: "Jul 31"
   },
   {
+    id: "sample-monthly-cleanup",
     title: "Monthly Operations Cleanup",
     type: "Monthly Operations Partnership",
     status: "Active",
@@ -79,13 +110,14 @@ const workItems = [
     due: "This week"
   },
   {
+    id: "sample-northgate-showing",
     title: "Northgate Showing Coverage",
     type: "Licensed Showing Coverage",
     status: "Completed",
     nextAction: "Showing notes and feedback are available in the work history.",
     due: "Complete"
   }
-] as const;
+];
 
 type ShowingRequestItem = {
   id: string;
@@ -169,6 +201,7 @@ const sampleAccessRequests: AccessRequestItem[] = [
 
 export default async function ClientDashboardPreviewPage() {
   const actor = await requirePortalPermission("client-portal:view", "/client/dashboard");
+  const workItemView = await getClientWorkItemView(actor.workspaceId, actor.id);
   const showingRequestView = await getClientShowingRequestView(actor.workspaceId, actor.id);
   const accessRequestView = await getClientAccessRequestView(actor.workspaceId, actor.id);
 
@@ -186,16 +219,15 @@ export default async function ClientDashboardPreviewPage() {
             </h1>
 
             <p className="koinonia-lead">
-              This preview is moving toward live portal workflows. Showing
-              requests and access updates can use protected storage when
-              production database access is available; document intake has a
-              guarded upload path, and billing setup requests now have a
-              metadata-only storage path.
+              Current work, showing requests, access updates, documents, and
+              billing setup can use protected storage when production database
+              access is available. Document uploads also require private
+              storage and malware scanning before live files are accepted.
             </p>
           </div>
 
           <div className="koinonia-client-summary-grid">
-            {summaryCards.map((card) => (
+            {workItemView.summaryCards.map((card) => (
               <article className="koinonia-client-summary-card" key={card.label}>
                 <span>{card.label}</span>
                 <strong>{card.value}</strong>
@@ -217,8 +249,12 @@ export default async function ClientDashboardPreviewPage() {
                 </div>
 
                 <div className="koinonia-client-work-list">
-                  {workItems.map((item) => (
-                    <article className="koinonia-client-work-item" key={item.title}>
+                  {workItemView.notice ? (
+                    <p className="koinonia-client-security-note">{workItemView.notice}</p>
+                  ) : null}
+
+                  {workItemView.items.map((item) => (
+                    <article className="koinonia-client-work-item" key={item.id}>
                       <div>
                         <span>{item.type}</span>
                         <h3>{item.title}</h3>
@@ -334,6 +370,94 @@ export default async function ClientDashboardPreviewPage() {
       <Footer />
     </main>
   );
+}
+
+async function getClientWorkItemView(
+  workspaceId: string,
+  userId: string
+): Promise<ClientWorkView> {
+  try {
+    const workObjects = await prisma.rosObject.findMany({
+      where: {
+        workspaceId,
+        ownerId: userId,
+        objectType: { in: [...clientPortalWorkObjectTypes] },
+        archivedAt: null
+      },
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      take: 20
+    });
+    const items = workObjects.map((object) => ({
+      id: object.id,
+      title: object.name,
+      type: getPortalWorkItemTypeLabel(object.objectType),
+      status: object.status,
+      nextAction: object.nextAction ?? "Koinonia will update this work item as it moves.",
+      due: getPortalWorkDueLabel(object.data)
+    }));
+
+    return {
+      isLiveData: true,
+      items: withEmptyClientWorkItems(items),
+      summaryCards: buildClientSummaryCards(items)
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    return {
+      isLiveData: false,
+      items: sampleWorkItems,
+      notice:
+        "Current work storage is not reachable in this preview, so sample support items are shown.",
+      summaryCards: sampleSummaryCards
+    };
+  }
+}
+
+function buildClientSummaryCards(items: ClientWorkItem[]): ClientSummaryCard[] {
+  const counts = buildPortalWorkSummaryCounts(items);
+
+  return [
+    {
+      label: "Waiting on You",
+      value: String(counts.waiting),
+      body: "Items that need instructions, files, approval, or access."
+    },
+    {
+      label: "Active Work",
+      value: String(counts.active),
+      body: "Support currently in progress with Koinonia."
+    },
+    {
+      label: "Ready for Review",
+      value: String(counts.review),
+      body: "Drafts or next steps waiting for Realtor review."
+    },
+    {
+      label: "Completed",
+      value: String(counts.completed),
+      body: "Recently completed work and closed-out support."
+    }
+  ];
+}
+
+function withEmptyClientWorkItems(items: ClientWorkItem[]): ClientWorkItem[] {
+  if (items.length > 0) {
+    return items;
+  }
+
+  return [
+    {
+      id: "empty-client-work-items",
+      title: "No active portal work yet",
+      type: "Portal Work",
+      status: "Ready",
+      nextAction: "New transaction, document, showing, access, and billing work will appear here.",
+      due: "No active item"
+    }
+  ];
 }
 
 async function getClientAccessRequestView(
