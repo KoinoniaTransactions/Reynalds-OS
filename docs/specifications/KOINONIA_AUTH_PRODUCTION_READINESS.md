@@ -1,6 +1,6 @@
 # Koinonia Auth Production Readiness
 
-Status: Scaffolded  
+Status: Provider Wired / Pre-Live
 Applies To: Client portal, employee portal, document workspace, billing workspace, and portal APIs
 
 ---
@@ -17,7 +17,10 @@ The portal must not accept real client documents, billing setup, staff assignmen
 
 The current web app includes:
 
-- A secure login entry route at `/sign-in`.
+- Clerk installed as the managed auth provider dependency.
+- A Clerk-aware app provider wrapper in `apps/web/components/auth/AuthProvider.tsx`.
+- Clerk middleware in `apps/web/middleware.ts`, enabled only when Clerk keys are configured.
+- A secure catch-all login route at `/sign-in/[[...sign-in]]`.
 - Public client and employee entry pages at `/client` and `/employee`.
 - Protected client portal preview routes:
   - `/client/dashboard`
@@ -44,7 +47,7 @@ The protected routes still use sample data only. They are guarded screens, not p
 - `managed` for environment-aware behavior.
 - `clerk` for explicit Clerk-backed production login.
 
-When `AUTH_PROVIDER=managed`, the app uses Clerk only when Clerk environment variables are present. Otherwise it falls back to local mock auth. In production, mock auth is blocked for portal routes unless `ROS_ALLOW_MOCK_AUTH=true` is explicitly set. Do not enable `ROS_ALLOW_MOCK_AUTH` on any deployment that can receive real client or staff data.
+When `AUTH_PROVIDER=managed`, the app uses Clerk only when both Clerk environment variables are present. Otherwise it falls back to local mock auth. In production, mock auth is blocked for portal routes unless `ROS_ALLOW_MOCK_AUTH=true` is explicitly set. Do not enable `ROS_ALLOW_MOCK_AUTH` on any deployment that can receive real client or staff data.
 
 Recommended production value:
 
@@ -56,26 +59,19 @@ AUTH_PROVIDER=clerk
 
 ## 4. Required Production Auth Setup
 
-Before production portal login:
-
-1. Install the managed auth package:
-
-```bash
-pnpm --filter @reynalds-os/web add @clerk/nextjs
-```
-
-2. Add production environment variables in the deployment host:
+Before production portal login, add production environment variables in the deployment host:
 
 ```bash
 AUTH_PROVIDER=clerk
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
 CLERK_SECRET_KEY=
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_AUTH_SIGN_IN_URL=
 NEXT_PUBLIC_AUTH_SIGN_OUT_URL=
 ROS_DEFAULT_WORKSPACE_ID=
 ```
 
-3. Configure Clerk user metadata for Koinonia:
+Then configure Clerk user metadata for Koinonia:
 
 ```json
 {
@@ -153,6 +149,17 @@ Before the portal accepts real data:
 
 ## 8. Current Blocker
 
-The code is ready for the managed provider package, but the local package install was blocked by machine-level pnpm store permissions during this implementation session. The package still needs to be installed and committed with the lockfile before production auth can run.
+The managed provider package is installed and wired. Production login is still blocked by deployment and account configuration, not by source scaffolding.
 
-Do not mark login production-ready until the package is installed, the deployment variables are configured, staff MFA is enabled, and the verification checklist passes.
+Do not mark login production-ready until Clerk production variables are configured, staff MFA is enabled, client/staff invitation flows exist, and the verification checklist passes with real provider users.
+
+---
+
+## 9. Verification Completed Locally
+
+Verified on 2026-07-29:
+
+- Auth package tests passed.
+- Web production build passed.
+- Production preview with `ROS_ALLOW_MOCK_AUTH=true` returned 200 for `/sign-in`, `/client/billing`, `/employee/dashboard`, and `/api/me`.
+- Production preview with `ROS_ALLOW_MOCK_AUTH=false` kept public `/client` available, redirected protected `/client/billing` to `/sign-in`, and returned 503 from `/api/me`.

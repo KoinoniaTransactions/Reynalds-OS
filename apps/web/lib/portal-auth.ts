@@ -1,6 +1,10 @@
 import { notFound, redirect } from "next/navigation";
 import { PermissionDeniedError, type AuthUser, type Permission } from "@reynalds-os/auth";
-import { assertPermission, AuthenticationRequiredError } from "./auth";
+import {
+  assertPermission,
+  AuthenticationRequiredError,
+  AuthProviderConfigurationError
+} from "./auth";
 
 const defaultSignInPath = "/sign-in";
 
@@ -15,6 +19,10 @@ export async function requirePortalPermission(
       redirect(getSignInPath(returnTo));
     }
 
+    if (error instanceof AuthProviderConfigurationError) {
+      redirect(getSignInPath(returnTo, "configuration"));
+    }
+
     if (error instanceof PermissionDeniedError) {
       notFound();
     }
@@ -23,8 +31,14 @@ export async function requirePortalPermission(
   }
 }
 
-export function getSignInPath(returnTo: string): string {
-  return `${defaultSignInPath}?return_to=${encodeURIComponent(returnTo)}`;
+export function getSignInPath(returnTo: string, status?: "configuration"): string {
+  const params = new URLSearchParams({ return_to: returnTo });
+
+  if (status) {
+    params.set("auth_status", status);
+  }
+
+  return `${defaultSignInPath}?${params.toString()}`;
 }
 
 export function getHostedSignInUrl(returnTo: string): string | null {

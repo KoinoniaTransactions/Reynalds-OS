@@ -1432,3 +1432,33 @@ The Koinonia client and employee portal preview routes were moved behind an auth
 ### Current Status
 
 The login boundary is scaffolded and guarded, but login is not production-complete. The managed auth package still needs to be installed, deployment variables must be configured, staff MFA must be enabled, and portal routes must be verified with real provider users before real client data is accepted.
+
+---
+
+## 2026-07-29 — Koinonia Managed Auth Provider Wired
+
+### Summary
+
+The Koinonia portal auth scaffold was advanced from provider-ready to provider-wired. Clerk is now a web app dependency, the root layout includes a conditional Clerk provider wrapper, middleware is present, and the sign-in route uses Clerk's catch-all route shape.
+
+### Implemented
+
+- Installed `@clerk/nextjs` in the web app dependency graph.
+- Patched React and React DOM to `19.0.3` to satisfy Clerk's current peer range.
+- Added `apps/web/components/auth/AuthProvider.tsx`.
+- Added `apps/web/middleware.ts` with Clerk middleware enabled only when Clerk keys are configured.
+- Moved `/sign-in` to `/sign-in/[[...sign-in]]`.
+- Rendered Clerk's `SignIn` component when a publishable key is configured.
+- Kept the safe request-access fallback when Clerk keys are absent.
+- Tightened protected portal pages to redirect to sign-in instead of showing a generic server error when production auth is not configured.
+
+### Verified
+
+- Auth package tests passed.
+- Web production build passed.
+- Production preview with mock preview allowed returned 200 for secure login, client billing, employee dashboard, and `/api/me`.
+- Production preview with mock preview disabled redirected protected client billing to `/sign-in` and returned 503 from `/api/me`.
+
+### Current Status
+
+Source scaffolding for managed auth is wired. Login is still not production-ready until Clerk production keys are configured, staff MFA is enforced, invitation/onboarding flows exist, and real client/staff users are tested.

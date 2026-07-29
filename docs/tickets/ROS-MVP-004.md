@@ -36,4 +36,5 @@ protected app routes; user identity available; unauthenticated users redirected;
 - `/sign-in` secure login entry added.
 - Client and employee preview routes now require portal permissions before rendering.
 - `apps/web/lib/auth.ts` now supports local mock preview and Clerk-ready managed session lookup.
-- Provider package install and real deployment configuration remain required before the ticket is complete.
+- Clerk provider package, middleware, and app provider wrapper are installed and wired.
+- Real deployment configuration, staff MFA, invitation flow, and provider-user verification remain required before the ticket is complete.

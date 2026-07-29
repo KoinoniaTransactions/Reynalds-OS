@@ -10,13 +10,14 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.6.2",
     "@reynalds-os/auth": "workspace:*",
     "@reynalds-os/core": "workspace:*",
     "@reynalds-os/database": "workspace:*",
     "@reynalds-os/design-system": "workspace:*",
     "next": "^15.5.20",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.0.3",
+    "react-dom": "^19.0.3"
   },
   "devDependencies": {
     "@types/node": "20.17.6",

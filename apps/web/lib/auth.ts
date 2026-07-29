@@ -71,7 +71,7 @@ export function getAuthProvider(): AuthProvider {
 }
 
 function hasClerkConfiguration(): boolean {
-  return Boolean(process.env.CLERK_SECRET_KEY || process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+  return Boolean(process.env.CLERK_SECRET_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 }
 
 export function isAuthError(error: unknown): error is Error & { status: number } {
@@ -121,6 +121,12 @@ function getMockAuthUser(): AuthUser {
 }
 
 async function getClerkAuthUser(): Promise<AuthUser> {
+  if (!hasClerkConfiguration()) {
+    throw new AuthProviderConfigurationError(
+      "Managed auth requires CLERK_SECRET_KEY and NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY before production login can run."
+    );
+  }
+
   const clerk = await loadClerkServerModule();
   const session = await Promise.resolve(clerk.auth());
 
@@ -169,8 +175,7 @@ async function getClerkAuthUser(): Promise<AuthUser> {
 
 async function loadClerkServerModule(): Promise<ClerkServerModule> {
   try {
-    // @ts-ignore Clerk is installed only when managed production auth is enabled.
-    return (await import(/* webpackIgnore: true */ "@clerk/nextjs/server")) as ClerkServerModule;
+    return (await import("@clerk/nextjs/server")) as ClerkServerModule;
   } catch (error) {
     throw new AuthProviderConfigurationError(
       "AUTH_PROVIDER=clerk requires @clerk/nextjs to be installed before production login can run."

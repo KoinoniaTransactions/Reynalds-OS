@@ -2375,6 +2375,16 @@ h1 {
   max-width: 760px;
 }
 
+.koinonia-auth-panel {
+  display: flex;
+  justify-content: center;
+  margin: clamp(28px, 5vw, 48px) auto 0;
+}
+
+.koinonia-auth-panel > * {
+  width: min(100%, 440px);
+}
+
 .koinonia-client-portal-panel {
   padding: clamp(22px, 3vw, 30px);
   border: 1px solid rgba(184, 138, 68, 0.28);
