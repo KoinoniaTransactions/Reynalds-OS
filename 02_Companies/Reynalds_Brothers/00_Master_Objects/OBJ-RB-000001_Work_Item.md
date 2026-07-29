@@ -118,6 +118,13 @@ Pressure washing is a standalone workflow.
 
 Approved active Work Items may be grouped into route batches by region or state so office users can see which jobs should be scheduled together and which blockers must clear before a run can be built.
 
+Tank inventory is tracked as a scheduling gate:
+
+- ACC tank replacement requires two 400 gallon bulk oil tanks, one 700 gallon waste oil tank, one 105 gallon DIY tank, and one 25 gallon filter crusher tank.
+- DIY-only work requires the 105 gallon DIY tank.
+- UCO tank replacement requires one 160 or 315 gallon UCO tank.
+- Required tank serial numbers must be assigned before the tank package is treated as ready for scheduling.
+
 ---
 
 ## Division Checklist Templates
@@ -181,6 +188,24 @@ Completion should be supported by evidence such as:
 - Invoice status
 - Payment status when applicable
 
+The first field-proof summary checks:
+
+- CompanyCam project link
+- Job-specific proof checklist items
+- Manager name and title
+- Signature status
+- Completion date
+- Billing readiness
+
+The billing handoff summary tracks the office pass-off:
+
+- Shay starts the billing packet
+- Jeremiah approval
+- Darren final approval
+- Josh visibility
+
+The dashboard shows the current billing owner, completed approvals, pending approvals, and the next handoff action. Jobs that are not ready to invoice stay owned by Field / Office until field proof is complete.
+
 ---
 
 ## First Software Implementation
@@ -224,6 +249,8 @@ Initial mutation support:
 - Update customer update status
 - Update next action
 - Toggle checklist item completion
+- Preview pasted spreadsheet trial data
+- Create imported trial rows as Needs Approval Work Items
 
 ---
 

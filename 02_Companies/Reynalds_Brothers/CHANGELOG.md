@@ -24,3 +24,8 @@
 - Added email intake action controls so classified emails can create Needs Approval jobs, file to matched job timelines, or remain visible in the unmatched review queue.
 - Added approval action controls that let the current approver activate a drafted job into its correct first working phase or hold it for review.
 - Added route-batch planning that groups approved active jobs by region and highlights ready versus blocked scheduling candidates.
+- Added tank inventory package summaries for ACC, DIY, and UCO jobs with required tank lists, assigned serials, and scheduling readiness.
+- Added field-proof summaries for CompanyCam, required photos/documents, manager details, signature status, completion date, and billing readiness.
+- Added billing handoff summaries that show the current owner, completed approvals, pending approvals, and next action for the Shay to Jeremiah to Darren to Josh pass-off.
+- Added a Reynalds Brothers-only brand styling layer inspired by reynaldsbrothers.com colors, scoped to the company workspace instead of the shared Reynalds OS or Koinonia stylesheet.
+- Added first-trial pasted spreadsheet import so real ACC/UCO/PW rows can be previewed, validated, and created as Needs Approval jobs.

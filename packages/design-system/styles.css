@@ -557,6 +557,11 @@ h1 {
   font-weight: 700;
 }
 
+.rb-phase-list li.complete {
+  color: var(--rb-ready);
+  font-weight: 800;
+}
+
 .rb-checklist li.ready {
   color: var(--rb-ready);
 }
@@ -639,7 +644,8 @@ h1 {
 .rb-email-form input,
 .rb-email-form textarea,
 .rb-update-form input,
-.rb-update-form select {
+.rb-update-form select,
+.rb-update-form textarea {
   width: 100%;
   border: 1px solid var(--ros-border);
   border-radius: 14px;
@@ -681,6 +687,15 @@ h1 {
   color: var(--ros-muted);
   font-size: 12px;
   font-weight: 700;
+}
+
+.rb-update-form textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.rb-wide-field {
+  grid-column: 1 / -1;
 }
 
 .rb-form-section-heading {
@@ -940,6 +955,59 @@ h1 {
   font-size: 13px;
 }
 
+.rb-tank-panel {
+  border: 1px solid var(--ros-border);
+  border-radius: 16px;
+  background: #fff;
+  padding: 14px;
+  margin-top: 14px;
+}
+
+.rb-tank-panel h3,
+.rb-tank-panel h4 {
+  margin: 0;
+}
+
+.rb-tank-panel p,
+.rb-tank-panel li {
+  color: var(--ros-muted);
+  line-height: 1.5;
+}
+
+.rb-tank-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.rb-tank-grid ul {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+.rb-ready-pill,
+.rb-blocked-pill {
+  align-self: start;
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.rb-ready-pill {
+  background: #eaf7ef;
+  color: var(--rb-ready);
+}
+
+.rb-blocked-pill {
+  background: #fff3e0;
+  color: #a66d21;
+}
+
 @media (max-width: 1180px) {
   .rb-command-strip,
   .rb-email-form,
@@ -948,6 +1016,7 @@ h1 {
   .rb-layout,
   .rb-module-grid,
   .rb-route-grid,
+  .rb-tank-grid,
   .rb-two-column {
     grid-template-columns: 1fr;
   }

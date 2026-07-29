@@ -1,0 +1,274 @@
+.brandScope {
+  --ros-bg: #f5f5f5;
+  --ros-surface: #ffffff;
+  --ros-border: #dfe5e2;
+  --ros-text: #1a1a1a;
+  --ros-muted: #606266;
+  --ros-gold: #54b947;
+  --ros-shadow: rgba(26, 26, 26, 0.08);
+  --rb-surface-muted: #f7faf8;
+  --rb-ready: #54b947;
+  --rb-missing: #b94532;
+  background:
+    linear-gradient(135deg, rgba(84, 185, 71, 0.12), rgba(30, 115, 190, 0.08) 42%, transparent 68%),
+    #f5f5f5;
+}
+
+.brandScope :global(.rb-sidebar) {
+  background: #1a1a1a;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.brandScope :global(.rb-sidebar .ros-brand) {
+  border-bottom-color: rgba(255, 255, 255, 0.14);
+}
+
+.brandScope :global(.rb-sidebar .ros-mark) {
+  background: #ffffff;
+  color: #1a1a1a;
+  box-shadow: inset 0 0 0 3px #54b947;
+}
+
+.brandScope :global(.rb-sidebar a) {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.brandScope :global(.rb-sidebar a.active),
+.brandScope :global(.rb-sidebar a:hover) {
+  background: rgba(84, 185, 71, 0.16);
+  color: #ffffff;
+}
+
+.brandScope :global(.rb-main) {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(245, 245, 245, 0.92)),
+    #f5f5f5;
+}
+
+.brandScope :global(.ros-topbar) {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(223, 229, 226, 0.92);
+  border-radius: 18px;
+  box-shadow: 0 12px 28px rgba(26, 26, 26, 0.06);
+}
+
+.brandScope :global(.ros-eyebrow),
+.brandScope :global(.rb-form-section-heading span),
+.brandScope :global(.rb-route-batch-heading span),
+.brandScope :global(.rb-route-batch-heading small) {
+  color: #1e73be;
+}
+
+.brandScope :global(.rb-section),
+.brandScope :global(.rb-detail),
+.brandScope :global(.rb-lane),
+.brandScope :global(.rb-metric) {
+  border-color: #dfe5e2;
+  border-radius: 10px;
+  box-shadow: 0 14px 32px rgba(26, 26, 26, 0.08);
+}
+
+.brandScope :global(.rb-section),
+.brandScope :global(.rb-detail),
+.brandScope :global(.rb-route-batch),
+.brandScope :global(.rb-tank-panel) {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.brandScope :global(.rb-metric) {
+  background: #ffffff;
+  border-top: 4px solid #54b947;
+}
+
+.brandScope :global(.rb-metric strong) {
+  color: #1a1a1a;
+}
+
+.brandScope :global(.rb-lane) {
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.brandScope :global(.rb-lane-heading span),
+.brandScope :global(.rb-service),
+.brandScope :global(.rb-health),
+.brandScope :global(.rb-route-stats span),
+.brandScope :global(.rb-ready-pill),
+.brandScope :global(.rb-blocked-pill) {
+  border-radius: 6px;
+}
+
+.brandScope :global(.rb-work-card) {
+  border-radius: 8px;
+  border-color: #dfe5e2;
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(26, 26, 26, 0.05);
+}
+
+.brandScope :global(.rb-work-card.active) {
+  outline: 3px solid rgba(30, 115, 190, 0.24);
+  border-color: #1e73be;
+}
+
+.brandScope :global(.rb-progress),
+.brandScope :global(.rb-checklist-progress) {
+  background: #e9ecef;
+}
+
+.brandScope :global(.rb-progress span),
+.brandScope :global(.rb-checklist-progress span) {
+  background: linear-gradient(90deg, #54b947, #1e73be);
+}
+
+.brandScope :global(.rb-service),
+.brandScope :global(.rb-health) {
+  background: #f7faf8;
+  border-color: #dfe5e2;
+}
+
+.brandScope :global(.rb-health.watch),
+.brandScope :global(.rb-health.attention),
+.brandScope :global(.rb-blocked-pill) {
+  background: #fff8e8;
+  color: #8f6518;
+}
+
+.brandScope :global(.rb-health.critical),
+.brandScope :global(.rb-red-flag),
+.brandScope :global(.rb-checklist li.missing) {
+  color: #b94532 !important;
+}
+
+.brandScope :global(.rb-detail-grid div),
+.brandScope :global(.rb-checklist),
+.brandScope :global(.rb-mini-columns div),
+.brandScope :global(.rb-module) {
+  background: #f7faf8;
+  border-color: #dfe5e2;
+  border-radius: 8px;
+}
+
+.brandScope :global(.rb-inline-form input),
+.brandScope :global(.rb-inline-form select),
+.brandScope :global(.rb-email-form input),
+.brandScope :global(.rb-email-form textarea),
+.brandScope :global(.rb-update-form input),
+.brandScope :global(.rb-update-form select),
+.brandScope :global(.rb-update-form textarea) {
+  border-color: #ced4da;
+  border-radius: 8px;
+}
+
+.brandScope :global(.rb-inline-form button),
+.brandScope :global(.rb-email-form button),
+.brandScope :global(.rb-update-form button) {
+  background: #54b947;
+  color: #101510;
+}
+
+.brandScope :global(.rb-secondary-button),
+.brandScope :global(.ros-button-link),
+.brandScope :global(.ros-topbar button) {
+  background: #1a1a1a;
+  color: #ffffff;
+  border-color: #1a1a1a;
+}
+
+.brandScope :global(.rb-approval-panel) {
+  background: #f7faf8;
+  border-color: rgba(84, 185, 71, 0.34);
+  border-radius: 8px;
+}
+
+.brandScope :global(.rb-trial-import) {
+  display: grid;
+  gap: 14px;
+}
+
+.brandScope :global(.rb-trial-import textarea) {
+  min-height: 170px;
+  width: 100%;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 12px 13px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font: inherit;
+  resize: vertical;
+}
+
+.brandScope :global(.rb-trial-import > button) {
+  justify-self: start;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: #54b947;
+  color: #101510;
+  font-weight: 800;
+}
+
+.brandScope :global(.rb-trial-import > button:disabled) {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.brandScope :global(.rb-trial-import-summary) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.brandScope :global(.rb-trial-import-summary span) {
+  border: 1px solid #dfe5e2;
+  border-radius: 6px;
+  padding: 6px 9px;
+  background: #f7faf8;
+  color: #606266;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.brandScope :global(.rb-import-preview-grid) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.brandScope :global(.rb-import-preview-card) {
+  display: grid;
+  gap: 7px;
+  border: 1px solid #dfe5e2;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.brandScope :global(.rb-import-preview-card span),
+.brandScope :global(.rb-import-preview-card small),
+.brandScope :global(.rb-import-preview-card li),
+.brandScope :global(.rb-import-preview-card p) {
+  color: #606266;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.brandScope :global(.rb-import-preview-card strong) {
+  line-height: 1.25;
+}
+
+.brandScope :global(.rb-import-preview-card ul) {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.brandScope :global(.rb-success-note) {
+  margin: 0;
+  color: #2f7d5c;
+  font-weight: 800;
+}
+
+@media (max-width: 1180px) {
+  .brandScope :global(.rb-import-preview-grid) {
+    grid-template-columns: 1fr;
+  }
+}

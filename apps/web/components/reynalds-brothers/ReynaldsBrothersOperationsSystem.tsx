@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import styles from "./ReynaldsBrothersOperationsSystem.module.css";
 import {
   type ReynaldsBrothersEmailClassification,
   type ReynaldsBrothersEmailCandidate,
@@ -9,9 +10,12 @@ import {
 import {
   applyChecklistAutomation,
   getActivationPhaseForJobType,
+  getBillingPassoffSummary,
   getChecklistProgress,
+  getFieldProofSummary,
   getPhaseProgress,
   getRouteBatches,
+  getTankInventorySummary,
   getPhaseTrackForJobType,
   getWorkItemData,
   getWorkItemAlerts,
@@ -22,6 +26,7 @@ import {
   isInvoiceReadyStatus,
   needsCrew,
   needsDocumentation,
+  previewTrialWorkItemImport,
   reynaldsBrothersBillingApprovalFlow,
   reynaldsBrothersBoardLanes,
   reynaldsBrothersFallbackWorkItems,
@@ -89,6 +94,12 @@ const defaultCreateForm = {
   nextAction: ""
 };
 
+const trialImportExample = [
+  "Store Number\tCity\tState\tJob Type\tPO\tWO\tLucernex Link\tNext Action",
+  "1590\tHialeah\tFlorida\tACC Tank Replacement\t\t247399487\t\tConfirm permits and PO.",
+  "4672\tMontgomery\tAlabama\tUCO Tank Replacement\tPO-123\t\t\tConfirm Frontline delivery."
+].join("\n");
+
 export function ReynaldsBrothersOperationsSystem() {
   const [workItems, setWorkItems] = useState<ReynaldsBrothersWorkItem[]>(reynaldsBrothersFallbackWorkItems);
   const [selectedId, setSelectedId] = useState(reynaldsBrothersFallbackWorkItems[0]?.id ?? "");
@@ -113,8 +124,13 @@ export function ReynaldsBrothersOperationsSystem() {
   const [permitSubmittedDateUpdate, setPermitSubmittedDateUpdate] = useState("");
   const [permitApprovedDateUpdate, setPermitApprovedDateUpdate] = useState("");
   const [tankStatusUpdate, setTankStatusUpdate] = useState("");
+  const [tankSupplierUpdate, setTankSupplierUpdate] = useState("");
+  const [tankSerialNumbersUpdate, setTankSerialNumbersUpdate] = useState("");
   const [oilRemovalStatusUpdate, setOilRemovalStatusUpdate] = useState("");
   const [companyCamUrlUpdate, setCompanyCamUrlUpdate] = useState("");
+  const [managerNameUpdate, setManagerNameUpdate] = useState("");
+  const [managerTitleUpdate, setManagerTitleUpdate] = useState("");
+  const [signatureStatusUpdate, setSignatureStatusUpdate] = useState("");
   const [vacTruckCompanyUpdate, setVacTruckCompanyUpdate] = useState("");
   const [disposalFacilityUpdate, setDisposalFacilityUpdate] = useState("");
   const [completionDateUpdate, setCompletionDateUpdate] = useState("");
@@ -125,6 +141,9 @@ export function ReynaldsBrothersOperationsSystem() {
   const [emailActionPendingId, setEmailActionPendingId] = useState("");
   const [emailActionMessage, setEmailActionMessage] = useState("");
   const [approvalActionPending, setApprovalActionPending] = useState("");
+  const [trialImportText, setTrialImportText] = useState("");
+  const [trialImportPending, setTrialImportPending] = useState(false);
+  const [trialImportMessage, setTrialImportMessage] = useState("");
 
   async function loadWorkItems() {
     setError("");
@@ -177,6 +196,10 @@ export function ReynaldsBrothersOperationsSystem() {
   const routeBatches = getRouteBatches(filtered);
   const selected = filtered.find((item) => item.id === selectedId) ?? filtered[0] ?? workItems[0];
   const selectedData = selected ? getWorkItemData(selected) : {};
+  const selectedTankSummary = selected ? getTankInventorySummary(selected) : null;
+  const selectedFieldProofSummary = selected ? getFieldProofSummary(selected) : null;
+  const selectedBillingSummary = selected ? getBillingPassoffSummary(selected) : null;
+  const trialImportPreview = useMemo(() => previewTrialWorkItemImport(trialImportText), [trialImportText]);
 
   useEffect(() => {
     if (!selected) return;
@@ -198,8 +221,13 @@ export function ReynaldsBrothersOperationsSystem() {
     setPermitSubmittedDateUpdate(selectedData.permitSubmittedDate ?? "");
     setPermitApprovedDateUpdate(selectedData.permitApprovedDate ?? "");
     setTankStatusUpdate(selectedData.tankStatus ?? "");
+    setTankSupplierUpdate(selectedData.tankSupplier ?? "");
+    setTankSerialNumbersUpdate((selectedData.tankSerialNumbers ?? []).join("\n"));
     setOilRemovalStatusUpdate(selectedData.oilRemovalStatus ?? "");
     setCompanyCamUrlUpdate(selectedData.companyCamUrl ?? "");
+    setManagerNameUpdate(selectedData.managerName ?? "");
+    setManagerTitleUpdate(selectedData.managerTitle ?? "");
+    setSignatureStatusUpdate(selectedData.signatureStatus ?? "");
     setVacTruckCompanyUpdate(selectedData.vacTruckCompany ?? "");
     setDisposalFacilityUpdate(selectedData.disposalFacility ?? "");
     setCompletionDateUpdate(selectedData.completionDate ?? "");
@@ -216,13 +244,18 @@ export function ReynaldsBrothersOperationsSystem() {
     selectedData.invoiceStatus,
     selectedData.lucernexStatus,
     selectedData.lucernexUrl,
+    selectedData.managerName,
+    selectedData.managerTitle,
     selectedData.oilRemovalStatus,
     selectedData.permitApprovedDate,
     selectedData.permitStatus,
     selectedData.permitSubmittedDate,
     selectedData.poNumber,
     selectedData.poStatus,
+    selectedData.signatureStatus,
     selectedData.tankStatus,
+    selectedData.tankSupplier,
+    selectedData.tankSerialNumbers,
     selectedData.vacTruckCompany
   ]);
 
@@ -271,6 +304,43 @@ export function ReynaldsBrothersOperationsSystem() {
       if (payload.workItem?.id) setSelectedId(payload.workItem.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Work Item could not be created.");
+    }
+  }
+
+  async function createTrialImportRecords() {
+    setError("");
+    setTrialImportMessage("");
+
+    if (trialImportPreview.records.length === 0) {
+      setError("Paste spreadsheet rows with headers before creating trial jobs.");
+      return;
+    }
+
+    setTrialImportPending(true);
+
+    try {
+      let lastCreatedId = "";
+
+      for (const record of trialImportPreview.records) {
+        const response = await fetch("/api/reynalds-brothers/work-items", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(record.input)
+        });
+
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error ?? `Row ${record.rowNumber} could not be created.`);
+        if (payload.workItem?.id) lastCreatedId = payload.workItem.id;
+      }
+
+      await loadWorkItems();
+      if (lastCreatedId) setSelectedId(lastCreatedId);
+      setTrialImportText("");
+      setTrialImportMessage(`${trialImportPreview.records.length} trial job${trialImportPreview.records.length === 1 ? "" : "s"} created in Needs Approval.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Trial jobs could not be created.");
+    } finally {
+      setTrialImportPending(false);
     }
   }
 
@@ -335,8 +405,13 @@ export function ReynaldsBrothersOperationsSystem() {
             permitSubmittedDate: permitSubmittedDateUpdate,
             permitApprovedDate: permitApprovedDateUpdate,
             tankStatus: tankStatusUpdate,
+            tankSupplier: tankSupplierUpdate,
+            tankSerialNumbers: parseSerialNumbers(tankSerialNumbersUpdate),
             oilRemovalStatus: oilRemovalStatusUpdate,
             companyCamUrl: companyCamUrlUpdate,
+            managerName: managerNameUpdate,
+            managerTitle: managerTitleUpdate,
+            signatureStatus: signatureStatusUpdate,
             vacTruckCompany: vacTruckCompanyUpdate,
             disposalFacility: disposalFacilityUpdate,
             completionDate: completionDateUpdate,
@@ -515,7 +590,7 @@ export function ReynaldsBrothersOperationsSystem() {
   }
 
   return (
-    <main className="ros-app rb-os">
+    <main className={`${styles.brandScope} ros-app rb-os`}>
       <aside className="ros-sidebar rb-sidebar">
         <div className="ros-brand">
           <div className="ros-mark">RB</div>
@@ -628,6 +703,73 @@ export function ReynaldsBrothersOperationsSystem() {
             />
             <button type="submit">Create Work Item</button>
           </form>
+        </section>
+
+        <section className="rb-section rb-trial-import">
+          <div className="rb-section-heading">
+            <div>
+              <div className="ros-eyebrow">First trial data</div>
+              <h2>Paste spreadsheet rows</h2>
+            </div>
+            <button
+              className="rb-secondary-button"
+              type="button"
+              onClick={() => setTrialImportText(trialImportExample)}
+            >
+              Load Example
+            </button>
+          </div>
+
+          <textarea
+            value={trialImportText}
+            onChange={(event) => {
+              setTrialImportText(event.target.value);
+              setTrialImportMessage("");
+            }}
+            placeholder="Paste columns from Excel or Sheets here. Include headers like Store Number, City, State, Job Type, PO, WO, Lucernex Link, Permit Status, Tank Status, CompanyCam, and Next Action."
+          />
+
+          <div className="rb-trial-import-summary">
+            <span>{trialImportPreview.records.length} ready</span>
+            <span>{trialImportPreview.errors.length} need fixes</span>
+          </div>
+
+          {trialImportPreview.errors.length > 0 ? (
+            <ul className="rb-alert-list">
+              {trialImportPreview.errors.map((importError) => (
+                <li key={`${importError.rowNumber}-${importError.message}`}>
+                  <strong>Row {importError.rowNumber}</strong>
+                  <span>{importError.message}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          {trialImportPreview.records.length > 0 ? (
+            <div className="rb-import-preview-grid">
+              {trialImportPreview.records.slice(0, 6).map((record) => (
+                <article className="rb-import-preview-card" key={`${record.rowNumber}-${record.input.name}`}>
+                  <span>Row {record.rowNumber}</span>
+                  <strong>{record.input.name}</strong>
+                  <small>{record.input.data.jobType} - {record.input.data.storeNumber}</small>
+                  {record.warnings.length > 0 ? (
+                    <ul>
+                      {record.warnings.map((warning) => <li key={warning}>{warning}</li>)}
+                    </ul>
+                  ) : <p>Ready for approval queue.</p>}
+                </article>
+              ))}
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={() => void createTrialImportRecords()}
+            disabled={trialImportPending || trialImportPreview.records.length === 0}
+          >
+            {trialImportPending ? "Creating..." : "Create Trial Jobs"}
+          </button>
+          {trialImportMessage ? <p className="rb-success-note">{trialImportMessage}</p> : null}
         </section>
 
         <section className="rb-command-strip" aria-label="Reynalds Brothers operational metrics">
@@ -888,6 +1030,74 @@ export function ReynaldsBrothersOperationsSystem() {
                   </div>
                 </section>
 
+                {selectedTankSummary ? (
+                  <section className="rb-tank-panel">
+                    <div className="rb-section-heading">
+                      <div>
+                        <div className="ros-eyebrow">Tank inventory</div>
+                        <h3>{selectedTankSummary.status}</h3>
+                      </div>
+                      <span className={selectedTankSummary.readyForScheduling ? "rb-ready-pill" : "rb-blocked-pill"}>
+                        {selectedTankSummary.readyForScheduling ? "Ready" : "Blocked"}
+                      </span>
+                    </div>
+                    <p>{selectedTankSummary.nextAction}</p>
+                    {selectedTankSummary.requiredTanks.length > 0 ? (
+                      <div className="rb-tank-grid">
+                        <div>
+                          <h4>Required tanks</h4>
+                          <ul>
+                            {selectedTankSummary.requiredTanks.map((tank) => (
+                              <li key={tank}>{tank}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <h4>Assigned serials</h4>
+                          <ul>
+                            {selectedTankSummary.assignedSerials.length > 0 ? selectedTankSummary.assignedSerials.map((serial) => (
+                              <li key={serial}>{serial}</li>
+                            )) : <li>No serial numbers assigned.</li>}
+                          </ul>
+                        </div>
+                      </div>
+                    ) : null}
+                  </section>
+                ) : null}
+
+                {selectedFieldProofSummary ? (
+                  <section className="rb-tank-panel">
+                    <div className="rb-section-heading">
+                      <div>
+                        <div className="ros-eyebrow">Field proof</div>
+                        <h3>{selectedFieldProofSummary.readyForBilling ? "Ready for Billing" : "Proof Needed"}</h3>
+                      </div>
+                      <span className={selectedFieldProofSummary.readyForBilling ? "rb-ready-pill" : "rb-blocked-pill"}>
+                        {selectedFieldProofSummary.readyForBilling ? "Ready" : "Blocked"}
+                      </span>
+                    </div>
+                    <p>{selectedFieldProofSummary.nextAction}</p>
+                    <div className="rb-tank-grid">
+                      <div>
+                        <h4>Proof status</h4>
+                        <ul>
+                          <li>{selectedFieldProofSummary.companyCamLinked ? "CompanyCam linked" : "CompanyCam link missing"}</li>
+                          <li>{selectedFieldProofSummary.managerCaptured ? "Manager details captured" : "Manager details missing"}</li>
+                          <li>{selectedFieldProofSummary.completionDateRecorded ? "Completion date recorded" : "Completion date missing"}</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4>Missing proof</h4>
+                        <ul>
+                          {selectedFieldProofSummary.missingProofItems.length > 0 ? selectedFieldProofSummary.missingProofItems.map((item) => (
+                            <li key={item}>{item}</li>
+                          )) : <li>All required proof checklist items are complete.</li>}
+                        </ul>
+                      </div>
+                    </div>
+                  </section>
+                ) : null}
+
                 <section className="rb-mini-columns">
                   <div>
                     <h3>Phase Track</h3>
@@ -901,11 +1111,49 @@ export function ReynaldsBrothersOperationsSystem() {
                     <h3>Billing Pass-Off</h3>
                     <ol className="rb-phase-list">
                       {reynaldsBrothersBillingApprovalFlow.map((step) => (
-                        <li key={step}>{step}</li>
+                        <li
+                          className={selectedBillingSummary?.completedSteps.includes(step) ? "complete" : ""}
+                          key={step}
+                        >
+                          {step}
+                        </li>
                       ))}
                     </ol>
                   </div>
                 </section>
+
+                {selectedBillingSummary ? (
+                  <section className="rb-tank-panel">
+                    <div className="rb-section-heading">
+                      <div>
+                        <div className="ros-eyebrow">Billing handoff</div>
+                        <h3>{selectedBillingSummary.approved ? "Approved" : selectedBillingSummary.currentOwner}</h3>
+                      </div>
+                      <span className={selectedBillingSummary.approved ? "rb-ready-pill" : "rb-blocked-pill"}>
+                        {selectedBillingSummary.approved ? "Approved" : "In Review"}
+                      </span>
+                    </div>
+                    <p>{selectedBillingSummary.nextAction}</p>
+                    <div className="rb-tank-grid">
+                      <div>
+                        <h4>Completed</h4>
+                        <ul>
+                          {selectedBillingSummary.completedSteps.length > 0 ? selectedBillingSummary.completedSteps.map((step) => (
+                            <li key={step}>{step}</li>
+                          )) : <li>No billing approvals completed.</li>}
+                        </ul>
+                      </div>
+                      <div>
+                        <h4>Pending</h4>
+                        <ul>
+                          {selectedBillingSummary.pendingSteps.length > 0 ? selectedBillingSummary.pendingSteps.map((step) => (
+                            <li key={step}>{step}</li>
+                          )) : <li>No pending billing steps.</li>}
+                        </ul>
+                      </div>
+                    </div>
+                  </section>
+                ) : null}
 
                 <dl className="rb-detail-grid">
                   <div>
@@ -1019,6 +1267,18 @@ export function ReynaldsBrothersOperationsSystem() {
                     <input value={tankStatusUpdate} onChange={(event) => setTankStatusUpdate(event.target.value)} />
                   </label>
                   <label>
+                    Tank Supplier
+                    <input value={tankSupplierUpdate} onChange={(event) => setTankSupplierUpdate(event.target.value)} />
+                  </label>
+                  <label className="rb-wide-field">
+                    Tank Serial Numbers
+                    <textarea
+                      value={tankSerialNumbersUpdate}
+                      onChange={(event) => setTankSerialNumbersUpdate(event.target.value)}
+                      placeholder="One serial number per line"
+                    />
+                  </label>
+                  <label>
                     Oil Removal Status
                     <select value={oilRemovalStatusUpdate} onChange={(event) => setOilRemovalStatusUpdate(event.target.value)}>
                       {["Not Coordinated", "Requested", "Coordinated", "Confirmed", "Not applicable"].map((option) => (
@@ -1029,6 +1289,22 @@ export function ReynaldsBrothersOperationsSystem() {
                   <label>
                     CompanyCam Link
                     <input value={companyCamUrlUpdate} onChange={(event) => setCompanyCamUrlUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Manager Name
+                    <input value={managerNameUpdate} onChange={(event) => setManagerNameUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Manager Title
+                    <input value={managerTitleUpdate} onChange={(event) => setManagerTitleUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Signature Status
+                    <select value={signatureStatusUpdate} onChange={(event) => setSignatureStatusUpdate(event.target.value)}>
+                      {["", "Missing", "Requested", "Captured", "Complete"].map((option) => (
+                        <option key={option || "blank"} value={option}>{option || "Not set"}</option>
+                      ))}
+                    </select>
                   </label>
                   <label>
                     Vac Truck Company
@@ -1251,4 +1527,11 @@ function getApprovalNextAction(jobType?: string | null): string {
   if (normalizedJobType.includes("ACC")) return "Call store manager and complete Level 1 triage.";
 
   return "Begin office planning workflow.";
+}
+
+function parseSerialNumbers(input: string): string[] {
+  return input
+    .split(/\r?\n|,/)
+    .map((serial) => serial.trim())
+    .filter(Boolean);
 }

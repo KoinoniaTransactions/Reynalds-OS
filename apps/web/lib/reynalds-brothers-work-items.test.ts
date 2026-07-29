@@ -2,16 +2,20 @@ import { describe, expect, it } from "vitest";
 import {
   REYNALDS_BROTHERS_WORK_ITEM_TYPE,
   applyChecklistAutomation,
+  getBillingPassoffSummary,
   getChecklistProgress,
   getActivationPhaseForJobType,
   getOpenChecklistItems,
   getPhaseTrackForJobType,
+  getFieldProofSummary,
   getRouteBatches,
+  getTankInventorySummary,
   getWorkItemAlerts,
   getWorkItemChecklist,
   getWorkItemLane,
   getWorkItemLocation,
   getWorkItemMetrics,
+  previewTrialWorkItemImport,
   reynaldsBrothersFallbackWorkItems,
   validateWorkItemCreate,
   validateWorkItemUpdate
@@ -85,6 +89,57 @@ describe("Reynalds Brothers work item engine", () => {
     expect(getActivationPhaseForJobType("Pressure Washing")).toBe("Planning");
   });
 
+  it("summarizes ACC and UCO tank inventory readiness", () => {
+    const accSummary = getTankInventorySummary({
+      ...reynaldsBrothersFallbackWorkItems[0],
+      data: {
+        ...(reynaldsBrothersFallbackWorkItems[0].data ?? {}),
+        tankStatus: "Received",
+        tankSerialNumbers: ["S1", "S2", "S3", "S4", "S5"]
+      }
+    });
+    const ucoSummary = getTankInventorySummary({
+      ...reynaldsBrothersFallbackWorkItems[1],
+      data: {
+        ...(reynaldsBrothersFallbackWorkItems[1].data ?? {}),
+        tankStatus: "Received from Frontline LLC",
+        tankSerialNumbers: []
+      }
+    });
+
+    expect(accSummary.requiredTanks).toHaveLength(5);
+    expect(accSummary.readyForScheduling).toBe(true);
+    expect(ucoSummary.requiredTanks).toHaveLength(1);
+    expect(ucoSummary.readyForScheduling).toBe(false);
+    expect(ucoSummary.missingSerialCount).toBe(1);
+  });
+
+  it("summarizes field proof readiness before billing", () => {
+    const blocked = getFieldProofSummary(reynaldsBrothersFallbackWorkItems[0]);
+    const ready = getFieldProofSummary({
+      ...reynaldsBrothersFallbackWorkItems[0],
+      data: {
+        ...(reynaldsBrothersFallbackWorkItems[0].data ?? {}),
+        companyCamUrl: "https://companycam.example/project/1590",
+        managerName: "Store Manager",
+        managerTitle: "ACC Manager",
+        signatureStatus: "Captured",
+        completionDate: "2026-08-01",
+        checklistCompleted: [
+          "acc_serials_recorded",
+          "acc_companycam_complete",
+          "acc_manager_signature",
+          "acc_completion_date"
+        ]
+      }
+    });
+
+    expect(blocked.readyForBilling).toBe(false);
+    expect(blocked.nextAction).toContain("CompanyCam");
+    expect(ready.readyForBilling).toBe(true);
+    expect(ready.missingProofItems).toEqual([]);
+  });
+
   it("automates related status fields from completed checklist items", () => {
     const data = applyChecklistAutomation(reynaldsBrothersFallbackWorkItems[1].data ?? {}, [
       "uco_frontline_ordered",
@@ -134,6 +189,72 @@ describe("Reynalds Brothers work item engine", () => {
     expect(data.phase).toBe("Billing Review");
   });
 
+  it("summarizes billing pass-off ownership and pending approvals", () => {
+    const blocked = getBillingPassoffSummary({
+      ...reynaldsBrothersFallbackWorkItems[0],
+      data: {
+        ...(reynaldsBrothersFallbackWorkItems[0].data ?? {}),
+        invoiceStatus: "Not Ready",
+        billingApprovalStatus: "Not Started"
+      }
+    });
+    const inReview = getBillingPassoffSummary({
+      ...reynaldsBrothersFallbackWorkItems[0],
+      data: {
+        ...(reynaldsBrothersFallbackWorkItems[0].data ?? {}),
+        invoiceStatus: "Ready to Invoice",
+        billingApprovalStatus: "Needs Jeremiah Approval"
+      }
+    });
+    const approved = getBillingPassoffSummary({
+      ...reynaldsBrothersFallbackWorkItems[0],
+      data: {
+        ...(reynaldsBrothersFallbackWorkItems[0].data ?? {}),
+        invoiceStatus: "Ready to Invoice",
+        billingApprovalStatus: "Approved"
+      }
+    });
+
+    expect(blocked.currentOwner).toBe("Field / Office");
+    expect(blocked.nextAction).toContain("field proof");
+    expect(inReview.currentOwner).toBe("Jeremiah Reynalds");
+    expect(inReview.completedSteps).toEqual(["Shay starts billing packet"]);
+    expect(inReview.pendingSteps).toEqual([
+      "Jeremiah approval",
+      "Darren final approval",
+      "Josh visibility"
+    ]);
+    expect(approved.approved).toBe(true);
+    expect(approved.pendingSteps).toEqual([]);
+  });
+
+  it("previews pasted trial spreadsheet rows as needs-approval jobs", () => {
+    const preview = previewTrialWorkItemImport([
+      "Store Number\tCity\tState\tJob Type\tPO\tWO\tLucernex Link\tNext Action",
+      "1590\tHialeah\tFlorida\tACC Tank Replacement\t\t247399487\thttps://lucernex.example/1590\tConfirm permits.",
+      "450\tShreveport\tLouisiana\tPW\t\t\t\tSecure vac truck."
+    ].join("\n"));
+
+    expect(preview.errors).toEqual([]);
+    expect(preview.records).toHaveLength(2);
+    expect(preview.records[0].input.name).toBe("WM-1590 Hialeah, Florida - ACC Tank Replacement");
+    expect(preview.records[0].input.status).toBe("Needs Approval");
+    expect(preview.records[0].input.data.workOrderNumber).toBe("247399487");
+    expect(preview.records[0].input.data.sourceSystem).toBe("trial_import");
+    expect(preview.records[1].input.data.jobType).toBe("Pressure Washing");
+    expect(preview.records[1].input.data.poStatus).toBe("Not Required Yet");
+  });
+
+  it("flags pasted trial rows that are missing required job identity fields", () => {
+    const preview = previewTrialWorkItemImport([
+      "Store Number\tCity\tState\tJob Type",
+      "1590\t\tFlorida\tACC Tank Replacement"
+    ].join("\n"));
+
+    expect(preview.records).toEqual([]);
+    expect(preview.errors).toEqual([{ rowNumber: 2, message: "Missing required city, job title." }]);
+  });
+
   it("validates a new work item payload", () => {
     const input = validateWorkItemCreate({
       name: "WM-9001 Tulsa, Oklahoma - UCO Tank Replacement",
@@ -174,6 +295,9 @@ describe("Reynalds Brothers work item engine", () => {
         tankStatus: "Received",
         oilRemovalStatus: "Coordinated",
         companyCamUrl: "https://companycam.example/project/123",
+        managerName: "Jamie Store",
+        managerTitle: "Store Manager",
+        signatureStatus: "Captured",
         vacTruckCompany: "Vac2Go",
         disposalFacility: "Shreveport Disposal",
         completionDate: "2026-08-01",
@@ -189,6 +313,8 @@ describe("Reynalds Brothers work item engine", () => {
     expect(update.data?.approvalStatus).toBe("Approved");
     expect(update.data?.lucernexUrl).toContain("lucernex");
     expect(update.data?.poNumber).toBe("PO-123");
+    expect(update.data?.managerName).toBe("Jamie Store");
+    expect(update.data?.signatureStatus).toBe("Captured");
     expect(update.data?.checklistCompleted).toEqual(["pw_vac_truck_secured"]);
     expect(update.data?.sourceReferenceId).toBe("gmail_preview_new_uco_9001");
     expect(update.data?.approvalDecisionAt).toBe("2026-07-29T17:00:00.000Z");
