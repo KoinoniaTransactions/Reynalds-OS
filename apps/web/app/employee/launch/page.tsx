@@ -10,6 +10,7 @@ import {
   buildPortalLaunchChecklistReport,
   type PortalLaunchChecklistReport,
   type PortalLaunchChecklistItemStatus,
+  type PortalLaunchChecklistPhaseStatus,
   type PortalLaunchChecklistStatus
 } from "../../../lib/portal-launch-checklist";
 import { requirePortalPermission } from "../../../lib/portal-auth";
@@ -42,6 +43,7 @@ export default async function EmployeePortalLaunchPage() {
   const proofView = await getPortalLaunchProofView(actor.workspaceId);
   const launchReport = buildPortalLaunchChecklistReport(readinessReport, proofView.proofs);
   const proofFormItems = getManualProofFormItems(launchReport);
+  const launchBlockers = getRequiredLaunchBlockers(launchReport);
 
   return (
     <main className="koinonia-site koinonia-readiness koinonia-launch">
@@ -107,12 +109,14 @@ export default async function EmployeePortalLaunchPage() {
 
           <PortalLaunchProofForm defaultOwner={actor.name} items={proofFormItems} />
 
+          {launchBlockers.length > 0 ? <LaunchBlockers blockers={launchBlockers} /> : null}
+
           <div className="koinonia-readiness-grid koinonia-launch-grid">
             {launchReport.phases.map((phase) => (
               <section className="koinonia-readiness-panel" key={phase.id}>
                 <div className="koinonia-readiness-panel-heading">
                   <p className="koinonia-eyebrow">{phase.title}</p>
-                  <span className="koinonia-launch-count">{phase.items.length} checks</span>
+                  <span className="koinonia-launch-count">{getPhaseCountLabel(phase)}</span>
                 </div>
 
                 <div className="koinonia-readiness-list">
@@ -128,6 +132,38 @@ export default async function EmployeePortalLaunchPage() {
 
       <Footer />
     </main>
+  );
+}
+
+type LaunchBlocker = {
+  item: PortalLaunchChecklistItemStatus;
+  phaseTitle: string;
+};
+
+function LaunchBlockers({ blockers }: { blockers: LaunchBlocker[] }) {
+  return (
+    <section className="koinonia-launch-blockers" aria-labelledby="launch-blockers-title">
+      <div className="koinonia-launch-blockers-heading">
+        <div>
+          <p className="koinonia-eyebrow">Required Blockers</p>
+          <h2 id="launch-blockers-title">What still blocks launch</h2>
+        </div>
+        <span>{blockers.length} remaining</span>
+      </div>
+
+      <div className="koinonia-launch-blocker-list">
+        {blockers.map((blocker) => (
+          <article className={`koinonia-launch-blocker ${blocker.item.status}`} key={blocker.item.id}>
+            <div>
+              <span>{blocker.phaseTitle}</span>
+              <h3>{blocker.item.title}</h3>
+            </div>
+            <LaunchStatusBadge status={blocker.item.status} />
+            <p>{blocker.item.statusDetail}</p>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -184,6 +220,24 @@ function LaunchChecklistItem({ item }: { item: PortalLaunchChecklistItemStatus }
       ) : null}
     </article>
   );
+}
+
+function getPhaseCountLabel(phase: PortalLaunchChecklistPhaseStatus): string {
+  const parts = [`${phase.items.length} checks`];
+
+  if (phase.summary.requiredRemainingCount > 0) {
+    parts.push(`${phase.summary.requiredRemainingCount} required left`);
+  }
+
+  if (phase.summary.blockedCount > 0) {
+    parts.push(`${phase.summary.blockedCount} blocked`);
+  } else if (phase.summary.attentionCount > 0) {
+    parts.push(`${phase.summary.attentionCount} attention`);
+  } else if (phase.summary.manualCount > 0) {
+    parts.push(`${phase.summary.manualCount} proof needed`);
+  }
+
+  return parts.join(" / ");
 }
 
 function LaunchStatusBadge({
@@ -265,6 +319,17 @@ function getManualProofFormItems(
       statusLabel: item.statusLabel,
       title: item.title
     }));
+}
+
+function getRequiredLaunchBlockers(launchReport: PortalLaunchChecklistReport): LaunchBlocker[] {
+  return launchReport.phases.flatMap((phase) =>
+    phase.items
+      .filter((item) => item.required && item.status !== "ready")
+      .map((item) => ({
+        item,
+        phaseTitle: phase.title
+      }))
+  );
 }
 
 function isPortalLaunchProofRecord(

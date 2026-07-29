@@ -75,6 +75,7 @@ The current web app includes:
 - `/employee/launch` gives staff a protected launch checklist for production provider setup, database access, service workflow QA, document handling, billing/payment setup, optional social login, optional AI review, and final dry-run proof.
 - `/employee/launch` uses the same current readiness report as `/employee/readiness` for technical launch gates, while service workflow QA and end-to-end dry-run checks remain manual proof items.
 - `/employee/launch` includes a staff proof form for manual launch items. Completed proof marks the item ready; follow-up proof keeps the item in attention status.
+- `/employee/launch` separates required remaining work from optional social login and AI review work, so optional enhancements stay visible without blocking the base launch signal.
 - `/employee/review` gives staff a protected rules-based review queue for missing assignments, document gaps, billing setup gaps, access needs, showing authorization, and stale work.
 - Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
 - Provider invitation redirects are limited to same-site portal paths, `NEXT_PUBLIC_SITE_URL`, or explicit public-HTTPS origins in `KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS`.
@@ -293,6 +294,7 @@ Before the portal accepts real data:
 - Staff can review the production launch checklist from `/employee/launch` before accepting real client data.
 - Staff can use `/employee/launch` to distinguish automated readiness status from manual proof items.
 - Staff can record launch proof for manual checklist items from `/employee/launch`; proof records must remain metadata-only and safe for audit review.
+- Staff can review required launch blockers and phase-level remaining counts from `/employee/launch` while test clients and staff work through dry runs.
 - Authorized staff can assign or reassign live portal work items to primary and backup staff from `/employee/dashboard`.
 - Work assignment updates write timeline and audit history, and assignment notes must remain free of credentials, card data, bank details, API keys, and private login details.
 - Clients can open scoped work detail pages for their own work items from `/client/dashboard`.

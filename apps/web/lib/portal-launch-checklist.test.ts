@@ -86,7 +86,10 @@ describe("portal launch checklist", () => {
     expect(items.find((item) => item.id === "clerk-production-auth")?.status).toBe("ready");
     expect(items.find((item) => item.id === "workspace-role-seed")?.status).toBe("ready");
     expect(items.find((item) => item.id === "end-to-end-client-dry-run")?.status).toBe("manual");
+    expect(launchReport.overallStatus).toBe("manual");
     expect(launchReport.summary.find((item) => item.label === "Manual Proof Needed")?.value).toBe("7");
+    expect(launchReport.summary.find((item) => item.label === "Required Remaining")?.value).toBe("7");
+    expect(launchReport.phases.find((phase) => phase.id === "service-workflows")?.summary.manualCount).toBe(4);
   });
 
   it("blocks launch checks when any linked readiness item is blocked", () => {
@@ -128,5 +131,6 @@ describe("portal launch checklist", () => {
     expect(dryRun?.status).toBe("ready");
     expect(dryRun?.latestProof?.id).toBe("proof_1");
     expect(launchReport.summary.find((item) => item.label === "Manual Proof Needed")?.value).toBe("6");
+    expect(launchReport.summary.find((item) => item.label === "Required Remaining")?.value).toBe("6");
   });
 });

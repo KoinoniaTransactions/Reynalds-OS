@@ -4038,6 +4038,7 @@ h1 {
 }
 
 .koinonia-readiness-panel {
+  min-width: 0;
   padding: clamp(18px, 3vw, 24px);
 }
 
@@ -4152,7 +4153,7 @@ h1 {
 }
 
 .koinonia-launch .koinonia-readiness-summary-grid {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .koinonia-launch-storage-note {
@@ -4262,6 +4263,88 @@ h1 {
   color: #3f6539;
 }
 
+.koinonia-launch-blockers {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.koinonia-launch-blockers-heading {
+  align-items: flex-end;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.koinonia-launch-blockers-heading h2 {
+  margin: 0;
+  font-family: var(--ros-font-display);
+  font-size: 28px;
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.koinonia-launch-blockers-heading span {
+  color: #8a6225;
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.koinonia-launch-blocker-list {
+  display: grid;
+  gap: 10px;
+}
+
+.koinonia-launch-blocker {
+  align-items: center;
+  border: 1px solid rgba(25, 92, 96, 0.16);
+  border-radius: 8px;
+  background: #ffffff;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(180px, 0.9fr) auto minmax(220px, 1.3fr);
+  min-width: 0;
+  padding: 14px;
+}
+
+.koinonia-launch-blocker.manual,
+.koinonia-launch-blocker.attention {
+  border-color: rgba(184, 138, 68, 0.34);
+}
+
+.koinonia-launch-blocker.blocked {
+  border-color: rgba(178, 59, 59, 0.26);
+}
+
+.koinonia-launch-blocker span {
+  color: #195c60;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-launch-blocker h3 {
+  margin: 5px 0 0;
+  font-family: var(--ros-font-display);
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+}
+
+.koinonia-launch-blocker p {
+  color: var(--ros-muted);
+  font-size: 14px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.koinonia-launch-blocker .koinonia-readiness-badge {
+  justify-self: start;
+}
+
 .koinonia-launch-count {
   color: var(--ros-muted);
   flex: 0 0 auto;
@@ -4275,6 +4358,7 @@ h1 {
   background: #ffffff;
   display: grid;
   gap: 12px;
+  min-width: 0;
   padding: 16px;
 }
 
@@ -4312,6 +4396,7 @@ h1 {
   font-size: 21px;
   letter-spacing: 0;
   line-height: 1.12;
+  overflow-wrap: anywhere;
 }
 
 .koinonia-launch-item p {
@@ -5578,13 +5663,19 @@ h1 {
   .koinonia-readiness-panel-heading,
   .koinonia-readiness-item-heading,
   .koinonia-launch-item-heading,
+  .koinonia-launch-blockers-heading,
   .koinonia-staff-review-panel-heading,
   .koinonia-staff-review-item-heading {
     display: grid;
   }
 
-  .koinonia-launch-meta {
+  .koinonia-launch-meta,
+  .koinonia-launch-blocker {
     grid-template-columns: 1fr;
+  }
+
+  .koinonia-launch-badge-stack {
+    align-items: flex-start;
   }
 
   .koinonia-launch .koinonia-readiness-summary-grid,

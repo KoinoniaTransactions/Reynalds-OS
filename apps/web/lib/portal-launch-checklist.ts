@@ -50,7 +50,16 @@ export type PortalLaunchChecklistPhase = {
 export type PortalLaunchChecklistPhaseStatus = {
   id: PortalLaunchChecklistPhaseId;
   items: PortalLaunchChecklistItemStatus[];
+  summary: PortalLaunchChecklistPhaseStatusSummary;
   title: string;
+};
+
+export type PortalLaunchChecklistPhaseStatusSummary = {
+  attentionCount: number;
+  blockedCount: number;
+  manualCount: number;
+  readyCount: number;
+  requiredRemainingCount: number;
 };
 
 export type PortalLaunchChecklistSummary = {
@@ -372,27 +381,38 @@ export function buildPortalLaunchChecklistReport(
     readinessReport.groups.flatMap((group) => group.items).map((item) => [item.id, item])
   );
   const latestProofsByChecklistItemId = getLatestProofsByChecklistItemId(proofRecords);
-  const phases = portalLaunchChecklistPhases.map((phase) => ({
-    ...phase,
-    items: phase.items.map((item) =>
+  const phases = portalLaunchChecklistPhases.map((phase) => {
+    const items = phase.items.map((item) =>
       getChecklistItemStatus(item, readinessItemsById, latestProofsByChecklistItemId)
-    )
-  }));
+    );
+
+    return {
+      ...phase,
+      items,
+      summary: getPhaseStatusSummary(items)
+    };
+  });
   const items = phases.flatMap((phase) => phase.items);
+  const requiredItems = items.filter((item) => item.required);
   const readyCount = items.filter((item) => item.status === "ready").length;
   const attentionCount = items.filter((item) => item.status === "attention").length;
   const blockedCount = items.filter((item) => item.status === "blocked").length;
   const manualCount = items.filter((item) => item.status === "manual").length;
+  const requiredReadyCount = requiredItems.filter((item) => item.status === "ready").length;
+  const requiredAttentionCount = requiredItems.filter((item) => item.status === "attention").length;
+  const requiredBlockedCount = requiredItems.filter((item) => item.status === "blocked").length;
+  const requiredManualCount = requiredItems.filter((item) => item.status === "manual").length;
+  const requiredRemainingCount = requiredItems.length - requiredReadyCount;
   const staticSummary = getPortalLaunchChecklistSummary();
 
   return {
     generatedAt: readinessReport.generatedAt,
     overallStatus:
-      blockedCount > 0
+      requiredBlockedCount > 0
         ? "blocked"
-        : attentionCount > 0
+        : requiredAttentionCount > 0
           ? "attention"
-          : manualCount > 0
+          : requiredManualCount > 0
             ? "manual"
             : "ready",
     phases,
@@ -401,10 +421,26 @@ export function buildPortalLaunchChecklistReport(
       { label: "Needs Attention", value: String(attentionCount) },
       { label: "Blocked", value: String(blockedCount) },
       { label: "Manual Proof Needed", value: String(manualCount) },
+      { label: "Required Ready", value: String(requiredReadyCount) },
+      { label: "Required Remaining", value: String(requiredRemainingCount) },
       { label: "Required", value: String(staticSummary.requiredCount) },
       { label: "Optional", value: String(staticSummary.optionalCount) }
     ],
     workspaceId: readinessReport.workspaceId
+  };
+}
+
+function getPhaseStatusSummary(
+  items: PortalLaunchChecklistItemStatus[]
+): PortalLaunchChecklistPhaseStatusSummary {
+  const readyCount = items.filter((item) => item.status === "ready").length;
+
+  return {
+    attentionCount: items.filter((item) => item.status === "attention").length,
+    blockedCount: items.filter((item) => item.status === "blocked").length,
+    manualCount: items.filter((item) => item.status === "manual").length,
+    readyCount,
+    requiredRemainingCount: items.filter((item) => item.required && item.status !== "ready").length
   };
 }
 
