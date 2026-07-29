@@ -1963,3 +1963,26 @@ Koinonia now has a protected billing setup request workflow that records billing
 ### Current Status
 
 The billing setup request workflow compiles and is covered by helper tests. Live mutation verification still requires reachable database storage and real provider-backed users. This workflow stores billing setup metadata only; card collection, saved payment methods, invoice payment, charge capture, refunds, disputes, and processor webhooks still require an approved payment processor integration.
+
+---
+
+## 2026-07-29 — Portal Document Downloads Added
+
+### Summary
+
+Koinonia now has an authorized document download path so uploaded portal files can be served through the application instead of exposing private storage directly.
+
+### Implemented
+
+- Added `/api/portal/documents/[id]/download`.
+- Requires client document view or document-workspace permission before serving a file.
+- Limits client downloads to documents owned by that signed-in client.
+- Limits staff downloads to documents in the staff user's workspace.
+- Validates storage keys to reject missing, absolute, traversal, or malformed file references.
+- Serves files from `PORTAL_DOCUMENT_UPLOAD_DIR` only, with private no-store response headers.
+- Records a `portal.document.downloaded` audit event.
+- Added client and employee document page links when storage is configured and a document has a stored file key.
+
+### Current Status
+
+Authorized downloads compile and are covered by helper tests. Live verification still requires reachable database storage, configured upload storage, and real provider-backed users. Malware scanning, document replacement/versioning, approval records, e-signature delivery, and final archive delivery remain future production slices.

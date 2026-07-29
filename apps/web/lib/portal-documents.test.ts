@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildPortalDocumentContentDisposition,
   buildPortalDocumentDisplayName,
   formatDocumentFileSize,
   getHumanDocumentStatus,
   PortalDocumentValidationError,
   sanitizeDocumentFileName,
+  validatePortalDocumentStorageKey,
   validatePortalDocumentSubmission
 } from "./portal-documents";
 
@@ -81,5 +83,27 @@ describe("portal document helpers", () => {
     expect(formatDocumentFileSize(1024)).toBe("1 KB");
     expect(formatDocumentFileSize(2.5 * 1024 * 1024)).toBe("2.5 MB");
     expect(getHumanDocumentStatus("Ready for Client Review")).toBe("Ready for Review");
+  });
+
+  it("validates stored file references for authorized downloads", () => {
+    expect(validatePortalDocumentStorageKey("wks_koinonia/file.pdf")).toBe(
+      "wks_koinonia/file.pdf"
+    );
+    expect(validatePortalDocumentStorageKey("wks_koinonia\\file.pdf")).toBe(
+      "wks_koinonia/file.pdf"
+    );
+    expect(buildPortalDocumentContentDisposition(" Buyer Offer Final!!.pdf ")).toBe(
+      'attachment; filename="Buyer-Offer-Final.pdf"'
+    );
+
+    expect(() => validatePortalDocumentStorageKey("../outside.pdf")).toThrow(
+      "Document file reference is invalid."
+    );
+    expect(() => validatePortalDocumentStorageKey("/tmp/outside.pdf")).toThrow(
+      "Document file reference is invalid."
+    );
+    expect(() => validatePortalDocumentStorageKey("")).toThrow(
+      "Document file reference is missing."
+    );
   });
 });

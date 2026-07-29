@@ -50,6 +50,7 @@ The current web app includes:
 - `/api/portal/audit` for protected portal access audit history review.
 - `/api/portal/showing-requests` for protected showing request create/list workflows.
 - `/api/portal/documents` for protected document upload intake and document queue listing.
+- `/api/portal/documents/[id]/download` for protected document downloads through configured private storage.
 - `/api/portal/access-requests` for protected external access request create/list workflows without storing credentials.
 - `/api/portal/billing-setup-requests` for protected billing setup request create/list workflows without storing card data.
 - `/employee/access` can read portal users and portal invitation records for staff access readiness, with safe preview fallback when storage is unavailable.
@@ -62,7 +63,7 @@ The current web app includes:
 - `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 
-Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, showing requests now have a protected object-backed workflow, documents now have a guarded upload-intake workflow, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Broader dashboard work tracking, invoice/payment processing, payment processor integration, document download/version/replacement/scanning, and client workspaces still need real workflow storage before production use.
+Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, showing requests now have a protected object-backed workflow, documents now have guarded upload-intake and authorized download workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Broader dashboard work tracking, invoice/payment processing, payment processor integration, document version/replacement/scanning, and client workspaces still need real workflow storage before production use.
 
 ---
 
@@ -204,6 +205,9 @@ Before the portal accepts real data:
 - Clients can upload allowed document files only after upload storage is configured.
 - Client users can review only their own submitted document records.
 - Employee users with document-workspace access can review the document upload intake queue.
+- Clients can download only their own stored portal documents through the protected download route.
+- Employee users with document-workspace access can download stored workspace documents through the protected download route.
+- Document downloads reject missing, absolute, traversal, or malformed storage keys.
 - Document upload notes reject passwords and access-code language.
 - Clients can create and review their own external access requests without submitting credentials.
 - Employee users with client visibility can review the external access request queue.

@@ -75,6 +75,7 @@ const documentRequests = [
 
 type ClientDocumentItem = {
   detail: string;
+  downloadHref?: string;
   fileName: string;
   id: string;
   status: string;
@@ -263,6 +264,11 @@ export default async function ClientDocumentCenterPreviewPage() {
                           <span>{item.fileName}</span>
                           <h3>{item.title}</h3>
                           <p>{item.detail}</p>
+                          {item.downloadHref ? (
+                            <a className="koinonia-document-link" href={item.downloadHref}>
+                              Download File
+                            </a>
+                          ) : null}
                         </div>
 
                         <div className="koinonia-document-work-meta">
@@ -330,6 +336,7 @@ async function getClientDocumentView(
   ownerId: string
 ): Promise<ClientDocumentView> {
   try {
+    const storageReady = isDocumentStorageConfigured();
     const documents = await prisma.document.findMany({
       where: {
         workspaceId,
@@ -341,9 +348,9 @@ async function getClientDocumentView(
     });
 
     return {
-      documents: documents.map(mapDocumentRecord),
+      documents: documents.map((document) => mapDocumentRecord(document, storageReady)),
       isLiveData: true,
-      storageReady: isDocumentStorageConfigured()
+      storageReady
     };
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
@@ -359,7 +366,10 @@ async function getClientDocumentView(
   }
 }
 
-function mapDocumentRecord(document: PortalDocumentRecord): ClientDocumentItem {
+function mapDocumentRecord(
+  document: PortalDocumentRecord,
+  storageReady: boolean
+): ClientDocumentItem {
   const fileSize = formatDocumentFileSize(document.fileSizeBytes);
 
   return {
@@ -367,6 +377,8 @@ function mapDocumentRecord(document: PortalDocumentRecord): ClientDocumentItem {
     title: document.documentType,
     status: getHumanDocumentStatus(document.status),
     detail: document.requestedAction ?? "Koinonia can review this uploaded document.",
+    downloadHref:
+      storageReady && document.storageKey ? `/api/portal/documents/${document.id}/download` : undefined,
     fileName: `${document.fileName} - ${fileSize}`,
     submitted: getDocumentSubmittedLabel(document.createdAt)
   };

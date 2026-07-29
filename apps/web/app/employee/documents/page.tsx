@@ -82,6 +82,7 @@ const draftQueue = [
 
 type EmployeeDocumentItem = {
   detail: string;
+  downloadHref?: string;
   fileInfo: string;
   id: string;
   requestedBy: string;
@@ -268,6 +269,11 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
                           <h3>{item.title}</h3>
                           <p>{item.detail}</p>
                           <p>{item.fileInfo}</p>
+                          {item.downloadHref ? (
+                            <a className="koinonia-document-link employee" href={item.downloadHref}>
+                              Download Upload
+                            </a>
+                          ) : null}
                         </div>
 
                         <div className="koinonia-document-work-meta employee">
@@ -364,6 +370,7 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
 
 async function getEmployeeDocumentView(actor: AuthUser): Promise<EmployeeDocumentView> {
   try {
+    const storageReady = isDocumentStorageConfigured();
     const documents = await prisma.document.findMany({
       where: {
         workspaceId: actor.workspaceId,
@@ -374,7 +381,7 @@ async function getEmployeeDocumentView(actor: AuthUser): Promise<EmployeeDocumen
     });
 
     return {
-      documents: documents.map(mapDocumentRecord),
+      documents: documents.map((document) => mapDocumentRecord(document, storageReady)),
       isLiveData: true
     };
   } catch (error) {
@@ -390,16 +397,25 @@ async function getEmployeeDocumentView(actor: AuthUser): Promise<EmployeeDocumen
   }
 }
 
-function mapDocumentRecord(document: PortalDocumentRecord): EmployeeDocumentItem {
+function mapDocumentRecord(
+  document: PortalDocumentRecord,
+  storageReady: boolean
+): EmployeeDocumentItem {
   return {
     id: document.id,
     title: document.documentType,
     requestedBy: document.uploadedByUserId ? "Portal user upload" : "Portal upload",
     status: getHumanDocumentStatus(document.status),
     detail: document.requestedAction ?? "Review uploaded document for the client file.",
+    downloadHref:
+      storageReady && document.storageKey ? `/api/portal/documents/${document.id}/download` : undefined,
     fileInfo: `${document.fileName} - ${formatDocumentFileSize(document.fileSizeBytes)}`,
     submitted: getDocumentSubmittedLabel(document.createdAt)
   };
+}
+
+function isDocumentStorageConfigured(): boolean {
+  return Boolean(process.env.PORTAL_DOCUMENT_UPLOAD_DIR?.trim());
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {

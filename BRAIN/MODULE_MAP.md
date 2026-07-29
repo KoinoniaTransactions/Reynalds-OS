@@ -52,5 +52,6 @@
 | `/api/portal/audit` | Portal access audit history |
 | `/api/portal/showing-requests` | Portal showing request list/create |
 | `/api/portal/documents` | Portal document upload intake list/create |
+| `/api/portal/documents/:id/download` | Authorized portal document download through configured private storage |
 | `/api/portal/access-requests` | Portal external access request list/create without credential storage |
 | `/api/portal/billing-setup-requests` | Portal billing setup request list/create without card storage |

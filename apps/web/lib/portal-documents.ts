@@ -134,6 +134,30 @@ export function sanitizeDocumentFileName(fileName: string): string {
   return name || "document";
 }
 
+export function validatePortalDocumentStorageKey(storageKey: unknown): string {
+  const key = optionalString(storageKey);
+
+  if (!key) {
+    throw new PortalDocumentValidationError("Document file reference is missing.");
+  }
+
+  const normalizedKey = key.replace(/\\/g, "/");
+  const segments = normalizedKey.split("/");
+
+  if (
+    normalizedKey.startsWith("/") ||
+    segments.some((segment) => !segment || segment === "." || segment === "..")
+  ) {
+    throw new PortalDocumentValidationError("Document file reference is invalid.");
+  }
+
+  return normalizedKey;
+}
+
+export function buildPortalDocumentContentDisposition(fileName: string): string {
+  return `attachment; filename="${sanitizeDocumentFileName(fileName)}"`;
+}
+
 function validatePortalDocumentFile(file: unknown): PortalDocumentSubmission["file"] {
   if (!file || typeof file !== "object") {
     throw new PortalDocumentValidationError("A document file is required.");
