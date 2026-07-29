@@ -141,6 +141,7 @@ async function getClerkAuthUser(): Promise<AuthUser> {
   }
 
   const clerkUser = await Promise.resolve(clerk.currentUser());
+  const email = getRequiredClerkEmail(clerkUser);
   const publicMetadata = toRecord(clerkUser?.publicMetadata);
   const privateMetadata = toRecord(clerkUser?.privateMetadata);
   const sessionClaims = toRecord(session.sessionClaims);
@@ -173,8 +174,8 @@ async function getClerkAuthUser(): Promise<AuthUser> {
         session.orgId,
         process.env.ROS_DEFAULT_WORKSPACE_ID
       ) ?? "wks_koinonia",
-    name: getClerkDisplayName(clerkUser, role),
-    email: getClerkEmail(clerkUser),
+    name: getClerkDisplayName(clerkUser, role, email),
+    email,
     role
   });
 
@@ -191,7 +192,7 @@ async function loadClerkServerModule(): Promise<ClerkServerModule> {
   }
 }
 
-function getClerkDisplayName(clerkUser: ClerkUser | null, role: RoleName): string {
+function getClerkDisplayName(clerkUser: ClerkUser | null, role: RoleName, email: string): string {
   if (!clerkUser) {
     return `${role} User`;
   }
@@ -201,16 +202,22 @@ function getClerkDisplayName(clerkUser: ClerkUser | null, role: RoleName): strin
     [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ")
   );
 
-  return fullName ?? getClerkEmail(clerkUser);
+  return fullName ?? email;
 }
 
-function getClerkEmail(clerkUser: ClerkUser | null): string {
-  return (
-    firstString(
-      clerkUser?.primaryEmailAddress?.emailAddress,
-      clerkUser?.emailAddresses?.[0]?.emailAddress
-    ) ?? "unknown@example.com"
+function getRequiredClerkEmail(clerkUser: ClerkUser | null): string {
+  const email = firstString(
+    clerkUser?.primaryEmailAddress?.emailAddress,
+    clerkUser?.emailAddresses?.[0]?.emailAddress
   );
+
+  if (!email) {
+    throw new AuthProviderConfigurationError(
+      "Clerk users must expose an email address before Koinonia portal access can be granted."
+    );
+  }
+
+  return email;
 }
 
 async function resolveClerkDatabaseUser(providerUser: AuthUser): Promise<AuthUser> {
@@ -272,7 +279,7 @@ async function acceptPortalInvitationForProviderUser(providerUser: AuthUser): Pr
       provider: "clerk",
       email: providerUser.email,
       revokedAt: null,
-      status: { in: ["pending", "provider_pending", "accepted"] },
+      status: { in: ["pending", "provider_pending"] },
       OR: [{ expiresAt: null }, { expiresAt: { gt: now } }]
     },
     orderBy: { createdAt: "desc" }

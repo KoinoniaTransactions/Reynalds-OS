@@ -40,6 +40,7 @@ The current web app includes:
 - `PortalInvitation` for client and staff invitation status.
 - `AuditEvent` for sensitive auth and portal access history.
 - Provider users resolve through the Koinonia database when available; database role and access status control portal permissions.
+- Provider users must expose a real email address before portal matching or invitation acceptance can run.
 - `/api/portal/invitations` for internal invitation record creation and review.
 - Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
 - First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
@@ -150,6 +151,7 @@ Invitations should assign `koinoniaRole=Client` and the correct workspace before
 - Provider invitation metadata includes `koinoniaRole`, `koinoniaWorkspaceId`, optional client object ID, and service context.
 - If the provider send fails after the Koinonia record is created, the invitation is marked `provider_error` for staff review.
 - When an invited email signs in and no Koinonia user exists yet, the auth layer can accept the matching invitation, create the user, require staff MFA for non-client roles, and mark the invitation accepted.
+- Already-accepted invitations do not create new users; they must match an existing active Koinonia user record.
 
 ---
 
@@ -166,6 +168,7 @@ Before the portal accepts real data:
 - Signed-out user is redirected to `/sign-in`.
 - Unknown role becomes Viewer and cannot see portal data.
 - `/api/me` returns the real provider-backed user.
+- Provider users without an email address fail closed.
 - Portal APIs use real session identity, not mock identity.
 - Audit logging exists for sensitive actions.
 - Portal invitation records exist before client/staff access is granted.

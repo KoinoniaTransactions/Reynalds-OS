@@ -1625,3 +1625,21 @@ The database seed now creates the approved Koinonia role names used by portal in
 ### Current Status
 
 The seed compiles. It still needs to be run against a live database once the local or production Postgres environment is available.
+
+---
+
+## 2026-07-29 — Provider Email Matching Hardened
+
+### Summary
+
+Provider-backed portal access now fails closed when Clerk does not expose an email address, and invitation acceptance no longer creates users from already-accepted invitation records.
+
+### Implemented
+
+- Removed the `unknown@example.com` fallback from Clerk user mapping.
+- Required a real provider email before database user matching or invitation acceptance.
+- Limited first-login invitation acceptance to pending and provider-pending invitations.
+
+### Current Status
+
+This prevents unsafe invitation matching, but live provider-user testing is still required before production portal login is marked ready.
