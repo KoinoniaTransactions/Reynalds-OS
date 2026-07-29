@@ -19,6 +19,14 @@ export type BillingSetupRequestInput = {
   triggerDescription?: string;
 };
 
+export type BillingSetupStatusUpdateInput = {
+  notes?: string;
+  paymentMethodSummary?: string;
+  processorReference?: string;
+  status: BillingSetupStatus;
+  triggerDescription?: string;
+};
+
 export class BillingSetupValidationError extends Error {
   constructor(message: string) {
     super(message);
@@ -63,6 +71,38 @@ export function validateBillingSetupRequestInput(input: unknown): BillingSetupRe
   };
 }
 
+export function validateBillingSetupStatusUpdateInput(
+  input: unknown
+): BillingSetupStatusUpdateInput {
+  if (!input || typeof input !== "object") {
+    throw new BillingSetupValidationError("Billing setup update body must be an object.");
+  }
+
+  const value = input as Record<string, unknown>;
+  const notes = optionalString(value.notes);
+  const paymentMethodSummary = optionalString(value.paymentMethodSummary);
+  const processorReference = optionalString(value.processorReference);
+  const triggerDescription = optionalString(value.triggerDescription);
+
+  if (
+    [notes, paymentMethodSummary, processorReference, triggerDescription]
+      .filter((item): item is string => Boolean(item))
+      .some(containsPaymentSecretLanguage)
+  ) {
+    throw new BillingSetupValidationError(
+      "Do not include card numbers, CVV codes, bank details, or private payment secrets in billing updates."
+    );
+  }
+
+  return {
+    notes,
+    paymentMethodSummary,
+    processorReference,
+    status: normalizeRequiredBillingSetupStatus(value.status),
+    triggerDescription
+  };
+}
+
 export function buildBillingSetupRequestName(input: BillingSetupRequestInput): string {
   return `Billing Setup - ${input.serviceName}`;
 }
@@ -72,7 +112,11 @@ export function buildBillingSetupNextAction(input: BillingSetupRequestInput): st
     return "Confirm service billing consent before sending a processor-hosted setup link.";
   }
 
-  switch (input.status) {
+  return buildBillingSetupStatusNextAction(input.status);
+}
+
+export function buildBillingSetupStatusNextAction(status: BillingSetupStatus): string {
+  switch (status) {
     case "Payment Method Ready":
       return "Review safe payment method metadata and process only approved charges.";
     case "Pay at Close Watch":
@@ -160,6 +204,20 @@ function normalizeBillingSetupStatus(
 
   if (!consentAcknowledged && status !== "Blocked") {
     return "Consent Needed";
+  }
+
+  return status as BillingSetupStatus;
+}
+
+function normalizeRequiredBillingSetupStatus(value: unknown): BillingSetupStatus {
+  const status = optionalString(value);
+
+  if (!status) {
+    throw new BillingSetupValidationError("status is required.");
+  }
+
+  if (!allowedStatuses.has(status as BillingSetupStatus)) {
+    throw new BillingSetupValidationError("status must match an approved billing setup status.");
   }
 
   return status as BillingSetupStatus;

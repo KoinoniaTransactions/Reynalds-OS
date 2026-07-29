@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BillingSetupStatusForm } from "../../../components/employee/BillingSetupStatusForm";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
 import {
@@ -109,6 +110,7 @@ type BillingSetupItem = {
   requestedBy: string;
   service: string;
   status: string;
+  workflowStatus: string;
 };
 
 type BillingSetupView = {
@@ -125,7 +127,8 @@ const sampleBillingSetupRequests: BillingSetupItem[] = [
     status: "Processor Link Needed",
     detail: "Monthly recurring support - Custom monthly",
     nextAction: "Send the secure setup link after recurring billing consent is confirmed.",
-    labels: ["No card stored", "Monthly recurring support", "Wilson Realty Group"]
+    labels: ["No card stored", "Monthly recurring support", "Wilson Realty Group"],
+    workflowStatus: "Processor Link Needed"
   },
   {
     id: "sample-northgate-close",
@@ -134,7 +137,8 @@ const sampleBillingSetupRequests: BillingSetupItem[] = [
     status: "Pay at Close Watch",
     detail: "Pay after successful close - $599",
     nextAction: "Track the closing trigger before billing the approved pay-at-close fee.",
-    labels: ["No card stored", "After successful close", "Northgate Partners"]
+    labels: ["No card stored", "After successful close", "Northgate Partners"],
+    workflowStatus: "Pay at Close Watch"
   }
 ];
 
@@ -263,6 +267,12 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
                         <strong>{request.status}</strong>
                         <span>Setup status</span>
                       </div>
+
+                      <BillingSetupStatusForm
+                        currentStatus={request.workflowStatus}
+                        disabled={!billingSetupView.isLiveData}
+                        requestId={request.id}
+                      />
                     </article>
                   ))}
                 </div>
@@ -362,7 +372,9 @@ async function getEmployeeBillingSetupView(workspaceId: string): Promise<Billing
           status: getHumanBillingSetupStatus(request.status),
           detail: getBillingSetupDetail(request.data),
           labels: getBillingSetupMetaLabels(request.data),
-          nextAction: request.nextAction ?? "Review this billing setup request before sending a secure processor link."
+          nextAction:
+            request.nextAction ?? "Review this billing setup request before sending a secure processor link.",
+          workflowStatus: request.status
         }))
       )
     };
@@ -393,7 +405,8 @@ function withEmptyBillingSetupRequests(requests: BillingSetupItem[]): BillingSet
       status: "Ready",
       detail: "Setup requests will appear after a client or staff member records billing intent.",
       nextAction: "Send secure processor links only after consent and service billing terms are clear.",
-      labels: ["No card stored", "Processor-hosted setup only"]
+      labels: ["No card stored", "Processor-hosted setup only"],
+      workflowStatus: "Setup Requested"
     }
   ];
 }

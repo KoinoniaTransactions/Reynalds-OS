@@ -215,6 +215,7 @@ Staff actions:
 
 - Send payment setup link.
 - Record billing model.
+- Update billing setup status with safe processor references, payment method summaries, and billing triggers.
 - Create invoice.
 - Mark pay-at-closing trigger ready.
 - Record approved payment exception.
@@ -223,6 +224,7 @@ Staff actions:
 - Open processor dashboard link, when available.
 
 Staff users should not see full card numbers or CVV/CVC.
+Staff billing notes and status updates must not store raw card numbers, CVV/CVC, bank details, processor secrets, or payment passwords.
 
 ---
 

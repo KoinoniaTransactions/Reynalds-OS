@@ -64,6 +64,7 @@ The current web app includes:
 - `/api/portal/document-send-packages/[id]/status` for protected staff send-package delivery status updates with approval gating, audit, and timeline history.
 - `/api/portal/access-requests` for protected external access request create/list workflows without storing credentials.
 - `/api/portal/billing-setup-requests` for protected billing setup request create/list workflows without storing card data.
+- `/api/portal/billing-setup-requests/[id]/status` for protected staff billing setup status updates with safe processor metadata, audit, and timeline history.
 - `/api/portal/launch-proof` for protected staff launch-proof create/list workflows without storing credentials, card data, or private login details.
 - `/api/portal/work-items/[id]/assignment` for protected staff assignment updates with timeline and audit history.
 - `/client/work/[id]` for scoped client work detail with status, next action, safe metadata, attached documents, and timeline summaries.
@@ -90,7 +91,7 @@ The current web app includes:
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 - The verifier and `/employee/readiness` require at least one accepted client invitation and one accepted staff invitation before login can be treated as production-ready.
 
-Most protected portal screens still use sample fallback data when production storage is unavailable. `/employee/access` now has a database-backed access-readiness path, `/employee/dashboard` can review and update live work assignments, `/employee/review` can review live work/document records for staff oversight, the client dashboard current-work list can read owned `RosObject` records, clients and staff can open scoped work detail pages, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake, authorized download, staff status-update, client approval/revision, staff version-replacement, staff send-package preparation, and staff send-package status-update workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Invoice/payment processing, payment processor integration, in-browser document editing, external e-signature routing, email delivery, brokerage-platform handoff, and final archive delivery still need production passes.
+Most protected portal screens still use sample fallback data when production storage is unavailable. `/employee/access` now has a database-backed access-readiness path, `/employee/dashboard` can review and update live work assignments, `/employee/review` can review live work/document records for staff oversight, the client dashboard current-work list can read owned `RosObject` records, clients and staff can open scoped work detail pages, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake, authorized download, staff status-update, client approval/revision, staff version-replacement, staff send-package preparation, and staff send-package status-update workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have protected create/list/status-update workflows. Invoice/payment processing, payment processor integration, in-browser document editing, external e-signature routing, email delivery, brokerage-platform handoff, and final archive delivery still need production passes.
 
 ---
 
@@ -327,6 +328,7 @@ Before the portal accepts real data:
 - Clients can create and review their own billing setup requests without submitting card data.
 - Employee users with billing-workspace access can review the billing setup request queue.
 - Billing setup notes reject card numbers, CVV/CVC, bank details, routing numbers, account numbers, payment passwords, processor secrets, and API keys.
+- Staff billing setup status updates can record safe processor references, payment method summaries, setup state, and billing triggers, but still reject raw payment secrets.
 - Payment readiness requires an approved provider name, a public HTTPS processor-hosted setup URL, and a webhook secret before payment status should be treated as production-ready.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.

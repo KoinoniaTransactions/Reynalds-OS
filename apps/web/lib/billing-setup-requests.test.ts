@@ -3,10 +3,12 @@ import {
   BillingSetupValidationError,
   buildBillingSetupNextAction,
   buildBillingSetupRequestName,
+  buildBillingSetupStatusNextAction,
   getBillingSetupDetail,
   getBillingSetupHealth,
   getBillingSetupMetaLabels,
-  validateBillingSetupRequestInput
+  validateBillingSetupRequestInput,
+  validateBillingSetupStatusUpdateInput
 } from "./billing-setup-requests";
 
 describe("billing setup request helpers", () => {
@@ -78,5 +80,28 @@ describe("billing setup request helpers", () => {
         triggerDescription: "Before work begins"
       })
     ).toEqual(["No card stored", "Before work begins", "Wilson Realty Group"]);
+  });
+
+  it("validates safe billing setup status updates", () => {
+    const input = validateBillingSetupStatusUpdateInput({
+      notes: "Processor setup completed by client through hosted setup link.",
+      paymentMethodSummary: "Visa ending 4242, expires 12/29",
+      processorReference: "pm_koinonia_reference_123",
+      status: "Payment Method Ready"
+    });
+
+    expect(input.status).toBe("Payment Method Ready");
+    expect(buildBillingSetupStatusNextAction(input.status)).toContain(
+      "safe payment method metadata"
+    );
+  });
+
+  it("rejects raw payment details in billing setup updates", () => {
+    expect(() =>
+      validateBillingSetupStatusUpdateInput({
+        notes: "The client provided the CVV and bank account number.",
+        status: "Payment Method Ready"
+      })
+    ).toThrow(BillingSetupValidationError);
   });
 });
