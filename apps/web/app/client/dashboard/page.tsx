@@ -380,9 +380,9 @@ async function getClientWorkItemView(
     const workObjects = await prisma.rosObject.findMany({
       where: {
         workspaceId,
-        ownerId: userId,
         objectType: { in: [...clientPortalWorkObjectTypes] },
-        archivedAt: null
+        archivedAt: null,
+        OR: [{ clientUserId: userId }, { ownerId: userId }]
       },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
       take: 20
@@ -468,9 +468,9 @@ async function getClientAccessRequestView(
     const accessRequests = await prisma.rosObject.findMany({
       where: {
         workspaceId,
-        ownerId: userId,
         objectType: accessRequestObjectType,
-        archivedAt: null
+        archivedAt: null,
+        OR: [{ clientUserId: userId }, { ownerId: userId }]
       },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
       take: 12
@@ -510,9 +510,9 @@ async function getClientShowingRequestView(
     const showingRequests = await prisma.rosObject.findMany({
       where: {
         workspaceId,
-        ownerId: userId,
         objectType: showingRequestObjectType,
-        archivedAt: null
+        archivedAt: null,
+        OR: [{ clientUserId: userId }, { ownerId: userId }]
       },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
       take: 12

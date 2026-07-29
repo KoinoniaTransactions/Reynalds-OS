@@ -64,23 +64,32 @@ model Role {
 }
 
 model RosObject {
-  id          String    @id @default(cuid())
-  workspaceId String
-  objectType  String
-  name        String
-  status      String
-  health      String
-  ownerId     String?
-  nextAction  String?
-  data        Json?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  archivedAt  DateTime?
+  id                  String    @id @default(cuid())
+  workspaceId         String
+  objectType          String
+  name                String
+  status              String
+  health              String
+  ownerId             String?
+  clientUserId        String?
+  clientObjectId      String?
+  assignedStaffUserId String?
+  backupStaffUserId   String?
+  nextAction          String?
+  data                Json?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  archivedAt          DateTime?
 
   workspace   Workspace            @relation(fields: [workspaceId], references: [id])
   events      TimelineEvent[]
   sourceLinks ObjectRelationship[] @relation("source")
   targetLinks ObjectRelationship[] @relation("target")
+
+  @@index([workspaceId, clientUserId])
+  @@index([workspaceId, clientObjectId])
+  @@index([workspaceId, assignedStaffUserId])
+  @@index([workspaceId, backupStaffUserId])
 }
 
 model ObjectRelationship {

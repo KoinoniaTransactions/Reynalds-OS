@@ -9,6 +9,10 @@ type RosObject = {
   status: string;
   health: string;
   ownerId?: string | null;
+  clientUserId?: string | null;
+  clientObjectId?: string | null;
+  assignedStaffUserId?: string | null;
+  backupStaffUserId?: string | null;
   nextAction?: string | null;
   updatedAt?: string;
 };

@@ -39,6 +39,10 @@ export async function POST(request: Request) {
       status: input.status ?? "Open",
       health: input.health ?? "Healthy",
       ownerId: input.ownerId,
+      clientUserId: input.clientUserId,
+      clientObjectId: input.clientObjectId,
+      assignedStaffUserId: input.assignedStaffUserId,
+      backupStaffUserId: input.backupStaffUserId,
       nextAction: input.nextAction,
       data: input.data as Prisma.InputJsonValue | undefined
     }

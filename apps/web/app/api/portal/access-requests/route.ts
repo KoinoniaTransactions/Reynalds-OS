@@ -28,7 +28,9 @@ export async function GET() {
         workspaceId: actor.workspaceId,
         objectType: accessRequestObjectType,
         archivedAt: null,
-        ...(canViewWorkspaceQueue ? {} : { ownerId: actor.id })
+        ...(canViewWorkspaceQueue
+          ? {}
+          : { OR: [{ clientUserId: actor.id }, { ownerId: actor.id }] })
       },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
       take: 50
@@ -56,6 +58,8 @@ export async function POST(request: Request) {
         status: input.status,
         health: getAccessRequestHealth(input.status),
         ownerId: actor.id,
+        clientUserId: actor.role === "Client" ? actor.id : undefined,
+        assignedStaffUserId: actor.role === "Client" ? undefined : actor.id,
         nextAction: buildAccessRequestNextAction(input),
         data: buildAccessRequestData(input, actor)
       }

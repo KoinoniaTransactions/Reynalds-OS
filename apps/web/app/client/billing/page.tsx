@@ -321,9 +321,9 @@ async function getClientBillingSetupView(
     const billingSetupRequests = await prisma.rosObject.findMany({
       where: {
         workspaceId,
-        ownerId,
         objectType: billingSetupRequestObjectType,
-        archivedAt: null
+        archivedAt: null,
+        OR: [{ clientUserId: ownerId }, { ownerId }]
       },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
       take: 12

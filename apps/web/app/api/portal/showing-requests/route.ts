@@ -27,7 +27,9 @@ export async function GET() {
         workspaceId: actor.workspaceId,
         objectType: showingRequestObjectType,
         archivedAt: null,
-        ...(canViewWorkspaceQueue ? {} : { ownerId: actor.id })
+        ...(canViewWorkspaceQueue
+          ? {}
+          : { OR: [{ clientUserId: actor.id }, { ownerId: actor.id }] })
       },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
       take: 50
@@ -55,6 +57,8 @@ export async function POST(request: Request) {
         status: input.authorization ? "Requested" : "Waiting on Client",
         health: input.authorization ? "Attention" : "Watch",
         ownerId: actor.id,
+        clientUserId: actor.role === "Client" ? actor.id : undefined,
+        assignedStaffUserId: actor.role === "Client" ? undefined : actor.id,
         nextAction: buildShowingRequestNextAction(input),
         data: buildShowingRequestData(input, actor)
       }

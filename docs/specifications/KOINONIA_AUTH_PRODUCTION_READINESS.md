@@ -39,6 +39,7 @@ The current web app includes:
 - Role normalization and provider-user construction in `packages/auth`.
 - Database seed creates all approved Koinonia role names for portal assignment.
 - Portal identity fields on `User` for auth provider IDs, MFA requirement, access status, and login timing.
+- Portal assignment fields on `RosObject` for client visibility, client account context, assigned staff owner, and backup staff owner.
 - `PortalInvitation` for client and staff invitation status.
 - `AuditEvent` for sensitive auth and portal access history.
 - Provider users resolve through the Koinonia database when available; database role and access status control portal permissions.
@@ -204,6 +205,7 @@ Before the portal accepts real data:
 - Clients can create and review their own showing requests.
 - Employee users with assigned-work access can review the showing request queue.
 - Client dashboard current-work cards can read `RosObject` work records owned by the signed-in client.
+- Portal-created showing, access, and billing setup requests populate explicit client/staff assignment fields for future assignment workflows.
 - Clients can upload allowed document files only after upload storage is configured.
 - Client users can review only their own submitted document records.
 - Employee users with document-workspace access can review the document upload intake queue.

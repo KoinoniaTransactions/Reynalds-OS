@@ -185,6 +185,10 @@ Assignment events should create audit history:
 - Assignment date.
 - Capacity snapshot at assignment time.
 
+Current implementation note:
+
+`RosObject` now separates client visibility from staff assignment with `clientUserId`, `clientObjectId`, `assignedStaffUserId`, and `backupStaffUserId`. This gives the employee portal a safer foundation for assigning work to Koinonia staff without using one generic owner field for both client access and staff responsibility.
+
 ---
 
 ## 5. Role-Based Responsibilities

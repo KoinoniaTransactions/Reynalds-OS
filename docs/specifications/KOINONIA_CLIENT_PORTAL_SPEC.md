@@ -467,6 +467,10 @@ These should connect to existing Reynalds OS concepts rather than bypass them:
 
 The preferred implementation should extend the Object Engine instead of creating a disconnected portal database.
 
+Current implementation note:
+
+`RosObject` now has explicit portal assignment fields for `clientUserId`, `clientObjectId`, `assignedStaffUserId`, and `backupStaffUserId`. Client-facing portal reads use `clientUserId` with backward compatibility for older `ownerId` records, while staff assignment can use separate staff fields instead of overloading client ownership.
+
 ---
 
 ## 12. MVP Build Order
