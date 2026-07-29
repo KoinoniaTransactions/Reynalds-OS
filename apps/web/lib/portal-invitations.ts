@@ -56,7 +56,9 @@ export function validateInvitationInput(input: unknown): InvitationInput {
       : undefined;
 
   if (redirectUrl && !isAllowedRedirectUrl(redirectUrl)) {
-    throw new InvitationValidationError("redirectUrl must be an http(s) URL or same-site path.");
+    throw new InvitationValidationError(
+      "redirectUrl must be a same-site path or a configured Koinonia redirect origin."
+    );
   }
 
   return {
@@ -82,15 +84,72 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function isAllowedRedirectUrl(url: string): boolean {
-  if (url.startsWith("/") && !url.startsWith("//")) {
+export function isAllowedRedirectUrl(url: string): boolean {
+  const trimmed = url.trim();
+
+  if (trimmed.startsWith("/") && !trimmed.startsWith("//")) {
     return true;
   }
 
   try {
-    const parsedUrl = new URL(url);
-    return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+    const parsedUrl = new URL(trimmed);
+    const allowedOrigins = getAllowedAuthRedirectOrigins();
+
+    if (allowedOrigins.includes(parsedUrl.origin)) {
+      return true;
+    }
+
+    return process.env.NODE_ENV !== "production" && isLocalPreviewOrigin(parsedUrl);
   } catch {
     return false;
   }
+}
+
+export function getAllowedAuthRedirectOrigins(): string[] {
+  const configuredOrigins = [
+    process.env.NEXT_PUBLIC_SITE_URL,
+    ...(process.env.KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS ?? "").split(",")
+  ];
+
+  return Array.from(
+    new Set(configuredOrigins.map(toAllowedOrigin).filter((origin): origin is string => Boolean(origin)))
+  );
+}
+
+function toAllowedOrigin(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+
+  if (!trimmed || containsPlaceholder(trimmed)) {
+    return undefined;
+  }
+
+  try {
+    const parsedUrl = new URL(trimmed);
+
+    if (parsedUrl.protocol === "https:") {
+      return parsedUrl.origin;
+    }
+
+    if (process.env.NODE_ENV !== "production" && isLocalPreviewOrigin(parsedUrl)) {
+      return parsedUrl.origin;
+    }
+  } catch {
+    return undefined;
+  }
+
+  return undefined;
+}
+
+function isLocalPreviewOrigin(url: URL): boolean {
+  return (
+    (url.protocol === "http:" || url.protocol === "https:") &&
+    (url.hostname === "localhost" ||
+      url.hostname === "127.0.0.1" ||
+      url.hostname === "::1" ||
+      url.hostname === "[::1]")
+  );
+}
+
+function containsPlaceholder(value: string): boolean {
+  return /\b(placeholder|changeme|change-me|dummy|example|fake|todo|your-url|your_url)\b/i.test(value);
 }

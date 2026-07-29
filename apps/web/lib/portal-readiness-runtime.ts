@@ -18,6 +18,7 @@ export async function buildCurrentPortalReadinessReport(): Promise<PortalReadine
     aiReviewHumanApprovalRequired: process.env.KOINONIA_AI_HUMAN_APPROVAL_REQUIRED === "true",
     aiReviewPrivacyRulesApproved: process.env.KOINONIA_AI_PRIVACY_RULES_APPROVED === "true",
     aiReviewPromptsApproved: process.env.KOINONIA_AI_REVIEW_PROMPTS_APPROVED === "true",
+    authRedirectOrigins: getConfiguredList(process.env.KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS),
     authProvider: process.env.AUTH_PROVIDER,
     clerkPublishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     clerkSecretKey: process.env.CLERK_SECRET_KEY,
@@ -33,7 +34,8 @@ export async function buildCurrentPortalReadinessReport(): Promise<PortalReadine
     socialLoginConfigured: process.env.KOINONIA_SOCIAL_LOGIN_CONFIGURED === "true",
     socialLoginInviteMatchingVerified:
       process.env.KOINONIA_SOCIAL_LOGIN_INVITE_MATCHING_VERIFIED === "true",
-    socialLoginProviders: getSocialLoginProviders(process.env.KOINONIA_SOCIAL_LOGIN_PROVIDERS),
+    socialLoginProviders: getConfiguredList(process.env.KOINONIA_SOCIAL_LOGIN_PROVIDERS),
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
     workspaceId,
     database
   });
@@ -121,9 +123,9 @@ export async function getPortalDatabaseReadiness(
   }
 }
 
-function getSocialLoginProviders(value: string | undefined): string[] {
+function getConfiguredList(value: string | undefined): string[] {
   return (value ?? "")
     .split(",")
-    .map((provider) => provider.trim())
+    .map((item) => item.trim())
     .filter(Boolean);
 }

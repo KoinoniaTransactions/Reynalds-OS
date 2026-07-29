@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   canRevokeInvitationStatus,
+  getAllowedAuthRedirectOrigins,
   InvitationValidationError,
+  isAllowedRedirectUrl,
   validateInvitationInput
 } from "./portal-invitations";
 
@@ -78,7 +80,46 @@ describe("portal invitation validation", () => {
         roleName: "Client",
         redirectUrl: "javascript:alert(1)"
       })
-    ).toThrow("redirectUrl must be an http(s) URL or same-site path.");
+    ).toThrow("redirectUrl must be a same-site path or a configured Koinonia redirect origin.");
+  });
+
+  it("rejects absolute invitation redirects outside configured Koinonia origins", () => {
+    expect(() =>
+      validateInvitationInput({
+        email: "client@example.com",
+        roleName: "Client",
+        redirectUrl: "https://not-koinonia.example/client/dashboard"
+      })
+    ).toThrow("redirectUrl must be a same-site path or a configured Koinonia redirect origin.");
+  });
+
+  it("allows configured Koinonia redirect origins", () => {
+    const originalSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+    process.env.NEXT_PUBLIC_SITE_URL = "https://www.koinoniatransactions.com";
+
+    try {
+      expect(isAllowedRedirectUrl("https://www.koinoniatransactions.com/client/dashboard")).toBe(true);
+    } finally {
+      restoreEnvValue("NEXT_PUBLIC_SITE_URL", originalSiteUrl);
+    }
+  });
+
+  it("supports an explicit auth redirect origin allowlist", () => {
+    const originalAllowlist = process.env.KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS;
+    const originalSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+    delete process.env.NEXT_PUBLIC_SITE_URL;
+    process.env.KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS =
+      "https://portal.koinoniatransactions.com, https://example-placeholder.invalid";
+
+    try {
+      expect(getAllowedAuthRedirectOrigins()).toEqual(["https://portal.koinoniatransactions.com"]);
+      expect(isAllowedRedirectUrl("https://portal.koinoniatransactions.com/employee/dashboard")).toBe(true);
+    } finally {
+      restoreEnvValue("KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS", originalAllowlist);
+      restoreEnvValue("NEXT_PUBLIC_SITE_URL", originalSiteUrl);
+    }
   });
 
   it("rejects sending a provider invitation with an existing provider id", () => {
@@ -100,3 +141,12 @@ describe("portal invitation validation", () => {
     expect(canRevokeInvitationStatus("revoked")).toBe(false);
   });
 });
+
+function restoreEnvValue(key: string, value: string | undefined): void {
+  if (value === undefined) {
+    delete process.env[key];
+    return;
+  }
+
+  process.env[key] = value;
+}

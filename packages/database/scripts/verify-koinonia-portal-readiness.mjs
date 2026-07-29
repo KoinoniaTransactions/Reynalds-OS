@@ -47,6 +47,16 @@ recordCheck(
   isProductionClerkKey(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, "pk_live_"),
   "production portal login should use a pk_live_ key, not a placeholder or test key"
 );
+const authRedirectOrigins = [
+  process.env.NEXT_PUBLIC_SITE_URL,
+  ...parseList(process.env.KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS)
+].filter(isPresent);
+const invalidAuthRedirectOrigins = authRedirectOrigins.filter((origin) => !isPublicHttpsUrl(origin));
+recordCheck(
+  "auth redirect origins use public HTTPS",
+  authRedirectOrigins.length > 0 && invalidAuthRedirectOrigins.length === 0,
+  getAuthRedirectOriginDetail(authRedirectOrigins, invalidAuthRedirectOrigins)
+);
 recordCheck("DATABASE_URL is set", isPresent(process.env.DATABASE_URL));
 recordCheck(
   "ROS_ALLOW_MOCK_AUTH is not enabled",
@@ -374,6 +384,18 @@ function getSocialLoginProviderDetail(providers, unsupportedProviders) {
   return `approved provider(s): ${providers.join(", ")}`;
 }
 
+function getAuthRedirectOriginDetail(origins, invalidOrigins) {
+  if (origins.length === 0) {
+    return "set NEXT_PUBLIC_SITE_URL or KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS";
+  }
+
+  if (invalidOrigins.length > 0) {
+    return `invalid origin(s): ${invalidOrigins.join(", ")}`;
+  }
+
+  return `configured origin(s): ${origins.join(", ")}`;
+}
+
 function isPlaceholderCredential(value) {
   return /\b(placeholder|changeme|change-me|dummy|example|fake|todo|your-key|your_key)\b/i.test(
     value
@@ -392,7 +414,8 @@ function isPublicHttpsUrl(value) {
       url.protocol === "https:" &&
       url.hostname !== "localhost" &&
       url.hostname !== "127.0.0.1" &&
-      url.hostname !== "::1"
+      url.hostname !== "::1" &&
+      url.hostname !== "[::1]"
     );
   } catch {
     return false;

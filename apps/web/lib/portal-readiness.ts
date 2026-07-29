@@ -23,6 +23,7 @@ export type PortalReadinessInput = {
   aiReviewHumanApprovalRequired?: boolean;
   aiReviewPrivacyRulesApproved?: boolean;
   aiReviewPromptsApproved?: boolean;
+  authRedirectOrigins?: string[];
   authProvider?: string;
   clerkPublishableKey?: string;
   clerkSecretKey?: string;
@@ -37,6 +38,7 @@ export type PortalReadinessInput = {
   socialLoginConfigured?: boolean;
   socialLoginInviteMatchingVerified?: boolean;
   socialLoginProviders?: string[];
+  siteUrl?: string;
   workspaceId: string;
   database: PortalDatabaseReadiness;
 };
@@ -90,6 +92,7 @@ export function buildPortalReadinessReport(input: PortalReadinessInput): PortalR
         getAuthProviderReadiness(input),
         getClerkKeyReadiness(input),
         getHostedLoginReadiness(input),
+        getAuthRedirectReadiness(input),
         getMockAuthReadiness(input),
         getSocialLoginReadiness(input)
       ]
@@ -267,6 +270,40 @@ function getHostedLoginReadiness(input: PortalReadinessInput): PortalReadinessIt
     "The app can use the internal sign-in route, but production should explicitly configure the hosted sign-in URL.",
     "No hosted sign-in URL is set.",
     "Set NEXT_PUBLIC_CLERK_SIGN_IN_URL or NEXT_PUBLIC_AUTH_SIGN_IN_URL."
+  );
+}
+
+function getAuthRedirectReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const configuredOrigins = [input.siteUrl, ...(input.authRedirectOrigins ?? [])]
+    .map((origin) => origin?.trim())
+    .filter((origin): origin is string => Boolean(origin));
+  const invalidOrigins = configuredOrigins.filter((origin) => !isPublicHttpsUrl(origin));
+
+  if (configuredOrigins.length === 0) {
+    return attentionItem(
+      "auth-redirect-origins",
+      "Invite redirect origins",
+      "Invitation redirects are limited to same-site paths until production origins are configured.",
+      "No NEXT_PUBLIC_SITE_URL or auth redirect allowlist is set.",
+      "Set NEXT_PUBLIC_SITE_URL to the production Koinonia domain before sending provider invitations."
+    );
+  }
+
+  if (invalidOrigins.length > 0) {
+    return blockedItem(
+      "auth-redirect-origins",
+      "Invite redirect origins",
+      "Production invitation redirects must use public HTTPS Koinonia-owned origins.",
+      `Invalid origin(s): ${invalidOrigins.join(", ")}.`,
+      "Use NEXT_PUBLIC_SITE_URL and KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS with public HTTPS domains only."
+    );
+  }
+
+  return readyItem(
+    "auth-redirect-origins",
+    "Invite redirect origins",
+    "Provider invitation redirects are restricted to configured production origins or same-site portal paths.",
+    `Configured origin(s): ${configuredOrigins.join(", ")}.`
   );
 }
 
@@ -760,9 +797,11 @@ function isPublicHttpsUrl(value: string): boolean {
 
     return (
       url.protocol === "https:" &&
+      !isPlaceholderCredential(value) &&
       url.hostname !== "localhost" &&
       url.hostname !== "127.0.0.1" &&
-      url.hostname !== "::1"
+      url.hostname !== "::1" &&
+      url.hostname !== "[::1]"
     );
   } catch {
     return false;

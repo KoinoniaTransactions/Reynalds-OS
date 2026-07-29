@@ -20,6 +20,7 @@ function getReadyInput(overrides: Partial<PortalReadinessInput> = {}): PortalRea
     paymentProcessorWebhookSecret: "whsec_livevalue",
     rosAllowMockAuth: "false",
     socialLoginConfigured: false,
+    siteUrl: "https://www.koinoniatransactions.com",
     workspaceId: "wks_koinonia",
     database: {
       acceptedClientInvitationCount: 1,
@@ -120,6 +121,32 @@ describe("portal readiness report", () => {
 
     expect(report.overallStatus).toBe("blocked");
     expect(mockAuth?.status).toBe("blocked");
+  });
+
+  it("marks auth redirect origins ready when the production site URL is public HTTPS", () => {
+    const report = buildPortalReadinessReport(getReadyInput());
+    const authRedirectOrigins = report.groups
+      .flatMap((group) => group.items)
+      .find((item) => item.id === "auth-redirect-origins");
+
+    expect(authRedirectOrigins?.status).toBe("ready");
+    expect(authRedirectOrigins?.proof).toContain("koinoniatransactions.com");
+  });
+
+  it("blocks invalid auth redirect origins", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        authRedirectOrigins: ["http://localhost:3000", "https://placeholder.invalid"],
+        siteUrl: undefined
+      })
+    );
+    const authRedirectOrigins = report.groups
+      .flatMap((group) => group.items)
+      .find((item) => item.id === "auth-redirect-origins");
+
+    expect(authRedirectOrigins?.status).toBe("blocked");
+    expect(authRedirectOrigins?.proof).toContain("localhost");
+    expect(authRedirectOrigins?.proof).toContain("placeholder");
   });
 
   it("blocks placeholder or test Clerk keys", () => {
