@@ -21,6 +21,7 @@ export type ReynaldsBrothersWorkItemData = {
   equipmentRequired?: string[];
   documentationRequired?: string[];
   readinessRequired?: string[];
+  checklistCompleted?: string[];
   operationalRisks?: string[];
   scheduledStart?: string | null;
   scheduledEnd?: string | null;
@@ -44,6 +45,14 @@ export type ReynaldsBrothersWorkItemData = {
   billingApprovalStatus?: string | null;
   customerUpdateStatus?: string | null;
   mediaStatus?: string | null;
+};
+
+export type ReynaldsBrothersChecklistItem = {
+  id: string;
+  label: string;
+  phase: string;
+  owner: "Office" | "Field" | "Billing" | "AI";
+  requiredBefore: string;
 };
 
 export type ReynaldsBrothersWorkItem = {
@@ -131,6 +140,65 @@ export const reynaldsBrothersBillingApprovalFlow = [
   "Josh visibility"
 ];
 
+export const accLevel1Checklist: ReynaldsBrothersChecklistItem[] = [
+  { id: "l1_store_called", label: "Store manager called", phase: "Level 1 Triage", owner: "Office", requiredBefore: "Level 1 complete" },
+  { id: "l1_manager_recorded", label: "Manager name and title recorded", phase: "Level 1 Triage", owner: "Office", requiredBefore: "Level 1 complete" },
+  { id: "l1_scope_decision", label: "Wrong-asset or in-scope decision recorded", phase: "Level 1 Triage", owner: "Office", requiredBefore: "Level 1 complete" },
+  { id: "l1_service_channel_note", label: "Service Channel / Walmart update entered", phase: "Level 1 Triage", owner: "Office", requiredBefore: "Level 1 complete" },
+  { id: "l1_level2_decision", label: "Level 2 needed decision recorded", phase: "Level 1 Triage", owner: "Office", requiredBefore: "Move to Level 2 or close" }
+];
+
+export const accLevel2Checklist: ReynaldsBrothersChecklistItem[] = [
+  { id: "l2_companycam_link", label: "CompanyCam project linked", phase: "Level 2 Triage", owner: "Office", requiredBefore: "Field dispatch" },
+  { id: "l2_all_tank_photos", label: "Photos captured for all five ACC tanks", phase: "Level 2 Triage", owner: "Field", requiredBefore: "Level 2 complete" },
+  { id: "l2_starting_gauges", label: "Starting gauge photos captured for each vacuum test", phase: "Level 2 Triage", owner: "Field", requiredBefore: "Level 2 complete" },
+  { id: "l2_ending_gauges", label: "Ending gauge photos captured for each vacuum test", phase: "Level 2 Triage", owner: "Field", requiredBefore: "Level 2 complete" },
+  { id: "l2_tank_age_recorded", label: "Tank age recorded for each tank", phase: "Level 2 Triage", owner: "Field", requiredBefore: "Recommendation" },
+  { id: "l2_tank_dimensions_recorded", label: "Tank dimensions recorded", phase: "Level 2 Triage", owner: "Field", requiredBefore: "Recommendation" },
+  { id: "l2_shop_location_recorded", label: "Tank location in shop recorded", phase: "Level 2 Triage", owner: "Field", requiredBefore: "Recommendation" },
+  { id: "l2_interstitial_photos", label: "Interstitial / secondary-space photos captured", phase: "Level 2 Triage", owner: "Field", requiredBefore: "Recommendation" },
+  { id: "l2_recommendation_sent", label: "Replacement recommendation sent to Walmart when needed", phase: "Replacement Recommended", owner: "Office", requiredBefore: "ACC replacement" }
+];
+
+export const accReplacementChecklist: ReynaldsBrothersChecklistItem[] = [
+  { id: "acc_po_confirmed", label: "PO number confirmed or red flag acknowledged", phase: "PO Confirmed", owner: "Office", requiredBefore: "Scheduling" },
+  { id: "acc_tanks_ordered", label: "ACC tank set ordered", phase: "Tanks Ordered", owner: "Office", requiredBefore: "Scheduling" },
+  { id: "acc_tanks_received", label: "ACC tank set received", phase: "Tanks Received and Tested", owner: "Office", requiredBefore: "Scheduling" },
+  { id: "acc_new_tanks_tested", label: "New tanks vacuum tested", phase: "Tanks Received and Tested", owner: "Field", requiredBefore: "Scheduling" },
+  { id: "acc_manufacturer_recorded", label: "Tank manufacturer recorded", phase: "Tanks Received and Tested", owner: "Office", requiredBefore: "Completion" },
+  { id: "acc_serials_recorded", label: "New tank serial numbers recorded", phase: "Tanks Received and Tested", owner: "Field", requiredBefore: "Completion" },
+  { id: "acc_permits_approved", label: "Final permitting authority approvals received", phase: "Permitting", owner: "Office", requiredBefore: "Scheduling" },
+  { id: "acc_service_channel_notice", label: "Walmart install notice entered in Service Channel", phase: "Scheduling", owner: "Office", requiredBefore: "Field work" },
+  { id: "acc_oil_removal_coordinated", label: "Safety Kleen / LES coordinated oil removal confirmed", phase: "Oil Removal Coordinated", owner: "Office", requiredBefore: "Field work" },
+  { id: "acc_companycam_complete", label: "CompanyCam before/after photo set complete", phase: "Completion Review", owner: "Field", requiredBefore: "Billing" },
+  { id: "acc_manager_signature", label: "Manager name, title, and signature captured", phase: "Completion Review", owner: "Field", requiredBefore: "Billing" },
+  { id: "acc_completion_date", label: "Completion date recorded", phase: "Completion Review", owner: "Office", requiredBefore: "Billing" }
+];
+
+export const ucoChecklist: ReynaldsBrothersChecklistItem[] = [
+  { id: "uco_po_confirmed", label: "PO number confirmed or red flag acknowledged", phase: "PO Confirmed", owner: "Office", requiredBefore: "Scheduling" },
+  { id: "uco_frontline_ordered", label: "Frontline LLC tank ordered", phase: "Tank Ordered", owner: "Office", requiredBefore: "Scheduling" },
+  { id: "uco_frontline_received", label: "Frontline LLC tank received", phase: "Tank Received", owner: "Office", requiredBefore: "Scheduling" },
+  { id: "uco_permits_approved", label: "Permits and jurisdiction approvals complete", phase: "Permitting", owner: "Office", requiredBefore: "Scheduling" },
+  { id: "uco_oil_removal_coordinated", label: "Safety Kleen / LES coordinated oil removal confirmed", phase: "Oil Removal Coordinated", owner: "Office", requiredBefore: "Field work" },
+  { id: "uco_serial_recorded", label: "New UCO tank serial number recorded", phase: "Completion Review", owner: "Field", requiredBefore: "Billing" },
+  { id: "uco_companycam_complete", label: "CompanyCam install photos complete", phase: "Completion Review", owner: "Field", requiredBefore: "Billing" },
+  { id: "uco_manager_signature", label: "Manager name, title, and signature captured", phase: "Completion Review", owner: "Field", requiredBefore: "Billing" },
+  { id: "uco_completion_date", label: "Completion date recorded", phase: "Completion Review", owner: "Office", requiredBefore: "Billing" }
+];
+
+export const pressureWashingChecklist: ReynaldsBrothersChecklistItem[] = [
+  { id: "pw_vac_truck_secured", label: "Vac truck company secured", phase: "Vac Truck Secured", owner: "Office", requiredBefore: "Scheduling" },
+  { id: "pw_disposal_facility", label: "Disposal facility arranged", phase: "Disposal Facility Secured", owner: "Office", requiredBefore: "Scheduling" },
+  { id: "pw_overnight_access", label: "Overnight access window confirmed", phase: "Scheduled", owner: "Office", requiredBefore: "Field work" },
+  { id: "pw_companycam_link", label: "CompanyCam project linked", phase: "Planning", owner: "Office", requiredBefore: "Field dispatch" },
+  { id: "pw_before_photos", label: "Before photos captured", phase: "Field Work", owner: "Field", requiredBefore: "Completion" },
+  { id: "pw_after_photos", label: "After photos captured", phase: "Completion Review", owner: "Field", requiredBefore: "Billing" },
+  { id: "pw_disposal_manifest", label: "Disposal manifest captured", phase: "Completion Review", owner: "Field", requiredBefore: "Billing" },
+  { id: "pw_manager_signature", label: "Manager name, title, and signature captured", phase: "Completion Review", owner: "Field", requiredBefore: "Billing" },
+  { id: "pw_completion_date", label: "Completion date recorded", phase: "Completion Review", owner: "Office", requiredBefore: "Billing" }
+];
+
 export const accReplacementPhaseTrack = [
   "Needs Approval",
   "Level 1 Triage",
@@ -205,6 +273,7 @@ export const reynaldsBrothersFallbackWorkItems: ReynaldsBrothersWorkItem[] = [
       equipmentRequired: ["Two 400 gallon bulk oil tanks", "700 gallon waste oil tank", "105 gallon DIY tank", "25 gallon filter crusher tank", "Install tools", "PPE"],
       documentationRequired: ["CompanyCam project link", "Before photos", "After photos", "New tank serial numbers", "Manager name and title", "Completion notes"],
       readinessRequired: ["PO number confirmed", "Tanks ordered", "Tanks received", "New tanks vacuum tested", "Manufacturer recorded", "Serial numbers recorded", "Final permit approvals", "Service Channel notice", "Oil removal coordinated"],
+      checklistCompleted: ["acc_tanks_ordered"],
       operationalRisks: ["PO missing red flag", "Permit delay", "Oil removal vendor not coordinated", "Missing CompanyCam photos"],
       poStatus: "Missing",
       poDueDate: "Within 5 business days of approval",
@@ -246,6 +315,7 @@ export const reynaldsBrothersFallbackWorkItems: ReynaldsBrothersWorkItem[] = [
       equipmentRequired: ["Frontline UCO tank", "Install tools", "PPE"],
       documentationRequired: ["CompanyCam project link", "Before photos", "Install photos", "New tank serial number", "Manager name and title", "Completion notes"],
       readinessRequired: ["Frontline tank ordered", "Frontline tank received", "Permit approvals complete", "PO number tracked", "Oil removal coordinated"],
+      checklistCompleted: ["uco_frontline_ordered"],
       operationalRisks: ["Tank delivery pending", "PO missing red flag", "Permit approval pending"],
       poStatus: "Missing",
       poDueDate: "Within 5 business days of approval",
@@ -287,6 +357,7 @@ export const reynaldsBrothersFallbackWorkItems: ReynaldsBrothersWorkItem[] = [
       equipmentRequired: ["Office phone call", "Service Channel notes"],
       documentationRequired: ["Store call record", "Manager name and title", "Triage notes", "Service Channel update"],
       readinessRequired: ["Store called", "Wrong asset decision or Level 2 decision recorded"],
+      checklistCompleted: [],
       operationalRisks: ["Level 1 triage overdue", "Store call not recorded"],
       lucernexStatus: "Needs Update",
       permitStatus: "Not Started",
@@ -323,6 +394,7 @@ export const reynaldsBrothersFallbackWorkItems: ReynaldsBrothersWorkItem[] = [
       equipmentRequired: ["Hot water pressure washer", "Vac truck", "Surface cleaner", "PPE"],
       documentationRequired: ["CompanyCam project link", "Before photos", "After photos", "Disposal manifest", "Manager name and title", "Completion notes"],
       readinessRequired: ["Vac truck company secured", "Disposal facility secured", "Overnight access window confirmed"],
+      checklistCompleted: [],
       operationalRisks: ["Needs human approval", "Vac truck not secured", "Disposal facility not secured"],
       vacTruckCompany: "",
       disposalFacility: "",
@@ -403,6 +475,7 @@ export function getWorkItemAlerts(item: ReynaldsBrothersWorkItem): string[] {
   const data = getWorkItemData(item);
   const alerts: string[] = [];
   const jobType = String(data.jobType ?? data.serviceLine ?? "");
+  const openChecklistItems = getOpenChecklistItems(item);
 
   if (data.approvalStatus === "Needs Approval") alerts.push("Human approval required before this job becomes active.");
   if (data.poStatus === "Missing") alerts.push("PO missing; alert all office staff after 5 business days.");
@@ -419,8 +492,47 @@ export function getWorkItemAlerts(item: ReynaldsBrothersWorkItem): string[] {
   if (isInvoiceReadyStatus(data.invoiceStatus) && data.billingApprovalStatus !== "Approved") {
     alerts.push("Billing packet is ready but approval pass-off is not complete.");
   }
+  if (openChecklistItems.length > 0) alerts.push(`${openChecklistItems.length} required checklist item${openChecklistItems.length === 1 ? "" : "s"} still open.`);
 
   return alerts;
+}
+
+export function getWorkItemChecklist(item: ReynaldsBrothersWorkItem): ReynaldsBrothersChecklistItem[] {
+  const data = getWorkItemData(item);
+  const jobType = String(data.jobType ?? data.workType ?? data.serviceLine ?? "");
+
+  if (jobType.includes("Pressure Washing")) return pressureWashingChecklist;
+  if (jobType.includes("UCO")) return ucoChecklist;
+  if (jobType.includes("ACC Tank Replacement")) return [...accLevel1Checklist, ...accLevel2Checklist, ...accReplacementChecklist];
+  if (jobType.includes("ACC Level 2")) return accLevel2Checklist;
+  if (jobType.includes("DIY")) return accReplacementChecklist.filter((item) => item.id.includes("po") || item.id.includes("serial") || item.id.includes("companycam") || item.id.includes("manager") || item.id.includes("completion"));
+  if (jobType.includes("ACC")) return accLevel1Checklist;
+
+  return [];
+}
+
+export function getPhaseTrackForJobType(jobType: string): string[] {
+  if (jobType.includes("Pressure Washing")) return pressureWashingPhaseTrack;
+  if (jobType.includes("UCO")) return ucoPhaseTrack;
+  if (jobType.includes("ACC") || jobType.includes("DIY")) return accReplacementPhaseTrack;
+
+  return [];
+}
+
+export function getOpenChecklistItems(item: ReynaldsBrothersWorkItem): ReynaldsBrothersChecklistItem[] {
+  const completed = new Set(getWorkItemData(item).checklistCompleted ?? []);
+
+  return getWorkItemChecklist(item).filter((checklistItem) => !completed.has(checklistItem.id));
+}
+
+export function getChecklistProgress(item: ReynaldsBrothersWorkItem): { complete: number; total: number; percent: number } {
+  const checklist = getWorkItemChecklist(item);
+  const completed = new Set(getWorkItemData(item).checklistCompleted ?? []);
+  const complete = checklist.filter((item) => completed.has(item.id)).length;
+  const total = checklist.length;
+  const percent = total > 0 ? Math.round((complete / total) * 100) : 100;
+
+  return { complete, total, percent };
 }
 
 export function getPhaseProgress(item: ReynaldsBrothersWorkItem): { currentIndex: number; total: number; percent: number } {
@@ -514,6 +626,7 @@ function getWorkItemPayloadData(value: Record<string, unknown>): ReynaldsBrother
     equipmentRequired: getStringList(sourceData.equipmentRequired),
     documentationRequired: getStringList(sourceData.documentationRequired),
     readinessRequired: getStringList(sourceData.readinessRequired),
+    checklistCompleted: getStringList(sourceData.checklistCompleted),
     operationalRisks: getStringList(sourceData.operationalRisks),
     scheduledStart: getOptionalString(sourceData.scheduledStart),
     scheduledEnd: getOptionalString(sourceData.scheduledEnd),

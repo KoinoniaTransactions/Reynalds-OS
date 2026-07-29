@@ -14,6 +14,27 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Reynalds Brothers Job Checklists Added
+
+### Summary
+
+Reynalds Brothers work items now have job-specific checklists so required ACC, UCO, and Pressure Washing steps can be tracked directly on the operations dashboard.
+
+### Implemented
+
+- Added checklist templates for ACC Level 1, ACC Level 2, ACC Tank Replacement, DIY Only, UCO Tank Replacement, and Pressure Washing.
+- Added checklist completion storage on Work Item data.
+- Added checklist progress and open-item red flags to the Work Item engine.
+- Added saveable checklist toggles to the Reynalds Brothers dashboard.
+- Updated Reynalds Brothers object documentation and changelog.
+- Added focused tests for checklist selection, progress, and phase-track mapping.
+
+### Current Status
+
+This is still local application state backed by Work Item data. The next production pass should add staff ownership, due dates, audit events for checklist changes, and a clearer approval workflow before checklist completion is used for billing release.
+
+---
+
 ## 2026-07-29 — Social Login Readiness Gate Added
 
 ### Summary

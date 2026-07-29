@@ -66,6 +66,7 @@ External systems are sources of evidence. They do not define the internal operat
 - Tank Serial Numbers when applicable
 - Oil Removal Status when applicable
 - CompanyCam Link
+- Completed Checklist Item IDs
 - Date Received
 - Scheduled Date
 - Completion Date
@@ -114,6 +115,33 @@ A Work Item may relate to:
 ACC work may move as one connected job through Level 1 triage, Level 2 triage, and ACC tank replacement.
 
 Pressure washing is a standalone workflow.
+
+---
+
+## Division Checklist Templates
+
+The ACC/UCO/Pressure Washing division uses job-specific checklist templates.
+
+Initial templates:
+
+- ACC Level 1 Triage
+- ACC Level 2 Triage
+- ACC Tank Replacement
+- DIY Only
+- UCO Tank Replacement
+- Pressure Washing
+
+Checklist items include an item ID, label, phase, owner group, and required-before gate.
+
+The system computes:
+
+- Completed checklist count
+- Total checklist count
+- Checklist progress percent
+- Open required checklist items
+- Red flags for incomplete required work
+
+ACC tank replacement is treated as one connected chain that may include Level 1 triage, Level 2 triage, and final replacement work.
 
 ---
 
@@ -173,6 +201,7 @@ Initial mutation support:
 - Update invoice status
 - Update customer update status
 - Update next action
+- Toggle checklist item completion
 
 ---
 

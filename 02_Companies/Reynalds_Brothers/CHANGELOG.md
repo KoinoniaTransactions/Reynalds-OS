@@ -17,3 +17,5 @@
 - Replaced generic board lanes with division lanes: Needs Approval, Triage, Permits, Tanks, Scheduling, Field Work, Billing, and Complete.
 - Added red-flag logic for missing PO, permit delays, tank assignment/receiving, coordinated oil removal, field proof, and billing approval.
 - Updated email intake to use Walmart-style job naming, detect multi-store emails, and flag multi-store AI-created jobs for human review.
+- Added job-specific checklist templates for ACC Level 1, ACC Level 2, ACC Tank Replacement, DIY Only, UCO Tank Replacement, and Pressure Washing.
+- Added checklist progress, open required-item counts, and saveable checklist completion toggles to the Reynalds Brothers dashboard.

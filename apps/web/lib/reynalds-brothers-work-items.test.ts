@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  getChecklistProgress,
+  getOpenChecklistItems,
+  getPhaseTrackForJobType,
   getWorkItemAlerts,
+  getWorkItemChecklist,
   getWorkItemLane,
   getWorkItemLocation,
   getWorkItemMetrics,
@@ -37,6 +41,27 @@ describe("Reynalds Brothers work item engine", () => {
 
     expect(alerts).toContain("PO missing; alert all office staff after 5 business days.");
     expect(alerts).toContain("Coordinated oil removal is not confirmed.");
+    expect(alerts).toContain("25 required checklist items still open.");
+  });
+
+  it("selects job-specific checklist templates", () => {
+    expect(getWorkItemChecklist(reynaldsBrothersFallbackWorkItems[0]).some((item) => item.id === "acc_oil_removal_coordinated")).toBe(true);
+    expect(getWorkItemChecklist(reynaldsBrothersFallbackWorkItems[1]).some((item) => item.id === "uco_frontline_received")).toBe(true);
+    expect(getWorkItemChecklist(reynaldsBrothersFallbackWorkItems[3]).some((item) => item.id === "pw_vac_truck_secured")).toBe(true);
+  });
+
+  it("calculates checklist progress from completed item IDs", () => {
+    const progress = getChecklistProgress(reynaldsBrothersFallbackWorkItems[1]);
+
+    expect(progress.complete).toBe(1);
+    expect(progress.total).toBe(9);
+    expect(getOpenChecklistItems(reynaldsBrothersFallbackWorkItems[1])).toHaveLength(8);
+  });
+
+  it("selects phase tracks by job type", () => {
+    expect(getPhaseTrackForJobType("Pressure Washing")).toContain("Vac Truck Secured");
+    expect(getPhaseTrackForJobType("UCO Tank Replacement")).toContain("Tank Received");
+    expect(getPhaseTrackForJobType("ACC Level 1 Triage")).toContain("Level 2 Triage");
   });
 
   it("validates a new work item payload", () => {

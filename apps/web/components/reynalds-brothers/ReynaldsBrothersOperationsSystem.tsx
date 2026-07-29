@@ -7,9 +7,12 @@ import {
   reynaldsBrothersFallbackEmails
 } from "../../lib/reynalds-brothers-email-intake";
 import {
+  getChecklistProgress,
   getPhaseProgress,
+  getPhaseTrackForJobType,
   getWorkItemData,
   getWorkItemAlerts,
+  getWorkItemChecklist,
   getWorkItemLane,
   getWorkItemLocation,
   getWorkItemMetrics,
@@ -191,6 +194,8 @@ export function ReynaldsBrothersOperationsSystem() {
             siteName: createForm.siteName,
             workType: createForm.workType,
             phase: "Needs Approval",
+            phaseTrack: getPhaseTrackForJobType(createForm.jobType),
+            checklistCompleted: [],
             poStatus: createForm.jobType === "Pressure Washing" ? "Not Required Yet" : "Missing",
             lucernexStatus: "Not Started",
             permitStatus: createForm.jobType === "Pressure Washing" ? "Not required" : "Not Started",
@@ -210,6 +215,38 @@ export function ReynaldsBrothersOperationsSystem() {
       if (payload.workItem?.id) setSelectedId(payload.workItem.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Work Item could not be created.");
+    }
+  }
+
+  async function toggleChecklistItem(checklistItemId: string) {
+    if (!selected) return;
+
+    setError("");
+
+    const currentCompleted = selectedData.checklistCompleted ?? [];
+    const nextCompleted = currentCompleted.includes(checklistItemId)
+      ? currentCompleted.filter((item) => item !== checklistItemId)
+      : [...currentCompleted, checklistItemId];
+
+    try {
+      const response = await fetch(`/api/reynalds-brothers/work-items/${selected.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            ...selectedData,
+            checklistCompleted: nextCompleted
+          }
+        })
+      });
+
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Checklist could not be updated.");
+
+      await loadWorkItems();
+      setSelectedId(selected.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Checklist could not be updated.");
     }
   }
 
@@ -443,6 +480,7 @@ export function ReynaldsBrothersOperationsSystem() {
                     {laneItems.map((item) => {
                       const data = getWorkItemData(item);
                       const progress = getPhaseProgress(item);
+                      const checklistProgress = getChecklistProgress(item);
                       const alerts = getWorkItemAlerts(item);
 
                       return (
@@ -460,6 +498,7 @@ export function ReynaldsBrothersOperationsSystem() {
                             <span style={{ width: `${progress.percent}%` }} />
                           </div>
                           <small>{data.phase ?? item.status}</small>
+                          <small>{checklistProgress.complete}/{checklistProgress.total} checklist items complete</small>
                           {alerts.length > 0 ? <small className="rb-red-flag">{alerts.length} red flag{alerts.length === 1 ? "" : "s"}</small> : null}
                           <p>{item.nextAction ?? "Set the next action."}</p>
                         </button>
@@ -554,6 +593,36 @@ export function ReynaldsBrothersOperationsSystem() {
                       Billing {isInvoiceReadyStatus(selectedData.invoiceStatus) ? "ready" : "not ready"}
                     </li>
                   </ul>
+                </section>
+
+                <section className="rb-checklist rb-action-checklist">
+                  <div className="rb-checklist-heading">
+                    <h3>Job Checklist</h3>
+                    <span>{getChecklistProgress(selected).complete}/{getChecklistProgress(selected).total}</span>
+                  </div>
+                  <div className="rb-checklist-progress" aria-label={`Checklist progress ${getChecklistProgress(selected).percent}%`}>
+                    <span style={{ width: `${getChecklistProgress(selected).percent}%` }} />
+                  </div>
+                  <div className="rb-checklist-rows">
+                    {getWorkItemChecklist(selected).map((item) => {
+                      const checked = (selectedData.checklistCompleted ?? []).includes(item.id);
+
+                      return (
+                        <label className={checked ? "complete" : ""} key={item.id}>
+                          <input
+                            checked={checked}
+                            onChange={() => void toggleChecklistItem(item.id)}
+                            type="checkbox"
+                          />
+                          <span>
+                            <strong>{item.label}</strong>
+                            <small>{item.phase} - {item.owner} - before {item.requiredBefore}</small>
+                          </span>
+                        </label>
+                      );
+                    })}
+                    {getWorkItemChecklist(selected).length === 0 ? <p>No checklist template selected for this job type.</p> : null}
+                  </div>
                 </section>
 
                 <section className="rb-mini-columns">
