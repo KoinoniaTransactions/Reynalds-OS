@@ -254,6 +254,7 @@ export const rolePermissions = {
     "client-portal:documents:upload",
     "client-portal:documents:approve",
     "client-portal:access:view",
+    "client-portal:access:update",
     "client-portal:billing:view",
     "client-portal:billing:setup"
   ]

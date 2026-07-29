@@ -1920,3 +1920,24 @@ Koinonia now has a guarded document upload intake path for client-submitted tran
 ### Current Status
 
 The first document intake slice is source-backed and guarded. Live upload verification still requires reachable database storage, a configured upload directory, and real provider-backed users. Secure download handlers, malware scanning, version replacement, draft approval, send-package routing, and final archive delivery remain future production slices.
+
+---
+
+## 2026-07-29 — Portal External Access Requests Added
+
+### Summary
+
+Koinonia now has a protected external access request workflow that records what access is needed without turning the portal into a credential vault.
+
+### Implemented
+
+- Added client permission to submit access request updates.
+- Added `/api/portal/access-requests`.
+- Stores access requests as `AccessRequest` objects with timeline and audit history.
+- Added validation that rejects passwords, usernames, passcodes, recovery codes, and private login details in access notes.
+- Added a safe access update form and live/fallback access list to `/client/dashboard`.
+- Added an external access request queue to `/employee/access`.
+
+### Current Status
+
+The access request workflow compiles and is covered by helper and permission tests. Live mutation verification still requires reachable database storage and real provider-backed users. This workflow stores metadata and status only; it intentionally does not store third-party credentials.

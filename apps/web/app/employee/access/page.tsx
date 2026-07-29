@@ -9,6 +9,12 @@ import {
   getHumanAuditAction,
   portalAuditActionPrefix
 } from "../../../lib/portal-audit";
+import {
+  accessRequestObjectType,
+  getAccessRequestDetail,
+  getAccessRequestMetaLabels,
+  getHumanAccessRequestStatus
+} from "../../../lib/access-requests";
 import { canRevokeInvitationStatus } from "../../../lib/portal-invitations";
 import {
   buildAccessSummaryCards,
@@ -76,9 +82,19 @@ type AccessAuditItem = {
   time: string;
 };
 
+type ExternalAccessRequestItem = {
+  detail: string;
+  id: string;
+  labels: string[];
+  platform: string;
+  requestedBy: string;
+  status: string;
+};
+
 type AccessWorkspaceView = {
   auditEvents: AccessAuditItem[];
   clientReadiness: ClientReadinessItem[];
+  externalAccessRequests: ExternalAccessRequestItem[];
   invitationQueue: InvitationQueueItem[];
   isLiveData: boolean;
   notice?: string;
@@ -228,12 +244,31 @@ const sampleAuditEvents: AccessAuditItem[] = [
   }
 ];
 
+const sampleExternalAccessRequests: ExternalAccessRequestItem[] = [
+  {
+    id: "sample-external-transaction",
+    platform: "Transaction platform",
+    requestedBy: "Bright Homes Team",
+    status: "Waiting on Client",
+    detail: "Grant transaction coordinator access through the approved platform settings.",
+    labels: ["No password stored", "Smith Contract-to-Close"]
+  },
+  {
+    id: "sample-external-forms",
+    platform: "Forms workspace",
+    requestedBy: "Wilson Realty Group",
+    status: "Access Needed",
+    detail: "Delegated document-prep access is needed before drafting can begin.",
+    labels: ["No password stored", "Buyer Offer Package"]
+  }
+];
+
 const accessRules = [
   "Only Owner and Operations roles can create or change portal invitations.",
   "Koinonia database roles control portal permissions after a user signs in.",
   "Staff access requires MFA before real client files or internal notes are exposed.",
   "Client users see their own work, documents, billing setup, and approvals only.",
-  "Brokerage passwords, MLS passwords, raw card numbers, and CVV values stay out of portal fields."
+  "Brokerage passwords, MLS passwords, raw usernames, access codes, card numbers, and CVV values stay out of portal fields."
 ] as const;
 
 const setupChecklist = [
@@ -436,6 +471,38 @@ export default async function EmployeeAccessWorkspacePage() {
                   </table>
                 </div>
               </section>
+
+              <section
+                className="koinonia-employee-work-panel"
+                aria-labelledby="external-access-title"
+              >
+                <div className="koinonia-employee-panel-heading">
+                  <p className="koinonia-eyebrow">External Access</p>
+                  <h2 id="external-access-title">Access Request Queue</h2>
+                </div>
+
+                <div className="koinonia-employee-assignment-list">
+                  {accessWorkspace.externalAccessRequests.map((request) => (
+                    <article className="koinonia-employee-assignment-item" key={request.id}>
+                      <div>
+                        <span>{request.requestedBy}</span>
+                        <h3>{request.platform}</h3>
+                        <p>{request.detail}</p>
+                        <ul className="koinonia-client-showing-notes">
+                          {request.labels.map((label) => (
+                            <li key={label}>{label}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="koinonia-employee-work-meta">
+                        <strong>{request.status}</strong>
+                        <span>Access request</span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
             </div>
 
             <aside className="koinonia-employee-side-panel" aria-label="Access guardrails">
@@ -505,7 +572,7 @@ export default async function EmployeeAccessWorkspacePage() {
 
 async function getAccessWorkspaceView(workspaceId: string, actorId: string): Promise<AccessWorkspaceView> {
   try {
-    const [users, invitations, auditEvents] = await Promise.all([
+    const [users, invitations, auditEvents, accessRequests] = await Promise.all([
       prisma.user.findMany({
         where: { workspaceId },
         select: {
@@ -559,6 +626,15 @@ async function getAccessWorkspaceView(workspaceId: string, actorId: string): Pro
         },
         orderBy: { createdAt: "desc" },
         take: 8
+      }),
+      prisma.rosObject.findMany({
+        where: {
+          workspaceId,
+          objectType: accessRequestObjectType,
+          archivedAt: null
+        },
+        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+        take: 12
       })
     ]);
 
@@ -579,6 +655,16 @@ async function getAccessWorkspaceView(workspaceId: string, actorId: string): Pro
       ),
       clientReadiness: withEmptyClientReadiness(
         buildClientReadinessItems(users, invitations, clientObjectNames)
+      ),
+      externalAccessRequests: withEmptyExternalAccessRequests(
+        accessRequests.map((request) => ({
+          id: request.id,
+          platform: request.name.replace(/^Access Request - /, ""),
+          requestedBy: getExternalAccessRequester(request.data),
+          status: getHumanAccessRequestStatus(request.status),
+          detail: getAccessRequestDetail(request.data),
+          labels: getAccessRequestMetaLabels(request.data)
+        }))
       ),
       invitationQueue: withEmptyInvitations(
         invitations
@@ -644,6 +730,7 @@ async function getAccessWorkspaceView(workspaceId: string, actorId: string): Pro
     return {
       auditEvents: sampleAuditEvents,
       clientReadiness: sampleClientReadiness,
+      externalAccessRequests: sampleExternalAccessRequests,
       invitationQueue: sampleInvitationQueue,
       isLiveData: false,
       notice: "Production storage is not reachable in this preview, so sample access records are shown. Real client and staff access should wait until the database and Clerk environment pass verification.",
@@ -852,6 +939,25 @@ function withEmptyClientReadiness(clientReadiness: ClientReadinessItem[]): Clien
   ];
 }
 
+function withEmptyExternalAccessRequests(
+  accessRequests: ExternalAccessRequestItem[]
+): ExternalAccessRequestItem[] {
+  if (accessRequests.length > 0) {
+    return accessRequests;
+  }
+
+  return [
+    {
+      id: "empty-external-access",
+      platform: "No external access requests",
+      requestedBy: "Access queue is clear",
+      status: "Ready",
+      detail: "Client access requests will appear here after a Realtor submits a safe access update.",
+      labels: ["No password stored", "Delegated access only"]
+    }
+  ];
+}
+
 function withEmptyAuditEvents(auditEvents: AccessAuditItem[]): AccessAuditItem[] {
   if (auditEvents.length > 0) {
     return auditEvents;
@@ -866,6 +972,24 @@ function withEmptyAuditEvents(auditEvents: AccessAuditItem[]): AccessAuditItem[]
       time: "Ready"
     }
   ];
+}
+
+function getExternalAccessRequester(data: unknown): string {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return "Portal user";
+  }
+
+  const value = data as Record<string, unknown>;
+
+  if (typeof value.clientName === "string" && value.clientName.trim()) {
+    return value.clientName.trim();
+  }
+
+  if (typeof value.requestedByEmail === "string" && value.requestedByEmail.trim()) {
+    return value.requestedByEmail.trim();
+  }
+
+  return "Portal user";
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {

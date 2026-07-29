@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
+import { AccessRequestForm } from "../../../components/client/AccessRequestForm";
 import { ShowingRequestForm } from "../../../components/client/ShowingRequestForm";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
+import {
+  accessRequestObjectType,
+  getAccessRequestDetail,
+  getAccessRequestMetaLabels,
+  getHumanAccessRequestStatus
+} from "../../../lib/access-requests";
 import {
   getHumanShowingStatus,
   getShowingNoteLabels,
@@ -95,6 +102,20 @@ type ShowingRequestView = {
   requests: ShowingRequestItem[];
 };
 
+type AccessRequestItem = {
+  detail: string;
+  id: string;
+  labels: string[];
+  platform: string;
+  status: string;
+};
+
+type AccessRequestView = {
+  isLiveData: boolean;
+  notice?: string;
+  requests: AccessRequestItem[];
+};
+
 const sampleShowingRequests: ShowingRequestItem[] = [
   {
     id: "sample-northgate-tour",
@@ -129,22 +150,27 @@ const documentRequests = [
   "Showing access notes for West Ridge"
 ] as const;
 
-const accessRequests = [
+const sampleAccessRequests: AccessRequestItem[] = [
   {
+    id: "sample-transaction-platform",
     platform: "Transaction platform",
     status: "Waiting on Client",
-    body: "Grant broker-approved transaction coordinator access or send an approved secure sharing link."
+    detail: "Grant broker-approved transaction coordinator access or send an approved secure sharing link.",
+    labels: ["No password stored", "Smith Contract-to-Close"]
   },
   {
+    id: "sample-forms-workspace",
     platform: "Forms workspace",
-    status: "Needed",
-    body: "Koinonia needs delegated document-preparation access before drafting forms."
+    status: "Access Needed",
+    detail: "Koinonia needs delegated document-preparation access before drafting forms.",
+    labels: ["No password stored", "Buyer Offer Package"]
   }
-] as const;
+];
 
 export default async function ClientDashboardPreviewPage() {
   const actor = await requirePortalPermission("client-portal:view", "/client/dashboard");
   const showingRequestView = await getClientShowingRequestView(actor.workspaceId, actor.id);
+  const accessRequestView = await getClientAccessRequestView(actor.workspaceId, actor.id);
 
   return (
     <main className="koinonia-site koinonia-client-dashboard">
@@ -161,9 +187,9 @@ export default async function ClientDashboardPreviewPage() {
 
             <p className="koinonia-lead">
               This preview is moving toward live portal workflows. Showing
-              requests can use protected storage when production database
-              access is available; document and billing work still need their
-              own storage pass.
+              requests and access updates can use protected storage when
+              production database access is available; document intake has a
+              guarded upload path, and billing still needs its own storage pass.
             </p>
           </div>
 
@@ -256,14 +282,25 @@ export default async function ClientDashboardPreviewPage() {
                 </a>
               </section>
 
+              <AccessRequestForm storageReady={accessRequestView.isLiveData} />
+
               <section className="koinonia-client-request-card">
                 <p className="koinonia-eyebrow">Access Needed</p>
                 <div className="koinonia-client-access-list">
-                  {accessRequests.map((request) => (
-                    <article key={request.platform}>
+                  {accessRequestView.notice ? (
+                    <p className="koinonia-client-security-note">{accessRequestView.notice}</p>
+                  ) : null}
+
+                  {accessRequestView.requests.map((request) => (
+                    <article key={request.id}>
                       <span>{request.status}</span>
                       <strong>{request.platform}</strong>
-                      <p>{request.body}</p>
+                      <p>{request.detail}</p>
+                      <ul className="koinonia-client-showing-notes">
+                        {request.labels.map((label) => (
+                          <li key={label}>{label}</li>
+                        ))}
+                      </ul>
                     </article>
                   ))}
                 </div>
@@ -296,6 +333,48 @@ export default async function ClientDashboardPreviewPage() {
       <Footer />
     </main>
   );
+}
+
+async function getClientAccessRequestView(
+  workspaceId: string,
+  userId: string
+): Promise<AccessRequestView> {
+  try {
+    const accessRequests = await prisma.rosObject.findMany({
+      where: {
+        workspaceId,
+        ownerId: userId,
+        objectType: accessRequestObjectType,
+        archivedAt: null
+      },
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      take: 12
+    });
+
+    return {
+      isLiveData: true,
+      requests: withEmptyAccessRequests(
+        accessRequests.map((request) => ({
+          id: request.id,
+          platform: request.name.replace(/^Access Request - /, ""),
+          status: getHumanAccessRequestStatus(request.status),
+          detail: getAccessRequestDetail(request.data),
+          labels: getAccessRequestMetaLabels(request.data)
+        }))
+      )
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    return {
+      isLiveData: false,
+      notice:
+        "Access request storage is not reachable in this preview, so sample requests are shown.",
+      requests: sampleAccessRequests
+    };
+  }
 }
 
 async function getClientShowingRequestView(
@@ -354,6 +433,22 @@ function withEmptyShowingRequests(requests: ShowingRequestItem[]): ShowingReques
       nextAction: "Submit a showing request when a client needs scheduling or licensed coverage.",
       timing: "No active request",
       notes: ["Request form ready", "No access secrets in notes"]
+    }
+  ];
+}
+
+function withEmptyAccessRequests(requests: AccessRequestItem[]): AccessRequestItem[] {
+  if (requests.length > 0) {
+    return requests;
+  }
+
+  return [
+    {
+      id: "empty-access-requests",
+      platform: "No access requests yet",
+      status: "Ready",
+      detail: "Use the access update form when Koinonia needs delegated access or status confirmation.",
+      labels: ["No password stored", "Delegated access only"]
     }
   ];
 }

@@ -32,8 +32,12 @@ describe("auth permissions", () => {
     expect(can(client, "objects:create")).toBe(false);
   });
 
-  it("does not allow client users to update access requests", () => {
-    expect(can(getMockClientUser(), "client-portal:access:update")).toBe(false);
+  it("allows client users to submit access requests without object-admin access", () => {
+    const client = getMockClientUser();
+
+    expect(can(client, "client-portal:access:view")).toBe(true);
+    expect(can(client, "client-portal:access:update")).toBe(true);
+    expect(can(client, "objects:update")).toBe(false);
   });
 
   it("allows operations employees to assign work", () => {

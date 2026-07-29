@@ -54,6 +54,8 @@ The portal may store access request metadata.
 
 The portal must not store the secret itself.
 
+The first production slice stores safe access request metadata as `AccessRequest` objects through `/api/portal/access-requests`. It tracks platform, access purpose, requested permission level, status, related work label, client label, and safe notes while rejecting passwords, usernames, passcodes, lockbox codes, gate codes, recovery codes, and private login details.
+
 ---
 
 ## 3. Contract-Writing Boundary
@@ -358,6 +360,7 @@ Recommended statuses:
 - Needed
 - Requested
 - Waiting on Client
+- Client Says Granted
 - Granted
 - Blocked
 - Expired
@@ -366,6 +369,10 @@ Recommended statuses:
 Example visible language:
 
 Koinonia needs access to prepare this document. Please grant access through your brokerage-approved transaction platform or send an approved secure sharing link. Do not paste passwords into this portal.
+
+Current implementation note:
+
+`/api/portal/access-requests` lets client users create and review their own external access requests. Employee users with client visibility can review the workspace access request queue. The client dashboard includes a safe access update form and the employee access workspace includes an external access request queue. This is not a credential vault and does not store the secret itself.
 
 ---
 
@@ -436,7 +443,7 @@ Build the portal in safe slices:
 10. Database schema additions. — Portal identity fields, `PortalInvitation`, and `AuditEvent` scaffolded in Prisma.
 11. Authenticated read-only dashboard connected to real work items. — Preview routes now require portal permissions but still use sample data only.
 12. Secure file upload and document request flow. — First guarded upload-intake slice added; secure download/version/replacement/scanning still required.
-13. Access request tracking without credential storage.
+13. Access request tracking without credential storage. — First protected access request create/list API, client update form, employee queue, and credential-note rejection added.
 14. Portal messaging or notes.
 15. Audit logs. — `AuditEvent` model scaffolded; invitation creation writes audit event.
 16. Production security review before accepting real client documents or payment methods.
