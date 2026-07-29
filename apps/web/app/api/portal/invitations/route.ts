@@ -1,6 +1,7 @@
 import { isKnownRoleName } from "@reynalds-os/auth";
 import type { Prisma } from "@reynalds-os/database";
 import { NextResponse } from "next/server";
+import { getAuthErrorResponse } from "../../../../lib/api-auth";
 import { assertPermission } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/db";
 import { InvitationValidationError, validateInvitationInput } from "../../../../lib/portal-invitations";
@@ -8,11 +9,11 @@ import { InvitationValidationError, validateInvitationInput } from "../../../../
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const user = await assertPermission("employee-portal:assignments:update");
-  const url = new URL(request.url);
-  const status = url.searchParams.get("status");
-
   try {
+    const user = await assertPermission("employee-portal:assignments:update");
+    const url = new URL(request.url);
+    const status = url.searchParams.get("status");
+
     const invitations = await prisma.portalInvitation.findMany({
       where: {
         workspaceId: user.workspaceId,
@@ -29,9 +30,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const user = await assertPermission("employee-portal:assignments:update");
-
   try {
+    const user = await assertPermission("employee-portal:assignments:update");
     const input = validateInvitationInput(await request.json());
 
     if (!isKnownRoleName(input.roleName)) {
@@ -108,6 +108,12 @@ export async function POST(request: Request) {
 }
 
 function handleInvitationError(error: unknown) {
+  const authResponse = getAuthErrorResponse(error);
+
+  if (authResponse) {
+    return authResponse;
+  }
+
   if (error instanceof InvitationValidationError) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }

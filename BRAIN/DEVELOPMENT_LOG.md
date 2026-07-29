@@ -1532,3 +1532,22 @@ A protected employee access workspace preview was added so Koinonia staff have a
 ### Current Status
 
 The page is sample data only. Real invite sending, staff MFA verification, provider invitation creation, and live database-backed access changes still remain before production portal login can accept real clients or staff.
+
+---
+
+## 2026-07-29 — Portal API Auth Errors Standardized
+
+### Summary
+
+Portal API auth and configuration failures now return clear JSON responses instead of relying on generic route errors.
+
+### Implemented
+
+- Added a shared API auth error response helper.
+- Updated `/api/me` to use the shared helper while preserving its `{ user: null, error }` response shape.
+- Updated `/api/portal/invitations` so missing authentication or auth-provider configuration problems return clean JSON status responses.
+- Added unit coverage for the shared API auth response helper.
+
+### Current Status
+
+Invitation creation still requires a live database and the future managed-provider invitation-sending integration before it can be used for real client or staff onboarding.

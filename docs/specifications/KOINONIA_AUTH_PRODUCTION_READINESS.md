@@ -39,6 +39,7 @@ The current web app includes:
 - `AuditEvent` for sensitive auth and portal access history.
 - Provider users resolve through the Koinonia database when available; database role and access status control portal permissions.
 - `/api/portal/invitations` for internal invitation record creation and review.
+- Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
 - Permission tests for provider role mapping and typed denial behavior.
 
 The protected routes still use sample data only. They are guarded screens, not production data workflows.
@@ -154,6 +155,7 @@ Before the portal accepts real data:
 - Audit logging exists for sensitive actions.
 - Portal invitation records exist before client/staff access is granted.
 - Invitation record creation writes an audit event.
+- Portal API auth failures return clear JSON status responses, not generic crashes.
 - No brokerage passwords, MLS passwords, raw card numbers, or CVV fields are accepted.
 
 ---
