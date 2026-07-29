@@ -51,6 +51,7 @@ The current web app includes:
 - `/api/portal/showing-requests` for protected showing request create/list workflows.
 - `/api/portal/documents` for protected document upload intake and document queue listing.
 - `/api/portal/access-requests` for protected external access request create/list workflows without storing credentials.
+- `/api/portal/billing-setup-requests` for protected billing setup request create/list workflows without storing card data.
 - `/employee/access` can read portal users and portal invitation records for staff access readiness, with safe preview fallback when storage is unavailable.
 - `/employee/access` includes a protected invitation form for creating portal invitations through the existing API.
 - `/employee/access` includes protected action controls for revoking unaccepted invitations and deactivating active portal users.
@@ -61,7 +62,7 @@ The current web app includes:
 - `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 
-Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, showing requests now have a protected object-backed workflow, documents now have a guarded upload-intake workflow, and external access requests now have a protected metadata-only workflow. Billing, broader dashboard work tracking, document download/version/replacement/scanning, and client workspaces still need real workflow storage before production use.
+Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, showing requests now have a protected object-backed workflow, documents now have a guarded upload-intake workflow, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Broader dashboard work tracking, invoice/payment processing, payment processor integration, document download/version/replacement/scanning, and client workspaces still need real workflow storage before production use.
 
 ---
 
@@ -207,13 +208,16 @@ Before the portal accepts real data:
 - Clients can create and review their own external access requests without submitting credentials.
 - Employee users with client visibility can review the external access request queue.
 - Access request notes reject passwords, usernames, access codes, recovery codes, and private login details.
+- Clients can create and review their own billing setup requests without submitting card data.
+- Employee users with billing-workspace access can review the billing setup request queue.
+- Billing setup notes reject card numbers, CVV/CVC, bank details, routing numbers, account numbers, payment passwords, processor secrets, and API keys.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
 - Invitation acceptance writes an audit event and creates the portal user from the approved invitation.
 - Invitation revocation writes an audit event and blocks later first-login acceptance.
 - Portal user deactivation writes an audit event and blocks future portal permissions.
 - Portal API auth failures return clear JSON status responses, not generic crashes.
-- No brokerage passwords, MLS passwords, raw usernames, access codes, raw card numbers, or CVV fields are accepted.
+- No brokerage passwords, MLS passwords, raw usernames, access codes, raw card numbers, CVV fields, bank details, routing numbers, account numbers, payment passwords, processor secrets, or API keys are accepted.
 - `pnpm verify:portal` passes against the target production environment.
 - The target environment has at least one active Owner portal user and no active staff users missing MFA requirement.
 - The target environment has `PORTAL_DOCUMENT_UPLOAD_DIR` configured before live document uploads are enabled.

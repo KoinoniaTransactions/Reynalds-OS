@@ -201,6 +201,10 @@ Rules:
 - Payment setup should happen through an approved processor-hosted flow.
 - The portal may show safe metadata such as brand, last four digits, expiration, payment setup status, and consent history.
 - Each service activation should clearly show whether billing is prepaid, pay-at-closing, monthly, per showing, or custom.
+- The first billing setup slice stores safe setup metadata as `BillingSetupRequest` objects through `/api/portal/billing-setup-requests`.
+- Client users can create and review their own billing setup requests.
+- Employee users with billing-workspace access can review the workspace billing setup request queue.
+- Billing setup notes must not include raw card numbers, CVV/CVC, bank details, routing numbers, account numbers, payment passwords, processor secrets, or API keys.
 
 ### Showing Request Section
 
@@ -376,7 +380,44 @@ Current implementation note:
 
 ---
 
-## 9. Authentication Requirements
+## 9. Billing Setup Model
+
+The portal should create a `BillingSetupRequest`, not a raw payment-method field.
+
+Example billing setup request fields:
+
+- Service name
+- Billing model
+- Amount label
+- Trigger description
+- Consent acknowledgement
+- Status
+- Requested by
+- Requested at
+- Processor setup status
+- Safe processor reference after setup
+- Notes
+
+Recommended statuses:
+
+- Setup Requested
+- Consent Needed
+- Processor Link Needed
+- Payment Method Ready
+- Pay at Close Watch
+- Blocked
+
+Example visible language:
+
+Koinonia can send a secure payment setup link for this service. Do not enter card numbers, CVV codes, bank details, or payment credentials into this portal.
+
+Current implementation note:
+
+`/api/portal/billing-setup-requests` lets client users create and review their own billing setup requests. Employee users with billing-workspace access can review the workspace setup queue. The client billing center includes a setup request form and the employee billing workspace includes a setup request queue. This workflow stores billing intent, consent, status, service context, and safe notes only. It does not store payment card data or process charges.
+
+---
+
+## 10. Authentication Requirements
 
 The current repository uses mock auth.
 
@@ -399,7 +440,7 @@ The portal should not go live with mock auth.
 
 ---
 
-## 10. Recommended Data Model Additions
+## 11. Recommended Data Model Additions
 
 These models should be refined before implementation:
 
@@ -412,6 +453,7 @@ These models should be refined before implementation:
 - `DocumentRequest`
 - `PortalMessage`
 - `AccessRequest`
+- `BillingSetupRequest`
 - `AuditEvent` — Prisma model scaffolded for auth and portal access history.
 
 These should connect to existing Reynalds OS concepts rather than bypass them:
@@ -427,7 +469,7 @@ The preferred implementation should extend the Object Engine instead of creating
 
 ---
 
-## 11. MVP Build Order
+## 12. MVP Build Order
 
 Build the portal in safe slices:
 
@@ -439,22 +481,22 @@ Build the portal in safe slices:
 6. Work item detail shell using mocked/sample data only.
 7. Showing request section with protected create/list API, client request form, employee queue visibility, and safe preview fallback.
 8. Client document center with protected upload intake API, client upload form, employee intake queue visibility, and safe preview fallback.
-9. Client billing center using mocked/sample data only.
+9. Client billing center with protected billing setup request API, client setup form, employee queue visibility, and safe preview fallback.
 10. Database schema additions. — Portal identity fields, `PortalInvitation`, and `AuditEvent` scaffolded in Prisma.
 11. Authenticated read-only dashboard connected to real work items. — Preview routes now require portal permissions but still use sample data only.
 12. Secure file upload and document request flow. — First guarded upload-intake slice added; secure download/version/replacement/scanning still required.
 13. Access request tracking without credential storage. — First protected access request create/list API, client update form, employee queue, and credential-note rejection added.
 14. Portal messaging or notes.
 15. Audit logs. — `AuditEvent` model scaffolded; invitation creation writes audit event.
-16. Production security review before accepting real client documents or payment methods.
+16. Production security review before accepting real client documents or live payment methods.
 
 Do not begin with file upload or credential fields.
 
-The `/client/dashboard` preview is not a complete production dashboard. It has protected showing request support, while documents now have a guarded upload-intake path. Do not accept full real client document exchange until storage, download, scanning, approval, and archive controls are configured and verified.
+The `/client/dashboard` preview is not a complete production dashboard. It has protected showing request support, while documents now have a guarded upload-intake path and billing now has a metadata-only setup request path. Do not accept full real client document exchange until storage, download, scanning, approval, and archive controls are configured and verified. Do not accept live payment methods until the approved processor-hosted setup flow and payment processor integration are configured and verified.
 
 ---
 
-## 12. Launch Classification
+## 13. Launch Classification
 
 This is not required for the public marketing website launch unless Jeremiah intentionally changes the launch scope.
 
@@ -468,7 +510,7 @@ The public Koinonia site and consultation flow can launch without a full portal.
 
 ---
 
-## 13. External Security References
+## 14. External Security References
 
 Use these as implementation guardrails:
 

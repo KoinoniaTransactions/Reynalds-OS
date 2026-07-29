@@ -3711,6 +3711,132 @@ h1 {
   border-color: rgba(25, 92, 96, 0.34);
 }
 
+.koinonia-billing-meta-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.koinonia-billing-meta-list li {
+  padding: 6px 9px;
+  border: 1px solid rgba(83, 112, 76, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ros-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.koinonia-billing-meta-list.employee li {
+  border-color: rgba(25, 92, 96, 0.16);
+}
+
+.koinonia-billing-security-note {
+  border: 1px solid rgba(83, 112, 76, 0.2);
+  border-radius: 8px;
+  background: rgba(83, 112, 76, 0.08);
+  color: #3f6539 !important;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+  padding: 12px;
+}
+
+.koinonia-billing-security-note.employee {
+  border-color: rgba(25, 92, 96, 0.2);
+  background: rgba(25, 92, 96, 0.08);
+  color: #195c60 !important;
+}
+
+.koinonia-billing-setup-form {
+  display: grid;
+  gap: 12px;
+}
+
+.koinonia-billing-setup-form label {
+  display: grid;
+  gap: 6px;
+  color: #53704c;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-billing-setup-form input,
+.koinonia-billing-setup-form select,
+.koinonia-billing-setup-form textarea {
+  width: 100%;
+  border: 1px solid rgba(83, 112, 76, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--ros-text);
+  font: inherit;
+  letter-spacing: 0;
+  padding: 10px 11px;
+  text-transform: none;
+}
+
+.koinonia-billing-setup-form input,
+.koinonia-billing-setup-form select {
+  min-height: 44px;
+}
+
+.koinonia-billing-setup-form textarea {
+  min-height: 108px;
+  resize: vertical;
+}
+
+.koinonia-billing-setup-form input:disabled,
+.koinonia-billing-setup-form select:disabled,
+.koinonia-billing-setup-form textarea:disabled,
+.koinonia-billing-setup-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.koinonia-billing-checkbox {
+  align-items: center;
+  display: flex !important;
+  gap: 9px;
+  letter-spacing: 0 !important;
+  line-height: 1.35;
+  text-transform: none !important;
+}
+
+.koinonia-billing-checkbox input {
+  min-height: 18px;
+  width: 18px;
+}
+
+.koinonia-billing-setup-form-status {
+  border: 1px solid rgba(83, 112, 76, 0.22);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0;
+  padding: 10px 11px;
+}
+
+.koinonia-billing-setup-form-status.error {
+  background: rgba(178, 59, 59, 0.08);
+  border-color: rgba(178, 59, 59, 0.22);
+  color: #8e2d2d;
+}
+
+.koinonia-billing-setup-form-status.success {
+  background: rgba(83, 112, 76, 0.1);
+  border-color: rgba(83, 112, 76, 0.24);
+  color: #3f6539;
+}
+
+.koinonia-billing-setup-form .koinonia-button {
+  margin-top: 4px;
+  width: 100%;
+}
+
 @media (max-width: 720px) {
   .koinonia-client-work-item {
     grid-template-columns: 1fr;

@@ -1941,3 +1941,25 @@ Koinonia now has a protected external access request workflow that records what 
 ### Current Status
 
 The access request workflow compiles and is covered by helper and permission tests. Live mutation verification still requires reachable database storage and real provider-backed users. This workflow stores metadata and status only; it intentionally does not store third-party credentials.
+
+---
+
+## 2026-07-29 — Portal Billing Setup Requests Added
+
+### Summary
+
+Koinonia now has a protected billing setup request workflow that records billing intent, service billing model, consent status, and next action without turning the portal into a card data vault.
+
+### Implemented
+
+- Added `/api/portal/billing-setup-requests`.
+- Stores billing setup requests as `BillingSetupRequest` objects with timeline and audit history.
+- Added validation that rejects card numbers, CVV/CVC, bank details, routing numbers, account numbers, payment passwords, processor secrets, and API keys in billing notes.
+- Added a client billing setup request form to `/client/billing`.
+- Connected the client billing setup list to live request records with sample fallback.
+- Added an employee billing setup request queue to `/employee/billing`.
+- Updated portal specifications, auth readiness notes, and the module map for the metadata-only billing setup slice.
+
+### Current Status
+
+The billing setup request workflow compiles and is covered by helper tests. Live mutation verification still requires reachable database storage and real provider-backed users. This workflow stores billing setup metadata only; card collection, saved payment methods, invoice payment, charge capture, refunds, disputes, and processor webhooks still require an approved payment processor integration.

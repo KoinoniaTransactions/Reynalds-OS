@@ -189,7 +189,8 @@ export default async function ClientDashboardPreviewPage() {
               This preview is moving toward live portal workflows. Showing
               requests and access updates can use protected storage when
               production database access is available; document intake has a
-              guarded upload path, and billing still needs its own storage pass.
+              guarded upload path, and billing setup requests now have a
+              metadata-only storage path.
             </p>
           </div>
 

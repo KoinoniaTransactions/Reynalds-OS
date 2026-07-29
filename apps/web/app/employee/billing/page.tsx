@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
+import {
+  billingSetupRequestObjectType,
+  getBillingSetupDetail,
+  getBillingSetupMetaLabels,
+  getHumanBillingSetupStatus
+} from "../../../lib/billing-setup-requests";
+import { prisma } from "../../../lib/db";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 
 export const dynamic = "force-dynamic";
@@ -62,7 +69,7 @@ const billingProfiles = [
     client: "Northgate Partners",
     service: "Pay-at-Closing Coordination",
     model: "$599 after successful close",
-    payment: "Card Ready",
+    payment: "Processor Ready",
     status: "Closing Watch",
     nextAction: "Charge only after confirmed close."
   },
@@ -94,6 +101,43 @@ const paymentSetupQueue = [
   }
 ] as const;
 
+type BillingSetupItem = {
+  detail: string;
+  id: string;
+  labels: string[];
+  nextAction: string;
+  requestedBy: string;
+  service: string;
+  status: string;
+};
+
+type BillingSetupView = {
+  isLiveData: boolean;
+  notice?: string;
+  requests: BillingSetupItem[];
+};
+
+const sampleBillingSetupRequests: BillingSetupItem[] = [
+  {
+    id: "sample-wilson-monthly",
+    requestedBy: "Wilson Realty Group",
+    service: "Monthly Operations Partnership",
+    status: "Processor Link Needed",
+    detail: "Monthly recurring support - Custom monthly",
+    nextAction: "Send the secure setup link after recurring billing consent is confirmed.",
+    labels: ["No card stored", "Monthly recurring support", "Wilson Realty Group"]
+  },
+  {
+    id: "sample-northgate-close",
+    requestedBy: "Northgate Partners",
+    service: "Pay-at-Closing Coordination",
+    status: "Pay at Close Watch",
+    detail: "Pay after successful close - $599",
+    nextAction: "Track the closing trigger before billing the approved pay-at-close fee.",
+    labels: ["No card stored", "After successful close", "Northgate Partners"]
+  }
+];
+
 const payAtCloseWatch = [
   {
     file: "Northgate Closing File",
@@ -124,7 +168,8 @@ const billingRules = [
 ] as const;
 
 export default async function EmployeeBillingWorkspacePreviewPage() {
-  await requirePortalPermission("billing-workspace:view", "/employee/billing");
+  const actor = await requirePortalPermission("billing-workspace:view", "/employee/billing");
+  const billingSetupView = await getEmployeeBillingSetupView(actor.workspaceId);
 
   return (
     <main className="koinonia-site koinonia-billing-center koinonia-employee-billing">
@@ -140,9 +185,11 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
             </h1>
 
             <p className="koinonia-lead">
-              This preview uses sample data only. Real payments should be
-              processed through an approved payment processor with tokenized
-              payment methods, consent records, and audit logs.
+              Billing setup requests can now flow through protected portal
+              storage when the production database is reachable. Actual card
+              collection and charges should stay inside an approved payment
+              processor with tokenized references, consent records, and audit
+              logs.
             </p>
           </div>
 
@@ -181,6 +228,40 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
                       <div className="koinonia-billing-work-meta employee">
                         <strong>{profile.status}</strong>
                         <span>{profile.payment}</span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section className="koinonia-billing-panel employee" aria-labelledby="billing-setup-queue-title">
+                <div className="koinonia-billing-panel-heading">
+                  <p className="koinonia-eyebrow">Setup</p>
+                  <h2 id="billing-setup-queue-title">Billing Setup Request Queue</h2>
+                </div>
+
+                <div className="koinonia-billing-card-list">
+                  {billingSetupView.notice ? (
+                    <p className="koinonia-billing-security-note employee">{billingSetupView.notice}</p>
+                  ) : null}
+
+                  {billingSetupView.requests.map((request) => (
+                    <article className="koinonia-billing-work-item employee" key={request.id}>
+                      <div>
+                        <span>{request.requestedBy}</span>
+                        <h3>{request.service}</h3>
+                        <p>{request.detail}</p>
+                        <p>{request.nextAction}</p>
+                        <ul className="koinonia-billing-meta-list employee">
+                          {request.labels.map((label) => (
+                            <li key={label}>{label}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="koinonia-billing-work-meta employee">
+                        <strong>{request.status}</strong>
+                        <span>Setup status</span>
                       </div>
                     </article>
                   ))}
@@ -256,5 +337,90 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
 
       <Footer />
     </main>
+  );
+}
+
+async function getEmployeeBillingSetupView(workspaceId: string): Promise<BillingSetupView> {
+  try {
+    const billingSetupRequests = await prisma.rosObject.findMany({
+      where: {
+        workspaceId,
+        objectType: billingSetupRequestObjectType,
+        archivedAt: null
+      },
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      take: 25
+    });
+
+    return {
+      isLiveData: true,
+      requests: withEmptyBillingSetupRequests(
+        billingSetupRequests.map((request) => ({
+          id: request.id,
+          requestedBy: getBillingSetupRequester(request.data),
+          service: request.name.replace(/^Billing Setup - /, ""),
+          status: getHumanBillingSetupStatus(request.status),
+          detail: getBillingSetupDetail(request.data),
+          labels: getBillingSetupMetaLabels(request.data),
+          nextAction: request.nextAction ?? "Review this billing setup request before sending a secure processor link."
+        }))
+      )
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    return {
+      isLiveData: false,
+      notice:
+        "Billing setup storage is not reachable in this preview, so sample setup requests are shown.",
+      requests: sampleBillingSetupRequests
+    };
+  }
+}
+
+function withEmptyBillingSetupRequests(requests: BillingSetupItem[]): BillingSetupItem[] {
+  if (requests.length > 0) {
+    return requests;
+  }
+
+  return [
+    {
+      id: "empty-billing-setup-queue",
+      requestedBy: "Billing queue is clear",
+      service: "No billing setup requests",
+      status: "Ready",
+      detail: "Setup requests will appear after a client or staff member records billing intent.",
+      nextAction: "Send secure processor links only after consent and service billing terms are clear.",
+      labels: ["No card stored", "Processor-hosted setup only"]
+    }
+  ];
+}
+
+function getBillingSetupRequester(data: unknown): string {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return "Portal user";
+  }
+
+  const value = data as Record<string, unknown>;
+
+  if (typeof value.clientName === "string" && value.clientName.trim()) {
+    return value.clientName.trim();
+  }
+
+  if (typeof value.requestedByEmail === "string" && value.requestedByEmail.trim()) {
+    return value.requestedByEmail.trim();
+  }
+
+  return "Portal user";
+}
+
+function isDatabaseUnavailableError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "PrismaClientInitializationError" ||
+      error.message.includes("Can't reach database server") ||
+      error.message.includes("ECONNREFUSED"))
   );
 }

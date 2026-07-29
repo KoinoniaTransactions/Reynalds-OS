@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
+import { BillingSetupRequestForm } from "../../../components/client/BillingSetupRequestForm";
 import { Footer, Header } from "../../../components/site";
+import {
+  billingSetupRequestObjectType,
+  getBillingSetupDetail,
+  getBillingSetupMetaLabels,
+  getHumanBillingSetupStatus
+} from "../../../lib/billing-setup-requests";
+import { prisma } from "../../../lib/db";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 
 export const dynamic = "force-dynamic";
@@ -57,7 +65,7 @@ const selectedServices = [
   {
     service: "Licensed Showing Coverage",
     billing: "Per showing / custom",
-    status: "Card Ready",
+    status: "Setup Ready",
     nextAction: "Showing charges follow the approved showing request."
   }
 ] as const;
@@ -87,9 +95,9 @@ const invoices = [
 ] as const;
 
 const paymentProfile = [
-  "Processor customer reference is connected.",
-  "Default payment method: Visa ending in 4242.",
-  "Consent recorded for approved service billing models.",
+  "Processor customer reference is saved only after secure setup.",
+  "Payment method details should come from approved processor metadata.",
+  "Consent must be recorded for approved service billing models.",
   "Card number and CVV are not stored in Koinonia."
 ] as const;
 
@@ -100,8 +108,43 @@ const consentItems = [
   "Monthly/custom billing only when authorized by agreement"
 ] as const;
 
+type BillingSetupItem = {
+  detail: string;
+  id: string;
+  labels: string[];
+  nextAction: string;
+  service: string;
+  status: string;
+};
+
+type BillingSetupView = {
+  isLiveData: boolean;
+  notice?: string;
+  requests: BillingSetupItem[];
+};
+
+const sampleBillingSetupRequests: BillingSetupItem[] = [
+  {
+    id: "sample-prepaid-coordination",
+    service: "Transaction Coordination Plus",
+    status: "Processor Link Needed",
+    detail: "Prepaid before work begins - $389",
+    nextAction: "Koinonia needs to send the secure setup link before coordination starts.",
+    labels: ["No card stored", "Before work begins", "Bright Homes Team"]
+  },
+  {
+    id: "sample-pay-at-close",
+    service: "Pay-at-Closing Coordination",
+    status: "Pay at Close Watch",
+    detail: "Pay after successful close - $599",
+    nextAction: "Track the closing trigger before billing the approved pay-at-close fee.",
+    labels: ["No card stored", "After successful close", "Northgate Partners"]
+  }
+];
+
 export default async function ClientBillingCenterPreviewPage() {
-  await requirePortalPermission("client-portal:billing:view", "/client/billing");
+  const actor = await requirePortalPermission("client-portal:billing:view", "/client/billing");
+  const billingSetupView = await getClientBillingSetupView(actor.workspaceId, actor.id);
 
   return (
     <main className="koinonia-site koinonia-billing-center koinonia-client-billing">
@@ -117,9 +160,10 @@ export default async function ClientBillingCenterPreviewPage() {
             </h1>
 
             <p className="koinonia-lead">
-              This preview uses sample data only. Real payment setup should use
-              a processor-hosted flow so Koinonia never stores card numbers or
-              CVV codes in portal fields.
+              Billing setup requests can use protected portal storage when the
+              production database is reachable. Real payment details should
+              still be entered only through an approved processor-hosted flow so
+              Koinonia never stores card numbers or CVV codes in portal fields.
             </p>
           </div>
 
@@ -163,6 +207,39 @@ export default async function ClientBillingCenterPreviewPage() {
                 </div>
               </section>
 
+              <section className="koinonia-billing-panel" aria-labelledby="client-billing-setup-title">
+                <div className="koinonia-billing-panel-heading">
+                  <p className="koinonia-eyebrow">Setup</p>
+                  <h2 id="client-billing-setup-title">Billing Setup Requests</h2>
+                </div>
+
+                <div className="koinonia-billing-card-list">
+                  {billingSetupView.notice ? (
+                    <p className="koinonia-billing-security-note">{billingSetupView.notice}</p>
+                  ) : null}
+
+                  {billingSetupView.requests.map((request) => (
+                    <article className="koinonia-billing-work-item" key={request.id}>
+                      <div>
+                        <span>{request.detail}</span>
+                        <h3>{request.service}</h3>
+                        <p>{request.nextAction}</p>
+                        <ul className="koinonia-billing-meta-list">
+                          {request.labels.map((label) => (
+                            <li key={label}>{label}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="koinonia-billing-work-meta">
+                        <strong>{request.status}</strong>
+                        <span>Setup status</span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
               <section className="koinonia-billing-panel" aria-labelledby="client-invoices-title">
                 <div className="koinonia-billing-panel-heading">
                   <p className="koinonia-eyebrow">Invoices</p>
@@ -197,6 +274,8 @@ export default async function ClientBillingCenterPreviewPage() {
             </div>
 
             <aside className="koinonia-billing-side-panel" aria-label="Payment setup">
+              <BillingSetupRequestForm storageReady={billingSetupView.isLiveData} />
+
               <section className="koinonia-billing-panel">
                 <p className="koinonia-eyebrow">Payment Setup</p>
                 <ul className="koinonia-billing-list">
@@ -204,9 +283,6 @@ export default async function ClientBillingCenterPreviewPage() {
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
-                <a className="koinonia-billing-link" href="/contact">
-                  Secure Setup Link Placeholder
-                </a>
               </section>
 
               <section className="koinonia-billing-panel">
@@ -234,5 +310,74 @@ export default async function ClientBillingCenterPreviewPage() {
 
       <Footer />
     </main>
+  );
+}
+
+async function getClientBillingSetupView(
+  workspaceId: string,
+  ownerId: string
+): Promise<BillingSetupView> {
+  try {
+    const billingSetupRequests = await prisma.rosObject.findMany({
+      where: {
+        workspaceId,
+        ownerId,
+        objectType: billingSetupRequestObjectType,
+        archivedAt: null
+      },
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      take: 12
+    });
+
+    return {
+      isLiveData: true,
+      requests: withEmptyBillingSetupRequests(
+        billingSetupRequests.map((request) => ({
+          id: request.id,
+          service: request.name.replace(/^Billing Setup - /, ""),
+          status: getHumanBillingSetupStatus(request.status),
+          detail: getBillingSetupDetail(request.data),
+          labels: getBillingSetupMetaLabels(request.data),
+          nextAction: request.nextAction ?? "Koinonia will review this billing setup request."
+        }))
+      )
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    return {
+      isLiveData: false,
+      notice:
+        "Billing setup storage is not reachable in this preview, so sample setup requests are shown.",
+      requests: sampleBillingSetupRequests
+    };
+  }
+}
+
+function withEmptyBillingSetupRequests(requests: BillingSetupItem[]): BillingSetupItem[] {
+  if (requests.length > 0) {
+    return requests;
+  }
+
+  return [
+    {
+      id: "empty-billing-setup",
+      service: "No billing setup requests yet",
+      status: "Ready",
+      detail: "Choose a service and billing model when setup is needed.",
+      nextAction: "Submit a setup request before Koinonia sends a secure processor link.",
+      labels: ["No card stored", "Processor-hosted setup only"]
+    }
+  ];
+}
+
+function isDatabaseUnavailableError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "PrismaClientInitializationError" ||
+      error.message.includes("Can't reach database server") ||
+      error.message.includes("ECONNREFUSED"))
   );
 }
