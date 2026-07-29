@@ -216,6 +216,8 @@ For source-only verification without a database, the script supports:
 pnpm verify:portal -- --skip-database
 ```
 
+CI runs the source-only verifier with placeholder Clerk values. Production acceptance still requires running the verifier without `--skip-database` against the real deployment environment.
+
 ---
 
 ## 8. Current Blocker

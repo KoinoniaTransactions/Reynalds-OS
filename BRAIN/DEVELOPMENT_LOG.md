@@ -1859,3 +1859,21 @@ The production readiness verifier now checks the database for the minimum owner 
 ### Current Status
 
 The new database checks run when `pnpm verify:portal` is executed without `--skip-database`. Live verification still requires reachable database storage.
+
+---
+
+## 2026-07-29 — Portal Verifier Added To CI
+
+### Summary
+
+CI now runs the portal readiness verifier in source-only mode so changes that break the verifier fail before merge.
+
+### Implemented
+
+- Added `pnpm verify:portal -- --skip-database` to the GitHub Actions workflow.
+- Used placeholder Clerk and database environment values in CI.
+- Kept live database checks out of CI because production database verification must run against the target environment.
+
+### Current Status
+
+CI now covers the verifier command shape. Production readiness still requires running `pnpm verify:portal` without `--skip-database` against real deployment configuration.
