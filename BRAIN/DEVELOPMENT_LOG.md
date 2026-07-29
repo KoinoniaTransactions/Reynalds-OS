@@ -1780,3 +1780,23 @@ The employee access workspace now has a live-data path for portal users, invitat
 ### Current Status
 
 The access workspace compiles and remains protected by `employee-portal:assignments:update`. Live database verification is still blocked until the local or deployed database is reachable.
+
+---
+
+## 2026-07-29 — Employee Portal Invitation Form Added
+
+### Summary
+
+The employee access workspace now includes a protected invitation form so approved staff can create portal invitations from the workspace instead of calling the API manually.
+
+### Implemented
+
+- Added a client-side invitation form to `/employee/access`.
+- Captures name, email, role, client/team label, service package, billing readiness, and whether to send the managed login invite immediately.
+- Sends invitation requests to `/api/portal/invitations`.
+- Refreshes the access workspace after a successful invite.
+- Disables the form when production storage is unavailable in preview.
+
+### Current Status
+
+The form compiles and uses the existing protected invitation API. Live send testing still requires reachable database storage and configured Clerk provider keys.

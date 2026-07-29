@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
+import { PortalInvitationForm } from "../../../components/employee/PortalInvitationForm";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
@@ -375,6 +376,8 @@ export default async function EmployeeAccessWorkspacePage() {
             </div>
 
             <aside className="koinonia-employee-side-panel" aria-label="Access guardrails">
+              <PortalInvitationForm storageReady={accessWorkspace.isLiveData} />
+
               <section className="koinonia-employee-request-card">
                 <p className="koinonia-eyebrow">Setup Flow</p>
                 <div className="koinonia-employee-handoff-list">

@@ -48,6 +48,7 @@ The current web app includes:
 - `/api/portal/users` for staff access-status review.
 - `/api/portal/users/:id/deactivate` for deactivating accepted portal users with audit history.
 - `/employee/access` can read portal users and portal invitation records for staff access readiness, with safe preview fallback when storage is unavailable.
+- `/employee/access` includes a protected invitation form for creating portal invitations through the existing API.
 - Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
 - First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
@@ -187,6 +188,7 @@ Before the portal accepts real data:
 - Portal invitation records exist before client/staff access is granted.
 - Staff can review active and inactive portal users through a protected API.
 - Staff can review portal users, portal invitations, MFA readiness, and client access readiness in `/employee/access`.
+- Staff can create portal invitation records from `/employee/access`.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
 - Invitation acceptance writes an audit event and creates the portal user from the approved invitation.
