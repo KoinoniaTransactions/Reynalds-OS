@@ -1,33 +1,30 @@
 import type { Metadata } from "next";
-import { KoinoniaHome } from "../components/site/PageAssemblies/KoinoniaHome";
-import { absoluteUrl, seoConfig } from "../config/seo.config";
+import { DashboardShell } from "../components/dashboard-shell";
+import { absoluteUrl } from "../config/seo.config";
+
+const title = "Reynalds OS | Business Command Center";
+const description =
+  "Platform dashboard for Reynalds OS company workspaces, operations, objects, finance, workflows, and intelligence.";
 
 export const metadata: Metadata = {
-  title: seoConfig.publicRoutes[0].title,
-  description: seoConfig.publicRoutes[0].description,
+  title: {
+    absolute: title
+  },
+  description,
   alternates: {
     canonical: absoluteUrl("/")
   },
   openGraph: {
-    title: seoConfig.publicRoutes[0].title,
-    description: seoConfig.publicRoutes[0].description,
-    images: [
-      {
-        url: absoluteUrl(seoConfig.socialPreviewPath),
-        width: seoConfig.socialPreviewWidth,
-        height: seoConfig.socialPreviewHeight,
-        alt: seoConfig.publicRoutes[0].title
-      }
-    ],
+    title,
+    description,
     url: absoluteUrl("/")
   },
   twitter: {
-    title: seoConfig.publicRoutes[0].title,
-    description: seoConfig.publicRoutes[0].description,
-    images: [absoluteUrl(seoConfig.socialPreviewPath)]
+    title,
+    description
   }
 };
 
 export default function Page() {
-  return <KoinoniaHome />;
+  return <DashboardShell />;
 }

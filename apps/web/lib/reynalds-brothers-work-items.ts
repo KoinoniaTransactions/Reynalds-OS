@@ -47,11 +47,16 @@ export type ReynaldsBrothersWorkItemData = {
   completionDate?: string | null;
   invoiceStatus?: string | null;
   billingApprovalStatus?: string | null;
+  billingReviewNotes?: string | null;
   customerUpdateStatus?: string | null;
   mediaStatus?: string | null;
   sourceSystem?: string | null;
+  sourceSheet?: string | null;
+  sourceRowNumber?: string | null;
   sourceReferenceId?: string | null;
   intakeReasons?: string[];
+  dataQualityStatus?: string | null;
+  spreadsheetFields?: Record<string, string>;
 };
 
 export type ReynaldsBrothersChecklistItem = {
@@ -75,6 +80,7 @@ export type ReynaldsBrothersWorkItem = {
 export type ReynaldsBrothersMetrics = {
   total: number;
   active: number;
+  completed: number;
   needsApproval: number;
   attention: number;
   triage: number;
@@ -444,14 +450,14 @@ export const reynaldsBrothersFallbackWorkItems: ReynaldsBrothersWorkItem[] = [
     id: "rb_wi_pw_450_preview",
     objectType: REYNALDS_BROTHERS_WORK_ITEM_TYPE,
     name: "WM-450 Shreveport, Louisiana - Pressure Washing",
-    status: "Scheduling",
-    health: "Attention",
-    nextAction: "Secure vac truck company and disposal facility for overnight lower bay work.",
+    status: "Complete",
+    health: "Healthy",
+    nextAction: "Completed; verify billing record as needed.",
     data: {
       serviceLine: "Pressure Washing",
       customer: "Walmart",
       jobType: "Pressure Washing",
-      approvalStatus: "Needs Approval",
+      approvalStatus: "Approved",
       storeNumber: "450",
       city: "Shreveport",
       state: "LA",
@@ -459,21 +465,34 @@ export const reynaldsBrothersFallbackWorkItems: ReynaldsBrothersWorkItem[] = [
       workType: "Pressure Washing",
       workOrderNumber: "RB-WO-PW-450",
       siteName: "WM-450 Shreveport, Louisiana",
-      phase: "Planning",
+      phase: "Complete",
       phaseTrack: pressureWashingPhaseTrack,
       crewLead: null,
       crewMembers: [],
       equipmentRequired: ["Hot water pressure washer", "Vac truck", "Surface cleaner", "PPE"],
       documentationRequired: ["CompanyCam project link", "Before photos", "After photos", "Disposal manifest", "Manager name and title", "Completion notes"],
       readinessRequired: ["Vac truck company secured", "Disposal facility secured", "Overnight access window confirmed"],
-      checklistCompleted: [],
-      operationalRisks: ["Needs human approval", "Vac truck not secured", "Disposal facility not secured"],
-      vacTruckCompany: "",
-      disposalFacility: "",
-      invoiceStatus: "Not Ready",
-      billingApprovalStatus: "Not Started",
-      customerUpdateStatus: "Needs approval before activation",
-      mediaStatus: "No media yet",
+      checklistCompleted: [
+        "pw_vac_truck_secured",
+        "pw_disposal_facility",
+        "pw_scheduled",
+        "pw_field_work_complete",
+        "pw_before_photos",
+        "pw_after_photos",
+        "pw_disposal_manifest",
+        "pw_manager_signature",
+        "pw_completion_date"
+      ],
+      operationalRisks: [],
+      vacTruckCompany: "Completed",
+      disposalFacility: "Completed",
+      completionDate: "Recorded",
+      invoiceStatus: "Paid",
+      billingApprovalStatus: "Approved",
+      billingReviewNotes: "Preview pressure washing job marked complete from historical spreadsheet status.",
+      customerUpdateStatus: "Completed.",
+      mediaStatus: "Complete",
+      dataQualityStatus: "Needs Line Review",
       permitStatus: "Not required"
     }
   }
@@ -493,11 +512,15 @@ export function getWorkItemLocation(item: ReynaldsBrothersWorkItem): string {
 }
 
 export function needsCrew(item: ReynaldsBrothersWorkItem): boolean {
+  if (isCompletedWorkItem(item)) return false;
+
   const data = getWorkItemData(item);
   return !data.crewLead || data.crewLead === "Unassigned";
 }
 
 export function needsDocumentation(item: ReynaldsBrothersWorkItem): boolean {
+  if (isCompletedWorkItem(item)) return false;
+
   const data = getWorkItemData(item);
   return (data.documentationRequired ?? []).length > 0 && data.mediaStatus !== "Complete";
 }
@@ -508,8 +531,8 @@ export function getWorkItemLane(item: ReynaldsBrothersWorkItem): string {
   const invoiceStatus = String(getWorkItemData(item).invoiceStatus ?? "");
   const approvalStatus = String(getWorkItemData(item).approvalStatus ?? "").toLowerCase();
 
+  if (isCompletedWorkItem(item)) return "Complete";
   if (approvalStatus.includes("needs approval") || status.includes("approval")) return "Needs Approval";
-  if (status.includes("complete") || status.includes("closed")) return "Complete";
   if (isInvoiceReadyStatus(invoiceStatus)) return "Billing";
   if (status.includes("billing") || phase.includes("billing") || invoiceStatus.includes("invoice")) return "Billing";
   if (status.includes("triage") || phase.includes("triage")) return "Triage";
@@ -522,7 +545,8 @@ export function getWorkItemLane(item: ReynaldsBrothersWorkItem): string {
 export function getWorkItemMetrics(items: ReynaldsBrothersWorkItem[]): ReynaldsBrothersMetrics {
   return {
     total: items.length,
-    active: items.filter((item) => !["Complete", "Closed", "Archived"].includes(item.status)).length,
+    active: items.filter((item) => !isCompletedWorkItem(item)).length,
+    completed: items.filter(isCompletedWorkItem).length,
     needsApproval: items.filter((item) => getWorkItemLane(item) === "Needs Approval").length,
     attention: items.filter((item) => ["Watch", "Attention", "Critical"].includes(item.health)).length,
     triage: items.filter((item) => getWorkItemLane(item) === "Triage").length,
@@ -541,7 +565,7 @@ export function getRouteBatches(items: ReynaldsBrothersWorkItem[]): ReynaldsBrot
   const groups = new Map<string, ReynaldsBrothersWorkItem[]>();
 
   items
-    .filter((item) => !["Complete", "Closed", "Archived"].includes(item.status))
+    .filter((item) => !isCompletedWorkItem(item))
     .filter((item) => getWorkItemData(item).approvalStatus !== "Needs Approval")
     .forEach((item) => {
       const data = getWorkItemData(item);
@@ -572,6 +596,17 @@ export function getTankInventorySummary(item: ReynaldsBrothersWorkItem): Reynald
   const jobType = String(data.jobType ?? data.workType ?? data.serviceLine ?? "");
   const assignedSerials = data.tankSerialNumbers ?? [];
   const requiredTanks = getRequiredTanksForJobType(jobType);
+
+  if (isCompletedWorkItem(item)) {
+    return {
+      requiredTanks,
+      assignedSerials,
+      missingSerialCount: 0,
+      status: "Ready",
+      readyForScheduling: true,
+      nextAction: "Job is completed; tank inventory no longer blocks scheduling."
+    };
+  }
 
   if (requiredTanks.length === 0) {
     return {
@@ -606,6 +641,21 @@ export function getFieldProofSummary(item: ReynaldsBrothersWorkItem): ReynaldsBr
   const completed = new Set(data.checklistCompleted ?? []);
   const jobType = String(data.jobType ?? data.workType ?? data.serviceLine ?? "");
   const requiredProofItems = getRequiredFieldProofItems(jobType);
+  const requiredProofLabels = requiredProofItems.map((item) => item.label);
+
+  if (isCompletedWorkItem(item)) {
+    return {
+      requiredProofItems: requiredProofLabels,
+      completedProofItems: requiredProofLabels,
+      missingProofItems: [],
+      companyCamLinked: Boolean(data.companyCamUrl) || data.mediaStatus === "Complete",
+      managerCaptured: true,
+      completionDateRecorded: true,
+      readyForBilling: true,
+      nextAction: "Job is completed."
+    };
+  }
+
   const completedProofItems = requiredProofItems.filter((item) => completed.has(item.id)).map((item) => item.label);
   const missingProofItems = requiredProofItems.filter((item) => !completed.has(item.id)).map((item) => item.label);
   const companyCamLinked = Boolean(data.companyCamUrl);
@@ -614,7 +664,7 @@ export function getFieldProofSummary(item: ReynaldsBrothersWorkItem): ReynaldsBr
   const readyForBilling = missingProofItems.length === 0 && companyCamLinked && managerCaptured && completionDateRecorded;
 
   return {
-    requiredProofItems: requiredProofItems.map((item) => item.label),
+    requiredProofItems: requiredProofLabels,
     completedProofItems,
     missingProofItems,
     companyCamLinked,
@@ -752,7 +802,51 @@ export function isInvoiceReadyStatus(invoiceStatus: unknown): boolean {
   return normalizedStatus.includes("ready") && !normalizedStatus.includes("not ready");
 }
 
+export function isCompletedWorkItem(item: ReynaldsBrothersWorkItem): boolean {
+  const data = getWorkItemData(item);
+
+  return isCompletionValue(item.status)
+    || isCompletionValue(data.phase)
+    || Boolean(String(data.completionDate ?? "").trim());
+}
+
+export function normalizeWorkItemStatus(item: ReynaldsBrothersWorkItem): ReynaldsBrothersWorkItem {
+  if (!isCompletedWorkItem(item)) return item;
+
+  const data = getWorkItemData(item);
+
+  return {
+    ...item,
+    status: "Complete",
+    health: "Healthy",
+    nextAction: item.nextAction || "Completed; verify billing record as needed.",
+    data: {
+      ...data,
+      approvalStatus: data.approvalStatus === "Needs Approval" ? "Approved" : data.approvalStatus ?? "Approved",
+      phase: "Complete",
+      completionDate: data.completionDate ?? "Recorded",
+      invoiceStatus: data.invoiceStatus ?? "Needs Billing Review",
+      billingApprovalStatus: data.billingApprovalStatus ?? "Needs Shay Review",
+      billingReviewNotes: data.billingReviewNotes ?? "Completion date confirms job completion, but billing still needs line-by-line review.",
+      customerUpdateStatus: data.customerUpdateStatus ?? "Completed.",
+      dataQualityStatus: data.dataQualityStatus ?? "Needs Line Review"
+    }
+  };
+}
+
+function isCompletionValue(value: unknown): boolean {
+  const normalized = String(value ?? "").trim().toLowerCase();
+
+  return normalized.includes("complete")
+    || normalized.includes("closed")
+    || normalized.includes("archived")
+    || normalized.includes("completed/nocharge")
+    || normalized.includes("completed/no charge");
+}
+
 export function getWorkItemAlerts(item: ReynaldsBrothersWorkItem): string[] {
+  if (isCompletedWorkItem(item)) return [];
+
   const data = getWorkItemData(item);
   const alerts: string[] = [];
   const jobType = String(data.jobType ?? data.serviceLine ?? "");
@@ -938,6 +1032,8 @@ export function getActivationPhaseForJobType(jobType?: string | null): string {
 }
 
 export function getOpenChecklistItems(item: ReynaldsBrothersWorkItem): ReynaldsBrothersChecklistItem[] {
+  if (isCompletedWorkItem(item)) return [];
+
   const completed = new Set(getWorkItemData(item).checklistCompleted ?? []);
 
   return getWorkItemChecklist(item).filter((checklistItem) => !completed.has(checklistItem.id));
@@ -945,6 +1041,8 @@ export function getOpenChecklistItems(item: ReynaldsBrothersWorkItem): ReynaldsB
 
 export function getChecklistProgress(item: ReynaldsBrothersWorkItem): { complete: number; total: number; percent: number } {
   const checklist = getWorkItemChecklist(item);
+  if (isCompletedWorkItem(item)) return { complete: checklist.length, total: checklist.length, percent: 100 };
+
   const completed = new Set(getWorkItemData(item).checklistCompleted ?? []);
   const complete = checklist.filter((item) => completed.has(item.id)).length;
   const total = checklist.length;
@@ -1002,6 +1100,7 @@ export function previewTrialWorkItemImport(input: string): ReynaldsBrothersTrial
   if (table.length === 0) return { records: [], errors: [] };
 
   const [headerRow, ...dataRows] = table;
+  const rawHeaders = headerRow.map((header) => header.trim());
   const headers = headerRow.map(normalizeImportHeader);
   const records: ReynaldsBrothersTrialImportRecord[] = [];
   const errors: ReynaldsBrothersTrialImportError[] = [];
@@ -1011,6 +1110,7 @@ export function previewTrialWorkItemImport(input: string): ReynaldsBrothersTrial
     if (row.every((cell) => cell.trim().length === 0)) return;
 
     const value = getImportRowValue(headers, row);
+    const spreadsheetFields = getSpreadsheetFieldSnapshot(rawHeaders, row);
     const storeNumber = value(["storeNumber", "store", "storeNo", "storeNum", "walmartStore"]);
     const city = value(["city", "locationCity"]);
     const state = value(["state", "st", "locationState"]);
@@ -1042,16 +1142,28 @@ export function previewTrialWorkItemImport(input: string): ReynaldsBrothersTrial
     const lucernexUrl = value(["lucernexUrl", "lucernexLink", "lucernex"]);
     const permitStatus = value(["permitStatus", "permit", "permits"]);
     const tankStatus = value(["tankStatus", "tanks", "tank"]);
-    const approvalStatus = value(["approvalStatus", "approval"]) ?? "Needs Approval";
+    const completionDate = value(["completionDate", "completeDate", "dateComplete"]);
+    const importedStatus = value(["status", "completedStatus", "completed", "invoiceStatus", "invoiced"]);
+    const completedFromSpreadsheet = Boolean(completionDate) || isCompletionValue(importedStatus);
+    const approvalStatus = completedFromSpreadsheet
+      ? "Approved"
+      : value(["approvalStatus", "approval"]) ?? "Needs Approval";
+    const importedInvoiceStatus = value(["invoiceStatus", "billingStatus", "invoiced", "paid"]);
+    const invoiceStatus = getImportedInvoiceStatus(importedInvoiceStatus, completedFromSpreadsheet);
+    const billingApprovalStatus = getImportedBillingApprovalStatus(
+      value(["billingApprovalStatus", "billingApproval"]),
+      invoiceStatus,
+      completedFromSpreadsheet
+    );
     const nextAction = value(["nextAction", "next", "action", "notes"])
-      ?? "Review imported job details and approve when ready.";
+      ?? (completedFromSpreadsheet ? "Completed; verify billing record as needed." : "Review imported job details and approve when ready.");
 
     records.push({
       rowNumber,
       input: {
         name: validName,
-        status: "Needs Approval",
-        health: "Watch",
+        status: completedFromSpreadsheet ? "Complete" : "Needs Approval",
+        health: completedFromSpreadsheet ? "Healthy" : "Watch",
         nextAction,
         data: {
           serviceLine,
@@ -1065,7 +1177,7 @@ export function previewTrialWorkItemImport(input: string): ReynaldsBrothersTrial
           workType: value(["workType"]) ?? importedJobType,
           workOrderNumber: value(["workOrderNumber", "wo", "workOrder", "serviceChannel", "serviceChannelWo"]),
           siteName: value(["siteName", "site", "storeName"]),
-          phase: "Needs Approval",
+          phase: completedFromSpreadsheet ? "Complete" : "Needs Approval",
           phaseTrack: getPhaseTrackForJobType(importedJobType),
           checklistCompleted: [],
           poNumber,
@@ -1078,17 +1190,30 @@ export function previewTrialWorkItemImport(input: string): ReynaldsBrothersTrial
           vacTruckCompany: value(["vacTruckCompany", "vacTruck"]),
           disposalFacility: value(["disposalFacility", "disposal"]),
           companyCamUrl: value(["companyCamUrl", "companyCam", "photos"]),
-          completionDate: value(["completionDate", "completeDate", "dateComplete"]),
-          invoiceStatus: value(["invoiceStatus", "billingStatus"]) ?? "Not Ready",
-          billingApprovalStatus: value(["billingApprovalStatus", "billingApproval"]) ?? "Not Started",
-          customerUpdateStatus: "Imported for human approval.",
-          mediaStatus: value(["mediaStatus"]) ?? "Needs CompanyCam review",
+          completionDate,
+          invoiceStatus,
+          billingApprovalStatus,
+          billingReviewNotes: completedFromSpreadsheet && invoiceStatus !== "Paid"
+            ? "Completion date confirms job completion, but billing status needs line-by-line review."
+            : undefined,
+          customerUpdateStatus: completedFromSpreadsheet
+            ? "Imported as completed; billing accuracy still needs review."
+            : "Imported for human approval.",
+          mediaStatus: value(["mediaStatus"]) ?? (completedFromSpreadsheet ? "Complete" : "Needs CompanyCam review"),
           sourceSystem: "trial_import",
+          sourceSheet: value(["sourceSheet", "sheet"]),
+          sourceRowNumber: value(["sourceRowNumber", "rowNumber"]),
           sourceReferenceId: `trial_import_row_${rowNumber}`,
-          intakeReasons: ["Imported from pasted trial data."]
+          intakeReasons: [
+            completedFromSpreadsheet
+              ? "Imported from pasted trial data and marked complete from completion date/status."
+              : "Imported from pasted trial data."
+          ],
+          dataQualityStatus: "Needs Line Review",
+          spreadsheetFields
         }
       },
-      warnings: getTrialImportWarnings(importedJobType, poNumber, lucernexUrl)
+      warnings: getTrialImportWarnings(importedJobType, poNumber, lucernexUrl, completedFromSpreadsheet)
     });
   });
 
@@ -1168,11 +1293,16 @@ function getWorkItemPayloadData(value: Record<string, unknown>): ReynaldsBrother
     completionDate: getOptionalString(sourceData.completionDate),
     invoiceStatus: getOptionalString(sourceData.invoiceStatus) ?? "Not Ready",
     billingApprovalStatus: getOptionalString(sourceData.billingApprovalStatus),
+    billingReviewNotes: getOptionalString(sourceData.billingReviewNotes),
     customerUpdateStatus: getOptionalString(sourceData.customerUpdateStatus),
     mediaStatus: getOptionalString(sourceData.mediaStatus),
     sourceSystem: getOptionalString(sourceData.sourceSystem),
+    sourceSheet: getOptionalString(sourceData.sourceSheet),
+    sourceRowNumber: getOptionalString(sourceData.sourceRowNumber),
     sourceReferenceId: getOptionalString(sourceData.sourceReferenceId),
-    intakeReasons: getStringList(sourceData.intakeReasons)
+    intakeReasons: getStringList(sourceData.intakeReasons),
+    dataQualityStatus: getOptionalString(sourceData.dataQualityStatus),
+    spreadsheetFields: getStringRecord(sourceData.spreadsheetFields)
   };
 }
 
@@ -1190,6 +1320,16 @@ function getStringList(input: unknown): string[] {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function getStringRecord(input: unknown): Record<string, string> | undefined {
+  if (!input || typeof input !== "object" || Array.isArray(input)) return undefined;
+
+  const entries = Object.entries(input)
+    .map(([key, value]) => [key.trim(), String(value ?? "").trim()] as const)
+    .filter(([key, value]) => key.length > 0 && value.length > 0);
+
+  return entries.length > 0 ? Object.fromEntries(entries) : undefined;
 }
 
 function parseDelimitedRows(input: string): string[][] {
@@ -1254,6 +1394,8 @@ function normalizeImportHeader(input: string): string {
     companycam: "companyCam",
     companycamlink: "companyCamUrl",
     companycamurl: "companyCamUrl",
+    completed: "completed",
+    completedstatus: "completedStatus",
     completedate: "completeDate",
     completiondate: "completionDate",
     coordinatedvisit: "coordinatedVisit",
@@ -1266,6 +1408,7 @@ function normalizeImportHeader(input: string): string {
     jobname: "jobName",
     jobtitle: "jobTitle",
     jobtype: "jobType",
+    invoiced: "invoiced",
     lucernex: "lucernex",
     lucernexlink: "lucernexLink",
     lucernexurl: "lucernexUrl",
@@ -1278,6 +1421,9 @@ function normalizeImportHeader(input: string): string {
     photos: "photos",
     po: "po",
     ponumber: "poNumber",
+    paid: "paid",
+    pmntrcvd: "paid",
+    paymentreceived: "paid",
     projectname: "projectName",
     region: "region",
     routeregion: "routeRegion",
@@ -1328,6 +1474,19 @@ function getImportRowValue(headers: string[], row: string[]) {
   };
 }
 
+function getSpreadsheetFieldSnapshot(headers: string[], row: string[]): Record<string, string> | undefined {
+  const fields = headers.reduce<Record<string, string>>((accumulator, header, index) => {
+    const key = header.trim();
+    const value = row[index]?.trim();
+
+    if (key && value) accumulator[key] = value;
+
+    return accumulator;
+  }, {});
+
+  return Object.keys(fields).length > 0 ? fields : undefined;
+}
+
 function normalizeJobType(input?: string): string {
   const value = input?.trim();
   if (!value) return "ACC Level 1 Triage";
@@ -1356,8 +1515,37 @@ function buildWalmartJobName(storeNumber?: string, city?: string, state?: string
   return `WM-${storeNumber} ${city}, ${state} - ${jobType}`;
 }
 
-function getTrialImportWarnings(jobType: string, poNumber?: string, lucernexUrl?: string): string[] {
+function getImportedInvoiceStatus(importedInvoiceStatus: string | undefined, completedFromSpreadsheet: boolean): string {
+  const normalized = String(importedInvoiceStatus ?? "").trim().toLowerCase();
+
+  if (normalized.includes("paid")) return "Paid";
+  if (normalized.includes("sent") || normalized.includes("invoiced") || normalized.includes("inv")) return "Invoice Sent";
+  if (importedInvoiceStatus) return importedInvoiceStatus;
+
+  return completedFromSpreadsheet ? "Needs Billing Review" : "Not Ready";
+}
+
+function getImportedBillingApprovalStatus(
+  importedBillingApprovalStatus: string | undefined,
+  invoiceStatus: string,
+  completedFromSpreadsheet: boolean
+): string {
+  if (importedBillingApprovalStatus) return importedBillingApprovalStatus;
+  if (!completedFromSpreadsheet) return "Not Started";
+  if (invoiceStatus === "Paid") return "Approved";
+
+  return "Needs Shay Review";
+}
+
+function getTrialImportWarnings(
+  jobType: string,
+  poNumber: string | undefined,
+  lucernexUrl: string | undefined,
+  completedFromSpreadsheet = false
+): string[] {
   const warnings: string[] = [];
+
+  if (completedFromSpreadsheet) return warnings;
 
   if (!reynaldsBrothersJobTypes.includes(jobType)) {
     warnings.push("Job type is not one of the current ACC/UCO/PW workflow templates.");

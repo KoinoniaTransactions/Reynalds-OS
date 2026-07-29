@@ -6,6 +6,7 @@ import { prisma } from "../../../../../lib/db";
 import {
   REYNALDS_BROTHERS_WORKSPACE_ID,
   REYNALDS_BROTHERS_WORK_ITEM_TYPE,
+  normalizeWorkItemStatus,
   validateWorkItemUpdate,
   type ReynaldsBrothersWorkItemData
 } from "../../../../../lib/reynalds-brothers-work-items";
@@ -42,14 +43,23 @@ export async function PATCH(request: Request, { params }: Params) {
 
     const existingData = toWorkItemData(existing.data) ?? {};
     const nextData = input.data ? { ...existingData, ...input.data } : existingData;
+    const normalizedInput = normalizeWorkItemStatus({
+      id: existing.id,
+      objectType: existing.objectType,
+      name: existing.name,
+      status: input.status ?? existing.status,
+      health: input.health ?? existing.health,
+      nextAction: input.nextAction !== undefined ? input.nextAction : existing.nextAction,
+      data: nextData
+    });
 
     const object = await prisma.rosObject.update({
       where: { id },
       data: {
-        ...(input.status ? { status: input.status } : {}),
-        ...(input.health ? { health: input.health } : {}),
-        ...(input.nextAction !== undefined ? { nextAction: input.nextAction } : {}),
-        data: nextData as Prisma.InputJsonValue
+        status: normalizedInput.status,
+        health: normalizedInput.health,
+        nextAction: normalizedInput.nextAction,
+        data: normalizedInput.data as Prisma.InputJsonValue
       }
     });
 
@@ -66,7 +76,7 @@ export async function PATCH(request: Request, { params }: Params) {
     });
 
     return NextResponse.json({
-      workItem: {
+      workItem: normalizeWorkItemStatus({
         id: object.id,
         objectType: object.objectType,
         name: object.name,
@@ -74,7 +84,7 @@ export async function PATCH(request: Request, { params }: Params) {
         health: object.health,
         nextAction: object.nextAction,
         data: toWorkItemData(object.data)
-      }
+      })
     });
   } catch (error) {
     const authErrorResponse = getAuthErrorResponse(error);

@@ -46,6 +46,10 @@
     #f5f5f5;
 }
 
+.brandScope :global(.rb-command-strip) {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .brandScope :global(.ros-topbar) {
   background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(223, 229, 226, 0.92);
@@ -278,7 +282,17 @@
   font-weight: 800;
 }
 
+.brandScope :global(#rb-intake),
+.brandScope :global(#rb-routing),
+.brandScope :global(#rb-board),
+.brandScope :global(#rb-email-intake),
+.brandScope :global(#rb-system-map),
+.brandScope :global(#rb-access-rhythm) {
+  scroll-margin-top: 24px;
+}
+
 @media (max-width: 1180px) {
+  .brandScope :global(.rb-command-strip),
   .brandScope :global(.rb-import-preview-grid) {
     grid-template-columns: 1fr;
   }

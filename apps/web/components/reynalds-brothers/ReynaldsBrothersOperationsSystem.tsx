@@ -24,6 +24,7 @@ import {
   getWorkItemLane,
   getWorkItemLocation,
   getWorkItemMetrics,
+  normalizeWorkItemStatus,
   isInvoiceReadyStatus,
   needsCrew,
   needsDocumentation,
@@ -106,7 +107,9 @@ const trialImportExample = [
 const trialWorkItemsStorageKey = "reynalds-brothers.trial-work-items.v1";
 
 export function ReynaldsBrothersOperationsSystem() {
-  const [workItems, setWorkItems] = useState<ReynaldsBrothersWorkItem[]>(reynaldsBrothersFallbackWorkItems);
+  const [workItems, setWorkItems] = useState<ReynaldsBrothersWorkItem[]>(() =>
+    reynaldsBrothersFallbackWorkItems.map(normalizeWorkItemStatus)
+  );
   const [selectedId, setSelectedId] = useState(reynaldsBrothersFallbackWorkItems[0]?.id ?? "");
   const [search, setSearch] = useState("");
   const [source, setSource] = useState("fallback");
@@ -118,7 +121,12 @@ export function ReynaldsBrothersOperationsSystem() {
   const [crewLeadUpdate, setCrewLeadUpdate] = useState("");
   const [invoiceStatusUpdate, setInvoiceStatusUpdate] = useState("Not Ready");
   const [billingApprovalStatusUpdate, setBillingApprovalStatusUpdate] = useState("Not Started");
+  const [billingReviewNotesUpdate, setBillingReviewNotesUpdate] = useState("");
   const [customerUpdateStatus, setCustomerUpdateStatus] = useState("");
+  const [dataQualityStatusUpdate, setDataQualityStatusUpdate] = useState("");
+  const [sourceSheetUpdate, setSourceSheetUpdate] = useState("");
+  const [sourceRowNumberUpdate, setSourceRowNumberUpdate] = useState("");
+  const [spreadsheetFieldsUpdate, setSpreadsheetFieldsUpdate] = useState("");
   const [approvalStatusUpdate, setApprovalStatusUpdate] = useState("Needs Approval");
   const [approvedByUpdate, setApprovedByUpdate] = useState("");
   const [lucernexStatusUpdate, setLucernexStatusUpdate] = useState("Not Started");
@@ -157,7 +165,7 @@ export function ReynaldsBrothersOperationsSystem() {
       const response = await fetch("/api/reynalds-brothers/work-items");
       if (!response.ok) throw new Error("Failed to load Reynalds Brothers work items.");
       const payload = (await response.json()) as ApiPayload;
-      const loaded = payload.workItems?.length ? payload.workItems : reynaldsBrothersFallbackWorkItems;
+      const loaded = (payload.workItems?.length ? payload.workItems : reynaldsBrothersFallbackWorkItems).map(normalizeWorkItemStatus);
       const trialItems = loadStoredTrialWorkItems();
       const nextItems = mergeWorkItemLists(loaded, trialItems);
       setWorkItems(nextItems);
@@ -166,7 +174,7 @@ export function ReynaldsBrothersOperationsSystem() {
       if (payload.warning) setError(payload.warning);
     } catch (err) {
       const trialItems = loadStoredTrialWorkItems();
-      const nextItems = mergeWorkItemLists(reynaldsBrothersFallbackWorkItems, trialItems);
+      const nextItems = mergeWorkItemLists(reynaldsBrothersFallbackWorkItems.map(normalizeWorkItemStatus), trialItems);
       setSource("fallback");
       setError(err instanceof Error ? err.message : "Using preview work items.");
       setWorkItems(nextItems);
@@ -221,7 +229,12 @@ export function ReynaldsBrothersOperationsSystem() {
     setCrewLeadUpdate(selectedData.crewLead ?? "");
     setInvoiceStatusUpdate(selectedData.invoiceStatus ?? "Not Ready");
     setBillingApprovalStatusUpdate(selectedData.billingApprovalStatus ?? "Not Started");
+    setBillingReviewNotesUpdate(selectedData.billingReviewNotes ?? "");
     setCustomerUpdateStatus(selectedData.customerUpdateStatus ?? "");
+    setDataQualityStatusUpdate(selectedData.dataQualityStatus ?? "");
+    setSourceSheetUpdate(selectedData.sourceSheet ?? "");
+    setSourceRowNumberUpdate(selectedData.sourceRowNumber ?? "");
+    setSpreadsheetFieldsUpdate(formatSpreadsheetFields(selectedData.spreadsheetFields));
     setApprovalStatusUpdate(selectedData.approvalStatus ?? "Approved");
     setApprovedByUpdate(selectedData.approvedBy ?? "");
     setLucernexStatusUpdate(selectedData.lucernexStatus ?? "Not Started");
@@ -247,10 +260,12 @@ export function ReynaldsBrothersOperationsSystem() {
     selectedData.approvalStatus,
     selectedData.approvedBy,
     selectedData.billingApprovalStatus,
+    selectedData.billingReviewNotes,
     selectedData.companyCamUrl,
     selectedData.completionDate,
     selectedData.crewLead,
     selectedData.customerUpdateStatus,
+    selectedData.dataQualityStatus,
     selectedData.disposalFacility,
     selectedData.invoiceStatus,
     selectedData.lucernexStatus,
@@ -264,6 +279,9 @@ export function ReynaldsBrothersOperationsSystem() {
     selectedData.poNumber,
     selectedData.poStatus,
     selectedData.signatureStatus,
+    selectedData.sourceRowNumber,
+    selectedData.sourceSheet,
+    selectedData.spreadsheetFields,
     selectedData.tankStatus,
     selectedData.tankSupplier,
     selectedData.tankSerialNumbers,
@@ -349,7 +367,7 @@ export function ReynaldsBrothersOperationsSystem() {
       );
       saveLocalWorkItems(created);
       setTrialImportText("");
-      setTrialImportMessage(`${created.length} trial job${created.length === 1 ? "" : "s"} created locally in Needs Approval.`);
+      setTrialImportMessage(buildTrialImportMessage(created.length, created));
       setTrialImportPending(false);
       return;
     }
@@ -372,7 +390,7 @@ export function ReynaldsBrothersOperationsSystem() {
       await loadWorkItems();
       if (lastCreatedId) setSelectedId(lastCreatedId);
       setTrialImportText("");
-      setTrialImportMessage(`${trialImportPreview.records.length} trial job${trialImportPreview.records.length === 1 ? "" : "s"} created in Needs Approval.`);
+      setTrialImportMessage(buildTrialImportMessage(trialImportPreview.records.length, trialImportPreview.records.map((record) => record.input)));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Trial jobs could not be created.");
     } finally {
@@ -433,6 +451,7 @@ export function ReynaldsBrothersOperationsSystem() {
       crewLead: crewLeadUpdate,
       invoiceStatus: invoiceStatusUpdate,
       billingApprovalStatus: billingApprovalStatusUpdate,
+      billingReviewNotes: billingReviewNotesUpdate,
       approvalStatus: approvalStatusUpdate,
       approvedBy: approvedByUpdate,
       lucernexStatus: lucernexStatusUpdate,
@@ -453,7 +472,11 @@ export function ReynaldsBrothersOperationsSystem() {
       vacTruckCompany: vacTruckCompanyUpdate,
       disposalFacility: disposalFacilityUpdate,
       completionDate: completionDateUpdate,
-      customerUpdateStatus
+      customerUpdateStatus,
+      dataQualityStatus: dataQualityStatusUpdate,
+      sourceSheet: sourceSheetUpdate,
+      sourceRowNumber: sourceRowNumberUpdate,
+      spreadsheetFields: parseSpreadsheetFields(spreadsheetFieldsUpdate)
     };
 
     if (source !== "database") {
@@ -684,7 +707,7 @@ export function ReynaldsBrothersOperationsSystem() {
   }
 
   function saveLocalWorkItems(items: ReynaldsBrothersWorkItem[]) {
-    const nextItems = mergeWorkItemLists(workItems, items);
+    const nextItems = mergeWorkItemLists(workItems, items.map(normalizeWorkItemStatus));
     persistStoredTrialWorkItems(nextItems);
     setWorkItems(nextItems);
     setSource("trial");
@@ -713,12 +736,13 @@ export function ReynaldsBrothersOperationsSystem() {
 
         <nav>
           <a href="/">Reynalds OS</a>
-          <a href="/reynalds-brothers" className="active">RB Operations</a>
-          <a href="/operations">Shared Queue</a>
-          <a href="/objects">Object Engine</a>
-          <a href="/finance">Finance</a>
-          <a href="/workflows">Workflows</a>
-          <a href="/copilot">AI Copilot</a>
+          <a href="/reynalds-brothers" className="active">RB Board</a>
+          <a href="/reynalds-brothers#rb-intake">Intake</a>
+          <a href="/reynalds-brothers#rb-routing">Routing</a>
+          <a href="/reynalds-brothers#rb-board">Work Board</a>
+          <a href="/reynalds-brothers#rb-email-intake">Email Intake</a>
+          <a href="/reynalds-brothers#rb-system-map">System Map</a>
+          <a href="/reynalds-brothers#rb-access-rhythm">Access</a>
         </nav>
       </aside>
 
@@ -730,7 +754,7 @@ export function ReynaldsBrothersOperationsSystem() {
             placeholder="Search work items, stores, services, blockers..."
           />
           <button onClick={() => void loadWorkItems()}>Refresh</button>
-          <a className="ros-button-link" href="/objects">Object Engine</a>
+          <a className="ros-button-link" href="/reynalds-brothers#rb-system-map">RB System Map</a>
         </header>
 
         <div className="ros-eyebrow">Company workspace</div>
@@ -742,7 +766,7 @@ export function ReynaldsBrothersOperationsSystem() {
 
         {error ? <p className="ros-error">{error}</p> : null}
 
-        <section className="rb-section rb-create-panel">
+        <section className="rb-section rb-create-panel" id="rb-intake">
           <div>
             <div className="ros-eyebrow">Approval-controlled intake</div>
             <h2>Create ACC/UCO/PW job</h2>
@@ -851,6 +875,8 @@ export function ReynaldsBrothersOperationsSystem() {
 
           <div className="rb-trial-import-summary">
             <span>{trialImportPreview.records.length} ready</span>
+            <span>{trialImportPreview.records.filter((record) => record.input.status !== "Complete").length} need approval</span>
+            <span>{trialImportPreview.records.filter((record) => record.input.status === "Complete").length} completed</span>
             <span>{trialImportPreview.errors.length} need fixes</span>
           </div>
 
@@ -876,7 +902,9 @@ export function ReynaldsBrothersOperationsSystem() {
                     <ul>
                       {record.warnings.map((warning) => <li key={warning}>{warning}</li>)}
                     </ul>
-                  ) : <p>Ready for approval queue.</p>}
+                  ) : (
+                    <p>{record.input.status === "Complete" ? "Will import as completed." : "Ready for approval queue."}</p>
+                  )}
                 </article>
               ))}
             </div>
@@ -899,6 +927,11 @@ export function ReynaldsBrothersOperationsSystem() {
             <p>{source === "database" ? "live company records" : source === "trial" ? "local trial records" : "preview records"}</p>
           </article>
           <article className="rb-metric">
+            <span>Completed</span>
+            <strong>{metrics.completed}</strong>
+            <p>completion date recorded or closed status</p>
+          </article>
+          <article className="rb-metric">
             <span>Needs Approval</span>
             <strong>{metrics.needsApproval}</strong>
             <p>AI or manual intake awaiting human approval</p>
@@ -915,7 +948,7 @@ export function ReynaldsBrothersOperationsSystem() {
           </article>
         </section>
 
-        <section className="rb-section rb-route-planner">
+        <section className="rb-section rb-route-planner" id="rb-routing">
           <div className="rb-section-heading">
             <div>
               <div className="ros-eyebrow">Route planning</div>
@@ -948,7 +981,7 @@ export function ReynaldsBrothersOperationsSystem() {
           </div>
         </section>
 
-        <section className="rb-layout">
+        <section className="rb-layout" id="rb-board">
           <div className="rb-board" aria-label="Work item lanes">
             {reynaldsBrothersBoardLanes.map((lane) => {
               const laneItems = filtered.filter((item) => getWorkItemLane(item) === lane);
@@ -1444,7 +1477,7 @@ export function ReynaldsBrothersOperationsSystem() {
                   <label>
                     Invoice Status
                     <select value={invoiceStatusUpdate} onChange={(event) => setInvoiceStatusUpdate(event.target.value)}>
-                      {["Not Ready", "Blocked", "Ready to Invoice", "Invoice Sent", "Paid"].map((option) => (
+                      {["Not Ready", "Needs Billing Review", "Blocked", "Ready to Invoice", "Invoice Sent", "Paid"].map((option) => (
                         <option key={option} value={option}>{option}</option>
                       ))}
                     </select>
@@ -1456,6 +1489,41 @@ export function ReynaldsBrothersOperationsSystem() {
                         <option key={option} value={option}>{option}</option>
                       ))}
                     </select>
+                  </label>
+                  <label className="rb-wide-field">
+                    Billing Review Notes
+                    <textarea
+                      value={billingReviewNotesUpdate}
+                      onChange={(event) => setBillingReviewNotesUpdate(event.target.value)}
+                      placeholder="Track billing uncertainty, invoice checks, IP2P/QuickBooks notes, or line-by-line cleanup."
+                    />
+                  </label>
+                  <div className="rb-form-section-heading">
+                    <span>Spreadsheet source and cleanup</span>
+                  </div>
+                  <label>
+                    Data Quality
+                    <select value={dataQualityStatusUpdate} onChange={(event) => setDataQualityStatusUpdate(event.target.value)}>
+                      {["", "Needs Line Review", "Verified", "Needs Billing Review", "Needs Source Cleanup", "Void"].map((option) => (
+                        <option key={option || "blank"} value={option}>{option || "Not set"}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Source Sheet
+                    <input value={sourceSheetUpdate} onChange={(event) => setSourceSheetUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Source Row
+                    <input value={sourceRowNumberUpdate} onChange={(event) => setSourceRowNumberUpdate(event.target.value)} />
+                  </label>
+                  <label className="rb-wide-field">
+                    Spreadsheet Fields
+                    <textarea
+                      value={spreadsheetFieldsUpdate}
+                      onChange={(event) => setSpreadsheetFieldsUpdate(event.target.value)}
+                      placeholder="One field per line, like Completion Date: 2026-07-10"
+                    />
                   </label>
                   <label>
                     Customer Update
@@ -1472,7 +1540,7 @@ export function ReynaldsBrothersOperationsSystem() {
           </aside>
         </section>
 
-        <section className="rb-section">
+        <section className="rb-section" id="rb-email-intake">
           <div className="rb-section-heading">
             <div>
               <div className="ros-eyebrow">Email intake</div>
@@ -1570,7 +1638,7 @@ export function ReynaldsBrothersOperationsSystem() {
           </div>
         </section>
 
-        <section className="rb-section">
+        <section className="rb-section" id="rb-system-map">
           <div className="rb-section-heading">
             <div>
               <div className="ros-eyebrow">Build-out map</div>
@@ -1588,7 +1656,7 @@ export function ReynaldsBrothersOperationsSystem() {
           </div>
         </section>
 
-        <section className="rb-two-column">
+        <section className="rb-two-column" id="rb-access-rhythm">
           <article className="rb-section">
             <div className="ros-eyebrow">Office users</div>
             <h2>Access can be delegated</h2>
@@ -1649,11 +1717,51 @@ function getApprovalNextAction(jobType?: string | null): string {
   return "Begin office planning workflow.";
 }
 
+function buildTrialImportMessage(
+  total: number,
+  items: Array<ReynaldsBrothersWorkItem | ReynaldsBrothersWorkItemCreateInput>
+): string {
+  const completed = items.filter((item) => item.status === "Complete").length;
+  const needsApproval = total - completed;
+  const label = total === 1 ? "job" : "jobs";
+
+  return `${total} trial ${label} created: ${needsApproval} needing approval, ${completed} completed.`;
+}
+
 function parseSerialNumbers(input: string): string[] {
   return input
     .split(/\r?\n|,/)
     .map((serial) => serial.trim())
     .filter(Boolean);
+}
+
+function formatSpreadsheetFields(fields?: Record<string, string>): string {
+  return Object.entries(fields ?? {})
+    .map(([key, value]) => `${key}: ${value}`)
+    .join("\n");
+}
+
+function parseSpreadsheetFields(input: string): Record<string, string> | undefined {
+  const fields = input
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .reduce<Record<string, string>>((accumulator, line) => {
+      const separatorIndex = line.indexOf(":");
+
+      if (separatorIndex < 0) {
+        accumulator[line] = "";
+        return accumulator;
+      }
+
+      const key = line.slice(0, separatorIndex).trim();
+      const value = line.slice(separatorIndex + 1).trim();
+      if (key && value) accumulator[key] = value;
+
+      return accumulator;
+    }, {});
+
+  return Object.keys(fields).length > 0 ? fields : undefined;
 }
 
 function createLocalTrialWorkItem(input: ReynaldsBrothersWorkItemCreateInput, idPrefix = "trial_manual"): ReynaldsBrothersWorkItem {
@@ -1688,7 +1796,7 @@ function loadStoredTrialWorkItems(): ReynaldsBrothersWorkItem[] {
     const parsed = JSON.parse(stored);
     if (!Array.isArray(parsed)) return [];
 
-    return parsed.filter(isWorkItemLike);
+    return parsed.filter(isWorkItemLike).map(normalizeWorkItemStatus);
   } catch {
     return [];
   }
@@ -1704,8 +1812,8 @@ function persistStoredTrialWorkItems(items: ReynaldsBrothersWorkItem[]) {
 function mergeWorkItemLists(baseItems: ReynaldsBrothersWorkItem[], overlayItems: ReynaldsBrothersWorkItem[]): ReynaldsBrothersWorkItem[] {
   const byId = new Map<string, ReynaldsBrothersWorkItem>();
 
-  baseItems.forEach((item) => byId.set(item.id, item));
-  overlayItems.forEach((item) => byId.set(item.id, item));
+  baseItems.forEach((item) => byId.set(item.id, normalizeWorkItemStatus(item)));
+  overlayItems.forEach((item) => byId.set(item.id, normalizeWorkItemStatus(item)));
 
   return Array.from(byId.values());
 }
