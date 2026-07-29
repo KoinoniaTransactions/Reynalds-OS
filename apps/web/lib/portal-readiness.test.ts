@@ -123,6 +123,31 @@ describe("portal readiness report", () => {
     expect(mockAuth?.status).toBe("blocked");
   });
 
+  it("blocks unsafe hosted login URLs", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        hostedSignInUrl: "javascript:alert(1)"
+      })
+    );
+    const hostedLogin = report.groups.flatMap((group) => group.items).find((item) => item.id === "hosted-login");
+
+    expect(report.overallStatus).toBe("blocked");
+    expect(hostedLogin?.status).toBe("blocked");
+    expect(hostedLogin?.proof).toContain("javascript");
+  });
+
+  it("allows public HTTPS hosted login URLs", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        hostedSignInUrl: "https://accounts.koinoniatransactions.com/sign-in"
+      })
+    );
+    const hostedLogin = report.groups.flatMap((group) => group.items).find((item) => item.id === "hosted-login");
+
+    expect(hostedLogin?.status).toBe("ready");
+    expect(hostedLogin?.proof).toContain("accounts.koinoniatransactions.com");
+  });
+
   it("marks auth redirect origins ready when the production site URL is public HTTPS", () => {
     const report = buildPortalReadinessReport(getReadyInput());
     const authRedirectOrigins = report.groups

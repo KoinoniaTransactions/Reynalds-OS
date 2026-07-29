@@ -255,12 +255,24 @@ function getClerkKeyReadiness(input: PortalReadinessInput): PortalReadinessItem 
 }
 
 function getHostedLoginReadiness(input: PortalReadinessInput): PortalReadinessItem {
-  if (isPresent(input.hostedSignInUrl)) {
+  const hostedSignInUrl = input.hostedSignInUrl?.trim();
+
+  if (hostedSignInUrl && isAllowedHostedLoginUrl(hostedSignInUrl, input.nodeEnv)) {
     return readyItem(
       "hosted-login",
       "Hosted login route",
       "The sign-in path is configured for redirects back into the portal.",
-      "A hosted sign-in URL environment value is present."
+      `Hosted sign-in target: ${hostedSignInUrl}.`
+    );
+  }
+
+  if (hostedSignInUrl) {
+    return blockedItem(
+      "hosted-login",
+      "Hosted login route",
+      "The sign-in URL must be a same-site portal path or a public HTTPS login destination.",
+      `Invalid hosted sign-in target: ${hostedSignInUrl}.`,
+      "Use /sign-in or a public HTTPS managed-auth login URL."
     );
   }
 
@@ -806,6 +818,44 @@ function isPublicHttpsUrl(value: string): boolean {
   } catch {
     return false;
   }
+}
+
+function isAllowedHostedLoginUrl(value: string, nodeEnv?: string): boolean {
+  const trimmed = value.trim();
+
+  if (isSameSitePath(trimmed)) {
+    return true;
+  }
+
+  if (nodeEnv !== "production" && isLocalPreviewUrl(trimmed)) {
+    return true;
+  }
+
+  return isPublicHttpsUrl(trimmed);
+}
+
+function isSameSitePath(value: string): boolean {
+  return value.startsWith("/") && !value.startsWith("//") && !hasControlCharacter(value);
+}
+
+function isLocalPreviewUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+
+    return (
+      (url.protocol === "http:" || url.protocol === "https:") &&
+      (url.hostname === "localhost" ||
+        url.hostname === "127.0.0.1" ||
+        url.hostname === "::1" ||
+        url.hostname === "[::1]")
+    );
+  } catch {
+    return false;
+  }
+}
+
+function hasControlCharacter(value: string): boolean {
+  return /[\u0000-\u001f\u007f]/.test(value);
 }
 
 function getApprovedSocialLoginProviders(providers: string[]): string[] {

@@ -2,7 +2,7 @@ import { SignIn } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Footer, Header } from "../../../components/site";
 import { absoluteUrl } from "../../../config/seo.config";
-import { getHostedSignInUrl } from "../../../lib/portal-auth";
+import { getHostedSignInUrl, normalizePortalReturnTo } from "../../../lib/portal-auth";
 
 export const metadata: Metadata = {
   title: "Secure Login",
@@ -25,7 +25,7 @@ type SignInPageProps = {
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
   const params = await searchParams;
-  const returnTo = normalizeReturnTo(params?.return_to ?? params?.redirect_url);
+  const returnTo = normalizePortalReturnTo(params?.return_to ?? params?.redirect_url);
   const hostedSignInUrl = getHostedSignInUrl(returnTo);
   const shouldRenderClerkSignIn = hasClerkPublishableKey();
 
@@ -114,12 +114,4 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
 
 function hasClerkPublishableKey(): boolean {
   return Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-}
-
-function normalizeReturnTo(value: string | undefined): string {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) {
-    return "/client/dashboard";
-  }
-
-  return value;
 }

@@ -81,6 +81,7 @@ The current web app includes:
 - First provider login can accept a matching Koinonia invitation for the same workspace, create the portal user, attach the approved role, and audit acceptance.
 - Provider email fallback matching is scoped to the provider workspace before attaching a login to an existing Koinonia user.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
+- Hosted sign-in links and return destinations are limited to same-site portal paths or public HTTPS managed-auth URLs.
 - Permission tests for provider role mapping and typed denial behavior.
 - `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, seeded portal roles, and stored role permission lists.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
@@ -146,6 +147,8 @@ Production Clerk values must be real production keys. Placeholder values, exampl
 `KOINONIA_PAYMENT_SETUP_URL` must be a public HTTPS processor-hosted setup destination. The portal should not render raw card entry fields.
 
 `NEXT_PUBLIC_SITE_URL` and any `KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS` entries must be public HTTPS Koinonia-controlled origins. Use same-site paths such as `/client/dashboard` and `/employee/dashboard` for normal portal invite redirects.
+
+`NEXT_PUBLIC_CLERK_SIGN_IN_URL` and `NEXT_PUBLIC_AUTH_SIGN_IN_URL` must be same-site paths such as `/sign-in` or public HTTPS managed-auth login URLs.
 
 Then configure Clerk user metadata for Koinonia:
 
@@ -270,6 +273,7 @@ Before the portal accepts real data:
 - Pending Clerk sessions cannot access protected portal routes.
 - Staff with a pending `setup-mfa` task can be directed to `/session-tasks/setup-mfa`.
 - Signed-out user is redirected to `/sign-in`.
+- Hosted login URL configuration rejects `javascript:`, protocol-relative, placeholder, localhost production, and non-HTTPS external values.
 - Clerk server and publishable keys use production key prefixes and are not placeholders.
 - Unknown role becomes Viewer and cannot see portal data.
 - `/api/me` returns the real provider-backed user.
