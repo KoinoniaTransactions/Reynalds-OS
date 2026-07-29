@@ -14,6 +14,7 @@
 | Copilot | `/copilot` | Read-only MVP |
 | Notifications | `/notifications` | Notification MVP |
 | Workflows | `/workflows` | Workflow MVP |
+| Koinonia Client Portal Entry | `/client` | Public entry shell, no sensitive forms |
 
 ## Primary APIs
 

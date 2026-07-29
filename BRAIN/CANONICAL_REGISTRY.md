@@ -45,6 +45,7 @@ Recover before reinventing.
 | Website Framework | 03_Knowledge/Website/WEBSITE_PRODUCTION_FRAMEWORK.md | Active |
 | Production Index | 03_Knowledge/Website/PRODUCTION_INDEX.md | Active |
 | Page Specifications | docs/specifications/ | Active |
+| Client Portal Specification | docs/specifications/KOINONIA_CLIENT_PORTAL_SPEC.md | Proposed |
 | Component Catalog | 03_Knowledge/Website/component_catalog.md | Active |
 
 ---

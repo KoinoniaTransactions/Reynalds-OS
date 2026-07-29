@@ -60,3 +60,11 @@ Reason: Improves consistency, reduces duplicate code, and accelerates launch.
 Decision: Website launch work takes priority over future Reynalds OS expansion unless an architectural improvement directly accelerates the website.
 
 Reason: Prevents feature creep and keeps Koinonia moving toward publication.
+
+## D-011 — Client Portal Must Not Store Third-Party Login Credentials
+
+Decision: The Koinonia client portal may track access needs, document uploads, work status, and authorization history, but it must not collect or store raw third-party usernames and passwords for brokerage, MLS, transaction-management, forms, e-signature, CRM, email, or related systems.
+
+Reason: Client credentials are high-risk secrets. Koinonia should use delegated access, team or assistant accounts, transaction coordinator permissions, broker-approved workflows, or an approved external encrypted password manager/secrets platform instead of turning the website into an unreviewed credential vault.
+
+Canonical specification: `docs/specifications/KOINONIA_CLIENT_PORTAL_SPEC.md`

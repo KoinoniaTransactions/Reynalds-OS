@@ -28,7 +28,8 @@ export const sharedContent = {
       { label: "Home", href: "/" },
       { label: "Services", href: "/services" },
       { label: "About", href: "/about" },
-      { label: "Contact", href: "/contact" }
+      { label: "Contact", href: "/contact" },
+      { label: "Client Portal", href: "/client" }
     ]
   },
 

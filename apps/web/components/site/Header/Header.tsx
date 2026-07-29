@@ -23,6 +23,11 @@ const navigationItems = [
     label: "Contact",
     href: brandContent.navigation.contact,
     description: "Start the conversation"
+  },
+  {
+    label: "Client Login",
+    href: brandContent.navigation.client,
+    description: "Portal access"
   }
 ] as const;
 
