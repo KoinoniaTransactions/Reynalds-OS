@@ -212,6 +212,17 @@
   opacity: 0.55;
 }
 
+.brandScope :global(.rb-trial-import-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.brandScope :global(.rb-trial-import-actions button) {
+  border-radius: 8px;
+}
+
 .brandScope :global(.rb-trial-import-summary) {
   display: flex;
   flex-wrap: wrap;

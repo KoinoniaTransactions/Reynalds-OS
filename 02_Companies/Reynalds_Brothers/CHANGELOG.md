@@ -29,3 +29,4 @@
 - Added billing handoff summaries that show the current owner, completed approvals, pending approvals, and next action for the Shay to Jeremiah to Darren to Josh pass-off.
 - Added a Reynalds Brothers-only brand styling layer inspired by reynaldsbrothers.com colors, scoped to the company workspace instead of the shared Reynalds OS or Koinonia stylesheet.
 - Added first-trial pasted spreadsheet import so real ACC/UCO/PW rows can be previewed, validated, and created as Needs Approval jobs.
+- Added local first-trial mode so imported rows, manual jobs, approvals, checklist changes, and status edits can be exercised in the browser when the live database is unavailable.

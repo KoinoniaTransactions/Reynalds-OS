@@ -8,6 +8,7 @@ import {
   reynaldsBrothersFallbackEmails
 } from "../../lib/reynalds-brothers-email-intake";
 import {
+  REYNALDS_BROTHERS_WORK_ITEM_TYPE,
   applyChecklistAutomation,
   getActivationPhaseForJobType,
   getBillingPassoffSummary,
@@ -33,6 +34,8 @@ import {
   reynaldsBrothersJobTypes,
   reynaldsBrothersLucernexStatuses,
   reynaldsBrothersOfficeUsers,
+  type ReynaldsBrothersWorkItemData,
+  type ReynaldsBrothersWorkItemCreateInput,
   type ReynaldsBrothersWorkItem
 } from "../../lib/reynalds-brothers-work-items";
 
@@ -100,6 +103,8 @@ const trialImportExample = [
   "4672\tMontgomery\tAlabama\tUCO Tank Replacement\tPO-123\t\t\tConfirm Frontline delivery."
 ].join("\n");
 
+const trialWorkItemsStorageKey = "reynalds-brothers.trial-work-items.v1";
+
 export function ReynaldsBrothersOperationsSystem() {
   const [workItems, setWorkItems] = useState<ReynaldsBrothersWorkItem[]>(reynaldsBrothersFallbackWorkItems);
   const [selectedId, setSelectedId] = useState(reynaldsBrothersFallbackWorkItems[0]?.id ?? "");
@@ -153,14 +158,20 @@ export function ReynaldsBrothersOperationsSystem() {
       if (!response.ok) throw new Error("Failed to load Reynalds Brothers work items.");
       const payload = (await response.json()) as ApiPayload;
       const loaded = payload.workItems?.length ? payload.workItems : reynaldsBrothersFallbackWorkItems;
-      setWorkItems(loaded);
-      setSource(payload.source ?? "fallback");
-      setSelectedId((current) => (loaded.some((item) => item.id === current) ? current : loaded[0]?.id ?? ""));
+      const trialItems = loadStoredTrialWorkItems();
+      const nextItems = mergeWorkItemLists(loaded, trialItems);
+      setWorkItems(nextItems);
+      setSource(trialItems.length > 0 ? "trial" : payload.source ?? "fallback");
+      setSelectedId((current) => (nextItems.some((item) => item.id === current) ? current : nextItems[0]?.id ?? ""));
       if (payload.warning) setError(payload.warning);
     } catch (err) {
+      const trialItems = loadStoredTrialWorkItems();
+      const nextItems = mergeWorkItemLists(reynaldsBrothersFallbackWorkItems, trialItems);
       setSource("fallback");
       setError(err instanceof Error ? err.message : "Using preview work items.");
-      setWorkItems(reynaldsBrothersFallbackWorkItems);
+      setWorkItems(nextItems);
+      setSource(trialItems.length > 0 ? "trial" : "fallback");
+      setSelectedId((current) => (nextItems.some((item) => item.id === current) ? current : nextItems[0]?.id ?? ""));
     }
   }
 
@@ -263,37 +274,48 @@ export function ReynaldsBrothersOperationsSystem() {
     event.preventDefault();
     setError("");
 
+    const input: ReynaldsBrothersWorkItemCreateInput = {
+      name: createForm.name,
+      status: "Needs Approval",
+      health: "Watch",
+      nextAction: createForm.nextAction,
+      data: {
+        serviceLine: createForm.serviceLine,
+        customer: createForm.customer,
+        jobType: createForm.jobType,
+        approvalStatus: "Needs Approval",
+        storeNumber: createForm.storeNumber,
+        city: createForm.city,
+        state: createForm.state,
+        siteName: createForm.siteName,
+        workType: createForm.workType,
+        phase: "Needs Approval",
+        phaseTrack: getPhaseTrackForJobType(createForm.jobType),
+        checklistCompleted: [],
+        poStatus: createForm.jobType === "Pressure Washing" ? "Not Required Yet" : "Missing",
+        lucernexStatus: "Not Started",
+        permitStatus: createForm.jobType === "Pressure Washing" ? "Not required" : "Not Started",
+        invoiceStatus: "Not Ready",
+        billingApprovalStatus: "Not Started",
+        mediaStatus: "No media yet",
+        customerUpdateStatus: "Needs human approval",
+        sourceSystem: "manual_trial"
+      }
+    };
+
+    if (source !== "database") {
+      const created = createLocalTrialWorkItem(input);
+      saveLocalWorkItem(created);
+      setCreateForm(defaultCreateForm);
+      setTrialImportMessage("Manual job created in local trial mode.");
+      return;
+    }
+
     try {
       const response = await fetch("/api/reynalds-brothers/work-items", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: createForm.name,
-          status: "Needs Approval",
-          health: "Watch",
-          nextAction: createForm.nextAction,
-          data: {
-            serviceLine: createForm.serviceLine,
-            customer: createForm.customer,
-            jobType: createForm.jobType,
-            approvalStatus: "Needs Approval",
-            storeNumber: createForm.storeNumber,
-            city: createForm.city,
-            state: createForm.state,
-            siteName: createForm.siteName,
-            workType: createForm.workType,
-            phase: "Needs Approval",
-            phaseTrack: getPhaseTrackForJobType(createForm.jobType),
-            checklistCompleted: [],
-            poStatus: createForm.jobType === "Pressure Washing" ? "Not Required Yet" : "Missing",
-            lucernexStatus: "Not Started",
-            permitStatus: createForm.jobType === "Pressure Washing" ? "Not required" : "Not Started",
-            invoiceStatus: "Not Ready",
-            billingApprovalStatus: "Not Started",
-            mediaStatus: "No media yet",
-            customerUpdateStatus: "Needs human approval"
-          }
-        })
+        body: JSON.stringify(input)
       });
 
       const payload = await response.json();
@@ -303,7 +325,10 @@ export function ReynaldsBrothersOperationsSystem() {
       await loadWorkItems();
       if (payload.workItem?.id) setSelectedId(payload.workItem.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Work Item could not be created.");
+      const created = createLocalTrialWorkItem(input);
+      saveLocalWorkItem(created);
+      setCreateForm(defaultCreateForm);
+      setTrialImportMessage("Live database create was unavailable, so this job was added in local trial mode.");
     }
   }
 
@@ -317,6 +342,17 @@ export function ReynaldsBrothersOperationsSystem() {
     }
 
     setTrialImportPending(true);
+
+    if (source !== "database") {
+      const created = trialImportPreview.records.map((record) =>
+        createLocalTrialWorkItem(record.input, `trial_import_${record.rowNumber}`)
+      );
+      saveLocalWorkItems(created);
+      setTrialImportText("");
+      setTrialImportMessage(`${created.length} trial job${created.length === 1 ? "" : "s"} created locally in Needs Approval.`);
+      setTrialImportPending(false);
+      return;
+    }
 
     try {
       let lastCreatedId = "";
@@ -354,6 +390,17 @@ export function ReynaldsBrothersOperationsSystem() {
       ? currentCompleted.filter((item) => item !== checklistItemId)
       : [...currentCompleted, checklistItemId];
     const nextData = applyChecklistAutomation(selectedData, nextCompleted);
+    const nextItem = {
+      ...selected,
+      status: nextData.phase ?? selected.status,
+      data: markTrialWorkItemData(nextData, selected.id)
+    };
+
+    if (source !== "database") {
+      saveLocalWorkItem(nextItem);
+      setTrialImportMessage("Checklist updated in local trial mode.");
+      return;
+    }
 
     try {
       const response = await fetch(`/api/reynalds-brothers/work-items/${selected.id}`, {
@@ -380,6 +427,46 @@ export function ReynaldsBrothersOperationsSystem() {
     if (!selected) return;
 
     setError("");
+    const nextData = {
+      ...selectedData,
+      phase: statusUpdate,
+      crewLead: crewLeadUpdate,
+      invoiceStatus: invoiceStatusUpdate,
+      billingApprovalStatus: billingApprovalStatusUpdate,
+      approvalStatus: approvalStatusUpdate,
+      approvedBy: approvedByUpdate,
+      lucernexStatus: lucernexStatusUpdate,
+      lucernexUrl: lucernexUrlUpdate,
+      poNumber: poNumberUpdate,
+      poStatus: poStatusUpdate,
+      permitStatus: permitStatusUpdate,
+      permitSubmittedDate: permitSubmittedDateUpdate,
+      permitApprovedDate: permitApprovedDateUpdate,
+      tankStatus: tankStatusUpdate,
+      tankSupplier: tankSupplierUpdate,
+      tankSerialNumbers: parseSerialNumbers(tankSerialNumbersUpdate),
+      oilRemovalStatus: oilRemovalStatusUpdate,
+      companyCamUrl: companyCamUrlUpdate,
+      managerName: managerNameUpdate,
+      managerTitle: managerTitleUpdate,
+      signatureStatus: signatureStatusUpdate,
+      vacTruckCompany: vacTruckCompanyUpdate,
+      disposalFacility: disposalFacilityUpdate,
+      completionDate: completionDateUpdate,
+      customerUpdateStatus
+    };
+
+    if (source !== "database") {
+      saveLocalWorkItem({
+        ...selected,
+        status: statusUpdate,
+        health: healthUpdate,
+        nextAction: nextActionUpdate,
+        data: markTrialWorkItemData(nextData, selected.id)
+      });
+      setTrialImportMessage("Work item updated in local trial mode.");
+      return;
+    }
 
     try {
       const response = await fetch(`/api/reynalds-brothers/work-items/${selected.id}`, {
@@ -389,34 +476,7 @@ export function ReynaldsBrothersOperationsSystem() {
           status: statusUpdate,
           health: healthUpdate,
           nextAction: nextActionUpdate,
-          data: {
-            ...selectedData,
-            phase: statusUpdate,
-            crewLead: crewLeadUpdate,
-            invoiceStatus: invoiceStatusUpdate,
-            billingApprovalStatus: billingApprovalStatusUpdate,
-            approvalStatus: approvalStatusUpdate,
-            approvedBy: approvedByUpdate,
-            lucernexStatus: lucernexStatusUpdate,
-            lucernexUrl: lucernexUrlUpdate,
-            poNumber: poNumberUpdate,
-            poStatus: poStatusUpdate,
-            permitStatus: permitStatusUpdate,
-            permitSubmittedDate: permitSubmittedDateUpdate,
-            permitApprovedDate: permitApprovedDateUpdate,
-            tankStatus: tankStatusUpdate,
-            tankSupplier: tankSupplierUpdate,
-            tankSerialNumbers: parseSerialNumbers(tankSerialNumbersUpdate),
-            oilRemovalStatus: oilRemovalStatusUpdate,
-            companyCamUrl: companyCamUrlUpdate,
-            managerName: managerNameUpdate,
-            managerTitle: managerTitleUpdate,
-            signatureStatus: signatureStatusUpdate,
-            vacTruckCompany: vacTruckCompanyUpdate,
-            disposalFacility: disposalFacilityUpdate,
-            completionDate: completionDateUpdate,
-            customerUpdateStatus
-          }
+          data: nextData
         })
       });
 
@@ -437,6 +497,28 @@ export function ReynaldsBrothersOperationsSystem() {
     setApprovalActionPending("approve");
 
     const activationPhase = getActivationPhaseForJobType(selectedData.jobType ?? selectedData.workType ?? selectedData.serviceLine);
+    const nextData = {
+      ...selectedData,
+      approvalStatus: "Approved",
+      approvedBy: "Jeremiah Reynalds",
+      approvalDecisionAt: new Date().toISOString(),
+      phase: activationPhase,
+      customerUpdateStatus: "Approved; ready for office workflow."
+    };
+    const nextItem = {
+      ...selected,
+      status: activationPhase,
+      health: selected.health === "Critical" ? "Attention" : selected.health,
+      nextAction: getApprovalNextAction(selectedData.jobType ?? selectedData.serviceLine),
+      data: markTrialWorkItemData(nextData, selected.id)
+    };
+
+    if (source !== "database") {
+      saveLocalWorkItem(nextItem);
+      setTrialImportMessage("Job approved in local trial mode.");
+      setApprovalActionPending("");
+      return;
+    }
 
     try {
       const response = await fetch(`/api/reynalds-brothers/work-items/${selected.id}`, {
@@ -446,14 +528,7 @@ export function ReynaldsBrothersOperationsSystem() {
           status: activationPhase,
           health: selected.health === "Critical" ? "Attention" : selected.health,
           nextAction: getApprovalNextAction(selectedData.jobType ?? selectedData.serviceLine),
-          data: {
-            ...selectedData,
-            approvalStatus: "Approved",
-            approvedBy: "Jeremiah Reynalds",
-            approvalDecisionAt: new Date().toISOString(),
-            phase: activationPhase,
-            customerUpdateStatus: "Approved; ready for office workflow."
-          }
+          data: nextData
         })
       });
 
@@ -474,6 +549,28 @@ export function ReynaldsBrothersOperationsSystem() {
 
     setError("");
     setApprovalActionPending("hold");
+    const nextData = {
+      ...selectedData,
+      approvalStatus: "On Hold",
+      approvedBy: "Jeremiah Reynalds",
+      approvalDecisionAt: new Date().toISOString(),
+      phase: "Needs Approval",
+      customerUpdateStatus: "Approval held; intake needs office review."
+    };
+    const nextItem = {
+      ...selected,
+      status: "Needs Approval",
+      health: "Attention",
+      nextAction: "Review intake details before activating this job.",
+      data: markTrialWorkItemData(nextData, selected.id)
+    };
+
+    if (source !== "database") {
+      saveLocalWorkItem(nextItem);
+      setTrialImportMessage("Job held for review in local trial mode.");
+      setApprovalActionPending("");
+      return;
+    }
 
     try {
       const response = await fetch(`/api/reynalds-brothers/work-items/${selected.id}`, {
@@ -483,14 +580,7 @@ export function ReynaldsBrothersOperationsSystem() {
           status: "Needs Approval",
           health: "Attention",
           nextAction: "Review intake details before activating this job.",
-          data: {
-            ...selectedData,
-            approvalStatus: "On Hold",
-            approvedBy: "Jeremiah Reynalds",
-            approvalDecisionAt: new Date().toISOString(),
-            phase: "Needs Approval",
-            customerUpdateStatus: "Approval held; intake needs office review."
-          }
+          data: nextData
         })
       });
 
@@ -587,6 +677,27 @@ export function ReynaldsBrothersOperationsSystem() {
     } finally {
       setEmailActionPendingId("");
     }
+  }
+
+  function saveLocalWorkItem(item: ReynaldsBrothersWorkItem) {
+    saveLocalWorkItems([item]);
+  }
+
+  function saveLocalWorkItems(items: ReynaldsBrothersWorkItem[]) {
+    const nextItems = mergeWorkItemLists(workItems, items);
+    persistStoredTrialWorkItems(nextItems);
+    setWorkItems(nextItems);
+    setSource("trial");
+    setSelectedId(items[items.length - 1]?.id ?? selectedId);
+  }
+
+  function clearLocalTrialWorkItems() {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(trialWorkItemsStorageKey);
+    }
+
+    setTrialImportMessage("Local trial jobs cleared.");
+    void loadWorkItems();
   }
 
   return (
@@ -711,13 +822,22 @@ export function ReynaldsBrothersOperationsSystem() {
               <div className="ros-eyebrow">First trial data</div>
               <h2>Paste spreadsheet rows</h2>
             </div>
-            <button
-              className="rb-secondary-button"
-              type="button"
-              onClick={() => setTrialImportText(trialImportExample)}
-            >
-              Load Example
-            </button>
+            <div className="rb-trial-import-actions">
+              <button
+                className="rb-secondary-button"
+                type="button"
+                onClick={() => setTrialImportText(trialImportExample)}
+              >
+                Load Example
+              </button>
+              <button
+                className="rb-secondary-button"
+                type="button"
+                onClick={clearLocalTrialWorkItems}
+              >
+                Clear Trial Jobs
+              </button>
+            </div>
           </div>
 
           <textarea
@@ -776,7 +896,7 @@ export function ReynaldsBrothersOperationsSystem() {
           <article className="rb-metric">
             <span>Open Work</span>
             <strong>{metrics.active}</strong>
-            <p>{source === "database" ? "live company records" : "preview records"}</p>
+            <p>{source === "database" ? "live company records" : source === "trial" ? "local trial records" : "preview records"}</p>
           </article>
           <article className="rb-metric">
             <span>Needs Approval</span>
@@ -1534,4 +1654,73 @@ function parseSerialNumbers(input: string): string[] {
     .split(/\r?\n|,/)
     .map((serial) => serial.trim())
     .filter(Boolean);
+}
+
+function createLocalTrialWorkItem(input: ReynaldsBrothersWorkItemCreateInput, idPrefix = "trial_manual"): ReynaldsBrothersWorkItem {
+  const id = `${idPrefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+  return {
+    id,
+    objectType: REYNALDS_BROTHERS_WORK_ITEM_TYPE,
+    name: input.name,
+    status: input.status,
+    health: input.health,
+    nextAction: input.nextAction,
+    data: markTrialWorkItemData(input.data, id)
+  };
+}
+
+function markTrialWorkItemData(data: ReynaldsBrothersWorkItemData, id: string): ReynaldsBrothersWorkItemData {
+  return {
+    ...data,
+    sourceSystem: data.sourceSystem?.includes("trial") ? data.sourceSystem : "local_trial",
+    sourceReferenceId: data.sourceReferenceId ?? id,
+    intakeReasons: data.intakeReasons?.length ? data.intakeReasons : ["Stored in browser for first trial."]
+  };
+}
+
+function loadStoredTrialWorkItems(): ReynaldsBrothersWorkItem[] {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const stored = window.localStorage.getItem(trialWorkItemsStorageKey);
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.filter(isWorkItemLike);
+  } catch {
+    return [];
+  }
+}
+
+function persistStoredTrialWorkItems(items: ReynaldsBrothersWorkItem[]) {
+  if (typeof window === "undefined") return;
+
+  const localItems = items.filter(isLocalTrialWorkItem);
+  window.localStorage.setItem(trialWorkItemsStorageKey, JSON.stringify(localItems));
+}
+
+function mergeWorkItemLists(baseItems: ReynaldsBrothersWorkItem[], overlayItems: ReynaldsBrothersWorkItem[]): ReynaldsBrothersWorkItem[] {
+  const byId = new Map<string, ReynaldsBrothersWorkItem>();
+
+  baseItems.forEach((item) => byId.set(item.id, item));
+  overlayItems.forEach((item) => byId.set(item.id, item));
+
+  return Array.from(byId.values());
+}
+
+function isLocalTrialWorkItem(item: ReynaldsBrothersWorkItem): boolean {
+  return item.id.startsWith("trial_") || String(item.data?.sourceSystem ?? "").includes("trial");
+}
+
+function isWorkItemLike(input: unknown): input is ReynaldsBrothersWorkItem {
+  if (!input || typeof input !== "object" || Array.isArray(input)) return false;
+  const value = input as Record<string, unknown>;
+
+  return typeof value.id === "string"
+    && typeof value.objectType === "string"
+    && typeof value.name === "string"
+    && typeof value.status === "string"
+    && typeof value.health === "string";
 }

@@ -251,6 +251,7 @@ Initial mutation support:
 - Toggle checklist item completion
 - Preview pasted spreadsheet trial data
 - Create imported trial rows as Needs Approval Work Items
+- Store and edit local browser trial Work Items when the live database is unavailable
 
 ---
 
