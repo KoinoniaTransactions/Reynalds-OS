@@ -430,6 +430,18 @@ export default async function EmployeeDashboardPreviewPage() {
               </section>
 
               <section className="koinonia-employee-request-card">
+                <p className="koinonia-eyebrow">Staff Review</p>
+                <p>
+                  Review missing assignments, open document approvals, billing
+                  setup gaps, access blockers, and showing authorization before
+                  staff work continues.
+                </p>
+                <a className="koinonia-document-link employee" href="/employee/review">
+                  Open Staff Review
+                </a>
+              </section>
+
+              <section className="koinonia-employee-request-card">
                 <p className="koinonia-eyebrow">Billing Readiness</p>
                 <p>
                   Staff should see payment setup needs, prepaid blocks,

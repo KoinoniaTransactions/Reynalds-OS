@@ -34,6 +34,7 @@ The current web app includes:
   - `/employee/documents`
   - `/employee/billing`
   - `/employee/readiness`
+  - `/employee/review`
 - Async session lookup in `apps/web/lib/auth.ts`.
 - Clerk session lookup explicitly treats pending sessions as signed out.
 - Route-level permission guards in `apps/web/lib/portal-auth.ts`.
@@ -59,6 +60,7 @@ The current web app includes:
 - `/employee/access` includes a protected invitation form for creating portal invitations through the existing API.
 - `/employee/access` includes protected action controls for revoking unaccepted invitations and deactivating active portal users.
 - `/employee/readiness` gives staff a live readiness view for login, database, portal workflow, document, oversight, social login, and AI gates.
+- `/employee/review` gives staff a protected rules-based review queue for missing assignments, document gaps, billing setup gaps, access needs, showing authorization, and stale work.
 - Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
 - First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
@@ -66,7 +68,7 @@ The current web app includes:
 - `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 
-Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, the client dashboard current-work list can read owned `RosObject` records, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake and authorized download workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Work-item detail pages, employee assignment mutation, invoice/payment processing, payment processor integration, document version/replacement, and client workspaces still need production passes.
+Most protected portal screens still use sample fallback data when production storage is unavailable. `/employee/access` now has a database-backed access-readiness path, `/employee/review` can review live work/document records for staff oversight, the client dashboard current-work list can read owned `RosObject` records, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake and authorized download workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Work-item detail pages, employee assignment mutation, invoice/payment processing, payment processor integration, document version/replacement, and client workspaces still need production passes.
 
 ---
 
@@ -218,6 +220,7 @@ Before the portal accepts real data:
 - Audit logging exists for sensitive actions.
 - Portal invitation records exist before client/staff access is granted.
 - Staff can review active and inactive portal users through a protected API.
+- Staff can review `/employee/review` findings for assignment, document, billing, access, showing, and stale-work gaps.
 - Staff can review portal users, portal invitations, MFA readiness, and client access readiness in `/employee/access`.
 - Staff can create portal invitation records from `/employee/access`.
 - Staff can revoke unaccepted invitations and deactivate active portal users from `/employee/access`.

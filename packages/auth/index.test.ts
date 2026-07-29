@@ -45,6 +45,7 @@ describe("auth permissions", () => {
 
     expect(can(employee, "employee-portal:view")).toBe(true);
     expect(can(employee, "employee-portal:assignments:update")).toBe(true);
+    expect(can(employee, "employee-portal:reviews:view")).toBe(true);
   });
 
   it("keeps client users out of the employee portal", () => {
@@ -58,6 +59,7 @@ describe("auth permissions", () => {
     expect(permissions).toContain("employee-portal:assigned-work:update");
     expect(permissions).not.toContain("employee-portal:assignments:update");
     expect(permissions).not.toContain("employee-portal:clients:view");
+    expect(permissions).not.toContain("employee-portal:reviews:view");
   });
 
   it("allows contract support to draft and request approval", () => {
@@ -66,6 +68,7 @@ describe("auth permissions", () => {
     expect(permissions).toContain("document-workspace:drafts:create");
     expect(permissions).toContain("document-workspace:drafts:update");
     expect(permissions).toContain("document-workspace:approval:request");
+    expect(permissions).toContain("employee-portal:reviews:view");
     expect(permissions).not.toContain("document-workspace:templates:update");
   });
 
@@ -99,6 +102,7 @@ describe("auth permissions", () => {
     expect(permissions).toContain("billing-workspace:profiles:update");
     expect(permissions).toContain("billing-workspace:invoices:create");
     expect(permissions).toContain("billing-workspace:payments:process");
+    expect(permissions).not.toContain("employee-portal:reviews:view");
   });
 
   it("keeps showing providers out of payment records", () => {

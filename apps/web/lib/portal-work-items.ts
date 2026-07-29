@@ -35,29 +35,19 @@ export function getPortalWorkStatusBucket(status: string): PortalWorkStatusBucke
   const normalizedStatus = status.toLowerCase();
 
   if (
-    normalizedStatus.includes("complete") ||
-    normalizedStatus.includes("archived") ||
-    normalizedStatus.includes("closed") ||
-    normalizedStatus.includes("sent") ||
-    normalizedStatus.includes("approved")
+    /\b(completed?|archived|closed|sent|approved)\b/.test(normalizedStatus)
   ) {
     return "completed";
   }
 
   if (
-    normalizedStatus.includes("review") ||
-    normalizedStatus.includes("approval") ||
-    normalizedStatus.includes("ready")
+    /\b(review|approval|ready)\b/.test(normalizedStatus)
   ) {
     return "review";
   }
 
   if (
-    normalizedStatus.includes("waiting") ||
-    normalizedStatus.includes("needed") ||
-    normalizedStatus.includes("blocked") ||
-    normalizedStatus.includes("missing") ||
-    normalizedStatus.includes("requested")
+    /\b(waiting|needed|blocked|missing|requested)\b/.test(normalizedStatus)
   ) {
     return "waiting";
   }

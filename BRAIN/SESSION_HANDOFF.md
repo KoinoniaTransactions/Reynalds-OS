@@ -11,8 +11,8 @@ Primary Business Priority: Koinonia Transactions website launch and client-acqui
 
 Status: Source scaffold advanced / not production-live
 Branch: `feature/app-shell-foundation`
-Local state: ahead of `origin/feature/app-shell-foundation` by 12 commits
-Push state: do not push without Jeremiah explicitly approving the exact commit hashes
+Local state: checkpoint completed and pushed after each verified production-readiness slice
+Push state: Jeremiah approved committing and pushing all completed portal-readiness work in the active thread
 
 ## Completed In This Session
 
@@ -25,21 +25,21 @@ Push state: do not push without Jeremiah explicitly approving the exact commit h
 - Added first-login invitation acceptance that can create the Koinonia user from an approved invitation.
 - Explicitly treats pending Clerk sessions as signed out.
 - Seeds all approved Koinonia portal role names.
+- Added scanner-gated portal document uploads and authorized private document downloads.
+- Added protected showing, external access, and billing setup request workflows.
+- Added explicit client/staff assignment fields to `RosObject`.
+- Added `/employee/readiness` as the live production-readiness oversight view.
+- Added `/employee/review` as the protected rules-based Staff Review Center for missing assignments, document gaps, billing setup, access needs, showing authorization, and stale work.
 
-## Local Commits Not Yet Pushed
+## Recent Pushed Commits
 
-- `e6406b9` Seed Koinonia portal roles
-- `f6e8cb4` Treat pending Clerk sessions as signed out
-- `8f2d0e2` Accept portal invitations on first login
-- `0e341b2` Scaffold portal provider invitations
-- `ae90889` Standardize portal API auth errors
-- `386cc89` Add employee portal access preview
-- `f1b0b3d` Test portal invitation validation
-- `266180b` Add portal invitation API scaffold
-- `3feeebb` Resolve provider users through portal records
-- `84a28ce` Add portal auth identity schema
-- `56cfaae` Wire Clerk portal auth provider
-- `3928bbc` Add portal production auth scaffold
+- `0837948` Add portal readiness view and email intake oversight
+- `b438c3d` Add Reynalds Brothers operations workspace
+- `4d9c7ae` Add portal assignment fields to work objects
+- `1c6b423` Connect client dashboard work items
+- `5ce3fee` Require malware scan for portal document uploads
+- `f6a3bd9` Add authorized portal document downloads
+- `5a6765e` Add portal billing setup requests
 
 ## Verified Locally
 
@@ -48,6 +48,8 @@ Push state: do not push without Jeremiah explicitly approving the exact commit h
 - `pnpm --filter @reynalds-os/database build`
 - `pnpm --filter @reynalds-os/web build`
 - Production preview route check for `/employee/access` with mock auth allowed returned 200.
+- Production preview route check for `/employee/readiness` with mock auth allowed returned 200.
+- Production preview route check for `/employee/review` with mock auth allowed returned 200.
 - Production preview with mock auth disabled returned clean 503 JSON from `/api/me` and `/api/portal/invitations`.
 
 ## Still Not Production Ready
@@ -56,6 +58,7 @@ Push state: do not push without Jeremiah explicitly approving the exact commit h
 - Staff MFA must be enabled and verified in Clerk.
 - Docker/Postgres was unavailable locally, so full invitation create/list/send/acceptance could not be tested against a live database.
 - A real Clerk invite email must be sent and accepted by a test client and a test staff user.
+- The Staff Review Center is rules-based. AI summarization should stay read-only until privacy controls, citations, audit events, and human approval gates are verified.
 - No real client documents, billing setup, staff assignments, or internal notes should be accepted until the real-provider checklist passes.
 
 ---

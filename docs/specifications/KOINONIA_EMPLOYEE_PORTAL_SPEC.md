@@ -75,6 +75,7 @@ Expected dashboard sections:
 - Assignment Overview
 - Unassigned Clients
 - Unassigned Work
+- Staff Review Center
 - Document Workspace
 - Billing Workspace
 - Staff Workload
@@ -116,6 +117,38 @@ Rules:
 - Final document sending requires recorded Realtor approval or a documented approved workflow.
 - Showing providers should not see transaction document drafts unless a showing-specific document is assigned.
 - The portal should not store third-party forms, brokerage, MLS, or e-signature passwords.
+
+### Employee Staff Review Center
+
+Route:
+
+`/employee/review`
+
+Purpose:
+
+Give Koinonia staff one protected oversight queue for the operational gaps that can cause missed deadlines, client confusion, unauthorized showing activity, billing mistakes, or document-sending errors.
+
+Expected sections:
+
+- Critical findings
+- Needs-attention findings
+- Monitor findings
+- Assignment gaps
+- Missing client links
+- Missing next actions
+- Document storage and review gaps
+- Billing consent and processor setup gaps
+- External access blockers
+- Showing authorization and scheduling gaps
+- Stale active work
+
+Rules:
+
+- The first production version should be rules-based and cite the record field that caused each finding.
+- AI may summarize or prioritize these findings later, but should not silently change records, send documents, schedule showings, or process billing.
+- Each finding should include a clear next staff action.
+- Staff review access should be limited to roles responsible for transaction, document, client, and operations oversight.
+- Finance-only and showing-only staff should continue through their narrower role-specific workspaces unless granted broader review access.
 
 ### Employee Billing Workspace
 

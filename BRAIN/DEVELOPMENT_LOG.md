@@ -14,6 +14,28 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Koinonia Staff Review Center Added
+
+### Summary
+
+Koinonia staff now have a protected review center for spotting the operational gaps that AI should eventually help summarize: missing assignments, missing client links, missing next actions, document review/storage gaps, billing consent issues, delegated access needs, showing authorization, and stale work.
+
+### Implemented
+
+- Added `/employee/review` as a staff-only review workspace.
+- Added `employee-portal:reviews:view` to the permission model for Owner, Operations, Transaction Coordinator, Contract Support, and Customer Success.
+- Added a shared `buildStaffReviewReport` helper with critical, attention, monitor, and clear statuses.
+- Added unit tests for review rules covering assignments, showings, billing setup, documents, and clear work.
+- Linked the Staff Review Center from the employee portal entry and employee dashboard.
+- Updated the readiness view so rules-based staff review is separate from future AI-provider readiness.
+- Updated the employee portal spec, auth readiness notes, module map, and robots exclusions.
+
+### Current Status
+
+The Staff Review Center is rules-based and safe for preview. A future AI layer should summarize and prioritize these findings only after production privacy controls, citations, audit events, and human approval gates are verified.
+
+---
+
 ## 2026-07-29 — Koinonia Portal Readiness View Added
 
 ### Summary

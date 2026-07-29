@@ -112,6 +112,10 @@ export default function EmployeePortalPage() {
                   View Billing Workspace
                 </a>
 
+                <a className="koinonia-button secondary" href="/employee/review">
+                  View Staff Review
+                </a>
+
                 <a className="koinonia-button secondary" href="/employee/readiness">
                   View Readiness
                 </a>

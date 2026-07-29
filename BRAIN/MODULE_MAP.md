@@ -27,6 +27,7 @@
 | Koinonia Employee Document Workspace Preview | `/employee/documents` | Auth-guarded upload intake queue with live document metadata and sample fallback; drafting/send/archive still preview only |
 | Koinonia Employee Billing Workspace Preview | `/employee/billing` | Auth-guarded billing setup request queue with live metadata list and sample fallback; invoices/payment processing still preview only |
 | Koinonia Employee Readiness View | `/employee/readiness` | Auth-guarded live portal production readiness view for login, database, documents, social login, AI review, and launch gates |
+| Koinonia Staff Review Center | `/employee/review` | Auth-guarded rules-based review queue for missing assignments, document gaps, billing setup, access needs, showing authorization, and stale work |
 
 ## Primary APIs
 

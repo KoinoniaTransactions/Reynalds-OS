@@ -3596,6 +3596,214 @@ h1 {
   padding: 18px;
 }
 
+.koinonia-staff-review-hero {
+  padding-top: clamp(96px, 11vw, 138px);
+  padding-bottom: clamp(34px, 5vw, 64px);
+}
+
+.koinonia-staff-review-status-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.koinonia-staff-review-status-row span,
+.koinonia-staff-review-notice,
+.koinonia-staff-review-empty-line {
+  color: var(--ros-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.koinonia-staff-review-notice {
+  margin: 18px 0 0;
+}
+
+.koinonia-staff-review-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.koinonia-staff-review-summary-card,
+.koinonia-staff-review-panel,
+.koinonia-staff-review-item,
+.koinonia-staff-review-empty {
+  border: 1px solid rgba(25, 92, 96, 0.16);
+  border-radius: 8px;
+  background: rgba(250, 253, 252, 0.82);
+}
+
+.koinonia-staff-review-summary-card {
+  min-height: 114px;
+  padding: 18px;
+}
+
+.koinonia-staff-review-summary-card span,
+.koinonia-staff-review-item-heading span {
+  color: #195c60;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-staff-review-summary-card strong {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--ros-font-display);
+  font-size: clamp(34px, 4vw, 48px);
+  line-height: 1;
+}
+
+.koinonia-staff-review-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.koinonia-staff-review-panel {
+  padding: clamp(18px, 3vw, 24px);
+}
+
+.koinonia-staff-review-panel-heading,
+.koinonia-staff-review-item-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.koinonia-staff-review-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.koinonia-staff-review-item {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+}
+
+.koinonia-staff-review-item.critical {
+  border-color: rgba(178, 59, 59, 0.28);
+}
+
+.koinonia-staff-review-item.attention {
+  border-color: rgba(184, 138, 68, 0.35);
+}
+
+.koinonia-staff-review-item.monitor {
+  border-color: rgba(25, 92, 96, 0.28);
+}
+
+.koinonia-staff-review-item h2,
+.koinonia-staff-review-empty h2 {
+  margin: 6px 0 0;
+  font-family: var(--ros-font-display);
+  font-size: 22px;
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+.koinonia-staff-review-item strong,
+.koinonia-staff-review-item p,
+.koinonia-staff-review-item small,
+.koinonia-staff-review-empty p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.koinonia-staff-review-item strong {
+  color: var(--ros-text);
+  font-weight: 800;
+}
+
+.koinonia-staff-review-item p,
+.koinonia-staff-review-item small,
+.koinonia-staff-review-empty p {
+  color: var(--ros-muted);
+}
+
+.koinonia-staff-review-item small {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.koinonia-staff-review-badge {
+  align-items: center;
+  border: 1px solid rgba(25, 92, 96, 0.14);
+  border-radius: 999px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.koinonia-staff-review-badge.clear {
+  background: rgba(83, 112, 76, 0.11);
+  border-color: rgba(83, 112, 76, 0.26);
+  color: #3f6539;
+}
+
+.koinonia-staff-review-badge.critical {
+  background: rgba(178, 59, 59, 0.1);
+  border-color: rgba(178, 59, 59, 0.24);
+  color: #8e2d2d;
+}
+
+.koinonia-staff-review-badge.attention {
+  background: rgba(184, 138, 68, 0.12);
+  border-color: rgba(184, 138, 68, 0.32);
+  color: #8a6225;
+}
+
+.koinonia-staff-review-badge.monitor {
+  background: rgba(25, 92, 96, 0.1);
+  border-color: rgba(25, 92, 96, 0.22);
+  color: #195c60;
+}
+
+.koinonia-staff-review-empty {
+  display: grid;
+  gap: 14px;
+  margin: 0 auto;
+  max-width: 760px;
+  padding: clamp(24px, 4vw, 38px);
+  text-align: center;
+}
+
+.koinonia-staff-review-next {
+  display: grid;
+  gap: 18px;
+}
+
+.koinonia-staff-review-next-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.koinonia-staff-review-next-grid a {
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  min-height: 40px;
+  padding: 9px 14px;
+  text-decoration: none;
+}
+
 .koinonia-access-form {
   display: grid;
   gap: 12px;
@@ -4438,12 +4646,16 @@ h1 {
 
   .koinonia-readiness-summary-grid,
   .koinonia-readiness-grid,
-  .koinonia-readiness-next-grid {
+  .koinonia-readiness-next-grid,
+  .koinonia-staff-review-summary-grid,
+  .koinonia-staff-review-grid {
     grid-template-columns: 1fr;
   }
 
   .koinonia-readiness-panel-heading,
-  .koinonia-readiness-item-heading {
+  .koinonia-readiness-item-heading,
+  .koinonia-staff-review-panel-heading,
+  .koinonia-staff-review-item-heading {
     display: grid;
   }
 }

@@ -137,6 +137,12 @@ export function buildPortalReadinessReport(input: PortalReadinessInput): PortalR
           "Staff can review the current login, data, document, portal, and AI gates from one protected page.",
           "This page is generated from current configuration and database checks."
         ),
+        readyItem(
+          "staff-review-center",
+          "Staff review center",
+          "Koinonia has a protected rules-based review queue for missing assignments, documents, billing setup, access, and showing issues.",
+          "/employee/review uses current portal records and does not rely on generative output."
+        ),
         getAiReadiness(input)
       ]
     }
@@ -457,8 +463,8 @@ function getAiReadiness(input: PortalReadinessInput): PortalReadinessItem {
     return attentionItem(
       "ai-review",
       "AI staff review",
-      "AI provider configuration is present, but staff approval policy still needs a production pass.",
-      "The current Copilot is read-only and requires human review.",
+      "AI provider configuration is present, but checklist-specific prompts and approval policy still need a production pass.",
+      "The staff review center is rules-based and the current Copilot is read-only.",
       "Add checklist-specific AI review prompts, citations, audit events, and approval gates."
     );
   }
@@ -466,9 +472,9 @@ function getAiReadiness(input: PortalReadinessInput): PortalReadinessItem {
   return attentionItem(
     "ai-review",
     "AI staff review",
-    "AI should help staff avoid missed deadlines, missing documents, billing gaps, showing access issues, and unsigned approvals.",
-    "The current Copilot is read-only and does not write records.",
-    "Keep AI read-only until model configuration, privacy rules, and human approval gates are verified."
+    "AI can help staff prioritize missed deadlines, missing documents, billing gaps, showing access issues, and unsigned approvals after the rules-based review center is proven.",
+    "The staff review center is active without sending portal data to an AI provider.",
+    "Keep AI read-only until model configuration, privacy rules, citations, audit events, and human approval gates are verified."
   );
 }
 

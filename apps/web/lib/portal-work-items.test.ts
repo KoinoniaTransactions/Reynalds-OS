@@ -15,6 +15,7 @@ describe("portal work item helpers", () => {
 
   it("groups statuses into client dashboard buckets", () => {
     expect(getPortalWorkStatusBucket("Waiting on Client")).toBe("waiting");
+    expect(getPortalWorkStatusBucket("Consent Needed")).toBe("waiting");
     expect(getPortalWorkStatusBucket("Ready for Client Review")).toBe("review");
     expect(getPortalWorkStatusBucket("Completed")).toBe("completed");
     expect(getPortalWorkStatusBucket("Active")).toBe("active");

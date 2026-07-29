@@ -28,6 +28,7 @@ export type Permission =
   | "employee-portal:assignments:update"
   | "employee-portal:staff:view"
   | "employee-portal:capacity:view"
+  | "employee-portal:reviews:view"
   | "document-workspace:view"
   | "document-workspace:checklists:update"
   | "document-workspace:drafts:create"
@@ -90,6 +91,7 @@ export const rolePermissions = {
     "employee-portal:assignments:update",
     "employee-portal:staff:view",
     "employee-portal:capacity:view",
+    "employee-portal:reviews:view",
     "document-workspace:view",
     "document-workspace:checklists:update",
     "document-workspace:drafts:create",
@@ -136,6 +138,7 @@ export const rolePermissions = {
     "employee-portal:assignments:update",
     "employee-portal:staff:view",
     "employee-portal:capacity:view",
+    "employee-portal:reviews:view",
     "document-workspace:view",
     "document-workspace:checklists:update",
     "document-workspace:drafts:create",
@@ -168,6 +171,7 @@ export const rolePermissions = {
     "employee-portal:work:view",
     "employee-portal:assigned-work:view",
     "employee-portal:assigned-work:update",
+    "employee-portal:reviews:view",
     "document-workspace:view",
     "document-workspace:checklists:update",
     "document-workspace:versions:view",
@@ -193,6 +197,7 @@ export const rolePermissions = {
     "employee-portal:work:view",
     "employee-portal:assigned-work:view",
     "employee-portal:assigned-work:update",
+    "employee-portal:reviews:view",
     "document-workspace:view",
     "document-workspace:checklists:update",
     "document-workspace:drafts:create",
@@ -226,7 +231,8 @@ export const rolePermissions = {
     "employee-portal:clients:view",
     "employee-portal:work:view",
     "employee-portal:assigned-work:view",
-    "employee-portal:assigned-work:update"
+    "employee-portal:assigned-work:update",
+    "employee-portal:reviews:view"
   ],
   Finance: [
     "objects:view",

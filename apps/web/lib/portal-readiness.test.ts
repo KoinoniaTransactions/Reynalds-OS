@@ -38,6 +38,16 @@ describe("portal readiness report", () => {
     expect(socialLogin?.detail).toContain("invitation-gated");
   });
 
+  it("tracks the staff review center separately from AI provider readiness", () => {
+    const report = buildPortalReadinessReport(getReadyInput());
+    const items = report.groups.flatMap((group) => group.items);
+    const staffReview = items.find((item) => item.id === "staff-review-center");
+    const aiReview = items.find((item) => item.id === "ai-review");
+
+    expect(staffReview?.status).toBe("ready");
+    expect(aiReview?.status).toBe("attention");
+  });
+
   it("blocks production readiness when mock auth is enabled in production", () => {
     const report = buildPortalReadinessReport(getReadyInput({ rosAllowMockAuth: "true" }));
     const mockAuth = report.groups.flatMap((group) => group.items).find((item) => item.id === "mock-auth");
