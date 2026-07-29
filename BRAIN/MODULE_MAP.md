@@ -15,6 +15,7 @@
 | Notifications | `/notifications` | Notification MVP |
 | Workflows | `/workflows` | Workflow MVP |
 | Koinonia Client Portal Entry | `/client` | Public entry shell, no sensitive forms |
+| Koinonia Client Dashboard Preview | `/client/dashboard` | Sample-data preview only, not production auth |
 
 ## Primary APIs
 

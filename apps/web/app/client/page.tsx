@@ -100,6 +100,10 @@ export default function ClientPortalPage() {
                 <a className="koinonia-button secondary" href="/contact">
                   Contact Koinonia
                 </a>
+
+                <a className="koinonia-button secondary" href="/client/dashboard">
+                  View Dashboard Preview
+                </a>
               </div>
             </div>
 

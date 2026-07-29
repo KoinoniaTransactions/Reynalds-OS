@@ -280,11 +280,11 @@ The preferred implementation should extend the Object Engine instead of creating
 
 Build the portal in safe slices:
 
-1. Client portal specification and security decision.
-2. Public `/client` login entry page with no sensitive forms.
+1. Client portal specification and security decision. — Complete
+2. Public `/client` login entry page with no sensitive forms. — Complete
 3. Real auth provider selection and implementation plan.
-4. Portal roles and permissions.
-5. Client dashboard shell using mocked/sample data only.
+4. Portal roles and permissions. — Scaffolded in `packages/auth`
+5. Client dashboard shell using mocked/sample data only. — Preview route added at `/client/dashboard`
 6. Work item detail shell using mocked/sample data only.
 7. Database schema additions.
 8. Authenticated read-only dashboard connected to real work items.
@@ -295,6 +295,8 @@ Build the portal in safe slices:
 13. Production security review before accepting real client documents.
 
 Do not begin with file upload or credential fields.
+
+The `/client/dashboard` preview is not a production dashboard. It uses sample data only and must not receive real client documents, passwords, or confidential transaction details.
 
 ---
 
@@ -320,4 +322,3 @@ Use these as implementation guardrails:
 - OWASP Secrets Management Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html
 - NIST SP 800-63B Digital Identity Guidelines: https://pages.nist.gov/800-63-4/sp800-63b.html
 - Colorado Division of Real Estate, Employing Broker Supervision: https://dre.colorado.gov/division-programs/real-estate-broker/broker-practice-guidance/employing-broker-supervision
-

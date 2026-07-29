@@ -11,7 +11,13 @@ export type Permission =
   | "finance:update"
   | "admin:view"
   | "admin:update"
-  | "copilot:ask";
+  | "copilot:ask"
+  | "client-portal:view"
+  | "client-portal:work:view"
+  | "client-portal:documents:view"
+  | "client-portal:documents:upload"
+  | "client-portal:access:view"
+  | "client-portal:access:update";
 
 export type AuthUser = {
   id: string;
@@ -36,7 +42,13 @@ export const rolePermissions: Record<string, Permission[]> = {
     "finance:update",
     "admin:view",
     "admin:update",
-    "copilot:ask"
+    "copilot:ask",
+    "client-portal:view",
+    "client-portal:work:view",
+    "client-portal:documents:view",
+    "client-portal:documents:upload",
+    "client-portal:access:view",
+    "client-portal:access:update"
   ],
   Operations: [
     "objects:view",
@@ -46,10 +58,22 @@ export const rolePermissions: Record<string, Permission[]> = {
     "timeline:create",
     "tasks:view",
     "tasks:update",
-    "copilot:ask"
+    "copilot:ask",
+    "client-portal:view",
+    "client-portal:work:view",
+    "client-portal:documents:view",
+    "client-portal:access:view",
+    "client-portal:access:update"
   ],
   Finance: ["objects:view", "timeline:view", "finance:view", "finance:update"],
-  Viewer: ["objects:view", "timeline:view"]
+  Viewer: ["objects:view", "timeline:view"],
+  Client: [
+    "client-portal:view",
+    "client-portal:work:view",
+    "client-portal:documents:view",
+    "client-portal:documents:upload",
+    "client-portal:access:view"
+  ]
 };
 
 export function can(user: AuthUser, permission: Permission): boolean {
@@ -70,5 +94,16 @@ export function getMockUser(): AuthUser {
     email: "owner@example.com",
     role: "Owner",
     permissions: rolePermissions.Owner
+  };
+}
+
+export function getMockClientUser(): AuthUser {
+  return {
+    id: "usr_client_preview",
+    workspaceId: process.env.ROS_MOCK_WORKSPACE_ID ?? "wks_koinonia",
+    name: "Realtor Client Preview",
+    email: "client@example.com",
+    role: "Client",
+    permissions: rolePermissions.Client
   };
 }
