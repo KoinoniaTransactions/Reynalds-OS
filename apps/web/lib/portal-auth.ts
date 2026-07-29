@@ -42,8 +42,10 @@ export function getSignInPath(returnTo: string, status?: "configuration"): strin
 }
 
 export function getHostedSignInUrl(returnTo: string): string | null {
-  const signInUrl =
-    process.env.NEXT_PUBLIC_AUTH_SIGN_IN_URL ?? process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL;
+  const signInUrl = firstPresent(
+    process.env.NEXT_PUBLIC_AUTH_SIGN_IN_URL,
+    process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL
+  );
 
   if (!signInUrl || !isAllowedHostedAuthUrl(signInUrl)) {
     return null;
@@ -53,8 +55,10 @@ export function getHostedSignInUrl(returnTo: string): string | null {
 }
 
 export function getHostedSignOutUrl(returnTo = "/"): string | null {
-  const signOutUrl =
-    process.env.NEXT_PUBLIC_AUTH_SIGN_OUT_URL ?? process.env.NEXT_PUBLIC_CLERK_SIGN_OUT_URL;
+  const signOutUrl = firstPresent(
+    process.env.NEXT_PUBLIC_AUTH_SIGN_OUT_URL,
+    process.env.NEXT_PUBLIC_CLERK_SIGN_OUT_URL
+  );
 
   if (!signOutUrl || !isAllowedHostedAuthUrl(signOutUrl)) {
     return null;
@@ -99,6 +103,10 @@ export function isAllowedHostedAuthUrl(url: string, nodeEnv = process.env.NODE_E
   } catch {
     return false;
   }
+}
+
+function firstPresent(...values: Array<string | undefined>): string | undefined {
+  return values.find((value) => typeof value === "string" && value.trim().length > 0);
 }
 
 function withRedirectParam(url: string, returnTo: string): string {

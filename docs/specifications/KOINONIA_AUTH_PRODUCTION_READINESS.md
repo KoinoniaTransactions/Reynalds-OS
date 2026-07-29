@@ -84,7 +84,7 @@ The current web app includes:
 - Hosted sign-in links and return destinations are limited to same-site portal paths or public HTTPS managed-auth URLs.
 - Permission tests for provider role mapping and typed denial behavior.
 - Portal API permission denials return a clean 403 response without exposing internal permission names.
-- `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, seeded portal roles, and stored role permission lists.
+- `pnpm verify:portal` checks production auth env, hosted login URL safety, upload storage env, mock-auth safety, database connectivity, workspace presence, seeded portal roles, and stored role permission lists.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 - The verifier and `/employee/readiness` require at least one accepted client invitation and one accepted staff invitation before login can be treated as production-ready.
 
@@ -149,7 +149,7 @@ Production Clerk values must be real production keys. Placeholder values, exampl
 
 `NEXT_PUBLIC_SITE_URL` and any `KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS` entries must be public HTTPS Koinonia-controlled origins. Use same-site paths such as `/client/dashboard` and `/employee/dashboard` for normal portal invite redirects.
 
-`NEXT_PUBLIC_CLERK_SIGN_IN_URL` and `NEXT_PUBLIC_AUTH_SIGN_IN_URL` must be same-site paths such as `/sign-in` or public HTTPS managed-auth login URLs.
+`NEXT_PUBLIC_CLERK_SIGN_IN_URL`, `NEXT_PUBLIC_AUTH_SIGN_IN_URL`, and optional hosted sign-out URLs must be same-site paths such as `/sign-in` or public HTTPS managed-auth URLs. Blank generic auth URL values are ignored so `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in` can remain the stable fallback.
 
 Then configure Clerk user metadata for Koinonia:
 

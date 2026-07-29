@@ -21,9 +21,14 @@ jobs:
       - run: pnpm verify:portal -- --skip-database
         env:
           AUTH_PROVIDER: clerk
-          CLERK_SECRET_KEY: sk_test_ci_placeholder
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci_placeholder
+          CLERK_SECRET_KEY: sk_live_ciReadinessValue
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_live_ciReadinessValue
+          NEXT_PUBLIC_CLERK_SIGN_IN_URL: /sign-in
+          NEXT_PUBLIC_SITE_URL: https://www.koinoniatransactions.com
           DATABASE_URL: postgresql://portal-readiness-ci:portal-readiness-ci@localhost:5432/portal_readiness_ci
+          KOINONIA_PAYMENT_PROCESSOR_PROVIDER: stripe
+          KOINONIA_PAYMENT_SETUP_URL: https://payments.koinoniatransactions.com/setup
+          KOINONIA_PAYMENT_WEBHOOK_SECRET: whsec_ciReadinessValue
           ROS_ALLOW_MOCK_AUTH: "false"
       - run: pnpm test
       - run: pnpm build

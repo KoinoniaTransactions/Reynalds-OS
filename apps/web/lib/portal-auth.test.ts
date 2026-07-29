@@ -44,6 +44,15 @@ describe("portal auth redirects", () => {
     );
   });
 
+  it("falls back to Clerk sign-in when the generic auth sign-in URL is blank", () => {
+    process.env.NEXT_PUBLIC_AUTH_SIGN_IN_URL = "";
+    process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL = "/sign-in";
+
+    expect(getHostedSignInUrl("/client/documents")).toBe(
+      "/sign-in?redirect_url=%2Fclient%2Fdocuments"
+    );
+  });
+
   it("allows public HTTPS hosted sign-in destinations", () => {
     process.env.NEXT_PUBLIC_AUTH_SIGN_IN_URL = "https://accounts.koinoniatransactions.com/sign-in?mode=portal";
     delete process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL;

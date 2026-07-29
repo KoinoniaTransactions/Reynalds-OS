@@ -24,8 +24,10 @@ export async function buildCurrentPortalReadinessReport(): Promise<PortalReadine
     clerkSecretKey: process.env.CLERK_SECRET_KEY,
     documentMalwareScanCommand: process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND,
     documentUploadDir: process.env.PORTAL_DOCUMENT_UPLOAD_DIR,
-    hostedSignInUrl:
-      process.env.NEXT_PUBLIC_AUTH_SIGN_IN_URL ?? process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
+    hostedSignInUrl: getFirstConfiguredValue(
+      process.env.NEXT_PUBLIC_AUTH_SIGN_IN_URL,
+      process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL
+    ),
     nodeEnv: process.env.NODE_ENV,
     paymentProcessorProvider: process.env.KOINONIA_PAYMENT_PROCESSOR_PROVIDER,
     paymentProcessorSetupUrl: process.env.KOINONIA_PAYMENT_SETUP_URL,
@@ -128,4 +130,8 @@ function getConfiguredList(value: string | undefined): string[] {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function getFirstConfiguredValue(...values: Array<string | undefined>): string | undefined {
+  return values.find((value) => typeof value === "string" && value.trim().length > 0);
 }

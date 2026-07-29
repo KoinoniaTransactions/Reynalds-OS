@@ -57,6 +57,26 @@ recordCheck(
   authRedirectOrigins.length > 0 && invalidAuthRedirectOrigins.length === 0,
   getAuthRedirectOriginDetail(authRedirectOrigins, invalidAuthRedirectOrigins)
 );
+const hostedSignInUrl = getFirstConfiguredValue(
+  process.env.NEXT_PUBLIC_AUTH_SIGN_IN_URL,
+  process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL
+);
+const hostedSignOutUrl = getFirstConfiguredValue(
+  process.env.NEXT_PUBLIC_AUTH_SIGN_OUT_URL,
+  process.env.NEXT_PUBLIC_CLERK_SIGN_OUT_URL
+);
+recordCheck(
+  "hosted sign-in URL is safe",
+  isAllowedHostedAuthUrl(hostedSignInUrl, process.env.NODE_ENV),
+  getHostedAuthUrlDetail(hostedSignInUrl)
+);
+if (isPresent(hostedSignOutUrl)) {
+  recordCheck(
+    "hosted sign-out URL is safe",
+    isAllowedHostedAuthUrl(hostedSignOutUrl, process.env.NODE_ENV),
+    getHostedAuthUrlDetail(hostedSignOutUrl)
+  );
+}
 recordCheck("DATABASE_URL is set", isPresent(process.env.DATABASE_URL));
 recordCheck(
   "ROS_ALLOW_MOCK_AUTH is not enabled",
@@ -396,10 +416,58 @@ function getAuthRedirectOriginDetail(origins, invalidOrigins) {
   return `configured origin(s): ${origins.join(", ")}`;
 }
 
+function getHostedAuthUrlDetail(value) {
+  if (!isPresent(value)) {
+    return "set NEXT_PUBLIC_CLERK_SIGN_IN_URL or NEXT_PUBLIC_AUTH_SIGN_IN_URL";
+  }
+
+  if (!isAllowedHostedAuthUrl(value, process.env.NODE_ENV)) {
+    return `invalid target: ${value.trim()}`;
+  }
+
+  return `configured target: ${value.trim()}`;
+}
+
 function isPlaceholderCredential(value) {
   return /\b(placeholder|changeme|change-me|dummy|example|fake|todo|your-key|your_key)\b/i.test(
     value
   );
+}
+
+function getFirstConfiguredValue(...values) {
+  return values.find(isPresent);
+}
+
+function isAllowedHostedAuthUrl(value, nodeEnv) {
+  if (!isPresent(value)) {
+    return false;
+  }
+
+  const trimmed = value.trim();
+
+  if (isSameSitePath(trimmed)) {
+    return true;
+  }
+
+  if (isPlaceholderCredential(trimmed)) {
+    return false;
+  }
+
+  try {
+    const url = new URL(trimmed);
+
+    if (url.protocol === "https:" && !isLocalPreviewHost(url.hostname)) {
+      return true;
+    }
+
+    return (
+      nodeEnv !== "production" &&
+      (url.protocol === "http:" || url.protocol === "https:") &&
+      isLocalPreviewHost(url.hostname)
+    );
+  } catch {
+    return false;
+  }
 }
 
 function isPublicHttpsUrl(value) {
@@ -420,6 +488,18 @@ function isPublicHttpsUrl(value) {
   } catch {
     return false;
   }
+}
+
+function isSameSitePath(value) {
+  return value.startsWith("/") && !value.startsWith("//") && !hasControlCharacter(value);
+}
+
+function isLocalPreviewHost(hostname) {
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1" || hostname === "[::1]";
+}
+
+function hasControlCharacter(value) {
+  return /[\u0000-\u001f\u007f]/.test(value);
 }
 
 function recordCheck(name, ok, detail = "") {
