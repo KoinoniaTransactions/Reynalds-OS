@@ -1,5 +1,6 @@
 const nav = [
   "Dashboard",
+  "Reynalds Brothers",
   "CRM",
   "Transactions",
   "Contracts",
@@ -19,6 +20,7 @@ const nav = [
 
 function navHref(item: string) {
   if (item === "CRM") return "/crm";
+  if (item === "Reynalds Brothers") return "/reynalds-brothers";
   if (item === "Transactions") return "/transactions";
   if (item === "Operations") return "/operations";
   if (item === "Finance") return "/finance";

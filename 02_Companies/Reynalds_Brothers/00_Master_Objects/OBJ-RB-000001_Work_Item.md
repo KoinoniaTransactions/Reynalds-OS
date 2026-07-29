@@ -111,6 +111,42 @@ Completion should be supported by evidence such as:
 
 ---
 
+## First Software Implementation
+
+The first Work Item implementation is the Reynalds Brothers operations workspace:
+
+`/reynalds-brothers`
+
+The first dedicated API is:
+
+`/api/reynalds-brothers/work-items`
+
+Work Item updates are handled at:
+
+`/api/reynalds-brothers/work-items/[id]`
+
+Initial computed signals:
+
+- Work item lane
+- Active work count
+- Attention count
+- Missing crew assignment
+- Missing documentation
+- Billing readiness
+- Customer update status
+
+Initial mutation support:
+
+- Create Work Item
+- Update status
+- Update health
+- Update crew lead
+- Update invoice status
+- Update customer update status
+- Update next action
+
+---
+
 ## AI Role
 
 AI may assist by:

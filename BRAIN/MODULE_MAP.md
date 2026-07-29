@@ -5,6 +5,7 @@
 | Module | Route | Status |
 |---|---|---|
 | Dashboard | `/` | Database-backed metrics |
+| Reynalds Brothers Operations Workspace | `/reynalds-brothers` | Dedicated company workspace for Reynalds Brothers Work Items, field readiness, documentation, billing readiness, and customer updates |
 | Object Explorer | `/objects` | Create/edit/archive/search/relate |
 | CRM | `/crm` | Relationship MVP |
 | Transactions | `/transactions` | Transaction MVP |
@@ -38,6 +39,8 @@
 | `/api/invoices` | Invoice list/create |
 | `/api/invoices/:id` | Invoice update/mark paid |
 | `/api/analytics/dashboard` | Dashboard metrics |
+| `/api/reynalds-brothers/work-items` | Reynalds Brothers Work Item list and operational metrics scoped to the company workspace |
+| `/api/reynalds-brothers/work-items/:id` | Reynalds Brothers Work Item operational update |
 | `/api/copilot` | Read-only Copilot |
 | `/api/notifications` | Notification list/create |
 | `/api/notifications/:id` | Notification update |

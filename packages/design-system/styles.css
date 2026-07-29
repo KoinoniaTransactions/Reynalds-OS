@@ -303,6 +303,317 @@ h1 {
   color: var(--ros-text);
 }
 
+.ros-table a {
+  color: var(--ros-text);
+  text-decoration: none;
+}
+
+.ros-table a:hover {
+  color: var(--ros-gold);
+}
+
+.rb-os {
+  --rb-surface-muted: #fbf7f0;
+  --rb-ready: #2f7d5c;
+  --rb-missing: #b84f35;
+}
+
+.rb-main {
+  overflow: hidden;
+}
+
+.rb-command-strip,
+.rb-module-grid,
+.rb-two-column {
+  display: grid;
+  gap: 14px;
+}
+
+.rb-command-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 24px 0 18px;
+}
+
+.rb-metric,
+.rb-section,
+.rb-detail,
+.rb-lane {
+  background: var(--ros-surface);
+  border: 1px solid var(--ros-border);
+  border-radius: 20px;
+  box-shadow: 0 14px 35px var(--ros-shadow);
+}
+
+.rb-metric {
+  min-height: 132px;
+  padding: 18px;
+  display: grid;
+  align-content: space-between;
+}
+
+.rb-metric span,
+.rb-service,
+.rb-lane-heading span,
+.rb-work-card small,
+.rb-detail-grid dt {
+  color: var(--ros-muted);
+  font-size: 12px;
+}
+
+.rb-metric strong {
+  font-family: var(--ros-font-display);
+  font-size: 34px;
+}
+
+.rb-metric p,
+.rb-module p,
+.rb-work-card p,
+.rb-detail p,
+.rb-alert-list span,
+.rb-rhythm li {
+  color: var(--ros-muted);
+  line-height: 1.5;
+}
+
+.rb-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
+  gap: 18px;
+  align-items: start;
+}
+
+.rb-board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(210px, 1fr));
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.rb-lane {
+  min-width: 210px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.rb-lane-heading,
+.rb-detail-heading,
+.rb-section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.rb-lane-heading h2,
+.rb-section h2,
+.rb-detail h2,
+.rb-detail h3,
+.rb-module h3 {
+  margin: 0;
+}
+
+.rb-lane-heading h2 {
+  font-family: var(--ros-font-ui);
+  font-size: 15px;
+}
+
+.rb-card-stack {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.rb-work-card {
+  width: 100%;
+  min-height: 178px;
+  border: 1px solid var(--ros-border);
+  border-radius: 16px;
+  padding: 12px;
+  text-align: left;
+  background: white;
+  color: var(--ros-text);
+  display: grid;
+  gap: 8px;
+}
+
+.rb-work-card.active {
+  outline: 3px solid rgba(184, 138, 68, 0.34);
+}
+
+.rb-work-card strong {
+  font-family: var(--ros-font-display);
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.rb-service,
+.rb-health {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: var(--rb-surface-muted);
+  border: 1px solid var(--ros-border);
+  font-weight: 700;
+}
+
+.rb-health {
+  color: var(--rb-ready);
+}
+
+.rb-health.watch,
+.rb-health.attention {
+  color: #a66d21;
+}
+
+.rb-health.critical {
+  color: var(--rb-missing);
+}
+
+.rb-detail {
+  padding: 18px;
+  position: sticky;
+  top: 18px;
+}
+
+.rb-detail-grid,
+.rb-mini-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.rb-detail-grid div,
+.rb-checklist,
+.rb-mini-columns div,
+.rb-module {
+  background: var(--rb-surface-muted);
+  border: 1px solid var(--ros-border);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.rb-detail-grid dt {
+  margin-bottom: 6px;
+}
+
+.rb-detail-grid dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.rb-checklist ul,
+.rb-mini-columns ul,
+.rb-alert-list,
+.rb-rhythm {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.rb-checklist li.ready {
+  color: var(--rb-ready);
+}
+
+.rb-checklist li.missing {
+  color: var(--rb-missing);
+}
+
+.rb-section {
+  padding: 18px;
+  margin-top: 18px;
+}
+
+.rb-create-panel {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.rb-inline-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.rb-inline-form input,
+.rb-update-form input,
+.rb-update-form select {
+  width: 100%;
+  border: 1px solid var(--ros-border);
+  border-radius: 14px;
+  padding: 11px 13px;
+  background: white;
+  color: var(--ros-text);
+  font: inherit;
+}
+
+.rb-inline-form button,
+.rb-update-form button {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 16px;
+  background: var(--ros-text);
+  color: white;
+  font-weight: 700;
+}
+
+.rb-update-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ros-border);
+}
+
+.rb-update-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--ros-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rb-module-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rb-two-column {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.rb-alert-list {
+  display: grid;
+  gap: 10px;
+}
+
+.rb-alert-list li {
+  display: grid;
+  gap: 4px;
+}
+
+.rb-empty {
+  margin: 0;
+  color: var(--ros-muted);
+  font-size: 13px;
+}
+
+@media (max-width: 1180px) {
+  .rb-command-strip,
+  .rb-inline-form,
+  .rb-layout,
+  .rb-module-grid,
+  .rb-two-column {
+    grid-template-columns: 1fr;
+  }
+
+  .rb-detail {
+    position: static;
+  }
+}
+
 /* Koinonia public website components */
 .koinonia-site {
   background: var(--ros-bg);

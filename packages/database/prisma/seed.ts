@@ -164,7 +164,10 @@ async function main() {
         operationalRisks: ["Disposal coordination", "Water volume control", "Overnight access window"],
         scheduledStart: null,
         scheduledEnd: null,
-        invoiceStatus: "Not Ready"
+        invoiceStatus: "Not Ready",
+        customerUpdateStatus: "Needs confirmation email",
+        mediaStatus: "Before photos required",
+        permitStatus: "Not required"
       }
     },
     {
@@ -192,7 +195,10 @@ async function main() {
         operationalRisks: ["Scope confirmation pending", "Material availability"],
         scheduledStart: null,
         scheduledEnd: null,
-        invoiceStatus: "Not Ready"
+        invoiceStatus: "Not Ready",
+        customerUpdateStatus: "Scope not confirmed",
+        mediaStatus: "No media yet",
+        permitStatus: "Review needed"
       }
     },
     {
@@ -217,7 +223,38 @@ async function main() {
         operationalRisks: ["Site contact not confirmed", "Material requirements pending"],
         scheduledStart: null,
         scheduledEnd: null,
-        invoiceStatus: "Not Ready"
+        invoiceStatus: "Not Ready",
+        customerUpdateStatus: "Needs site contact",
+        mediaStatus: "No media yet",
+        permitStatus: "Unknown"
+      }
+    },
+    {
+      id: "rb_wi_backflow_221",
+      objectType: "rb.work_item",
+      name: "Backflow Service — Multi-Site Review",
+      status: "Waiting on Customer",
+      health: "Attention",
+      nextAction: "Get site list, access windows, and device counts before scheduling.",
+      data: {
+        serviceLine: "Backflow",
+        customer: "Commercial Client",
+        sourceSystem: "manual_seed",
+        workType: "Backflow testing and documentation",
+        workOrderNumber: "RB-WO-BF-221",
+        siteName: "Multi-site route",
+        phase: "Scope Hold",
+        crewLead: null,
+        crewMembers: [],
+        equipmentRequired: ["Backflow test kit", "Calibration record", "Tablet"],
+        documentationRequired: ["Device list", "Test reports", "Customer authorization"],
+        operationalRisks: ["Incomplete site list", "Access windows unknown"],
+        scheduledStart: null,
+        scheduledEnd: null,
+        invoiceStatus: "Blocked",
+        customerUpdateStatus: "Waiting on customer details",
+        mediaStatus: "Not applicable",
+        permitStatus: "Jurisdiction review"
       }
     }
   ];

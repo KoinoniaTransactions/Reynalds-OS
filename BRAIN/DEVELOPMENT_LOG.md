@@ -14,6 +14,34 @@ Each development session should add a new entry with:
 
 ---
 
+# 2026-07-29 — Reynalds Brothers Operations Workspace
+
+## Objective
+
+Promote Reynalds Brothers from a simple dashboard concept into a distinct company operations workspace inside Reynalds OS, separate from Koinonia.
+
+## Completed
+
+- Added a dedicated Reynalds Brothers route at `/reynalds-brothers`.
+- Added a dedicated Work Item API at `/api/reynalds-brothers/work-items`.
+- Added Work Item create/update actions and timeline events for company-scoped Work Items.
+- Added Work Item intake and selected-item update controls to the Reynalds Brothers workspace.
+- Added a Work Item engine helper for lanes, metrics, location formatting, crew readiness, and documentation readiness.
+- Added focused tests for the Work Item engine.
+- Updated the Reynalds OS workspace registry to point Reynalds Brothers to its own company route.
+- Updated the Reynalds Brothers company Brain, README, object spec, and changelog.
+
+## Known Issues
+
+- This is the first operations workspace slice. Media uploads, document storage, customer communication logging, task assignment, and billing closeout actions still need live workflows.
+- The repository had unrelated active Koinonia portal changes during this work; avoid mixing those changes into a Reynalds Brothers commit unless intentionally bundling a larger checkpoint.
+
+## Recommended Next Step
+
+Connect tasks, documents/media, and billing readiness to the existing Object Engine instead of leaving them as display-only signals.
+
+---
+
 # 2026-07-08 — Next.js Stabilization and Koinonia Content Architecture
 
 ## Objective
@@ -2028,3 +2056,24 @@ The client dashboard current-work list now has a live read path for client-owned
 ### Current Status
 
 Client dashboard work-item reads compile and are covered by helper tests. Live verification still requires reachable database storage and real provider-backed users with client-owned work objects. Work-item detail pages, client-visible history, staff assignment mutation, and employee assignment queue persistence remain future production slices.
+
+---
+
+## 2026-07-29 — RosObject Portal Assignment Fields Added
+
+### Summary
+
+Koinonia work records now have explicit fields for client visibility and staff assignment, reducing the risk of one generic owner field being used for both client access and internal responsibility.
+
+### Implemented
+
+- Added `clientUserId`, `clientObjectId`, `assignedStaffUserId`, and `backupStaffUserId` to `RosObject`.
+- Added database migration indexes for client visibility and staff assignment lookups.
+- Updated object create/update validation and object creation to pass assignment fields.
+- Updated showing, access, and billing setup request APIs to populate `clientUserId` for client-created records and `assignedStaffUserId` for staff-created records.
+- Updated client-facing portal reads to use `clientUserId` with backward-compatible `ownerId` fallback.
+- Updated client, employee, and auth readiness specifications.
+
+### Current Status
+
+The assignment fields compile after Prisma client generation and are covered by validation tests. Employee assignment mutation, assignment history, staff capacity logic, and client account ownership screens remain future production slices.
