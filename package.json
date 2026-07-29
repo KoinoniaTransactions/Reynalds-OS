@@ -16,7 +16,8 @@
     "db:migrate": "pnpm --filter @reynalds-os/database prisma migrate dev",
     "setup:local": "pnpm install && docker compose up -d && pnpm db:generate",
     "verify:local": "pnpm test && pnpm build",
-    "db:seed": "pnpm --filter @reynalds-os/database db:seed"
+    "db:seed": "pnpm --filter @reynalds-os/database db:seed",
+    "verify:portal": "pnpm --filter @reynalds-os/database verify:portal"
   },
   "devDependencies": {
     "typescript": "^5.6.0"

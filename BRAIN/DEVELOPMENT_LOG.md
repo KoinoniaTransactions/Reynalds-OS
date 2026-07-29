@@ -1643,3 +1643,22 @@ Provider-backed portal access now fails closed when Clerk does not expose an ema
 ### Current Status
 
 This prevents unsafe invitation matching, but live provider-user testing is still required before production portal login is marked ready.
+
+---
+
+## 2026-07-29 — Portal Production Readiness Verifier Added
+
+### Summary
+
+A repeatable portal readiness command was added so production login can be checked against real environment variables and database state before client or staff data is accepted.
+
+### Implemented
+
+- Added `pnpm verify:portal`.
+- Verifies `AUTH_PROVIDER=clerk`, required Clerk keys, `DATABASE_URL`, and that mock auth is not enabled.
+- Verifies database connectivity, Koinonia workspace presence, and approved portal role seed records when database access is available.
+- Added a `--skip-database` mode for source-only verification.
+
+### Current Status
+
+The command is ready, but local Docker/Postgres access is still blocked in this sandbox. Run the full command against a reachable local or production database before marking login production-ready.

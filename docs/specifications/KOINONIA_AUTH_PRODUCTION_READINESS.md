@@ -46,6 +46,7 @@ The current web app includes:
 - First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
 - Permission tests for provider role mapping and typed denial behavior.
+- `pnpm verify:portal` checks production auth env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
 
 The protected routes still use sample data only. They are guarded screens, not production data workflows.
 
@@ -177,6 +178,19 @@ Before the portal accepts real data:
 - Invitation acceptance writes an audit event and creates the portal user from the approved invitation.
 - Portal API auth failures return clear JSON status responses, not generic crashes.
 - No brokerage passwords, MLS passwords, raw card numbers, or CVV fields are accepted.
+- `pnpm verify:portal` passes against the target production environment.
+
+Run this before accepting real portal data:
+
+```bash
+pnpm verify:portal
+```
+
+For source-only verification without a database, the script supports:
+
+```bash
+pnpm verify:portal -- --skip-database
+```
 
 ---
 
