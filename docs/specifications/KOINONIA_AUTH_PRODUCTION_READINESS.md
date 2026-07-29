@@ -43,6 +43,7 @@ The current web app includes:
 - Provider users must expose a real email address before portal matching or invitation acceptance can run.
 - `/api/portal/invitations` for internal invitation record creation and review.
 - `/api/portal/invitations/:id/revoke` for revoking unaccepted invitation records with audit history.
+- `/api/portal/users` for staff access-status review.
 - `/api/portal/users/:id/deactivate` for deactivating accepted portal users with audit history.
 - Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
 - First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
@@ -177,6 +178,7 @@ Before the portal accepts real data:
 - Portal APIs use real session identity, not mock identity.
 - Audit logging exists for sensitive actions.
 - Portal invitation records exist before client/staff access is granted.
+- Staff can review active and inactive portal users through a protected API.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
 - Invitation acceptance writes an audit event and creates the portal user from the approved invitation.

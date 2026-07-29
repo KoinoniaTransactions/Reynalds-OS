@@ -46,4 +46,5 @@
 | `/api/workflow-runs` | Workflow run list |
 | `/api/portal/invitations` | Portal invitation record list/create |
 | `/api/portal/invitations/:id/revoke` | Portal invitation revoke and audit |
+| `/api/portal/users` | Portal user access status list |
 | `/api/portal/users/:id/deactivate` | Portal user deactivation and audit |

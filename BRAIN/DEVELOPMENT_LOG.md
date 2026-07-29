@@ -1703,3 +1703,22 @@ Koinonia can now deactivate accepted portal users through a protected API route,
 ### Current Status
 
 The route compiles and guard behavior is covered. Live database verification still requires reachable Postgres.
+
+---
+
+## 2026-07-29 — Portal User Listing API Added
+
+### Summary
+
+A protected portal user listing API was added so operations staff can review user access status before deactivation or audit review.
+
+### Implemented
+
+- Added `/api/portal/users`.
+- Requires `employee-portal:staff:view`.
+- Returns safe user access fields, MFA requirement, login timing, deactivation timing, and role name.
+- Supports optional `status` and `portalAccessStatus` filters.
+
+### Current Status
+
+The route compiles. Live database verification still requires reachable Postgres.
