@@ -3011,6 +3011,48 @@ h1 {
   width: 100%;
 }
 
+.koinonia-access-action {
+  display: grid;
+  gap: 6px;
+  justify-items: end;
+}
+
+.koinonia-access-action-button {
+  border: 1px solid rgba(25, 92, 96, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.84);
+  color: #195c60;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.1;
+  padding: 8px 10px;
+}
+
+.koinonia-access-action-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.koinonia-access-action-status {
+  display: block;
+  max-width: 180px;
+  color: var(--ros-muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.koinonia-access-action-status.error {
+  color: #8e2d2d;
+}
+
+.koinonia-access-action-status.success {
+  color: #3f6539;
+}
+
 .koinonia-employee-boundary-card {
   border-color: rgba(25, 92, 96, 0.34);
 }

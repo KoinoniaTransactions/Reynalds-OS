@@ -1800,3 +1800,23 @@ The employee access workspace now includes a protected invitation form so approv
 ### Current Status
 
 The form compiles and uses the existing protected invitation API. Live send testing still requires reachable database storage and configured Clerk provider keys.
+
+---
+
+## 2026-07-29 — Employee Access Actions Added
+
+### Summary
+
+The employee access workspace now exposes protected revoke and deactivate actions for access operations that already exist in the portal API.
+
+### Implemented
+
+- Added reusable client action button for protected portal access operations.
+- Added revoke controls for unaccepted invitation records.
+- Added deactivate controls for active staff portal users.
+- Hid self-deactivation in the UI while keeping the API-level guard.
+- Refreshed the access workspace after successful access changes.
+
+### Current Status
+
+The UI action layer compiles and calls the existing protected APIs. Live mutation verification still requires reachable database storage.

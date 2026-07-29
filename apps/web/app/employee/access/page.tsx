@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
+import { PortalAccessActionButton } from "../../../components/employee/PortalAccessActionButton";
 import { PortalInvitationForm } from "../../../components/employee/PortalInvitationForm";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
+import { canRevokeInvitationStatus } from "../../../lib/portal-invitations";
 import {
   buildAccessSummaryCards,
   getAccessSummaryCounts,
@@ -31,6 +33,7 @@ export const metadata: Metadata = {
 };
 
 type InvitationQueueItem = {
+  canRevoke: boolean;
   client: string;
   email: string;
   id: string;
@@ -44,6 +47,7 @@ type InvitationQueueItem = {
 
 type StaffAccessItem = {
   access: string;
+  canDeactivate: boolean;
   id: string;
   mfa: string;
   name: string;
@@ -72,6 +76,7 @@ type AccessWorkspaceView = {
 const sampleInvitationQueue: InvitationQueueItem[] = [
   {
     id: "sample-alyssa",
+    canRevoke: false,
     person: "Alyssa Morgan",
     email: "alyssa@brighthomesteam.example",
     role: "Client",
@@ -83,6 +88,7 @@ const sampleInvitationQueue: InvitationQueueItem[] = [
   },
   {
     id: "sample-daniel",
+    canRevoke: false,
     person: "Daniel Price",
     email: "daniel@wilsonrealty.example",
     role: "Client",
@@ -94,6 +100,7 @@ const sampleInvitationQueue: InvitationQueueItem[] = [
   },
   {
     id: "sample-tasha",
+    canRevoke: false,
     person: "Tasha Reed",
     email: "tasha@koinonia.example",
     role: "Showing Provider",
@@ -105,6 +112,7 @@ const sampleInvitationQueue: InvitationQueueItem[] = [
   },
   {
     id: "sample-erin",
+    canRevoke: false,
     person: "Erin Blake",
     email: "erin@koinonia.example",
     role: "Customer Success",
@@ -119,6 +127,7 @@ const sampleInvitationQueue: InvitationQueueItem[] = [
 const sampleStaffAccess: StaffAccessItem[] = [
   {
     id: "sample-jeremiah",
+    canDeactivate: false,
     name: "Jeremiah Reynalds",
     role: "Owner",
     mfa: "Required",
@@ -127,6 +136,7 @@ const sampleStaffAccess: StaffAccessItem[] = [
   },
   {
     id: "sample-maya",
+    canDeactivate: false,
     name: "Maya Torres",
     role: "Transaction Coordinator",
     mfa: "Required",
@@ -135,6 +145,7 @@ const sampleStaffAccess: StaffAccessItem[] = [
   },
   {
     id: "sample-luis",
+    canDeactivate: false,
     name: "Luis Carter",
     role: "Contract Support",
     mfa: "Required",
@@ -143,6 +154,7 @@ const sampleStaffAccess: StaffAccessItem[] = [
   },
   {
     id: "sample-tasha-staff",
+    canDeactivate: false,
     name: "Tasha Reed",
     role: "Showing Provider",
     mfa: "Required",
@@ -215,7 +227,7 @@ const setupChecklist = [
 
 export default async function EmployeeAccessWorkspacePage() {
   const actor = await requirePortalPermission("employee-portal:assignments:update", "/employee/access");
-  const accessWorkspace = await getAccessWorkspaceView(actor.workspaceId);
+  const accessWorkspace = await getAccessWorkspaceView(actor.workspaceId, actor.id);
 
   return (
     <main className="koinonia-site koinonia-employee-dashboard koinonia-employee-access">
@@ -298,6 +310,14 @@ export default async function EmployeeAccessWorkspacePage() {
                       <div className="koinonia-employee-work-meta">
                         <strong>{invite.status}</strong>
                         <span>Access status</span>
+                        {invite.canRevoke ? (
+                          <PortalAccessActionButton
+                            confirmation={`Revoke access invitation for ${invite.email}?`}
+                            endpoint={`/api/portal/invitations/${invite.id}/revoke`}
+                            label="Revoke"
+                            successMessage="Invitation revoked."
+                          />
+                        ) : null}
                       </div>
                     </article>
                   ))}
@@ -322,6 +342,7 @@ export default async function EmployeeAccessWorkspacePage() {
                         <th>MFA</th>
                         <th>Access</th>
                         <th>Scope</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -332,6 +353,18 @@ export default async function EmployeeAccessWorkspacePage() {
                           <td>{staff.mfa}</td>
                           <td>{staff.access}</td>
                           <td>{staff.scope}</td>
+                          <td>
+                            {staff.canDeactivate ? (
+                              <PortalAccessActionButton
+                                confirmation={`Deactivate portal access for ${staff.name}?`}
+                                endpoint={`/api/portal/users/${staff.id}/deactivate`}
+                                label="Deactivate"
+                                successMessage="Access deactivated."
+                              />
+                            ) : (
+                              "No action"
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -427,7 +460,7 @@ export default async function EmployeeAccessWorkspacePage() {
   );
 }
 
-async function getAccessWorkspaceView(workspaceId: string): Promise<AccessWorkspaceView> {
+async function getAccessWorkspaceView(workspaceId: string, actorId: string): Promise<AccessWorkspaceView> {
   try {
     const [users, invitations] = await Promise.all([
       prisma.user.findMany({
@@ -484,6 +517,7 @@ async function getAccessWorkspaceView(workspaceId: string): Promise<AccessWorksp
           .slice(0, 8)
           .map((invitation) => ({
             id: invitation.id,
+            canRevoke: canRevokeInvitationStatus(invitation.status),
             person: invitation.name ?? invitation.email,
             email: invitation.email,
             role: invitation.roleName,
@@ -507,6 +541,8 @@ async function getAccessWorkspaceView(workspaceId: string): Promise<AccessWorksp
           )
           .map((user) => ({
             id: user.id,
+            canDeactivate:
+              user.id !== actorId && user.status === "active" && user.portalAccessStatus === "active",
             name: user.name,
             role: user.role?.name ?? "Viewer",
             mfa: getMfaLabel({
@@ -691,6 +727,7 @@ function withEmptyInvitations(invitations: InvitationQueueItem[]): InvitationQue
   return [
     {
       id: "empty-invitations",
+      canRevoke: false,
       person: "No pending invitations",
       email: "Invite queue is clear",
       role: "Access",
@@ -711,6 +748,7 @@ function withEmptyStaffAccess(staffAccess: StaffAccessItem[]): StaffAccessItem[]
   return [
     {
       id: "empty-staff-access",
+      canDeactivate: false,
       name: "No staff users found",
       role: "Setup Needed",
       mfa: "Needs Review",
