@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
+import { ShowingRequestForm } from "../../../components/client/ShowingRequestForm";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
+import { prisma } from "../../../lib/db";
+import {
+  getHumanShowingStatus,
+  getShowingNoteLabels,
+  getShowingTimingLabel,
+  showingRequestObjectType
+} from "../../../lib/showing-requests";
 
 export const dynamic = "force-dynamic";
 
@@ -72,8 +80,24 @@ const workItems = [
   }
 ] as const;
 
-const showingRequests = [
+type ShowingRequestItem = {
+  id: string;
+  nextAction: string;
+  notes: string[];
+  status: string;
+  timing: string;
+  title: string;
+};
+
+type ShowingRequestView = {
+  isLiveData: boolean;
+  notice?: string;
+  requests: ShowingRequestItem[];
+};
+
+const sampleShowingRequests: ShowingRequestItem[] = [
   {
+    id: "sample-northgate-tour",
     title: "Schedule Northgate Buyer Tour",
     status: "Scheduling Requested",
     nextAction: "Koinonia is checking requested showing windows and buyer availability.",
@@ -81,6 +105,7 @@ const showingRequests = [
     notes: ["Client contact authorized", "Friday morning is the backup window"]
   },
   {
+    id: "sample-west-ridge",
     title: "West Ridge Showing Coverage",
     status: "Waiting on Client",
     nextAction: "Access instructions and safety notes are needed before coverage can be confirmed.",
@@ -88,13 +113,14 @@ const showingRequests = [
     notes: ["Rush review needed", "Access details pending"]
   },
   {
+    id: "sample-northgate-follow-up",
     title: "Northgate Showing Follow-Up",
     status: "Feedback Sent",
     nextAction: "Showing notes were delivered. Follow-up remains open if the Realtor requests it.",
     timing: "Complete",
     notes: ["Buyer feedback delivered", "No immediate issue flagged"]
   }
-] as const;
+];
 
 const documentRequests = [
   "Executed listing agreement",
@@ -117,7 +143,8 @@ const accessRequests = [
 ] as const;
 
 export default async function ClientDashboardPreviewPage() {
-  await requirePortalPermission("client-portal:view", "/client/dashboard");
+  const actor = await requirePortalPermission("client-portal:view", "/client/dashboard");
+  const showingRequestView = await getClientShowingRequestView(actor.workspaceId, actor.id);
 
   return (
     <main className="koinonia-site koinonia-client-dashboard">
@@ -133,9 +160,10 @@ export default async function ClientDashboardPreviewPage() {
             </h1>
 
             <p className="koinonia-lead">
-              This preview uses sample data only. Real client dashboard access
-              must wait for production authentication, document storage, and
-              audit logging.
+              This preview is moving toward live portal workflows. Showing
+              requests can use protected storage when production database
+              access is available; document and billing work still need their
+              own storage pass.
             </p>
           </div>
 
@@ -186,8 +214,12 @@ export default async function ClientDashboardPreviewPage() {
                 </div>
 
                 <div className="koinonia-client-work-list">
-                  {showingRequests.map((request) => (
-                    <article className="koinonia-client-work-item" key={request.title}>
+                  {showingRequestView.notice ? (
+                    <p className="koinonia-client-security-note">{showingRequestView.notice}</p>
+                  ) : null}
+
+                  {showingRequestView.requests.map((request) => (
+                    <article className="koinonia-client-work-item" key={request.id}>
                       <div>
                         <span>Request Showing Coverage</span>
                         <h3>{request.title}</h3>
@@ -210,6 +242,8 @@ export default async function ClientDashboardPreviewPage() {
             </div>
 
             <aside className="koinonia-client-side-panel" aria-label="Client requests">
+              <ShowingRequestForm storageReady={showingRequestView.isLiveData} />
+
               <section className="koinonia-client-request-card">
                 <p className="koinonia-eyebrow">Documents Needed</p>
                 <ul>
@@ -261,5 +295,74 @@ export default async function ClientDashboardPreviewPage() {
 
       <Footer />
     </main>
+  );
+}
+
+async function getClientShowingRequestView(
+  workspaceId: string,
+  userId: string
+): Promise<ShowingRequestView> {
+  try {
+    const showingRequests = await prisma.rosObject.findMany({
+      where: {
+        workspaceId,
+        ownerId: userId,
+        objectType: showingRequestObjectType,
+        archivedAt: null
+      },
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      take: 12
+    });
+
+    return {
+      isLiveData: true,
+      requests: withEmptyShowingRequests(
+        showingRequests.map((request) => ({
+          id: request.id,
+          title: request.name,
+          status: getHumanShowingStatus(request.status),
+          nextAction: request.nextAction ?? "Koinonia will review the showing request.",
+          timing: getShowingTimingLabel(request.data),
+          notes: getShowingNoteLabels(request.data)
+        }))
+      )
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    return {
+      isLiveData: false,
+      notice:
+        "Showing request storage is not reachable in this preview, so sample requests are shown.",
+      requests: sampleShowingRequests
+    };
+  }
+}
+
+function withEmptyShowingRequests(requests: ShowingRequestItem[]): ShowingRequestItem[] {
+  if (requests.length > 0) {
+    return requests;
+  }
+
+  return [
+    {
+      id: "empty-showing-requests",
+      title: "No showing requests yet",
+      status: "Ready",
+      nextAction: "Submit a showing request when a client needs scheduling or licensed coverage.",
+      timing: "No active request",
+      notes: ["Request form ready", "No access secrets in notes"]
+    }
+  ];
+}
+
+function isDatabaseUnavailableError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "PrismaClientInitializationError" ||
+      error.message.includes("Can't reach database server") ||
+      error.message.includes("ECONNREFUSED"))
   );
 }

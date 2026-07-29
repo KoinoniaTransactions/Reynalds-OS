@@ -24,6 +24,14 @@ describe("auth permissions", () => {
     expect(can(client, "client-portal:documents:upload")).toBe(true);
   });
 
+  it("allows client users to request showing support without object-admin access", () => {
+    const client = getMockClientUser();
+
+    expect(can(client, "client-portal:showings:view")).toBe(true);
+    expect(can(client, "client-portal:showings:create")).toBe(true);
+    expect(can(client, "objects:create")).toBe(false);
+  });
+
   it("does not allow client users to update access requests", () => {
     expect(can(getMockClientUser(), "client-portal:access:update")).toBe(false);
   });

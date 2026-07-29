@@ -219,21 +219,12 @@ The showing request form should collect:
 - Buyer or client name.
 - Buyer/client phone or email, if Koinonia is approved to coordinate directly.
 - Property address.
-- MLS number or listing link, if available.
-- Requested showing date.
 - Preferred showing time or time window.
-- Alternate time windows.
-- Access method and access instructions.
-- Showing service or platform used, if applicable.
-- Appointment confirmation status.
-- Client instructions.
-- Safety notes.
-- Pets, occupancy, gate, parking, alarm, lockbox, or access constraints.
 - Whether the Realtor has authorized Koinonia to contact the buyer/client for scheduling.
-- Preferred feedback format.
-- Follow-up requested after showing.
-- Rush or same-day flag.
-- Distance or custom-pricing flag.
+
+The first production slice stores showing requests as `ShowingRequest` objects through `/api/portal/showing-requests`. It captures property, timing, request type, buyer/client label, approved contact, authorization, and scheduling notes.
+
+Access-sensitive details such as lockbox codes, gate codes, door codes, passwords, MLS login details, alarm codes, or other private access secrets must not be entered into the general showing request notes. Those require a separate approved secure sharing flow before production use.
 
 The showing request should show these client-facing statuses:
 
@@ -255,6 +246,8 @@ Rules:
 - Same-day requests should be flagged as rush and accepted only if capacity allows.
 - If Koinonia is scheduling directly with a buyer/client, the Realtor's authorization should be recorded before contact occurs.
 - Showing providers should only receive the assigned showing details, access instructions, safety notes, and feedback form needed for that showing.
+- Client users can create and review their own showing requests.
+- Employee users with assigned-work access can review the workspace showing request queue.
 
 ---
 
@@ -428,7 +421,7 @@ Build the portal in safe slices:
 4. Portal roles and permissions. — Scaffolded in `packages/auth`
 5. Client dashboard shell using mocked/sample data only. — Preview route added at `/client/dashboard`
 6. Work item detail shell using mocked/sample data only.
-7. Showing request section using mocked/sample data only.
+7. Showing request section with protected create/list API, client request form, employee queue visibility, and safe preview fallback.
 8. Client document center using mocked/sample data only.
 9. Client billing center using mocked/sample data only.
 10. Database schema additions. — Portal identity fields, `PortalInvitation`, and `AuditEvent` scaffolded in Prisma.

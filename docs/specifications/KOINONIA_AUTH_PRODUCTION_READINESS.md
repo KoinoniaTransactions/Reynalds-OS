@@ -48,6 +48,7 @@ The current web app includes:
 - `/api/portal/users` for staff access-status review.
 - `/api/portal/users/:id/deactivate` for deactivating accepted portal users with audit history.
 - `/api/portal/audit` for protected portal access audit history review.
+- `/api/portal/showing-requests` for protected showing request create/list workflows.
 - `/employee/access` can read portal users and portal invitation records for staff access readiness, with safe preview fallback when storage is unavailable.
 - `/employee/access` includes a protected invitation form for creating portal invitations through the existing API.
 - `/employee/access` includes protected action controls for revoking unaccepted invitations and deactivating active portal users.
@@ -58,7 +59,7 @@ The current web app includes:
 - `pnpm verify:portal` checks production auth env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 
-Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, but document, billing, dashboard, and client workspaces still need real workflow storage before production use.
+Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, and showing requests now have a protected object-backed workflow. Document, billing, broader dashboard, and client workspaces still need real workflow storage before production use.
 
 ---
 
@@ -194,6 +195,8 @@ Before the portal accepts real data:
 - Staff can create portal invitation records from `/employee/access`.
 - Staff can revoke unaccepted invitations and deactivate active portal users from `/employee/access`.
 - Staff can review recent portal access audit history from `/employee/access`.
+- Clients can create and review their own showing requests.
+- Employee users with assigned-work access can review the showing request queue.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
 - Invitation acceptance writes an audit event and creates the portal user from the approved invitation.

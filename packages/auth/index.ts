@@ -14,6 +14,8 @@ export type Permission =
   | "copilot:ask"
   | "client-portal:view"
   | "client-portal:work:view"
+  | "client-portal:showings:view"
+  | "client-portal:showings:create"
   | "client-portal:documents:view"
   | "client-portal:documents:upload"
   | "client-portal:access:view"
@@ -74,6 +76,8 @@ export const rolePermissions = {
     "copilot:ask",
     "client-portal:view",
     "client-portal:work:view",
+    "client-portal:showings:view",
+    "client-portal:showings:create",
     "client-portal:documents:view",
     "client-portal:documents:upload",
     "client-portal:access:view",
@@ -119,6 +123,8 @@ export const rolePermissions = {
     "copilot:ask",
     "client-portal:view",
     "client-portal:work:view",
+    "client-portal:showings:view",
+    "client-portal:showings:create",
     "client-portal:documents:view",
     "client-portal:access:view",
     "client-portal:access:update",
@@ -154,6 +160,7 @@ export const rolePermissions = {
     "tasks:view",
     "tasks:update",
     "client-portal:work:view",
+    "client-portal:showings:view",
     "client-portal:documents:view",
     "client-portal:access:view",
     "employee-portal:view",
@@ -178,6 +185,7 @@ export const rolePermissions = {
     "tasks:view",
     "tasks:update",
     "client-portal:work:view",
+    "client-portal:showings:view",
     "client-portal:documents:view",
     "client-portal:access:view",
     "employee-portal:view",
@@ -213,6 +221,7 @@ export const rolePermissions = {
     "tasks:view",
     "tasks:update",
     "client-portal:work:view",
+    "client-portal:showings:view",
     "employee-portal:view",
     "employee-portal:clients:view",
     "employee-portal:work:view",
@@ -239,6 +248,8 @@ export const rolePermissions = {
   Client: [
     "client-portal:view",
     "client-portal:work:view",
+    "client-portal:showings:view",
+    "client-portal:showings:create",
     "client-portal:documents:view",
     "client-portal:documents:upload",
     "client-portal:documents:approve",

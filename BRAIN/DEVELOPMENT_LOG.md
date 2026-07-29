@@ -1877,3 +1877,25 @@ CI now runs the portal readiness verifier in source-only mode so changes that br
 ### Current Status
 
 CI now covers the verifier command shape. Production readiness still requires running `pnpm verify:portal` without `--skip-database` against real deployment configuration.
+
+---
+
+## 2026-07-29 — Portal Showing Request Workflow Added
+
+### Summary
+
+Koinonia now has a protected showing request workflow for client scheduling and licensed showing coverage requests.
+
+### Implemented
+
+- Added dedicated client showing permissions.
+- Added `/api/portal/showing-requests`.
+- Stores showing requests as `ShowingRequest` objects with timeline and audit history.
+- Added validation that blocks private access secrets in general request notes.
+- Added a client showing request form to `/client/dashboard`.
+- Connected the client showing list to live request records with sample fallback.
+- Added employee dashboard visibility for the showing request queue, limited to assigned-work roles.
+
+### Current Status
+
+The showing request workflow compiles and is covered by helper tests. Live mutation verification still requires reachable database storage and real provider-backed users.

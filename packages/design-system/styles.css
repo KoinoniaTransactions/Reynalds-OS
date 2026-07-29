@@ -2628,6 +2628,93 @@ h1 {
   line-height: 1.1;
 }
 
+.koinonia-showing-form {
+  display: grid;
+  gap: 12px;
+}
+
+.koinonia-showing-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--ros-gold);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-showing-form input,
+.koinonia-showing-form select,
+.koinonia-showing-form textarea {
+  width: 100%;
+  border: 1px solid rgba(184, 138, 68, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--ros-text);
+  font: inherit;
+  letter-spacing: 0;
+  padding: 10px 11px;
+  text-transform: none;
+}
+
+.koinonia-showing-form input,
+.koinonia-showing-form select {
+  min-height: 44px;
+}
+
+.koinonia-showing-form textarea {
+  min-height: 108px;
+  resize: vertical;
+}
+
+.koinonia-showing-form input:disabled,
+.koinonia-showing-form select:disabled,
+.koinonia-showing-form textarea:disabled,
+.koinonia-showing-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.koinonia-showing-checkbox {
+  align-items: center;
+  display: flex !important;
+  gap: 9px;
+  letter-spacing: 0 !important;
+  line-height: 1.35;
+  text-transform: none !important;
+}
+
+.koinonia-showing-checkbox input {
+  min-height: 18px;
+  width: 18px;
+}
+
+.koinonia-showing-form-status {
+  border: 1px solid rgba(184, 138, 68, 0.22);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0;
+  padding: 10px 11px;
+}
+
+.koinonia-showing-form-status.error {
+  background: rgba(178, 59, 59, 0.08);
+  border-color: rgba(178, 59, 59, 0.22);
+  color: #8e2d2d;
+}
+
+.koinonia-showing-form-status.success {
+  background: rgba(83, 112, 76, 0.1);
+  border-color: rgba(83, 112, 76, 0.24);
+  color: #3f6539;
+}
+
+.koinonia-showing-form .koinonia-button {
+  margin-top: 4px;
+  width: 100%;
+}
+
 .koinonia-client-boundary-card {
   border-color: rgba(184, 138, 68, 0.36);
 }

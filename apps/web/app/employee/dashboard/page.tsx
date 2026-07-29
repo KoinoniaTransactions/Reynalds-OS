@@ -2,6 +2,13 @@ import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
+import { prisma } from "../../../lib/db";
+import {
+  getHumanShowingStatus,
+  getShowingNoteLabels,
+  getShowingTimingLabel,
+  showingRequestObjectType
+} from "../../../lib/showing-requests";
 
 export const dynamic = "force-dynamic";
 
@@ -128,6 +135,43 @@ const assignmentQueue = [
   }
 ] as const;
 
+type EmployeeShowingRequestItem = {
+  id: string;
+  nextAction: string;
+  notes: string[];
+  requestedBy: string;
+  status: string;
+  timing: string;
+  title: string;
+};
+
+type EmployeeShowingRequestView = {
+  isLiveData: boolean;
+  notice?: string;
+  requests: EmployeeShowingRequestItem[];
+};
+
+const sampleEmployeeShowingRequests: EmployeeShowingRequestItem[] = [
+  {
+    id: "sample-employee-west-ridge",
+    title: "West Ridge Showing Coverage",
+    requestedBy: "Northgate Partners",
+    status: "Waiting on Client",
+    nextAction: "Access instructions and safety notes are needed before coverage can be confirmed.",
+    timing: "Same-day request",
+    notes: ["Rush review needed", "Access details pending"]
+  },
+  {
+    id: "sample-employee-northgate",
+    title: "Schedule Northgate Buyer Tour",
+    requestedBy: "Bright Homes Team",
+    status: "Scheduling Requested",
+    nextAction: "Check requested showing windows and buyer availability.",
+    timing: "Thu afternoon",
+    notes: ["Client contact authorized", "Friday morning backup"]
+  }
+];
+
 const assignedClients = [
   {
     client: "Bright Homes Team",
@@ -193,7 +237,8 @@ const assignmentRules = [
 ] as const;
 
 export default async function EmployeeDashboardPreviewPage() {
-  await requirePortalPermission("employee-portal:view", "/employee/dashboard");
+  const actor = await requirePortalPermission("employee-portal:view", "/employee/dashboard");
+  const showingRequestView = await getEmployeeShowingRequestView(actor);
 
   return (
     <main className="koinonia-site koinonia-employee-dashboard">
@@ -304,6 +349,47 @@ export default async function EmployeeDashboardPreviewPage() {
                   </table>
                 </div>
               </section>
+
+              <section
+                className="koinonia-employee-work-panel"
+                aria-labelledby="employee-showings-title"
+              >
+                <div className="koinonia-employee-panel-heading">
+                  <p className="koinonia-eyebrow">Showings</p>
+                  <h2 id="employee-showings-title">Showing Request Queue</h2>
+                </div>
+
+                <div className="koinonia-employee-assignment-list">
+                  {showingRequestView.notice ? (
+                    <p className="koinonia-employee-security-note">{showingRequestView.notice}</p>
+                  ) : null}
+
+                  {showingRequestView.requests.map((request) => (
+                    <article className="koinonia-employee-assignment-item" key={request.id}>
+                      <div>
+                        <span>{request.requestedBy}</span>
+                        <h3>{request.title}</h3>
+                        <p>{request.nextAction}</p>
+                        <dl className="koinonia-employee-assignment-meta">
+                          <div>
+                            <dt>Timing</dt>
+                            <dd>{request.timing}</dd>
+                          </div>
+                          <div>
+                            <dt>Notes</dt>
+                            <dd>{request.notes.join(", ")}</dd>
+                          </div>
+                        </dl>
+                      </div>
+
+                      <div className="koinonia-employee-work-meta">
+                        <strong>{request.status}</strong>
+                        <span>Showing request</span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
             </div>
 
             <aside className="koinonia-employee-side-panel" aria-label="Staff workload">
@@ -376,5 +462,113 @@ export default async function EmployeeDashboardPreviewPage() {
 
       <Footer />
     </main>
+  );
+}
+
+async function getEmployeeShowingRequestView(actor: {
+  permissions: string[];
+  workspaceId: string;
+}): Promise<EmployeeShowingRequestView> {
+  if (!actor.permissions.includes("employee-portal:assigned-work:view")) {
+    return {
+      isLiveData: false,
+      notice: "Showing request queue requires assigned-work access.",
+      requests: [
+        {
+          id: "restricted-employee-showing-requests",
+          title: "Showing queue restricted",
+          requestedBy: "Koinonia",
+          status: "Restricted",
+          nextAction: "Ask an Owner or Operations user to review showing assignments.",
+          timing: "Access limited",
+          notes: ["Assigned-work permission required"]
+        }
+      ]
+    };
+  }
+
+  try {
+    const showingRequests = await prisma.rosObject.findMany({
+      where: {
+        workspaceId: actor.workspaceId,
+        objectType: showingRequestObjectType,
+        archivedAt: null
+      },
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      take: 12
+    });
+
+    return {
+      isLiveData: true,
+      requests: withEmptyEmployeeShowingRequests(
+        showingRequests.map((request) => ({
+          id: request.id,
+          title: request.name,
+          requestedBy: getRequestedByLabel(request.data),
+          status: getHumanShowingStatus(request.status),
+          nextAction: request.nextAction ?? "Review this showing request and assign coverage.",
+          timing: getShowingTimingLabel(request.data),
+          notes: getShowingNoteLabels(request.data)
+        }))
+      )
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    return {
+      isLiveData: false,
+      notice:
+        "Showing request storage is not reachable in this preview, so sample requests are shown.",
+      requests: sampleEmployeeShowingRequests
+    };
+  }
+}
+
+function withEmptyEmployeeShowingRequests(
+  requests: EmployeeShowingRequestItem[]
+): EmployeeShowingRequestItem[] {
+  if (requests.length > 0) {
+    return requests;
+  }
+
+  return [
+    {
+      id: "empty-employee-showing-requests",
+      title: "No showing requests in queue",
+      requestedBy: "Koinonia",
+      status: "Clear",
+      nextAction: "New client showing requests will appear here for assignment and follow-up.",
+      timing: "No active request",
+      notes: ["Queue ready"]
+    }
+  ];
+}
+
+function getRequestedByLabel(data: unknown): string {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return "Client request";
+  }
+
+  const value = data as Record<string, unknown>;
+
+  for (const key of ["clientName", "requestedByEmail"]) {
+    const candidate = value[key];
+
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate.trim();
+    }
+  }
+
+  return "Client request";
+}
+
+function isDatabaseUnavailableError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "PrismaClientInitializationError" ||
+      error.message.includes("Can't reach database server") ||
+      error.message.includes("ECONNREFUSED"))
   );
 }
