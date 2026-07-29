@@ -83,6 +83,7 @@ The current web app includes:
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
 - Hosted sign-in links and return destinations are limited to same-site portal paths or public HTTPS managed-auth URLs.
 - Permission tests for provider role mapping and typed denial behavior.
+- Portal API permission denials return a clean 403 response without exposing internal permission names.
 - `pnpm verify:portal` checks production auth env, upload storage env, mock-auth safety, database connectivity, workspace presence, seeded portal roles, and stored role permission lists.
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 - The verifier and `/employee/readiness` require at least one accepted client invitation and one accepted staff invitation before login can be treated as production-ready.
@@ -329,6 +330,7 @@ Before the portal accepts real data:
 - Invitation revocation writes an audit event and blocks later first-login acceptance.
 - Portal user deactivation writes an audit event and blocks future portal permissions.
 - Portal API auth failures return clear JSON status responses, not generic crashes.
+- Portal API permission failures return 403 with a generic denial message.
 - No brokerage passwords, MLS passwords, raw usernames, access codes, raw card numbers, CVV fields, bank details, routing numbers, account numbers, payment passwords, processor secrets, or API keys are accepted.
 - `pnpm verify:portal` passes against the target production environment.
 - The target environment has at least one active Owner portal user and no active staff users missing MFA requirement.
