@@ -129,6 +129,7 @@ Additional portal-login variables before accepting real client or staff data:
 - NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 - NEXT_PUBLIC_AUTH_SIGN_IN_URL
 - NEXT_PUBLIC_AUTH_SIGN_OUT_URL
+- ROS_ALLOW_MOCK_AUTH=false
 
 Important:
 
@@ -137,6 +138,7 @@ Important:
 - Add only variables required for public launch
 - Treat dashboard and API variables separately from the public website launch
 - Do not enable ROS_ALLOW_MOCK_AUTH on any deployment that can receive real portal data
+- Run `pnpm verify:portal` before accepting real client or staff portal access
 
 ---
 

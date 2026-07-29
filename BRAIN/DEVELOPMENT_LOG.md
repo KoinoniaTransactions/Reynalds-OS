@@ -1722,3 +1722,22 @@ A protected portal user listing API was added so operations staff can review use
 ### Current Status
 
 The route compiles. Live database verification still requires reachable Postgres.
+
+---
+
+## 2026-07-29 — Portal Auth Environment Template Clarified
+
+### Summary
+
+The environment template and deployment readiness notes now make the mock-auth production boundary explicit.
+
+### Implemented
+
+- Added `ROS_ALLOW_MOCK_AUTH=false` to `.env.example`.
+- Added local mock user identity variables to `.env.example`.
+- Updated portal auth and deployment readiness notes to require mock auth disabled before real portal access.
+- Added `pnpm verify:portal` to deployment readiness notes.
+
+### Current Status
+
+Environment templates are clearer. Real deployment variables still need to be set in the deployment host.
