@@ -1,7 +1,10 @@
 import {
   REYNALDS_BROTHERS_WORK_ITEM_TYPE,
+  accReplacementPhaseTrack,
   getWorkItemData,
   getWorkItemLocation,
+  pressureWashingPhaseTrack,
+  ucoPhaseTrack,
   type ReynaldsBrothersWorkItem
 } from "./reynalds-brothers-work-items";
 
@@ -26,7 +29,13 @@ export type ReynaldsBrothersEmailClassification = {
   suggestedServiceLine?: string;
   suggestedCustomer?: string;
   suggestedLocation?: string;
+  suggestedCity?: string;
+  suggestedState?: string;
+  suggestedStoreNumber?: string;
   suggestedNextAction: string;
+  requiresApproval?: boolean;
+  multiStoreFlag?: boolean;
+  extractedStoreNumbers?: string[];
   reasons: string[];
 };
 
@@ -39,20 +48,29 @@ export const reynaldsBrothersFallbackEmails: ReynaldsBrothersEmailInput[] = [
   {
     providerMessageId: "gmail_preview_wm1540_001",
     from: "facility.coordinator@walmart.com",
-    to: "ops@reynaldsbrothers.com",
-    subject: "WM 1540 - lower bay pressure washing schedule",
+    to: "WMTanks@ReynoldsBrothers.com",
+    subject: "WM 450 - lower bay pressure washing schedule",
     receivedAt: "2026-07-29T08:15:00-06:00",
-    snippet: "Can you confirm crew availability and disposal documentation for store 1540?",
-    body: "Please confirm crew availability, equipment, disposal documentation, and after photos for Walmart store 1540 lower bay pressure washing."
+    snippet: "Can you confirm vac truck availability and disposal documentation for store 450?",
+    body: "Please confirm vac truck availability, disposal documentation, and after photos for Walmart store 450 in Shreveport, LA lower bay pressure washing."
   },
   {
     providerMessageId: "gmail_preview_new_uco_9001",
     from: "projects@walmart.com",
-    to: "ops@reynaldsbrothers.com",
+    to: "WMTanks@ReynoldsBrothers.com",
     subject: "New UCO tank replacement request - store 9001",
     receivedAt: "2026-07-29T09:05:00-06:00",
     snippet: "We have a new UCO tank replacement request for store 9001 in Tulsa.",
     body: "New request for a used cooking oil tank replacement at Walmart store 9001 in Tulsa, OK. Please review scope and provide availability."
+  },
+  {
+    providerMessageId: "gmail_preview_multi_store",
+    from: "program.manager@walmart.com",
+    to: "WMTanks@ReynoldsBrothers.com",
+    subject: "New ACC triage requests - stores 331 and 746",
+    receivedAt: "2026-07-29T09:45:00-06:00",
+    snippet: "Please start ACC triage for stores 331 Sulphur LA and 746 Temple TX.",
+    body: "Please start ACC Level 1 triage for Walmart store 331 in Sulphur, LA and store 746 in Temple, TX."
   },
   {
     providerMessageId: "gmail_preview_vendor_quote",
@@ -71,10 +89,36 @@ export function classifyEmailForWorkItem(
 ): ReynaldsBrothersEmailClassification {
   const text = normalizeText(`${email.subject} ${email.snippet ?? ""} ${email.body ?? ""}`);
   const storeNumber = findStoreNumber(text);
+  const storeNumbers = findStoreNumbers(text);
   const workOrderNumber = findWorkOrderNumber(text);
   const serviceLine = inferServiceLine(text);
   const customer = inferCustomer(text, email.from);
+  const location = findCityState(text);
   const matched = findMatchingWorkItem(text, workItems, storeNumber, workOrderNumber);
+
+  if (storeNumbers.length > 1 && looksLikeNewWork(text)) {
+    const suggestedName = buildSuggestedWorkItemName(email, serviceLine, customer, storeNumber);
+
+    return {
+      action: "create_work_item",
+      confidence: "medium",
+      suggestedWorkItemName: suggestedName,
+      suggestedServiceLine: serviceLine,
+      suggestedCustomer: customer,
+      suggestedLocation: buildSuggestedLocation(storeNumber, location),
+      suggestedCity: location?.city,
+      suggestedState: location?.state,
+      suggestedStoreNumber: storeNumber,
+      suggestedNextAction: "Create separate Needs Approval jobs for each store and review the split before activation.",
+      requiresApproval: true,
+      multiStoreFlag: true,
+      extractedStoreNumbers: storeNumbers,
+      reasons: [
+        "Email appears to describe new work for multiple stores.",
+        "Each generated job requires human approval before it becomes active."
+      ]
+    };
+  }
 
   if (matched) {
     return {
@@ -85,10 +129,14 @@ export function classifyEmailForWorkItem(
       suggestedServiceLine: getWorkItemData(matched).serviceLine ?? serviceLine,
       suggestedCustomer: getWorkItemData(matched).customer ?? customer,
       suggestedLocation: getWorkItemLocation(matched),
+      suggestedStoreNumber: storeNumber,
       suggestedNextAction: getSuggestedNextAction(text, "link_to_work_item"),
+      multiStoreFlag: storeNumbers.length > 1,
+      extractedStoreNumbers: storeNumbers,
       reasons: [
         storeNumber ? `Matched store ${storeNumber}.` : "Matched existing work item language.",
-        "Email should be filed under the existing Work Item timeline."
+        "Email should be filed under the existing Work Item timeline.",
+        ...(storeNumbers.length > 1 ? ["Multiple stores were detected; office review is required."] : [])
       ]
     };
   }
@@ -102,11 +150,19 @@ export function classifyEmailForWorkItem(
       suggestedWorkItemName: suggestedName,
       suggestedServiceLine: serviceLine,
       suggestedCustomer: customer,
-      suggestedLocation: storeNumber ? `Store ${storeNumber}` : undefined,
+      suggestedLocation: buildSuggestedLocation(storeNumber, location),
+      suggestedCity: location?.city,
+      suggestedState: location?.state,
+      suggestedStoreNumber: storeNumber,
       suggestedNextAction: getSuggestedNextAction(text, "create_work_item"),
+      requiresApproval: true,
+      multiStoreFlag: storeNumbers.length > 1,
+      extractedStoreNumbers: storeNumbers,
       reasons: [
         "Email appears to describe new work.",
-        "No existing Work Item match was found."
+        "No existing Work Item match was found.",
+        "AI-created jobs enter the Needs Approval lane until an authorized office user approves them.",
+        ...(storeNumbers.length > 1 ? ["Multiple stores were detected; each generated job requires human approval."] : [])
       ]
     };
   }
@@ -116,7 +172,11 @@ export function classifyEmailForWorkItem(
     confidence: "low",
     suggestedServiceLine: serviceLine,
     suggestedCustomer: customer,
+    suggestedStoreNumber: storeNumber,
     suggestedNextAction: "Review email and choose a Work Item before filing.",
+    requiresApproval: true,
+    multiStoreFlag: storeNumbers.length > 1,
+    extractedStoreNumbers: storeNumbers,
     reasons: [
       "No confident Work Item match.",
       "Email does not clearly define a new job."
@@ -174,8 +234,12 @@ function looksLikeNewWork(text: string): boolean {
   return [
     "new request",
     "new work",
+    "want us to complete",
+    "please complete",
     "replacement request",
     "service request",
+    "triage request",
+    "start acc triage",
     "please schedule",
     "scope",
     "availability",
@@ -184,6 +248,7 @@ function looksLikeNewWork(text: string): boolean {
 }
 
 function inferServiceLine(text: string): string | undefined {
+  if (text.includes("acc") || text.includes("level 1") || text.includes("level 2")) return "ACC";
   if (text.includes("uco") || text.includes("used cooking oil")) return "UCO";
   if (text.includes("pressure wash") || text.includes("lower bay")) return "Pressure Washing";
   if (text.includes("backflow")) return "Backflow";
@@ -200,8 +265,13 @@ function inferCustomer(text: string, from: string): string | undefined {
 }
 
 function findStoreNumber(text: string): string | undefined {
-  const match = text.match(/(?:store|wm)\s*#?\s*(\d{3,5})/);
+  const match = text.match(/(?:store|wm)[-\s]*#?\s*(\d{3,5})/);
   return match?.[1];
+}
+
+function findStoreNumbers(text: string): string[] {
+  const matches = [...text.matchAll(/(?:store|wm)[-\s]*#?\s*(\d{3,5})/g)];
+  return [...new Set(matches.map((match) => match[1]))];
 }
 
 function findWorkOrderNumber(text: string): string | undefined {
@@ -215,10 +285,97 @@ function buildSuggestedWorkItemName(
   customer?: string,
   storeNumber?: string
 ): string {
-  if (customer && storeNumber && serviceLine) return `${customer} ${storeNumber} - ${serviceLine}`;
+  const location = findCityState(normalizeText(`${email.subject} ${email.snippet ?? ""} ${email.body ?? ""}`));
+  const workType = getWorkTypeName(serviceLine);
+
+  if (customer === "Walmart" && storeNumber && location) return `WM-${storeNumber} ${location.city}, ${stateName(location.state)} - ${workType}`;
+  if (customer === "Walmart" && storeNumber && serviceLine) return `WM-${storeNumber} - ${workType}`;
+  if (customer && storeNumber && serviceLine) return `${customer} ${storeNumber} - ${workType}`;
   if (customer && serviceLine) return `${customer} - ${serviceLine}`;
   if (serviceLine) return `${serviceLine} - ${email.subject}`;
   return email.subject;
+}
+
+export function getDefaultWorkItemDataForClassification(classification: ReynaldsBrothersEmailClassification) {
+  const serviceLine = classification.suggestedServiceLine;
+  const jobType = getWorkTypeName(serviceLine);
+  const phaseTrack = serviceLine === "UCO"
+    ? ucoPhaseTrack
+    : serviceLine === "Pressure Washing"
+      ? pressureWashingPhaseTrack
+      : accReplacementPhaseTrack;
+
+  return {
+    sourceSystem: "email",
+    serviceLine,
+    customer: classification.suggestedCustomer,
+    jobType,
+    approvalStatus: "Needs Approval",
+    storeNumber: classification.suggestedStoreNumber,
+    city: classification.suggestedCity,
+    state: classification.suggestedState,
+    siteName: classification.suggestedLocation,
+    workType: jobType,
+    phase: "Needs Approval",
+    phaseTrack,
+    poStatus: serviceLine === "Pressure Washing" ? "Not Required Yet" : "Missing",
+    poDueDate: serviceLine === "Pressure Washing" ? undefined : "Within 5 business days of approval",
+    lucernexStatus: "Not Started",
+    permitStatus: serviceLine === "Pressure Washing" ? "Not required" : "Not Started",
+    tankStatus: serviceLine === "UCO" ? "Not Ordered" : serviceLine === "ACC" ? "Not Ordered" : undefined,
+    tankSupplier: serviceLine === "UCO" ? "Frontline LLC" : undefined,
+    oilRemovalStatus: serviceLine === "Pressure Washing" ? undefined : "Not Coordinated",
+    invoiceStatus: "Not Ready",
+    billingApprovalStatus: "Not Started",
+    mediaStatus: "No media yet",
+    customerUpdateStatus: "Email received; human approval required."
+  };
+}
+
+function getWorkTypeName(serviceLine?: string): string {
+  if (serviceLine === "ACC") return "ACC Level 1 Triage";
+  if (serviceLine === "UCO") return "UCO Tank Replacement";
+  if (serviceLine === "Pressure Washing") return "Pressure Washing";
+  return serviceLine ?? "Work Item";
+}
+
+function findCityState(text: string): { city: string; state: string } | undefined {
+  const match = text.match(/\bin\s+([a-z][a-z\s.'-]{2,40}),?\s+([a-z]{2})\b/);
+  if (!match) return undefined;
+
+  return {
+    city: titleCase(match[1].trim()),
+    state: match[2].toUpperCase()
+  };
+}
+
+function buildSuggestedLocation(storeNumber?: string, location?: { city: string; state: string }) {
+  if (storeNumber && location) return `WM-${storeNumber} ${location.city}, ${stateName(location.state)}`;
+  if (storeNumber) return `Store ${storeNumber}`;
+  if (location) return `${location.city}, ${location.state}`;
+  return undefined;
+}
+
+function stateName(state: string): string {
+  const states: Record<string, string> = {
+    AL: "Alabama",
+    AR: "Arkansas",
+    FL: "Florida",
+    GA: "Georgia",
+    LA: "Louisiana",
+    MS: "Mississippi",
+    NC: "North Carolina",
+    OK: "Oklahoma",
+    SC: "South Carolina",
+    TN: "Tennessee",
+    TX: "Texas"
+  };
+
+  return states[state.toUpperCase()] ?? state.toUpperCase();
+}
+
+function titleCase(value: string): string {
+  return value.replace(/\b[a-z]/g, (letter) => letter.toUpperCase());
 }
 
 function getSuggestedNextAction(text: string, action: ReynaldsBrothersEmailClassification["action"]): string {

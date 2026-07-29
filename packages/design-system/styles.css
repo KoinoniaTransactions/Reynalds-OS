@@ -384,7 +384,7 @@ h1 {
 
 .rb-board {
   display: grid;
-  grid-template-columns: repeat(5, minmax(210px, 1fr));
+  grid-template-columns: repeat(8, minmax(210px, 1fr));
   gap: 12px;
   overflow-x: auto;
   padding-bottom: 8px;
@@ -447,6 +447,25 @@ h1 {
   line-height: 1.1;
 }
 
+.rb-progress {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eee6dc;
+}
+
+.rb-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ros-gold);
+}
+
+.rb-red-flag {
+  color: var(--rb-missing) !important;
+  font-weight: 700;
+}
+
 .rb-service,
 .rb-health {
   display: inline-flex;
@@ -506,10 +525,21 @@ h1 {
 
 .rb-checklist ul,
 .rb-mini-columns ul,
+.rb-phase-list,
 .rb-alert-list,
 .rb-rhythm {
   margin: 10px 0 0;
   padding-left: 18px;
+}
+
+.rb-phase-list {
+  display: grid;
+  gap: 7px;
+}
+
+.rb-phase-list li.current {
+  color: var(--ros-text);
+  font-weight: 700;
 }
 
 .rb-checklist li.ready {
@@ -539,6 +569,7 @@ h1 {
 }
 
 .rb-inline-form input,
+.rb-inline-form select,
 .rb-email-form input,
 .rb-email-form textarea,
 .rb-update-form input,

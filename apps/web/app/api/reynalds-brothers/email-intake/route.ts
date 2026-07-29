@@ -7,6 +7,7 @@ import {
   REYNALDS_BROTHERS_COMMUNICATION_TYPE,
   buildEmailCandidates,
   classifyEmailForWorkItem,
+  getDefaultWorkItemDataForClassification,
   reynaldsBrothersFallbackEmails,
   validateEmailIntake
 } from "../../../../lib/reynalds-brothers-email-intake";
@@ -112,20 +113,14 @@ export async function POST(request: Request) {
           workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
           objectType: REYNALDS_BROTHERS_WORK_ITEM_TYPE,
           name: classification.suggestedWorkItemName ?? email.subject,
-          status: "Intake",
-          health: "Healthy",
+          status: "Needs Approval",
+          health: classification.multiStoreFlag ? "Attention" : "Watch",
           nextAction: classification.suggestedNextAction,
           ownerId: user.id,
           data: {
-            sourceSystem: "email",
+            ...getDefaultWorkItemDataForClassification(classification),
             sourceReferenceId: email.providerMessageId,
-            serviceLine: classification.suggestedServiceLine,
-            customer: classification.suggestedCustomer,
-            siteName: classification.suggestedLocation,
-            phase: "Intake",
-            invoiceStatus: "Not Ready",
-            mediaStatus: "No media yet",
-            customerUpdateStatus: "Email received; scope needs review."
+            intakeReasons: classification.reasons
           } as Prisma.InputJsonValue
         }
       });

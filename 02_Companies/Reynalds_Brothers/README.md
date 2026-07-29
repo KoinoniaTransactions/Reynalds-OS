@@ -10,16 +10,18 @@ Reynalds Brothers organizes around Work Items.
 
 A Work Item is the central record for field-service work the company receives, plans, performs, verifies, invoices, learns from, and archives.
 
-Current known service/work areas include:
+The first division being built out is the Walmart ACC/UCO/Pressure Washing division.
 
-- Walmart field work
-- ACC and UCO tank work
-- Lower bay pressure washing
-- Plumbing service work
-- Backflow work
-- Grease interceptor service
-- Zurn alarm or related project work
-- Site surveys, warranty visits, and internal maintenance
+Current job types for this division:
+
+- ACC Level 1 Triage
+- ACC Level 2 Triage
+- ACC Tank Replacement
+- DIY Only
+- UCO Tank Replacement
+- Pressure Washing
+
+APG removals were tracked in the historical spreadsheet but are not an ongoing workflow for this division.
 
 ## Software Direction
 
@@ -38,6 +40,32 @@ The first app slice lives at:
 The first API slice lives at:
 
 `/api/reynalds-brothers/work-items`
+
+The first email intake source is:
+
+`WMTanks@ReynoldsBrothers.com`
+
+This is the current operational mailbox for Walmart tank-related work. Reynalds Brothers remains the company name and Reynalds OS remains the platform name.
+
+## Division Rules Captured
+
+- AI may create jobs from email, but AI-created jobs start in Needs Approval and are not active until approved by a human.
+- Needs Approval jobs appear on the main board.
+- Access to approve jobs must be delegable. Jeremiah Reynalds is the first approval authority.
+- Current office users are Jeremiah Reynalds, Joshua Reynalds, Shay Reynalds, John Nestor, and Darren Fielder.
+- Required minimum job fields are store number, city, state, and job title.
+- Walmart job titles should follow `WM-1590 Hialeah, Florida - ACC Tank Replacement`.
+- Multiple active jobs may exist for one store.
+- One email may create multiple jobs, but multi-store emails must be flagged for approval review.
+- Lucernex replaced the older Enviance workflow.
+- Reynalds OS should track Lucernex status, Lucernex record links, APO/PO numbers, permitting dates, and completion dates.
+- Missing PO does not block scheduling, but it must raise a red flag and alert office staff after five business days.
+- ACC and UCO jobs require coordinated oil removal with Walmart's vendor while Reynalds Brothers is onsite.
+- ACC, UCO, and Pressure Washing completion require job-specific checklists.
+- CompanyCam starts as a project link and should later sync photos directly.
+- Verizon GPS/ELD is needed first for vehicle and crew visibility.
+- QuickBooks is the revenue source of truth, while Walmart billing may still occur through IP2P.
+- Billing pass-off starts with Shay, moves to Jeremiah, then Darren final approval, with Josh visibility.
 
 ## Needed Modules
 

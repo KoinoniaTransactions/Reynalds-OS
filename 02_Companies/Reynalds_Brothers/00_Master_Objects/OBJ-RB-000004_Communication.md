@@ -17,7 +17,7 @@ Emails are operational evidence connected to Work Items.
 An email should be:
 
 1. Filed under an existing Work Item
-2. Used to create a new Work Item
+2. Used to create a Needs Approval Work Item
 3. Held for review if the AI cannot identify the correct job
 
 ---
@@ -37,6 +37,9 @@ An email should be:
 - Filing status
 - Related Work Item
 - Suggested next action
+- Extracted store numbers
+- Multi-store flag
+- Approval required flag
 
 ---
 
@@ -46,9 +49,12 @@ An email should be:
 2. AI reads the sender, subject, body, store number, work order number, customer, service line, and project language.
 3. AI checks active Reynalds Brothers Work Items.
 4. If a confident match exists, the email is filed under that Work Item.
-5. If the email describes new work, the AI suggests or creates a Work Item.
-6. If the email is ambiguous, it stays in review.
-7. Filed emails become timeline evidence and can update the Work Item next action.
+5. If the email describes new work, AI creates a Needs Approval Work Item.
+6. If the email contains multiple stores, AI may create drafted jobs but must flag them for human approval review.
+7. If the email is ambiguous, it stays in review.
+8. Filed emails become timeline evidence and can update the Work Item next action.
+
+The first monitored mailbox for this division is `WMTanks@ReynoldsBrothers.com`.
 
 ---
 
@@ -76,8 +82,11 @@ AI may assist by:
 
 - Identifying likely Work Item matches
 - Detecting new job requests
-- Extracting service line, customer, store number, work order number, and next action
+- Extracting service line, customer, store number, work order number, PO language, Lucernex language, and next action
+- Detecting multi-store emails that need extra review
 - Monitoring long planning cycles for unanswered emails, missing approvals, missing scope, and stalled jobs
+
+AI may not silently activate jobs. New AI-created jobs require human approval.
 
 AI may not silently file ambiguous emails. Low-confidence emails must remain in review.
 

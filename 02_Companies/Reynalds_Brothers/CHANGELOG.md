@@ -11,3 +11,9 @@
 - Added the first email intake API and UI preview for analyzing, filing, or creating Work Items from email.
 - Updated the active seed Work Items with customer update, media, permit, and billing-readiness fields.
 - Preserved the separation between Koinonia and Reynalds Brothers as distinct company domains inside Reynalds OS.
+- Specialized the first division build-out around Walmart ACC, UCO, and Pressure Washing work.
+- Added approval-controlled intake rules: AI-created jobs start in Needs Approval and remain inactive until approved by an authorized office user.
+- Added Lucernex, PO, permit, tank, oil-removal, CompanyCam, route region, and billing pass-off fields to Work Items.
+- Replaced generic board lanes with division lanes: Needs Approval, Triage, Permits, Tanks, Scheduling, Field Work, Billing, and Complete.
+- Added red-flag logic for missing PO, permit delays, tank assignment/receiving, coordinated oil removal, field proof, and billing approval.
+- Updated email intake to use Walmart-style job naming, detect multi-store emails, and flag multi-store AI-created jobs for human review.

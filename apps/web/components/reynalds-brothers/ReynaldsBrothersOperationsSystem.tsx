@@ -7,51 +7,56 @@ import {
   reynaldsBrothersFallbackEmails
 } from "../../lib/reynalds-brothers-email-intake";
 import {
+  getPhaseProgress,
   getWorkItemData,
+  getWorkItemAlerts,
   getWorkItemLane,
   getWorkItemLocation,
   getWorkItemMetrics,
   isInvoiceReadyStatus,
   needsCrew,
   needsDocumentation,
+  reynaldsBrothersBillingApprovalFlow,
+  reynaldsBrothersBoardLanes,
   reynaldsBrothersFallbackWorkItems,
+  reynaldsBrothersJobTypes,
+  reynaldsBrothersLucernexStatuses,
+  reynaldsBrothersOfficeUsers,
   type ReynaldsBrothersWorkItem
 } from "../../lib/reynalds-brothers-work-items";
 
-const lanes = ["Planning", "Field Work", "Waiting", "Billing", "Complete"];
-
 const systemModules = [
   {
-    title: "Work Items",
-    body: "The work item is the center object. Tasks, photos, documents, customer updates, and invoices attach to it."
+    title: "Approval-Controlled Intake",
+    body: "AI can draft jobs from WMTanks email, including multi-store emails, but every AI-created job starts in Needs Approval."
   },
   {
-    title: "Sites and Customers",
-    body: "Walmart stores, Zurn projects, commercial sites, contacts, access windows, and recurring customer rules stay visible."
+    title: "ACC/UCO/PW Workflows",
+    body: "Level 1 triage, Level 2 triage, ACC replacement, UCO replacement, DIY-only work, and pressure washing each carry their own required steps."
   },
   {
-    title: "Crew and Equipment",
-    body: "Every job needs a crew lead, crew list, equipment list, materials check, travel readiness, and safety notes before field work."
+    title: "Lucernex and PO Tracking",
+    body: "Jobs keep Lucernex links, Lucernex status, APO/PO numbers, permit dates, completion dates, and open fields for new Walmart requirements."
   },
   {
-    title: "Media and Documents",
-    body: "Before photos, after photos, completion notes, disposal manifests, test reports, and paperwork drive billing readiness."
+    title: "Tank Inventory Assignment",
+    body: "Tank sets and individual tanks are tracked before assignment, with manufacturer and serial numbers required before completion."
   },
   {
-    title: "Billing Readiness",
-    body: "Invoices should show whether scope, completion proof, customer approval, and pricing are ready."
+    title: "Field Proof",
+    body: "CompanyCam links, before/after photos, manager names, signatures, and completion notes become required proof on each job."
   },
   {
-    title: "Customer Updates",
-    body: "The system should show who needs an update, what was promised, and what is waiting on the customer or a third party."
+    title: "Billing Pass-Off",
+    body: "Shay starts billing, Jeremiah approves, Darren gives final approval, and Josh has visibility before the job closes."
   }
 ];
 
 const operatingRhythm = [
-  "Morning: review attention jobs, crew readiness, access windows, and customer blockers.",
-  "Before field work: confirm site contact, equipment, safety requirements, documentation needs, and billing scope.",
-  "After field work: upload photos, completion notes, exceptions, customer update, and invoice readiness.",
-  "Weekly: review open work items, unpaid work, repeat customers, route efficiency, and missing documentation."
+  "Morning: review approval queue, overdue triage, PO red flags, permit delays, and tank assignments.",
+  "Planning: keep Lucernex, PO, permitting, tank ordering, and coordinated oil removal moving.",
+  "Before field work: confirm route grouping, crews, tanks, permits, oil removal, CompanyCam link, and required documentation.",
+  "After field work: verify photos, serial numbers, manager details, completion date, and billing readiness."
 ];
 
 type ApiPayload = {
@@ -69,6 +74,10 @@ const defaultCreateForm = {
   name: "",
   serviceLine: "",
   customer: "",
+  jobType: "ACC Level 1 Triage",
+  storeNumber: "",
+  city: "",
+  state: "",
   siteName: "",
   workType: "",
   nextAction: ""
@@ -87,6 +96,8 @@ export function ReynaldsBrothersOperationsSystem() {
   const [crewLeadUpdate, setCrewLeadUpdate] = useState("");
   const [invoiceStatusUpdate, setInvoiceStatusUpdate] = useState("Not Ready");
   const [customerUpdateStatus, setCustomerUpdateStatus] = useState("");
+  const [lucernexStatusUpdate, setLucernexStatusUpdate] = useState("Not Started");
+  const [poStatusUpdate, setPoStatusUpdate] = useState("Missing");
   const [emailCandidates, setEmailCandidates] = useState<ReynaldsBrothersEmailCandidate[]>([]);
   const [manualEmailSubject, setManualEmailSubject] = useState("");
   const [manualEmailFrom, setManualEmailFrom] = useState("");
@@ -142,7 +153,6 @@ export function ReynaldsBrothersOperationsSystem() {
   const metrics = getWorkItemMetrics(filtered);
   const selected = filtered.find((item) => item.id === selectedId) ?? filtered[0] ?? workItems[0];
   const selectedData = selected ? getWorkItemData(selected) : {};
-  const attentionItems = filtered.filter((item) => ["Watch", "Attention", "Critical"].includes(item.health));
 
   useEffect(() => {
     if (!selected) return;
@@ -153,7 +163,9 @@ export function ReynaldsBrothersOperationsSystem() {
     setCrewLeadUpdate(selectedData.crewLead ?? "");
     setInvoiceStatusUpdate(selectedData.invoiceStatus ?? "Not Ready");
     setCustomerUpdateStatus(selectedData.customerUpdateStatus ?? "");
-  }, [selected, selectedData.crewLead, selectedData.customerUpdateStatus, selectedData.invoiceStatus]);
+    setLucernexStatusUpdate(selectedData.lucernexStatus ?? "Not Started");
+    setPoStatusUpdate(selectedData.poStatus ?? "Missing");
+  }, [selected, selectedData.crewLead, selectedData.customerUpdateStatus, selectedData.invoiceStatus, selectedData.lucernexStatus, selectedData.poStatus]);
 
   async function createWorkItem(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -165,18 +177,27 @@ export function ReynaldsBrothersOperationsSystem() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: createForm.name,
-          status: "Intake",
-          health: "Healthy",
+          status: "Needs Approval",
+          health: "Watch",
           nextAction: createForm.nextAction,
           data: {
             serviceLine: createForm.serviceLine,
             customer: createForm.customer,
+            jobType: createForm.jobType,
+            approvalStatus: "Needs Approval",
+            storeNumber: createForm.storeNumber,
+            city: createForm.city,
+            state: createForm.state,
             siteName: createForm.siteName,
             workType: createForm.workType,
-            phase: "Intake",
+            phase: "Needs Approval",
+            poStatus: createForm.jobType === "Pressure Washing" ? "Not Required Yet" : "Missing",
+            lucernexStatus: "Not Started",
+            permitStatus: createForm.jobType === "Pressure Washing" ? "Not required" : "Not Started",
             invoiceStatus: "Not Ready",
+            billingApprovalStatus: "Not Started",
             mediaStatus: "No media yet",
-            customerUpdateStatus: "Needs first customer update"
+            customerUpdateStatus: "Needs human approval"
           }
         })
       });
@@ -210,6 +231,8 @@ export function ReynaldsBrothersOperationsSystem() {
             phase: statusUpdate,
             crewLead: crewLeadUpdate,
             invoiceStatus: invoiceStatusUpdate,
+            lucernexStatus: lucernexStatusUpdate,
+            poStatus: poStatusUpdate,
             customerUpdateStatus
           }
         })
@@ -300,17 +323,16 @@ export function ReynaldsBrothersOperationsSystem() {
         <div className="ros-eyebrow">Company workspace</div>
         <h1>Reynalds Brothers Operations System</h1>
         <p className="ros-subtitle">
-          A company-level command center for field service work, Walmart tank work, pressure washing,
-          plumbing, backflow, grease interceptor projects, Zurn jobs, documents, billing readiness,
-          and customer follow-through.
+          A company-level command center for Walmart tank work and pressure washing: WMTanks email intake,
+          human approval, Lucernex, PO red flags, permits, tank inventory, routes, field proof, and billing pass-off.
         </p>
 
         {error ? <p className="ros-error">{error}</p> : null}
 
         <section className="rb-section rb-create-panel">
           <div>
-            <div className="ros-eyebrow">Work Item intake</div>
-            <h2>Create new work</h2>
+            <div className="ros-eyebrow">Approval-controlled intake</div>
+            <h2>Create ACC/UCO/PW job</h2>
           </div>
 
           <form className="rb-inline-form" onSubmit={createWorkItem}>
@@ -320,6 +342,19 @@ export function ReynaldsBrothersOperationsSystem() {
               onChange={(event) => setCreateForm((current) => ({ ...current, name: event.target.value }))}
               placeholder="Work item name"
             />
+            <select
+              value={createForm.jobType}
+              onChange={(event) => setCreateForm((current) => ({
+                ...current,
+                jobType: event.target.value,
+                serviceLine: getServiceLineFromJobType(event.target.value),
+                workType: event.target.value
+              }))}
+            >
+              {reynaldsBrothersJobTypes.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
             <input
               value={createForm.serviceLine}
               onChange={(event) => setCreateForm((current) => ({ ...current, serviceLine: event.target.value }))}
@@ -329,6 +364,24 @@ export function ReynaldsBrothersOperationsSystem() {
               value={createForm.customer}
               onChange={(event) => setCreateForm((current) => ({ ...current, customer: event.target.value }))}
               placeholder="Customer"
+            />
+            <input
+              required
+              value={createForm.storeNumber}
+              onChange={(event) => setCreateForm((current) => ({ ...current, storeNumber: event.target.value }))}
+              placeholder="Store number"
+            />
+            <input
+              required
+              value={createForm.city}
+              onChange={(event) => setCreateForm((current) => ({ ...current, city: event.target.value }))}
+              placeholder="City"
+            />
+            <input
+              required
+              value={createForm.state}
+              onChange={(event) => setCreateForm((current) => ({ ...current, state: event.target.value }))}
+              placeholder="State"
             />
             <input
               value={createForm.siteName}
@@ -357,25 +410,25 @@ export function ReynaldsBrothersOperationsSystem() {
             <p>{source === "database" ? "live company records" : "preview records"}</p>
           </article>
           <article className="rb-metric">
-            <span>Needs Attention</span>
-            <strong>{metrics.attention}</strong>
-            <p>watch, attention, or critical</p>
+            <span>Needs Approval</span>
+            <strong>{metrics.needsApproval}</strong>
+            <p>AI or manual intake awaiting human approval</p>
           </article>
           <article className="rb-metric">
-            <span>Missing Crew</span>
-            <strong>{metrics.missingCrew}</strong>
-            <p>needs a crew lead</p>
+            <span>Red Flags</span>
+            <strong>{metrics.redFlags}</strong>
+            <p>PO, permits, tanks, oil removal, photos, billing</p>
           </article>
           <article className="rb-metric">
-            <span>Docs Needed</span>
-            <strong>{metrics.missingDocumentation}</strong>
-            <p>proof or paperwork pending</p>
+            <span>Billing Ready</span>
+            <strong>{metrics.invoiceReady}</strong>
+            <p>waiting for approval pass-off</p>
           </article>
         </section>
 
         <section className="rb-layout">
           <div className="rb-board" aria-label="Work item lanes">
-            {lanes.map((lane) => {
+            {reynaldsBrothersBoardLanes.map((lane) => {
               const laneItems = filtered.filter((item) => getWorkItemLane(item) === lane);
 
               return (
@@ -389,6 +442,8 @@ export function ReynaldsBrothersOperationsSystem() {
                     {laneItems.length === 0 ? <p className="rb-empty">No work in this lane.</p> : null}
                     {laneItems.map((item) => {
                       const data = getWorkItemData(item);
+                      const progress = getPhaseProgress(item);
+                      const alerts = getWorkItemAlerts(item);
 
                       return (
                         <button
@@ -401,6 +456,11 @@ export function ReynaldsBrothersOperationsSystem() {
                           <strong>{item.name}</strong>
                           <small>{getWorkItemLocation(item)}</small>
                           <span className={`rb-health ${item.health.toLowerCase()}`}>{item.health}</span>
+                          <div className="rb-progress" aria-label={`Phase progress ${progress.percent}%`}>
+                            <span style={{ width: `${progress.percent}%` }} />
+                          </div>
+                          <small>{data.phase ?? item.status}</small>
+                          {alerts.length > 0 ? <small className="rb-red-flag">{alerts.length} red flag{alerts.length === 1 ? "" : "s"}</small> : null}
                           <p>{item.nextAction ?? "Set the next action."}</p>
                         </button>
                       );
@@ -427,6 +487,10 @@ export function ReynaldsBrothersOperationsSystem() {
 
                 <dl className="rb-detail-grid">
                   <div>
+                    <dt>Approval</dt>
+                    <dd>{selectedData.approvalStatus ?? "Approved"}</dd>
+                  </div>
+                  <div>
                     <dt>Customer</dt>
                     <dd>{selectedData.customer ?? "Customer TBD"}</dd>
                   </div>
@@ -437,6 +501,18 @@ export function ReynaldsBrothersOperationsSystem() {
                   <div>
                     <dt>Phase</dt>
                     <dd>{selectedData.phase ?? selected.status}</dd>
+                  </div>
+                  <div>
+                    <dt>Lucernex</dt>
+                    <dd>{selectedData.lucernexStatus ?? "Not Started"}</dd>
+                  </div>
+                  <div>
+                    <dt>PO</dt>
+                    <dd>{selectedData.poNumber ?? selectedData.poStatus ?? "Missing"}</dd>
+                  </div>
+                  <div>
+                    <dt>Permit</dt>
+                    <dd>{selectedData.permitStatus ?? "Not Started"}</dd>
                   </div>
                   <div>
                     <dt>Crew Lead</dt>
@@ -453,8 +529,21 @@ export function ReynaldsBrothersOperationsSystem() {
                 </dl>
 
                 <section className="rb-checklist">
+                  <h3>Red Flags</h3>
+                  <ul>
+                    {getWorkItemAlerts(selected).map((alert) => (
+                      <li className="missing" key={alert}>{alert}</li>
+                    ))}
+                    {getWorkItemAlerts(selected).length === 0 ? <li className="ready">No current red flags.</li> : null}
+                  </ul>
+                </section>
+
+                <section className="rb-checklist">
                   <h3>Readiness</h3>
                   <ul>
+                    {(selectedData.readinessRequired ?? []).map((item) => (
+                      <li className="missing" key={item}>{item}</li>
+                    ))}
                     <li className={needsCrew(selected) ? "missing" : "ready"}>
                       Crew assignment {needsCrew(selected) ? "needed" : "ready"}
                     </li>
@@ -486,6 +575,44 @@ export function ReynaldsBrothersOperationsSystem() {
                   </div>
                 </section>
 
+                <section className="rb-mini-columns">
+                  <div>
+                    <h3>Phase Track</h3>
+                    <ol className="rb-phase-list">
+                      {(selectedData.phaseTrack ?? [selected.status]).map((phase) => (
+                        <li className={phase === selectedData.phase ? "current" : ""} key={phase}>{phase}</li>
+                      ))}
+                    </ol>
+                  </div>
+                  <div>
+                    <h3>Billing Pass-Off</h3>
+                    <ol className="rb-phase-list">
+                      {reynaldsBrothersBillingApprovalFlow.map((step) => (
+                        <li key={step}>{step}</li>
+                      ))}
+                    </ol>
+                  </div>
+                </section>
+
+                <dl className="rb-detail-grid">
+                  <div>
+                    <dt>CompanyCam</dt>
+                    <dd>{selectedData.companyCamUrl ? <a href={selectedData.companyCamUrl}>Open project</a> : "Link needed"}</dd>
+                  </div>
+                  <div>
+                    <dt>Oil Removal</dt>
+                    <dd>{selectedData.oilRemovalStatus ?? "Not applicable"}</dd>
+                  </div>
+                  <div>
+                    <dt>Tank Status</dt>
+                    <dd>{selectedData.tankStatus ?? "Not applicable"}</dd>
+                  </div>
+                  <div>
+                    <dt>Route Region</dt>
+                    <dd>{selectedData.region ?? selectedData.state ?? "Region TBD"}</dd>
+                  </div>
+                </dl>
+
                 <section>
                   <h3>Next Action</h3>
                   <p>{selected.nextAction ?? "No next action set."}</p>
@@ -496,7 +623,7 @@ export function ReynaldsBrothersOperationsSystem() {
                   <label>
                     Status
                     <select value={statusUpdate} onChange={(event) => setStatusUpdate(event.target.value)}>
-                      {["Intake", "Planning", "Field Work", "Waiting on Customer", "Billing", "Complete"].map((option) => (
+                      {["Needs Approval", "Level 1 Triage", "Level 2 Triage", "Permitting", "Tanks Ordered", "Tanks Received and Tested", "Scheduling", "Field Work", "Completion Review", "Billing Review", "Paid", "Complete"].map((option) => (
                         <option key={option} value={option}>{option}</option>
                       ))}
                     </select>
@@ -512,6 +639,22 @@ export function ReynaldsBrothersOperationsSystem() {
                   <label>
                     Crew Lead
                     <input value={crewLeadUpdate} onChange={(event) => setCrewLeadUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Lucernex Status
+                    <select value={lucernexStatusUpdate} onChange={(event) => setLucernexStatusUpdate(event.target.value)}>
+                      {reynaldsBrothersLucernexStatuses.map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    PO Status
+                    <select value={poStatusUpdate} onChange={(event) => setPoStatusUpdate(event.target.value)}>
+                      {["Missing", "Requested", "Received", "Not Required Yet"].map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
                   </label>
                   <label>
                     Invoice Status
@@ -548,8 +691,8 @@ export function ReynaldsBrothersOperationsSystem() {
           </div>
 
           <p className="ros-subtitle">
-            Incoming email should either create a Work Item, file under an existing Work Item, or wait for review.
-            Long planning cycles stay organized when every email becomes evidence on the job timeline.
+            WMTanks email should create Needs Approval jobs, file under existing jobs, or land in unmatched review.
+            Every email becomes a timeline note; attachments and photos belong under the job.
           </p>
 
           <form className="rb-email-form" onSubmit={analyzeManualEmail}>
@@ -591,6 +734,9 @@ export function ReynaldsBrothersOperationsSystem() {
                 {email.classification.suggestedWorkItemName ? (
                   <p><strong>Suggested job:</strong> {email.classification.suggestedWorkItemName}</p>
                 ) : null}
+                {email.classification.multiStoreFlag ? (
+                  <p><strong>Review:</strong> Multiple stores detected: {email.classification.extractedStoreNumbers?.join(", ")}</p>
+                ) : null}
                 <p><strong>Next:</strong> {email.classification.suggestedNextAction}</p>
               </article>
             ))}
@@ -617,14 +763,13 @@ export function ReynaldsBrothersOperationsSystem() {
 
         <section className="rb-two-column">
           <article className="rb-section">
-            <div className="ros-eyebrow">Attention stack</div>
-            <h2>Review first</h2>
-            {attentionItems.length === 0 ? <p>No attention items in the current queue.</p> : null}
+            <div className="ros-eyebrow">Office users</div>
+            <h2>Access can be delegated</h2>
             <ul className="rb-alert-list">
-              {attentionItems.map((item) => (
-                <li key={item.id}>
-                  <strong>{item.name}</strong>
-                  <span>{item.nextAction ?? "Review this work item."}</span>
+              {reynaldsBrothersOfficeUsers.map((user, index) => (
+                <li key={user}>
+                  <strong>{user}</strong>
+                  <span>{index === 0 ? "Current approval authority" : "Can be granted approval access later"}</span>
                 </li>
               ))}
             </ul>
@@ -656,4 +801,11 @@ function getPreviewEmailCandidates(): ReynaldsBrothersEmailCandidate[] {
       reasons: ["Preview queue shown until authenticated email intake is available."]
     } satisfies ReynaldsBrothersEmailClassification
   }));
+}
+
+function getServiceLineFromJobType(jobType: string): string {
+  if (jobType.includes("ACC") || jobType.includes("DIY")) return "ACC";
+  if (jobType.includes("UCO")) return "UCO";
+  if (jobType.includes("Pressure")) return "Pressure Washing";
+  return "";
 }

@@ -22,9 +22,12 @@ External systems are sources of evidence. They do not define the internal operat
 
 ## Examples
 
-- ACC tank installation
-- UCO tank installation
-- Lower bay pressure washing
+- ACC Level 1 triage
+- ACC Level 2 triage
+- ACC tank replacement
+- DIY-only tank replacement
+- UCO tank replacement
+- Lower bay pressure washing with vac truck and disposal facility
 - Grease interceptor service
 - Plumbing service call
 - Backflow inspection
@@ -43,11 +46,26 @@ External systems are sources of evidence. They do not define the internal operat
 - Customer
 - Location
 - Service Line
+- Job Type
+- Approval Status
+- Store Number
+- City
+- State
 - Work Type
 - Current Status
+- Current Phase
 - Priority
 - Assigned Owner
 - Assigned Crew
+- Lucernex Status
+- Lucernex Link
+- APO or PO Number
+- PO Status
+- Permit Status
+- Tank Status
+- Tank Serial Numbers when applicable
+- Oil Removal Status when applicable
+- CompanyCam Link
 - Date Received
 - Scheduled Date
 - Completion Date
@@ -82,16 +100,20 @@ A Work Item may relate to:
 
 ## Lifecycle
 
-1. Opportunity
-2. Intake
-3. Planning
-4. Preparation
-5. Execution
-6. Verification
-7. Financial Closeout
-8. Knowledge Capture
-9. Performance Review
-10. Archive
+1. Needs Approval
+2. Triage when applicable
+3. Permitting when applicable
+4. Tanks ordered, assigned, received, and tested when applicable
+5. Scheduling
+6. Field Work
+7. Completion Review
+8. Billing Review
+9. Paid
+10. Complete
+
+ACC work may move as one connected job through Level 1 triage, Level 2 triage, and ACC tank replacement.
+
+Pressure washing is a standalone workflow.
 
 ---
 
@@ -129,11 +151,16 @@ Initial computed signals:
 
 - Work item lane
 - Active work count
-- Attention count
+- Needs approval count
+- Red flag count
 - Missing crew assignment
 - Missing documentation
 - Billing readiness
 - Customer update status
+- Lucernex status
+- PO status
+- Permit status
+- Tank and oil-removal readiness
 
 Initial mutation support:
 
@@ -141,6 +168,8 @@ Initial mutation support:
 - Update status
 - Update health
 - Update crew lead
+- Update Lucernex status
+- Update PO status
 - Update invoice status
 - Update customer update status
 - Update next action
@@ -151,13 +180,15 @@ Initial mutation support:
 
 AI may assist by:
 
-- Identifying new Work Items from incoming emails
+- Creating Needs Approval Work Items from incoming emails
 - Linking emails and documents to existing Work Items
 - Summarizing current status
 - Detecting missing evidence
 - Recommending next actions
 - Surfacing similar past Work Items
 - Capturing lessons learned
+
+AI-created jobs are not active until approved by an authorized human.
 
 AI may not overwrite verified facts.
 
