@@ -28,6 +28,7 @@ The current web app includes:
   - `/client/dashboard`
   - `/client/documents`
   - `/client/billing`
+  - `/client/work/[id]`
 - Protected employee portal preview routes:
   - `/employee/dashboard`
   - `/employee/access`
@@ -36,6 +37,7 @@ The current web app includes:
   - `/employee/launch`
   - `/employee/readiness`
   - `/employee/review`
+  - `/employee/work/[id]`
 - Async session lookup in `apps/web/lib/auth.ts`.
 - Clerk session lookup explicitly treats pending sessions as signed out.
 - Route-level permission guards in `apps/web/lib/portal-auth.ts`.
@@ -59,10 +61,12 @@ The current web app includes:
 - `/api/portal/billing-setup-requests` for protected billing setup request create/list workflows without storing card data.
 - `/api/portal/launch-proof` for protected staff launch-proof create/list workflows without storing credentials, card data, or private login details.
 - `/api/portal/work-items/[id]/assignment` for protected staff assignment updates with timeline and audit history.
+- `/client/work/[id]` for scoped client work detail with status, next action, safe metadata, attached documents, and timeline summaries.
 - `/employee/access` can read portal users and portal invitation records for staff access readiness, with safe preview fallback when storage is unavailable.
 - `/employee/access` includes a protected invitation form for creating portal invitations through the existing API.
 - `/employee/access` includes protected action controls for revoking unaccepted invitations and deactivating active portal users.
 - `/employee/dashboard` can read live portal work items, show primary/backup assignment status, and let authorized staff update assignments when production storage is reachable.
+- `/employee/work/[id]` for staff work detail with assignment controls, safe metadata, attached documents, and timeline summaries.
 - `/employee/readiness` gives staff a live readiness view for login, database, portal workflow, document, oversight, social login, and AI gates.
 - `/employee/launch` gives staff a protected launch checklist for production provider setup, database access, service workflow QA, document handling, billing/payment setup, optional social login, optional AI review, and final dry-run proof.
 - `/employee/launch` uses the same current readiness report as `/employee/readiness` for technical launch gates, while service workflow QA and end-to-end dry-run checks remain manual proof items.
@@ -76,7 +80,7 @@ The current web app includes:
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 - The verifier and `/employee/readiness` require at least one accepted client invitation and one accepted staff invitation before login can be treated as production-ready.
 
-Most protected portal screens still use sample fallback data when production storage is unavailable. `/employee/access` now has a database-backed access-readiness path, `/employee/dashboard` can review and update live work assignments, `/employee/review` can review live work/document records for staff oversight, the client dashboard current-work list can read owned `RosObject` records, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake and authorized download workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Work-item detail pages, invoice/payment processing, payment processor integration, document version/replacement, and client workspaces still need production passes.
+Most protected portal screens still use sample fallback data when production storage is unavailable. `/employee/access` now has a database-backed access-readiness path, `/employee/dashboard` can review and update live work assignments, `/employee/review` can review live work/document records for staff oversight, the client dashboard current-work list can read owned `RosObject` records, clients and staff can open scoped work detail pages, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake and authorized download workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Invoice/payment processing, payment processor integration, document version/replacement, and document editing/sending workflows still need production passes.
 
 ---
 
@@ -275,6 +279,9 @@ Before the portal accepts real data:
 - Staff can record launch proof for manual checklist items from `/employee/launch`; proof records must remain metadata-only and safe for audit review.
 - Authorized staff can assign or reassign live portal work items to primary and backup staff from `/employee/dashboard`.
 - Work assignment updates write timeline and audit history, and assignment notes must remain free of credentials, card data, bank details, API keys, and private login details.
+- Clients can open scoped work detail pages for their own work items from `/client/dashboard`.
+- Employee users with assigned-work access can open work detail pages from `/employee/dashboard`, with broader workspace visibility limited to roles that can manage assignments or client work.
+- Work detail pages display safe metadata labels, attached document links through the protected download endpoint, and timeline summaries without dumping raw JSON payloads.
 - Clients can create and review their own showing requests.
 - Employee users with assigned-work access can review the showing request queue.
 - Client dashboard current-work cards can read `RosObject` work records owned by the signed-in client.

@@ -14,6 +14,28 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Work Detail Pages Added
+
+### Summary
+
+Koinonia clients and staff can now open scoped work-item detail pages from their dashboards, giving each active file a focused workspace for status, next action, documents, and timeline history.
+
+### Implemented
+
+- Added shared portal workspace helpers for safe work metadata, document cards, and timeline labels.
+- Added `/client/work/[id]` for client-scoped work details.
+- Added `/employee/work/[id]` for staff-scoped work details with assignment controls.
+- Linked live client and employee dashboard work cards to their detail pages.
+- Detail pages show attached documents through the existing protected download route when storage is configured.
+- Detail pages show timeline summaries without dumping raw event payloads.
+- Added focused tests for safe workspace summary/document/timeline mapping.
+
+### Current Status
+
+Work item detail pages now compile into the production build. Live route testing still needs a reachable production database with real client/staff work records.
+
+---
+
 ## 2026-07-29 — Portal Work Assignment Updates Added
 
 ### Summary

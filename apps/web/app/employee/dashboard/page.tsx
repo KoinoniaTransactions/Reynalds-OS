@@ -46,6 +46,7 @@ type EmployeeAssignmentQueueItem = {
   backupStaff: string;
   backupStaffUserId?: string | null;
   client: string;
+  detailHref?: string;
   due: string;
   id: string;
   isAssignable: boolean;
@@ -357,6 +358,11 @@ export default async function EmployeeDashboardPreviewPage() {
                         <span>{item.service}</span>
                         <h3>{item.work}</h3>
                         <p>{item.reason}</p>
+                        {item.detailHref ? (
+                          <a className="koinonia-document-link employee" href={item.detailHref}>
+                            Open Work
+                          </a>
+                        ) : null}
                         <dl className="koinonia-employee-assignment-meta">
                           <div>
                             <dt>Client</dt>
@@ -649,6 +655,7 @@ async function getEmployeeAssignmentView(actor: {
           backupStaff: getStaffName(staffNameById, workItem.backupStaffUserId, "No backup"),
           backupStaffUserId: workItem.backupStaffUserId,
           client: getWorkClientLabel(workItem.data, workItem.clientUserId, workItem.clientObjectId),
+          detailHref: `/employee/work/${workItem.id}`,
           due: getPortalWorkDueLabel(workItem.data),
           id: workItem.id,
           isAssignable: true,

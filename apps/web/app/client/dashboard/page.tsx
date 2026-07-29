@@ -46,6 +46,7 @@ type ClientSummaryCard = {
 };
 
 type ClientWorkItem = {
+  detailHref?: string;
   due: string;
   id: string;
   nextAction: string;
@@ -259,6 +260,11 @@ export default async function ClientDashboardPreviewPage() {
                         <span>{item.type}</span>
                         <h3>{item.title}</h3>
                         <p>{item.nextAction}</p>
+                        {item.detailHref ? (
+                          <a className="koinonia-document-link" href={item.detailHref}>
+                            Open Work
+                          </a>
+                        ) : null}
                       </div>
 
                       <div className="koinonia-client-work-meta">
@@ -393,7 +399,8 @@ async function getClientWorkItemView(
       type: getPortalWorkItemTypeLabel(object.objectType),
       status: object.status,
       nextAction: object.nextAction ?? "Koinonia will update this work item as it moves.",
-      due: getPortalWorkDueLabel(object.data)
+      due: getPortalWorkDueLabel(object.data),
+      detailHref: `/client/work/${object.id}`
     }));
 
     return {

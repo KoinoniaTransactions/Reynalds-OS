@@ -3312,6 +3312,164 @@ h1 {
   font-weight: 700;
 }
 
+.koinonia-workspace-hero {
+  padding-top: clamp(96px, 11vw, 140px);
+  padding-bottom: clamp(42px, 6vw, 72px);
+}
+
+.koinonia-workspace-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 22px);
+  margin-top: clamp(28px, 4vw, 42px);
+}
+
+.koinonia-workspace-summary-grid article,
+.koinonia-workspace-panel {
+  border: 1px solid rgba(184, 138, 68, 0.22);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.72));
+  box-shadow:
+    0 22px 56px rgba(17, 17, 17, 0.065),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.koinonia-workspace-summary-grid.employee article,
+.koinonia-workspace-panel.employee {
+  border-color: rgba(25, 92, 96, 0.2);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(247, 252, 251, 0.76));
+}
+
+.koinonia-workspace-summary-grid article,
+.koinonia-workspace-panel {
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.koinonia-workspace-summary-grid span,
+.koinonia-workspace-meta-grid span,
+.koinonia-workspace-list-item span,
+.koinonia-workspace-timeline span {
+  color: var(--ros-gold);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.105em;
+  text-transform: uppercase;
+}
+
+.koinonia-employee-workspace-detail .koinonia-workspace-summary-grid span,
+.koinonia-employee-workspace-detail .koinonia-workspace-meta-grid span,
+.koinonia-employee-workspace-detail .koinonia-workspace-list-item span,
+.koinonia-employee-workspace-detail .koinonia-workspace-timeline span {
+  color: #195c60;
+}
+
+.koinonia-workspace-summary-grid strong {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--ros-font-display);
+  font-size: clamp(28px, 3.3vw, 42px);
+  line-height: 1;
+}
+
+.koinonia-workspace-summary-grid p,
+.koinonia-workspace-panel p,
+.koinonia-workspace-list-item p,
+.koinonia-workspace-timeline p {
+  color: var(--ros-muted);
+  line-height: 1.55;
+}
+
+.koinonia-workspace-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  gap: clamp(18px, 3vw, 30px);
+  align-items: start;
+}
+
+.koinonia-workspace-main-stack,
+.koinonia-workspace-side-panel,
+.koinonia-workspace-list,
+.koinonia-workspace-timeline {
+  display: grid;
+  gap: 14px;
+}
+
+.koinonia-workspace-panel-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.koinonia-workspace-panel-heading h2,
+.koinonia-workspace-list-item h3 {
+  margin: 0;
+  font-family: var(--ros-font-display);
+  letter-spacing: 0;
+}
+
+.koinonia-workspace-panel-heading h2 {
+  font-size: clamp(28px, 3vw, 38px);
+}
+
+.koinonia-workspace-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.koinonia-workspace-meta-grid article,
+.koinonia-workspace-list-item,
+.koinonia-workspace-timeline article {
+  border: 1px solid rgba(184, 138, 68, 0.16);
+  background: rgba(255, 253, 248, 0.72);
+  padding: 16px;
+}
+
+.koinonia-workspace-meta-grid.employee article,
+.koinonia-workspace-list-item.employee,
+.koinonia-workspace-timeline article.employee {
+  border-color: rgba(25, 92, 96, 0.14);
+  background: rgba(250, 253, 252, 0.72);
+}
+
+.koinonia-workspace-meta-grid strong,
+.koinonia-workspace-list-item strong,
+.koinonia-workspace-timeline strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--ros-text);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.koinonia-workspace-list-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(96px, auto);
+  gap: 16px;
+}
+
+.koinonia-workspace-list-item h3 {
+  margin-top: 8px;
+  font-size: 23px;
+  line-height: 1.1;
+}
+
+.koinonia-workspace-list-item > strong {
+  justify-self: end;
+  text-align: right;
+}
+
+.koinonia-workspace-boundary-card {
+  border-color: rgba(184, 138, 68, 0.36);
+}
+
+.koinonia-workspace-panel.employee.koinonia-workspace-boundary-card {
+  border-color: rgba(25, 92, 96, 0.34);
+}
+
 .koinonia-client-request-card ul {
   display: grid;
   gap: 9px;
@@ -5279,6 +5437,18 @@ h1 {
 
   .koinonia-client-work-meta {
     justify-items: start;
+    text-align: left;
+  }
+
+  .koinonia-workspace-summary-grid,
+  .koinonia-workspace-layout,
+  .koinonia-workspace-meta-grid,
+  .koinonia-workspace-list-item {
+    grid-template-columns: 1fr;
+  }
+
+  .koinonia-workspace-list-item > strong {
+    justify-self: start;
     text-align: left;
   }
 

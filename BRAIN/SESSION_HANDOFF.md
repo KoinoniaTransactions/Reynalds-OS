@@ -40,6 +40,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - Connected `/employee/launch` to the live readiness report so technical gates show Ready, Needs Attention, Blocked, or Manual Proof Needed from the same source as `/employee/readiness`.
 - Added `/api/portal/launch-proof` and a proof form on `/employee/launch` so Owner/Operations-style staff can record safe manual proof with audit and timeline history.
 - Added `/api/portal/work-items/[id]/assignment` and live assignment controls on `/employee/dashboard` so authorized staff can assign primary and backup owners for live portal work items.
+- Added `/client/work/[id]` and `/employee/work/[id]` so scoped work items have detail pages with safe metadata, attached documents, timeline summaries, and staff assignment controls.
 
 ## Recent Pushed Commits
 
@@ -75,6 +76,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - `/employee/launch` now shows live readiness-derived status for technical gates, but service workflow QA and end-to-end dry-run completion still require staff proof.
 - Launch proof notes must not contain passwords, access codes, card data, bank details, API keys, or private login details.
 - Work assignment notes must also avoid passwords, access codes, card data, bank details, API keys, and private login details.
+- Work detail pages intentionally show safe metadata labels and timeline summaries instead of raw JSON payloads.
 - The Staff Review Center is rules-based. AI summarization should stay read-only until privacy controls, citations, audit events, and human approval gates are verified.
 - No real client documents, billing setup, staff assignments, or internal notes should be accepted until the real-provider checklist passes.
 
