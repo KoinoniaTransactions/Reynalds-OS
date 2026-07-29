@@ -1741,3 +1741,22 @@ The environment template and deployment readiness notes now make the mock-auth p
 ### Current Status
 
 Environment templates are clearer. Real deployment variables still need to be set in the deployment host.
+
+---
+
+## 2026-07-29 — Clerk MFA Task Route Added
+
+### Summary
+
+Koinonia now hosts Clerk's `setup-mfa` session task route so staff can complete required multi-factor setup inside the app before entering protected portal areas.
+
+### Implemented
+
+- Added Clerk `taskUrls` configuration for `setup-mfa`.
+- Added `/session-tasks/setup-mfa`.
+- Rendered Clerk's `TaskSetupMFA` component when the publishable key is configured.
+- Added a safe fallback when Clerk keys are absent.
+
+### Current Status
+
+The task route compiles. Clerk production policy must still require staff MFA and live testing must confirm pending sessions are routed through this page.

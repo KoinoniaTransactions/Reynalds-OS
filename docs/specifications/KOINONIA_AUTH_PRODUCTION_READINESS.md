@@ -20,7 +20,9 @@ The current web app includes:
 - Clerk installed as the managed auth provider dependency.
 - A Clerk-aware app provider wrapper in `apps/web/components/auth/AuthProvider.tsx`.
 - Clerk middleware in `apps/web/middleware.ts`, enabled only when Clerk keys are configured.
+- Clerk session task URL for `setup-mfa` points to `/session-tasks/setup-mfa`.
 - A secure catch-all login route at `/sign-in/[[...sign-in]]`.
+- A no-index MFA setup task route at `/session-tasks/setup-mfa`.
 - Public client and employee entry pages at `/client` and `/employee`.
 - Protected client portal preview routes:
   - `/client/dashboard`
@@ -131,6 +133,8 @@ Client MFA can be evaluated later, but staff MFA is a production requirement.
 
 The source now calls Clerk auth with pending sessions treated as signed out. In production, Clerk must still be configured to require the `setup-mfa` session task for staff users or an equivalent MFA policy before staff portal access is considered ready.
 
+The app hosts Clerk's `TaskSetupMFA` component at `/session-tasks/setup-mfa` and points the Clerk provider's `setup-mfa` task URL there.
+
 ---
 
 ## 6. Invitation Flow Requirement
@@ -172,6 +176,7 @@ Before the portal accepts real data:
 - Staff user can reach only role-appropriate employee tools.
 - Staff user requires MFA.
 - Pending Clerk sessions cannot access protected portal routes.
+- Staff with a pending `setup-mfa` task can be directed to `/session-tasks/setup-mfa`.
 - Signed-out user is redirected to `/sign-in`.
 - Unknown role becomes Viewer and cannot see portal data.
 - `/api/me` returns the real provider-backed user.

@@ -16,6 +16,7 @@
 | Workflows | `/workflows` | Workflow MVP |
 | Koinonia Client Portal Entry | `/client` | Public entry shell, no sensitive forms |
 | Koinonia Secure Login Entry | `/sign-in` | Managed-auth entry scaffold |
+| Koinonia Staff MFA Setup Task | `/session-tasks/setup-mfa` | Clerk setup-mfa task route |
 | Koinonia Client Dashboard Preview | `/client/dashboard` | Auth-guarded sample-data preview only |
 | Koinonia Client Document Center Preview | `/client/documents` | Auth-guarded sample-data document review and approval preview only |
 | Koinonia Client Billing Center Preview | `/client/billing` | Auth-guarded sample-data billing setup, invoices, and pay-at-close preview only |
