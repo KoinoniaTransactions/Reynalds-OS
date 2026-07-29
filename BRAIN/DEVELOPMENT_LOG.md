@@ -14,6 +14,27 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Launch Proof Recording Added
+
+### Summary
+
+Koinonia staff can now record manual launch proof from the protected launch checklist, so service workflow QA and dry-run checks can move from manual reminder to auditable evidence.
+
+### Implemented
+
+- Added safe launch-proof validation that rejects credentials, access codes, card data, bank details, API keys, and private login details.
+- Added `/api/portal/launch-proof` for staff-only proof list/create workflows.
+- Launch proof records are stored as portal work objects with timeline and audit events.
+- Updated `/employee/launch` with a proof form and latest-proof display for manual checklist items.
+- Completed proof now marks manual launch checks ready; follow-up proof marks them as needing attention.
+- Added focused tests for proof validation, stored proof display normalization, and checklist proof status mapping.
+
+### Current Status
+
+Manual proof can now be recorded once production storage is reachable. Local preview still cannot persist proof because local Postgres is not running.
+
+---
+
 ## 2026-07-29 — Portal Launch Checklist Live Status Added
 
 ### Summary

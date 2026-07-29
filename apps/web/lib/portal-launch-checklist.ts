@@ -34,6 +34,7 @@ export type PortalLaunchChecklistItem = {
 export type PortalLaunchChecklistStatus = PortalReadinessStatus | "manual";
 
 export type PortalLaunchChecklistItemStatus = PortalLaunchChecklistItem & {
+  latestProof?: PortalLaunchChecklistProofRecord;
   readinessItems: PortalReadinessItem[];
   status: PortalLaunchChecklistStatus;
   statusDetail: string;
@@ -68,6 +69,19 @@ export type PortalLaunchChecklistReport = {
     value: string;
   }>;
   workspaceId: string;
+};
+
+export type PortalLaunchChecklistProofRecord = {
+  checklistItemId: string;
+  evidenceUrl?: string;
+  id: string;
+  notes: string;
+  proofDate: string;
+  proofOwner: string;
+  recordedAt: string;
+  recordedByEmail?: string;
+  recordedByName?: string;
+  status: "Completed" | "Needs Follow-up";
 };
 
 export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
@@ -330,6 +344,14 @@ export function getPortalLaunchChecklistPhases(): PortalLaunchChecklistPhase[] {
   return portalLaunchChecklistPhases;
 }
 
+export function getPortalLaunchChecklistItemById(
+  checklistItemId: string
+): PortalLaunchChecklistItem | undefined {
+  return portalLaunchChecklistPhases
+    .flatMap((phase) => phase.items)
+    .find((item) => item.id === checklistItemId);
+}
+
 export function getPortalLaunchChecklistSummary(): PortalLaunchChecklistSummary {
   const items = portalLaunchChecklistPhases.flatMap((phase) => phase.items);
   const requiredCount = items.filter((item) => item.required).length;
@@ -343,14 +365,18 @@ export function getPortalLaunchChecklistSummary(): PortalLaunchChecklistSummary 
 }
 
 export function buildPortalLaunchChecklistReport(
-  readinessReport: PortalReadinessReport
+  readinessReport: PortalReadinessReport,
+  proofRecords: PortalLaunchChecklistProofRecord[] = []
 ): PortalLaunchChecklistReport {
   const readinessItemsById = new Map(
     readinessReport.groups.flatMap((group) => group.items).map((item) => [item.id, item])
   );
+  const latestProofsByChecklistItemId = getLatestProofsByChecklistItemId(proofRecords);
   const phases = portalLaunchChecklistPhases.map((phase) => ({
     ...phase,
-    items: phase.items.map((item) => getChecklistItemStatus(item, readinessItemsById))
+    items: phase.items.map((item) =>
+      getChecklistItemStatus(item, readinessItemsById, latestProofsByChecklistItemId)
+    )
   }));
   const items = phases.flatMap((phase) => phase.items);
   const readyCount = items.filter((item) => item.status === "ready").length;
@@ -374,7 +400,7 @@ export function buildPortalLaunchChecklistReport(
       { label: "Ready", value: String(readyCount) },
       { label: "Needs Attention", value: String(attentionCount) },
       { label: "Blocked", value: String(blockedCount) },
-      { label: "Manual Proof", value: String(manualCount) },
+      { label: "Manual Proof Needed", value: String(manualCount) },
       { label: "Required", value: String(staticSummary.requiredCount) },
       { label: "Optional", value: String(staticSummary.optionalCount) }
     ],
@@ -384,13 +410,37 @@ export function buildPortalLaunchChecklistReport(
 
 function getChecklistItemStatus(
   item: PortalLaunchChecklistItem,
-  readinessItemsById: Map<string, PortalReadinessItem>
+  readinessItemsById: Map<string, PortalReadinessItem>,
+  latestProofsByChecklistItemId: Map<string, PortalLaunchChecklistProofRecord>
 ): PortalLaunchChecklistItemStatus {
   const readinessItems = (item.readinessItemIds ?? [])
     .map((id) => readinessItemsById.get(id))
     .filter((readinessItem): readinessItem is PortalReadinessItem => Boolean(readinessItem));
+  const latestProof = latestProofsByChecklistItemId.get(item.id);
 
   if (!item.readinessItemIds || item.readinessItemIds.length === 0) {
+    if (latestProof?.status === "Completed") {
+      return {
+        ...item,
+        latestProof,
+        readinessItems,
+        status: "ready",
+        statusDetail: `Proof recorded by ${latestProof.proofOwner} on ${latestProof.proofDate}.`,
+        statusLabel: "Ready"
+      };
+    }
+
+    if (latestProof?.status === "Needs Follow-up") {
+      return {
+        ...item,
+        latestProof,
+        readinessItems,
+        status: "attention",
+        statusDetail: `Follow-up recorded by ${latestProof.proofOwner} on ${latestProof.proofDate}.`,
+        statusLabel: "Needs Attention"
+      };
+    }
+
     return {
       ...item,
       readinessItems,
@@ -439,4 +489,18 @@ function getChecklistItemStatus(
     statusDetail: "Linked readiness checks are currently ready.",
     statusLabel: "Ready"
   };
+}
+
+function getLatestProofsByChecklistItemId(
+  proofRecords: PortalLaunchChecklistProofRecord[]
+): Map<string, PortalLaunchChecklistProofRecord> {
+  return proofRecords.reduce((latest, proofRecord) => {
+    const current = latest.get(proofRecord.checklistItemId);
+
+    if (!current || proofRecord.recordedAt > current.recordedAt) {
+      latest.set(proofRecord.checklistItemId, proofRecord);
+    }
+
+    return latest;
+  }, new Map<string, PortalLaunchChecklistProofRecord>());
 }

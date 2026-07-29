@@ -1,12 +1,23 @@
 import type { Metadata } from "next";
+import {
+  PortalLaunchProofForm,
+  type PortalLaunchProofFormItem
+} from "../../../components/employee/PortalLaunchProofForm";
 import { Footer, Header } from "../../../components/site";
 import { absoluteUrl } from "../../../config/seo.config";
+import { prisma } from "../../../lib/db";
 import {
   buildPortalLaunchChecklistReport,
+  type PortalLaunchChecklistReport,
   type PortalLaunchChecklistItemStatus,
   type PortalLaunchChecklistStatus
 } from "../../../lib/portal-launch-checklist";
 import { requirePortalPermission } from "../../../lib/portal-auth";
+import {
+  getPortalLaunchProofRecord,
+  portalLaunchProofObjectType,
+  type PortalLaunchProofRecord
+} from "../../../lib/portal-launch-proof";
 import { buildCurrentPortalReadinessReport } from "../../../lib/portal-readiness-runtime";
 
 export const dynamic = "force-dynamic";
@@ -25,10 +36,12 @@ export const metadata: Metadata = {
 };
 
 export default async function EmployeePortalLaunchPage() {
-  await requirePortalPermission("employee-portal:view", "/employee/launch");
+  const actor = await requirePortalPermission("employee-portal:view", "/employee/launch");
 
   const readinessReport = await buildCurrentPortalReadinessReport();
-  const launchReport = buildPortalLaunchChecklistReport(readinessReport);
+  const proofView = await getPortalLaunchProofView(actor.workspaceId);
+  const launchReport = buildPortalLaunchChecklistReport(readinessReport, proofView.proofs);
+  const proofFormItems = getManualProofFormItems(launchReport);
 
   return (
     <main className="koinonia-site koinonia-readiness koinonia-launch">
@@ -74,6 +87,10 @@ export default async function EmployeePortalLaunchPage() {
               </article>
             ))}
           </div>
+
+          {proofView.notice ? (
+            <p className="koinonia-launch-storage-note">{proofView.notice}</p>
+          ) : null}
         </div>
       </section>
 
@@ -87,6 +104,8 @@ export default async function EmployeePortalLaunchPage() {
               evidence and the live readiness page passes against production.
             </p>
           </div>
+
+          <PortalLaunchProofForm defaultOwner={actor.name} items={proofFormItems} />
 
           <div className="koinonia-readiness-grid koinonia-launch-grid">
             {launchReport.phases.map((phase) => (
@@ -144,6 +163,20 @@ function LaunchChecklistItem({ item }: { item: PortalLaunchChecklistItemStatus }
         <strong>{item.statusDetail}</strong>
       </div>
 
+      {item.latestProof ? (
+        <div className="koinonia-launch-recorded-proof">
+          <span>Recorded Proof</span>
+          <p>
+            {item.latestProof.status} by {item.latestProof.proofOwner} on{" "}
+            {item.latestProof.proofDate}
+          </p>
+          <strong>{item.latestProof.notes}</strong>
+          {item.latestProof.evidenceUrl ? (
+            <a href={item.latestProof.evidenceUrl}>Open Evidence</a>
+          ) : null}
+        </div>
+      ) : null}
+
       {item.link ? (
         <a className="koinonia-document-link employee" href={item.link.href}>
           {item.link.label}
@@ -186,4 +219,65 @@ function formatDateTime(isoDate: string): string {
     dateStyle: "medium",
     timeStyle: "short"
   }).format(new Date(isoDate));
+}
+
+type PortalLaunchProofView = {
+  notice?: string;
+  proofs: PortalLaunchProofRecord[];
+};
+
+async function getPortalLaunchProofView(workspaceId: string): Promise<PortalLaunchProofView> {
+  try {
+    const proofObjects = await prisma.rosObject.findMany({
+      where: {
+        archivedAt: null,
+        objectType: portalLaunchProofObjectType,
+        workspaceId
+      },
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      take: 100
+    });
+
+    return {
+      proofs: proofObjects.map(getPortalLaunchProofRecord).filter(isPortalLaunchProofRecord)
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    return {
+      notice:
+        "Launch proof storage is not reachable in this preview, so manual proof records cannot be shown yet.",
+      proofs: []
+    };
+  }
+}
+
+function getManualProofFormItems(
+  launchReport: PortalLaunchChecklistReport
+): PortalLaunchProofFormItem[] {
+  return launchReport.phases
+    .flatMap((phase) => phase.items)
+    .filter((item) => !item.readinessItemIds || item.readinessItemIds.length === 0)
+    .map((item) => ({
+      id: item.id,
+      statusLabel: item.statusLabel,
+      title: item.title
+    }));
+}
+
+function isPortalLaunchProofRecord(
+  record: PortalLaunchProofRecord | null
+): record is PortalLaunchProofRecord {
+  return Boolean(record);
+}
+
+function isDatabaseUnavailableError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "PrismaClientInitializationError" ||
+      error.message.includes("Can't reach database server") ||
+      error.message.includes("ECONNREFUSED"))
+  );
 }

@@ -86,7 +86,7 @@ describe("portal launch checklist", () => {
     expect(items.find((item) => item.id === "clerk-production-auth")?.status).toBe("ready");
     expect(items.find((item) => item.id === "workspace-role-seed")?.status).toBe("ready");
     expect(items.find((item) => item.id === "end-to-end-client-dry-run")?.status).toBe("manual");
-    expect(launchReport.summary.find((item) => item.label === "Manual Proof")?.value).toBe("7");
+    expect(launchReport.summary.find((item) => item.label === "Manual Proof Needed")?.value).toBe("7");
   });
 
   it("blocks launch checks when any linked readiness item is blocked", () => {
@@ -104,5 +104,29 @@ describe("portal launch checklist", () => {
 
     expect(loginCheck?.status).toBe("blocked");
     expect(loginCheck?.statusDetail).toContain("Add production Clerk keys");
+  });
+
+  it("marks manual launch checks ready when completed proof is recorded", () => {
+    const launchReport = buildPortalLaunchChecklistReport(
+      buildPortalReadinessReport(getReadyInput()),
+      [
+        {
+          checklistItemId: "end-to-end-client-dry-run",
+          id: "proof_1",
+          notes: "End-to-end dry run completed without unsafe data capture.",
+          proofDate: "2026-07-29",
+          proofOwner: "Jeremiah Reynalds",
+          recordedAt: "2026-07-29T18:00:00.000Z",
+          status: "Completed"
+        }
+      ]
+    );
+    const dryRun = launchReport.phases
+      .flatMap((phase) => phase.items)
+      .find((item) => item.id === "end-to-end-client-dry-run");
+
+    expect(dryRun?.status).toBe("ready");
+    expect(dryRun?.latestProof?.id).toBe("proof_1");
+    expect(launchReport.summary.find((item) => item.label === "Manual Proof Needed")?.value).toBe("6");
   });
 });
