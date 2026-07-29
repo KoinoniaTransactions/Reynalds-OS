@@ -330,7 +330,7 @@ Build the employee portal in safe slices:
 2. Employee auth permissions and limited staff roles. — Scaffolded in `packages/auth`
 3. Publicly hidden `/employee` entry page with no real client data.
 4. `/employee/dashboard` sample-data preview.
-5. `/employee/access` access workspace connected to portal users and invitations, with a protected invitation form, revoke/deactivate controls, and safe sample-data fallback when storage is unavailable.
+5. `/employee/access` access workspace connected to portal users, invitations, recent access history, a protected invitation form, revoke/deactivate controls, and safe sample-data fallback when storage is unavailable.
 6. `/employee/documents` sample-data document workspace preview.
 7. `/employee/billing` sample-data billing workspace preview.
 8. Work item detail assignment panel using mocked/sample data.

@@ -49,3 +49,4 @@
 | `/api/portal/invitations/:id/revoke` | Portal invitation revoke and audit |
 | `/api/portal/users` | Portal user access status list |
 | `/api/portal/users/:id/deactivate` | Portal user deactivation and audit |
+| `/api/portal/audit` | Portal access audit history |

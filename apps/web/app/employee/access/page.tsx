@@ -5,6 +5,10 @@ import { PortalInvitationForm } from "../../../components/employee/PortalInvitat
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
+import {
+  getHumanAuditAction,
+  portalAuditActionPrefix
+} from "../../../lib/portal-audit";
 import { canRevokeInvitationStatus } from "../../../lib/portal-invitations";
 import {
   buildAccessSummaryCards,
@@ -64,7 +68,16 @@ type ClientReadinessItem = {
   packageName: string;
 };
 
+type AccessAuditItem = {
+  action: string;
+  actor: string;
+  id: string;
+  summary: string;
+  time: string;
+};
+
 type AccessWorkspaceView = {
+  auditEvents: AccessAuditItem[];
   clientReadiness: ClientReadinessItem[];
   invitationQueue: InvitationQueueItem[];
   isLiveData: boolean;
@@ -195,6 +208,23 @@ const sampleClientReadiness: ClientReadinessItem[] = [
     accountOwner: "Erin Blake",
     accessStatus: "Active",
     billingStatus: "Per Showing"
+  }
+];
+
+const sampleAuditEvents: AccessAuditItem[] = [
+  {
+    id: "sample-audit-created",
+    action: "Invitation Created",
+    actor: "Jeremiah Reynalds",
+    summary: "Portal invitation created for a new client account.",
+    time: "Preview data"
+  },
+  {
+    id: "sample-audit-sent",
+    action: "Provider Invite Sent",
+    actor: "Koinonia",
+    summary: "Managed login invite sent after owner approval.",
+    time: "Preview data"
   }
 ];
 
@@ -412,6 +442,19 @@ export default async function EmployeeAccessWorkspacePage() {
               <PortalInvitationForm storageReady={accessWorkspace.isLiveData} />
 
               <section className="koinonia-employee-request-card">
+                <p className="koinonia-eyebrow">Recent Access History</p>
+                <div className="koinonia-employee-handoff-list">
+                  {accessWorkspace.auditEvents.map((event) => (
+                    <article key={event.id}>
+                      <span>{event.action}</span>
+                      <strong>{event.summary}</strong>
+                      <p>{event.actor} - {event.time}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section className="koinonia-employee-request-card">
                 <p className="koinonia-eyebrow">Setup Flow</p>
                 <div className="koinonia-employee-handoff-list">
                   {setupChecklist.map((item) => (
@@ -462,7 +505,7 @@ export default async function EmployeeAccessWorkspacePage() {
 
 async function getAccessWorkspaceView(workspaceId: string, actorId: string): Promise<AccessWorkspaceView> {
   try {
-    const [users, invitations] = await Promise.all([
+    const [users, invitations, auditEvents] = await Promise.all([
       prisma.user.findMany({
         where: { workspaceId },
         select: {
@@ -499,6 +542,23 @@ async function getAccessWorkspaceView(workspaceId: string, actorId: string): Pro
         },
         orderBy: { createdAt: "desc" },
         take: 50
+      }),
+      prisma.auditEvent.findMany({
+        where: {
+          workspaceId,
+          action: {
+            startsWith: portalAuditActionPrefix
+          }
+        },
+        select: {
+          id: true,
+          action: true,
+          actorEmail: true,
+          createdAt: true,
+          summary: true
+        },
+        orderBy: { createdAt: "desc" },
+        take: 8
       })
     ]);
 
@@ -508,6 +568,15 @@ async function getAccessWorkspaceView(workspaceId: string, actorId: string): Pro
     );
 
     return {
+      auditEvents: withEmptyAuditEvents(
+        auditEvents.map((event) => ({
+          id: event.id,
+          action: getHumanAuditAction(event.action),
+          actor: event.actorEmail ?? "System",
+          summary: event.summary,
+          time: formatAuditTime(event.createdAt)
+        }))
+      ),
       clientReadiness: withEmptyClientReadiness(
         buildClientReadinessItems(users, invitations, clientObjectNames)
       ),
@@ -573,6 +642,7 @@ async function getAccessWorkspaceView(workspaceId: string, actorId: string): Pro
     }
 
     return {
+      auditEvents: sampleAuditEvents,
       clientReadiness: sampleClientReadiness,
       invitationQueue: sampleInvitationQueue,
       isLiveData: false,
@@ -586,6 +656,13 @@ async function getAccessWorkspaceView(workspaceId: string, actorId: string): Pro
       })
     };
   }
+}
+
+function formatAuditTime(date: Date): string {
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short"
+  }).format(date);
 }
 
 async function getClientObjectNames(workspaceId: string, clientObjectIds: Array<string | null>): Promise<Map<string, string>> {
@@ -771,6 +848,22 @@ function withEmptyClientReadiness(clientReadiness: ClientReadinessItem[]): Clien
       accountOwner: "Owner approval needed",
       accessStatus: "Pending",
       billingStatus: "Billing setup needed"
+    }
+  ];
+}
+
+function withEmptyAuditEvents(auditEvents: AccessAuditItem[]): AccessAuditItem[] {
+  if (auditEvents.length > 0) {
+    return auditEvents;
+  }
+
+  return [
+    {
+      id: "empty-access-audit",
+      action: "No Access Events",
+      actor: "Koinonia",
+      summary: "Access history will appear after invitations, accepts, revokes, or deactivations.",
+      time: "Ready"
     }
   ];
 }

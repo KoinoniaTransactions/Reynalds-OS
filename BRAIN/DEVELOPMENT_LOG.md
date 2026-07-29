@@ -1820,3 +1820,23 @@ The employee access workspace now exposes protected revoke and deactivate action
 ### Current Status
 
 The UI action layer compiles and calls the existing protected APIs. Live mutation verification still requires reachable database storage.
+
+---
+
+## 2026-07-29 — Portal Access Audit Trail Added
+
+### Summary
+
+Koinonia now exposes recent portal access history through a protected audit API and displays the latest access events in the employee access workspace.
+
+### Implemented
+
+- Added `/api/portal/audit`.
+- Limited audit results to portal access actions.
+- Added tested audit helper functions for action filtering, limit handling, and display labels.
+- Added a recent access history panel to `/employee/access`.
+- Kept a safe preview fallback when storage is unavailable.
+
+### Current Status
+
+The audit API and access history panel compile. Live audit verification still requires reachable database storage.

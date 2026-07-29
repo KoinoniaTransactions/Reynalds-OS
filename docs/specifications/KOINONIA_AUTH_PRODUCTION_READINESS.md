@@ -47,6 +47,7 @@ The current web app includes:
 - `/api/portal/invitations/:id/revoke` for revoking unaccepted invitation records with audit history.
 - `/api/portal/users` for staff access-status review.
 - `/api/portal/users/:id/deactivate` for deactivating accepted portal users with audit history.
+- `/api/portal/audit` for protected portal access audit history review.
 - `/employee/access` can read portal users and portal invitation records for staff access readiness, with safe preview fallback when storage is unavailable.
 - `/employee/access` includes a protected invitation form for creating portal invitations through the existing API.
 - `/employee/access` includes protected action controls for revoking unaccepted invitations and deactivating active portal users.
@@ -191,6 +192,7 @@ Before the portal accepts real data:
 - Staff can review portal users, portal invitations, MFA readiness, and client access readiness in `/employee/access`.
 - Staff can create portal invitation records from `/employee/access`.
 - Staff can revoke unaccepted invitations and deactivate active portal users from `/employee/access`.
+- Staff can review recent portal access audit history from `/employee/access`.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
 - Invitation acceptance writes an audit event and creates the portal user from the approved invitation.
