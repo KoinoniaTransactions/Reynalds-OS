@@ -20,3 +20,4 @@
 - Added job-specific checklist templates for ACC Level 1, ACC Level 2, ACC Tank Replacement, DIY Only, UCO Tank Replacement, and Pressure Washing.
 - Added checklist progress, open required-item counts, and saveable checklist completion toggles to the Reynalds Brothers dashboard.
 - Added smart checklist automation so completed checklist items can update PO, permit, tank, oil-removal, pressure-washing vendor, media, billing, and phase status fields.
+- Expanded the Work Item update panel so office users can edit approval, Lucernex, PO, permit, tank, oil-removal, CompanyCam, pressure-washing vendor, completion, and billing approval fields directly.

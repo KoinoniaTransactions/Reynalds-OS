@@ -151,6 +151,8 @@ Checklist completion may also update related status fields automatically:
 - Completion-proof items can move Invoice Status to Ready to Invoice and Billing Approval Status to Needs Shay Review.
 - Checklist milestones may advance the current phase.
 
+The job detail screen also exposes editable job controls for approval, Lucernex, PO, permits, tank status, coordinated oil removal, CompanyCam, pressure-washing vendors, completion date, billing approval, and next action.
+
 ACC tank replacement is treated as one connected chain that may include Level 1 triage, Level 2 triage, and final replacement work.
 
 ---

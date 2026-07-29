@@ -14,6 +14,25 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Reynalds Brothers Job Controls Expanded
+
+### Summary
+
+The Reynalds Brothers job detail update form now exposes the operational fields staff need to manage ACC, UCO, and Pressure Washing work without editing raw data.
+
+### Implemented
+
+- Added editable controls for approval, approved-by, Lucernex link, PO number/status, permit status/dates, tank status, oil-removal status, CompanyCam link, pressure-washing vendors, completion date, billing approval, customer update, and next action.
+- Preserved existing Work Item data when saving targeted updates.
+- Added validation coverage for expanded job-control update fields.
+- Updated the Reynalds Brothers Work Item object documentation.
+
+### Current Status
+
+This gives staff a broader manual control surface. The next production pass should add field-level audit history and stronger workflow permissions for approval and billing status changes.
+
+---
+
 ## 2026-07-29 — Reynalds Brothers Smart Checklist Automation Added
 
 ### Summary

@@ -140,4 +140,32 @@ describe("Reynalds Brothers work item engine", () => {
   it("requires at least one update field", () => {
     expect(() => validateWorkItemUpdate({})).toThrow("At least one Work Item field is required.");
   });
+
+  it("accepts expanded job control fields during updates", () => {
+    const update = validateWorkItemUpdate({
+      data: {
+        approvalStatus: "Approved",
+        approvedBy: "Jeremiah Reynalds",
+        lucernexUrl: "https://lucernex.example/job/123",
+        poNumber: "PO-123",
+        poStatus: "Received",
+        permitStatus: "Approved",
+        permitSubmittedDate: "2026-07-29",
+        permitApprovedDate: "2026-07-30",
+        tankStatus: "Received",
+        oilRemovalStatus: "Coordinated",
+        companyCamUrl: "https://companycam.example/project/123",
+        vacTruckCompany: "Vac2Go",
+        disposalFacility: "Shreveport Disposal",
+        completionDate: "2026-08-01",
+        billingApprovalStatus: "Needs Shay Review",
+        checklistCompleted: ["pw_vac_truck_secured"]
+      }
+    });
+
+    expect(update.data?.approvalStatus).toBe("Approved");
+    expect(update.data?.lucernexUrl).toContain("lucernex");
+    expect(update.data?.poNumber).toBe("PO-123");
+    expect(update.data?.checklistCompleted).toEqual(["pw_vac_truck_secured"]);
+  });
 });

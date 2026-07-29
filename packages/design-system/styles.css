@@ -683,6 +683,19 @@ h1 {
   font-weight: 700;
 }
 
+.rb-form-section-heading {
+  border-top: 1px solid var(--ros-border);
+  margin-top: 4px;
+  padding-top: 12px;
+}
+
+.rb-form-section-heading span {
+  color: var(--ros-gold);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
 .rb-email-form {
   display: grid;
   grid-template-columns: minmax(180px, 0.6fr) minmax(220px, 1fr) minmax(280px, 1.2fr) auto;

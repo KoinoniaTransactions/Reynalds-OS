@@ -99,9 +99,23 @@ export function ReynaldsBrothersOperationsSystem() {
   const [nextActionUpdate, setNextActionUpdate] = useState("");
   const [crewLeadUpdate, setCrewLeadUpdate] = useState("");
   const [invoiceStatusUpdate, setInvoiceStatusUpdate] = useState("Not Ready");
+  const [billingApprovalStatusUpdate, setBillingApprovalStatusUpdate] = useState("Not Started");
   const [customerUpdateStatus, setCustomerUpdateStatus] = useState("");
+  const [approvalStatusUpdate, setApprovalStatusUpdate] = useState("Needs Approval");
+  const [approvedByUpdate, setApprovedByUpdate] = useState("");
   const [lucernexStatusUpdate, setLucernexStatusUpdate] = useState("Not Started");
+  const [lucernexUrlUpdate, setLucernexUrlUpdate] = useState("");
+  const [poNumberUpdate, setPoNumberUpdate] = useState("");
   const [poStatusUpdate, setPoStatusUpdate] = useState("Missing");
+  const [permitStatusUpdate, setPermitStatusUpdate] = useState("Not Started");
+  const [permitSubmittedDateUpdate, setPermitSubmittedDateUpdate] = useState("");
+  const [permitApprovedDateUpdate, setPermitApprovedDateUpdate] = useState("");
+  const [tankStatusUpdate, setTankStatusUpdate] = useState("");
+  const [oilRemovalStatusUpdate, setOilRemovalStatusUpdate] = useState("");
+  const [companyCamUrlUpdate, setCompanyCamUrlUpdate] = useState("");
+  const [vacTruckCompanyUpdate, setVacTruckCompanyUpdate] = useState("");
+  const [disposalFacilityUpdate, setDisposalFacilityUpdate] = useState("");
+  const [completionDateUpdate, setCompletionDateUpdate] = useState("");
   const [emailCandidates, setEmailCandidates] = useState<ReynaldsBrothersEmailCandidate[]>([]);
   const [manualEmailSubject, setManualEmailSubject] = useState("");
   const [manualEmailFrom, setManualEmailFrom] = useState("");
@@ -166,10 +180,45 @@ export function ReynaldsBrothersOperationsSystem() {
     setNextActionUpdate(selected.nextAction ?? "");
     setCrewLeadUpdate(selectedData.crewLead ?? "");
     setInvoiceStatusUpdate(selectedData.invoiceStatus ?? "Not Ready");
+    setBillingApprovalStatusUpdate(selectedData.billingApprovalStatus ?? "Not Started");
     setCustomerUpdateStatus(selectedData.customerUpdateStatus ?? "");
+    setApprovalStatusUpdate(selectedData.approvalStatus ?? "Approved");
+    setApprovedByUpdate(selectedData.approvedBy ?? "");
     setLucernexStatusUpdate(selectedData.lucernexStatus ?? "Not Started");
+    setLucernexUrlUpdate(selectedData.lucernexUrl ?? "");
+    setPoNumberUpdate(selectedData.poNumber ?? "");
     setPoStatusUpdate(selectedData.poStatus ?? "Missing");
-  }, [selected, selectedData.crewLead, selectedData.customerUpdateStatus, selectedData.invoiceStatus, selectedData.lucernexStatus, selectedData.poStatus]);
+    setPermitStatusUpdate(selectedData.permitStatus ?? "Not Started");
+    setPermitSubmittedDateUpdate(selectedData.permitSubmittedDate ?? "");
+    setPermitApprovedDateUpdate(selectedData.permitApprovedDate ?? "");
+    setTankStatusUpdate(selectedData.tankStatus ?? "");
+    setOilRemovalStatusUpdate(selectedData.oilRemovalStatus ?? "");
+    setCompanyCamUrlUpdate(selectedData.companyCamUrl ?? "");
+    setVacTruckCompanyUpdate(selectedData.vacTruckCompany ?? "");
+    setDisposalFacilityUpdate(selectedData.disposalFacility ?? "");
+    setCompletionDateUpdate(selectedData.completionDate ?? "");
+  }, [
+    selected,
+    selectedData.approvalStatus,
+    selectedData.approvedBy,
+    selectedData.billingApprovalStatus,
+    selectedData.companyCamUrl,
+    selectedData.completionDate,
+    selectedData.crewLead,
+    selectedData.customerUpdateStatus,
+    selectedData.disposalFacility,
+    selectedData.invoiceStatus,
+    selectedData.lucernexStatus,
+    selectedData.lucernexUrl,
+    selectedData.oilRemovalStatus,
+    selectedData.permitApprovedDate,
+    selectedData.permitStatus,
+    selectedData.permitSubmittedDate,
+    selectedData.poNumber,
+    selectedData.poStatus,
+    selectedData.tankStatus,
+    selectedData.vacTruckCompany
+  ]);
 
   async function createWorkItem(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -265,11 +314,26 @@ export function ReynaldsBrothersOperationsSystem() {
           health: healthUpdate,
           nextAction: nextActionUpdate,
           data: {
+            ...selectedData,
             phase: statusUpdate,
             crewLead: crewLeadUpdate,
             invoiceStatus: invoiceStatusUpdate,
+            billingApprovalStatus: billingApprovalStatusUpdate,
+            approvalStatus: approvalStatusUpdate,
+            approvedBy: approvedByUpdate,
             lucernexStatus: lucernexStatusUpdate,
+            lucernexUrl: lucernexUrlUpdate,
+            poNumber: poNumberUpdate,
             poStatus: poStatusUpdate,
+            permitStatus: permitStatusUpdate,
+            permitSubmittedDate: permitSubmittedDateUpdate,
+            permitApprovedDate: permitApprovedDateUpdate,
+            tankStatus: tankStatusUpdate,
+            oilRemovalStatus: oilRemovalStatusUpdate,
+            companyCamUrl: companyCamUrlUpdate,
+            vacTruckCompany: vacTruckCompanyUpdate,
+            disposalFacility: disposalFacilityUpdate,
+            completionDate: completionDateUpdate,
             customerUpdateStatus
           }
         })
@@ -689,6 +753,9 @@ export function ReynaldsBrothersOperationsSystem() {
 
                 <form className="rb-update-form" onSubmit={updateSelectedWorkItem}>
                   <h3>Update Work Item</h3>
+                  <div className="rb-form-section-heading">
+                    <span>Core status</span>
+                  </div>
                   <label>
                     Status
                     <select value={statusUpdate} onChange={(event) => setStatusUpdate(event.target.value)}>
@@ -696,6 +763,18 @@ export function ReynaldsBrothersOperationsSystem() {
                         <option key={option} value={option}>{option}</option>
                       ))}
                     </select>
+                  </label>
+                  <label>
+                    Approval Status
+                    <select value={approvalStatusUpdate} onChange={(event) => setApprovalStatusUpdate(event.target.value)}>
+                      {["Needs Approval", "Approved", "Rejected", "On Hold"].map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Approved By
+                    <input value={approvedByUpdate} onChange={(event) => setApprovedByUpdate(event.target.value)} />
                   </label>
                   <label>
                     Health
@@ -709,6 +788,9 @@ export function ReynaldsBrothersOperationsSystem() {
                     Crew Lead
                     <input value={crewLeadUpdate} onChange={(event) => setCrewLeadUpdate(event.target.value)} />
                   </label>
+                  <div className="rb-form-section-heading">
+                    <span>Lucernex, PO, permits</span>
+                  </div>
                   <label>
                     Lucernex Status
                     <select value={lucernexStatusUpdate} onChange={(event) => setLucernexStatusUpdate(event.target.value)}>
@@ -716,6 +798,14 @@ export function ReynaldsBrothersOperationsSystem() {
                         <option key={option} value={option}>{option}</option>
                       ))}
                     </select>
+                  </label>
+                  <label>
+                    Lucernex Link
+                    <input value={lucernexUrlUpdate} onChange={(event) => setLucernexUrlUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    PO Number
+                    <input value={poNumberUpdate} onChange={(event) => setPoNumberUpdate(event.target.value)} />
                   </label>
                   <label>
                     PO Status
@@ -726,9 +816,67 @@ export function ReynaldsBrothersOperationsSystem() {
                     </select>
                   </label>
                   <label>
+                    Permit Status
+                    <select value={permitStatusUpdate} onChange={(event) => setPermitStatusUpdate(event.target.value)}>
+                      {["Not Started", "In Progress", "Submitted", "Approved", "Rejected", "Not required"].map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Permit Submitted Date
+                    <input value={permitSubmittedDateUpdate} onChange={(event) => setPermitSubmittedDateUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Permit Approved Date
+                    <input value={permitApprovedDateUpdate} onChange={(event) => setPermitApprovedDateUpdate(event.target.value)} />
+                  </label>
+                  <div className="rb-form-section-heading">
+                    <span>Field readiness</span>
+                  </div>
+                  <label>
+                    Tank Status
+                    <input value={tankStatusUpdate} onChange={(event) => setTankStatusUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Oil Removal Status
+                    <select value={oilRemovalStatusUpdate} onChange={(event) => setOilRemovalStatusUpdate(event.target.value)}>
+                      {["Not Coordinated", "Requested", "Coordinated", "Confirmed", "Not applicable"].map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    CompanyCam Link
+                    <input value={companyCamUrlUpdate} onChange={(event) => setCompanyCamUrlUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Vac Truck Company
+                    <input value={vacTruckCompanyUpdate} onChange={(event) => setVacTruckCompanyUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Disposal Facility
+                    <input value={disposalFacilityUpdate} onChange={(event) => setDisposalFacilityUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Completion Date
+                    <input value={completionDateUpdate} onChange={(event) => setCompletionDateUpdate(event.target.value)} />
+                  </label>
+                  <div className="rb-form-section-heading">
+                    <span>Billing and next action</span>
+                  </div>
+                  <label>
                     Invoice Status
                     <select value={invoiceStatusUpdate} onChange={(event) => setInvoiceStatusUpdate(event.target.value)}>
                       {["Not Ready", "Blocked", "Ready to Invoice", "Invoice Sent", "Paid"].map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Billing Approval
+                    <select value={billingApprovalStatusUpdate} onChange={(event) => setBillingApprovalStatusUpdate(event.target.value)}>
+                      {["Not Started", "Needs Shay Review", "Needs Jeremiah Approval", "Needs Darren Final Approval", "Josh Visibility", "Approved"].map((option) => (
                         <option key={option} value={option}>{option}</option>
                       ))}
                     </select>
