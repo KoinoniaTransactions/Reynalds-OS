@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  REYNALDS_BROTHERS_WORK_ITEM_TYPE,
+  applyChecklistAutomation,
   getChecklistProgress,
   getOpenChecklistItems,
   getPhaseTrackForJobType,
@@ -62,6 +64,55 @@ describe("Reynalds Brothers work item engine", () => {
     expect(getPhaseTrackForJobType("Pressure Washing")).toContain("Vac Truck Secured");
     expect(getPhaseTrackForJobType("UCO Tank Replacement")).toContain("Tank Received");
     expect(getPhaseTrackForJobType("ACC Level 1 Triage")).toContain("Level 2 Triage");
+  });
+
+  it("automates related status fields from completed checklist items", () => {
+    const data = applyChecklistAutomation(reynaldsBrothersFallbackWorkItems[1].data ?? {}, [
+      "uco_frontline_ordered",
+      "uco_frontline_received",
+      "uco_po_confirmed",
+      "uco_permits_approved",
+      "uco_oil_removal_coordinated"
+    ]);
+
+    expect(data.poStatus).toBe("Received");
+    expect(data.permitStatus).toBe("Approved");
+    expect(data.tankStatus).toBe("Received from Frontline LLC");
+    expect(data.oilRemovalStatus).toBe("Coordinated");
+    expect(data.phase).toBe("Scheduled");
+  });
+
+  it("clears pressure washing red flags from smart checklist completion", () => {
+    const smartData = applyChecklistAutomation(reynaldsBrothersFallbackWorkItems[3].data ?? {}, [
+      "pw_vac_truck_secured",
+      "pw_disposal_facility"
+    ]);
+    const alerts = getWorkItemAlerts({
+      id: "test_pw",
+      objectType: REYNALDS_BROTHERS_WORK_ITEM_TYPE,
+      name: "PW test",
+      status: smartData.phase ?? "Scheduling",
+      health: "Watch",
+      data: smartData
+    });
+
+    expect(smartData.vacTruckCompany).toBe("Secured - details pending");
+    expect(smartData.disposalFacility).toBe("Secured - details pending");
+    expect(alerts).not.toContain("Vac truck company is not secured.");
+    expect(alerts).not.toContain("Disposal facility is not secured.");
+  });
+
+  it("marks jobs ready to invoice when completion proof is checked", () => {
+    const data = applyChecklistAutomation(reynaldsBrothersFallbackWorkItems[3].data ?? {}, [
+      "pw_after_photos",
+      "pw_disposal_manifest",
+      "pw_manager_signature",
+      "pw_completion_date"
+    ]);
+
+    expect(data.invoiceStatus).toBe("Ready to Invoice");
+    expect(data.billingApprovalStatus).toBe("Needs Shay Review");
+    expect(data.phase).toBe("Billing Review");
   });
 
   it("validates a new work item payload", () => {

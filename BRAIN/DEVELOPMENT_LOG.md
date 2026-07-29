@@ -14,6 +14,26 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Reynalds Brothers Smart Checklist Automation Added
+
+### Summary
+
+Reynalds Brothers checklist completion can now update related operational status fields so checked work reduces manual double-entry and clears matching red flags.
+
+### Implemented
+
+- Added checklist automation for PO, permit, tank, oil-removal, pressure-washing vendor, media, completion, billing, and phase status fields.
+- Updated checklist toggles to save automated Work Item data and status.
+- Strengthened red-flag rules so completed checklist evidence can clear matching blockers.
+- Added focused tests for automated UCO, Pressure Washing, billing, and checklist status behavior.
+- Updated the Reynalds Brothers Work Item object documentation and changelog.
+
+### Current Status
+
+This is a useful operational helper, but production use should still add timeline/audit events for checklist changes and staff ownership on each checklist item.
+
+---
+
 ## 2026-07-29 — AI Review Launch Controls Added
 
 ### Summary

@@ -141,6 +141,16 @@ The system computes:
 - Open required checklist items
 - Red flags for incomplete required work
 
+Checklist completion may also update related status fields automatically:
+
+- PO checklist items update PO Status to Received.
+- Permit approval items update Permit Status to Approved.
+- Tank received items update Tank Status.
+- Coordinated oil-removal items update Oil Removal Status.
+- Pressure washing vac-truck and disposal items clear their related red flags.
+- Completion-proof items can move Invoice Status to Ready to Invoice and Billing Approval Status to Needs Shay Review.
+- Checklist milestones may advance the current phase.
+
 ACC tank replacement is treated as one connected chain that may include Level 1 triage, Level 2 triage, and final replacement work.
 
 ---

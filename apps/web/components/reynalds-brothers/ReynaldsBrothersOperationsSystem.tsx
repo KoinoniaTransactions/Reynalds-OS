@@ -7,6 +7,7 @@ import {
   reynaldsBrothersFallbackEmails
 } from "../../lib/reynalds-brothers-email-intake";
 import {
+  applyChecklistAutomation,
   getChecklistProgress,
   getPhaseProgress,
   getPhaseTrackForJobType,
@@ -227,16 +228,15 @@ export function ReynaldsBrothersOperationsSystem() {
     const nextCompleted = currentCompleted.includes(checklistItemId)
       ? currentCompleted.filter((item) => item !== checklistItemId)
       : [...currentCompleted, checklistItemId];
+    const nextData = applyChecklistAutomation(selectedData, nextCompleted);
 
     try {
       const response = await fetch(`/api/reynalds-brothers/work-items/${selected.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          data: {
-            ...selectedData,
-            checklistCompleted: nextCompleted
-          }
+          status: nextData.phase ?? selected.status,
+          data: nextData
         })
       });
 

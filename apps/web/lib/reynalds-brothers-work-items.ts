@@ -476,18 +476,19 @@ export function getWorkItemAlerts(item: ReynaldsBrothersWorkItem): string[] {
   const alerts: string[] = [];
   const jobType = String(data.jobType ?? data.serviceLine ?? "");
   const openChecklistItems = getOpenChecklistItems(item);
+  const completed = new Set(data.checklistCompleted ?? []);
 
   if (data.approvalStatus === "Needs Approval") alerts.push("Human approval required before this job becomes active.");
   if (data.poStatus === "Missing") alerts.push("PO missing; alert all office staff after 5 business days.");
   if (data.permitStatus && !["Approved", "Not required", "Not Required"].includes(data.permitStatus)) alerts.push("Permit process is not complete.");
-  if ((jobType.includes("ACC") || jobType.includes("UCO")) && !["coordinated", "confirmed"].includes(String(data.oilRemovalStatus ?? "").trim().toLowerCase())) {
+  if ((jobType.includes("ACC") || jobType.includes("UCO")) && !["coordinated", "confirmed"].includes(String(data.oilRemovalStatus ?? "").trim().toLowerCase()) && !hasAnyCompleted(completed, ["acc_oil_removal_coordinated", "uco_oil_removal_coordinated"])) {
     alerts.push("Coordinated oil removal is not confirmed.");
   }
-  if ((jobType.includes("ACC") || jobType.includes("UCO")) && !String(data.tankStatus ?? "").toLowerCase().includes("received")) {
+  if ((jobType.includes("ACC") || jobType.includes("UCO")) && !String(data.tankStatus ?? "").toLowerCase().includes("received") && !hasAnyCompleted(completed, ["acc_tanks_received", "uco_frontline_received"])) {
     alerts.push("Tank assignment, delivery, or receiving is not complete.");
   }
-  if (jobType.includes("Pressure Washing") && !data.vacTruckCompany) alerts.push("Vac truck company is not secured.");
-  if (jobType.includes("Pressure Washing") && !data.disposalFacility) alerts.push("Disposal facility is not secured.");
+  if (jobType.includes("Pressure Washing") && !data.vacTruckCompany && !completed.has("pw_vac_truck_secured")) alerts.push("Vac truck company is not secured.");
+  if (jobType.includes("Pressure Washing") && !data.disposalFacility && !completed.has("pw_disposal_facility")) alerts.push("Disposal facility is not secured.");
   if (needsDocumentation(item)) alerts.push("Required photos or documents are still missing.");
   if (isInvoiceReadyStatus(data.invoiceStatus) && data.billingApprovalStatus !== "Approved") {
     alerts.push("Billing packet is ready but approval pass-off is not complete.");
@@ -495,6 +496,130 @@ export function getWorkItemAlerts(item: ReynaldsBrothersWorkItem): string[] {
   if (openChecklistItems.length > 0) alerts.push(`${openChecklistItems.length} required checklist item${openChecklistItems.length === 1 ? "" : "s"} still open.`);
 
   return alerts;
+}
+
+export function applyChecklistAutomation(
+  data: ReynaldsBrothersWorkItemData,
+  checklistCompleted: string[]
+): ReynaldsBrothersWorkItemData {
+  const completed = new Set(checklistCompleted);
+  const next: ReynaldsBrothersWorkItemData = {
+    ...data,
+    checklistCompleted
+  };
+
+  if (hasAnyCompleted(completed, ["acc_po_confirmed", "uco_po_confirmed"])) {
+    next.poStatus = "Received";
+  } else if (next.poStatus === "Received" && !next.poNumber) {
+    next.poStatus = next.jobType === "Pressure Washing" ? "Not Required Yet" : "Missing";
+  }
+
+  if (hasAnyCompleted(completed, ["acc_permits_approved", "uco_permits_approved"])) {
+    next.permitStatus = "Approved";
+  } else if (next.permitStatus === "Approved" && !next.permitApprovedDate) {
+    next.permitStatus = next.jobType === "Pressure Washing" ? "Not required" : "In Progress";
+  }
+
+  if (completed.has("acc_tanks_ordered")) next.tankStatus = "Ordered";
+  if (completed.has("acc_tanks_received")) next.tankStatus = "Received";
+  if (completed.has("uco_frontline_ordered")) next.tankStatus = "Ordered from Frontline LLC";
+  if (completed.has("uco_frontline_received")) next.tankStatus = "Received from Frontline LLC";
+
+  if (hasAnyCompleted(completed, ["acc_oil_removal_coordinated", "uco_oil_removal_coordinated"])) {
+    next.oilRemovalStatus = "Coordinated";
+  } else if (next.oilRemovalStatus === "Coordinated") {
+    next.oilRemovalStatus = "Not Coordinated";
+  }
+
+  if (completed.has("pw_vac_truck_secured") && !next.vacTruckCompany) {
+    next.vacTruckCompany = "Secured - details pending";
+  } else if (!completed.has("pw_vac_truck_secured") && next.vacTruckCompany === "Secured - details pending") {
+    next.vacTruckCompany = "";
+  }
+
+  if (completed.has("pw_disposal_facility") && !next.disposalFacility) {
+    next.disposalFacility = "Secured - details pending";
+  } else if (!completed.has("pw_disposal_facility") && next.disposalFacility === "Secured - details pending") {
+    next.disposalFacility = "";
+  }
+
+  if (hasAnyCompleted(completed, ["acc_companycam_complete", "uco_companycam_complete", "pw_after_photos", "pw_disposal_manifest"])) {
+    next.mediaStatus = "Complete";
+  } else if (next.mediaStatus === "Complete") {
+    next.mediaStatus = "No media yet";
+  }
+
+  if (hasAnyCompleted(completed, ["acc_completion_date", "uco_completion_date", "pw_completion_date"]) && !next.completionDate) {
+    next.completionDate = "Recorded";
+  } else if (!hasAnyCompleted(completed, ["acc_completion_date", "uco_completion_date", "pw_completion_date"]) && next.completionDate === "Recorded") {
+    next.completionDate = null;
+  }
+
+  if (isReadyForBilling(next)) {
+    next.invoiceStatus = "Ready to Invoice";
+    next.billingApprovalStatus = !next.billingApprovalStatus || next.billingApprovalStatus === "Not Started"
+      ? "Needs Shay Review"
+      : next.billingApprovalStatus;
+  } else if (next.invoiceStatus === "Ready to Invoice") {
+    next.invoiceStatus = "Not Ready";
+  }
+
+  next.phase = getAutomatedPhase(next);
+
+  return next;
+}
+
+function isReadyForBilling(data: ReynaldsBrothersWorkItemData): boolean {
+  const completed = new Set(data.checklistCompleted ?? []);
+  const jobType = String(data.jobType ?? "");
+
+  if (jobType.includes("Pressure Washing")) {
+    return ["pw_after_photos", "pw_disposal_manifest", "pw_manager_signature", "pw_completion_date"].every((id) => completed.has(id));
+  }
+
+  if (jobType.includes("UCO")) {
+    return ["uco_serial_recorded", "uco_companycam_complete", "uco_manager_signature", "uco_completion_date"].every((id) => completed.has(id));
+  }
+
+  if (jobType.includes("ACC")) {
+    return ["acc_serials_recorded", "acc_companycam_complete", "acc_manager_signature", "acc_completion_date"].every((id) => completed.has(id));
+  }
+
+  return false;
+}
+
+function getAutomatedPhase(data: ReynaldsBrothersWorkItemData): string | null | undefined {
+  const completed = new Set(data.checklistCompleted ?? []);
+  const currentPhase = data.phase;
+  const jobType = String(data.jobType ?? "");
+
+  if (data.invoiceStatus === "Ready to Invoice") return "Billing Review";
+  if (jobType.includes("Pressure Washing")) {
+    if (completed.has("pw_disposal_facility")) return "Scheduled";
+    if (completed.has("pw_vac_truck_secured")) return "Disposal Facility Secured";
+  }
+  if (jobType.includes("UCO")) {
+    if (completed.has("uco_oil_removal_coordinated")) return "Scheduled";
+    if (completed.has("uco_po_confirmed")) return "PO Confirmed";
+    if (completed.has("uco_frontline_received")) return "Tank Received";
+    if (completed.has("uco_frontline_ordered")) return "Tank Ordered";
+    if (completed.has("uco_permits_approved")) return "Permitting";
+  }
+  if (jobType.includes("ACC")) {
+    if (completed.has("acc_oil_removal_coordinated")) return "Scheduled";
+    if (completed.has("acc_po_confirmed")) return "PO Confirmed";
+    if (completed.has("acc_tanks_received")) return "Tanks Received and Tested";
+    if (completed.has("acc_tanks_ordered")) return "Tanks Ordered";
+    if (completed.has("acc_permits_approved")) return "Permitting";
+    if (completed.has("l2_recommendation_sent")) return "Replacement Recommended";
+    if (completed.has("l1_level2_decision")) return "Level 2 Triage";
+  }
+
+  return currentPhase;
+}
+
+function hasAnyCompleted(completed: Set<string>, itemIds: string[]): boolean {
+  return itemIds.some((itemId) => completed.has(itemId));
 }
 
 export function getWorkItemChecklist(item: ReynaldsBrothersWorkItem): ReynaldsBrothersChecklistItem[] {
