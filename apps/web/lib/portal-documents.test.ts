@@ -7,6 +7,7 @@ import {
   PortalDocumentValidationError,
   sanitizeDocumentFileName,
   validatePortalDocumentScannerCommand,
+  validatePortalDocumentStatusUpdateInput,
   validatePortalDocumentStorageKey,
   validatePortalDocumentUploadRoot,
   validatePortalDocumentSubmission
@@ -85,6 +86,34 @@ describe("portal document helpers", () => {
     expect(formatDocumentFileSize(1024)).toBe("1 KB");
     expect(formatDocumentFileSize(2.5 * 1024 * 1024)).toBe("2.5 MB");
     expect(getHumanDocumentStatus("Ready for Client Review")).toBe("Ready for Review");
+    expect(getHumanDocumentStatus("Revision Requested")).toBe("Revision Requested");
+  });
+
+  it("validates staff document status updates", () => {
+    expect(
+      validatePortalDocumentStatusUpdateInput({
+        notes: "Reviewed against the source terms.",
+        requestedAction: "Send to client for review",
+        status: "Ready for Client Review"
+      })
+    ).toEqual({
+      notes: "Reviewed against the source terms.",
+      requestedAction: "Send to client for review",
+      status: "Ready for Client Review"
+    });
+
+    expect(() =>
+      validatePortalDocumentStatusUpdateInput({
+        status: "Custom Workflow"
+      })
+    ).toThrow("Document status is not supported.");
+
+    expect(() =>
+      validatePortalDocumentStatusUpdateInput({
+        notes: "The credit card number is here.",
+        status: "In Review"
+      })
+    ).toThrow("Do not include passwords");
   });
 
   it("validates stored file references for authorized downloads", () => {

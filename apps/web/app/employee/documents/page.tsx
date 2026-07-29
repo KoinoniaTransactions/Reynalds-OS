@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { AuthUser } from "@reynalds-os/auth";
 import type { Document as PortalDocumentRecord } from "@reynalds-os/database";
+import { PortalDocumentStatusForm } from "../../../components/employee/PortalDocumentStatusForm";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
@@ -86,10 +87,12 @@ type EmployeeDocumentItem = {
   downloadHref?: string;
   fileInfo: string;
   id: string;
+  requestedAction?: string | null;
   requestedBy: string;
   status: string;
   submitted: string;
   title: string;
+  workflowStatus: string;
 };
 
 type EmployeeDocumentView = {
@@ -106,7 +109,8 @@ const sampleUploadIntake: EmployeeDocumentItem[] = [
     status: "Uploaded",
     detail: "Sample client upload waiting for document review.",
     fileInfo: "seller-disclosure.pdf - 500 KB",
-    submitted: "Today"
+    submitted: "Today",
+    workflowStatus: "Uploaded"
   },
   {
     id: "sample-intake-inspection",
@@ -115,7 +119,8 @@ const sampleUploadIntake: EmployeeDocumentItem[] = [
     status: "In Review",
     detail: "Sample upload tied to terms review.",
     fileInfo: "inspection-instructions.pdf - 220 KB",
-    submitted: "Yesterday"
+    submitted: "Yesterday",
+    workflowStatus: "In Review"
   }
 ];
 
@@ -281,6 +286,13 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
                           <strong>{item.status}</strong>
                           <span>{item.submitted}</span>
                         </div>
+
+                        <PortalDocumentStatusForm
+                          currentRequestedAction={item.requestedAction ?? item.detail}
+                          currentStatus={item.workflowStatus}
+                          disabled={!documentView.isLiveData}
+                          documentId={item.id}
+                        />
                       </article>
                     ))
                   ) : (
@@ -411,7 +423,9 @@ function mapDocumentRecord(
     downloadHref:
       storageReady && document.storageKey ? `/api/portal/documents/${document.id}/download` : undefined,
     fileInfo: `${document.fileName} - ${formatDocumentFileSize(document.fileSizeBytes)}`,
-    submitted: getDocumentSubmittedLabel(document.createdAt)
+    requestedAction: document.requestedAction,
+    submitted: getDocumentSubmittedLabel(document.createdAt),
+    workflowStatus: document.status
   };
 }
 

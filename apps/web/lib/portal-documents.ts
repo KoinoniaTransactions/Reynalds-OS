@@ -2,6 +2,18 @@ import { isAbsolute } from "node:path";
 
 export const portalDocumentMaxUploadBytes = 25 * 1024 * 1024;
 
+export const portalDocumentWorkflowStatuses = [
+  "Uploaded",
+  "In Review",
+  "Ready for Client Review",
+  "Revision Requested",
+  "Approved",
+  "Sent",
+  "Archived"
+] as const;
+
+export type PortalDocumentWorkflowStatus = (typeof portalDocumentWorkflowStatuses)[number];
+
 const allowedMimeTypes = new Set([
   "application/pdf",
   "application/msword",
@@ -37,6 +49,12 @@ export type PortalDocumentSubmission = PortalDocumentSubmissionInput & {
   };
 };
 
+export type PortalDocumentStatusUpdateInput = {
+  notes?: string;
+  requestedAction?: string;
+  status: PortalDocumentWorkflowStatus;
+};
+
 export class PortalDocumentValidationError extends Error {
   constructor(message: string) {
     super(message);
@@ -55,7 +73,7 @@ export function validatePortalDocumentSubmission(input: unknown): PortalDocument
 
   if (notes && containsCredentialLanguage(notes)) {
     throw new PortalDocumentValidationError(
-      "Do not include passwords, access codes, or private login details in document notes."
+      "Do not include passwords, card numbers, access codes, or private login details in document notes."
     );
   }
 
@@ -66,6 +84,31 @@ export function validatePortalDocumentSubmission(input: unknown): PortalDocument
     relatedObjectId: optionalString(value.relatedObjectId),
     requestedAction: optionalString(value.requestedAction) ?? "Review uploaded document",
     transactionName: optionalString(value.transactionName)
+  };
+}
+
+export function validatePortalDocumentStatusUpdateInput(
+  input: unknown
+): PortalDocumentStatusUpdateInput {
+  if (!input || typeof input !== "object") {
+    throw new PortalDocumentValidationError("Document status update must be an object.");
+  }
+
+  const value = input as Record<string, unknown>;
+  const status = requiredDocumentStatus(value.status);
+  const requestedAction = boundedOptionalString(value.requestedAction, "requestedAction", 220);
+  const notes = boundedOptionalString(value.notes, "notes", 1_500);
+
+  if (notes && containsCredentialLanguage(notes)) {
+    throw new PortalDocumentValidationError(
+      "Do not include passwords, card numbers, access codes, or private login details in document notes."
+    );
+  }
+
+  return {
+    notes,
+    requestedAction,
+    status
   };
 }
 
@@ -83,6 +126,8 @@ export function getHumanDocumentStatus(status: string): string {
       return "In Review";
     case "Ready for Client Review":
       return "Ready for Review";
+    case "Revision Requested":
+      return "Revision Requested";
     case "Approved":
       return "Approved";
     case "Sent":
@@ -271,12 +316,66 @@ function requiredString(value: unknown, fieldName: string): string {
   return text;
 }
 
+function requiredDocumentStatus(value: unknown): PortalDocumentWorkflowStatus {
+  const status = requiredString(value, "status");
+
+  if (!isPortalDocumentWorkflowStatus(status)) {
+    throw new PortalDocumentValidationError("Document status is not supported.");
+  }
+
+  return status;
+}
+
+function isPortalDocumentWorkflowStatus(value: string): value is PortalDocumentWorkflowStatus {
+  return portalDocumentWorkflowStatuses.includes(value as PortalDocumentWorkflowStatus);
+}
+
+function boundedOptionalString(
+  value: unknown,
+  fieldName: string,
+  maxLength: number
+): string | undefined {
+  const text = optionalString(value);
+
+  if (text && text.length > maxLength) {
+    throw new PortalDocumentValidationError(
+      `${fieldName} must be ${maxLength} characters or fewer.`
+    );
+  }
+
+  return text;
+}
+
 function optionalString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
 function containsCredentialLanguage(value: string): boolean {
-  return /\b(password|passcode|credential|secret|token|api key|lockbox|gate code|door code|alarm code|combo|pin|mls login|showingtime login|forms login|e-signature login)\b/i.test(
-    value
-  );
+  return new RegExp(
+    `\\b(${[
+      "password",
+      "passcode",
+      "credential",
+      "secret",
+      "token",
+      "api key",
+      "lockbox",
+      "gate code",
+      "door code",
+      "alarm code",
+      "combo",
+      "pin",
+      "mls login",
+      "showingtime login",
+      "forms login",
+      "e-signature login",
+      "credit card",
+      "card number",
+      "cvv",
+      "cvc",
+      "bank account",
+      "routing number"
+    ].join("|")})\\b`,
+    "i"
+  ).test(value);
 }

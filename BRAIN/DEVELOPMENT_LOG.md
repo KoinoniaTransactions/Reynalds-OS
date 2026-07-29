@@ -14,6 +14,28 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Document Status Workflow Added
+
+### Summary
+
+Koinonia staff can now update uploaded portal documents through a controlled status workflow, giving the employee document workspace a real operating action beyond upload intake and protected downloads.
+
+### Implemented
+
+- Added safe document status-update validation for uploaded, in-review, client-review, revision-requested, approved, sent, and archived states.
+- Added `/api/portal/documents/[id]/status` for staff-only document workflow updates.
+- Status updates enforce the matching document-workspace permission for approval and sending steps.
+- Document status updates write timeline history for related work items and audit events for the document record.
+- Added a staff status form to `/employee/documents` for live document records.
+- Extended document note filtering to reject payment-card and bank-account language along with credential and access-code language.
+- Added focused tests for document status update validation.
+
+### Current Status
+
+The staff document workflow compiles into the production build and the local preview shows the status controls. Real saved updates still require reachable production database storage. Full document version replacement, in-browser editing, e-signature routing, and final archive delivery remain separate production passes.
+
+---
+
 ## 2026-07-29 — Portal Work Detail Pages Added
 
 ### Summary

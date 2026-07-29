@@ -4896,6 +4896,62 @@ h1 {
   width: 100%;
 }
 
+.koinonia-document-status-form {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 10px;
+  margin-top: 2px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(25, 92, 96, 0.14);
+}
+
+.koinonia-document-status-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--ros-text);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.koinonia-document-status-form input,
+.koinonia-document-status-form select,
+.koinonia-document-status-form textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(25, 92, 96, 0.18);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ros-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+
+.koinonia-document-status-form input,
+.koinonia-document-status-form select {
+  min-height: 40px;
+  padding: 9px 11px;
+}
+
+.koinonia-document-status-form textarea {
+  resize: vertical;
+  padding: 11px;
+}
+
+.koinonia-document-status-form input:disabled,
+.koinonia-document-status-form select:disabled,
+.koinonia-document-status-form textarea:disabled {
+  color: rgba(36, 36, 36, 0.58);
+  background: rgba(244, 244, 242, 0.84);
+}
+
+.koinonia-document-status-form .koinonia-button {
+  width: 100%;
+}
+
 .koinonia-document-security-note,
 .koinonia-document-form-status {
   margin: 0;
