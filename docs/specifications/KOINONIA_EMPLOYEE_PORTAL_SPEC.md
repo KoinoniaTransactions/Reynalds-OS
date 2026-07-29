@@ -330,15 +330,16 @@ Build the employee portal in safe slices:
 2. Employee auth permissions and limited staff roles. — Scaffolded in `packages/auth`
 3. Publicly hidden `/employee` entry page with no real client data.
 4. `/employee/dashboard` sample-data preview.
-5. `/employee/documents` sample-data document workspace preview.
-6. `/employee/billing` sample-data billing workspace preview.
-7. Work item detail assignment panel using mocked/sample data.
-8. Staff roster and capacity schema.
-9. Assignment event audit trail.
-10. Authenticated read-only employee dashboard connected to real objects.
-11. Assignment update actions with permission checks.
-12. Staff-specific views for assigned transaction, contract, showing, and operations work.
-13. Production security review before exposing real client files, internal staff notes, or payment method setup.
+5. `/employee/access` access workspace connected to portal users and invitations, with safe sample-data fallback when storage is unavailable.
+6. `/employee/documents` sample-data document workspace preview.
+7. `/employee/billing` sample-data billing workspace preview.
+8. Work item detail assignment panel using mocked/sample data.
+9. Staff roster and capacity schema.
+10. Assignment event audit trail.
+11. Authenticated read-only employee dashboard connected to real objects.
+12. Assignment update actions with permission checks.
+13. Staff-specific views for assigned transaction, contract, showing, and operations work.
+14. Production security review before exposing real client files, internal staff notes, or payment method setup.
 
 ---
 

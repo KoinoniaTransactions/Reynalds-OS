@@ -1760,3 +1760,23 @@ Koinonia now hosts Clerk's `setup-mfa` session task route so staff can complete 
 ### Current Status
 
 The task route compiles. Clerk production policy must still require staff MFA and live testing must confirm pending sessions are routed through this page.
+
+---
+
+## 2026-07-29 — Employee Access Workspace Connected To Portal Records
+
+### Summary
+
+The employee access workspace now has a live-data path for portal users, invitations, staff MFA readiness, and client access readiness.
+
+### Implemented
+
+- Added tested access-status helpers for portal user and invitation summaries.
+- Connected `/employee/access` to Koinonia portal users and portal invitation records.
+- Added live summary counts for pending invites, MFA-required staff, active access, and blocked records.
+- Added live staff access and client readiness rows.
+- Kept a safe sample-data fallback when production storage is unavailable in preview.
+
+### Current Status
+
+The access workspace compiles and remains protected by `employee-portal:assignments:update`. Live database verification is still blocked until the local or deployed database is reachable.

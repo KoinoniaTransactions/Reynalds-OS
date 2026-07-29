@@ -2,13 +2,24 @@ import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
+import { prisma } from "../../../lib/db";
+import {
+  buildAccessSummaryCards,
+  getAccessSummaryCounts,
+  getHumanInvitationStatus,
+  getHumanPortalAccessStatus,
+  getMfaLabel,
+  getServiceContextText,
+  isStaffPortalUser,
+  type AccessSummaryCard
+} from "../../../lib/portal-access-workspace";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Employee Access Workspace Preview",
+  title: "Employee Access Workspace",
   description:
-    "Preview of the Koinonia employee access workspace for staff invites, client portal readiness, role status, and security guardrails.",
+    "Koinonia employee access workspace for staff invites, client portal readiness, role status, and security guardrails.",
   alternates: {
     canonical: absoluteUrl("/employee/access")
   },
@@ -18,31 +29,48 @@ export const metadata: Metadata = {
   }
 };
 
-const accessSummary = [
-  {
-    label: "Pending Invites",
-    value: "5",
-    body: "Client and staff users waiting on invitation, acceptance, or profile setup."
-  },
-  {
-    label: "MFA Required",
-    value: "4",
-    body: "Internal staff accounts that must keep stronger sign-in protection enabled."
-  },
-  {
-    label: "Active Access",
-    value: "12",
-    body: "Users mapped to Koinonia roles, workspace access, and current service ownership."
-  },
-  {
-    label: "Blocked",
-    value: "2",
-    body: "Access records held until ownership, billing, or security questions are resolved."
-  }
-] as const;
+type InvitationQueueItem = {
+  client: string;
+  email: string;
+  id: string;
+  nextAction: string;
+  owner: string;
+  person: string;
+  role: string;
+  service: string;
+  status: string;
+};
 
-const invitationQueue = [
+type StaffAccessItem = {
+  access: string;
+  id: string;
+  mfa: string;
+  name: string;
+  role: string;
+  scope: string;
+};
+
+type ClientReadinessItem = {
+  accessStatus: string;
+  accountOwner: string;
+  billingStatus: string;
+  client: string;
+  id: string;
+  packageName: string;
+};
+
+type AccessWorkspaceView = {
+  clientReadiness: ClientReadinessItem[];
+  invitationQueue: InvitationQueueItem[];
+  isLiveData: boolean;
+  notice?: string;
+  staffAccess: StaffAccessItem[];
+  summaryCards: AccessSummaryCard[];
+};
+
+const sampleInvitationQueue: InvitationQueueItem[] = [
   {
+    id: "sample-alyssa",
     person: "Alyssa Morgan",
     email: "alyssa@brighthomesteam.example",
     role: "Client",
@@ -53,6 +81,7 @@ const invitationQueue = [
     nextAction: "Confirm billing contact and send portal invite."
   },
   {
+    id: "sample-daniel",
     person: "Daniel Price",
     email: "daniel@wilsonrealty.example",
     role: "Client",
@@ -63,6 +92,7 @@ const invitationQueue = [
     nextAction: "Confirm package selection before access is granted."
   },
   {
+    id: "sample-tasha",
     person: "Tasha Reed",
     email: "tasha@koinonia.example",
     role: "Showing Provider",
@@ -73,6 +103,7 @@ const invitationQueue = [
     nextAction: "Require staff MFA before field assignments are visible."
   },
   {
+    id: "sample-erin",
     person: "Erin Blake",
     email: "erin@koinonia.example",
     role: "Customer Success",
@@ -82,10 +113,11 @@ const invitationQueue = [
     status: "Ready",
     nextAction: "Grant staff access after owner approval."
   }
-] as const;
+];
 
-const staffAccess = [
+const sampleStaffAccess: StaffAccessItem[] = [
   {
+    id: "sample-jeremiah",
     name: "Jeremiah Reynalds",
     role: "Owner",
     mfa: "Required",
@@ -93,6 +125,7 @@ const staffAccess = [
     scope: "All client files, staff assignments, billing, and audit history"
   },
   {
+    id: "sample-maya",
     name: "Maya Torres",
     role: "Transaction Coordinator",
     mfa: "Required",
@@ -100,6 +133,7 @@ const staffAccess = [
     scope: "Assigned clients, transaction files, document review, and deadlines"
   },
   {
+    id: "sample-luis",
     name: "Luis Carter",
     role: "Contract Support",
     mfa: "Required",
@@ -107,16 +141,18 @@ const staffAccess = [
     scope: "Assigned drafting work, document versions, and approval requests"
   },
   {
+    id: "sample-tasha-staff",
     name: "Tasha Reed",
     role: "Showing Provider",
     mfa: "Required",
     access: "Pending",
     scope: "Assigned showing details, access notes, and feedback only"
   }
-] as const;
+];
 
-const clientReadiness = [
+const sampleClientReadiness: ClientReadinessItem[] = [
   {
+    id: "sample-bright-homes",
     client: "Bright Homes Team",
     packageName: "Transaction Coordination Plus",
     accountOwner: "Maya Torres",
@@ -124,6 +160,7 @@ const clientReadiness = [
     billingStatus: "Prepay Due"
   },
   {
+    id: "sample-wilson",
     client: "Wilson Realty Group",
     packageName: "Realtor Support Plus",
     accountOwner: "Jeremiah Reynalds",
@@ -131,6 +168,7 @@ const clientReadiness = [
     billingStatus: "Setup Needed"
   },
   {
+    id: "sample-northgate",
     client: "Northgate Partners",
     packageName: "Pay-at-Closing Coordination",
     accountOwner: "Erin Blake",
@@ -138,13 +176,14 @@ const clientReadiness = [
     billingStatus: "Card Ready"
   },
   {
+    id: "sample-summit",
     client: "Summit Line Realty",
     packageName: "Licensed Showing Coverage",
     accountOwner: "Erin Blake",
     accessStatus: "Active",
     billingStatus: "Per Showing"
   }
-] as const;
+];
 
 const accessRules = [
   "Only Owner and Operations roles can create or change portal invitations.",
@@ -173,8 +212,9 @@ const setupChecklist = [
   }
 ] as const;
 
-export default async function EmployeeAccessWorkspacePreviewPage() {
-  await requirePortalPermission("employee-portal:assignments:update", "/employee/access");
+export default async function EmployeeAccessWorkspacePage() {
+  const actor = await requirePortalPermission("employee-portal:assignments:update", "/employee/access");
+  const accessWorkspace = await getAccessWorkspaceView(actor.workspaceId);
 
   return (
     <main className="koinonia-site koinonia-employee-dashboard koinonia-employee-access">
@@ -183,21 +223,27 @@ export default async function EmployeeAccessWorkspacePreviewPage() {
       <section className="koinonia-section koinonia-employee-dashboard-hero">
         <div className="koinonia-container">
           <div className="koinonia-section-header">
-            <p className="koinonia-eyebrow">Employee Access Workspace Preview</p>
+            <p className="koinonia-eyebrow">
+              {accessWorkspace.isLiveData ? "Employee Access Workspace" : "Employee Access Workspace Preview"}
+            </p>
 
             <h1 className="koinonia-title">
               One place to manage who can enter the client and employee portal.
             </h1>
 
             <p className="koinonia-lead">
-              This preview uses sample data only. Real access changes must wait
-              for production authentication, invitation email delivery, staff
-              MFA, database-backed users, and audit logging.
+              {accessWorkspace.isLiveData
+                ? "Live portal records are connected to Koinonia users, invitations, roles, staff MFA requirements, and client readiness."
+                : "This workspace is ready for live portal records, but it is showing sample data until production storage is reachable."}
             </p>
           </div>
 
+          {accessWorkspace.notice ? (
+            <p className="koinonia-employee-security-note">{accessWorkspace.notice}</p>
+          ) : null}
+
           <div className="koinonia-employee-summary-grid">
-            {accessSummary.map((card) => (
+            {accessWorkspace.summaryCards.map((card) => (
               <article className="koinonia-employee-summary-card" key={card.label}>
                 <span>{card.label}</span>
                 <strong>{card.value}</strong>
@@ -222,8 +268,8 @@ export default async function EmployeeAccessWorkspacePreviewPage() {
                 </div>
 
                 <div className="koinonia-employee-assignment-list">
-                  {invitationQueue.map((invite) => (
-                    <article className="koinonia-employee-assignment-item" key={invite.email}>
+                  {accessWorkspace.invitationQueue.map((invite) => (
+                    <article className="koinonia-employee-assignment-item" key={invite.id}>
                       <div>
                         <span>{invite.role}</span>
                         <h3>{invite.person}</h3>
@@ -278,8 +324,8 @@ export default async function EmployeeAccessWorkspacePreviewPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {staffAccess.map((staff) => (
-                        <tr key={staff.name}>
+                      {accessWorkspace.staffAccess.map((staff) => (
+                        <tr key={staff.id}>
                           <td>{staff.name}</td>
                           <td>{staff.role}</td>
                           <td>{staff.mfa}</td>
@@ -313,8 +359,8 @@ export default async function EmployeeAccessWorkspacePreviewPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {clientReadiness.map((client) => (
-                        <tr key={client.client}>
+                      {accessWorkspace.clientReadiness.map((client) => (
+                        <tr key={client.id}>
                           <td>{client.client}</td>
                           <td>{client.packageName}</td>
                           <td>{client.accountOwner}</td>
@@ -375,5 +421,324 @@ export default async function EmployeeAccessWorkspacePreviewPage() {
 
       <Footer />
     </main>
+  );
+}
+
+async function getAccessWorkspaceView(workspaceId: string): Promise<AccessWorkspaceView> {
+  try {
+    const [users, invitations] = await Promise.all([
+      prisma.user.findMany({
+        where: { workspaceId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          status: true,
+          portalAccessStatus: true,
+          mfaRequired: true,
+          role: {
+            select: {
+              name: true
+            }
+          }
+        },
+        orderBy: [{ status: "asc" }, { name: "asc" }],
+        take: 100
+      }),
+      prisma.portalInvitation.findMany({
+        where: { workspaceId },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          roleName: true,
+          status: true,
+          clientObjectId: true,
+          serviceContext: true,
+          invitedBy: {
+            select: {
+              name: true
+            }
+          }
+        },
+        orderBy: { createdAt: "desc" },
+        take: 50
+      })
+    ]);
+
+    const clientObjectNames = await getClientObjectNames(
+      workspaceId,
+      invitations.map((invitation) => invitation.clientObjectId)
+    );
+
+    return {
+      clientReadiness: withEmptyClientReadiness(
+        buildClientReadinessItems(users, invitations, clientObjectNames)
+      ),
+      invitationQueue: withEmptyInvitations(
+        invitations
+          .filter((invitation) => invitation.status !== "accepted" && invitation.status !== "revoked")
+          .slice(0, 8)
+          .map((invitation) => ({
+            id: invitation.id,
+            person: invitation.name ?? invitation.email,
+            email: invitation.email,
+            role: invitation.roleName,
+            client: getInvitationClientLabel(invitation, clientObjectNames),
+            service: getServiceContextText(invitation.serviceContext, ["packageName", "package", "service", "serviceName"], "Access setup"),
+            owner: invitation.invitedBy?.name ?? "Owner approval needed",
+            status: getHumanInvitationStatus(invitation.status),
+            nextAction: getInvitationNextAction(invitation.status)
+          }))
+      ),
+      isLiveData: true,
+      staffAccess: withEmptyStaffAccess(
+        users
+          .filter((user) =>
+            isStaffPortalUser({
+              mfaRequired: user.mfaRequired,
+              portalAccessStatus: user.portalAccessStatus,
+              roleName: user.role?.name,
+              status: user.status
+            })
+          )
+          .map((user) => ({
+            id: user.id,
+            name: user.name,
+            role: user.role?.name ?? "Viewer",
+            mfa: getMfaLabel({
+              mfaRequired: user.mfaRequired,
+              portalAccessStatus: user.portalAccessStatus,
+              roleName: user.role?.name,
+              status: user.status
+            }),
+            access: getHumanPortalAccessStatus(user.status, user.portalAccessStatus),
+            scope: getRoleScope(user.role?.name)
+          }))
+      ),
+      summaryCards: buildAccessSummaryCards(
+        getAccessSummaryCounts(
+          users.map((user) => ({
+            mfaRequired: user.mfaRequired,
+            portalAccessStatus: user.portalAccessStatus,
+            roleName: user.role?.name,
+            status: user.status
+          })),
+          invitations.map((invitation) => ({ status: invitation.status }))
+        )
+      )
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    return {
+      clientReadiness: sampleClientReadiness,
+      invitationQueue: sampleInvitationQueue,
+      isLiveData: false,
+      notice: "Production storage is not reachable in this preview, so sample access records are shown. Real client and staff access should wait until the database and Clerk environment pass verification.",
+      staffAccess: sampleStaffAccess,
+      summaryCards: buildAccessSummaryCards({
+        activeAccess: 12,
+        blockedAccess: 2,
+        mfaRequired: 4,
+        pendingInvitations: 5
+      })
+    };
+  }
+}
+
+async function getClientObjectNames(workspaceId: string, clientObjectIds: Array<string | null>): Promise<Map<string, string>> {
+  const uniqueClientObjectIds = Array.from(
+    new Set(clientObjectIds.filter((clientObjectId): clientObjectId is string => Boolean(clientObjectId)))
+  );
+
+  if (uniqueClientObjectIds.length === 0) {
+    return new Map();
+  }
+
+  const clientObjects = await prisma.rosObject.findMany({
+    where: {
+      workspaceId,
+      id: { in: uniqueClientObjectIds },
+      archivedAt: null
+    },
+    select: {
+      id: true,
+      name: true
+    }
+  });
+
+  return new Map(clientObjects.map((clientObject) => [clientObject.id, clientObject.name]));
+}
+
+function buildClientReadinessItems(
+  users: Array<{
+    email: string;
+    id: string;
+    name: string;
+    portalAccessStatus: string;
+    role: { name: string } | null;
+    status: string;
+  }>,
+  invitations: Array<{
+    clientObjectId: string | null;
+    email: string;
+    id: string;
+    name: string | null;
+    roleName: string;
+    serviceContext: unknown;
+    status: string;
+    invitedBy: { name: string } | null;
+  }>,
+  clientObjectNames: Map<string, string>
+): ClientReadinessItem[] {
+  const clientUsers = users
+    .filter((user) => user.role?.name === "Client")
+    .map((user) => ({
+      id: `user-${user.id}`,
+      client: user.name || user.email,
+      packageName: "Service profile needed",
+      accountOwner: "Assigned owner needed",
+      accessStatus: getHumanPortalAccessStatus(user.status, user.portalAccessStatus),
+      billingStatus: "Billing profile needed"
+    }));
+
+  const pendingClientInvitations = invitations
+    .filter((invitation) => invitation.roleName === "Client" && invitation.status !== "accepted")
+    .map((invitation) => ({
+      id: `invitation-${invitation.id}`,
+      client: getInvitationClientLabel(invitation, clientObjectNames),
+      packageName: getServiceContextText(invitation.serviceContext, ["packageName", "package", "service", "serviceName"], "Package selection needed"),
+      accountOwner: invitation.invitedBy?.name ?? "Owner approval needed",
+      accessStatus: getHumanInvitationStatus(invitation.status),
+      billingStatus: getServiceContextText(invitation.serviceContext, ["billingStatus", "billing", "paymentStatus"], "Billing setup needed")
+    }));
+
+  return [...clientUsers, ...pendingClientInvitations].slice(0, 12);
+}
+
+function getInvitationClientLabel(
+  invitation: {
+    clientObjectId: string | null;
+    email: string;
+    name: string | null;
+    roleName: string;
+    serviceContext: unknown;
+  },
+  clientObjectNames: Map<string, string>
+): string {
+  if (invitation.clientObjectId) {
+    const clientObjectName = clientObjectNames.get(invitation.clientObjectId);
+
+    if (clientObjectName) {
+      return clientObjectName;
+    }
+  }
+
+  return getServiceContextText(
+    invitation.serviceContext,
+    ["clientName", "client", "accountName", "company"],
+    invitation.roleName === "Client" ? invitation.name ?? invitation.email : "Staff account"
+  );
+}
+
+function getInvitationNextAction(status: string): string {
+  switch (status) {
+    case "pending":
+      return "Review the account details, then send the managed login invitation.";
+    case "provider_pending":
+      return "Wait for the user to accept the managed login invitation.";
+    case "provider_error":
+      return "Review the provider error, then retry or revoke the invitation.";
+    case "expired":
+      return "Create a fresh invitation if this person still needs portal access.";
+    default:
+      return "Confirm the access request still matches the approved service scope.";
+  }
+}
+
+function getRoleScope(roleName: string | null | undefined): string {
+  switch (roleName) {
+    case "Owner":
+      return "All client files, staff assignments, billing, and audit history";
+    case "Operations":
+      return "Client setup, staff assignments, document workflow, billing readiness, and access review";
+    case "Transaction Coordinator":
+      return "Assigned clients, transaction files, document review, and deadlines";
+    case "Contract Support":
+      return "Assigned drafting work, document versions, approvals, and send packages";
+    case "Showing Provider":
+      return "Assigned showing details, access notes, and showing feedback only";
+    case "Customer Success":
+      return "Assigned client follow-up, onboarding, service check-ins, and account notes";
+    case "Finance":
+      return "Billing profiles, invoices, payment readiness, and pay-at-closing triggers";
+    default:
+      return "Limited review access only";
+  }
+}
+
+function withEmptyInvitations(invitations: InvitationQueueItem[]): InvitationQueueItem[] {
+  if (invitations.length > 0) {
+    return invitations;
+  }
+
+  return [
+    {
+      id: "empty-invitations",
+      person: "No pending invitations",
+      email: "Invite queue is clear",
+      role: "Access",
+      client: "No active queue",
+      service: "Ready for next approved invite",
+      owner: "Koinonia",
+      status: "Clear",
+      nextAction: "Create a portal invitation when a client or staff member is ready."
+    }
+  ];
+}
+
+function withEmptyStaffAccess(staffAccess: StaffAccessItem[]): StaffAccessItem[] {
+  if (staffAccess.length > 0) {
+    return staffAccess;
+  }
+
+  return [
+    {
+      id: "empty-staff-access",
+      name: "No staff users found",
+      role: "Setup Needed",
+      mfa: "Needs Review",
+      access: "Pending",
+      scope: "Invite Koinonia staff before exposing employee portal tools."
+    }
+  ];
+}
+
+function withEmptyClientReadiness(clientReadiness: ClientReadinessItem[]): ClientReadinessItem[] {
+  if (clientReadiness.length > 0) {
+    return clientReadiness;
+  }
+
+  return [
+    {
+      id: "empty-client-readiness",
+      client: "No client portal users yet",
+      packageName: "Package selection needed",
+      accountOwner: "Owner approval needed",
+      accessStatus: "Pending",
+      billingStatus: "Billing setup needed"
+    }
+  ];
+}
+
+function isDatabaseUnavailableError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "PrismaClientInitializationError" ||
+      error.message.includes("Can't reach database server") ||
+      error.message.includes("ECONNREFUSED"))
   );
 }

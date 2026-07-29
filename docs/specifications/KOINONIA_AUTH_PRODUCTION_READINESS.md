@@ -47,13 +47,14 @@ The current web app includes:
 - `/api/portal/invitations/:id/revoke` for revoking unaccepted invitation records with audit history.
 - `/api/portal/users` for staff access-status review.
 - `/api/portal/users/:id/deactivate` for deactivating accepted portal users with audit history.
+- `/employee/access` can read portal users and portal invitation records for staff access readiness, with safe preview fallback when storage is unavailable.
 - Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
 - First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
 - Permission tests for provider role mapping and typed denial behavior.
 - `pnpm verify:portal` checks production auth env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
 
-The protected routes still use sample data only. They are guarded screens, not production data workflows.
+Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, but document, billing, dashboard, and client workspaces still need real workflow storage before production use.
 
 ---
 
@@ -185,6 +186,7 @@ Before the portal accepts real data:
 - Audit logging exists for sensitive actions.
 - Portal invitation records exist before client/staff access is granted.
 - Staff can review active and inactive portal users through a protected API.
+- Staff can review portal users, portal invitations, MFA readiness, and client access readiness in `/employee/access`.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
 - Invitation acceptance writes an audit event and creates the portal user from the approved invitation.
