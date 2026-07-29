@@ -199,23 +199,23 @@ function getAuthProviderReadiness(input: PortalReadinessInput): PortalReadinessI
 }
 
 function getClerkKeyReadiness(input: PortalReadinessInput): PortalReadinessItem {
-  const hasSecret = isPresent(input.clerkSecretKey);
-  const hasPublishable = isPresent(input.clerkPublishableKey);
+  const secretReadiness = getCredentialReadiness(input.clerkSecretKey, "sk_live_");
+  const publishableReadiness = getCredentialReadiness(input.clerkPublishableKey, "pk_live_");
 
-  if (hasSecret && hasPublishable) {
+  if (secretReadiness.ok && publishableReadiness.ok) {
     return readyItem(
       "clerk-keys",
       "Clerk keys",
-      "Clerk server and browser keys are configured.",
-      "Both Clerk environment variables are present."
+      "Clerk server and browser keys look production-ready.",
+      "Both Clerk environment variables are present and use production key prefixes."
     );
   }
 
   return blockedItem(
     "clerk-keys",
     "Clerk keys",
-    "Clerk cannot run production login until both keys are configured.",
-    hasSecret ? "Publishable key is missing." : hasPublishable ? "Secret key is missing." : "Both Clerk keys are missing.",
+    "Clerk cannot run production login until both production keys are configured.",
+    getCredentialProof(secretReadiness.detail, publishableReadiness.detail),
     "Add production Clerk keys in the deployment environment."
   );
 }
@@ -518,4 +518,53 @@ function blockedItem(
 
 function isPresent(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
+}
+
+function getCredentialReadiness(
+  value: unknown,
+  productionPrefix: "pk_live_" | "sk_live_"
+): { detail: string; ok: boolean } {
+  if (!isPresent(value)) {
+    return { detail: productionPrefix === "sk_live_" ? "Secret key is missing." : "Publishable key is missing.", ok: false };
+  }
+
+  const credential = value.trim();
+
+  if (isPlaceholderCredential(credential)) {
+    return {
+      detail:
+        productionPrefix === "sk_live_"
+          ? "Secret key still looks like a placeholder."
+          : "Publishable key still looks like a placeholder.",
+      ok: false
+    };
+  }
+
+  if (!credential.startsWith(productionPrefix)) {
+    return {
+      detail:
+        productionPrefix === "sk_live_"
+          ? "Secret key does not use the sk_live_ production prefix."
+          : "Publishable key does not use the pk_live_ production prefix.",
+      ok: false
+    };
+  }
+
+  return { detail: "Production key shape found.", ok: true };
+}
+
+function getCredentialProof(secretDetail: string, publishableDetail: string): string {
+  if (secretDetail === "Production key shape found.") {
+    return publishableDetail;
+  }
+
+  if (publishableDetail === "Production key shape found.") {
+    return secretDetail;
+  }
+
+  return `${secretDetail} ${publishableDetail}`;
+}
+
+function isPlaceholderCredential(value: string): boolean {
+  return /\b(placeholder|changeme|change-me|dummy|example|fake|todo|your-key|your_key)\b/i.test(value);
 }

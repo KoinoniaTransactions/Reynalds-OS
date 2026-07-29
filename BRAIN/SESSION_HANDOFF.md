@@ -30,6 +30,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - Added explicit client/staff assignment fields to `RosObject`.
 - Added `/employee/readiness` as the live production-readiness oversight view.
 - Added `/employee/review` as the protected rules-based Staff Review Center for missing assignments, document gaps, billing setup, access needs, showing authorization, and stale work.
+- Hardened readiness checks so placeholder, example, fake, or test-shaped Clerk keys do not count as production-ready.
 
 ## Recent Pushed Commits
 

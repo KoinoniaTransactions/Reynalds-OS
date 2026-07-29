@@ -36,6 +36,16 @@ recordCheck(
   "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is set",
   isPresent(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
 );
+recordCheck(
+  "CLERK_SECRET_KEY uses production key shape",
+  isProductionClerkKey(process.env.CLERK_SECRET_KEY, "sk_live_"),
+  "production portal login should use an sk_live_ key, not a placeholder or test key"
+);
+recordCheck(
+  "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY uses production key shape",
+  isProductionClerkKey(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, "pk_live_"),
+  "production portal login should use a pk_live_ key, not a placeholder or test key"
+);
 recordCheck("DATABASE_URL is set", isPresent(process.env.DATABASE_URL));
 recordCheck(
   "ROS_ALLOW_MOCK_AUTH is not enabled",
@@ -207,6 +217,16 @@ function stripQuotes(value) {
 
 function isPresent(value) {
   return typeof value === "string" && value.trim().length > 0;
+}
+
+function isProductionClerkKey(value, prefix) {
+  return isPresent(value) && value.trim().startsWith(prefix) && !isPlaceholderCredential(value);
+}
+
+function isPlaceholderCredential(value) {
+  return /\b(placeholder|changeme|change-me|dummy|example|fake|todo|your-key|your_key)\b/i.test(
+    value
+  );
 }
 
 function recordCheck(name, ok, detail = "") {

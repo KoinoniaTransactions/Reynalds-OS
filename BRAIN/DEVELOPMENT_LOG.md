@@ -14,6 +14,25 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Clerk Production Key Readiness Hardened
+
+### Summary
+
+Koinonia portal readiness now rejects placeholder, example, fake, or test-shaped Clerk keys instead of treating any non-empty value as production-ready.
+
+### Implemented
+
+- Updated the live readiness view to require production-shaped Clerk keys.
+- Updated `pnpm verify:portal` to fail placeholder or non-production Clerk keys.
+- Added readiness tests for placeholder/test key blocking.
+- Documented the production key expectation in the auth readiness specification.
+
+### Current Status
+
+This makes the login checklist safer, but real Clerk production keys still need to be configured in the deployment environment and verified with live invite acceptance.
+
+---
+
 ## 2026-07-29 — Portal Role Permission Seed Hardened
 
 ### Summary

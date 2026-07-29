@@ -107,6 +107,8 @@ PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND=
 ROS_ALLOW_MOCK_AUTH=false
 ```
 
+Production Clerk values must be real production keys. Placeholder values, example values, and test-key prefixes should fail readiness checks.
+
 Then configure Clerk user metadata for Koinonia:
 
 ```json
@@ -213,6 +215,7 @@ Before the portal accepts real data:
 - Pending Clerk sessions cannot access protected portal routes.
 - Staff with a pending `setup-mfa` task can be directed to `/session-tasks/setup-mfa`.
 - Signed-out user is redirected to `/sign-in`.
+- Clerk server and publishable keys use production key prefixes and are not placeholders.
 - Unknown role becomes Viewer and cannot see portal data.
 - `/api/me` returns the real provider-backed user.
 - Provider users without an email address fail closed.

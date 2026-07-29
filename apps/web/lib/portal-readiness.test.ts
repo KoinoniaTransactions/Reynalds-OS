@@ -9,8 +9,8 @@ function getReadyInput(overrides: Partial<PortalReadinessInput> = {}): PortalRea
   return {
     aiProviderConfigured: false,
     authProvider: "clerk",
-    clerkPublishableKey: "present",
-    clerkSecretKey: "present",
+    clerkPublishableKey: "pk_live_livevalue",
+    clerkSecretKey: "sk_live_livevalue",
     documentMalwareScanCommand: "/bin/sh",
     documentUploadDir: "/tmp/koinonia-portal-documents",
     hostedSignInUrl: "/sign-in",
@@ -54,6 +54,19 @@ describe("portal readiness report", () => {
 
     expect(report.overallStatus).toBe("blocked");
     expect(mockAuth?.status).toBe("blocked");
+  });
+
+  it("blocks placeholder or test Clerk keys", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        clerkPublishableKey: "pk_test_placeholder",
+        clerkSecretKey: "placeholder"
+      })
+    );
+    const keys = report.groups.flatMap((group) => group.items).find((item) => item.id === "clerk-keys");
+
+    expect(keys?.status).toBe("blocked");
+    expect(keys?.proof).toContain("placeholder");
   });
 
   it("reports missing portal roles from the database check", () => {
