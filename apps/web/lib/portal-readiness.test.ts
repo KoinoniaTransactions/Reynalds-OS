@@ -15,6 +15,9 @@ function getReadyInput(overrides: Partial<PortalReadinessInput> = {}): PortalRea
     documentUploadDir: "/tmp/koinonia-portal-documents",
     hostedSignInUrl: "/sign-in",
     nodeEnv: "production",
+    paymentProcessorProvider: "stripe",
+    paymentProcessorSetupUrl: "https://payments.koinoniatransactions.com/setup",
+    paymentProcessorWebhookSecret: "whsec_livevalue",
     rosAllowMockAuth: "false",
     socialLoginConfigured: false,
     workspaceId: "wks_koinonia",
@@ -119,5 +122,34 @@ describe("portal readiness report", () => {
 
     expect(storage?.status).toBe("blocked");
     expect(storage?.proof).toContain("absolute");
+  });
+
+  it("blocks missing payment processor setup", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        paymentProcessorProvider: undefined,
+        paymentProcessorSetupUrl: undefined,
+        paymentProcessorWebhookSecret: undefined
+      })
+    );
+    const items = report.groups.flatMap((group) => group.items);
+
+    expect(items.find((item) => item.id === "payment-processor")?.status).toBe("blocked");
+    expect(items.find((item) => item.id === "payment-setup-url")?.status).toBe("blocked");
+    expect(items.find((item) => item.id === "payment-webhook-secret")?.status).toBe("blocked");
+  });
+
+  it("blocks non-public payment setup URLs", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        paymentProcessorSetupUrl: "http://localhost:3000/setup"
+      })
+    );
+    const setupUrl = report.groups
+      .flatMap((group) => group.items)
+      .find((item) => item.id === "payment-setup-url");
+
+    expect(setupUrl?.status).toBe("blocked");
+    expect(setupUrl?.proof).toContain("HTTPS");
   });
 });

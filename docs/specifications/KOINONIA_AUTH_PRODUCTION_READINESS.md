@@ -104,12 +104,17 @@ NEXT_PUBLIC_AUTH_SIGN_OUT_URL=
 ROS_DEFAULT_WORKSPACE_ID=
 PORTAL_DOCUMENT_UPLOAD_DIR=
 PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND=
+KOINONIA_PAYMENT_PROCESSOR_PROVIDER=
+KOINONIA_PAYMENT_SETUP_URL=
+KOINONIA_PAYMENT_WEBHOOK_SECRET=
 ROS_ALLOW_MOCK_AUTH=false
 ```
 
 Production Clerk values must be real production keys. Placeholder values, example values, and test-key prefixes should fail readiness checks.
 
 `PORTAL_DOCUMENT_UPLOAD_DIR` must be an absolute private storage path outside public web assets.
+
+`KOINONIA_PAYMENT_SETUP_URL` must be a public HTTPS processor-hosted setup destination. The portal should not render raw card entry fields.
 
 Then configure Clerk user metadata for Koinonia:
 
@@ -248,6 +253,7 @@ Before the portal accepts real data:
 - Clients can create and review their own billing setup requests without submitting card data.
 - Employee users with billing-workspace access can review the billing setup request queue.
 - Billing setup notes reject card numbers, CVV/CVC, bank details, routing numbers, account numbers, payment passwords, processor secrets, and API keys.
+- Payment readiness requires an approved provider name, a public HTTPS processor-hosted setup URL, and a webhook secret before payment status should be treated as production-ready.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
 - Invitation acceptance writes an audit event and creates the portal user from the approved invitation.

@@ -22,6 +22,9 @@ export type PortalReadinessInput = {
   documentUploadDir?: string;
   hostedSignInUrl?: string;
   nodeEnv?: string;
+  paymentProcessorProvider?: string;
+  paymentProcessorSetupUrl?: string;
+  paymentProcessorWebhookSecret?: string;
   rosAllowMockAuth?: string;
   socialLoginConfigured?: boolean;
   workspaceId: string;
@@ -126,6 +129,21 @@ export function buildPortalReadinessReport(input: PortalReadinessInput): PortalR
           "Portal documents have a protected download route that checks user permissions and rejects unsafe storage paths.",
           "Downloads use stored private file keys instead of public file links."
         )
+      ]
+    },
+    {
+      id: "billing",
+      title: "Billing",
+      items: [
+        readyItem(
+          "billing-metadata",
+          "Billing setup metadata",
+          "Billing setup requests collect service, consent, billing model, and safe notes without storing card data.",
+          "The portal stores BillingSetupRequest records and rejects raw payment secrets."
+        ),
+        getPaymentProcessorReadiness(input),
+        getPaymentSetupUrlReadiness(input),
+        getPaymentWebhookReadiness(input)
       ]
     },
     {
@@ -474,6 +492,69 @@ function getDocumentScannerReadiness(input: PortalReadinessInput): PortalReadine
   );
 }
 
+function getPaymentProcessorReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const provider = input.paymentProcessorProvider?.trim();
+
+  if (provider && !isPlaceholderCredential(provider)) {
+    return readyItem(
+      "payment-processor",
+      "Payment processor",
+      "A payment processor provider is named for processor-hosted setup.",
+      `KOINONIA_PAYMENT_PROCESSOR_PROVIDER is set to ${provider}.`
+    );
+  }
+
+  return blockedItem(
+    "payment-processor",
+    "Payment processor",
+    "Billing can track setup requests, but live payment methods require an approved processor.",
+    provider ? "Payment processor provider looks like a placeholder." : "Payment processor provider is missing.",
+    "Set KOINONIA_PAYMENT_PROCESSOR_PROVIDER before accepting live payment setup."
+  );
+}
+
+function getPaymentSetupUrlReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const setupUrl = input.paymentProcessorSetupUrl?.trim();
+
+  if (setupUrl && isPublicHttpsUrl(setupUrl) && !isPlaceholderCredential(setupUrl)) {
+    return readyItem(
+      "payment-setup-url",
+      "Processor-hosted setup URL",
+      "Clients can be sent to a secure processor-hosted payment setup destination.",
+      "KOINONIA_PAYMENT_SETUP_URL is a public HTTPS URL."
+    );
+  }
+
+  return blockedItem(
+    "payment-setup-url",
+    "Processor-hosted setup URL",
+    "The portal must not collect card numbers directly.",
+    getPaymentUrlProof(setupUrl),
+    "Set KOINONIA_PAYMENT_SETUP_URL to a public HTTPS processor-hosted setup destination."
+  );
+}
+
+function getPaymentWebhookReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const webhookSecret = input.paymentProcessorWebhookSecret?.trim();
+
+  if (webhookSecret && !isPlaceholderCredential(webhookSecret)) {
+    return readyItem(
+      "payment-webhook-secret",
+      "Payment webhook secret",
+      "A payment webhook secret is configured so processor events can be verified before payment state changes are trusted.",
+      "KOINONIA_PAYMENT_WEBHOOK_SECRET is present."
+    );
+  }
+
+  return blockedItem(
+    "payment-webhook-secret",
+    "Payment webhook secret",
+    "Koinonia needs verified processor events before treating payment setup, failed payments, refunds, or charge status as final.",
+    webhookSecret ? "Payment webhook secret looks like a placeholder." : "Payment webhook secret is missing.",
+    "Configure KOINONIA_PAYMENT_WEBHOOK_SECRET before payment status is treated as production-ready."
+  );
+}
+
 function getAiReadiness(input: PortalReadinessInput): PortalReadinessItem {
   if (input.aiProviderConfigured) {
     return attentionItem(
@@ -569,4 +650,31 @@ function getCredentialProof(secretDetail: string, publishableDetail: string): st
 
 function isPlaceholderCredential(value: string): boolean {
   return /\b(placeholder|changeme|change-me|dummy|example|fake|todo|your-key|your_key)\b/i.test(value);
+}
+
+function getPaymentUrlProof(setupUrl: string | undefined): string {
+  if (!setupUrl) {
+    return "Payment setup URL is missing.";
+  }
+
+  if (isPlaceholderCredential(setupUrl)) {
+    return "Payment setup URL looks like a placeholder.";
+  }
+
+  return "Payment setup URL must be public HTTPS and cannot point to localhost.";
+}
+
+function isPublicHttpsUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+
+    return (
+      url.protocol === "https:" &&
+      url.hostname !== "localhost" &&
+      url.hostname !== "127.0.0.1" &&
+      url.hostname !== "::1"
+    );
+  } catch {
+    return false;
+  }
 }

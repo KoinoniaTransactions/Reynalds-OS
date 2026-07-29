@@ -40,6 +40,9 @@ export default async function EmployeePortalReadinessPage() {
     hostedSignInUrl:
       process.env.NEXT_PUBLIC_AUTH_SIGN_IN_URL ?? process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
     nodeEnv: process.env.NODE_ENV,
+    paymentProcessorProvider: process.env.KOINONIA_PAYMENT_PROCESSOR_PROVIDER,
+    paymentProcessorSetupUrl: process.env.KOINONIA_PAYMENT_SETUP_URL,
+    paymentProcessorWebhookSecret: process.env.KOINONIA_PAYMENT_WEBHOOK_SECRET,
     rosAllowMockAuth: process.env.ROS_ALLOW_MOCK_AUTH,
     socialLoginConfigured: process.env.KOINONIA_SOCIAL_LOGIN_CONFIGURED === "true",
     workspaceId: readinessWorkspaceId,

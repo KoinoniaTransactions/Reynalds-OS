@@ -52,6 +52,21 @@ recordCheck(
   process.env.ROS_ALLOW_MOCK_AUTH !== "true",
   "mock auth must stay disabled for production portal data"
 );
+recordCheck(
+  "KOINONIA_PAYMENT_PROCESSOR_PROVIDER is set",
+  isConfiguredValue(process.env.KOINONIA_PAYMENT_PROCESSOR_PROVIDER),
+  "live payment setup requires an approved payment processor"
+);
+recordCheck(
+  "KOINONIA_PAYMENT_SETUP_URL is public HTTPS",
+  isPublicHttpsUrl(process.env.KOINONIA_PAYMENT_SETUP_URL),
+  "use a processor-hosted payment setup URL, not a portal card-entry form"
+);
+recordCheck(
+  "KOINONIA_PAYMENT_WEBHOOK_SECRET is set",
+  isConfiguredValue(process.env.KOINONIA_PAYMENT_WEBHOOK_SECRET),
+  "verified processor events are required before trusting payment status"
+);
 
 if (skipDatabase) {
   recordCheck("document upload storage check skipped", true, "remove --skip-database for production verification");
@@ -228,10 +243,33 @@ function isProductionClerkKey(value, prefix) {
   return isPresent(value) && value.trim().startsWith(prefix) && !isPlaceholderCredential(value);
 }
 
+function isConfiguredValue(value) {
+  return isPresent(value) && !isPlaceholderCredential(value);
+}
+
 function isPlaceholderCredential(value) {
   return /\b(placeholder|changeme|change-me|dummy|example|fake|todo|your-key|your_key)\b/i.test(
     value
   );
+}
+
+function isPublicHttpsUrl(value) {
+  if (!isConfiguredValue(value)) {
+    return false;
+  }
+
+  try {
+    const url = new URL(value.trim());
+
+    return (
+      url.protocol === "https:" &&
+      url.hostname !== "localhost" &&
+      url.hostname !== "127.0.0.1" &&
+      url.hostname !== "::1"
+    );
+  } catch {
+    return false;
+  }
 }
 
 function recordCheck(name, ok, detail = "") {

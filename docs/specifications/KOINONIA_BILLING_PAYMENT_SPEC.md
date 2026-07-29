@@ -51,6 +51,12 @@ The safer model is:
 
 If Koinonia later needs full PCI-scope payment processing, that should be treated as a separate security project with legal, insurance, processor, and compliance review.
 
+Production readiness requires:
+
+- `KOINONIA_PAYMENT_PROCESSOR_PROVIDER` set to the approved processor.
+- `KOINONIA_PAYMENT_SETUP_URL` set to a public HTTPS processor-hosted setup destination.
+- `KOINONIA_PAYMENT_WEBHOOK_SECRET` set so processor events can be verified before payment status is trusted.
+
 ---
 
 ## 3. Customer Billing Profile

@@ -32,6 +32,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - Added `/employee/review` as the protected rules-based Staff Review Center for missing assignments, document gaps, billing setup, access needs, showing authorization, and stale work.
 - Hardened readiness checks so placeholder, example, fake, or test-shaped Clerk keys do not count as production-ready.
 - Hardened document upload readiness so live uploads require an absolute private storage path.
+- Added payment processor readiness gates for provider name, public HTTPS setup URL, and webhook secret.
 
 ## Recent Pushed Commits
 

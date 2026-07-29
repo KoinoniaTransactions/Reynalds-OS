@@ -14,6 +14,26 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Payment Processor Readiness Gate Added
+
+### Summary
+
+Koinonia portal readiness now treats payment setup as blocked until an approved processor, public HTTPS setup URL, and webhook secret are configured.
+
+### Implemented
+
+- Added a Billing group to `/employee/readiness`.
+- Added readiness checks for `KOINONIA_PAYMENT_PROCESSOR_PROVIDER`, `KOINONIA_PAYMENT_SETUP_URL`, and `KOINONIA_PAYMENT_WEBHOOK_SECRET`.
+- Updated `pnpm verify:portal` to enforce payment processor setup readiness.
+- Added tests for missing payment setup and non-public setup URLs.
+- Updated auth readiness and billing/payment specifications.
+
+### Current Status
+
+The portal still stores only billing setup metadata. Live payment method collection and payment status should remain processor-hosted and webhook-verified before real billing operations are treated as production-ready.
+
+---
+
 ## 2026-07-29 — Portal Upload Storage Path Hardened
 
 ### Summary
