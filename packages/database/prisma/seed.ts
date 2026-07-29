@@ -2,6 +2,18 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+const koinoniaRoles = [
+  { id: "role_owner", name: "Owner" },
+  { id: "role_operations", name: "Operations" },
+  { id: "role_transaction_coordinator", name: "Transaction Coordinator" },
+  { id: "role_contract_support", name: "Contract Support" },
+  { id: "role_showing_provider", name: "Showing Provider" },
+  { id: "role_customer_success", name: "Customer Success" },
+  { id: "role_finance", name: "Finance" },
+  { id: "role_viewer", name: "Viewer" },
+  { id: "role_client", name: "Client" }
+] as const;
+
 async function main() {
   const workspace = await prisma.workspace.upsert({
     where: { id: "wks_koinonia" },
@@ -19,18 +31,30 @@ async function main() {
     }
   });
 
-  const ownerRole = await prisma.role.upsert({
-    where: { id: "role_owner" },
-    update: {},
-    create: {
-      id: "role_owner",
-      workspaceId: workspace.id,
-      name: "Owner",
-      permissions: {
-        all: true
+  const roleRecords = new Map<string, { id: string }>();
+
+  for (const role of koinoniaRoles) {
+    const roleRecord = await prisma.role.upsert({
+      where: { id: role.id },
+      update: {
+        name: role.name,
+        workspaceId: workspace.id
+      },
+      create: {
+        id: role.id,
+        workspaceId: workspace.id,
+        name: role.name
       }
-    }
-  });
+    });
+
+    roleRecords.set(role.name, roleRecord);
+  }
+
+  const ownerRole = roleRecords.get("Owner");
+
+  if (!ownerRole) {
+    throw new Error("Owner role seed failed.");
+  }
 
   await prisma.user.upsert({
     where: { email: "owner@example.com" },

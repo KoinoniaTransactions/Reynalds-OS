@@ -1608,3 +1608,20 @@ Server-side Clerk auth now explicitly treats pending sessions as signed out, sup
 ### Current Status
 
 The source is ready to respect pending-session blocking, but real MFA enforcement still depends on Clerk production policy configuration and live verification.
+
+---
+
+## 2026-07-29 — Koinonia Portal Roles Seeded
+
+### Summary
+
+The database seed now creates the approved Koinonia role names used by portal invitations and first-login user acceptance.
+
+### Implemented
+
+- Added seed records for Owner, Operations, Transaction Coordinator, Contract Support, Showing Provider, Customer Success, Finance, Viewer, and Client.
+- Kept live permission behavior in the auth package; the seed provides stable role records for database assignment.
+
+### Current Status
+
+The seed compiles. It still needs to be run against a live database once the local or production Postgres environment is available.

@@ -35,6 +35,7 @@ The current web app includes:
 - Clerk session lookup explicitly treats pending sessions as signed out.
 - Route-level permission guards in `apps/web/lib/portal-auth.ts`.
 - Role normalization and provider-user construction in `packages/auth`.
+- Database seed creates all approved Koinonia role names for portal assignment.
 - Portal identity fields on `User` for auth provider IDs, MFA requirement, access status, and login timing.
 - `PortalInvitation` for client and staff invitation status.
 - `AuditEvent` for sensitive auth and portal access history.
