@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { InvitationValidationError, validateInvitationInput } from "./portal-invitations";
+import {
+  canRevokeInvitationStatus,
+  InvitationValidationError,
+  validateInvitationInput
+} from "./portal-invitations";
 
 describe("portal invitation validation", () => {
   it("normalizes valid invitation input", () => {
@@ -86,5 +90,13 @@ describe("portal invitation validation", () => {
         sendProviderInvitation: true
       })
     ).toThrow("providerInvitationId cannot be supplied when sendProviderInvitation is true.");
+  });
+
+  it("allows only unaccepted invitation statuses to be revoked", () => {
+    expect(canRevokeInvitationStatus("pending")).toBe(true);
+    expect(canRevokeInvitationStatus("provider_pending")).toBe(true);
+    expect(canRevokeInvitationStatus("provider_error")).toBe(true);
+    expect(canRevokeInvitationStatus("accepted")).toBe(false);
+    expect(canRevokeInvitationStatus("revoked")).toBe(false);
   });
 });

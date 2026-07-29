@@ -45,3 +45,4 @@
 | `/api/workflows/:id/start` | Start workflow |
 | `/api/workflow-runs` | Workflow run list |
 | `/api/portal/invitations` | Portal invitation record list/create |
+| `/api/portal/invitations/:id/revoke` | Portal invitation revoke and audit |

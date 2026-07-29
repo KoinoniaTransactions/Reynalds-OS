@@ -42,6 +42,7 @@ The current web app includes:
 - Provider users resolve through the Koinonia database when available; database role and access status control portal permissions.
 - Provider users must expose a real email address before portal matching or invitation acceptance can run.
 - `/api/portal/invitations` for internal invitation record creation and review.
+- `/api/portal/invitations/:id/revoke` for revoking unaccepted invitation records with audit history.
 - Optional Clerk invitation email creation through `/api/portal/invitations` when `sendProviderInvitation` is true.
 - First provider login can accept a matching Koinonia invitation, create the portal user, attach the approved role, and audit acceptance.
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
@@ -153,6 +154,7 @@ Invitations should assign `koinoniaRole=Client` and the correct workspace before
 - If the provider send fails after the Koinonia record is created, the invitation is marked `provider_error` for staff review.
 - When an invited email signs in and no Koinonia user exists yet, the auth layer can accept the matching invitation, create the user, require staff MFA for non-client roles, and mark the invitation accepted.
 - Already-accepted invitations do not create new users; they must match an existing active Koinonia user record.
+- Pending, provider-pending, and provider-error invitations can be revoked before acceptance.
 
 ---
 
@@ -176,6 +178,7 @@ Before the portal accepts real data:
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
 - Invitation acceptance writes an audit event and creates the portal user from the approved invitation.
+- Invitation revocation writes an audit event and blocks later first-login acceptance.
 - Portal API auth failures return clear JSON status responses, not generic crashes.
 - No brokerage passwords, MLS passwords, raw card numbers, or CVV fields are accepted.
 - `pnpm verify:portal` passes against the target production environment.

@@ -17,6 +17,10 @@ export class InvitationValidationError extends Error {
   }
 }
 
+export function canRevokeInvitationStatus(status: string): boolean {
+  return status === "pending" || status === "provider_pending" || status === "provider_error";
+}
+
 export function validateInvitationInput(input: unknown): InvitationInput {
   if (!input || typeof input !== "object") {
     throw new InvitationValidationError("Request body must be an object.");

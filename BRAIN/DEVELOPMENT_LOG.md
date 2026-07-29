@@ -1662,3 +1662,23 @@ A repeatable portal readiness command was added so production login can be check
 ### Current Status
 
 The command is ready, but local Docker/Postgres access is still blocked in this sandbox. Run the full command against a reachable local or production database before marking login production-ready.
+
+---
+
+## 2026-07-29 — Portal Invitation Revocation API Added
+
+### Summary
+
+Koinonia can now revoke unaccepted portal invitation records through a protected API route before an invited user receives active access.
+
+### Implemented
+
+- Added `/api/portal/invitations/:id/revoke`.
+- Limited revocation to pending, provider-pending, and provider-error invitations.
+- Prevented accepted invitations from being revoked through the invitation endpoint; accepted users should be deactivated through user access controls instead.
+- Added invitation revocation audit logging.
+- Added unit coverage for revokable invitation statuses.
+
+### Current Status
+
+The route compiles and the status logic is covered. Live database verification still requires reachable Postgres.
