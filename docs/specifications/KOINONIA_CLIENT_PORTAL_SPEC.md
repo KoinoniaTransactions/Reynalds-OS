@@ -436,7 +436,7 @@ Build the portal in safe slices:
 12. Secure file upload and document request flow.
 13. Access request tracking without credential storage.
 14. Portal messaging or notes.
-15. Audit logs.
+15. Audit logs. — `AuditEvent` model scaffolded; invitation creation writes audit event.
 16. Production security review before accepting real client documents or payment methods.
 
 Do not begin with file upload or credential fields.

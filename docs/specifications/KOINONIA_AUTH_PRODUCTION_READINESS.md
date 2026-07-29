@@ -37,6 +37,7 @@ The current web app includes:
 - `PortalInvitation` for client and staff invitation status.
 - `AuditEvent` for sensitive auth and portal access history.
 - Provider users resolve through the Koinonia database when available; database role and access status control portal permissions.
+- `/api/portal/invitations` for internal invitation record creation and review.
 - Permission tests for provider role mapping and typed denial behavior.
 
 The protected routes still use sample data only. They are guarded screens, not production data workflows.
@@ -150,6 +151,7 @@ Before the portal accepts real data:
 - Portal APIs use real session identity, not mock identity.
 - Audit logging exists for sensitive actions.
 - Portal invitation records exist before client/staff access is granted.
+- Invitation record creation writes an audit event.
 - No brokerage passwords, MLS passwords, raw card numbers, or CVV fields are accepted.
 
 ---
@@ -169,5 +171,7 @@ Verified on 2026-07-29:
 - Auth package tests passed.
 - Web production build passed.
 - Database package build passed after Prisma client generation.
+- Portal invitation API route compiled in the web production build.
+- Portal invitation API returns 503 when storage is unavailable.
 - Production preview with `ROS_ALLOW_MOCK_AUTH=true` returned 200 for `/sign-in`, `/client/billing`, `/employee/dashboard`, and `/api/me`.
 - Production preview with `ROS_ALLOW_MOCK_AUTH=false` kept public `/client` available, redirected protected `/client/billing` to `/sign-in`, and returned 503 from `/api/me`.

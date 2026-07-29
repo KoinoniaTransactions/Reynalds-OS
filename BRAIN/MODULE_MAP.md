@@ -43,3 +43,4 @@
 | `/api/workflows` | Workflow list/create |
 | `/api/workflows/:id/start` | Start workflow |
 | `/api/workflow-runs` | Workflow run list |
+| `/api/portal/invitations` | Portal invitation record list/create |

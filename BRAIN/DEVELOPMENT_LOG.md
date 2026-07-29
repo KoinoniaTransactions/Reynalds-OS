@@ -1488,3 +1488,28 @@ The database schema was extended so managed portal login can map provider users 
 ### Current Status
 
 The schema foundation exists, but invitation APIs, Clerk invitation creation, staff MFA enforcement, and real-provider user testing still remain before production login can accept real client or staff access.
+
+---
+
+## 2026-07-29 — Portal Invitation API Scaffolded
+
+### Summary
+
+An internal API route was added for creating and reviewing Koinonia portal invitation records before the Clerk email-sending integration is connected.
+
+### Implemented
+
+- Added `/api/portal/invitations`.
+- `GET` lists invitation records for the current workspace.
+- `POST` creates invitation records for approved Koinonia role names.
+- Duplicate pending invitations for the same email are blocked.
+- Optional client object links are checked against the current workspace.
+- Invitation creation writes an `AuditEvent`.
+
+### Current Status
+
+The route creates the Koinonia invitation record only. It does not yet create or send the Clerk invitation, enforce staff MFA, or complete client onboarding.
+
+### Verification Note
+
+The local Docker daemon was not running, so Postgres could not be started for full create/list verification. The route was verified to compile and to return clean 503 responses when invitation storage is unavailable.
