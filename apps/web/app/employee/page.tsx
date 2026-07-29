@@ -96,6 +96,10 @@ export default function EmployeePortalPage() {
                   Staff Login
                 </a>
 
+                <a className="koinonia-button secondary" href="/employee/access">
+                  View Access Workspace
+                </a>
+
                 <a className="koinonia-button secondary" href="/client/dashboard">
                   View Client Dashboard
                 </a>

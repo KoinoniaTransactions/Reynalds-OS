@@ -1513,3 +1513,22 @@ The route creates the Koinonia invitation record only. It does not yet create or
 ### Verification Note
 
 The local Docker daemon was not running, so Postgres could not be started for full create/list verification. The route was verified to compile and to return clean 503 responses when invitation storage is unavailable.
+
+---
+
+## 2026-07-29 — Employee Access Workspace Preview Added
+
+### Summary
+
+A protected employee access workspace preview was added so Koinonia staff have a clear future place to review portal invitations, staff MFA readiness, client portal readiness, and access guardrails.
+
+### Implemented
+
+- Added `/employee/access`.
+- Protected the route with `employee-portal:assignments:update`, limiting access to Owner and Operations roles.
+- Added sample invitation, staff access, client readiness, setup flow, and access rule views.
+- Linked the access workspace from the employee entry page and employee dashboard.
+
+### Current Status
+
+The page is sample data only. Real invite sending, staff MFA verification, provider invitation creation, and live database-backed access changes still remain before production portal login can accept real clients or staff.

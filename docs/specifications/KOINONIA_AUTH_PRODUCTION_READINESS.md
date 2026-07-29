@@ -28,6 +28,7 @@ The current web app includes:
   - `/client/billing`
 - Protected employee portal preview routes:
   - `/employee/dashboard`
+  - `/employee/access`
   - `/employee/documents`
   - `/employee/billing`
 - Async session lookup in `apps/web/lib/auth.ts`.
@@ -143,6 +144,7 @@ Before the portal accepts real data:
 
 - Client user can reach `/client/dashboard`.
 - Client user cannot reach `/employee/dashboard`.
+- Only Owner or Operations can reach `/employee/access`.
 - Staff user can reach only role-appropriate employee tools.
 - Staff user requires MFA.
 - Signed-out user is redirected to `/sign-in`.

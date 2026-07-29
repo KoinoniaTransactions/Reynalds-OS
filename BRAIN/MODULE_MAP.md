@@ -21,6 +21,7 @@
 | Koinonia Client Billing Center Preview | `/client/billing` | Auth-guarded sample-data billing setup, invoices, and pay-at-close preview only |
 | Koinonia Employee Portal Entry | `/employee` | Internal entry shell, no real client data |
 | Koinonia Employee Dashboard Preview | `/employee/dashboard` | Auth-guarded sample-data staff assignment preview only |
+| Koinonia Employee Access Workspace Preview | `/employee/access` | Auth-guarded sample-data invitation, role, MFA, and access readiness preview only |
 | Koinonia Employee Document Workspace Preview | `/employee/documents` | Auth-guarded sample-data drafting, approval, send, and archive preview only |
 | Koinonia Employee Billing Workspace Preview | `/employee/billing` | Auth-guarded sample-data billing profiles, payment setup, and pay-at-close preview only |
 
