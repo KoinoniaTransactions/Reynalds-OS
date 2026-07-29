@@ -55,6 +55,13 @@ export type PortalDocumentStatusUpdateInput = {
   status: PortalDocumentWorkflowStatus;
 };
 
+export type PortalDocumentClientApprovalAction = "approve" | "request_revision";
+
+export type PortalDocumentClientApprovalInput = {
+  action: PortalDocumentClientApprovalAction;
+  notes?: string;
+};
+
 export class PortalDocumentValidationError extends Error {
   constructor(message: string) {
     super(message);
@@ -84,6 +91,29 @@ export function validatePortalDocumentSubmission(input: unknown): PortalDocument
     relatedObjectId: optionalString(value.relatedObjectId),
     requestedAction: optionalString(value.requestedAction) ?? "Review uploaded document",
     transactionName: optionalString(value.transactionName)
+  };
+}
+
+export function validatePortalDocumentClientApprovalInput(
+  input: unknown
+): PortalDocumentClientApprovalInput {
+  if (!input || typeof input !== "object") {
+    throw new PortalDocumentValidationError("Document approval response must be an object.");
+  }
+
+  const value = input as Record<string, unknown>;
+  const action = requiredClientApprovalAction(value.action);
+  const notes = boundedOptionalString(value.notes, "notes", 1_500);
+
+  if (notes && containsCredentialLanguage(notes)) {
+    throw new PortalDocumentValidationError(
+      "Do not include passwords, card numbers, access codes, or private login details in document notes."
+    );
+  }
+
+  return {
+    action,
+    notes
   };
 }
 
@@ -324,6 +354,16 @@ function requiredDocumentStatus(value: unknown): PortalDocumentWorkflowStatus {
   }
 
   return status;
+}
+
+function requiredClientApprovalAction(value: unknown): PortalDocumentClientApprovalAction {
+  const action = requiredString(value, "action");
+
+  if (action !== "approve" && action !== "request_revision") {
+    throw new PortalDocumentValidationError("Document approval action is not supported.");
+  }
+
+  return action;
 }
 
 function isPortalDocumentWorkflowStatus(value: string): value is PortalDocumentWorkflowStatus {

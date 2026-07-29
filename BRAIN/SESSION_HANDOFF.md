@@ -42,6 +42,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - Added `/api/portal/work-items/[id]/assignment` and live assignment controls on `/employee/dashboard` so authorized staff can assign primary and backup owners for live portal work items.
 - Added `/client/work/[id]` and `/employee/work/[id]` so scoped work items have detail pages with safe metadata, attached documents, timeline summaries, and staff assignment controls.
 - Added `/api/portal/documents/[id]/status` and staff status controls on `/employee/documents` so live documents can move through review, approval, sending, revision, and archive states with audit/timeline history.
+- Added `/api/portal/documents/[id]/approval` and client approval/revision controls on `/client/documents` so client-owned review documents can receive auditable Realtor responses.
 
 ## Recent Pushed Commits
 
@@ -53,6 +54,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - `f6a3bd9` Add authorized portal document downloads
 - `5a6765e` Add portal billing setup requests
 - `e0c114c` Add portal work detail pages
+- `0183b04` Add portal document status workflow
 
 ## Verified Locally
 
@@ -80,6 +82,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - Work assignment notes must also avoid passwords, access codes, card data, bank details, API keys, and private login details.
 - Work detail pages intentionally show safe metadata labels and timeline summaries instead of raw JSON payloads.
 - Document status update notes must avoid passwords, access codes, card data, bank details, API keys, and private login details.
+- Client document approval/revision notes must avoid passwords, access codes, card data, bank details, API keys, and private login details.
 - Full document version replacement, in-browser editing, e-signature routing, and final archive delivery still need production integrations.
 - The Staff Review Center is rules-based. AI summarization should stay read-only until privacy controls, citations, audit events, and human approval gates are verified.
 - No real client documents, billing setup, staff assignments, or internal notes should be accepted until the real-provider checklist passes.

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { Document as PortalDocumentRecord } from "@reynalds-os/database";
 import { absoluteUrl } from "../../../config/seo.config";
+import { PortalDocumentApprovalForm } from "../../../components/client/PortalDocumentApprovalForm";
 import { PortalDocumentUploadForm } from "../../../components/client/PortalDocumentUploadForm";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
@@ -76,6 +77,7 @@ const documentRequests = [
 ] as const;
 
 type ClientDocumentItem = {
+  approvalReady: boolean;
   detail: string;
   downloadHref?: string;
   fileName: string;
@@ -83,9 +85,11 @@ type ClientDocumentItem = {
   status: string;
   submitted: string;
   title: string;
+  workflowStatus: string;
 };
 
 type ClientDocumentView = {
+  approvalRequests: ClientDocumentItem[];
   documents: ClientDocumentItem[];
   isLiveData: boolean;
   notice?: string;
@@ -99,7 +103,9 @@ const sampleUploadedDocuments: ClientDocumentItem[] = [
     status: "Uploaded",
     detail: "Sample upload waiting for Koinonia review.",
     fileName: "seller-disclosure.pdf",
-    submitted: "Today"
+    submitted: "Today",
+    workflowStatus: "Uploaded",
+    approvalReady: false
   },
   {
     id: "sample-lender-contact",
@@ -107,30 +113,44 @@ const sampleUploadedDocuments: ClientDocumentItem[] = [
     status: "In Review",
     detail: "Sample document tied to buyer offer preparation.",
     fileName: "lender-contact-sheet.pdf",
-    submitted: "Yesterday"
+    submitted: "Yesterday",
+    workflowStatus: "In Review",
+    approvalReady: false
   }
 ];
 
-const approvalQueue = [
+const sampleApprovalQueue: ClientDocumentItem[] = [
   {
+    approvalReady: true,
+    fileName: "buyer-offer-package-v2.pdf",
+    id: "sample-buyer-offer-package",
     title: "Buyer Offer Package v2",
-    transaction: "Wilson Realty Group",
-    status: "Ready for Realtor Review",
-    nextAction: "Review price, concessions, financing terms, and closing date before approval."
+    status: "Ready for Review",
+    detail: "Review price, concessions, financing terms, and closing date before approval.",
+    submitted: "Client action",
+    workflowStatus: "Ready for Client Review"
   },
   {
+    approvalReady: false,
+    fileName: "inspection-resolution-draft-v1.pdf",
+    id: "sample-inspection-resolution",
     title: "Inspection Resolution Draft v1",
-    transaction: "Smith Contract-to-Close",
     status: "Revision Requested",
-    nextAction: "Koinonia is updating the draft from your requested repair language."
+    detail: "Koinonia is updating the draft from your requested repair language.",
+    submitted: "Client action",
+    workflowStatus: "Revision Requested"
   },
   {
+    approvalReady: false,
+    fileName: "post-closing-archive-packet.pdf",
+    id: "sample-archive-packet",
     title: "Post-Closing Archive Packet",
-    transaction: "Northgate Partners",
     status: "Archived",
-    nextAction: "Final signed documents are available for download."
+    detail: "Final signed documents are available for download.",
+    submitted: "Client action",
+    workflowStatus: "Archived"
   }
-] as const;
+];
 
 const sendStatus = [
   {
@@ -231,20 +251,38 @@ export default async function ClientDocumentCenterPreviewPage() {
                 </div>
 
                 <div className="koinonia-document-card-list">
-                  {approvalQueue.map((item) => (
-                    <article className="koinonia-document-work-item" key={item.title}>
-                      <div>
-                        <span>{item.transaction}</span>
-                        <h3>{item.title}</h3>
-                        <p>{item.nextAction}</p>
-                      </div>
+                  {documentView.approvalRequests.length ? (
+                    documentView.approvalRequests.map((item) => (
+                      <article className="koinonia-document-work-item" key={item.title}>
+                        <div>
+                          <span>{item.fileName}</span>
+                          <h3>{item.title}</h3>
+                          <p>{item.detail}</p>
+                          {item.downloadHref ? (
+                            <a className="koinonia-document-link" href={item.downloadHref}>
+                              Download File
+                            </a>
+                          ) : null}
+                        </div>
 
-                      <div className="koinonia-document-work-meta">
-                        <strong>{item.status}</strong>
-                        <span>Client action</span>
-                      </div>
-                    </article>
-                  ))}
+                        <div className="koinonia-document-work-meta">
+                          <strong>{item.status}</strong>
+                          <span>{item.submitted}</span>
+                        </div>
+
+                        {item.approvalReady ? (
+                          <PortalDocumentApprovalForm
+                            disabled={!documentView.isLiveData}
+                            documentId={item.id}
+                          />
+                        ) : null}
+                      </article>
+                    ))
+                  ) : (
+                    <p className="koinonia-document-security-note">
+                      No documents are waiting for client approval right now.
+                    </p>
+                  )}
                 </div>
               </section>
 
@@ -349,14 +387,18 @@ async function getClientDocumentView(
       take: 20
     });
 
+    const documentItems = documents.map((document) => mapDocumentRecord(document, downloadReady));
+
     return {
-      documents: documents.map((document) => mapDocumentRecord(document, downloadReady)),
+      approvalRequests: buildClientApprovalRequests(documentItems),
+      documents: documentItems,
       isLiveData: true,
       uploadReady: isDocumentUploadConfigured()
     };
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
       return {
+        approvalRequests: sampleApprovalQueue,
         documents: sampleUploadedDocuments,
         isLiveData: false,
         notice: "Document storage is not reachable in this preview, so sample uploads are shown.",
@@ -375,6 +417,7 @@ function mapDocumentRecord(
   const fileSize = formatDocumentFileSize(document.fileSizeBytes);
 
   return {
+    approvalReady: document.status === "Ready for Client Review",
     id: document.id,
     title: document.documentType,
     status: getHumanDocumentStatus(document.status),
@@ -382,8 +425,23 @@ function mapDocumentRecord(
     downloadHref:
       storageReady && document.storageKey ? `/api/portal/documents/${document.id}/download` : undefined,
     fileName: `${document.fileName} - ${fileSize}`,
-    submitted: getDocumentSubmittedLabel(document.createdAt)
+    submitted: getDocumentSubmittedLabel(document.createdAt),
+    workflowStatus: document.status
   };
+}
+
+function buildClientApprovalRequests(documents: ClientDocumentItem[]): ClientDocumentItem[] {
+  const clientReviewStatuses = new Set([
+    "Ready for Client Review",
+    "Revision Requested",
+    "Approved",
+    "Sent",
+    "Archived"
+  ]);
+
+  return documents
+    .filter((document) => clientReviewStatuses.has(document.workflowStatus))
+    .slice(0, 10);
 }
 
 function isDocumentStorageConfigured(): boolean {

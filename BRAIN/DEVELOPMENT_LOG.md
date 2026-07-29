@@ -14,6 +14,27 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Client Document Approval Added
+
+### Summary
+
+Koinonia clients can now respond to documents marked ready for review by approving them or requesting a revision, completing the first real back-and-forth document loop between staff and clients.
+
+### Implemented
+
+- Added safe client document approval validation for approve and revision-request actions.
+- Added `/api/portal/documents/[id]/approval` for client-owned document responses.
+- Client responses are limited to documents currently marked `Ready for Client Review`.
+- Client approvals and revision requests update document status, requested action, timeline history, and audit history.
+- Added approval/revision controls to `/client/documents` for live client review documents.
+- Added focused tests for client approval validation and sensitive-note rejection.
+
+### Current Status
+
+The approval workflow compiles into the production build and appears in local preview fallback mode. Real saved approvals still require reachable production database storage. External e-signature delivery, document editing/version replacement, and final archive delivery remain separate production passes.
+
+---
+
 ## 2026-07-29 — Portal Document Status Workflow Added
 
 ### Summary

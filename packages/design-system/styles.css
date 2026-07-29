@@ -4905,6 +4905,10 @@ h1 {
   border-top: 1px solid rgba(25, 92, 96, 0.14);
 }
 
+.koinonia-document-status-form.client {
+  border-top-color: rgba(184, 138, 68, 0.2);
+}
+
 .koinonia-document-status-form label {
   display: grid;
   gap: 7px;
@@ -4950,6 +4954,12 @@ h1 {
 
 .koinonia-document-status-form .koinonia-button {
   width: 100%;
+}
+
+.koinonia-document-approval-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .koinonia-document-security-note,

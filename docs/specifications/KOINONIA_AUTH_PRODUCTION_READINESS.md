@@ -57,6 +57,7 @@ The current web app includes:
 - `/api/portal/showing-requests` for protected showing request create/list workflows.
 - `/api/portal/documents` for protected scanner-gated document upload intake and document queue listing.
 - `/api/portal/documents/[id]/download` for protected document downloads through configured private storage.
+- `/api/portal/documents/[id]/approval` for client document approval or revision responses with audit and timeline history.
 - `/api/portal/documents/[id]/status` for staff document workflow status updates with audit and timeline history.
 - `/api/portal/access-requests` for protected external access request create/list workflows without storing credentials.
 - `/api/portal/billing-setup-requests` for protected billing setup request create/list workflows without storing card data.
@@ -81,7 +82,7 @@ The current web app includes:
 - The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 - The verifier and `/employee/readiness` require at least one accepted client invitation and one accepted staff invitation before login can be treated as production-ready.
 
-Most protected portal screens still use sample fallback data when production storage is unavailable. `/employee/access` now has a database-backed access-readiness path, `/employee/dashboard` can review and update live work assignments, `/employee/review` can review live work/document records for staff oversight, the client dashboard current-work list can read owned `RosObject` records, clients and staff can open scoped work detail pages, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake, authorized download, and staff status-update workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Invoice/payment processing, payment processor integration, document version/replacement, in-browser document editing, e-signature routing, and final archive delivery still need production passes.
+Most protected portal screens still use sample fallback data when production storage is unavailable. `/employee/access` now has a database-backed access-readiness path, `/employee/dashboard` can review and update live work assignments, `/employee/review` can review live work/document records for staff oversight, the client dashboard current-work list can read owned `RosObject` records, clients and staff can open scoped work detail pages, showing requests now have a protected object-backed workflow, documents now have scanner-gated upload-intake, authorized download, staff status-update, and client approval/revision workflows, external access requests now have a protected metadata-only workflow, and billing setup requests now have a protected metadata-only workflow. Invoice/payment processing, payment processor integration, document version/replacement, in-browser document editing, e-signature routing, and final archive delivery still need production passes.
 
 ---
 
@@ -291,11 +292,13 @@ Before the portal accepts real data:
 - Client users can review only their own submitted document records.
 - Employee users with document-workspace access can review the document upload intake queue.
 - Clients can download only their own stored portal documents through the protected download route.
+- Clients can approve or request revisions only for their own documents marked `Ready for Client Review`.
 - Employee users with document-workspace access can download stored workspace documents through the protected download route.
 - Employee users can update live document workflow status only when their role has the required document-workspace permission for that status.
+- Client approval and revision responses record audit history and related work-item timeline history when the document is tied to a work item.
 - Document status updates record audit history and related work-item timeline history when the document is tied to a work item.
 - Document downloads reject missing, absolute, traversal, or malformed storage keys.
-- Document upload and status-update notes reject passwords, access-code, payment-card, and bank-account language.
+- Document upload, status-update, and client response notes reject passwords, access-code, payment-card, and bank-account language.
 - Clients can create and review their own external access requests without submitting credentials.
 - Employee users with client visibility can review the external access request queue.
 - Access request notes reject passwords, usernames, access codes, recovery codes, and private login details.

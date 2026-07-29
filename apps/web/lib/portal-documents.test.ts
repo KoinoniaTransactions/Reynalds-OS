@@ -6,6 +6,7 @@ import {
   getHumanDocumentStatus,
   PortalDocumentValidationError,
   sanitizeDocumentFileName,
+  validatePortalDocumentClientApprovalInput,
   validatePortalDocumentScannerCommand,
   validatePortalDocumentStatusUpdateInput,
   validatePortalDocumentStorageKey,
@@ -112,6 +113,40 @@ describe("portal document helpers", () => {
       validatePortalDocumentStatusUpdateInput({
         notes: "The credit card number is here.",
         status: "In Review"
+      })
+    ).toThrow("Do not include passwords");
+  });
+
+  it("validates client document approval responses", () => {
+    expect(
+      validatePortalDocumentClientApprovalInput({
+        action: "approve",
+        notes: "Approved to continue."
+      })
+    ).toEqual({
+      action: "approve",
+      notes: "Approved to continue."
+    });
+
+    expect(
+      validatePortalDocumentClientApprovalInput({
+        action: "request_revision",
+        notes: "Please correct the closing date."
+      })
+    ).toMatchObject({
+      action: "request_revision"
+    });
+
+    expect(() =>
+      validatePortalDocumentClientApprovalInput({
+        action: "send_now"
+      })
+    ).toThrow("Document approval action is not supported.");
+
+    expect(() =>
+      validatePortalDocumentClientApprovalInput({
+        action: "approve",
+        notes: "The gate code is 1234."
       })
     ).toThrow("Do not include passwords");
   });
