@@ -1840,3 +1840,22 @@ Koinonia now exposes recent portal access history through a protected audit API 
 ### Current Status
 
 The audit API and access history panel compile. Live audit verification still requires reachable database storage.
+
+---
+
+## 2026-07-29 — Portal Readiness Verifier Strengthened
+
+### Summary
+
+The production readiness verifier now checks the database for the minimum owner and staff MFA conditions required before portal login is treated as ready for real client data.
+
+### Implemented
+
+- Updated the seed owner to require MFA and remain portal-active.
+- Added verifier check for at least one active Owner portal user.
+- Added verifier check that active staff portal users require MFA.
+- Updated production readiness notes.
+
+### Current Status
+
+The new database checks run when `pnpm verify:portal` is executed without `--skip-database`. Live verification still requires reachable database storage.

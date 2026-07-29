@@ -56,6 +56,7 @@ The current web app includes:
 - Portal APIs return clean JSON auth errors for missing sessions or provider configuration problems.
 - Permission tests for provider role mapping and typed denial behavior.
 - `pnpm verify:portal` checks production auth env, mock-auth safety, database connectivity, workspace presence, and seeded portal roles.
+- The verifier also checks for an active Owner portal user and requires active staff users to have MFA marked as required.
 
 Most protected portal screens still use sample data only. `/employee/access` now has a database-backed access-readiness path, but document, billing, dashboard, and client workspaces still need real workflow storage before production use.
 
@@ -201,6 +202,7 @@ Before the portal accepts real data:
 - Portal API auth failures return clear JSON status responses, not generic crashes.
 - No brokerage passwords, MLS passwords, raw card numbers, or CVV fields are accepted.
 - `pnpm verify:portal` passes against the target production environment.
+- The target environment has at least one active Owner portal user and no active staff users missing MFA requirement.
 
 Run this before accepting real portal data:
 

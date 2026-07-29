@@ -84,6 +84,45 @@ async function runDatabaseChecks() {
       missingRoles.length === 0,
       missingRoles.length ? `missing ${missingRoles.join(", ")}` : `${requiredRoles.length} roles found`
     );
+
+    const users = await prisma.user.findMany({
+      where: {
+        workspaceId,
+        status: "active"
+      },
+      select: {
+        email: true,
+        mfaRequired: true,
+        portalAccessStatus: true,
+        role: {
+          select: {
+            name: true
+          }
+        }
+      }
+    });
+
+    const ownerUsers = users.filter(
+      (user) => user.role?.name === "Owner" && user.portalAccessStatus === "active"
+    );
+
+    recordCheck(
+      "active owner portal user exists",
+      ownerUsers.length > 0,
+      ownerUsers.length ? `${ownerUsers.length} owner user(s) found` : "no active owner portal user found"
+    );
+
+    const staffWithoutMfa = users.filter(
+      (user) => user.role?.name !== "Client" && user.portalAccessStatus === "active" && !user.mfaRequired
+    );
+
+    recordCheck(
+      "active staff users require MFA",
+      staffWithoutMfa.length === 0,
+      staffWithoutMfa.length
+        ? `missing MFA requirement for ${staffWithoutMfa.map((user) => user.email).join(", ")}`
+        : "all active staff users require MFA"
+    );
   } catch (error) {
     recordCheck(
       "database readiness checks",

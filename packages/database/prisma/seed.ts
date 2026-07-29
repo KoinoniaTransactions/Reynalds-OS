@@ -58,14 +58,21 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email: "owner@example.com" },
-    update: {},
+    update: {
+      roleId: ownerRole.id,
+      status: "active",
+      mfaRequired: true,
+      portalAccessStatus: "active"
+    },
     create: {
       id: "usr_owner",
       workspaceId: workspace.id,
       name: "Jeremiah Reynalds",
       email: "owner@example.com",
       roleId: ownerRole.id,
-      status: "active"
+      status: "active",
+      mfaRequired: true,
+      portalAccessStatus: "active"
     }
   });
 

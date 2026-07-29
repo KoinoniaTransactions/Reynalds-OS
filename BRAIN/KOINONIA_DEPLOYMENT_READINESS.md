@@ -139,6 +139,7 @@ Important:
 - Treat dashboard and API variables separately from the public website launch
 - Do not enable ROS_ALLOW_MOCK_AUTH on any deployment that can receive real portal data
 - Run `pnpm verify:portal` before accepting real client or staff portal access
+- Confirm `pnpm verify:portal` reports an active Owner portal user and active staff MFA requirement
 
 ---
 
