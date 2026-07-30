@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BillingSetupStatusForm } from "../../../components/employee/BillingSetupStatusForm";
+import { InvoiceStatusForm } from "../../../components/employee/InvoiceStatusForm";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
 import {
@@ -9,6 +10,7 @@ import {
   getHumanBillingSetupStatus
 } from "../../../lib/billing-setup-requests";
 import { prisma } from "../../../lib/db";
+import { buildPortalInvoiceDisplayItem } from "../../../lib/portal-billing-invoices";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 
 export const dynamic = "force-dynamic";
@@ -119,6 +121,22 @@ type BillingSetupView = {
   requests: BillingSetupItem[];
 };
 
+type InvoiceItem = {
+  amount: string;
+  due: string;
+  id: string;
+  invoice: string;
+  nextAction: string;
+  service: string;
+  status: string;
+};
+
+type InvoiceView = {
+  invoices: InvoiceItem[];
+  isLiveData: boolean;
+  notice?: string;
+};
+
 const sampleBillingSetupRequests: BillingSetupItem[] = [
   {
     id: "sample-wilson-monthly",
@@ -139,6 +157,27 @@ const sampleBillingSetupRequests: BillingSetupItem[] = [
     nextAction: "Track the closing trigger before billing the approved pay-at-close fee.",
     labels: ["No card stored", "After successful close", "Northgate Partners"],
     workflowStatus: "Pay at Close Watch"
+  }
+];
+
+const sampleInvoices: InvoiceItem[] = [
+  {
+    id: "sample-invoice-prepaid",
+    invoice: "INV-1042",
+    service: "Transaction Coordination Plus",
+    amount: "$389.00",
+    status: "Due Before Work Begins",
+    due: "Due Today",
+    nextAction: "Collect payment or record an approved exception before work begins."
+  },
+  {
+    id: "sample-invoice-close",
+    invoice: "PAC-2011",
+    service: "Pay-at-Closing Coordination",
+    amount: "$599.00",
+    status: "Pay at Close Watch",
+    due: "After close",
+    nextAction: "Wait for a confirmed successful closing before charging this invoice."
   }
 ];
 
@@ -173,7 +212,10 @@ const billingRules = [
 
 export default async function EmployeeBillingWorkspacePreviewPage() {
   const actor = await requirePortalPermission("billing-workspace:view", "/employee/billing");
-  const billingSetupView = await getEmployeeBillingSetupView(actor.workspaceId);
+  const [billingSetupView, invoiceView] = await Promise.all([
+    getEmployeeBillingSetupView(actor.workspaceId),
+    getEmployeeInvoiceView(actor.workspaceId)
+  ]);
 
   return (
     <main className="koinonia-site koinonia-billing-center koinonia-employee-billing">
@@ -307,6 +349,43 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
                   </table>
                 </div>
               </section>
+
+              <section className="koinonia-billing-panel employee" aria-labelledby="invoice-queue-title">
+                <div className="koinonia-billing-panel-heading">
+                  <p className="koinonia-eyebrow">Invoices</p>
+                  <h2 id="invoice-queue-title">Invoice and Payment Queue</h2>
+                </div>
+
+                <div className="koinonia-billing-card-list">
+                  {invoiceView.notice ? (
+                    <p className="koinonia-billing-security-note employee">{invoiceView.notice}</p>
+                  ) : null}
+
+                  {invoiceView.invoices.map((invoice) => (
+                    <article className="koinonia-billing-work-item employee" key={invoice.id}>
+                      <div>
+                        <span>{invoice.invoice}</span>
+                        <h3>{invoice.service}</h3>
+                        <p>
+                          {invoice.amount} - {invoice.due}
+                        </p>
+                        <p>{invoice.nextAction}</p>
+                      </div>
+
+                      <div className="koinonia-billing-work-meta employee">
+                        <strong>{invoice.status}</strong>
+                        <span>Invoice status</span>
+                      </div>
+
+                      <InvoiceStatusForm
+                        currentStatus={invoice.status}
+                        disabled={!invoiceView.isLiveData}
+                        invoiceId={invoice.id}
+                      />
+                    </article>
+                  ))}
+                </div>
+              </section>
             </div>
 
             <aside className="koinonia-billing-side-panel" aria-label="Billing operations">
@@ -348,6 +427,52 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
       <Footer />
     </main>
   );
+}
+
+async function getEmployeeInvoiceView(workspaceId: string): Promise<InvoiceView> {
+  try {
+    const invoices = await prisma.invoice.findMany({
+      where: { workspaceId },
+      orderBy: [{ createdAt: "desc" }],
+      take: 25
+    });
+    const objectIds = [
+      ...new Set(
+        invoices.flatMap((invoice) =>
+          [invoice.clientObjectId, invoice.relatedObjectId, invoice.packageObjectId].filter(
+            (id): id is string => Boolean(id)
+          )
+        )
+      )
+    ];
+    const objects = objectIds.length
+      ? await prisma.rosObject.findMany({
+          where: {
+            id: { in: objectIds },
+            workspaceId
+          },
+          select: { id: true, name: true }
+        })
+      : [];
+    const objectNames = new Map(objects.map((object) => [object.id, object.name]));
+
+    return {
+      invoices: withEmptyInvoices(
+        invoices.map((invoice) => buildPortalInvoiceDisplayItem(invoice, objectNames))
+      ),
+      isLiveData: true
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    return {
+      invoices: sampleInvoices,
+      isLiveData: false,
+      notice: "Invoice storage is not reachable in this preview, so sample invoices are shown."
+    };
+  }
 }
 
 async function getEmployeeBillingSetupView(workspaceId: string): Promise<BillingSetupView> {
@@ -407,6 +532,24 @@ function withEmptyBillingSetupRequests(requests: BillingSetupItem[]): BillingSet
       nextAction: "Send secure processor links only after consent and service billing terms are clear.",
       labels: ["No card stored", "Processor-hosted setup only"],
       workflowStatus: "Setup Requested"
+    }
+  ];
+}
+
+function withEmptyInvoices(invoices: InvoiceItem[]): InvoiceItem[] {
+  if (invoices.length > 0) {
+    return invoices;
+  }
+
+  return [
+    {
+      id: "empty-invoice-queue",
+      invoice: "No invoices",
+      service: "Invoice queue is clear",
+      amount: "$0.00",
+      status: "Ready",
+      due: "No due date",
+      nextAction: "Invoices will appear after staff create billing items for client files."
     }
   ];
 }

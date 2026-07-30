@@ -9,6 +9,7 @@ import {
   getHumanBillingSetupStatus
 } from "../../../lib/billing-setup-requests";
 import { prisma } from "../../../lib/db";
+import { buildPortalInvoiceDisplayItem } from "../../../lib/portal-billing-invoices";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 
 export const dynamic = "force-dynamic";
@@ -72,27 +73,33 @@ const selectedServices = [
 
 const invoices = [
   {
+    id: "sample-invoice-1042",
     invoice: "INV-1042",
     service: "Transaction Coordination Plus",
     amount: "$389.00",
     status: "Due Before Work Begins",
-    due: "Today"
+    due: "Today",
+    nextAction: "Pay before coordination work begins."
   },
   {
+    id: "sample-pay-at-close-2011",
     invoice: "PAC-2011",
     service: "Pay-at-Closing Coordination",
     amount: "$599.00",
     status: "Waiting on Successful Closing",
-    due: "After close"
+    due: "After close",
+    nextAction: "No fee is due unless the transaction closes."
   },
   {
+    id: "sample-showing-3310",
     invoice: "SHW-3310",
     service: "Showing Coverage",
     amount: "$75.00",
     status: "Pending",
-    due: "After showing"
+    due: "After showing",
+    nextAction: "Showing charges follow the approved showing request."
   }
-] as const;
+] as const satisfies readonly InvoiceItem[];
 
 const paymentProfile = [
   "Processor customer reference is saved only after secure setup.",
@@ -123,6 +130,22 @@ type BillingSetupView = {
   requests: BillingSetupItem[];
 };
 
+type InvoiceItem = {
+  amount: string;
+  due: string;
+  id: string;
+  invoice: string;
+  nextAction: string;
+  service: string;
+  status: string;
+};
+
+type InvoiceView = {
+  invoices: InvoiceItem[];
+  isLiveData: boolean;
+  notice?: string;
+};
+
 const sampleBillingSetupRequests: BillingSetupItem[] = [
   {
     id: "sample-prepaid-coordination",
@@ -144,7 +167,10 @@ const sampleBillingSetupRequests: BillingSetupItem[] = [
 
 export default async function ClientBillingCenterPreviewPage() {
   const actor = await requirePortalPermission("client-portal:billing:view", "/client/billing");
-  const billingSetupView = await getClientBillingSetupView(actor.workspaceId, actor.id);
+  const [billingSetupView, invoiceView] = await Promise.all([
+    getClientBillingSetupView(actor.workspaceId, actor.id),
+    getClientInvoiceView(actor.workspaceId, actor.id)
+  ]);
 
   return (
     <main className="koinonia-site koinonia-billing-center koinonia-client-billing">
@@ -247,6 +273,10 @@ export default async function ClientBillingCenterPreviewPage() {
                 </div>
 
                 <div className="koinonia-billing-table-wrap">
+                  {invoiceView.notice ? (
+                    <p className="koinonia-billing-security-note">{invoiceView.notice}</p>
+                  ) : null}
+
                   <table className="koinonia-billing-table">
                     <thead>
                       <tr>
@@ -258,8 +288,8 @@ export default async function ClientBillingCenterPreviewPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {invoices.map((invoice) => (
-                        <tr key={invoice.invoice}>
+                      {invoiceView.invoices.map((invoice) => (
+                        <tr key={invoice.id}>
                           <td>{invoice.invoice}</td>
                           <td>{invoice.service}</td>
                           <td>{invoice.amount}</td>
@@ -311,6 +341,58 @@ export default async function ClientBillingCenterPreviewPage() {
       <Footer />
     </main>
   );
+}
+
+async function getClientInvoiceView(workspaceId: string, ownerId: string): Promise<InvoiceView> {
+  try {
+    const accessibleObjects = await prisma.rosObject.findMany({
+      where: {
+        workspaceId,
+        archivedAt: null,
+        OR: [{ clientUserId: ownerId }, { ownerId }]
+      },
+      select: { id: true, name: true }
+    });
+    const accessibleObjectIds = accessibleObjects.map((object) => object.id);
+
+    if (!accessibleObjectIds.length) {
+      return {
+        invoices: withEmptyInvoices([]),
+        isLiveData: true
+      };
+    }
+
+    const invoices = await prisma.invoice.findMany({
+      where: {
+        workspaceId,
+        OR: [
+          { clientObjectId: { in: accessibleObjectIds } },
+          { relatedObjectId: { in: accessibleObjectIds } },
+          { packageObjectId: { in: accessibleObjectIds } }
+        ]
+      },
+      orderBy: [{ createdAt: "desc" }],
+      take: 25
+    });
+    const objectNames = new Map(accessibleObjects.map((object) => [object.id, object.name]));
+
+    return {
+      invoices: withEmptyInvoices(
+        invoices.map((invoice) => buildPortalInvoiceDisplayItem(invoice, objectNames))
+      ),
+      isLiveData: true
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    return {
+      invoices: [...invoices],
+      isLiveData: false,
+      notice: "Invoice storage is not reachable in this preview, so sample invoices are shown."
+    };
+  }
 }
 
 async function getClientBillingSetupView(
@@ -369,6 +451,24 @@ function withEmptyBillingSetupRequests(requests: BillingSetupItem[]): BillingSet
       detail: "Choose a service and billing model when setup is needed.",
       nextAction: "Submit a setup request before Koinonia sends a secure processor link.",
       labels: ["No card stored", "Processor-hosted setup only"]
+    }
+  ];
+}
+
+function withEmptyInvoices(invoiceItems: InvoiceItem[]): InvoiceItem[] {
+  if (invoiceItems.length > 0) {
+    return invoiceItems;
+  }
+
+  return [
+    {
+      id: "empty-client-invoices",
+      invoice: "No invoices",
+      service: "No invoice activity yet",
+      amount: "$0.00",
+      status: "Ready",
+      due: "No due date",
+      nextAction: "Invoices will appear here when Koinonia creates billing items for your file."
     }
   ];
 }
