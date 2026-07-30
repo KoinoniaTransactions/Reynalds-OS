@@ -33,6 +33,7 @@ export type PortalReadinessInput = {
   nodeEnv?: string;
   paymentProcessorProvider?: string;
   paymentProcessorSetupUrl?: string;
+  paymentProcessorWebhookUrl?: string;
   paymentProcessorWebhookSecret?: string;
   rosAllowMockAuth?: string;
   socialLoginConfigured?: boolean;
@@ -159,6 +160,7 @@ export function buildPortalReadinessReport(input: PortalReadinessInput): PortalR
         ),
         getPaymentProcessorReadiness(input),
         getPaymentSetupUrlReadiness(input),
+        getPaymentWebhookUrlReadiness(input),
         getPaymentWebhookReadiness(input)
       ]
     },
@@ -670,6 +672,27 @@ function getPaymentWebhookReadiness(input: PortalReadinessInput): PortalReadines
     "Koinonia needs verified processor events before treating payment setup, failed payments, refunds, or charge status as final.",
     webhookSecret ? "Payment webhook secret looks like a placeholder." : "Payment webhook secret is missing.",
     "Configure KOINONIA_PAYMENT_WEBHOOK_SECRET before payment status is treated as production-ready."
+  );
+}
+
+function getPaymentWebhookUrlReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const webhookUrl = input.paymentProcessorWebhookUrl?.trim();
+
+  if (webhookUrl && isPublicHttpsUrl(webhookUrl) && !isPlaceholderCredential(webhookUrl)) {
+    return readyItem(
+      "payment-webhook-url",
+      "Payment webhook endpoint",
+      "A public HTTPS endpoint is configured for verified processor payment events.",
+      "KOINONIA_PAYMENT_WEBHOOK_URL is a public HTTPS URL."
+    );
+  }
+
+  return blockedItem(
+    "payment-webhook-url",
+    "Payment webhook endpoint",
+    "The payment processor needs a public HTTPS webhook destination before payment status can be trusted.",
+    getPaymentUrlProof(webhookUrl),
+    "Set KOINONIA_PAYMENT_WEBHOOK_URL to the public HTTPS webhook endpoint configured in the payment processor."
   );
 }
 

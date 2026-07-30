@@ -18,6 +18,7 @@ function getReadyInput(overrides: Partial<PortalReadinessInput> = {}): PortalRea
     nodeEnv: "production",
     paymentProcessorProvider: "stripe",
     paymentProcessorSetupUrl: "https://payments.koinoniatransactions.com/setup",
+    paymentProcessorWebhookUrl: "https://www.koinoniatransactions.com/api/portal/payments/webhook",
     paymentProcessorWebhookSecret: "whsec_livevalue",
     rosAllowMockAuth: "false",
     socialLoginConfigured: false,

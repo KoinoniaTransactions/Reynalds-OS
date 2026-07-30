@@ -268,14 +268,19 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
       },
       {
         detail:
-          "The production payment processor setup link and webhook secret are configured so cards can be captured by the processor instead of the portal.",
+          "The production payment processor setup link, webhook endpoint, and webhook secret are configured so cards can be captured by the processor instead of the portal.",
         id: "payment-processor-tokenization",
         link: { href: "/employee/readiness", label: "Open Readiness" },
         owner: "Finance / Owner",
         phase: "billing",
         proof:
-          "Readiness shows payment provider, public HTTPS setup URL, and webhook secret as configured.",
-        readinessItemIds: ["payment-processor", "payment-setup-url", "payment-webhook-secret"],
+          "Readiness shows payment provider, public HTTPS setup URL, public HTTPS webhook URL, and webhook secret as configured.",
+        readinessItemIds: [
+          "payment-processor",
+          "payment-setup-url",
+          "payment-webhook-url",
+          "payment-webhook-secret"
+        ],
         readinessGate: "Processor-hosted payment capture is ready before billing requests are sent to clients.",
         required: true,
         title: "Payment capture stays processor-hosted"

@@ -331,7 +331,7 @@ Before the portal accepts real data:
 - Billing setup notes reject card numbers, CVV/CVC, bank details, routing numbers, account numbers, payment passwords, processor secrets, and API keys.
 - Staff billing setup status updates can record safe processor references, payment method summaries, setup state, and billing triggers, but still reject raw payment secrets.
 - Clients can review scoped invoice status, and staff can update invoice/payment status with safe processor references while rejecting raw payment secrets.
-- Payment readiness requires an approved provider name, a public HTTPS processor-hosted setup URL, and a webhook secret before payment status should be treated as production-ready.
+- Payment readiness requires an approved provider name, a public HTTPS processor-hosted setup URL, a public HTTPS webhook URL, and a webhook secret before payment status should be treated as production-ready.
 - Invitation record creation writes an audit event.
 - Provider invitation creation writes a sent or provider-error audit event.
 - Invitation acceptance writes an audit event and creates the portal user from the approved same-workspace invitation.

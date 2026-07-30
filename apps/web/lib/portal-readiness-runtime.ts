@@ -31,6 +31,7 @@ export async function buildCurrentPortalReadinessReport(): Promise<PortalReadine
     nodeEnv: process.env.NODE_ENV,
     paymentProcessorProvider: process.env.KOINONIA_PAYMENT_PROCESSOR_PROVIDER,
     paymentProcessorSetupUrl: process.env.KOINONIA_PAYMENT_SETUP_URL,
+    paymentProcessorWebhookUrl: process.env.KOINONIA_PAYMENT_WEBHOOK_URL,
     paymentProcessorWebhookSecret: process.env.KOINONIA_PAYMENT_WEBHOOK_SECRET,
     rosAllowMockAuth: process.env.ROS_ALLOW_MOCK_AUTH,
     socialLoginConfigured: process.env.KOINONIA_SOCIAL_LOGIN_CONFIGURED === "true",

@@ -17,6 +17,7 @@ function getReadyInput(overrides: Partial<PortalReadinessInput> = {}): PortalRea
     nodeEnv: "production",
     paymentProcessorProvider: "stripe",
     paymentProcessorSetupUrl: "https://payments.koinoniatransactions.com/setup",
+    paymentProcessorWebhookUrl: "https://www.koinoniatransactions.com/api/portal/payments/webhook",
     paymentProcessorWebhookSecret: "whsec_livevalue",
     rosAllowMockAuth: "false",
     socialLoginConfigured: false,
@@ -268,6 +269,7 @@ describe("portal readiness report", () => {
       getReadyInput({
         paymentProcessorProvider: undefined,
         paymentProcessorSetupUrl: undefined,
+        paymentProcessorWebhookUrl: undefined,
         paymentProcessorWebhookSecret: undefined
       })
     );
@@ -275,7 +277,22 @@ describe("portal readiness report", () => {
 
     expect(items.find((item) => item.id === "payment-processor")?.status).toBe("blocked");
     expect(items.find((item) => item.id === "payment-setup-url")?.status).toBe("blocked");
+    expect(items.find((item) => item.id === "payment-webhook-url")?.status).toBe("blocked");
     expect(items.find((item) => item.id === "payment-webhook-secret")?.status).toBe("blocked");
+  });
+
+  it("blocks non-public payment webhook URLs", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        paymentProcessorWebhookUrl: "http://localhost:3000/api/portal/payments/webhook"
+      })
+    );
+    const webhookUrl = report.groups
+      .flatMap((group) => group.items)
+      .find((item) => item.id === "payment-webhook-url");
+
+    expect(webhookUrl?.status).toBe("blocked");
+    expect(webhookUrl?.proof).toContain("HTTPS");
   });
 
   it("blocks non-public payment setup URLs", () => {
