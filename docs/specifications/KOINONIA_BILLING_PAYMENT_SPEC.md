@@ -217,6 +217,7 @@ Staff actions:
 - Record billing model.
 - Update billing setup status with safe processor references, payment method summaries, and billing triggers.
 - Create invoice.
+- Update invoice/payment status with safe processor references and audit history.
 - Mark pay-at-closing trigger ready.
 - Record approved payment exception.
 - Record failed payment follow-up.
@@ -290,9 +291,9 @@ The preferred implementation should extend the existing finance and object model
 Build billing in safe slices:
 
 1. Billing and payment setup specification. — Complete
-2. Billing permissions and tests.
-3. Client billing center preview using sample data only.
-4. Employee billing workspace preview using sample data only.
+2. Billing permissions and tests. — Complete
+3. Client billing center preview with live billing setup and invoice status fallback. — Complete
+4. Employee billing workspace preview with live billing setup, invoice queue, and status updates. — Complete
 5. Billing profile and service activation schema.
 6. Processor customer/payment-method reference model.
 7. Processor-hosted payment setup link flow.

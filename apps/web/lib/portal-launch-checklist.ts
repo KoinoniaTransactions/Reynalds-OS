@@ -254,15 +254,15 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
     items: [
       {
         detail:
-          "Prepay, pay-at-close, monthly, and invoice-later billing setup can be recorded for each client file without storing raw card data.",
+          "Prepay, pay-at-close, monthly, invoice-later setup, and invoice status can be recorded for each client file without storing raw card data.",
         id: "billing-model-setup",
         link: { href: "/employee/billing", label: "Open Billing" },
         owner: "Finance / Owner",
         phase: "billing",
         proof:
-          "Billing workspace shows request status, billing model, consent status, service context, and staff next action.",
+          "Billing workspace shows request status, billing model, consent status, invoice status, service context, and staff next action.",
         readinessItemIds: ["billing-metadata"],
-        readinessGate: "Billing setup requests keep payment metadata separate from raw payment credentials.",
+        readinessGate: "Billing setup and invoice status keep payment metadata separate from raw payment credentials.",
         required: true,
         title: "Client billing setup is file-level"
       },
