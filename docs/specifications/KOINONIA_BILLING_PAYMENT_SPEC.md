@@ -55,6 +55,7 @@ Production readiness requires:
 
 - `KOINONIA_PAYMENT_PROCESSOR_PROVIDER` set to the approved processor.
 - `KOINONIA_PAYMENT_SETUP_URL` set to a public HTTPS processor-hosted setup destination.
+- `KOINONIA_PAYMENT_WEBHOOK_URL` set to the public HTTPS endpoint configured in the payment processor.
 - `KOINONIA_PAYMENT_WEBHOOK_SECRET` set so processor events can be verified before payment status is trusted.
 
 ---

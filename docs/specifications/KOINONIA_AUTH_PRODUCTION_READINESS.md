@@ -132,6 +132,7 @@ PORTAL_DOCUMENT_UPLOAD_DIR=
 PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND=
 KOINONIA_PAYMENT_PROCESSOR_PROVIDER=
 KOINONIA_PAYMENT_SETUP_URL=
+KOINONIA_PAYMENT_WEBHOOK_URL=
 KOINONIA_PAYMENT_WEBHOOK_SECRET=
 KOINONIA_SOCIAL_LOGIN_CONFIGURED=false
 KOINONIA_SOCIAL_LOGIN_PROVIDERS=
@@ -149,7 +150,7 @@ Production Clerk values must be real production keys. Placeholder values, exampl
 
 `PORTAL_DOCUMENT_UPLOAD_DIR` must be an absolute private storage path outside public web assets.
 
-`KOINONIA_PAYMENT_SETUP_URL` must be a public HTTPS processor-hosted setup destination. The portal should not render raw card entry fields.
+`KOINONIA_PAYMENT_SETUP_URL` must be a public HTTPS processor-hosted setup destination. `KOINONIA_PAYMENT_WEBHOOK_URL` must be the public HTTPS endpoint configured inside the approved payment processor. The portal should not render raw card entry fields.
 
 `NEXT_PUBLIC_SITE_URL` and any `KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS` entries must be public HTTPS Koinonia-controlled origins. Use same-site paths such as `/client/dashboard` and `/employee/dashboard` for normal portal invite redirects.
 

@@ -308,12 +308,12 @@ This keeps the portal from being called login-ready based only on environment va
 
 ### Summary
 
-Koinonia portal readiness now treats payment setup as blocked until an approved processor, public HTTPS setup URL, and webhook secret are configured.
+Koinonia portal readiness now treats payment setup as blocked until an approved processor, public HTTPS setup URL, public HTTPS webhook URL, and webhook secret are configured.
 
 ### Implemented
 
 - Added a Billing group to `/employee/readiness`.
-- Added readiness checks for `KOINONIA_PAYMENT_PROCESSOR_PROVIDER`, `KOINONIA_PAYMENT_SETUP_URL`, and `KOINONIA_PAYMENT_WEBHOOK_SECRET`.
+- Added readiness checks for `KOINONIA_PAYMENT_PROCESSOR_PROVIDER`, `KOINONIA_PAYMENT_SETUP_URL`, `KOINONIA_PAYMENT_WEBHOOK_URL`, and `KOINONIA_PAYMENT_WEBHOOK_SECRET`.
 - Updated `pnpm verify:portal` to enforce payment processor setup readiness.
 - Added tests for missing payment setup and non-public setup URLs.
 - Updated auth readiness and billing/payment specifications.
