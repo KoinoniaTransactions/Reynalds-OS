@@ -7,6 +7,115 @@ Primary Business Priority: Koinonia Transactions website launch and client-acqui
 
 ---
 
+# 2026-07-30 Current Session Handoff — Client Portal Production Readiness
+
+Status: Continue from root project folder
+Local project path: `/Users/jeremiahreynalds/Documents/Codex/2026-07-28/files-mentioned-by-the-user-i/work/Reynalds_OS_v11_3_1_Work`
+Local branch currently used by Codex: `safe-push-koinonia-api-permission-errors`
+Remote target branch: `feature/app-shell-foundation`
+Push state: Jeremiah confirmed the latest focused slice was pushed manually.
+
+## User Working Rules
+
+- Keep using budget mode.
+- Make one focused improvement per turn.
+- Avoid browser testing unless Jeremiah asks.
+- Avoid production builds unless Jeremiah asks.
+- Run focused tests only.
+- Batch changes before running TypeScript.
+- Push small verified commits to GitHub.
+- Stay on the production-readiness plan and avoid extra expansion work.
+- Do not work on Reynalds Brothers files unless Jeremiah explicitly asks.
+
+## Current Clean Check
+
+At handoff, the working tree was clean on `safe-push-koinonia-api-permission-errors`.
+
+Recent local commits:
+
+- `f972742` Show service template cues on client dashboard
+- `9e252ef` Use service templates for billing intake
+- `491d5b1` Add Koinonia service template map
+- `09b3b93` Document payment webhook URL setup
+- `b08e73f` Require payment webhook URL readiness
+- `5df1c77` Clarify portal billing launch readiness
+- `97ef7a9` Add portal invoice status tracking
+- `fc67a2c` Add portal billing setup status updates
+
+Jeremiah pushed to GitHub using:
+
+```bash
+cd "/Users/jeremiahreynalds/Documents/Codex/2026-07-28/files-mentioned-by-the-user-i/work/Reynalds_OS_v11_3_1_Work"
+git push origin safe-push-koinonia-api-permission-errors:feature/app-shell-foundation
+```
+
+Codex may still be unable to push directly from this task if network access is restricted. If push fails with DNS or network errors, give Jeremiah the exact terminal command above.
+
+## Latest Completed Slice
+
+Completed and verified:
+
+- Added service-template matching for live portal work items.
+- Client dashboard now uses the Koinonia service template map to show service-specific work cues.
+- Showing requests default into the `Licensed Showing Coverage` template.
+- Billing intake already uses service templates to explain prepay, due-at-close, and retainer expectations.
+
+Verification run for the latest slice:
+
+- `pnpm --filter @reynalds-os/web exec vitest run --cache=false lib/koinonia-service-templates.test.ts`
+- `pnpm --filter @reynalds-os/web exec tsc --noEmit`
+
+No browser testing was run. No production build was run.
+
+## Production-Ready Portal Goal
+
+The Koinonia portal is for a transaction management company. It should support:
+
+- Secure client login.
+- Client dashboard for completed, pending, and active work.
+- Client document upload and document status tracking.
+- Staff portal where work and clients can be assigned to Koinonia staff.
+- Showing request intake and scheduling workflow.
+- Billing setup per client file, with safe readiness gates for payment processor setup.
+- Staff tools for editing, sending, approving, replacing, and tracking documents.
+- Audit trail and status history.
+- Rules-based review center so staff do not miss missing documents, stale work, assignment gaps, billing gaps, showing gaps, or access needs.
+- Optional AI assistance only after privacy, citation, audit, and human approval controls are ready.
+
+Important security boundary:
+
+- Do not store raw client passwords, credit card numbers, bank information, API keys, or private access codes in notes or database text fields.
+- Any future "login/access sharing" feature must be built as secure delegated access or encrypted secret storage with strict access logging, not normal notes.
+- Payment collection should use a payment processor setup intent or hosted payment method capture. Do not store card numbers directly.
+
+## Recommended Next Focused Improvements
+
+Continue in small verified slices. Good next steps:
+
+1. Add a client-facing service detail/status panel for one work item page, using the service template map already created.
+2. Add staff-side service template cues to `/employee/work/[id]` so employees see expected documents, next action, billing model, and risk notes.
+3. Add a showing request status lifecycle to make showing work move through Requested, Scheduling, Confirmed, Completed, and Needs Follow-up.
+4. Add a safe access-request workflow that collects what access is needed without asking clients to paste passwords.
+5. Add payment-method readiness UI copy that clearly separates prepay, due-at-close, and monthly retainer workflows.
+6. Add focused tests for whichever slice is chosen.
+
+Best immediate next slice:
+
+Add staff-side service template cues to `/employee/work/[id]`. This helps Koinonia staff serve clients consistently and builds directly on the service template work already committed.
+
+## Startup Commands For Next Chat
+
+```bash
+cd "/Users/jeremiahreynalds/Documents/Codex/2026-07-28/files-mentioned-by-the-user-i/work/Reynalds_OS_v11_3_1_Work"
+git branch --show-current
+git status --short --branch
+git log --oneline -8
+```
+
+If dependencies are missing because this workspace uses external symlinks, restore temporary links only for testing, then remove them after verification.
+
+---
+
 # 2026-07-29 Current Session Update — Portal Login Production Readiness
 
 Status: Source scaffold advanced / not production-live
