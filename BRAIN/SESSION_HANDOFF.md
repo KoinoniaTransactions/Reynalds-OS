@@ -7,6 +7,62 @@ Primary Business Priority: Koinonia Transactions website launch and client-acqui
 
 ---
 
+# 2026-07-31 Current Session Handoff — Client Billing Status Boundary
+
+Status: Continue from the clean main workspace
+Local project path: `/Users/jeremiahreynalds/Desktop/Reynalds_OS_v11_3_1_Work`
+Current branch: `feature/app-shell-foundation`
+Current verified head: `31e568e2a0d3bb9b93856e2de966c5c054fdb300`
+Remote target branch: `feature/app-shell-foundation`
+
+## Current Repository State
+
+- The main workspace is clean.
+- The local and remote feature branches are aligned at `31e568e`.
+- Pull request #7 was squash-merged successfully.
+- The temporary client-billing implementation worktree was removed.
+- The local and remote client-billing integration branches were deleted.
+- Remote recovery branches remain preserved:
+  - `recovery/koinonia-send-packages-20260729`
+  - `recovery/reynalds-brothers-main-workspace-20260731`
+
+## Latest Completed Slice
+
+Koinonia clients can no longer select or submit internal billing workflow statuses.
+
+The server now applies these client-created request rules:
+
+- Missing consent becomes `Consent Needed`.
+- Pay-after-successful-close billing becomes `Pay at Close Watch`.
+- Prepaid, per-request, monthly, and custom billing becomes `Setup Requested`.
+- Staff-created requests retain authorized internal status controls.
+
+This prevents clients from self-reporting processor-confirmed states such as `Payment Method Ready`.
+
+## Verification Completed
+
+- Prisma client generation passed.
+- TypeScript `tsc --noEmit` passed.
+- Focused billing setup tests passed: 8 of 8.
+- Vercel passed.
+- The merged four-file content matched the verified source branch.
+- No browser testing was run.
+- No production build was run.
+
+## Existing Workflows Audited
+
+The following recommended production-readiness slices were already present and did not require duplicate implementation:
+
+- Staff service-template cues on `/employee/work/[id]`.
+- Showing lifecycle: Requested, Scheduling, Confirmed, Completed, and Needs Follow-up.
+- Safe delegated-access requests with credential filtering, status history, audit events, and timeline events.
+
+## Recommended Next Focused Improvement
+
+Audit `/client/billing`, `/employee/billing`, and the billing status-update API together for consistent client/staff permissions, safe processor metadata, and status-transition ownership before adding another billing feature.
+
+---
+
 # 2026-07-30 Current Session Handoff — Client Portal Production Readiness
 
 Status: Continue from root project folder
