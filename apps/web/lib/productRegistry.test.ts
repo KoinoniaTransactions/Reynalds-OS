@@ -155,6 +155,84 @@ describe("product registry", () => {
     expect(entries.every((entry) => !("order" in entry))).toBe(true);
   });
 
+  it("orders workspace navigation by metadata instead of registry position", () => {
+    const registry = [
+      {
+        id: "workspace-last",
+        name: "Workspace Last",
+        owner: "Example Owner",
+        type: "company-operating-system",
+        audience: "internal",
+        purpose: "Verify explicit workspace ordering.",
+        status: "active",
+        hasPublicWebsite: false,
+        recordAuthority: "reynalds-os",
+        workspaceEntry: {
+          label: "Last",
+          href: "/last",
+          enabled: true,
+          order: 300
+        }
+      },
+      {
+        id: "public-middle",
+        name: "Public Middle",
+        owner: "Example Owner",
+        type: "public-website",
+        audience: "public",
+        purpose: "Verify public products are excluded.",
+        status: "active",
+        hasPublicWebsite: true,
+        recordAuthority: "reynalds-os"
+      },
+      {
+        id: "workspace-first",
+        name: "Workspace First",
+        owner: "Example Owner",
+        type: "central-operating-system",
+        audience: "internal",
+        purpose: "Verify explicit workspace ordering.",
+        status: "active",
+        hasPublicWebsite: false,
+        recordAuthority: "reynalds-os",
+        workspaceEntry: {
+          label: "First",
+          href: "/first",
+          enabled: false,
+          order: 100
+        }
+      },
+      {
+        id: "workspace-second",
+        name: "Workspace Second",
+        owner: "Example Owner",
+        type: "company-operating-system",
+        audience: "internal",
+        purpose: "Verify explicit workspace ordering.",
+        status: "active-development",
+        hasPublicWebsite: false,
+        recordAuthority: "reynalds-os",
+        workspaceEntry: {
+          label: "Second",
+          href: "/second",
+          enabled: true,
+          order: 200
+        }
+      }
+    ] as const;
+
+    expect(getWorkspaceProducts(registry).map((product) => product.id)).toEqual([
+      "workspace-last",
+      "workspace-first",
+      "workspace-second"
+    ]);
+    expect(getWorkspaceNavigationEntries(registry)).toEqual([
+      { label: "First", href: "/first", enabled: false },
+      { label: "Second", href: "/second", enabled: true },
+      { label: "Last", href: "/last", enabled: true }
+    ]);
+  });
+
   it("derives product workspace navigation from ordered registry entries", () => {
     const workspaceEntries = getWorkspaceNavigationEntries();
 
