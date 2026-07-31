@@ -134,11 +134,14 @@ It currently provides:
 - product status,
 - record-authority metadata,
 - optional workspace navigation metadata,
-- centralized queries for internal products, public websites, workspace products, and active products.
+- explicit workspace navigation ordering,
+- centralized queries for internal products, public websites, workspace products, ordered workspace navigation entries, and active products.
 
-Consumers should use registry helpers such as `getProductById`, `getInternalProducts`, `getPublicWebsites`, `getWorkspaceProducts`, and `getActiveProducts` rather than repeating classification logic.
+Consumers should use registry helpers such as `getProductById`, `getInternalProducts`, `getPublicWebsites`, `getWorkspaceProducts`, `getWorkspaceNavigationEntries`, and `getActiveProducts` rather than repeating classification or navigation-order logic.
 
-The registry does not replace this Brain document. When product meaning, ownership, status, audience, records, or boundaries change, update the Brain first or in the same focused change, then keep the executable registry aligned.
+Workspace order is product metadata, not an accidental result of array position. Each product workspace entry must declare an explicit `order`, while navigation consumers receive only the presentation fields they need.
+
+The registry does not replace this Brain document. When product meaning, ownership, status, audience, records, boundaries, or workspace placement change, update the Brain first or in the same focused change, then keep the executable registry aligned.
 
 ## Registry Verification
 
@@ -149,6 +152,8 @@ The focused tests verify that:
 - canonical product identifiers remain unique,
 - every registered product resolves through `getProductById`,
 - query helpers stay aligned with audience, type, website, and status metadata,
+- workspace navigation entries are produced in explicit registry order,
+- internal ordering metadata is not leaked into navigation presentation objects,
 - workspace navigation continues to derive product entries from the registry,
 - registry-backed workspace routes are not duplicated in navigation.
 
@@ -169,6 +174,7 @@ Before changing architecture or code, answer all of the following:
 7. Does the executable registry remain aligned with this catalog?
 8. Does this architectural change require a Brain update before the slice is considered complete?
 9. Do registry contract tests remain aligned with both the code and the Brain?
+10. If workspace placement changed, is the order explicit rather than dependent on registry array position?
 
 If any answer is unclear, inspect the Brain and repository before implementing.
 
@@ -184,7 +190,7 @@ Update this catalog when:
 - record ownership changes,
 - deployment or repository boundaries become canonical,
 - a product is retired or replaced,
-- registry structure changes how product identity, navigation, access, or classification is represented in code,
+- registry structure changes how product identity, navigation, access, ordering, or classification is represented in code,
 - registry verification changes which architectural guarantees are enforced by tests.
 
 Architectural work should document the Brain frequently. A focused code slice that changes canonical product behavior should include a Brain update in the same slice or in the immediate follow-up commit before moving to unrelated work.
