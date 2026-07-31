@@ -1,0 +1,121 @@
+{
+  "source": "Gmail",
+  "label": "WalMart Tanks",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "batchDate": "2026-07-29",
+  "page": 9,
+  "indexedThrough": 900,
+  "messageCount": 100,
+  "nextPageToken": "14861455326103467498",
+  "sampledThreadCount": 8,
+  "filingCandidates": [
+    {
+      "gmailId": "19dc7af0e06c252c",
+      "threadId": "19dc7af0e06c252c",
+      "storeNumber": "7658",
+      "city": "Brunswick",
+      "state": "GA",
+      "subject": "Re: store: WM 7658 04-25-2026 austin.wright@reynaldsbrothers.com UCO Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-04-26T02:47:07",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 7658 - Brunswick UCO Completion"
+    },
+    {
+      "gmailId": "19dc5c81fa4f2920",
+      "threadId": "19dc5c81fa4f2920",
+      "storeNumber": "3702",
+      "city": "Jacksonville",
+      "state": "FL",
+      "subject": "Re: store: WM 3702 04-25-2026 austin.wright@reynaldsbrothers.com ACC Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via Walmart Paperwork wmpw@reynaldsbrothers.com",
+      "sentAt": "2026-04-25T17:55:16",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 3702 - Jacksonville ACC Hydraulic Lines Completion"
+    },
+    {
+      "gmailId": "19dc1a8763cdb8af",
+      "threadId": "19dc1a8763cdb8af",
+      "storeNumber": "1283",
+      "city": "Starke",
+      "state": "FL",
+      "subject": "Re: store: WM 1283 04-24-2026 austin.wright@reynaldsbrothers.com ACC Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-04-24T22:42:13",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 1283 - Starke ACC UCO Completion"
+    },
+    {
+      "gmailId": "19dc102b21e1c14f",
+      "threadId": "19dc102b21e1c14f",
+      "storeNumber": "4702",
+      "city": "Friendswood",
+      "state": "TX",
+      "subject": "SC 4702 Friendswood TX. PROJECT RELEASE",
+      "sender": "Skip Zabel skip@reynaldsbrothers.com",
+      "sentAt": "2026-04-24T19:41:00",
+      "matchConfidence": "high",
+      "recommendedCard": "SC 4702 - Friendswood Project Release"
+    },
+    {
+      "gmailId": "19dc0eccb133f3b8",
+      "threadId": "19dc0eccb133f3b8",
+      "storeNumber": "5802",
+      "city": "Canovanas",
+      "state": "PR",
+      "subject": "Re: store: WM 5802 04-24-2026 jeremiah@reynaldsbrothers.com UCO Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-04-24T19:17:12",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 5802 - Canovanas UCO Completion"
+    },
+    {
+      "gmailId": "19dd0a1faf0c4afd",
+      "threadId": "19a2c88dc2ef9e9a",
+      "storeNumber": "121",
+      "city": "Okmulgee",
+      "state": "OK",
+      "subject": "Re: 121 Okmulgee, OK - used cooking oil tank",
+      "sender": "Kendall McAlester via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-04-27T20:28:47",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 121 - Okmulgee UCO Tank"
+    },
+    {
+      "gmailId": "19dbaa25adfbe700",
+      "threadId": "19db670597abdcbe",
+      "storeNumber": "697",
+      "city": "Ocala",
+      "state": "FL",
+      "subject": "Re: WM 697 at 2600 SW 19th Ave. Ocala FL. 34474",
+      "sender": "Skip Zabel skip@reynaldsbrothers.com",
+      "sentAt": "2026-04-23T13:58:01",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 697 - Ocala AST Inspection Coordination"
+    }
+  ],
+  "reviewCandidates": [
+    {
+      "gmailId": "19df38e814da5eee",
+      "threadId": "19dba8ced2020a2b",
+      "subject": "Re: Home Office and Transportation Grease Tank Removal",
+      "sender": "Samantha Allen via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-05-04T15:14:48",
+      "reviewReason": "Home Office and Transportation are non-store locations; billing needs a separate project or expense card before filing."
+    }
+  ],
+  "duplicateOrAlreadyFiled": [
+    {
+      "gmailId": "19e50830ed624fe8",
+      "threadId": "19de47955513ac59",
+      "subject": "Re: #External - Ref. Walmart 471 at 150 North Interstate 35 east.",
+      "reason": "Store 471 permit valuation was already promoted from page 6."
+    },
+    {
+      "gmailId": "19dfe4c611a63fea",
+      "threadId": "19dfe4a1d8633d86",
+      "subject": "Re: Newberry Tank Billing",
+      "reason": "The multi-store billing thread is already held in review from page 8."
+    }
+  ]
+}

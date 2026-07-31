@@ -1,0 +1,24 @@
+{
+  "source": "gmail",
+  "label": "WalMart Tanks",
+  "mailboxPath": "wmtanks@reynaldsbrothers.com",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "pulledAt": "2026-07-29",
+  "scope": {
+    "metadataPageSize": 20,
+    "idBatchSize": 100,
+    "hasMoreAfterFirst100": true
+  },
+  "firstPageResult": {
+    "filedCommunications": 17,
+    "reviewQueueItems": 3,
+    "storeNumbers": ["649", "773", "920", "1087", "1494", "2929", "3347", "3402", "3595", "4426", "6958"],
+    "workOrderNumbers": ["349228841", "354598199", "357811854", "1494.1018"],
+    "purchaseOrderNumbersForReview": ["WM-0157"]
+  },
+  "notes": [
+    "Outlook was not used.",
+    "The importer must paginate Gmail for full production import.",
+    "Unmatched emails remain preserved on the WalMart Tanks Email Review Queue card."
+  ]
+}

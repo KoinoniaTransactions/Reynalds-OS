@@ -1,0 +1,153 @@
+{
+  "source": "Gmail",
+  "label": "WalMart Tanks",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "batchDate": "2026-07-29",
+  "page": 7,
+  "indexedThrough": 700,
+  "messageCount": 100,
+  "nextPageToken": "11510645988125521422",
+  "sampledThreadCount": 11,
+  "filingCandidates": [
+    {
+      "gmailId": "19e2bfceaa19df24",
+      "threadId": "19e2bfceaa19df24",
+      "storeNumber": "3425",
+      "city": "Houston",
+      "state": "TX",
+      "subject": "WM 3425 Houston TX, PROJECT RELEASE",
+      "sender": "Skip Zabel skip@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 3425 - Houston Project Release"
+    },
+    {
+      "gmailId": "19e2d44b18550873",
+      "threadId": "19e2be9291254a97",
+      "storeNumber": "458",
+      "city": "Aransas Pass",
+      "state": "TX",
+      "subject": "Re: Ref WM 458 Aransas Pass. docs needed",
+      "sender": "Skip Zabel skip@reynaldsbrothers.com",
+      "matchConfidence": "medium",
+      "recommendedCard": "WM 458 - Aransas Pass Plans and Specs"
+    },
+    {
+      "gmailId": "19e2be48d9c266b7",
+      "threadId": "19e1d738ea2b9c89",
+      "storeNumber": "814",
+      "city": "Okeechobee",
+      "state": "FL",
+      "subject": "Re: FW: Ref. 814 Okeechobee, 174 Cocoa, 551 Palatka",
+      "sender": "Skip Zabel skip@reynaldsbrothers.com",
+      "matchConfidence": "medium",
+      "recommendedCard": "WM 814 - Okeechobee LCR and Registration"
+    },
+    {
+      "gmailId": "19e3be57d0d0650e",
+      "threadId": "19e2bb1ed313e946",
+      "storeNumber": "1621",
+      "city": "Laurel",
+      "state": "MS",
+      "subject": "RE: wm 1621 Laurel MS Pump OutRequest",
+      "sender": "WMServices WMServices@safety-kleen.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 1621 - Laurel Pump Out Coordination"
+    },
+    {
+      "gmailId": "19e3be523fb72b9b",
+      "threadId": "19e2bb6db1e2aa4c",
+      "storeNumber": "0533",
+      "city": "New Iberia",
+      "state": "LA",
+      "subject": "RE: Wm 0533 New Iberia LA Pump Out Request",
+      "sender": "WMServices WMServices@safety-kleen.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 0533 - New Iberia Pump Out Coordination"
+    },
+    {
+      "gmailId": "19e889247004e8e1",
+      "threadId": "19e2ba857c60822a",
+      "storeNumber": "4621",
+      "city": "Jacksonville",
+      "state": "FL",
+      "subject": "Re: Walmart 4621 Jacksonville / 800 gal AST testing",
+      "sender": "Shay Reynalds shay@reynaldsbrothers.com",
+      "matchConfidence": "medium",
+      "recommendedCard": "WM 4621 - Jacksonville AST Testing"
+    },
+    {
+      "gmailId": "19e286752eb5ef19",
+      "threadId": "19e286752eb5ef19",
+      "storeNumber": "814",
+      "workOrderNumber": "814.1014",
+      "city": "Okeechobee",
+      "state": "FL",
+      "subject": "[LxRetail] 814.1014 Okeechobee FL ACC Tank Replacement Workflow Updated",
+      "sender": "Walmart via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 814 - Okeechobee ACC Tank Replacement"
+    },
+    {
+      "gmailId": "19e283f597dd9661",
+      "threadId": "19d7900774ff1999",
+      "storeNumber": "211",
+      "city": "Hillsboro",
+      "state": "TX",
+      "subject": "RE: FW: WM Store # 211 Hillsboro TX Tank Observations",
+      "sender": "Krenz, Krista krista.krenz@aptim.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 211 - Hillsboro Tank Observations"
+    },
+    {
+      "gmailId": "19e2ddee0ef9b7d0",
+      "threadId": "19e283de8095ca0b",
+      "storeNumber": "458",
+      "subject": "Re: WM 458 Plans and specs",
+      "sender": "Skip Zabel skip@reynaldsbrothers.com",
+      "matchConfidence": "medium",
+      "recommendedCard": "WM 458 - Aransas Pass Plans and Specs"
+    },
+    {
+      "gmailId": "19e27cf8bd21a83c",
+      "threadId": "19e27cf8bd21a83c",
+      "storeNumber": "551",
+      "city": "Palatka",
+      "state": "FL",
+      "subject": "EDIT: Re: store: WM 551 05-14-2026 austin.wright@reynaldsbrothers.com ACC Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via Walmart Paperwork wmpw@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 551 - Palatka ACC UCO Completion"
+    },
+    {
+      "gmailId": "19e27cdae4cc5702",
+      "threadId": "19e27cdae4cc5702",
+      "storeNumber": "551",
+      "city": "Palatka",
+      "state": "FL",
+      "subject": "Re: store: WM 551 05-14-2026 austin.wright@reynaldsbrothers.com ACC Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via Walmart Paperwork wmpw@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 551 - Palatka ACC UCO Completion"
+    },
+    {
+      "gmailId": "19e27182a3f9a151",
+      "threadId": "19e27182a3f9a151",
+      "storeNumber": "5480",
+      "city": "Round Rock",
+      "state": "TX",
+      "subject": "WM 5480 Round Rock, TX -PROJECT RELEASE",
+      "sender": "John Nester john.nester@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 5480 - Round Rock Tank Scope"
+    }
+  ],
+  "reviewCandidates": [
+    {
+      "gmailId": "19e27cf4e84e46b6",
+      "threadId": "19e270bd8d705367",
+      "subject": "Re: Ref. WM Port Orange FL. EQ Number",
+      "sender": "Kidder, Matthew Matthew.Kidder@ocfl.net",
+      "reviewReason": "Subject and body identify Port Orange, FL but no store number or WO was visible in the sampled message."
+    }
+  ]
+}

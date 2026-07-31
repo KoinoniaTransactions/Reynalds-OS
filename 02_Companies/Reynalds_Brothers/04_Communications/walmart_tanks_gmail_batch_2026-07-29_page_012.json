@@ -1,0 +1,69 @@
+{
+  "source": "gmail",
+  "label": "WalMart Tanks",
+  "alternateLabel": "wmtanks",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "page": 12,
+  "messageCount": 100,
+  "indexedThrough": 1200,
+  "nextPageToken": "03463701910574169314",
+  "snapshotAt": "2026-07-29T17:30:00-06:00",
+  "filingCandidates": [
+    {
+      "gmailId": "19d1c5aa9b4771de",
+      "threadId": "1991653002d317bd",
+      "storeNumber": "8156",
+      "city": "Laredo",
+      "state": "TX",
+      "subject": "RE: Sam's Club 8156 - Laredo, TX - Used Cooking Oil Tank Replacement",
+      "sender": "Vincent Aguirre via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-03-23T20:19:34",
+      "recommendedCard": "SC 8156 - Laredo UCO Tank Replacement"
+    },
+    {
+      "gmailId": "19d1c46e3fc77858",
+      "threadId": "1999c5651245493b",
+      "storeNumber": "8224",
+      "city": "Wichita Falls",
+      "state": "TX",
+      "subject": "Re: Sam's Club 8224 - Wichita Falls, TX - Used Cooking Oil Tank Replacement",
+      "sender": "Shay Reynalds shay@reynaldsbrothers.com",
+      "sentAt": "2026-03-23T23:09:59",
+      "recommendedCard": "SC 8224 - Wichita Falls UCO Tank Replacement"
+    }
+  ],
+  "enrichmentCandidates": [
+    {
+      "gmailId": "19d3f574290ebe94",
+      "threadId": "19c71b6cb551ce9c",
+      "storeNumber": "3826",
+      "city": "Lubbock",
+      "state": "TX",
+      "subject": "Re: WM Supercenter #3826 - Lubbock, TX - Used Cooking Oil Tank Replacement",
+      "sender": "Jasmin Garcia via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-03-30T15:22:33",
+      "existingCard": "WM 3826 - Lubbock UCO Completion"
+    }
+  ],
+  "alreadyFiled": [
+    {
+      "gmailId": "19d1cafb6c7fbe73",
+      "threadId": "19a2c88dc2ef9e9a",
+      "storeNumber": "121",
+      "city": "Okmulgee",
+      "state": "OK",
+      "subject": "RE: 121 Okmulgee, OK - used cooking oil tank",
+      "reason": "Thread is already represented on the Store 121 card from an earlier page."
+    }
+  ],
+  "heldForNextReview": [
+    {
+      "threadId": "19cf9400daafdf48",
+      "storeNumber": "970",
+      "city": "Picayune",
+      "state": "MS",
+      "subject": "RE: 970 Picayune MS - Used Cooking Oil Tank replacement",
+      "reason": "Sampled output was truncated; re-read a precise representative message before filing."
+    }
+  ]
+}
