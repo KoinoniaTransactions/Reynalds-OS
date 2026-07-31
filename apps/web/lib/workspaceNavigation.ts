@@ -1,4 +1,4 @@
-import { productRegistry } from "./productRegistry";
+import { getWorkspaceProducts } from "./productRegistry";
 
 export type WorkspaceNavigationItem = {
   label: string;
@@ -6,8 +6,8 @@ export type WorkspaceNavigationItem = {
   enabled: boolean;
 };
 
-const productWorkspaceNavigation: WorkspaceNavigationItem[] = productRegistry.flatMap(
-  (product) => (product.workspaceEntry ? [product.workspaceEntry] : [])
+const productWorkspaceNavigation: WorkspaceNavigationItem[] = getWorkspaceProducts().map(
+  ({ workspaceEntry }) => workspaceEntry
 );
 
 export const workspaceNavigation: WorkspaceNavigationItem[] = [
