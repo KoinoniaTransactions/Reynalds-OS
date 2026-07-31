@@ -27,6 +27,13 @@ Before creating new documentation, business rules, copy, or code:
 3. Extend existing work whenever possible.
 4. Only create something new when no canonical source exists.
 
+Before proposing product architecture, also read:
+
+- `BRAIN/PRODUCT_BOUNDARIES.md`
+- `BRAIN/APPLICATION_CATALOG.md`
+
+These documents establish the difference between companies, public websites, company-specific operating systems, and records held inside Reynalds OS.
+
 ---
 
 # Brain Contents
@@ -35,6 +42,8 @@ Before creating new documentation, business rules, copy, or code:
 
 - PRODUCT_VISION.md
 - REYNALDS_OS_CONSTITUTION.md
+- PRODUCT_BOUNDARIES.md
+- APPLICATION_CATALOG.md
 - PROJECT_STATE.md
 - CURRENT_PRIORITIES.md
 - CANONICAL_REGISTRY.md
@@ -67,7 +76,9 @@ Before creating new documentation, business rules, copy, or code:
 The Brain explains:
 
 - what Reynalds OS is,
-- how it is built,
+- which products and companies exist,
+- how their boundaries are defined,
+- how the system is built,
 - why decisions were made.
 
 Business-specific knowledge belongs under:
@@ -94,8 +105,10 @@ Before implementing new features:
 
 1. Consult the Brain.
 2. Consult the Canonical Registry.
-3. Consult Business Objects.
-4. Recover existing work.
-5. Implement.
-6. Document.
-7. Commit.
+3. Identify the affected product in the Application Catalog.
+4. Confirm its boundaries in Product Boundaries.
+5. Consult Business Objects.
+6. Recover existing work.
+7. Implement.
+8. Document.
+9. Commit.
