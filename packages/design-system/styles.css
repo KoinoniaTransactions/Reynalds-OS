@@ -3872,6 +3872,56 @@ h1 {
   font-weight: 700;
 }
 
+.koinonia-showing-status-form {
+  display: grid;
+  gap: 9px;
+  margin-top: 8px;
+  min-width: 260px;
+  text-align: left;
+}
+
+.koinonia-showing-status-form label {
+  display: grid;
+  gap: 5px;
+  color: #195c60;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-showing-status-form input,
+.koinonia-showing-status-form select,
+.koinonia-showing-status-form textarea {
+  width: 100%;
+  border: 1px solid rgba(25, 92, 96, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ros-text);
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: 0;
+  padding: 9px 10px;
+  text-transform: none;
+}
+
+.koinonia-showing-status-form textarea {
+  min-height: 78px;
+  resize: vertical;
+}
+
+.koinonia-showing-status-form input:disabled,
+.koinonia-showing-status-form select:disabled,
+.koinonia-showing-status-form textarea:disabled,
+.koinonia-showing-status-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.koinonia-showing-status-form .koinonia-button {
+  width: 100%;
+}
+
 .koinonia-work-assignment-form {
   display: grid;
   gap: 8px;

@@ -159,7 +159,7 @@ const sampleShowingRequests: ShowingRequestItem[] = [
   {
     id: "sample-northgate-tour",
     title: "Schedule Northgate Buyer Tour",
-    status: "Scheduling Requested",
+    status: "Scheduling",
     nextAction: "Koinonia is checking requested showing windows and buyer availability.",
     timing: "Thu afternoon",
     notes: ["Client contact authorized", "Friday morning is the backup window"]
@@ -167,7 +167,7 @@ const sampleShowingRequests: ShowingRequestItem[] = [
   {
     id: "sample-west-ridge",
     title: "West Ridge Showing Coverage",
-    status: "Waiting on Client",
+    status: "Needs Follow-up",
     nextAction: "Access instructions and safety notes are needed before coverage can be confirmed.",
     timing: "Same-day request",
     notes: ["Rush review needed", "Access details pending"]
@@ -175,7 +175,7 @@ const sampleShowingRequests: ShowingRequestItem[] = [
   {
     id: "sample-northgate-follow-up",
     title: "Northgate Showing Follow-Up",
-    status: "Feedback Sent",
+    status: "Completed",
     nextAction: "Showing notes were delivered. Follow-up remains open if the Realtor requests it.",
     timing: "Complete",
     notes: ["Buyer feedback delivered", "No immediate issue flagged"]

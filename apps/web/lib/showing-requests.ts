@@ -1,5 +1,15 @@
 export const showingRequestObjectType = "ShowingRequest";
 
+export const showingRequestStatuses = [
+  "Requested",
+  "Scheduling",
+  "Confirmed",
+  "Completed",
+  "Needs Follow-up"
+] as const;
+
+export type ShowingRequestStatus = (typeof showingRequestStatuses)[number];
+
 export type ShowingRequestInput = {
   authorization: boolean;
   buyerContact?: string;
@@ -9,6 +19,14 @@ export type ShowingRequestInput = {
   preferredWindow: string;
   propertyAddress: string;
   serviceLevel: string;
+};
+
+export type ShowingRequestStatusUpdateInput = {
+  assignedProvider?: string;
+  confirmedWindow?: string;
+  feedbackSummary?: string;
+  notes?: string;
+  status: ShowingRequestStatus;
 };
 
 export class ShowingRequestValidationError extends Error {
@@ -53,27 +71,107 @@ export function buildShowingRequestName(input: ShowingRequestInput): string {
 
 export function buildShowingRequestNextAction(input: ShowingRequestInput): string {
   if (!input.authorization) {
-    return "Confirm Realtor authorization before Koinonia contacts the buyer or schedules directly.";
+    return buildShowingStatusNextAction("Needs Follow-up");
   }
 
-  return "Review requested showing window and confirm licensed coverage.";
+  return buildShowingStatusNextAction("Requested");
 }
 
 export function getHumanShowingStatus(status: string): string {
   switch (status) {
     case "Requested":
-      return "Scheduling Requested";
-    case "Waiting on Client":
-      return "Waiting on Client";
+      return "Requested";
+    case "Scheduling":
+      return "Scheduling";
+    case "Confirmed":
     case "Scheduled":
-      return "Scheduled";
+      return "Confirmed";
+    case "Needs Follow-up":
+    case "Waiting on Client":
+      return "Needs Follow-up";
     case "Completed":
       return "Completed";
     case "Canceled":
-      return "Canceled";
+      return "Needs Follow-up";
     default:
       return status;
   }
+}
+
+export function validateShowingRequestStatusUpdateInput(
+  input: unknown
+): ShowingRequestStatusUpdateInput {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    throw new ShowingRequestValidationError("Status update body must be an object.");
+  }
+
+  const value = input as Record<string, unknown>;
+  const status = normalizeShowingStatus(optionalString(value.status) ?? "");
+  const notes = optionalString(value.notes);
+  const feedbackSummary = optionalString(value.feedbackSummary);
+
+  for (const candidate of [notes, feedbackSummary]) {
+    if (candidate && containsCredentialLanguage(candidate)) {
+      throw new ShowingRequestValidationError(
+        "Do not include lockbox codes, gate codes, passwords, or private access secrets in showing status notes."
+      );
+    }
+  }
+
+  return {
+    assignedProvider: optionalString(value.assignedProvider),
+    confirmedWindow: optionalString(value.confirmedWindow),
+    feedbackSummary,
+    notes,
+    status
+  };
+}
+
+export function buildShowingStatusNextAction(status: ShowingRequestStatus): string {
+  switch (status) {
+    case "Requested":
+      return "Review the requested showing window and confirm licensed coverage.";
+    case "Scheduling":
+      return "Coordinate showing time, buyer availability, and access readiness.";
+    case "Confirmed":
+      return "Complete the confirmed showing and record feedback after coverage.";
+    case "Completed":
+      return "Review completion notes, feedback, and billing follow-up.";
+    case "Needs Follow-up":
+      return "Resolve missing authorization, access details, feedback, or client follow-up.";
+  }
+}
+
+export function getShowingStatusHealth(status: ShowingRequestStatus): string {
+  switch (status) {
+    case "Requested":
+    case "Scheduling":
+      return "Attention";
+    case "Confirmed":
+      return "Watch";
+    case "Completed":
+      return "Healthy";
+    case "Needs Follow-up":
+      return "Blocked";
+  }
+}
+
+export function normalizeShowingStatus(status: string): ShowingRequestStatus {
+  if (showingRequestStatuses.includes(status as ShowingRequestStatus)) {
+    return status as ShowingRequestStatus;
+  }
+
+  if (status === "Scheduled") {
+    return "Confirmed";
+  }
+
+  if (status === "Waiting on Client" || status === "Canceled") {
+    return "Needs Follow-up";
+  }
+
+  throw new ShowingRequestValidationError(
+    "status must be Requested, Scheduling, Confirmed, Completed, or Needs Follow-up."
+  );
 }
 
 export function getShowingTimingLabel(data: unknown): string {

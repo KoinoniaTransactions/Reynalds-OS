@@ -2,10 +2,14 @@ import { describe, expect, it } from "vitest";
 import {
   buildShowingRequestName,
   buildShowingRequestNextAction,
+  buildShowingStatusNextAction,
+  getShowingStatusHealth,
   getShowingNoteLabels,
   getShowingTimingLabel,
+  normalizeShowingStatus,
   ShowingRequestValidationError,
-  validateShowingRequestInput
+  validateShowingRequestInput,
+  validateShowingRequestStatusUpdateInput
 } from "./showing-requests";
 
 describe("showing request helpers", () => {
@@ -54,12 +58,45 @@ describe("showing request helpers", () => {
     });
 
     expect(buildShowingRequestName(input)).toBe("Showing Request - 456 Oak Ave");
-    expect(buildShowingRequestNextAction(input)).toContain("Confirm Realtor authorization");
+    expect(buildShowingRequestNextAction(input)).toContain("Resolve missing authorization");
     expect(getShowingTimingLabel({ preferredWindow: "Tomorrow afternoon" })).toBe("Tomorrow afternoon");
     expect(getShowingNoteLabels({ authorization: true, buyerName: "Avery", serviceLevel: "Tour setup" })).toEqual([
       "Client contact authorized",
       "Tour setup",
       "Buyer: Avery"
     ]);
+  });
+
+  it("validates the staff showing status lifecycle", () => {
+    expect(
+      validateShowingRequestStatusUpdateInput({
+        assignedProvider: "Maya Torres",
+        confirmedWindow: "Friday 10 AM",
+        feedbackSummary: "Buyer liked the kitchen layout.",
+        notes: "Confirmed with Realtor.",
+        status: "Confirmed"
+      })
+    ).toEqual({
+      assignedProvider: "Maya Torres",
+      confirmedWindow: "Friday 10 AM",
+      feedbackSummary: "Buyer liked the kitchen layout.",
+      notes: "Confirmed with Realtor.",
+      status: "Confirmed"
+    });
+
+    expect(normalizeShowingStatus("Scheduled")).toBe("Confirmed");
+    expect(normalizeShowingStatus("Waiting on Client")).toBe("Needs Follow-up");
+    expect(buildShowingStatusNextAction("Scheduling")).toContain("Coordinate showing time");
+    expect(getShowingStatusHealth("Completed")).toBe("Healthy");
+    expect(getShowingStatusHealth("Needs Follow-up")).toBe("Blocked");
+  });
+
+  it("blocks private access secrets in showing status updates", () => {
+    expect(() =>
+      validateShowingRequestStatusUpdateInput({
+        notes: "Gate code is 1234",
+        status: "Scheduling"
+      })
+    ).toThrow("Do not include lockbox codes");
   });
 });

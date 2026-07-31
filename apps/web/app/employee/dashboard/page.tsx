@@ -4,6 +4,7 @@ import {
   PortalWorkAssignmentForm,
   type PortalWorkAssignmentStaffOption
 } from "../../../components/employee/PortalWorkAssignmentForm";
+import { ShowingRequestStatusForm } from "../../../components/employee/ShowingRequestStatusForm";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
@@ -215,7 +216,7 @@ const sampleEmployeeShowingRequests: EmployeeShowingRequestItem[] = [
     id: "sample-employee-west-ridge",
     title: "West Ridge Showing Coverage",
     requestedBy: "Northgate Partners",
-    status: "Waiting on Client",
+    status: "Needs Follow-up",
     nextAction: "Access instructions and safety notes are needed before coverage can be confirmed.",
     timing: "Same-day request",
     notes: ["Rush review needed", "Access details pending"]
@@ -224,7 +225,7 @@ const sampleEmployeeShowingRequests: EmployeeShowingRequestItem[] = [
     id: "sample-employee-northgate",
     title: "Schedule Northgate Buyer Tour",
     requestedBy: "Bright Homes Team",
-    status: "Scheduling Requested",
+    status: "Scheduling",
     nextAction: "Check requested showing windows and buyer availability.",
     timing: "Thu afternoon",
     notes: ["Client contact authorized", "Friday morning backup"]
@@ -473,6 +474,11 @@ export default async function EmployeeDashboardPreviewPage() {
                       <div className="koinonia-employee-work-meta">
                         <strong>{request.status}</strong>
                         <span>Showing request</span>
+                        <ShowingRequestStatusForm
+                          currentStatus={request.status}
+                          disabled={!showingRequestView.isLiveData}
+                          requestId={request.id}
+                        />
                       </div>
                     </article>
                   ))}
