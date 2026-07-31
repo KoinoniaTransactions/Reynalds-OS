@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   extractWalmartTanksIdentifiers,
+  extractWalmartTanksLocation,
   getWalmartTanksReviewCategory,
   getWalmartTanksWorkBuckets
 } from "../lib/walmart-tanks-review";
@@ -95,17 +96,20 @@ function formatLocation(city?: unknown, state?: unknown) {
 }
 
 function formatDetectedIdentifiers(communication: WalmartTanksCommunication) {
-  const identifiers = extractWalmartTanksIdentifiers(
-    [communication.subject, communication.snippet, communication.sender].filter(Boolean).join(" ")
-  );
+  const reviewText = [communication.subject, communication.snippet, communication.sender].filter(Boolean).join(" ");
+  const identifiers = extractWalmartTanksIdentifiers(reviewText);
+  const location = extractWalmartTanksLocation(reviewText);
   const storeNumber = communication.storeNumber ?? identifiers.storeNumbers[0];
   const workOrderNumber = communication.workOrderNumber ?? identifiers.workOrderNumbers[0];
   const purchaseOrderNumber = communication.purchaseOrderNumber ?? identifiers.purchaseOrderNumbers[0];
+  const city = communication.city ?? location.city;
+  const state = communication.state ?? location.state;
 
   return [
     storeNumber ? `Store ${storeNumber}` : "",
     workOrderNumber ? `WO ${workOrderNumber}` : "",
-    purchaseOrderNumber ? `PO ${purchaseOrderNumber}` : ""
+    purchaseOrderNumber ? `PO ${purchaseOrderNumber}` : "",
+    city || state ? formatLocation(city, state) : ""
   ].filter(Boolean);
 }
 
