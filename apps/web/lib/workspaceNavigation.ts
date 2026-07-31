@@ -1,4 +1,4 @@
-import { getWorkspaceProducts } from "./productRegistry";
+import { getWorkspaceNavigationEntries } from "./productRegistry";
 
 export type WorkspaceNavigationItem = {
   label: string;
@@ -6,13 +6,9 @@ export type WorkspaceNavigationItem = {
   enabled: boolean;
 };
 
-const productWorkspaceNavigation: WorkspaceNavigationItem[] = getWorkspaceProducts().map(
-  ({ workspaceEntry }) => workspaceEntry
-);
-
 export const workspaceNavigation: WorkspaceNavigationItem[] = [
   { label: "Dashboard", href: "/", enabled: true },
-  ...productWorkspaceNavigation,
+  ...getWorkspaceNavigationEntries(),
   { label: "CRM", href: "/crm", enabled: true },
   { label: "Transactions", href: "/transactions", enabled: true },
   { label: "Contracts", enabled: false },
