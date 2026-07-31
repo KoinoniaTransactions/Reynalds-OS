@@ -1,7 +1,12 @@
 import { sharedContent } from "@/content/shared";
 import { contactConfig, mailto } from "../../../config/contact.config";
 
-export function Footer() {
+type FooterProps = {
+  serviceLine?: string;
+  supportLine?: string;
+};
+
+export function Footer({ serviceLine, supportLine }: FooterProps = {}) {
   const footer = sharedContent.footer;
 
   return (
@@ -12,8 +17,8 @@ export function Footer() {
             <span className="koinonia-footer-mark">K</span>
 
             <div>
-              <strong>{footer.companyName}</strong>
-              <p>{footer.tagline}</p>
+              <strong>{serviceLine ?? footer.companyName}</strong>
+              <p>{supportLine ?? footer.tagline}</p>
             </div>
           </div>
 
