@@ -207,6 +207,7 @@ export function OperationsQueueMvp() {
   const [selectedId, setSelectedId] = useState<string>("");
   const [reviewCategoryFilter, setReviewCategoryFilter] = useState("all");
   const [liveDataStatus, setLiveDataStatus] = useState<LiveDataStatus | null>(null);
+  const [approvingGmailId, setApprovingGmailId] = useState("");
 
   async function loadObjects() {
     setError("");
@@ -226,6 +227,60 @@ export function OperationsQueueMvp() {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error.");
+    }
+  }
+
+  async function approveReviewItem(
+    workItemId: string,
+    communication: WalmartTanksCommunication
+  ) {
+    const workItem = objects.find((item) => item.id === workItemId);
+
+    if (!workItem) {
+      setError("The selected Work Item could not be found.");
+      return;
+    }
+
+    const currentData = workItem.data ?? {};
+    const communications = getCommunications(currentData);
+    const reviewQueue = getReviewQueue(currentData);
+
+    const updatedCommunications = communications.some(
+      (item) => item.gmailId === communication.gmailId
+    )
+      ? communications
+      : [...communications, communication];
+
+    const updatedReviewQueue = reviewQueue.filter(
+      (item) => item.gmailId !== communication.gmailId
+    );
+
+    setApprovingGmailId(communication.gmailId);
+    setError("");
+
+    try {
+      const response = await fetch(`/api/objects/${workItem.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            ...currentData,
+            communications: updatedCommunications,
+            reviewQueue: updatedReviewQueue
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        throw new Error(result?.error ?? "Failed to approve the email filing.");
+      }
+
+      await loadObjects();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error.");
+    } finally {
+      setApprovingGmailId("");
     }
   }
 
@@ -729,6 +784,15 @@ export function OperationsQueueMvp() {
                             </span>
                             <small>{communication.reviewReason ?? "Needs manual filing."}</small>
                             <small>Suggested filing target: {getSuggestedFilingTarget(communication)}</small>
+                            <button
+                              type="button"
+                              disabled={approvingGmailId === communication.gmailId}
+                              onClick={() => void approveReviewItem(selectedItem.id, communication)}
+                            >
+                              {approvingGmailId === communication.gmailId
+                                ? "Approving..."
+                                : "Approve Filing"}
+                            </button>
                           </li>
                         );
                       })}
