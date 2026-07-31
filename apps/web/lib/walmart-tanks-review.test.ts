@@ -52,6 +52,16 @@ describe("WalMart Tanks review categorization", () => {
       })
     ).toBe("Manual review");
   });
+
+  it("does not flag missing city/state when the subject carries location", () => {
+    expect(
+      getWalmartTanksReviewCategory({
+        subject: "Re: WM 1087 Stuart State: Florida, AUTO CENTER Tank Triage - Locked",
+        sender: "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+        reviewReason: "Needs city/state check before filing."
+      })
+    ).toBe("Manual review");
+  });
 });
 
 describe("WalMart Tanks work bucket detection", () => {
