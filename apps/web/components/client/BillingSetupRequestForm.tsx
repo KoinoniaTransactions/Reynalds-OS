@@ -49,7 +49,6 @@ export function BillingSetupRequestForm({ storageReady }: BillingSetupRequestFor
           consentAcknowledged: formData.get("consentAcknowledged") === "on",
           notes: formData.get("notes"),
           serviceName: formData.get("serviceName"),
-          status: formData.get("status"),
           triggerDescription: formData.get("triggerDescription")
         })
       });
@@ -110,17 +109,12 @@ export function BillingSetupRequestForm({ storageReady }: BillingSetupRequestFor
           </p>
         ) : null}
 
-        <label>
-          Status
-          <select disabled={disabled} name="status">
-            <option value="Setup Requested">Setup requested</option>
-            <option value="Consent Needed">Consent needed</option>
-            <option value="Processor Link Needed">Processor link needed</option>
-            <option value="Payment Method Ready">Payment method ready</option>
-            <option value="Pay at Close Watch">Pay at close watch</option>
-            <option value="Blocked">Blocked</option>
-          </select>
-        </label>
+        <p className="koinonia-billing-security-note">
+          Prepaid, per-request, and monthly services move to secure processor
+          setup after consent. Pay-at-close services are tracked until a
+          successful closing. Payment method readiness is confirmed by
+          Koinonia only after secure processor verification.
+        </p>
 
         <label>
           Amount

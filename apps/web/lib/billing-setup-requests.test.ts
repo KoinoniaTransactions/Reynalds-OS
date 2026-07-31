@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyBillingSetupRequestSourcePolicy,
   BillingSetupValidationError,
   buildBillingSetupNextAction,
   buildBillingSetupRequestName,
@@ -56,6 +57,34 @@ describe("billing setup request helpers", () => {
         status: "Processor Link Needed"
       }).status
     ).toBe("Consent Needed");
+  });
+
+  it("prevents client intake from setting staff-confirmed billing statuses", () => {
+    const prepaidInput = validateBillingSetupRequestInput({
+      billingModel: "Prepaid before work begins",
+      consentAcknowledged: true,
+      serviceName: "Transaction Coordination Plus",
+      status: "Payment Method Ready"
+    });
+
+    const payAtCloseInput = validateBillingSetupRequestInput({
+      billingModel: "Pay after successful close",
+      consentAcknowledged: true,
+      serviceName: "Pay-at-Closing Coordination",
+      status: "Payment Method Ready"
+    });
+
+    expect(
+      applyBillingSetupRequestSourcePolicy(prepaidInput, "client-portal").status
+    ).toBe("Setup Requested");
+
+    expect(
+      applyBillingSetupRequestSourcePolicy(payAtCloseInput, "client-portal").status
+    ).toBe("Pay at Close Watch");
+
+    expect(
+      applyBillingSetupRequestSourcePolicy(prepaidInput, "employee-portal").status
+    ).toBe("Payment Method Ready");
   });
 
   it("blocks raw payment secrets in notes", () => {
