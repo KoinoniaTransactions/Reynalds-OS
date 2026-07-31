@@ -21,6 +21,8 @@ The executable counterpart to this catalog is `apps/web/lib/productRegistry.ts`.
 5. Business records may be stored in Reynalds OS even when the public or internal product is separate.
 6. Unknown deployment, repository, or synchronization details must remain undecided until verified.
 7. Code that classifies, filters, navigates to, or grants access to products should use the canonical product registry instead of duplicating product identity rules.
+8. Public websites must remain public products and must not expose internal workspace navigation metadata.
+9. Internal operating systems must remain internal products and must not claim a public website identity.
 
 ---
 
@@ -135,13 +137,20 @@ It currently provides:
 - record-authority metadata,
 - optional workspace navigation metadata,
 - explicit workspace navigation ordering,
-- centralized queries for internal products, public websites, workspace products, ordered workspace navigation entries, and active products.
+- centralized queries for internal products, public websites, workspace products, ordered workspace navigation entries, and active products,
+- discriminated product definitions that enforce public and internal boundary rules at compile time.
 
 Consumers should use registry helpers such as `getProductById`, `getInternalProducts`, `getPublicWebsites`, `getWorkspaceProducts`, `getWorkspaceNavigationEntries`, and `getActiveProducts` rather than repeating classification or navigation-order logic.
 
 Product identifiers must not be maintained in a separate manual union that can drift from the registry. The registry entries define the canonical identifier set, and the exported `ProductId` type is derived from those entries.
 
 Workspace order is product metadata, not an accidental result of array position. Each product workspace entry must declare an explicit `order`, while navigation consumers receive only the presentation fields they need.
+
+The executable type contract now prevents invalid boundary combinations:
+
+- `public-website` products must use audience `public`, must declare `hasPublicWebsite: true`, and cannot define internal `workspaceEntry` metadata;
+- `central-operating-system` and `company-operating-system` products must use audience `internal` and must declare `hasPublicWebsite: false`;
+- workspace navigation remains optional and available only to internal products.
 
 The registry does not replace this Brain document. When product meaning, ownership, status, audience, records, boundaries, identifiers, or workspace placement change, update the Brain first or in the same focused change, then keep the executable registry aligned.
 
@@ -153,6 +162,8 @@ The focused tests verify that:
 
 - canonical product identifiers remain unique,
 - every registered product resolves through `getProductById`,
+- public websites carry public audience and public website metadata without internal workspace entries,
+- internal operating systems carry internal audience and no public website identity,
 - query helpers stay aligned with audience, type, website, and status metadata,
 - workspace navigation entries are produced in explicit registry order,
 - internal ordering metadata is not leaked into navigation presentation objects,
@@ -178,6 +189,7 @@ Before changing architecture or code, answer all of the following:
 9. Do registry contract tests remain aligned with both the code and the Brain?
 10. If workspace placement changed, is the order explicit rather than dependent on registry array position?
 11. If a product identifier changed, is the type still derived from the registry rather than duplicated manually?
+12. Does the product definition satisfy the correct public or internal discriminated type contract?
 
 If any answer is unclear, inspect the Brain and repository before implementing.
 
