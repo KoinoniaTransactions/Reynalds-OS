@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   extractWalmartTanksIdentifiers,
+  extractWalmartTanksLocation,
   getWalmartTanksReviewCategory,
   getWalmartTanksWorkBuckets
 } from "./walmart-tanks-review";
@@ -115,6 +116,35 @@ describe("WalMart Tanks identifier extraction", () => {
     ).toMatchObject({
       storeNumbers: ["3826"],
       purchaseOrderNumbers: ["PO-77812"]
+    });
+  });
+});
+
+describe("WalMart Tanks location extraction", () => {
+  it("extracts city and full state names from tank triage subjects", () => {
+    expect(
+      extractWalmartTanksLocation("Re: WM 1087 Stuart State: Florida, AUTO CENTER Tank Triage - Locked")
+    ).toEqual({
+      city: "Stuart",
+      state: "FL"
+    });
+  });
+
+  it("extracts city and state abbreviations from LxRetail subjects", () => {
+    expect(
+      extractWalmartTanksLocation("[LxRetail] 4801.1015 Riverview FL UCO Tank Replacement Workflow Updated")
+    ).toEqual({
+      city: "Riverview",
+      state: "FL"
+    });
+  });
+
+  it("extracts multi-word cities before state abbreviations", () => {
+    expect(
+      extractWalmartTanksLocation("NHM 7251 - Fort Worth TX UCO Tank Replacement")
+    ).toEqual({
+      city: "Fort Worth",
+      state: "TX"
     });
   });
 });

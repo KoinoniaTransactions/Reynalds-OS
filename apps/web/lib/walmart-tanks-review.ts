@@ -15,8 +15,46 @@ export type WalmartTanksIdentifiers = {
   purchaseOrderNumbers: string[];
 };
 
+export type WalmartTanksLocation = {
+  city?: string;
+  state?: string;
+};
+
+const STATE_NAMES: Record<string, string> = {
+  alabama: "AL",
+  alaska: "AK",
+  arizona: "AZ",
+  arkansas: "AR",
+  california: "CA",
+  colorado: "CO",
+  connecticut: "CT",
+  florida: "FL",
+  georgia: "GA",
+  illinois: "IL",
+  indiana: "IN",
+  kentucky: "KY",
+  louisiana: "LA",
+  mississippi: "MS",
+  missouri: "MO",
+  new_mexico: "NM",
+  new_york: "NY",
+  north_carolina: "NC",
+  oklahoma: "OK",
+  south_carolina: "SC",
+  tennessee: "TN",
+  texas: "TX"
+};
+
 function unique(values: string[]) {
   return Array.from(new Set(values));
+}
+
+function toTitleCase(value: string) {
+  return value
+    .trim()
+    .split(/\s+/)
+    .map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1).toLowerCase()}`)
+    .join(" ");
 }
 
 export function getWalmartTanksReviewCategory(communication: WalmartTanksReviewCommunication) {
@@ -67,4 +105,25 @@ export function extractWalmartTanksIdentifiers(text: string): WalmartTanksIdenti
     workOrderNumbers: unique(workOrderNumbers),
     purchaseOrderNumbers: unique(purchaseOrderNumbers)
   };
+}
+
+export function extractWalmartTanksLocation(text: string): WalmartTanksLocation {
+  const stateNameMatch = text.match(/\b([A-Za-z]+(?:\s+[A-Za-z]+){0,2})\s+State:\s+([A-Za-z]+(?:\s+[A-Za-z]+)?)\b/);
+  if (stateNameMatch) {
+    const stateKey = stateNameMatch[2].toLowerCase().replace(/\s+/g, "_");
+    return {
+      city: toTitleCase(stateNameMatch[1]),
+      state: STATE_NAMES[stateKey] ?? stateNameMatch[2].toUpperCase()
+    };
+  }
+
+  const abbreviationMatch = text.match(/\b([A-Za-z]+(?:\s+[A-Za-z]+){0,2})\s*,?\s+(AL|AK|AR|AZ|CA|CO|CT|FL|GA|IL|IN|KY|LA|MS|MO|NC|NM|NY|OK|SC|TN|TX)\b/);
+  if (abbreviationMatch) {
+    return {
+      city: toTitleCase(abbreviationMatch[1]),
+      state: abbreviationMatch[2].toUpperCase()
+    };
+  }
+
+  return {};
 }
