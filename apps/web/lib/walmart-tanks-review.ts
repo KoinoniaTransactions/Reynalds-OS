@@ -9,6 +9,16 @@ export type WalmartTanksReviewCommunication = {
 
 export type WalmartTanksWorkBucket = "acc" | "uco" | "pw";
 
+export type WalmartTanksIdentifiers = {
+  storeNumbers: string[];
+  workOrderNumbers: string[];
+  purchaseOrderNumbers: string[];
+};
+
+function unique(values: string[]) {
+  return Array.from(new Set(values));
+}
+
 export function getWalmartTanksReviewCategory(communication: WalmartTanksReviewCommunication) {
   const reviewText = [
     communication.reviewReason,
@@ -36,4 +46,25 @@ export function getWalmartTanksWorkBuckets(searchText: string): WalmartTanksWork
   if (/wmpw|paperwork|jotform|completion|lxretail|workflow|permit|document/.test(normalizedText)) buckets.add("pw");
 
   return Array.from(buckets);
+}
+
+export function extractWalmartTanksIdentifiers(text: string): WalmartTanksIdentifiers {
+  const storeNumbers = Array.from(
+    text.matchAll(/\b(?:WM|NHM|SC|Walmart|Sam's Club)\s*(?:WM\s*)?-?\s*(\d{2,5})\b/gi),
+    (match) => match[1]
+  );
+  const workOrderNumbers = Array.from(
+    text.matchAll(/\b\d{2,5}\.\d{3,5}\b/g),
+    (match) => match[0]
+  );
+  const purchaseOrderNumbers = Array.from(
+    text.matchAll(/\b(?:PO|P\.O\.|purchase order)\s*[:#-]?\s*([A-Z0-9][A-Z0-9-]{3,})\b/gi),
+    (match) => match[1]
+  );
+
+  return {
+    storeNumbers: unique(storeNumbers),
+    workOrderNumbers: unique(workOrderNumbers),
+    purchaseOrderNumbers: unique(purchaseOrderNumbers)
+  };
 }

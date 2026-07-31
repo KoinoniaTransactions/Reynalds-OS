@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { getWalmartTanksReviewCategory, getWalmartTanksWorkBuckets } from "./walmart-tanks-review";
+import {
+  extractWalmartTanksIdentifiers,
+  getWalmartTanksReviewCategory,
+  getWalmartTanksWorkBuckets
+} from "./walmart-tanks-review";
 
 describe("WalMart Tanks review categorization", () => {
   it("flags missing city and state review items", () => {
@@ -74,5 +78,43 @@ describe("WalMart Tanks work bucket detection", () => {
     expect(
       getWalmartTanksWorkBuckets("Waste water tank ACC analog gauge store 4201 Edgewood, NM")
     ).toEqual(["acc"]);
+  });
+});
+
+describe("WalMart Tanks identifier extraction", () => {
+  it("extracts doubled WM store numbers from completion subjects", () => {
+    expect(
+      extractWalmartTanksIdentifiers("Re: store: WM WM- 5172 02-15-2026 ACC Walmart ACC UCO Work Completion [^]")
+    ).toMatchObject({
+      storeNumbers: ["5172"],
+      workOrderNumbers: [],
+      purchaseOrderNumbers: []
+    });
+  });
+
+  it("extracts NHM and Sam's Club store numbers", () => {
+    expect(
+      extractWalmartTanksIdentifiers("NHM 7251 Fort Worth TX and Sam's Club 6217 Doral FL")
+    ).toMatchObject({
+      storeNumbers: ["7251", "6217"]
+    });
+  });
+
+  it("extracts LxRetail workflow identifiers as work orders", () => {
+    expect(
+      extractWalmartTanksIdentifiers("[LxRetail] 4801.1015 Riverview FL UCO Tank Replacement Workflow Updated")
+    ).toMatchObject({
+      storeNumbers: [],
+      workOrderNumbers: ["4801.1015"]
+    });
+  });
+
+  it("extracts labeled purchase orders without treating dates as purchase orders", () => {
+    expect(
+      extractWalmartTanksIdentifiers("WM 3826 Lubbock TX PO: PO-77812 install scheduled 03-31-2026")
+    ).toMatchObject({
+      storeNumbers: ["3826"],
+      purchaseOrderNumbers: ["PO-77812"]
+    });
   });
 });
