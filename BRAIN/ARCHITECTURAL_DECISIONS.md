@@ -88,7 +88,29 @@ The Brain is the orchestration layer over objects, relationships, workflows, tas
 
 ---
 
-# ADR-0005 — Koinonia as First Production Workspace
+# ADR-0005 — Koinonia Transactions Website Is the First Production Product on Shared Infrastructure
+
+## Status
+
+Accepted and clarified
+
+## Decision
+
+The Koinonia Transactions public website is the first production product built using Reynalds OS shared infrastructure, design-system assets, and business knowledge.
+
+The website remains a separate public product from the Reynalds OS internal application interface. Shared packages, records, or infrastructure do not make the public website the same product as Reynalds OS or a generic internal workspace.
+
+## Consequences
+
+- The Koinonia Transactions website should use approved shared infrastructure where doing so preserves product boundaries.
+- Public website routes, branding, deployment, and audience must remain distinct from the Reynalds OS internal interface.
+- Koinonia lead and contact workflows may create records, tasks, notifications, and CRM activity inside Reynalds OS through verified integration.
+- Future companies and products may reuse shared infrastructure without losing their independent identity.
+- Product meaning and boundaries must remain aligned with `BRAIN/PRODUCT_BOUNDARIES.md` and `BRAIN/APPLICATION_CATALOG.md`.
+
+---
+
+# ADR-0006 — Product Identity Uses a Brain Catalog and Typed Executable Registry
 
 ## Status
 
@@ -96,12 +118,17 @@ Accepted
 
 ## Decision
 
-Koinonia is the first production workspace running on Reynalds OS.
+Canonical product identity is maintained in two aligned forms:
 
-The Koinonia website and business workflows should be built on the shared platform rather than treated as a separate one-off project.
+1. `BRAIN/APPLICATION_CATALOG.md` defines product meaning, ownership, audience, status, record authority, and boundaries.
+2. `apps/web/lib/productRegistry.ts` provides typed product metadata for application code.
+
+Workspace navigation and future product-aware application behavior should consume the executable registry instead of creating competing product lists or repeating classification rules.
 
 ## Consequences
 
-- Koinonia website should use the shared design system.
-- Koinonia lead/contact workflows should eventually create objects, tasks, notifications, and CRM records.
-- Future companies should follow the same workspace pattern.
+- Product identifiers must be unique and stable.
+- Product metadata changes must preserve alignment between the Brain catalog and executable registry.
+- Registry contract tests should protect product lookup, classification helpers, and registry-driven workspace navigation.
+- A new product must not be added to code without first confirming that it is approved and documented in the Brain.
+- Architectural product changes require a Brain update in the same focused slice or immediate follow-up commit.
