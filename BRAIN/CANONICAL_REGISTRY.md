@@ -19,6 +19,7 @@ Recover before reinventing.
 | Project Vision | BRAIN/PRODUCT_VISION.md | Active |
 | Project State | BRAIN/PROJECT_STATE.md | Active |
 | Constitution | BRAIN/REYNALDS_OS_CONSTITUTION.md | Active |
+| Product and Company Boundaries | BRAIN/PRODUCT_BOUNDARIES.md | Active |
 | Development Standards | BRAIN/DEVELOPMENT_STANDARDS.md | Active |
 | Design System Rules | BRAIN/DESIGN_SYSTEM_RULES.md | Active |
 | Repository Architecture | docs/ARCHITECTURE.md | Active |
@@ -65,6 +66,20 @@ Recover before reinventing.
 | Subject | Canonical Source | Status |
 |---------|------------------|--------|
 | Recovery Snapshots | RECOVERY_AUDIT/ | Reference Only |
+
+---
+
+## Product Boundary Rule
+
+Before proposing or modifying routing, hosting, repositories, deployments, workspaces, tenants, or application boundaries, consult `BRAIN/PRODUCT_BOUNDARIES.md` and identify whether the work concerns:
+
+- Reynalds OS,
+- a company,
+- a public website,
+- a company-specific operating system,
+- or a record held inside Reynalds OS.
+
+These concepts must not be treated as interchangeable.
 
 ---
 
