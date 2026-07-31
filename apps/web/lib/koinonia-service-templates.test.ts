@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  getKoinoniaBillingSetupOptions,
   getKoinoniaPublicServiceTitles,
   getKoinoniaServiceTemplateByPackageName,
   koinoniaServiceTemplates
@@ -47,5 +48,20 @@ describe("koinonia service templates", () => {
       expect(template.intakeFields.length).toBeGreaterThan(0);
       expect(template.requiredStaffRoles.length).toBeGreaterThan(0);
     }
+  });
+
+  it("builds billing setup options from service templates", () => {
+    const options = getKoinoniaBillingSetupOptions();
+    const payAtClose = options.find((option) => option.serviceName === "Pay-at-Closing Coordination");
+    const showing = options.find((option) => option.serviceName === "Licensed Showing Coverage");
+
+    expect(options.map((option) => option.serviceName)).toContain("Transaction Coordination Plus");
+    expect(payAtClose).toMatchObject({
+      billingModel: "pay_at_close",
+      billingModelLabel: "Pay after successful close",
+      templateId: "pay-at-closing-coordination"
+    });
+    expect(showing?.clientPortalSections).toContain("Showings");
+    expect(showing?.showingRequestRequired).toBe(true);
   });
 });

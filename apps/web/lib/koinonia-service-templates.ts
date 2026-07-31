@@ -28,6 +28,25 @@ export type KoinoniaServiceTemplate = {
   staffNextAction: string;
 };
 
+export type KoinoniaBillingSetupOption = {
+  billingModel: KoinoniaBillingModel;
+  billingModelLabel: string;
+  clientPortalSections: string[];
+  documentRequests: string[];
+  serviceName: string;
+  showingRequestRequired: boolean;
+  staffNextAction: string;
+  templateId: string;
+};
+
+const billingModelLabels = {
+  prepaid: "Prepaid before work begins",
+  pay_at_close: "Pay after successful close",
+  per_request: "Per request after completion",
+  monthly: "Monthly recurring support",
+  custom: "Custom written agreement"
+} as const satisfies Record<KoinoniaBillingModel, string>;
+
 export const koinoniaServiceTemplates = [
   {
     id: "transaction-support",
@@ -213,6 +232,25 @@ export function getKoinoniaServiceTemplateById(id: string): KoinoniaServiceTempl
 
 export function getKoinoniaPublicServiceTitles(): string[] {
   return [...new Set(koinoniaServiceTemplates.map((template) => template.publicServiceTitle))];
+}
+
+export function getKoinoniaBillingModelLabel(model: KoinoniaBillingModel): string {
+  return billingModelLabels[model];
+}
+
+export function getKoinoniaBillingSetupOptions(): KoinoniaBillingSetupOption[] {
+  return koinoniaServiceTemplates.flatMap((template) =>
+    template.packageNames.map((serviceName) => ({
+      billingModel: template.billingModel,
+      billingModelLabel: getKoinoniaBillingModelLabel(template.billingModel),
+      clientPortalSections: [...template.clientPortalSections],
+      documentRequests: [...template.documentRequests],
+      serviceName,
+      showingRequestRequired: template.showingRequestRequired,
+      staffNextAction: template.staffNextAction,
+      templateId: template.id
+    }))
+  );
 }
 
 function normalizeServiceText(value: string): string {

@@ -2,16 +2,25 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { getKoinoniaBillingSetupOptions } from "../../lib/koinonia-service-templates";
 
 type BillingSetupRequestFormProps = {
   storageReady: boolean;
 };
 
+const billingSetupOptions = getKoinoniaBillingSetupOptions();
+
 export function BillingSetupRequestForm({ storageReady }: BillingSetupRequestFormProps) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
+  const [selectedServiceName, setSelectedServiceName] = useState(
+    billingSetupOptions[0]?.serviceName ?? ""
+  );
   const [status, setStatus] = useState<"error" | "success" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const selectedOption =
+    billingSetupOptions.find((option) => option.serviceName === selectedServiceName) ??
+    billingSetupOptions[0];
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,26 +79,36 @@ export function BillingSetupRequestForm({ storageReady }: BillingSetupRequestFor
       <form className="koinonia-billing-setup-form" onSubmit={handleSubmit}>
         <label>
           Service
-          <select disabled={disabled} name="serviceName" required>
-            <option value="Transaction Coordination Plus">Transaction Coordination Plus</option>
-            <option value="Pay-at-Closing Coordination">Pay-at-Closing Coordination</option>
-            <option value="Licensed Showing Coverage">Licensed Showing Coverage</option>
-            <option value="Monthly Operations Partnership">Monthly Operations Partnership</option>
-            <option value="Realtor Support Plus">Realtor Support Plus</option>
-            <option value="Custom Scope">Custom Scope</option>
+          <select
+            disabled={disabled}
+            name="serviceName"
+            onChange={(event) => setSelectedServiceName(event.target.value)}
+            required
+            value={selectedServiceName}
+          >
+            {billingSetupOptions.map((option) => (
+              <option key={`${option.templateId}:${option.serviceName}`} value={option.serviceName}>
+                {option.serviceName}
+              </option>
+            ))}
           </select>
         </label>
 
         <label>
           Billing Model
-          <select disabled={disabled} name="billingModel" required>
-            <option value="Prepaid before work begins">Prepaid before work begins</option>
-            <option value="Pay after successful close">Pay after successful close</option>
-            <option value="Per showing after completion">Per showing after completion</option>
-            <option value="Monthly recurring support">Monthly recurring support</option>
-            <option value="Custom written agreement">Custom written agreement</option>
-          </select>
+          <input
+            name="billingModel"
+            readOnly
+            value={selectedOption?.billingModelLabel ?? "Custom written agreement"}
+          />
         </label>
+
+        {selectedOption ? (
+          <p className="koinonia-billing-security-note">
+            Portal setup: {selectedOption.clientPortalSections.join(", ")}. Staff next step:{" "}
+            {selectedOption.staffNextAction}
+          </p>
+        ) : null}
 
         <label>
           Status
