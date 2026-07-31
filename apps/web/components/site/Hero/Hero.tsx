@@ -12,6 +12,7 @@ export type HeroProps = {
   visualMobileSrc?: string;
   visualAlt?: string;
   variant?: "standard" | "fullBleed";
+  visualVariant?: "operations" | "properties";
 };
 
 export function Hero({
@@ -25,12 +26,17 @@ export function Hero({
   visualDesktopSrc,
   visualMobileSrc,
   visualAlt = "Koinonia organized real estate operations workspace",
-  variant = "standard"
+  variant = "standard",
+  visualVariant = "operations"
 }: HeroProps) {
-  const heroClassName =
-    variant === "fullBleed"
-      ? "koinonia-section koinonia-hero full-bleed"
-      : "koinonia-section koinonia-hero";
+  const heroClassName = [
+    "koinonia-section",
+    "koinonia-hero",
+    variant === "fullBleed" ? "full-bleed" : "",
+    visualVariant
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <section className={heroClassName}>
@@ -65,7 +71,14 @@ export function Hero({
           </div>
         </div>
 
-        <div className={visualDesktopSrc ? "koinonia-visual has-image" : "koinonia-visual"}>
+        <div
+          className={visualDesktopSrc ? "koinonia-visual has-image" : "koinonia-visual"}
+          aria-label={
+            visualVariant === "properties"
+              ? "Koinonia Properties management workspace"
+              : visualAlt
+          }
+        >
           {visualDesktopSrc ? (
             <picture>
               {visualMobileSrc ? (
@@ -73,6 +86,25 @@ export function Hero({
               ) : null}
               <img src={visualDesktopSrc} alt={visualAlt} />
             </picture>
+          ) : visualVariant === "properties" ? (
+            <div className="koinonia-visual-panel" aria-hidden="true">
+              <span>Property OS</span>
+              <strong>Owner · Tenant · Maintenance</strong>
+              <ul>
+                <li>
+                  <b>Rent</b>
+                  <em>Ready</em>
+                </li>
+                <li>
+                  <b>Work Orders</b>
+                  <em>Tracked</em>
+                </li>
+                <li>
+                  <b>Owner Updates</b>
+                  <em>Monthly</em>
+                </li>
+              </ul>
+            </div>
           ) : null}
         </div>
       </div>

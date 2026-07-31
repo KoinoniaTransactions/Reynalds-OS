@@ -11,3 +11,6 @@ export { KoinoniaAbout } from "./PageAssemblies/KoinoniaAbout";
 export { ContactActions } from "./ContactActions/ContactActions";
 export { Hero } from "./Hero/Hero";
 export { Section } from "./Section/Section";
+export { PropertiesNav } from "./PropertiesNav/PropertiesNav";
+export { PropertiesInquiry } from "./PropertiesInquiry/PropertiesInquiry";
+export { PropertiesSeoContent } from "./PropertiesSeoContent/PropertiesSeoContent";
