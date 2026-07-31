@@ -16,10 +16,14 @@ model Workspace {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users     User[]
-  roles     Role[]
-  objects   RosObject[]
-  events    TimelineEvent[]
+  users   User[]
+  roles   Role[]
+  objects RosObject[]
+  events  TimelineEvent[]
+
+  communications       Communication[]
+  communicationReviews CommunicationReviewItem[]
+  importCheckpoints    ImportCheckpoint[]
 }
 
 model User {
@@ -32,24 +36,24 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  role        Role?     @relation(fields: [roleId], references: [id])
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  role      Role?     @relation(fields: [roleId], references: [id])
 }
 
 model Role {
-  id           String   @id @default(cuid())
-  workspaceId  String
-  name         String
-  permissions  Json?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  permissions Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  workspace    Workspace @relation(fields: [workspaceId], references: [id])
-  users        User[]
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  users     User[]
 }
 
 model RosObject {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   workspaceId String
   objectType  String
   name        String
@@ -58,34 +62,37 @@ model RosObject {
   ownerId     String?
   nextAction  String?
   data        Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   archivedAt  DateTime?
 
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace            @relation(fields: [workspaceId], references: [id])
   events      TimelineEvent[]
   sourceLinks ObjectRelationship[] @relation("source")
   targetLinks ObjectRelationship[] @relation("target")
+
+  communications                Communication[]
+  suggestedCommunicationReviews CommunicationReviewItem[] @relation("suggestedWorkItem")
 }
 
 model ObjectRelationship {
-  id             String   @id @default(cuid())
-  sourceObjectId String
-  targetObjectId String
+  id               String   @id @default(cuid())
+  sourceObjectId   String
+  targetObjectId   String
   relationshipType String
-  createdAt      DateTime @default(now())
+  createdAt        DateTime @default(now())
 
   sourceObject RosObject @relation("source", fields: [sourceObjectId], references: [id])
   targetObject RosObject @relation("target", fields: [targetObjectId], references: [id])
 }
 
 model TimelineEvent {
-  id           String   @id @default(cuid())
-  workspaceId  String
-  objectId     String
-  actorId      String?
-  eventType    String
-  summary      String
+  id            String   @id @default(cuid())
+  workspaceId   String
+  objectId      String
+  actorId       String?
+  eventType     String
+  summary       String
   previousValue Json?
   newValue      Json?
   createdAt     DateTime @default(now())
@@ -106,27 +113,27 @@ model Workflow {
 }
 
 model WorkflowRun {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   workflowId   String
   objectId     String
   status       String
   currentStage String?
-  startedAt    DateTime @default(now())
+  startedAt    DateTime  @default(now())
   completedAt  DateTime?
 }
 
 model Task {
-  id              String   @id @default(cuid())
-  workspaceId      String
-  relatedObjectId  String?
-  ownerId          String?
-  title            String
-  status           String
-  priority         String
-  dueAt            DateTime?
-  completedAt      DateTime?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id              String    @id @default(cuid())
+  workspaceId     String
+  relatedObjectId String?
+  ownerId         String?
+  title           String
+  status          String
+  priority        String
+  dueAt           DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model AutomationRule {
@@ -143,48 +150,145 @@ model AutomationRule {
 }
 
 model Notification {
-  id              String   @id @default(cuid())
-  workspaceId      String
-  userId           String?
-  relatedObjectId  String?
-  level            String
-  title            String
-  message          String
-  status           String
-  dueAt            DateTime?
-  createdAt        DateTime @default(now())
+  id              String    @id @default(cuid())
+  workspaceId     String
+  userId          String?
+  relatedObjectId String?
+  level           String
+  title           String
+  message         String
+  status          String
+  dueAt           DateTime?
+  createdAt       DateTime  @default(now())
 }
 
 model Document {
   id              String   @id @default(cuid())
-  workspaceId      String
-  relatedObjectId  String?
-  fileName         String
-  fileUrl          String
-  documentType     String
-  status           String
-  createdAt        DateTime @default(now())
+  workspaceId     String
+  relatedObjectId String?
+  fileName        String
+  fileUrl         String
+  documentType    String
+  status          String
+  createdAt       DateTime @default(now())
 }
 
 model Invoice {
-  id              String   @id @default(cuid())
-  workspaceId      String
-  clientObjectId   String
-  relatedObjectId  String?
-  packageObjectId  String?
-  amount           Decimal
-  status           String
-  dueAt            DateTime?
-  paidAt           DateTime?
-  createdAt        DateTime @default(now())
+  id              String    @id @default(cuid())
+  workspaceId     String
+  clientObjectId  String
+  relatedObjectId String?
+  packageObjectId String?
+  amount          Decimal
+  status          String
+  dueAt           DateTime?
+  paidAt          DateTime?
+  createdAt       DateTime  @default(now())
 }
 
 model Payment {
-  id         String   @id @default(cuid())
+  id          String    @id @default(cuid())
   workspaceId String
-  invoiceId  String
-  amount     Decimal
-  status     String
-  receivedAt DateTime?
-  createdAt  DateTime @default(now())
+  invoiceId   String
+  amount      Decimal
+  status      String
+  receivedAt  DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model Communication {
+  id                String    @id @default(cuid())
+  workspaceId       String
+  source            String
+  externalMessageId String
+  externalThreadId  String?
+  workItemId        String?
+  subject           String
+  sender            String
+  recipients        Json?
+  sentAt            DateTime?
+  snippet           String?
+  bodyText          String?
+  bodyHtml          String?
+  sourceUrl         String?
+  status            String    @default("imported")
+  matchConfidence   Int?
+  matchEvidence     Json?
+  identifiers       Json?
+  location          Json?
+  rawMetadata       Json?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  workspace   Workspace                 @relation(fields: [workspaceId], references: [id])
+  workItem    RosObject?                @relation(fields: [workItemId], references: [id])
+  attachments CommunicationAttachment[]
+  reviewItem  CommunicationReviewItem?
+
+  @@unique([workspaceId, source, externalMessageId])
+  @@index([workspaceId, workItemId])
+  @@index([workspaceId, status])
+  @@index([externalThreadId])
+}
+
+model CommunicationAttachment {
+  id                   String   @id @default(cuid())
+  communicationId      String
+  externalAttachmentId String?
+  fileName             String
+  mimeType             String?
+  sizeBytes            Int?
+  sourceUrl            String?
+  storageUrl           String?
+  checksum             String?
+  metadata             Json?
+  createdAt            DateTime @default(now())
+
+  communication Communication @relation(fields: [communicationId], references: [id], onDelete: Cascade)
+
+  @@unique([communicationId, externalAttachmentId])
+  @@index([communicationId])
+}
+
+model CommunicationReviewItem {
+  id                  String    @id @default(cuid())
+  workspaceId         String
+  communicationId     String    @unique
+  suggestedWorkItemId String?
+  category            String
+  reason              String
+  status              String    @default("open")
+  confidence          Int?
+  evidence            Json?
+  resolvedById        String?
+  resolvedAt          DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  workspace         Workspace     @relation(fields: [workspaceId], references: [id])
+  communication     Communication @relation(fields: [communicationId], references: [id], onDelete: Cascade)
+  suggestedWorkItem RosObject?    @relation("suggestedWorkItem", fields: [suggestedWorkItemId], references: [id])
+
+  @@index([workspaceId, status])
+  @@index([suggestedWorkItemId])
+}
+
+model ImportCheckpoint {
+  id           String    @id @default(cuid())
+  workspaceId  String
+  source       String
+  mailbox      String
+  label        String    @default("")
+  cursor       String?
+  historyId    String?
+  lastSyncedAt DateTime?
+  status       String    @default("idle")
+  metadata     Json?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@unique([workspaceId, source, mailbox, label])
+  @@index([workspaceId, source])
 }
