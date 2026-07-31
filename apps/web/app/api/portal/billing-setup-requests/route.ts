@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { getAuthErrorResponse } from "../../../../lib/api-auth";
 import { assertPermission } from "../../../../lib/auth";
 import {
+  applyBillingSetupRequestSourcePolicy,
   billingSetupRequestObjectType,
   BillingSetupValidationError,
   buildBillingSetupNextAction,
@@ -48,7 +49,11 @@ export async function POST(request: Request) {
       "client-portal:billing:setup",
       "billing-workspace:payment-methods:request"
     ]);
-    const input = validateBillingSetupRequestInput(await request.json());
+    const requestSource = actor.role === "Client" ? "client-portal" : "employee-portal";
+    const input = applyBillingSetupRequestSourcePolicy(
+      validateBillingSetupRequestInput(await request.json()),
+      requestSource
+    );
 
     const billingSetupRequest = await prisma.rosObject.create({
       data: {

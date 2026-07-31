@@ -8,6 +8,8 @@ export type BillingSetupStatus =
   | "Pay at Close Watch"
   | "Blocked";
 
+export type BillingSetupRequestSource = "client-portal" | "employee-portal";
+
 export type BillingSetupRequestInput = {
   amountLabel?: string;
   billingModel: string;
@@ -69,6 +71,40 @@ export function validateBillingSetupRequestInput(input: unknown): BillingSetupRe
     status: normalizeBillingSetupStatus(value.status, consentAcknowledged),
     triggerDescription: optionalString(value.triggerDescription)
   };
+}
+
+export function applyBillingSetupRequestSourcePolicy(
+  input: BillingSetupRequestInput,
+  source: BillingSetupRequestSource
+): BillingSetupRequestInput {
+  if (source === "employee-portal") {
+    return input;
+  }
+
+  return {
+    ...input,
+    status: getClientBillingSetupInitialStatus(input)
+  };
+}
+
+export function getClientBillingSetupInitialStatus(
+  input: Pick<BillingSetupRequestInput, "billingModel" | "consentAcknowledged">
+): BillingSetupStatus {
+  if (!input.consentAcknowledged) {
+    return "Consent Needed";
+  }
+
+  const normalizedBillingModel = input.billingModel.trim().toLowerCase();
+
+  if (
+    normalizedBillingModel.includes("pay after successful close") ||
+    normalizedBillingModel.includes("pay at close") ||
+    normalizedBillingModel.includes("pay-at-close")
+  ) {
+    return "Pay at Close Watch";
+  }
+
+  return "Setup Requested";
 }
 
 export function validateBillingSetupStatusUpdateInput(
