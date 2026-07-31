@@ -100,3 +100,11 @@ Decision: Koinonia client and employee portal routes must use managed authentica
 Reason: Portal users include Realtor clients, Koinonia staff, finance, operations, contract support, showing providers, and owner/admin users. These roles require unique identity, workspace scoping, role-based permissions, staff MFA, session expiration, secure invitation, and audit logging. Mock auth may remain only for local preview and must fail closed in production portal routes unless explicitly allowed for a non-data preview.
 
 Canonical specification: `docs/specifications/KOINONIA_AUTH_PRODUCTION_READINESS.md`
+
+## D-016 — Product Registry Fails Fast on Invalid Canonical Metadata
+
+Decision: The executable product registry must validate itself when loaded and throw a structured `ProductRegistryValidationError` when canonical product identifiers, workspace routes, or workspace order values conflict.
+
+Reason: Returning validation issues only in tests is not sufficient protection for a canonical runtime source. Failing fast prevents ambiguous product identity and navigation metadata from silently reaching the application interface.
+
+Canonical sources: `BRAIN/APPLICATION_CATALOG.md` and `apps/web/lib/productRegistry.ts`
