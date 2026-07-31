@@ -24,6 +24,7 @@ The executable counterpart to this catalog is `apps/web/lib/productRegistry.ts`.
 8. Public websites must remain public products and must not expose internal workspace navigation metadata.
 9. Internal operating systems must remain internal products and must not claim a public website identity.
 10. Canonical product identifiers, workspace routes, and workspace order values must be unique.
+11. Canonical product lookups must either return the exact registered product or fail explicitly; unresolved product identities must not silently become `undefined`.
 
 ---
 
@@ -140,11 +141,14 @@ It currently provides:
 - explicit workspace navigation ordering,
 - centralized queries for internal products, public websites, workspace products, ordered workspace navigation entries, and active products,
 - discriminated product definitions that enforce public and internal boundary rules at compile time,
-- registry validation for duplicate product identifiers, duplicate workspace routes, and duplicate workspace order values.
+- registry validation for duplicate product identifiers, duplicate workspace routes, and duplicate workspace order values,
+- exact canonical lookup behavior that narrows the returned product type by identifier and throws `ProductNotFoundError` when resolution fails.
 
-Consumers should use registry helpers such as `getProductById`, `getInternalProducts`, `getPublicWebsites`, `getWorkspaceProducts`, `getWorkspaceNavigationEntries`, `getActiveProducts`, and `validateProductRegistry` rather than repeating classification, navigation-order, or uniqueness logic.
+Consumers should use registry helpers such as `getProductById`, `getInternalProducts`, `getPublicWebsites`, `getWorkspaceProducts`, `getWorkspaceNavigationEntries`, `getActiveProducts`, and `validateProductRegistry` rather than repeating classification, navigation-order, uniqueness, or product-resolution logic.
 
 Product identifiers must not be maintained in a separate manual union that can drift from the registry. The registry entries define the canonical identifier set, and the exported `ProductId` type is derived from those entries.
+
+Canonical lookups are strict. `getProductById` returns the exact registered product for the provided `ProductId` and narrows the result to that product's registry entry type. A failed lookup throws `ProductNotFoundError`; consumers must not treat a missing canonical product as a normal optional state.
 
 Workspace order is product metadata, not an accidental result of array position. Each product workspace entry must declare an explicit `order`, while navigation consumers receive only the presentation fields they need.
 
@@ -160,7 +164,7 @@ The registry validation contract prevents ambiguous executable metadata:
 - internal workspace routes must be unique,
 - workspace order values must be unique so placement remains deterministic.
 
-The registry does not replace this Brain document. When product meaning, ownership, status, audience, records, boundaries, identifiers, workspace placement, or uniqueness requirements change, update the Brain first or in the same focused change, then keep the executable registry aligned.
+The registry does not replace this Brain document. When product meaning, ownership, status, audience, records, boundaries, identifiers, lookup behavior, workspace placement, or uniqueness requirements change, update the Brain first or in the same focused change, then keep the executable registry aligned.
 
 ## Registry Verification
 
@@ -174,9 +178,11 @@ The focused tests verify that:
 - duplicate workspace order values are reported,
 - canonical product identifiers remain unique,
 - every registered product resolves through `getProductById`,
+- unresolved canonical lookups throw `ProductNotFoundError` with the missing identifier preserved,
 - public websites carry public audience and public website metadata without internal workspace entries,
 - internal operating systems carry internal audience and no public website identity,
-- query helpers stay aligned with audience, type, website, and status metadata,
+- query helpers stay complete and aligned with audience, type, website, and status metadata,
+- workspace product queries stay complete,
 - workspace navigation entries are produced in explicit registry order,
 - internal ordering metadata is not leaked into navigation presentation objects,
 - workspace navigation continues to derive product entries from the registry,
@@ -203,6 +209,7 @@ Before changing architecture or code, answer all of the following:
 11. If a product identifier changed, is the type still derived from the registry rather than duplicated manually?
 12. Does the product definition satisfy the correct public or internal discriminated type contract?
 13. Does registry validation still return no duplicate identifiers, routes, or order values?
+14. Does every canonical product lookup either resolve the exact registered product or fail explicitly with `ProductNotFoundError`?
 
 If any answer is unclear, inspect the Brain and repository before implementing.
 
@@ -219,7 +226,7 @@ Update this catalog when:
 - record ownership changes,
 - deployment or repository boundaries become canonical,
 - a product is retired or replaced,
-- registry structure changes how product identity, navigation, access, ordering, validation, or classification is represented in code,
+- registry structure changes how product identity, navigation, access, ordering, validation, lookup behavior, or classification is represented in code,
 - registry verification changes which architectural guarantees are enforced by tests.
 
 Architectural work should document the Brain frequently. A focused code slice that changes canonical product behavior should include a Brain update in the same slice or in the immediate follow-up commit before moving to unrelated work.
