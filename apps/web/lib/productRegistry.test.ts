@@ -24,6 +24,19 @@ describe("product registry", () => {
     }
   });
 
+  it("enforces public and internal product boundary metadata", () => {
+    for (const product of productRegistry) {
+      if (product.type === "public-website") {
+        expect(product.audience).toBe("public");
+        expect(product.hasPublicWebsite).toBe(true);
+        expect("workspaceEntry" in product).toBe(false);
+      } else {
+        expect(product.audience).toBe("internal");
+        expect(product.hasPublicWebsite).toBe(false);
+      }
+    }
+  });
+
   it("keeps registry query helpers aligned with product metadata", () => {
     expect(
       getInternalProducts().every((product) => product.audience === "internal")
