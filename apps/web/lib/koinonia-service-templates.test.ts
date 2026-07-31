@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   getKoinoniaBillingSetupOptions,
   getKoinoniaPublicServiceTitles,
+  getKoinoniaStaffServiceCuesForWork,
   getKoinoniaServiceTemplateByPackageName,
   getKoinoniaServiceTemplateForWork,
   koinoniaServiceTemplates
@@ -48,6 +49,7 @@ describe("koinonia service templates", () => {
       expect(template.employeePortalQueues.length).toBeGreaterThan(0);
       expect(template.intakeFields.length).toBeGreaterThan(0);
       expect(template.requiredStaffRoles.length).toBeGreaterThan(0);
+      expect(template.riskNotes.length).toBeGreaterThan(0);
     }
   });
 
@@ -82,5 +84,25 @@ describe("koinonia service templates", () => {
         objectType: "ShowingRequest"
       })?.id
     ).toBe("licensed-showing-coverage");
+  });
+
+  it("builds staff service cues for employee work detail pages", () => {
+    const cues = getKoinoniaStaffServiceCuesForWork({
+      data: { packageName: "Licensed Showing Coverage" },
+      name: "West Ridge Showing",
+      objectType: "ShowingRequest"
+    });
+
+    expect(cues).toMatchObject({
+      billingModelLabel: "Per request after completion",
+      serviceName: "Licensed Showing Coverage",
+      showingRequestRequired: true,
+      templateId: "licensed-showing-coverage"
+    });
+    expect(cues?.documentRequests).toContain("Access readiness confirmation");
+    expect(cues?.employeePortalQueues).toContain("Showings");
+    expect(cues?.requiredStaffRoles).toContain("Showing Provider");
+    expect(cues?.riskNotes.join(" ")).toContain("access authorization");
+    expect(cues?.staffNextAction).toContain("licensed showing provider");
   });
 });

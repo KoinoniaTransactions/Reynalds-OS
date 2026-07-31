@@ -8,6 +8,10 @@ import {
 import { Footer, Header } from "../../../../components/site";
 import { absoluteUrl } from "../../../../config/seo.config";
 import { prisma } from "../../../../lib/db";
+import {
+  getKoinoniaStaffServiceCuesForWork,
+  type KoinoniaStaffServiceCues
+} from "../../../../lib/koinonia-service-templates";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
 import { validatePortalDocumentUploadRoot } from "../../../../lib/portal-documents";
 import {
@@ -48,6 +52,7 @@ type EmployeeWorkWorkspaceView = {
   documents: PortalWorkspaceDocumentItem[];
   events: PortalWorkspaceEventItem[];
   notice?: string;
+  serviceCues: KoinoniaStaffServiceCues | null;
   staffOptions: PortalWorkAssignmentStaffOption[];
   summary: PortalWorkspaceSummary;
 };
@@ -138,6 +143,8 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
                 />
               </section>
 
+              <StaffServiceCuePanel serviceCues={workspace.serviceCues} />
+
               <section className="koinonia-workspace-panel employee">
                 <p className="koinonia-eyebrow">Next Step</p>
                 <p>{workspace.summary.nextAction}</p>
@@ -164,6 +171,64 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
 
       <Footer />
     </main>
+  );
+}
+
+function StaffServiceCuePanel({
+  serviceCues
+}: {
+  serviceCues: KoinoniaStaffServiceCues | null;
+}) {
+  if (!serviceCues) {
+    return (
+      <section className="koinonia-workspace-panel employee">
+        <p className="koinonia-eyebrow">Service Template</p>
+        <p>
+          No service template matched this work item yet. Confirm the service
+          package, billing model, expected documents, and next action before
+          assigning staff.
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="koinonia-workspace-panel employee" aria-labelledby="employee-service-cues">
+      <p className="koinonia-eyebrow">Service Template</p>
+      <strong className="koinonia-workspace-service-title" id="employee-service-cues">
+        {serviceCues.serviceName}
+      </strong>
+      <p>{serviceCues.staffNextAction}</p>
+
+      <div className="koinonia-workspace-meta-grid employee">
+        <article>
+          <span>Billing</span>
+          <strong>{serviceCues.billingModelLabel}</strong>
+        </article>
+        <article>
+          <span>Showing Request</span>
+          <strong>{serviceCues.showingRequestRequired ? "Required" : "Not Required"}</strong>
+        </article>
+      </div>
+
+      <StaffCueList title="Staff Roles" items={serviceCues.requiredStaffRoles} />
+      <StaffCueList title="Expected Documents" items={serviceCues.documentRequests} />
+      <StaffCueList title="Queues" items={serviceCues.employeePortalQueues} />
+      <StaffCueList title="Risk Notes" items={serviceCues.riskNotes} />
+    </section>
+  );
+}
+
+function StaffCueList({ items, title }: { items: readonly string[]; title: string }) {
+  return (
+    <div className="koinonia-workspace-cue-list">
+      <strong>{title}</strong>
+      <ul>
+        {items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -293,6 +358,11 @@ async function getEmployeeWorkWorkspace(
         })
       ),
       events: withWorkspaceEvents(buildPortalWorkspaceTimeline(events)),
+      serviceCues: getKoinoniaStaffServiceCuesForWork({
+        data: workItem.data,
+        name: workItem.name,
+        objectType: workItem.objectType
+      }),
       staffOptions,
       summary: buildPortalWorkspaceSummary(workItem)
     };
@@ -307,6 +377,7 @@ async function getEmployeeWorkWorkspace(
       events: buildEmptyPortalWorkspaceTimeline(),
       notice:
         "Work detail storage is not reachable in this preview, so live status, documents, assignment options, and history cannot be shown yet.",
+      serviceCues: null,
       staffOptions: [],
       summary: buildUnavailableWorkspaceSummary(workItemId)
     };

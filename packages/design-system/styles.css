@@ -3445,6 +3445,42 @@ h1 {
   line-height: 1.25;
 }
 
+.koinonia-workspace-service-title {
+  display: block;
+  margin: 10px 0;
+  color: var(--ros-text);
+  font-family: var(--ros-font-display);
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.koinonia-workspace-cue-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.koinonia-workspace-cue-list > strong {
+  color: var(--ros-text);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-workspace-cue-list ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.koinonia-workspace-cue-list li {
+  color: var(--ros-muted);
+  line-height: 1.45;
+}
+
 .koinonia-workspace-list-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(96px, auto);

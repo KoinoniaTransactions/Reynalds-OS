@@ -24,6 +24,7 @@ export type KoinoniaServiceTemplate = {
   packageNames: string[];
   publicServiceTitle: string;
   requiredStaffRoles: KoinoniaStaffRole[];
+  riskNotes: string[];
   showingRequestRequired: boolean;
   staffNextAction: string;
 };
@@ -33,6 +34,18 @@ export type KoinoniaBillingSetupOption = {
   billingModelLabel: string;
   clientPortalSections: string[];
   documentRequests: string[];
+  serviceName: string;
+  showingRequestRequired: boolean;
+  staffNextAction: string;
+  templateId: string;
+};
+
+export type KoinoniaStaffServiceCues = {
+  billingModelLabel: string;
+  documentRequests: string[];
+  employeePortalQueues: string[];
+  requiredStaffRoles: KoinoniaStaffRole[];
+  riskNotes: string[];
   serviceName: string;
   showingRequestRequired: boolean;
   staffNextAction: string;
@@ -72,6 +85,10 @@ export const koinoniaServiceTemplates = [
       "Lender/title contacts",
       "Broker compliance notes"
     ],
+    riskNotes: [
+      "Confirm all contract-to-close dates before staff begins deadline tracking.",
+      "Keep brokerage compliance decisions with the Realtor and brokerage."
+    ],
     showingRequestRequired: false,
     staffNextAction: "Assign a transaction coordinator and confirm contract-to-close dates."
   },
@@ -99,6 +116,10 @@ export const koinoniaServiceTemplates = [
       "Title/lender contacts",
       "Closing confirmation source"
     ],
+    riskNotes: [
+      "Track the successful-close billing trigger before marking billing ready.",
+      "Do not treat pay-at-close work as collected until closing confirmation is recorded."
+    ],
     showingRequestRequired: false,
     staffNextAction: "Assign transaction support and track the successful-close billing trigger."
   },
@@ -124,6 +145,10 @@ export const koinoniaServiceTemplates = [
       "Supporting contract terms",
       "Property details",
       "Approval before sending"
+    ],
+    riskNotes: [
+      "Prepare documents from Realtor instructions only.",
+      "Require Realtor approval before sending drafts or signature-ready files."
     ],
     showingRequestRequired: false,
     staffNextAction: "Collect Realtor instructions and prepare the document for approval."
@@ -151,6 +176,10 @@ export const koinoniaServiceTemplates = [
       "Safety/access notes",
       "Feedback request"
     ],
+    riskNotes: [
+      "Confirm access authorization before scheduling or assigning field coverage.",
+      "Record feedback and completion status after the showing."
+    ],
     showingRequestRequired: true,
     staffNextAction: "Assign a licensed showing provider and confirm access before scheduling."
   },
@@ -176,6 +205,10 @@ export const koinoniaServiceTemplates = [
       "CRM/task system context",
       "Recurring workflow notes",
       "Check-in cadence"
+    ],
+    riskNotes: [
+      "Confirm monthly hours, cadence, and active priority list before work begins.",
+      "Keep private system credentials out of portal notes."
     ],
     showingRequestRequired: false,
     staffNextAction: "Assign an account owner and confirm monthly priorities, hours, and cadence."
@@ -208,6 +241,10 @@ export const koinoniaServiceTemplates = [
       "Current active-file list",
       "Recurring support priorities",
       "Billing authorization"
+    ],
+    riskNotes: [
+      "Route mixed service requests to the right queue before assigning work.",
+      "Confirm custom billing terms before expanding scope."
     ],
     showingRequestRequired: false,
     staffNextAction: "Assign an account owner and route requests to the right service queue."
@@ -258,6 +295,30 @@ export function getKoinoniaPublicServiceTitles(): string[] {
 
 export function getKoinoniaBillingModelLabel(model: KoinoniaBillingModel): string {
   return billingModelLabels[model];
+}
+
+export function getKoinoniaStaffServiceCuesForWork(input: {
+  data?: unknown;
+  name: string;
+  objectType: string;
+}): KoinoniaStaffServiceCues | null {
+  const template = getKoinoniaServiceTemplateForWork(input);
+
+  if (!template) {
+    return null;
+  }
+
+  return {
+    billingModelLabel: getKoinoniaBillingModelLabel(template.billingModel),
+    documentRequests: [...template.documentRequests],
+    employeePortalQueues: [...template.employeePortalQueues],
+    requiredStaffRoles: [...template.requiredStaffRoles],
+    riskNotes: [...template.riskNotes],
+    serviceName: template.packageNames[0] ?? template.publicServiceTitle,
+    showingRequestRequired: template.showingRequestRequired,
+    staffNextAction: template.staffNextAction,
+    templateId: template.id
+  };
 }
 
 export function getKoinoniaBillingSetupOptions(): KoinoniaBillingSetupOption[] {
