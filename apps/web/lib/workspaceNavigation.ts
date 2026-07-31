@@ -1,12 +1,20 @@
+import { getProductById } from "./productRegistry";
+
 export type WorkspaceNavigationItem = {
   label: string;
   href?: string;
   enabled: boolean;
 };
 
+const reynaldsBrothers = getProductById("reynalds-brothers-os");
+
+if (!reynaldsBrothers) {
+  throw new Error("Reynalds Brothers OS is missing from the product registry.");
+}
+
 export const workspaceNavigation: WorkspaceNavigationItem[] = [
   { label: "Dashboard", href: "/", enabled: true },
-  { label: "Reynalds Brothers", href: "/reynalds-brothers", enabled: true },
+  { label: reynaldsBrothers.owner, href: "/reynalds-brothers", enabled: true },
   { label: "CRM", href: "/crm", enabled: true },
   { label: "Transactions", href: "/transactions", enabled: true },
   { label: "Contracts", enabled: false },
