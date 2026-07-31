@@ -21,18 +21,35 @@ export type ProductWorkspaceEntry = {
   order: number;
 };
 
-export type ProductDefinition<TProductId extends string = string> = {
+type ProductDefinitionBase<TProductId extends string> = {
   id: TProductId;
   name: string;
   owner: string;
-  type: ProductType;
-  audience: ProductAudience;
   purpose: string;
   status: ProductStatus;
-  hasPublicWebsite: boolean;
   recordAuthority: ProductRecordAuthority;
-  workspaceEntry?: ProductWorkspaceEntry;
 };
+
+export type InternalProductDefinition<TProductId extends string = string> =
+  ProductDefinitionBase<TProductId> & {
+    type: "central-operating-system" | "company-operating-system";
+    audience: "internal";
+    hasPublicWebsite: false;
+    workspaceEntry?: ProductWorkspaceEntry;
+  };
+
+export type PublicWebsiteProductDefinition<
+  TProductId extends string = string
+> = ProductDefinitionBase<TProductId> & {
+  type: "public-website";
+  audience: "public";
+  hasPublicWebsite: true;
+  workspaceEntry?: never;
+};
+
+export type ProductDefinition<TProductId extends string = string> =
+  | InternalProductDefinition<TProductId>
+  | PublicWebsiteProductDefinition<TProductId>;
 
 export const productRegistry = [
   {
