@@ -128,7 +128,7 @@ It is also not automatically the same user interface, deployment, or product as 
 
 It currently provides:
 
-- canonical product identifiers,
+- canonical product identifiers derived directly from registered product entries,
 - product ownership and purpose,
 - product type and audience,
 - product status,
@@ -139,9 +139,11 @@ It currently provides:
 
 Consumers should use registry helpers such as `getProductById`, `getInternalProducts`, `getPublicWebsites`, `getWorkspaceProducts`, `getWorkspaceNavigationEntries`, and `getActiveProducts` rather than repeating classification or navigation-order logic.
 
+Product identifiers must not be maintained in a separate manual union that can drift from the registry. The registry entries define the canonical identifier set, and the exported `ProductId` type is derived from those entries.
+
 Workspace order is product metadata, not an accidental result of array position. Each product workspace entry must declare an explicit `order`, while navigation consumers receive only the presentation fields they need.
 
-The registry does not replace this Brain document. When product meaning, ownership, status, audience, records, boundaries, or workspace placement change, update the Brain first or in the same focused change, then keep the executable registry aligned.
+The registry does not replace this Brain document. When product meaning, ownership, status, audience, records, boundaries, identifiers, or workspace placement change, update the Brain first or in the same focused change, then keep the executable registry aligned.
 
 ## Registry Verification
 
@@ -175,6 +177,7 @@ Before changing architecture or code, answer all of the following:
 8. Does this architectural change require a Brain update before the slice is considered complete?
 9. Do registry contract tests remain aligned with both the code and the Brain?
 10. If workspace placement changed, is the order explicit rather than dependent on registry array position?
+11. If a product identifier changed, is the type still derived from the registry rather than duplicated manually?
 
 If any answer is unclear, inspect the Brain and repository before implementing.
 
@@ -185,6 +188,7 @@ If any answer is unclear, inspect the Brain and repository before implementing.
 Update this catalog when:
 
 - a new product or website is approved,
+- a product identifier changes,
 - a product changes from planned to active,
 - a public or internal audience changes,
 - record ownership changes,
