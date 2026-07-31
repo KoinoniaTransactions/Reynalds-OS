@@ -23,6 +23,7 @@ import {
   getPortalWorkDueLabel,
   getPortalWorkItemTypeLabel
 } from "../../../lib/portal-work-items";
+import { getKoinoniaServiceTemplateForWork } from "../../../lib/koinonia-service-templates";
 
 export const dynamic = "force-dynamic";
 
@@ -50,6 +51,7 @@ type ClientWorkItem = {
   due: string;
   id: string;
   nextAction: string;
+  serviceCues: string[];
   status: string;
   title: string;
   type: string;
@@ -92,6 +94,7 @@ const sampleWorkItems: ClientWorkItem[] = [
     type: "Contract & Document Support",
     status: "Waiting on You",
     nextAction: "Confirm offer instructions and preferred closing timeline.",
+    serviceCues: ["Documents", "Realtor instructions", "Approval before sending"],
     due: "Today"
   },
   {
@@ -100,6 +103,7 @@ const sampleWorkItems: ClientWorkItem[] = [
     type: "Transaction Support",
     status: "Active",
     nextAction: "Koinonia is tracking inspection and earnest money deadlines.",
+    serviceCues: ["Documents", "Billing", "Executed contract"],
     due: "Jul 31"
   },
   {
@@ -108,6 +112,7 @@ const sampleWorkItems: ClientWorkItem[] = [
     type: "Monthly Operations Partnership",
     status: "Active",
     nextAction: "CRM follow-up groups are being organized for review.",
+    serviceCues: ["Monthly priorities", "Check-in cadence", "Billing"],
     due: "This week"
   },
   {
@@ -116,6 +121,7 @@ const sampleWorkItems: ClientWorkItem[] = [
     type: "Licensed Showing Coverage",
     status: "Completed",
     nextAction: "Showing notes and feedback are available in the work history.",
+    serviceCues: ["Showings", "Access readiness confirmation", "Feedback request"],
     due: "Complete"
   }
 ];
@@ -260,6 +266,13 @@ export default async function ClientDashboardPreviewPage() {
                         <span>{item.type}</span>
                         <h3>{item.title}</h3>
                         <p>{item.nextAction}</p>
+                        {item.serviceCues.length ? (
+                          <ul className="koinonia-client-showing-notes">
+                            {item.serviceCues.map((cue) => (
+                              <li key={cue}>{cue}</li>
+                            ))}
+                          </ul>
+                        ) : null}
                         {item.detailHref ? (
                           <a className="koinonia-document-link" href={item.detailHref}>
                             Open Work
@@ -393,15 +406,24 @@ async function getClientWorkItemView(
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
       take: 20
     });
-    const items = workObjects.map((object) => ({
-      id: object.id,
-      title: object.name,
-      type: getPortalWorkItemTypeLabel(object.objectType),
-      status: object.status,
-      nextAction: object.nextAction ?? "Koinonia will update this work item as it moves.",
-      due: getPortalWorkDueLabel(object.data),
-      detailHref: `/client/work/${object.id}`
-    }));
+    const items = workObjects.map((object) => {
+      const template = getKoinoniaServiceTemplateForWork({
+        data: object.data,
+        name: object.name,
+        objectType: object.objectType
+      });
+
+      return {
+        id: object.id,
+        title: object.name,
+        type: template?.publicServiceTitle ?? getPortalWorkItemTypeLabel(object.objectType),
+        status: object.status,
+        nextAction: object.nextAction ?? template?.staffNextAction ?? "Koinonia will update this work item as it moves.",
+        due: getPortalWorkDueLabel(object.data),
+        detailHref: `/client/work/${object.id}`,
+        serviceCues: buildServiceCues(template)
+      };
+    });
 
     return {
       isLiveData: true,
@@ -462,9 +484,23 @@ function withEmptyClientWorkItems(items: ClientWorkItem[]): ClientWorkItem[] {
       type: "Portal Work",
       status: "Ready",
       nextAction: "New transaction, document, showing, access, and billing work will appear here.",
+      serviceCues: ["Service package", "Documents", "Billing"],
       due: "No active item"
     }
   ];
+}
+
+function buildServiceCues(
+  template: ReturnType<typeof getKoinoniaServiceTemplateForWork>
+): string[] {
+  if (!template) {
+    return [];
+  }
+
+  return [
+    ...template.clientPortalSections,
+    ...template.documentRequests.slice(0, 2)
+  ].slice(0, 5);
 }
 
 async function getClientAccessRequestView(

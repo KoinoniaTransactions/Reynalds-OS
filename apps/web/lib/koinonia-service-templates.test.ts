@@ -3,6 +3,7 @@ import {
   getKoinoniaBillingSetupOptions,
   getKoinoniaPublicServiceTitles,
   getKoinoniaServiceTemplateByPackageName,
+  getKoinoniaServiceTemplateForWork,
   koinoniaServiceTemplates
 } from "./koinonia-service-templates";
 
@@ -63,5 +64,23 @@ describe("koinonia service templates", () => {
     });
     expect(showing?.clientPortalSections).toContain("Showings");
     expect(showing?.showingRequestRequired).toBe(true);
+  });
+
+  it("infers service templates from portal work metadata", () => {
+    expect(
+      getKoinoniaServiceTemplateForWork({
+        data: { packageName: "Transaction Coordination Plus" },
+        name: "Smith Contract-to-Close",
+        objectType: "Transaction"
+      })?.id
+    ).toBe("transaction-support");
+
+    expect(
+      getKoinoniaServiceTemplateForWork({
+        data: {},
+        name: "West Ridge Showing",
+        objectType: "ShowingRequest"
+      })?.id
+    ).toBe("licensed-showing-coverage");
   });
 });

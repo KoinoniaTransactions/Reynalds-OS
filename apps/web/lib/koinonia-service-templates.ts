@@ -230,6 +230,28 @@ export function getKoinoniaServiceTemplateById(id: string): KoinoniaServiceTempl
   return koinoniaServiceTemplates.find((template) => template.id === id) ?? null;
 }
 
+export function getKoinoniaServiceTemplateForWork(input: {
+  data?: unknown;
+  name: string;
+  objectType: string;
+}): KoinoniaServiceTemplate | null {
+  const candidates = [
+    ...getSafeServiceTextCandidates(input.data),
+    input.name,
+    input.objectType === "ShowingRequest" ? "Licensed Showing Coverage" : ""
+  ];
+
+  for (const candidate of candidates) {
+    const template = candidate ? getKoinoniaServiceTemplateByPackageName(candidate) : null;
+
+    if (template) {
+      return template;
+    }
+  }
+
+  return null;
+}
+
 export function getKoinoniaPublicServiceTitles(): string[] {
   return [...new Set(koinoniaServiceTemplates.map((template) => template.publicServiceTitle))];
 }
@@ -255,4 +277,22 @@ export function getKoinoniaBillingSetupOptions(): KoinoniaBillingSetupOption[] {
 
 function normalizeServiceText(value: string): string {
   return value.trim().toLowerCase().replaceAll(/\s+/g, " ");
+}
+
+function getSafeServiceTextCandidates(data: unknown): string[] {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return [];
+  }
+
+  const value = data as Record<string, unknown>;
+  const candidates = [
+    value.packageName,
+    value.package,
+    value.serviceName,
+    value.service,
+    value.serviceLevel,
+    value.billingModel
+  ];
+
+  return candidates.filter((candidate): candidate is string => typeof candidate === "string");
 }
