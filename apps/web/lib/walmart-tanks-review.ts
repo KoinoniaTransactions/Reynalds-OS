@@ -58,7 +58,9 @@ function toTitleCase(value: string) {
 }
 
 export function getWalmartTanksReviewCategory(communication: WalmartTanksReviewCommunication) {
-  const location = extractWalmartTanksLocation([communication.subject, communication.snippet].filter(Boolean).join(" "));
+  const subjectText = [communication.subject, communication.snippet].filter(Boolean).join(" ");
+  const location = extractWalmartTanksLocation(subjectText);
+  const identifiers = extractWalmartTanksIdentifiers(subjectText);
   const hasLocation = Boolean(communication.city || communication.state || location.city || location.state);
   const reviewText = [
     communication.reviewReason,
@@ -71,7 +73,7 @@ export function getWalmartTanksReviewCategory(communication: WalmartTanksReviewC
     .toLowerCase();
 
   if (!hasLocation && /city|state|location|address/.test(reviewText)) return "Needs city/state";
-  if (/multiple|multi-store|several stores|store numbers|split/.test(reviewText)) return "Multi-store";
+  if (identifiers.storeNumbers.length > 1 || /multiple|multi-store|several stores|store numbers|split/.test(reviewText)) return "Multi-store";
   if (/statement|invoice|vendor|remit|balance/.test(reviewText)) return "Vendor statement";
   if (/no job|not a job|newsletter|marketing|notification|receipt/.test(reviewText)) return "Non-job";
   return "Manual review";

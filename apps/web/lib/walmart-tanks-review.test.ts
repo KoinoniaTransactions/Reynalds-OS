@@ -30,6 +30,15 @@ describe("WalMart Tanks review categorization", () => {
     ).toBe("Multi-store");
   });
 
+  it("flags multi-store subjects from detected store numbers", () => {
+    expect(
+      getWalmartTanksReviewCategory({
+        subject: "Walmart 1590 Hialeah FL, Sam's Club 6217 Doral FL invoices",
+        sender: "Roy Payne via WalMart Tanks Program wmtanks@reynaldsbrothers.com"
+      })
+    ).toBe("Multi-store");
+  });
+
   it("flags vendor statements separately from job mail", () => {
     expect(
       getWalmartTanksReviewCategory({
