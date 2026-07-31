@@ -91,6 +91,8 @@ export async function POST(request: Request) {
         summary: `Access request created for ${input.platformName}`,
         metadata: {
           accessPurpose: input.accessPurpose,
+          grantMethod: input.grantMethod,
+          noSecretsAcknowledged: input.noSecretsAcknowledged,
           permissionLevel: input.permissionLevel,
           requestSource: actor.role === "Client" ? "client-portal" : "employee-portal",
           status: input.status
@@ -131,8 +133,10 @@ function buildAccessRequestData(
   input: ReturnType<typeof validateAccessRequestInput>,
   actor: AuthUser
 ): Prisma.InputJsonObject {
-  const data: Record<string, string> = {
+  const data: Record<string, string | boolean> = {
     accessPurpose: input.accessPurpose,
+    grantMethod: input.grantMethod,
+    noSecretsAcknowledged: input.noSecretsAcknowledged,
     permissionLevel: input.permissionLevel,
     platformName: input.platformName,
     requestedByEmail: actor.email,

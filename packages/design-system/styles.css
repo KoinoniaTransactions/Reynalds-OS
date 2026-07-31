@@ -3604,7 +3604,8 @@ h1 {
   opacity: 0.62;
 }
 
-.koinonia-showing-checkbox {
+.koinonia-showing-checkbox,
+.koinonia-access-request-checkbox {
   align-items: center;
   display: flex !important;
   gap: 9px;
@@ -3613,7 +3614,8 @@ h1 {
   text-transform: none !important;
 }
 
-.koinonia-showing-checkbox input {
+.koinonia-showing-checkbox input,
+.koinonia-access-request-checkbox input {
   min-height: 18px;
   width: 18px;
 }

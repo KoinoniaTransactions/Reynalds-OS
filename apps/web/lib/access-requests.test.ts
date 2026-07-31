@@ -14,6 +14,8 @@ describe("access request helpers", () => {
     const input = validateAccessRequestInput({
       accessPurpose: "Prepare contract documents",
       clientName: "Bright Homes Team",
+      grantMethod: "Team or assistant seat",
+      noSecretsAcknowledged: true,
       permissionLevel: "Transaction coordinator access",
       platformName: "Transaction platform",
       relatedWorkName: "Smith Contract-to-Close",
@@ -23,6 +25,8 @@ describe("access request helpers", () => {
     expect(input).toEqual({
       accessPurpose: "Prepare contract documents",
       clientName: "Bright Homes Team",
+      grantMethod: "Team or assistant seat",
+      noSecretsAcknowledged: true,
       permissionLevel: "Transaction coordinator access",
       platformName: "Transaction platform",
       relatedWorkName: "Smith Contract-to-Close",
@@ -46,9 +50,28 @@ describe("access request helpers", () => {
       validateAccessRequestInput({
         accessPurpose: "Prepare forms",
         notes: "The username is agent@example.com and password is hidden here.",
+        noSecretsAcknowledged: true,
         platformName: "Forms workspace"
       })
     ).toThrow("Do not include passwords");
+  });
+
+  it("requires safe access acknowledgement and an approved grant method", () => {
+    expect(() =>
+      validateAccessRequestInput({
+        accessPurpose: "Prepare forms",
+        platformName: "Forms workspace"
+      })
+    ).toThrow("Confirm that this access request will not include passwords");
+
+    expect(() =>
+      validateAccessRequestInput({
+        accessPurpose: "Prepare forms",
+        grantMethod: "Paste login in notes",
+        noSecretsAcknowledged: true,
+        platformName: "Forms workspace"
+      })
+    ).toThrow("grantMethod must match an approved safe access method");
   });
 
   it("builds display labels for staff and client queues", () => {
@@ -57,14 +80,21 @@ describe("access request helpers", () => {
     expect(
       getAccessRequestDetail({
         accessPurpose: "Track deadlines",
+        grantMethod: "Read-only role",
         permissionLevel: "Read-only access"
       })
-    ).toBe("Track deadlines - Read-only access");
+    ).toBe("Track deadlines - Read-only access via Read-only role");
     expect(
       getAccessRequestMetaLabels({
         clientName: "Wilson Realty Group",
+        grantMethod: "Processor or platform invite",
         relatedWorkName: "Buyer Offer Package"
       })
-    ).toEqual(["No password stored", "Buyer Offer Package", "Wilson Realty Group"]);
+    ).toEqual([
+      "No password stored",
+      "Processor or platform invite",
+      "Buyer Offer Package",
+      "Wilson Realty Group"
+    ]);
   });
 });

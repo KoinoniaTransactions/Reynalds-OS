@@ -10,6 +10,8 @@ export type AccessRequestStatus =
 export type AccessRequestInput = {
   accessPurpose: string;
   clientName?: string;
+  grantMethod: string;
+  noSecretsAcknowledged: boolean;
   notes?: string;
   permissionLevel: string;
   platformName: string;
@@ -39,6 +41,7 @@ export function validateAccessRequestInput(input: unknown): AccessRequestInput {
 
   const value = input as Record<string, unknown>;
   const notes = optionalString(value.notes);
+  const noSecretsAcknowledged = value.noSecretsAcknowledged === true;
 
   if (notes && containsCredentialLanguage(notes)) {
     throw new AccessRequestValidationError(
@@ -46,9 +49,17 @@ export function validateAccessRequestInput(input: unknown): AccessRequestInput {
     );
   }
 
+  if (!noSecretsAcknowledged) {
+    throw new AccessRequestValidationError(
+      "Confirm that this access request will not include passwords, access codes, API keys, or private login details."
+    );
+  }
+
   return {
     accessPurpose: requiredString(value.accessPurpose, "accessPurpose"),
     clientName: optionalString(value.clientName),
+    grantMethod: normalizeGrantMethod(value.grantMethod),
+    noSecretsAcknowledged,
     notes,
     permissionLevel: optionalString(value.permissionLevel) ?? "Delegated or team access",
     platformName: requiredString(value.platformName, "platformName"),
@@ -73,7 +84,7 @@ export function buildAccessRequestNextAction(input: AccessRequestInput): string 
       return "Wait for the client to grant delegated access or confirm approved next steps.";
     case "Access Needed":
     default:
-      return "Send the client safe access instructions and avoid collecting raw credentials.";
+      return `Send the client safe access instructions for ${input.grantMethod} and avoid collecting raw credentials.`;
   }
 }
 
@@ -116,8 +127,9 @@ export function getAccessRequestDetail(data: unknown): string {
   const value = data as Record<string, unknown>;
   const purpose = optionalString(value.accessPurpose) ?? "Access details needed";
   const level = optionalString(value.permissionLevel) ?? "Delegated access";
+  const grantMethod = optionalString(value.grantMethod);
 
-  return `${purpose} - ${level}`;
+  return grantMethod ? `${purpose} - ${level} via ${grantMethod}` : `${purpose} - ${level}`;
 }
 
 export function getAccessRequestMetaLabels(data: unknown): string[] {
@@ -129,6 +141,11 @@ export function getAccessRequestMetaLabels(data: unknown): string[] {
   const labels = ["No password stored"];
   const relatedWorkName = optionalString(value.relatedWorkName);
   const clientName = optionalString(value.clientName);
+  const grantMethod = optionalString(value.grantMethod);
+
+  if (grantMethod) {
+    labels.push(grantMethod);
+  }
 
   if (relatedWorkName) {
     labels.push(relatedWorkName);
@@ -149,6 +166,24 @@ function normalizeAccessRequestStatus(value: unknown): AccessRequestStatus {
   }
 
   return status as AccessRequestStatus;
+}
+
+function normalizeGrantMethod(value: unknown): string {
+  const grantMethod = optionalString(value) ?? "Delegated user access";
+  const allowedGrantMethods = new Set([
+    "Delegated user access",
+    "Team or assistant seat",
+    "Read-only role",
+    "Processor or platform invite",
+    "Broker-approved secure sharing link",
+    "Client will complete directly"
+  ]);
+
+  if (!allowedGrantMethods.has(grantMethod)) {
+    throw new AccessRequestValidationError("grantMethod must match an approved safe access method.");
+  }
+
+  return grantMethod;
 }
 
 function requiredString(value: unknown, fieldName: string): string {

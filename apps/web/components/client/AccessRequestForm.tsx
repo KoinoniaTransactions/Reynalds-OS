@@ -34,6 +34,8 @@ export function AccessRequestForm({ storageReady }: AccessRequestFormProps) {
         body: JSON.stringify({
           accessPurpose: formData.get("accessPurpose"),
           clientName: formData.get("clientName"),
+          grantMethod: formData.get("grantMethod"),
+          noSecretsAcknowledged: formData.get("noSecretsAcknowledged") === "on",
           notes: formData.get("notes"),
           permissionLevel: formData.get("permissionLevel"),
           platformName: formData.get("platformName"),
@@ -101,6 +103,20 @@ export function AccessRequestForm({ storageReady }: AccessRequestFormProps) {
         </label>
 
         <label>
+          Safe Grant Method
+          <select disabled={disabled} name="grantMethod">
+            <option value="Delegated user access">Delegated user access</option>
+            <option value="Team or assistant seat">Team or assistant seat</option>
+            <option value="Read-only role">Read-only role</option>
+            <option value="Processor or platform invite">Processor or platform invite</option>
+            <option value="Broker-approved secure sharing link">
+              Broker-approved secure sharing link
+            </option>
+            <option value="Client will complete directly">Client will complete directly</option>
+          </select>
+        </label>
+
+        <label>
           Status
           <select disabled={disabled} name="status">
             <option value="Access Needed">I need instructions</option>
@@ -129,6 +145,12 @@ export function AccessRequestForm({ storageReady }: AccessRequestFormProps) {
             placeholder="Use instructions only; no passwords, usernames, or access codes"
             rows={4}
           />
+        </label>
+
+        <label className="koinonia-access-request-checkbox">
+          <input disabled={disabled} name="noSecretsAcknowledged" required type="checkbox" />
+          I will not paste passwords, access codes, API keys, card data, bank
+          details, or private login details into this request.
         </label>
 
         <button className="koinonia-button primary" disabled={disabled} type="submit">
