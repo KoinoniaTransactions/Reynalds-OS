@@ -25,6 +25,7 @@ The executable counterpart to this catalog is `apps/web/lib/productRegistry.ts`.
 9. Internal operating systems must remain internal products and must not claim a public website identity.
 10. Canonical product identifiers, workspace routes, and workspace order values must be unique.
 11. Canonical product lookups must either return the exact registered product or fail explicitly; unresolved product identities must not silently become `undefined`.
+12. Exported product classification types must derive from the discriminated product definition contract rather than repeat separate manual unions.
 
 ---
 
@@ -141,12 +142,15 @@ It currently provides:
 - explicit workspace navigation ordering,
 - centralized queries for internal products, public websites, workspace products, ordered workspace navigation entries, and active products,
 - discriminated product definitions that enforce public and internal boundary rules at compile time,
+- product audience and product type aliases derived directly from the discriminated definition contract,
 - registry validation for duplicate product identifiers, duplicate workspace routes, and duplicate workspace order values,
 - exact canonical lookup behavior that narrows the returned product type by identifier and throws `ProductNotFoundError` when resolution fails.
 
 Consumers should use registry helpers such as `getProductById`, `getInternalProducts`, `getPublicWebsites`, `getWorkspaceProducts`, `getWorkspaceNavigationEntries`, `getActiveProducts`, and `validateProductRegistry` rather than repeating classification, navigation-order, uniqueness, or product-resolution logic.
 
 Product identifiers must not be maintained in a separate manual union that can drift from the registry. The registry entries define the canonical identifier set, and the exported `ProductId` type is derived from those entries.
+
+Product classification aliases must not duplicate the discriminated definition contract. The exported `ProductAudience` and `ProductType` types derive from `ProductDefinition`, so changes to supported public or internal classifications require changing the canonical definition rather than synchronizing multiple unions.
 
 Canonical lookups are strict. `getProductById` returns the exact registered product for the provided `ProductId` and narrows the result to that product's registry entry type. A failed lookup throws `ProductNotFoundError`; consumers must not treat a missing canonical product as a normal optional state.
 
@@ -164,7 +168,7 @@ The registry validation contract prevents ambiguous executable metadata:
 - internal workspace routes must be unique,
 - workspace order values must be unique so placement remains deterministic.
 
-The registry does not replace this Brain document. When product meaning, ownership, status, audience, records, boundaries, identifiers, lookup behavior, workspace placement, or uniqueness requirements change, update the Brain first or in the same focused change, then keep the executable registry aligned.
+The registry does not replace this Brain document. When product meaning, ownership, status, audience, records, boundaries, identifiers, classification types, lookup behavior, workspace placement, or uniqueness requirements change, update the Brain first or in the same focused change, then keep the executable registry aligned.
 
 ## Registry Verification
 
@@ -210,6 +214,7 @@ Before changing architecture or code, answer all of the following:
 12. Does the product definition satisfy the correct public or internal discriminated type contract?
 13. Does registry validation still return no duplicate identifiers, routes, or order values?
 14. Does every canonical product lookup either resolve the exact registered product or fail explicitly with `ProductNotFoundError`?
+15. Are exported classification aliases derived from `ProductDefinition` rather than duplicated as independent unions?
 
 If any answer is unclear, inspect the Brain and repository before implementing.
 
@@ -226,7 +231,7 @@ Update this catalog when:
 - record ownership changes,
 - deployment or repository boundaries become canonical,
 - a product is retired or replaced,
-- registry structure changes how product identity, navigation, access, ordering, validation, lookup behavior, or classification is represented in code,
+- registry structure changes how product identity, navigation, access, ordering, validation, lookup behavior, classification aliases, or classification is represented in code,
 - registry verification changes which architectural guarantees are enforced by tests.
 
 Architectural work should document the Brain frequently. A focused code slice that changes canonical product behavior should include a Brain update in the same slice or in the immediate follow-up commit before moving to unrelated work.
