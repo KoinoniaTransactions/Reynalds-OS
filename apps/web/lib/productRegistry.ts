@@ -21,12 +21,8 @@ export type ProductWorkspaceEntry = {
   order: number;
 };
 
-export type ProductDefinition = {
-  id:
-    | "reynalds-os"
-    | "koinonia-transactions-website"
-    | "koinonia-properties-website"
-    | "reynalds-brothers-os";
+export type ProductDefinition<TProductId extends string = string> = {
+  id: TProductId;
   name: string;
   owner: string;
   type: ProductType;
