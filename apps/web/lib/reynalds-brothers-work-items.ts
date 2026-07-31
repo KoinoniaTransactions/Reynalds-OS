@@ -1,6 +1,32 @@
 export const REYNALDS_BROTHERS_WORKSPACE_ID = "wks_reynalds_brothers";
 export const REYNALDS_BROTHERS_WORK_ITEM_TYPE = "rb.work_item";
 
+export type ReynaldsBrothersCommunicationEntry = {
+  id: string;
+  channel: string;
+  direction: string;
+  sourceLabel?: string | null;
+  subject: string;
+  from?: string | null;
+  to?: string | null;
+  occurredAt?: string | null;
+  snippet?: string | null;
+  body?: string | null;
+  summary?: string | null;
+  providerMessageId?: string | null;
+  communicationObjectId?: string | null;
+  attachments?: string[];
+  classificationConfidence?: string | null;
+  matchedBy?: string[];
+  humanResponseStatus?: string | null;
+  humanResponseBy?: string | null;
+  humanResponseAt?: string | null;
+  humanResponseNotes?: string | null;
+  humanActionTaken?: string | null;
+  filedBy?: string | null;
+  filedAt?: string | null;
+};
+
 export type ReynaldsBrothersWorkItemData = {
   serviceLine?: string | null;
   customer?: string | null;
@@ -57,6 +83,19 @@ export type ReynaldsBrothersWorkItemData = {
   intakeReasons?: string[];
   dataQualityStatus?: string | null;
   spreadsheetFields?: Record<string, string>;
+  communicationLog?: ReynaldsBrothersCommunicationEntry[];
+  lastCommunicationAt?: string | null;
+  lastCommunicationSubject?: string | null;
+  communicationNeedsResponse?: boolean;
+  communicationResponseStatus?: string | null;
+};
+
+export type ReynaldsBrothersCommunicationSummary = {
+  total: number;
+  needsResponse: number;
+  documented: number;
+  lastCommunication?: ReynaldsBrothersCommunicationEntry;
+  nextAction: string;
 };
 
 export type ReynaldsBrothersChecklistItem = {
@@ -81,6 +120,7 @@ export type ReynaldsBrothersMetrics = {
   total: number;
   active: number;
   completed: number;
+  communicationNeedsResponse: number;
   needsApproval: number;
   attention: number;
   triage: number;
@@ -364,7 +404,27 @@ export const reynaldsBrothersFallbackWorkItems: ReynaldsBrothersWorkItem[] = [
       billingApprovalStatus: "Not Started",
       customerUpdateStatus: "Needs Service Channel update",
       mediaStatus: "Before photos required",
-      tankSerialNumbers: []
+      tankSerialNumbers: [],
+      communicationLog: [
+        {
+          id: "comm_preview_acc_1590_001",
+          channel: "email",
+          direction: "inbound",
+          sourceLabel: "wmtanks",
+          subject: "WM 1590 ACC tank replacement permit follow-up",
+          from: "facility.coordinator@walmart.com",
+          to: "WMTanks@ReynoldsBrothers.com",
+          occurredAt: "2026-07-29T08:00:00-06:00",
+          snippet: "Please confirm permitting status and expected install window.",
+          humanResponseStatus: "Needs Response",
+          filedBy: "AI Intake",
+          filedAt: "2026-07-29T08:02:00-06:00"
+        }
+      ],
+      lastCommunicationAt: "2026-07-29T08:00:00-06:00",
+      lastCommunicationSubject: "WM 1590 ACC tank replacement permit follow-up",
+      communicationNeedsResponse: true,
+      communicationResponseStatus: "Needs Response"
     }
   },
   {
@@ -493,7 +553,30 @@ export const reynaldsBrothersFallbackWorkItems: ReynaldsBrothersWorkItem[] = [
       customerUpdateStatus: "Completed.",
       mediaStatus: "Complete",
       dataQualityStatus: "Needs Line Review",
-      permitStatus: "Not required"
+      permitStatus: "Not required",
+      communicationLog: [
+        {
+          id: "comm_preview_pw_450_001",
+          channel: "email",
+          direction: "inbound",
+          sourceLabel: "wmtanks",
+          subject: "WM 450 - lower bay pressure washing schedule",
+          from: "facility.coordinator@walmart.com",
+          to: "WMTanks@ReynoldsBrothers.com",
+          occurredAt: "2026-07-29T08:15:00-06:00",
+          snippet: "Can you confirm vac truck availability and disposal documentation for store 450?",
+          humanResponseStatus: "Documented",
+          humanResponseBy: "Office",
+          humanResponseAt: "2026-07-29T08:30:00-06:00",
+          humanActionTaken: "Confirmed completed work should be checked against billing before closeout.",
+          filedBy: "AI Intake",
+          filedAt: "2026-07-29T08:16:00-06:00"
+        }
+      ],
+      lastCommunicationAt: "2026-07-29T08:15:00-06:00",
+      lastCommunicationSubject: "WM 450 - lower bay pressure washing schedule",
+      communicationNeedsResponse: false,
+      communicationResponseStatus: "Current"
     }
   }
 ];
@@ -547,6 +630,7 @@ export function getWorkItemMetrics(items: ReynaldsBrothersWorkItem[]): ReynaldsB
     total: items.length,
     active: items.filter((item) => !isCompletedWorkItem(item)).length,
     completed: items.filter(isCompletedWorkItem).length,
+    communicationNeedsResponse: items.filter((item) => getCommunicationSummary(item).needsResponse > 0).length,
     needsApproval: items.filter((item) => getWorkItemLane(item) === "Needs Approval").length,
     attention: items.filter((item) => ["Watch", "Attention", "Critical"].includes(item.health)).length,
     triage: items.filter((item) => getWorkItemLane(item) === "Triage").length,
@@ -559,6 +643,92 @@ export function getWorkItemMetrics(items: ReynaldsBrothersWorkItem[]): ReynaldsB
     missingDocumentation: items.filter(needsDocumentation).length,
     redFlags: items.reduce((count, item) => count + getWorkItemAlerts(item).length, 0)
   };
+}
+
+export function getCommunicationSummary(item: ReynaldsBrothersWorkItem): ReynaldsBrothersCommunicationSummary {
+  const communications = getWorkItemData(item).communicationLog ?? [];
+  const needsResponse = communications.filter(communicationNeedsHumanReview).length;
+  const documented = communications.filter(communicationHasHumanDocumentation).length;
+  const lastCommunication = [...communications].sort(compareCommunicationsDescending)[0];
+
+  return {
+    total: communications.length,
+    needsResponse,
+    documented,
+    lastCommunication,
+    nextAction: getCommunicationNextAction(communications.length, needsResponse)
+  };
+}
+
+export function addCommunicationToWorkItemData(
+  data: ReynaldsBrothersWorkItemData,
+  communication: ReynaldsBrothersCommunicationEntry
+): ReynaldsBrothersWorkItemData {
+  const normalizedCommunication = normalizeCommunicationEntry(communication);
+  const communicationLog = [
+    normalizedCommunication,
+    ...(data.communicationLog ?? []).filter((entry) => entry.id !== normalizedCommunication.id)
+  ].sort(compareCommunicationsDescending);
+  const needsResponse = communicationLog.some(communicationNeedsHumanReview);
+
+  return {
+    ...data,
+    communicationLog,
+    lastCommunicationAt: normalizedCommunication.occurredAt ?? normalizedCommunication.filedAt ?? data.lastCommunicationAt,
+    lastCommunicationSubject: normalizedCommunication.subject || data.lastCommunicationSubject,
+    communicationNeedsResponse: needsResponse,
+    communicationResponseStatus: needsResponse ? "Needs Office Review" : "Current"
+  };
+}
+
+function normalizeCommunicationEntry(communication: ReynaldsBrothersCommunicationEntry): ReynaldsBrothersCommunicationEntry {
+  return {
+    ...communication,
+    channel: communication.channel || "email",
+    direction: communication.direction || "inbound",
+    sourceLabel: communication.sourceLabel ?? "wmtanks",
+    occurredAt: communication.occurredAt ?? communication.filedAt ?? new Date().toISOString(),
+    humanResponseStatus: communication.humanResponseStatus ?? "Needs Response",
+    matchedBy: communication.matchedBy ?? [],
+    attachments: communication.attachments ?? []
+  };
+}
+
+function communicationNeedsHumanReview(communication: ReynaldsBrothersCommunicationEntry): boolean {
+  const status = String(communication.humanResponseStatus ?? "").trim().toLowerCase();
+
+  return communication.humanResponseStatus === undefined
+    || status.includes("needs")
+    || status.includes("pending")
+    || status.includes("review")
+    || status.includes("follow");
+}
+
+function communicationHasHumanDocumentation(communication: ReynaldsBrothersCommunicationEntry): boolean {
+  return Boolean(
+    communication.humanActionTaken
+    || communication.humanResponseNotes
+    || communication.humanResponseBy
+    || String(communication.humanResponseStatus ?? "").toLowerCase().includes("documented")
+  );
+}
+
+function compareCommunicationsDescending(first: ReynaldsBrothersCommunicationEntry, second: ReynaldsBrothersCommunicationEntry): number {
+  return getCommunicationTime(second) - getCommunicationTime(first);
+}
+
+function getCommunicationTime(communication: ReynaldsBrothersCommunicationEntry): number {
+  const value = communication.occurredAt ?? communication.filedAt ?? "";
+  const timestamp = Date.parse(value);
+
+  return Number.isNaN(timestamp) ? 0 : timestamp;
+}
+
+function getCommunicationNextAction(total: number, needsResponse: number): string {
+  if (total === 0) return "No communications filed yet; pull and file emails from the wmtanks label.";
+  if (needsResponse > 0) return `${needsResponse} communication${needsResponse === 1 ? "" : "s"} need office response documentation.`;
+
+  return "Communication file is current.";
 }
 
 export function getRouteBatches(items: ReynaldsBrothersWorkItem[]): ReynaldsBrothersRouteBatch[] {
@@ -845,10 +1015,13 @@ function isCompletionValue(value: unknown): boolean {
 }
 
 export function getWorkItemAlerts(item: ReynaldsBrothersWorkItem): string[] {
-  if (isCompletedWorkItem(item)) return [];
-
   const data = getWorkItemData(item);
   const alerts: string[] = [];
+  const communicationSummary = getCommunicationSummary(item);
+
+  if (communicationSummary.needsResponse > 0) alerts.push(`${communicationSummary.needsResponse} communication${communicationSummary.needsResponse === 1 ? "" : "s"} need human response documentation.`);
+  if (isCompletedWorkItem(item)) return alerts;
+
   const jobType = String(data.jobType ?? data.serviceLine ?? "");
   const openChecklistItems = getOpenChecklistItems(item);
   const completed = new Set(data.checklistCompleted ?? []);
@@ -1302,8 +1475,46 @@ function getWorkItemPayloadData(value: Record<string, unknown>): ReynaldsBrother
     sourceReferenceId: getOptionalString(sourceData.sourceReferenceId),
     intakeReasons: getStringList(sourceData.intakeReasons),
     dataQualityStatus: getOptionalString(sourceData.dataQualityStatus),
-    spreadsheetFields: getStringRecord(sourceData.spreadsheetFields)
+    spreadsheetFields: getStringRecord(sourceData.spreadsheetFields),
+    communicationLog: getCommunicationLog(sourceData.communicationLog),
+    lastCommunicationAt: getOptionalString(sourceData.lastCommunicationAt),
+    lastCommunicationSubject: getOptionalString(sourceData.lastCommunicationSubject),
+    communicationNeedsResponse: getOptionalBoolean(sourceData.communicationNeedsResponse),
+    communicationResponseStatus: getOptionalString(sourceData.communicationResponseStatus)
   };
+}
+
+function getCommunicationLog(input: unknown): ReynaldsBrothersCommunicationEntry[] {
+  if (!Array.isArray(input)) return [];
+
+  return input
+    .filter((entry): entry is Record<string, unknown> => Boolean(entry) && typeof entry === "object" && !Array.isArray(entry))
+    .map((entry, index) => normalizeCommunicationEntry({
+      id: getOptionalString(entry.id) ?? `comm_import_${index + 1}`,
+      channel: getOptionalString(entry.channel) ?? "email",
+      direction: getOptionalString(entry.direction) ?? "inbound",
+      sourceLabel: getOptionalString(entry.sourceLabel),
+      subject: getOptionalString(entry.subject) ?? "Communication",
+      from: getOptionalString(entry.from),
+      to: getOptionalString(entry.to),
+      occurredAt: getOptionalString(entry.occurredAt),
+      snippet: getOptionalString(entry.snippet),
+      body: getOptionalString(entry.body),
+      summary: getOptionalString(entry.summary),
+      providerMessageId: getOptionalString(entry.providerMessageId),
+      communicationObjectId: getOptionalString(entry.communicationObjectId),
+      attachments: getStringList(entry.attachments),
+      classificationConfidence: getOptionalString(entry.classificationConfidence),
+      matchedBy: getStringList(entry.matchedBy),
+      humanResponseStatus: getOptionalString(entry.humanResponseStatus),
+      humanResponseBy: getOptionalString(entry.humanResponseBy),
+      humanResponseAt: getOptionalString(entry.humanResponseAt),
+      humanResponseNotes: getOptionalString(entry.humanResponseNotes),
+      humanActionTaken: getOptionalString(entry.humanActionTaken),
+      filedBy: getOptionalString(entry.filedBy),
+      filedAt: getOptionalString(entry.filedAt)
+    }))
+    .sort(compareCommunicationsDescending);
 }
 
 function getStringList(input: unknown): string[] {
@@ -1320,6 +1531,17 @@ function getStringList(input: unknown): string[] {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function getOptionalBoolean(input: unknown): boolean | undefined {
+  if (typeof input === "boolean") return input;
+  if (typeof input !== "string") return undefined;
+
+  const value = input.trim().toLowerCase();
+  if (["true", "yes", "1"].includes(value)) return true;
+  if (["false", "no", "0"].includes(value)) return false;
+
+  return undefined;
 }
 
 function getStringRecord(input: unknown): Record<string, string> | undefined {

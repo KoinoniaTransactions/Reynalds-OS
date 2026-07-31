@@ -5,6 +5,7 @@ import { assertPermission } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/db";
 import {
   REYNALDS_BROTHERS_COMMUNICATION_TYPE,
+  REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL,
   buildEmailCandidates,
   classifyEmailForWorkItem,
   getDefaultWorkItemDataForClassification,
@@ -14,6 +15,7 @@ import {
 import {
   REYNALDS_BROTHERS_WORKSPACE_ID,
   REYNALDS_BROTHERS_WORK_ITEM_TYPE,
+  addCommunicationToWorkItemData,
   reynaldsBrothersFallbackWorkItems,
   type ReynaldsBrothersWorkItem,
   type ReynaldsBrothersWorkItemData
@@ -106,8 +108,14 @@ export async function POST(request: Request) {
     const targetWorkItemId = payload.workItemId ?? classification.matchedWorkItemId;
     let workItemId = targetWorkItemId;
     let workItemName = classification.matchedWorkItemName;
+    let workItemData: ReynaldsBrothersWorkItemData = {};
 
     if (action === "create_work_item") {
+      const defaultWorkItemData: ReynaldsBrothersWorkItemData = {
+        ...getDefaultWorkItemDataForClassification(classification),
+        sourceReferenceId: email.providerMessageId,
+        intakeReasons: classification.reasons
+      };
       const workItem = await prisma.rosObject.create({
         data: {
           workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
@@ -117,16 +125,13 @@ export async function POST(request: Request) {
           health: classification.multiStoreFlag ? "Attention" : "Watch",
           nextAction: classification.suggestedNextAction,
           ownerId: user.id,
-          data: {
-            ...getDefaultWorkItemDataForClassification(classification),
-            sourceReferenceId: email.providerMessageId,
-            intakeReasons: classification.reasons
-          } as Prisma.InputJsonValue
+          data: defaultWorkItemData as Prisma.InputJsonValue
         }
       });
 
       workItemId = workItem.id;
       workItemName = workItem.name;
+      workItemData = defaultWorkItemData;
     }
 
     if (!workItemId) {
@@ -135,6 +140,17 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
+    if (action !== "create_work_item") {
+      const existingWorkItem = await prisma.rosObject.findUnique({
+        where: { id: workItemId }
+      });
+
+      workItemName = existingWorkItem?.name ?? workItemName;
+      workItemData = toWorkItemData(existingWorkItem?.data ?? null) ?? {};
+    }
+
+    const now = new Date().toISOString();
+    const sourceLabel = email.sourceLabel ?? REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL;
     const communication = await prisma.rosObject.create({
       data: {
         workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
@@ -152,6 +168,9 @@ export async function POST(request: Request) {
           receivedAt: email.receivedAt,
           snippet: email.snippet,
           body: email.body,
+          sourceLabel,
+          attachments: email.attachments ?? [],
+          humanResponseStatus: "Needs Response",
           classification
         } as Prisma.InputJsonValue
       }
@@ -165,6 +184,35 @@ export async function POST(request: Request) {
       }
     });
 
+    const communicationEntry = {
+      id: communication.id,
+      channel: "email",
+      direction: "inbound",
+      sourceLabel,
+      subject: email.subject,
+      from: email.from,
+      to: email.to,
+      occurredAt: email.receivedAt ?? now,
+      snippet: email.snippet,
+      body: email.body,
+      providerMessageId: email.providerMessageId,
+      communicationObjectId: communication.id,
+      attachments: email.attachments ?? [],
+      classificationConfidence: classification.confidence,
+      matchedBy: classification.reasons,
+      humanResponseStatus: "Needs Response",
+      filedBy: user.name,
+      filedAt: now
+    };
+    const nextWorkItemData = addCommunicationToWorkItemData(workItemData, communicationEntry);
+
+    await prisma.rosObject.update({
+      where: { id: workItemId },
+      data: {
+        data: nextWorkItemData as Prisma.InputJsonValue
+      }
+    });
+
     await prisma.timelineEvent.create({
       data: {
         workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
@@ -175,6 +223,8 @@ export async function POST(request: Request) {
         newValue: {
           communicationId: communication.id,
           providerMessageId: email.providerMessageId,
+          sourceLabel,
+          communicationEntry,
           classification
         }
       }

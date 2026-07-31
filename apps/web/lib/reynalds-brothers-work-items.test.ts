@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   REYNALDS_BROTHERS_WORK_ITEM_TYPE,
+  addCommunicationToWorkItemData,
   applyChecklistAutomation,
   getBillingPassoffSummary,
   getChecklistProgress,
+  getCommunicationSummary,
   getActivationPhaseForJobType,
   getOpenChecklistItems,
   getPhaseTrackForJobType,
@@ -28,6 +30,7 @@ describe("Reynalds Brothers work item engine", () => {
     expect(metrics.total).toBe(4);
     expect(metrics.active).toBe(3);
     expect(metrics.completed).toBe(1);
+    expect(metrics.communicationNeedsResponse).toBe(1);
     expect(metrics.needsApproval).toBe(0);
     expect(metrics.attention).toBe(3);
     expect(metrics.redFlags).toBeGreaterThan(0);
@@ -66,9 +69,68 @@ describe("Reynalds Brothers work item engine", () => {
   it("raises division red flags for missing PO, permitting, tanks, oil removal, and documents", () => {
     const alerts = getWorkItemAlerts(reynaldsBrothersFallbackWorkItems[0]);
 
+    expect(alerts).toContain("1 communication need human response documentation.");
     expect(alerts).toContain("PO missing; alert all office staff after 5 business days.");
     expect(alerts).toContain("Coordinated oil removal is not confirmed.");
     expect(alerts).toContain("25 required checklist items still open.");
+  });
+
+  it("summarizes filed communications and clears response flags when human action is documented", () => {
+    const baseData = reynaldsBrothersFallbackWorkItems[1].data ?? {};
+    const withInboundEmail = addCommunicationToWorkItemData(baseData, {
+      id: "comm_test_needs_response",
+      channel: "email",
+      direction: "inbound",
+      sourceLabel: "wmtanks",
+      subject: "WM 4672 UCO tank delivery question",
+      from: "projects@walmart.com",
+      occurredAt: "2026-07-29T10:00:00-06:00",
+      snippet: "Please confirm Frontline delivery.",
+      humanResponseStatus: "Needs Response"
+    });
+    const withDocumentedAction = addCommunicationToWorkItemData(withInboundEmail, {
+      id: "comm_test_documented",
+      channel: "phone",
+      direction: "outbound",
+      sourceLabel: "wmtanks",
+      subject: "Called store about UCO delivery",
+      occurredAt: "2026-07-29T10:30:00-06:00",
+      humanResponseStatus: "Documented",
+      humanResponseBy: "Shay Reynalds",
+      humanActionTaken: "Called Walmart and confirmed delivery timing."
+    });
+    const item = {
+      ...reynaldsBrothersFallbackWorkItems[1],
+      data: withDocumentedAction
+    };
+    const summary = getCommunicationSummary(item);
+
+    expect(summary.total).toBe(2);
+    expect(summary.needsResponse).toBe(1);
+    expect(summary.documented).toBe(1);
+    expect(summary.lastCommunication?.subject).toBe("Called store about UCO delivery");
+    expect(withInboundEmail.communicationNeedsResponse).toBe(true);
+    expect(withDocumentedAction.lastCommunicationSubject).toBe("Called store about UCO delivery");
+    expect(getWorkItemAlerts(item)).toContain("1 communication need human response documentation.");
+  });
+
+  it("keeps completed jobs clear unless a new communication needs response", () => {
+    const completedWithCommunication = {
+      ...reynaldsBrothersFallbackWorkItems[3],
+      data: addCommunicationToWorkItemData(reynaldsBrothersFallbackWorkItems[3].data ?? {}, {
+        id: "comm_test_completed_response",
+        channel: "email",
+        direction: "inbound",
+        sourceLabel: "wmtanks",
+        subject: "Billing documentation question",
+        from: "billing@walmart.com",
+        occurredAt: "2026-07-29T11:00:00-06:00",
+        humanResponseStatus: "Needs Response"
+      })
+    };
+
+    expect(getWorkItemAlerts(reynaldsBrothersFallbackWorkItems[3])).toEqual([]);
+    expect(getWorkItemAlerts(completedWithCommunication)).toEqual(["1 communication need human response documentation."]);
   });
 
   it("selects job-specific checklist templates", () => {
@@ -362,7 +424,24 @@ describe("Reynalds Brothers work item engine", () => {
         sourceSystem: "email",
         sourceReferenceId: "gmail_preview_new_uco_9001",
         approvalDecisionAt: "2026-07-29T17:00:00.000Z",
-        intakeReasons: ["Email appears to describe new work."]
+        intakeReasons: ["Email appears to describe new work."],
+        communicationLog: [
+          {
+            id: "comm_123",
+            channel: "email",
+            direction: "inbound",
+            sourceLabel: "wmtanks",
+            subject: "Store update",
+            from: "facility.coordinator@walmart.com",
+            occurredAt: "2026-07-29T18:00:00.000Z",
+            humanResponseStatus: "Needs Response",
+            attachments: ["scope.pdf"]
+          }
+        ],
+        lastCommunicationAt: "2026-07-29T18:00:00.000Z",
+        lastCommunicationSubject: "Store update",
+        communicationNeedsResponse: true,
+        communicationResponseStatus: "Needs Office Review"
       }
     });
 
@@ -380,6 +459,10 @@ describe("Reynalds Brothers work item engine", () => {
     expect(update.data?.sourceReferenceId).toBe("gmail_preview_new_uco_9001");
     expect(update.data?.approvalDecisionAt).toBe("2026-07-29T17:00:00.000Z");
     expect(update.data?.intakeReasons).toEqual(["Email appears to describe new work."]);
+    expect(update.data?.communicationLog?.[0]?.sourceLabel).toBe("wmtanks");
+    expect(update.data?.communicationLog?.[0]?.attachments).toEqual(["scope.pdf"]);
+    expect(update.data?.communicationNeedsResponse).toBe(true);
+    expect(update.data?.communicationResponseStatus).toBe("Needs Office Review");
   });
 });
 

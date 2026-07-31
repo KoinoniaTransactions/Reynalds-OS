@@ -9,10 +9,12 @@ import {
 } from "../../lib/reynalds-brothers-email-intake";
 import {
   REYNALDS_BROTHERS_WORK_ITEM_TYPE,
+  addCommunicationToWorkItemData,
   applyChecklistAutomation,
   getActivationPhaseForJobType,
   getBillingPassoffSummary,
   getChecklistProgress,
+  getCommunicationSummary,
   getFieldProofSummary,
   getPhaseProgress,
   getRouteBatches,
@@ -35,6 +37,7 @@ import {
   reynaldsBrothersJobTypes,
   reynaldsBrothersLucernexStatuses,
   reynaldsBrothersOfficeUsers,
+  type ReynaldsBrothersCommunicationEntry,
   type ReynaldsBrothersWorkItemData,
   type ReynaldsBrothersWorkItemCreateInput,
   type ReynaldsBrothersWorkItem
@@ -106,6 +109,21 @@ const trialImportExample = [
 
 const trialWorkItemsStorageKey = "reynalds-brothers.trial-work-items.v1";
 
+const defaultCommunicationForm = {
+  channel: "email",
+  direction: "inbound",
+  sourceLabel: "wmtanks",
+  from: "",
+  to: "WMTanks@ReynoldsBrothers.com",
+  subject: "",
+  occurredAt: "",
+  snippet: "",
+  humanResponseStatus: "Needs Response",
+  humanResponseBy: "",
+  humanActionTaken: "",
+  humanResponseNotes: ""
+};
+
 export function ReynaldsBrothersOperationsSystem() {
   const [workItems, setWorkItems] = useState<ReynaldsBrothersWorkItem[]>(() =>
     reynaldsBrothersFallbackWorkItems.map(normalizeWorkItemStatus)
@@ -153,6 +171,7 @@ export function ReynaldsBrothersOperationsSystem() {
   const [manualEmailBody, setManualEmailBody] = useState("");
   const [emailActionPendingId, setEmailActionPendingId] = useState("");
   const [emailActionMessage, setEmailActionMessage] = useState("");
+  const [communicationForm, setCommunicationForm] = useState(defaultCommunicationForm);
   const [approvalActionPending, setApprovalActionPending] = useState("");
   const [trialImportText, setTrialImportText] = useState("");
   const [trialImportPending, setTrialImportPending] = useState(false);
@@ -218,6 +237,7 @@ export function ReynaldsBrothersOperationsSystem() {
   const selectedTankSummary = selected ? getTankInventorySummary(selected) : null;
   const selectedFieldProofSummary = selected ? getFieldProofSummary(selected) : null;
   const selectedBillingSummary = selected ? getBillingPassoffSummary(selected) : null;
+  const selectedCommunicationSummary = selected ? getCommunicationSummary(selected) : null;
   const trialImportPreview = useMemo(() => previewTrialWorkItemImport(trialImportText), [trialImportText]);
 
   useEffect(() => {
@@ -633,7 +653,8 @@ export function ReynaldsBrothersOperationsSystem() {
           email: {
             from: manualEmailFrom,
             subject: manualEmailSubject,
-            body: manualEmailBody
+            body: manualEmailBody,
+            sourceLabel: "wmtanks"
           }
         })
       });
@@ -647,6 +668,7 @@ export function ReynaldsBrothersOperationsSystem() {
           from: manualEmailFrom,
           subject: manualEmailSubject,
           body: manualEmailBody,
+          sourceLabel: "wmtanks",
           classification: payload.classification
         },
         ...current
@@ -680,7 +702,9 @@ export function ReynaldsBrothersOperationsSystem() {
             subject: email.subject,
             receivedAt: email.receivedAt,
             snippet: email.snippet,
-            body: email.body
+            body: email.body,
+            sourceLabel: email.sourceLabel ?? "wmtanks",
+            attachments: email.attachments ?? []
           },
           workItemId: email.classification.matchedWorkItemId
         })
@@ -699,6 +723,67 @@ export function ReynaldsBrothersOperationsSystem() {
       setError(err instanceof Error ? err.message : "Email action could not be completed.");
     } finally {
       setEmailActionPendingId("");
+    }
+  }
+
+  async function addSelectedCommunication(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!selected) return;
+
+    setError("");
+
+    const hasHumanDocumentation = Boolean(
+      communicationForm.humanResponseBy.trim()
+      || communicationForm.humanActionTaken.trim()
+      || communicationForm.humanResponseNotes.trim()
+      || !communicationForm.humanResponseStatus.toLowerCase().includes("needs")
+    );
+    const now = new Date().toISOString();
+    const communication: ReynaldsBrothersCommunicationEntry = {
+      id: `comm_manual_${Date.now()}`,
+      channel: communicationForm.channel,
+      direction: communicationForm.direction,
+      sourceLabel: communicationForm.sourceLabel || "wmtanks",
+      from: communicationForm.from,
+      to: communicationForm.to,
+      subject: communicationForm.subject,
+      occurredAt: communicationForm.occurredAt || now,
+      snippet: communicationForm.snippet,
+      humanResponseStatus: communicationForm.humanResponseStatus,
+      humanResponseBy: communicationForm.humanResponseBy,
+      humanResponseAt: hasHumanDocumentation ? now : undefined,
+      humanActionTaken: communicationForm.humanActionTaken,
+      humanResponseNotes: communicationForm.humanResponseNotes,
+      filedBy: "Office",
+      filedAt: now
+    };
+    const nextData = addCommunicationToWorkItemData(selectedData, communication);
+
+    if (source !== "database") {
+      saveLocalWorkItem({
+        ...selected,
+        data: markTrialWorkItemData(nextData, selected.id)
+      });
+      setCommunicationForm(defaultCommunicationForm);
+      setTrialImportMessage("Communication added to the job card in local trial mode.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/reynalds-brothers/work-items/${selected.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: nextData })
+      });
+
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Communication could not be added.");
+
+      await loadWorkItems();
+      if (payload.workItem?.id) setSelectedId(payload.workItem.id);
+      setCommunicationForm(defaultCommunicationForm);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Communication could not be added.");
     }
   }
 
@@ -932,6 +1017,11 @@ export function ReynaldsBrothersOperationsSystem() {
             <p>completion date recorded or closed status</p>
           </article>
           <article className="rb-metric">
+            <span>Comms Need Response</span>
+            <strong>{metrics.communicationNeedsResponse}</strong>
+            <p>wmtanks messages needing human documentation</p>
+          </article>
+          <article className="rb-metric">
             <span>Needs Approval</span>
             <strong>{metrics.needsApproval}</strong>
             <p>AI or manual intake awaiting human approval</p>
@@ -1105,6 +1195,151 @@ export function ReynaldsBrothersOperationsSystem() {
                     <dd>{selectedData.customerUpdateStatus ?? "Not set"}</dd>
                   </div>
                 </dl>
+
+                {selectedCommunicationSummary ? (
+                  <section className="rb-communication-panel">
+                    <div className="rb-section-heading">
+                      <div>
+                        <div className="ros-eyebrow">Communications</div>
+                        <h3>Email and response log</h3>
+                      </div>
+                      <span className={selectedCommunicationSummary.needsResponse > 0 ? "rb-blocked-pill" : "rb-ready-pill"}>
+                        {selectedCommunicationSummary.needsResponse > 0 ? `${selectedCommunicationSummary.needsResponse} need response` : "Current"}
+                      </span>
+                    </div>
+                    <div className="rb-communication-stats">
+                      <span>{selectedCommunicationSummary.total} filed</span>
+                      <span>{selectedCommunicationSummary.documented} documented</span>
+                      <span>{selectedData.lastCommunicationSubject ?? "No last subject"}</span>
+                    </div>
+                    <p>{selectedCommunicationSummary.nextAction}</p>
+                    <div className="rb-communication-list">
+                      {(selectedData.communicationLog ?? []).slice(0, 6).map((communication) => (
+                        <article className="rb-communication-card" key={communication.id}>
+                          <div>
+                            <span>{communication.sourceLabel ?? "wmtanks"}</span>
+                            <span>{communication.channel}</span>
+                            <span>{communication.humanResponseStatus ?? "Needs Response"}</span>
+                          </div>
+                          <h4>{communication.subject}</h4>
+                          <small>{formatCommunicationTime(communication.occurredAt ?? communication.filedAt)} - {communication.from ?? "sender not recorded"}</small>
+                          {communication.snippet ? <p>{communication.snippet}</p> : null}
+                          {communication.humanActionTaken ? <p><strong>Human action:</strong> {communication.humanActionTaken}</p> : null}
+                          {communication.humanResponseNotes ? <p><strong>Response notes:</strong> {communication.humanResponseNotes}</p> : null}
+                          {communication.humanResponseBy ? <small>Documented by {communication.humanResponseBy}</small> : null}
+                        </article>
+                      ))}
+                      {(selectedData.communicationLog ?? []).length === 0 ? (
+                        <p>No communications filed under this job yet.</p>
+                      ) : null}
+                    </div>
+
+                    <form className="rb-update-form rb-communication-form" onSubmit={addSelectedCommunication}>
+                      <div className="rb-form-section-heading">
+                        <span>Add communication or human action</span>
+                      </div>
+                      <label>
+                        Channel
+                        <select
+                          value={communicationForm.channel}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, channel: event.target.value })}
+                        >
+                          {["email", "phone", "Lucernex", "Service Channel", "vendor", "internal note"].map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        Direction
+                        <select
+                          value={communicationForm.direction}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, direction: event.target.value })}
+                        >
+                          {["inbound", "outbound", "internal"].map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        Source Label
+                        <input
+                          value={communicationForm.sourceLabel}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, sourceLabel: event.target.value })}
+                        />
+                      </label>
+                      <label>
+                        From
+                        <input
+                          value={communicationForm.from}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, from: event.target.value })}
+                        />
+                      </label>
+                      <label>
+                        To
+                        <input
+                          value={communicationForm.to}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, to: event.target.value })}
+                        />
+                      </label>
+                      <label>
+                        Occurred At
+                        <input
+                          value={communicationForm.occurredAt}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, occurredAt: event.target.value })}
+                          placeholder="2026-07-29 08:30"
+                        />
+                      </label>
+                      <label className="rb-wide-field">
+                        Subject
+                        <input
+                          required
+                          value={communicationForm.subject}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, subject: event.target.value })}
+                        />
+                      </label>
+                      <label className="rb-wide-field">
+                        Message Summary
+                        <textarea
+                          value={communicationForm.snippet}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, snippet: event.target.value })}
+                        />
+                      </label>
+                      <label>
+                        Human Response Status
+                        <select
+                          value={communicationForm.humanResponseStatus}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, humanResponseStatus: event.target.value })}
+                        >
+                          {["Needs Response", "Needs Phone Call", "Needs Vendor Follow-up", "Documented", "No Response Needed", "Waiting on Client", "Complete"].map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        Documented By
+                        <input
+                          value={communicationForm.humanResponseBy}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, humanResponseBy: event.target.value })}
+                        />
+                      </label>
+                      <label className="rb-wide-field">
+                        Human Action Taken
+                        <textarea
+                          value={communicationForm.humanActionTaken}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, humanActionTaken: event.target.value })}
+                        />
+                      </label>
+                      <label className="rb-wide-field">
+                        Response Notes
+                        <textarea
+                          value={communicationForm.humanResponseNotes}
+                          onChange={(event) => setCommunicationForm({ ...communicationForm, humanResponseNotes: event.target.value })}
+                        />
+                      </label>
+                      <button type="submit">Add Communication</button>
+                    </form>
+                  </section>
+                ) : null}
 
                 <section className="rb-checklist">
                   <h3>Red Flags</h3>
@@ -1683,6 +1918,20 @@ export function ReynaldsBrothersOperationsSystem() {
       </section>
     </main>
   );
+}
+
+function formatCommunicationTime(value?: string | null): string {
+  if (!value) return "time not recorded";
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return value;
+
+  return date.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
 }
 
 function getPreviewEmailCandidates(): ReynaldsBrothersEmailCandidate[] {

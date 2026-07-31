@@ -9,6 +9,8 @@ import {
 } from "./reynalds-brothers-work-items";
 
 export const REYNALDS_BROTHERS_COMMUNICATION_TYPE = "rb.communication";
+export const REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL = "wmtanks";
+export const REYNALDS_BROTHERS_GMAIL_LABEL_NAME = "WalMart Tanks";
 
 export type ReynaldsBrothersEmailInput = {
   providerMessageId?: string;
@@ -18,6 +20,8 @@ export type ReynaldsBrothersEmailInput = {
   receivedAt?: string;
   snippet?: string;
   body?: string;
+  sourceLabel?: string;
+  attachments?: string[];
 };
 
 export type ReynaldsBrothersEmailClassification = {
@@ -52,7 +56,8 @@ export const reynaldsBrothersFallbackEmails: ReynaldsBrothersEmailInput[] = [
     subject: "WM 450 - lower bay pressure washing schedule",
     receivedAt: "2026-07-29T08:15:00-06:00",
     snippet: "Can you confirm vac truck availability and disposal documentation for store 450?",
-    body: "Please confirm vac truck availability, disposal documentation, and after photos for Walmart store 450 in Shreveport, LA lower bay pressure washing."
+    body: "Please confirm vac truck availability, disposal documentation, and after photos for Walmart store 450 in Shreveport, LA lower bay pressure washing.",
+    sourceLabel: REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL
   },
   {
     providerMessageId: "gmail_preview_new_uco_9001",
@@ -61,7 +66,8 @@ export const reynaldsBrothersFallbackEmails: ReynaldsBrothersEmailInput[] = [
     subject: "New UCO tank replacement request - store 9001",
     receivedAt: "2026-07-29T09:05:00-06:00",
     snippet: "We have a new UCO tank replacement request for store 9001 in Tulsa.",
-    body: "New request for a used cooking oil tank replacement at Walmart store 9001 in Tulsa, OK. Please review scope and provide availability."
+    body: "New request for a used cooking oil tank replacement at Walmart store 9001 in Tulsa, OK. Please review scope and provide availability.",
+    sourceLabel: REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL
   },
   {
     providerMessageId: "gmail_preview_multi_store",
@@ -70,7 +76,8 @@ export const reynaldsBrothersFallbackEmails: ReynaldsBrothersEmailInput[] = [
     subject: "New ACC triage requests - stores 331 and 746",
     receivedAt: "2026-07-29T09:45:00-06:00",
     snippet: "Please start ACC triage for stores 331 Sulphur LA and 746 Temple TX.",
-    body: "Please start ACC Level 1 triage for Walmart store 331 in Sulphur, LA and store 746 in Temple, TX."
+    body: "Please start ACC Level 1 triage for Walmart store 331 in Sulphur, LA and store 746 in Temple, TX.",
+    sourceLabel: REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL
   },
   {
     providerMessageId: "gmail_preview_vendor_quote",
@@ -79,7 +86,8 @@ export const reynaldsBrothersFallbackEmails: ReynaldsBrothersEmailInput[] = [
     subject: "Updated alarm material quote",
     receivedAt: "2026-07-29T10:30:00-06:00",
     snippet: "Updated pricing attached for alarm materials. Not sure which site this belongs to.",
-    body: "Here is the updated quote for alarm materials. I do not have the site number in this thread."
+    body: "Here is the updated quote for alarm materials. I do not have the site number in this thread.",
+    sourceLabel: REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL
   }
 ];
 
@@ -209,8 +217,26 @@ export function validateEmailIntake(input: unknown): ReynaldsBrothersEmailInput 
     subject: getRequiredString(value.subject, "subject"),
     receivedAt: getOptionalString(value.receivedAt),
     snippet: getOptionalString(value.snippet),
-    body: getOptionalString(value.body)
+    body: getOptionalString(value.body),
+    sourceLabel: getOptionalString(value.sourceLabel) ?? REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL,
+    attachments: getStringList(value.attachments)
   };
+}
+
+function getStringList(input: unknown): string[] {
+  if (Array.isArray(input)) {
+    return input
+      .filter((item): item is string => typeof item === "string")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  if (typeof input !== "string") return [];
+
+  return input
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 function findMatchingWorkItem(
@@ -234,13 +260,19 @@ function looksLikeNewWork(text: string): boolean {
   return [
     "new request",
     "new work",
+    "new work order note",
+    "work order note",
     "want us to complete",
     "please complete",
+    "work completion",
     "replacement request",
     "service request",
     "triage request",
+    "tank triage",
     "start acc triage",
     "please schedule",
+    "tracking information",
+    "order has shipped",
     "scope",
     "availability",
     "site survey"
@@ -265,12 +297,12 @@ function inferCustomer(text: string, from: string): string | undefined {
 }
 
 function findStoreNumber(text: string): string | undefined {
-  const match = text.match(/(?:store|wm)[-\s]*#?\s*(\d{3,5})/);
+  const match = text.match(/(?:store\/club|store#?|store|wm|location id)[:\-\s#]*(\d{3,5})/);
   return match?.[1];
 }
 
 function findStoreNumbers(text: string): string[] {
-  const matches = [...text.matchAll(/(?:store|wm)[-\s]*#?\s*(\d{3,5})/g)];
+  const matches = [...text.matchAll(/(?:store\/club|store#?|store|wm|location id)[:\-\s#]*(\d{3,5})/g)];
   return [...new Set(matches.map((match) => match[1]))];
 }
 
@@ -340,12 +372,16 @@ function getWorkTypeName(serviceLine?: string): string {
 }
 
 function findCityState(text: string): { city: string; state: string } | undefined {
-  const match = text.match(/\bin\s+([a-z][a-z\s.'-]{2,40}),?\s+([a-z]{2})\b/);
+  const match = text.match(/\bin\s+([a-z][a-z\s.'-]{2,40}),?\s+([a-z]{2})\b/)
+    ?? text.match(/location id:\s*\d+\s*\|\s*([a-z][a-z\s.'-]{2,40})\s*\|\s*([a-z]{2})\b/)
+    ?? text.match(/city\/state\s+([a-z][a-z\s.'-]{2,40}),?\s+([a-z]{2}|[a-z\s]{4,24})\b/)
+    ?? text.match(/wm\s+\d{3,5}\s+([a-z][a-z\s.'-]{2,40})\s+state:\s+([a-z\s]{2,24})\b/);
+
   if (!match) return undefined;
 
   return {
     city: titleCase(match[1].trim()),
-    state: match[2].toUpperCase()
+    state: normalizeState(match[2])
   };
 }
 
@@ -357,6 +393,7 @@ function buildSuggestedLocation(storeNumber?: string, location?: { city: string;
 }
 
 function stateName(state: string): string {
+  const normalized = normalizeState(state);
   const states: Record<string, string> = {
     AL: "Alabama",
     AR: "Arkansas",
@@ -371,7 +408,15 @@ function stateName(state: string): string {
     TX: "Texas"
   };
 
-  return states[state.toUpperCase()] ?? state.toUpperCase();
+  return states[normalized] ?? titleCase(normalized.toLowerCase());
+}
+
+function normalizeState(state: string): string {
+  const value = state.trim();
+
+  if (value.length <= 2) return value.toUpperCase();
+
+  return titleCase(value.toLowerCase());
 }
 
 function titleCase(value: string): string {
@@ -379,6 +424,9 @@ function titleCase(value: string): string {
 }
 
 function getSuggestedNextAction(text: string, action: ReynaldsBrothersEmailClassification["action"]): string {
+  if (text.includes("work completion") || text.includes("completion date")) return "File completion proof and verify billing, photos, signatures, and closeout fields.";
+  if (text.includes("tracking information") || text.includes("order has shipped")) return "File tracking information and update tank delivery status.";
+  if (text.includes("invoice")) return "File vendor invoice and match it to the correct tank order or job.";
   if (text.includes("photos")) return "Confirm required photos and completion documentation.";
   if (text.includes("availability")) return "Confirm availability and planning requirements.";
   if (text.includes("quote")) return "Review quote and file it under the correct Work Item.";

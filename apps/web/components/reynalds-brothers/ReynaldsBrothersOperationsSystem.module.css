@@ -47,7 +47,7 @@
 }
 
 .brandScope :global(.rb-command-strip) {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 .brandScope :global(.ros-topbar) {
@@ -76,7 +76,8 @@
 .brandScope :global(.rb-section),
 .brandScope :global(.rb-detail),
 .brandScope :global(.rb-route-batch),
-.brandScope :global(.rb-tank-panel) {
+.brandScope :global(.rb-tank-panel),
+.brandScope :global(.rb-communication-panel) {
   background: rgba(255, 255, 255, 0.96);
 }
 
@@ -146,7 +147,8 @@
 .brandScope :global(.rb-detail-grid div),
 .brandScope :global(.rb-checklist),
 .brandScope :global(.rb-mini-columns div),
-.brandScope :global(.rb-module) {
+.brandScope :global(.rb-module),
+.brandScope :global(.rb-communication-card) {
   background: #f7faf8;
   border-color: #dfe5e2;
   border-radius: 8px;
@@ -280,6 +282,61 @@
   margin: 0;
   color: #2f7d5c;
   font-weight: 800;
+}
+
+.brandScope :global(.rb-communication-panel) {
+  display: grid;
+  gap: 14px;
+  border: 1px solid #dfe5e2;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.brandScope :global(.rb-communication-stats) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.brandScope :global(.rb-communication-stats span),
+.brandScope :global(.rb-communication-card > div span) {
+  border: 1px solid #dfe5e2;
+  border-radius: 6px;
+  padding: 5px 8px;
+  background: #ffffff;
+  color: #606266;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.brandScope :global(.rb-communication-list) {
+  display: grid;
+  gap: 10px;
+}
+
+.brandScope :global(.rb-communication-card) {
+  border: 1px solid #dfe5e2;
+  padding: 12px;
+}
+
+.brandScope :global(.rb-communication-card > div) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.brandScope :global(.rb-communication-card h4),
+.brandScope :global(.rb-communication-card p) {
+  margin: 0 0 7px;
+}
+
+.brandScope :global(.rb-communication-card small) {
+  color: #606266;
+}
+
+.brandScope :global(.rb-communication-form) {
+  margin-top: 2px;
 }
 
 .brandScope :global(#rb-intake),
