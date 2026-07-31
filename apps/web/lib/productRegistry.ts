@@ -51,6 +51,18 @@ export type ProductDefinition<TProductId extends string = string> =
   | InternalProductDefinition<TProductId>
   | PublicWebsiteProductDefinition<TProductId>;
 
+export type ProductRegistryValidationIssueCode =
+  | "duplicate-product-id"
+  | "duplicate-workspace-href"
+  | "duplicate-workspace-order";
+
+export type ProductRegistryValidationIssue = {
+  code: ProductRegistryValidationIssueCode;
+  value: string | number;
+  productIds: string[];
+  message: string;
+};
+
 export const productRegistry = [
   {
     id: "reynalds-os",
@@ -110,6 +122,84 @@ export const productRegistry = [
 
 export type Product = (typeof productRegistry)[number];
 export type ProductId = Product["id"];
+
+function recordRegistryValue(
+  registryValues: Map<string | number, string[]>,
+  value: string | number,
+  productId: string
+) {
+  const existingProductIds = registryValues.get(value) ?? [];
+  registryValues.set(value, [...existingProductIds, productId]);
+}
+
+function appendDuplicateIssues(
+  issues: ProductRegistryValidationIssue[],
+  registryValues: Map<string | number, string[]>,
+  code: ProductRegistryValidationIssueCode,
+  label: string
+) {
+  for (const [value, productIds] of registryValues) {
+    if (productIds.length < 2) {
+      continue;
+    }
+
+    issues.push({
+      code,
+      value,
+      productIds,
+      message: `${label} ${String(value)} is used by multiple products: ${productIds.join(
+        ", "
+      )}.`
+    });
+  }
+}
+
+export function validateProductRegistry(
+  registry: readonly ProductDefinition[] = productRegistry
+) {
+  const issues: ProductRegistryValidationIssue[] = [];
+  const productIds = new Map<string | number, string[]>();
+  const workspaceHrefs = new Map<string | number, string[]>();
+  const workspaceOrders = new Map<string | number, string[]>();
+
+  for (const product of registry) {
+    recordRegistryValue(productIds, product.id, product.id);
+
+    if (product.workspaceEntry) {
+      recordRegistryValue(
+        workspaceHrefs,
+        product.workspaceEntry.href,
+        product.id
+      );
+      recordRegistryValue(
+        workspaceOrders,
+        product.workspaceEntry.order,
+        product.id
+      );
+    }
+  }
+
+  appendDuplicateIssues(
+    issues,
+    productIds,
+    "duplicate-product-id",
+    "Product identifier"
+  );
+  appendDuplicateIssues(
+    issues,
+    workspaceHrefs,
+    "duplicate-workspace-href",
+    "Workspace route"
+  );
+  appendDuplicateIssues(
+    issues,
+    workspaceOrders,
+    "duplicate-workspace-order",
+    "Workspace order"
+  );
+
+  return issues;
+}
 
 export function getProductById(productId: ProductId) {
   return productRegistry.find((product) => product.id === productId);
