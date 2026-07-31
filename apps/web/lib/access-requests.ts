@@ -19,6 +19,11 @@ export type AccessRequestInput = {
   status: AccessRequestStatus;
 };
 
+export type AccessRequestStatusUpdateInput = {
+  notes?: string;
+  status: AccessRequestStatus;
+};
+
 export class AccessRequestValidationError extends Error {
   constructor(message: string) {
     super(message);
@@ -73,7 +78,15 @@ export function buildAccessRequestName(input: AccessRequestInput): string {
 }
 
 export function buildAccessRequestNextAction(input: AccessRequestInput): string {
-  switch (input.status) {
+  if (input.status === "Access Needed") {
+    return `Send the client safe access instructions for ${input.grantMethod} and avoid collecting raw credentials.`;
+  }
+
+  return buildAccessRequestStatusNextAction(input.status);
+}
+
+export function buildAccessRequestStatusNextAction(status: AccessRequestStatus): string {
+  switch (status) {
     case "Client Says Granted":
       return "Verify delegated access works and update the work item before using it.";
     case "No Longer Needed":
@@ -83,9 +96,30 @@ export function buildAccessRequestNextAction(input: AccessRequestInput): string 
     case "Waiting on Client":
       return "Wait for the client to grant delegated access or confirm approved next steps.";
     case "Access Needed":
-    default:
-      return `Send the client safe access instructions for ${input.grantMethod} and avoid collecting raw credentials.`;
+      return "Send the client safe access instructions and avoid collecting raw credentials.";
   }
+}
+
+export function validateAccessRequestStatusUpdateInput(
+  input: unknown
+): AccessRequestStatusUpdateInput {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    throw new AccessRequestValidationError("Access request status update body must be an object.");
+  }
+
+  const value = input as Record<string, unknown>;
+  const notes = optionalString(value.notes);
+
+  if (notes && containsCredentialLanguage(notes)) {
+    throw new AccessRequestValidationError(
+      "Do not include passwords, usernames, access codes, recovery codes, or private login details in access request status notes."
+    );
+  }
+
+  return {
+    notes,
+    status: normalizeRequiredAccessRequestStatus(value.status)
+  };
 }
 
 export function getAccessRequestHealth(status: AccessRequestStatus): string {
@@ -160,6 +194,20 @@ export function getAccessRequestMetaLabels(data: unknown): string[] {
 
 function normalizeAccessRequestStatus(value: unknown): AccessRequestStatus {
   const status = optionalString(value) ?? "Access Needed";
+
+  if (!allowedStatuses.has(status as AccessRequestStatus)) {
+    throw new AccessRequestValidationError("status must match an approved access request status.");
+  }
+
+  return status as AccessRequestStatus;
+}
+
+function normalizeRequiredAccessRequestStatus(value: unknown): AccessRequestStatus {
+  const status = optionalString(value);
+
+  if (!status) {
+    throw new AccessRequestValidationError("status is required.");
+  }
 
   if (!allowedStatuses.has(status as AccessRequestStatus)) {
     throw new AccessRequestValidationError("status must match an approved access request status.");
