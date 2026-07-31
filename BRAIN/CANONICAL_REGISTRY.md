@@ -20,6 +20,7 @@ Recover before reinventing.
 | Project State | BRAIN/PROJECT_STATE.md | Active |
 | Constitution | BRAIN/REYNALDS_OS_CONSTITUTION.md | Active |
 | Product and Company Boundaries | BRAIN/PRODUCT_BOUNDARIES.md | Active |
+| Product and Application Catalog | BRAIN/APPLICATION_CATALOG.md | Active |
 | Development Standards | BRAIN/DEVELOPMENT_STANDARDS.md | Active |
 | Design System Rules | BRAIN/DESIGN_SYSTEM_RULES.md | Active |
 | Repository Architecture | docs/ARCHITECTURE.md | Active |
@@ -56,8 +57,13 @@ Recover before reinventing.
 | Subject | Canonical Source | Status |
 |---------|------------------|--------|
 | React Application | apps/web/ | Active |
+| Executable Product Registry | apps/web/lib/productRegistry.ts | Active |
+| Product Registry Contract Tests | apps/web/lib/productRegistry.test.ts | Active |
+| Workspace Navigation | apps/web/lib/workspaceNavigation.ts | Active |
 | Design System | packages/design-system/ | Active |
 | Database Schema | packages/database/prisma/schema.prisma | Active |
+
+The Brain application catalog is authoritative for product meaning, ownership, audience, status, and boundaries. The executable product registry is authoritative for typed product metadata consumed by application code. Both sources must remain aligned.
 
 ---
 
@@ -71,7 +77,7 @@ Recover before reinventing.
 
 ## Product Boundary Rule
 
-Before proposing or modifying routing, hosting, repositories, deployments, workspaces, tenants, or application boundaries, consult `BRAIN/PRODUCT_BOUNDARIES.md` and identify whether the work concerns:
+Before proposing or modifying routing, hosting, repositories, deployments, workspaces, tenants, or application boundaries, consult `BRAIN/PRODUCT_BOUNDARIES.md` and `BRAIN/APPLICATION_CATALOG.md`, then identify whether the work concerns:
 
 - Reynalds OS,
 - a company,
@@ -81,8 +87,12 @@ Before proposing or modifying routing, hosting, repositories, deployments, works
 
 These concepts must not be treated as interchangeable.
 
+Application code that identifies, classifies, filters, or navigates to products must consume `apps/web/lib/productRegistry.ts` instead of creating a competing product list.
+
 ---
 
 ## Rule
 
 Always identify the canonical source before creating or modifying documentation, business rules, or application code.
+
+When a code change modifies canonical product metadata or behavior, update the relevant Brain source in the same focused slice or immediate follow-up commit.
