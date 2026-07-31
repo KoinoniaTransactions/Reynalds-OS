@@ -213,7 +213,7 @@ export function OperationsQueueMvp() {
     setError("");
 
     try {
-      const response = await fetch("/api/objects?objectType=rb.work_item&workspaceId=wks_reynalds_brothers");
+      const response = await fetch("/api/objects?objectType=rb.work_item");
       if (!response.ok) throw new Error("Failed to load Reynalds Brothers work items.");
       const data = await response.json();
       const loadedObjects = data.objects ?? [];
