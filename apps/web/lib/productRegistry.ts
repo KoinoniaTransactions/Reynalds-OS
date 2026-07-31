@@ -77,6 +77,16 @@ export class ProductRegistryValidationError extends Error {
   }
 }
 
+export class ProductNotFoundError extends Error {
+  readonly productId: string;
+
+  constructor(productId: string) {
+    super(`Canonical product ${productId} was not found in the product registry.`);
+    this.name = "ProductNotFoundError";
+    this.productId = productId;
+  }
+}
+
 export const productRegistry = [
   {
     id: "reynalds-os",
@@ -229,8 +239,18 @@ export function assertValidProductRegistry(
 
 assertValidProductRegistry();
 
-export function getProductById(productId: ProductId) {
-  return productRegistry.find((product) => product.id === productId);
+export function getProductById<TProductId extends ProductId>(
+  productId: TProductId
+): Extract<Product, { id: TProductId }> {
+  const product = productRegistry.find(
+    (candidate) => candidate.id === productId
+  );
+
+  if (!product) {
+    throw new ProductNotFoundError(productId);
+  }
+
+  return product as Extract<Product, { id: TProductId }>;
 }
 
 export function getInternalProducts() {
