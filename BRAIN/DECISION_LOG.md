@@ -108,3 +108,11 @@ Decision: The executable product registry must validate itself when loaded and t
 Reason: Returning validation issues only in tests is not sufficient protection for a canonical runtime source. Failing fast prevents ambiguous product identity and navigation metadata from silently reaching the application interface.
 
 Canonical sources: `BRAIN/APPLICATION_CATALOG.md` and `apps/web/lib/productRegistry.ts`
+
+## D-017 — Workspace Navigation Order Is Verified Independently of Registry Position
+
+Decision: Workspace query helpers must accept an explicit product registry for focused verification, and workspace navigation must be sorted by each entry's declared `order` rather than by product array position.
+
+Reason: A single canonical workspace entry cannot prove ordering behavior. Parameterized queries allow deterministic multi-entry tests that verify public products are excluded, workspace products remain complete, and navigation placement follows metadata even when registry entries are deliberately out of order.
+
+Canonical sources: `BRAIN/APPLICATION_CATALOG.md` and `apps/web/lib/productRegistry.ts`
