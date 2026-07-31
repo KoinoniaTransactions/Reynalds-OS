@@ -1,0 +1,89 @@
+{
+  "source": "gmail",
+  "label": "WalMart Tanks",
+  "alternateLabel": "wmtanks",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "page": 10,
+  "messageCount": 100,
+  "indexedThrough": 1000,
+  "nextPageToken": "08665399679078636519",
+  "snapshotAt": "2026-07-29T17:00:00-06:00",
+  "filingCandidates": [
+    {
+      "gmailId": "19d79261c0221542",
+      "threadId": "19d79261c0221542",
+      "storeNumber": "1907",
+      "city": "Hinsdale",
+      "state": "NH",
+      "workOrderNumber": "004927",
+      "subject": "Re: store: WM WM 1907 04-10-2026 Trever@reynaldsbrothers.com UCO Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-04-10T20:47:11",
+      "matchEvidence": ["store: WM WM 1907 subject", "Store/Club WM 1907", "City/State Hinsdale, NH", "USEV # 004927", "sender", "attachments"],
+      "recommendedCard": "WM 1907 - Hinsdale UCO / Morrison Gauge Photos"
+    },
+    {
+      "gmailId": "19d784d4c28d6939",
+      "threadId": "19d784d4c28d6939",
+      "storeNumber": "2331",
+      "city": "Waterford",
+      "state": "CT",
+      "workOrderNumber": "004918",
+      "subject": "Re: store: WM WM 2331 04-10-2026 Trever@reynaldsbrothers.com ACC Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via Walmart Paperwork wmpw@reynaldsbrothers.com",
+      "sentAt": "2026-04-10T16:50:21",
+      "matchEvidence": ["store: WM WM 2331 subject", "Store/Club WM 2331", "City/State Waterford, CT", "USEV # 004918", "sender", "attachments"],
+      "recommendedCard": "WM 2331 - Waterford ACC Morrison Gauge Completion"
+    },
+    {
+      "gmailId": "19d782d029b819ec",
+      "threadId": "19d55977ccc5fd9f",
+      "storeNumber": "7676",
+      "city": "Amarillo",
+      "state": "TX",
+      "subject": "Re: Sam's Club 7676 Amarillo TX - Fee proposal",
+      "sender": "Roy Payne via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-04-10T16:15:00",
+      "matchEvidence": ["Sam's Club 7676 subject", "Amarillo TX subject", "approval reply", "DocuSign note", "proposal attachment"],
+      "recommendedCard": "SC 7676 - Amarillo Fee Proposal"
+    }
+  ],
+  "enrichmentCandidates": [
+    {
+      "gmailId": "19d7d46b51902535",
+      "threadId": "19d7d46b51902535",
+      "storeNumber": "3702",
+      "city": "Jacksonville",
+      "state": "FL",
+      "subject": "Re: store: WM 3702 04-11-2026 austin.wright@reynaldsbrothers.com ACC Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-04-11T16:01:14",
+      "matchEvidence": ["store: WM 3702 subject", "Store/Club 3702", "City/State Jacksonville, FL", "technician", "sender", "attachments"],
+      "existingCard": "WM 3702 - Jacksonville ACC Hydraulic Lines"
+    },
+    {
+      "gmailId": "19d7791afc51ffd6",
+      "threadId": "19d201c17a78fd63",
+      "storeNumber": "5802",
+      "city": "Canovanas",
+      "state": "PR",
+      "subject": "Re: Waste oil tank store 5802",
+      "sender": "Shay Reynalds shay@reynaldsbrothers.com",
+      "sentAt": "2026-04-27T17:40:03",
+      "matchEvidence": ["store 5802 subject", "Puerto Rico store contacts", "Canovanas compliance context", "tank arrival timeline", "sender"],
+      "existingCard": "WM 5802 - Canovanas UCO Completion"
+    }
+  ],
+  "duplicateOrAlreadyFiled": [
+    {
+      "gmailId": "19d79288b8070863",
+      "threadId": "19d7900774ff1999",
+      "storeNumber": "211",
+      "city": "Hillsboro",
+      "state": "TX",
+      "subject": "RE: FW: WM Store # 211 Hillsboro TX Tank Observations",
+      "reason": "Store 211 tank-observation thread is already represented on the existing Store 211 job card from page 7."
+    }
+  ],
+  "reviewCandidates": []
+}

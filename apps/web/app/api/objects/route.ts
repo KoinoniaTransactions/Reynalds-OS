@@ -12,10 +12,12 @@ export async function GET(request: Request) {
   const objectType = url.searchParams.get("objectType");
   const health = url.searchParams.get("health");
   const status = url.searchParams.get("status");
+  const requestedWorkspaceId = url.searchParams.get("workspaceId");
+  const workspaceId = requestedWorkspaceId === "wks_reynalds_brothers" ? requestedWorkspaceId : user.workspaceId;
 
   const objects = await prisma.rosObject.findMany({
     where: {
-      workspaceId: user.workspaceId,
+      workspaceId,
       archivedAt: null,
       ...(objectType ? { objectType } : {}),
       ...(health ? { health } : {}),

@@ -1,0 +1,84 @@
+{
+  "source": "gmail",
+  "label": "WalMart Tanks",
+  "alternateLabel": "wmtanks",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "page": 14,
+  "messageCount": 100,
+  "indexedThrough": 1400,
+  "nextPageToken": "07992450762596571690",
+  "snapshotAt": "2026-07-30T00:30:00-06:00",
+  "filingCandidates": [
+    {
+      "gmailId": "19cbf9df3c935c23",
+      "threadId": "19cbf783c3342f1d",
+      "storeNumber": "8263",
+      "city": "Tulsa",
+      "state": "OK",
+      "subject": "Re: store 8263 Tulsa, OK - Used Cooking Oil Tank Replacement",
+      "sender": "Shay Reynalds shay@reynaldsbrothers.com",
+      "sentAt": "2026-03-05T20:08:05",
+      "recommendedCard": "SC 8263 - Tulsa UCO Tank Replacement"
+    },
+    {
+      "gmailId": "19cbf8f26394ef67",
+      "threadId": "19c492ae6c4481fb",
+      "storeNumber": "5172",
+      "city": "Perry",
+      "state": "FL",
+      "subject": "RE: 5172 Perry FL - no workflow?",
+      "sender": "Krista Krenz krista.krenz@aptim.com",
+      "sentAt": "2026-03-05T19:52:28",
+      "recommendedCard": "WM 5172 - Perry Lucernex Workflow"
+    },
+    {
+      "gmailId": "19cbf4f073dc1822",
+      "threadId": "19cb434d834b41e0",
+      "storeNumber": "690",
+      "city": "Elizabethton",
+      "state": "TN",
+      "subject": "RE: Walmart 690 - Elizabethton, TN - Used Cooking Oil Tank Replacement",
+      "sender": "Vincent Aguirre Vincent.Aguirre@liquidenviro.com",
+      "sentAt": "2026-03-05T19:02:59",
+      "recommendedCard": "WM 690 - Elizabethton UCO Tank Replacement"
+    }
+  ],
+  "reviewCandidates": [
+    {
+      "gmailId": "19cbed00c806ac3e",
+      "threadId": "19cbed00c806ac3e",
+      "subject": "Walmart 1590 Hialeah FL, Sam's Club 6217 (Miami Dade) Doral, FL invoices",
+      "sender": "Roy Payne via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-03-05T16:23:42",
+      "reason": "Invoice email spans two store projects and two PDF invoices; split by attachment/store before filing."
+    },
+    {
+      "gmailId": "19cbe9320c3af882",
+      "threadId": "19cbe9320c3af882",
+      "subject": "Mar 2026 Frontline Monthly Statement",
+      "sender": "Orders atomlinson@frontlineii.com",
+      "sentAt": "2026-03-05T15:17:07",
+      "reason": "Monthly supplier statement spans multiple invoices and does not expose a single store, WO, or PO for filing."
+    }
+  ],
+  "relatedMessages": [
+    {
+      "gmailId": "19cbfc58e322d41c",
+      "threadId": "19cbfc58e322d41c",
+      "storeNumber": "8263",
+      "city": "Tulsa",
+      "state": "OK",
+      "subject": "8263 Tulsa OK Tank Order",
+      "reason": "Tank-order support for the Store 8263 card; representative thread communication is filed separately."
+    },
+    {
+      "gmailId": "19cbae8798f27734",
+      "threadId": "19cb434d834b41e0",
+      "storeNumber": "690",
+      "city": "Elizabethton",
+      "state": "TN",
+      "subject": "RE: Walmart 690 - Elizabethton, TN - Used Cooking Oil Tank Replacement",
+      "reason": "Earlier permitting/PO follow-up within the Store 690 thread; representative pump-out update is filed."
+    }
+  ]
+}

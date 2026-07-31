@@ -127,6 +127,16 @@ AI may not overwrite verified facts.
 
 ---
 
+## WalMart Tanks Gmail Communications
+
+WalMart Tanks Gmail messages belong on the Work Item when a store number, work order, purchase order, city/state, subject, or sender creates a reliable match.
+
+Unmatched or weakly matched messages must be preserved in a review queue instead of being forced onto a job card.
+
+The canonical workflow is stored at `02_Companies/Reynalds_Brothers/04_Communications/Walmart_Tanks_Gmail_Workflow.md`.
+
+---
+
 ## Governance
 
 This object belongs to the Reynalds Brothers company domain under `02_Companies/Reynalds_Brothers`.

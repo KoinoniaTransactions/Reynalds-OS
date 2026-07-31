@@ -1,0 +1,82 @@
+{
+  "source": "Gmail",
+  "label": "WalMart Tanks",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "batchDate": "2026-07-29",
+  "page": 8,
+  "indexedThrough": 800,
+  "messageCount": 100,
+  "nextPageToken": "14607626984538127042",
+  "sampledThreadCount": 10,
+  "filingCandidates": [
+    {
+      "gmailId": "19dfe4d5bb79e93c",
+      "threadId": "19dfe4d5bb79e93c",
+      "storeNumber": "4857",
+      "city": "Cape Coral",
+      "state": "FL",
+      "subject": "Re: store: WM 4857 05-06-2026 austin.wright@reynaldsbrothers.com UCO Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 4857 - Cape Coral UCO Completion"
+    },
+    {
+      "gmailId": "19e2714999b23784",
+      "threadId": "19dfe38e93dab263",
+      "storeNumber": "582",
+      "city": "Port Orange",
+      "state": "FL",
+      "subject": "RE: FW: 9805751 WAL-MART SUPERCENTER #582",
+      "sender": "Krenz, Krista krista.krenz@aptim.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 582 - Port Orange Tank Testing / EQ"
+    },
+    {
+      "gmailId": "19e665c3c1eb2622",
+      "threadId": "19df9ec59813e465",
+      "storeNumber": "5094",
+      "workOrderNumber": "5094.1008",
+      "city": "Houston",
+      "state": "TX",
+      "subject": "RE: NHM Store 5094 Houston, TX - Used Cooking Oil Tank Replacement",
+      "sender": "Timothy Kimes via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "NHM 5094 - Houston PAP Notification"
+    },
+    {
+      "gmailId": "19df97eee56a2234",
+      "threadId": "19df97eee56a2234",
+      "storeNumber": "6364",
+      "city": "Naples",
+      "state": "FL",
+      "subject": "Re: store: WM 6364 05-05-2026 austin.wright@reynaldsbrothers.com UCO Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via Walmart Paperwork wmpw@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 6364 - Naples UCO Completion"
+    }
+  ],
+  "reviewCandidates": [
+    {
+      "gmailId": "19dfe4c611a63fea",
+      "threadId": "19dfe4a1d8633d86",
+      "subject": "Re: Newberry Tank Billing",
+      "sender": "Shay Reynalds shay@reynaldsbrothers.com",
+      "reviewReason": "Billing thread maps multiple invoices to stores 814, 551, 563, 942, and 943; it should be split by invoice before filing."
+    },
+    {
+      "gmailId": "19e0830705a1d31d",
+      "threadId": "19de47955513ac59",
+      "subject": "Re: Pump out Request",
+      "sender": "Vincent Aguirre / Liquid Environmental Solutions",
+      "reviewReason": "Coordination thread references multiple Sam's Club locations: 6364, 4857, 4828, 6403, and 4801."
+    }
+  ],
+  "duplicateOrAlreadyFiled": [
+    {
+      "gmailId": "19e50830ed624fe8",
+      "threadId": "19de47955513ac59",
+      "subject": "Re: #External - Ref. Walmart 471 at 150 North Interstate 35 east.",
+      "reason": "Store 471 permit valuation was already promoted from page 6."
+    }
+  ]
+}

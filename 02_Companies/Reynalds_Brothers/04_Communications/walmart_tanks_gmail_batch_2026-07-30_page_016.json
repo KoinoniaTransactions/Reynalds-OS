@@ -1,0 +1,101 @@
+{
+  "source": "gmail",
+  "label": "WalMart Tanks",
+  "alternateLabel": "wmtanks",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "page": 16,
+  "messageCount": 100,
+  "indexedThrough": 1600,
+  "nextPageToken": "15362772058712427822",
+  "snapshotAt": "2026-07-30T01:00:00-06:00",
+  "filingCandidates": [
+    {
+      "gmailId": "19c6dd8fc00c13b8",
+      "threadId": "19c6dd8fc00c13b8",
+      "storeNumber": "1090",
+      "city": "Jacksonville",
+      "state": "FL",
+      "subject": "Re: store: WM WM 1090 02-17-2026 Joseph.gossage@reynaldsbrothers.com ACC Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-02-17T23:04:20",
+      "recommendedCard": "WM 1090 - Jacksonville ACC Completion"
+    },
+    {
+      "gmailId": "19c698a96621f1ad",
+      "threadId": "19c698a96621f1ad",
+      "storeNumber": "501",
+      "city": "Laurel",
+      "state": "MS",
+      "workOrderNumber": "501.1011",
+      "subject": "[LxRetail] 501.1011 Laurel MS ACC Tank Replacement Workflow Updated",
+      "sender": "Walmart via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-02-17T03:00:09",
+      "recommendedCard": "WM 501 - Laurel ACC Tank Workflow"
+    },
+    {
+      "gmailId": "19c68d5e5b3047d8",
+      "threadId": "19c68d5e5b3047d8",
+      "storeNumber": "4421",
+      "city": "Columbus",
+      "state": "GA",
+      "workOrderNumber": "4421.1010",
+      "subject": "[LxRetail] 4421.1010 Columbus GA UCO Tank Replacement Workflow Updated",
+      "sender": "Walmart via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-02-16T23:42:52",
+      "recommendedCard": "WM 4421 - Columbus UCO Workflow"
+    },
+    {
+      "gmailId": "19c67a722840f1f9",
+      "threadId": "19bc3edf20617130",
+      "storeNumber": "7251",
+      "city": "Fort Worth",
+      "state": "TX",
+      "subject": "RE: EXT: Re: NHM 7251 - Fort Worth, TX - Used Cooking Oil Tank Replacement",
+      "sender": "Kearra Swift via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-02-16T18:12:28",
+      "recommendedCard": "NHM 7251 - Fort Worth UCO Tank Replacement"
+    }
+  ],
+  "enrichmentCandidates": [
+    {
+      "gmailId": "19c62f8c2be095ce",
+      "threadId": "19c62f8c2be095ce",
+      "storeNumber": "5172",
+      "city": "Perry",
+      "state": "FL",
+      "subject": "Re: store: WM WM- 5172 02-15-2026 Joseph.gossage@reynaldsbrothers.com ACC Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via Walmart Paperwork wmpw@reynaldsbrothers.com",
+      "sentAt": "2026-02-15T20:23:13",
+      "existingCard": "WM 5172 - Perry Lucernex Workflow"
+    }
+  ],
+  "reviewCandidates": [
+    {
+      "gmailId": "19c71336b052e81d",
+      "threadId": "19c7130eeec54a3c",
+      "subject": "Re: Exciting Addition to the AST-SPCC Program",
+      "sender": "Millie Wells millie@unitedinstallersplumbing.com",
+      "sentAt": "2026-02-18T14:41:47",
+      "reason": "Program staffing announcement has no store, WO, PO, or job card target."
+    },
+    {
+      "gmailId": "19c57a1706a0a290",
+      "threadId": "19c57a1706a0a290",
+      "subject": "Friday the 13th? Don't be unlucky when it comes to safety",
+      "sender": "SafetySign.com promotions@safetysign.com",
+      "sentAt": "2026-02-13T15:32:02",
+      "reason": "Vendor marketing email has no store, WO, PO, or active job card target."
+    }
+  ],
+  "alreadyFiled": [
+    {
+      "gmailId": "19c6c75e60acbdc0",
+      "threadId": "19c6c75e60acbdc0",
+      "storeNumber": "5960",
+      "city": "Socorro",
+      "state": "TX",
+      "subject": "WM 5960 Socorro TX - 47gal Caddy",
+      "reason": "Thread is already represented on the Store 5960 card from page 15."
+    }
+  ]
+}

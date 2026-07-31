@@ -1,0 +1,137 @@
+{
+  "source": "gmail",
+  "label": "WalMart Tanks",
+  "alternateLabel": "wmtanks",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "page": 11,
+  "messageCount": 100,
+  "indexedThrough": 1100,
+  "nextPageToken": "06189598496395367753",
+  "snapshotAt": "2026-07-29T17:15:00-06:00",
+  "filingCandidates": [
+    {
+      "gmailId": "19d49f3999e8adc0",
+      "threadId": "19d49f3999e8adc0",
+      "storeNumber": "4801",
+      "city": "Riverview",
+      "state": "FL",
+      "subject": "SC 4801 Riverview, FL -PROJECT RELEASE",
+      "sender": "John Nester john.nester@reynaldsbrothers.com",
+      "sentAt": "2026-04-01T16:49:41",
+      "recommendedCard": "SC 4801 - Riverview UCO Project Release"
+    },
+    {
+      "gmailId": "19d49e2df0a1ab3e",
+      "threadId": "19d49e2df0a1ab3e",
+      "storeNumber": "4801",
+      "city": "Riverview",
+      "state": "FL",
+      "workOrderNumber": "4801.1015",
+      "subject": "[LxRetail] 4801.1015 Riverview FL UCO Tank Replacement Workflow Updated",
+      "sender": "Walmart via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-04-01T16:31:34",
+      "recommendedCard": "SC 4801 - Riverview UCO Project Release"
+    },
+    {
+      "gmailId": "19d49e5fa05c1439",
+      "threadId": "19d49e5fa05c1439",
+      "storeNumber": "4201",
+      "city": "Edgewood",
+      "state": "NM",
+      "subject": "RE: Waste water tank ACC analog gauge store 4201 Edgewood, NM",
+      "sender": "Rachel Marie Barton via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-04-01T16:34:47",
+      "recommendedCard": "WM 4201 - Edgewood ACC Analog Gauge"
+    },
+    {
+      "gmailId": "19d4543cf5a258b3",
+      "threadId": "19d4543cf5a258b3",
+      "storeNumber": "3826",
+      "city": "Lubbock",
+      "state": "TX",
+      "subject": "Re: store: WM WM 3826 03-31-2026 austin.wright@reynaldsbrothers.com UCO Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-03-31T18:59:21",
+      "recommendedCard": "WM 3826 - Lubbock UCO Completion"
+    },
+    {
+      "gmailId": "19d448a3b1859d6f",
+      "threadId": "19d448a3b1859d6f",
+      "storeNumber": "4843",
+      "city": "Pearland",
+      "state": "TX",
+      "workOrderNumber": "COM2025-10030",
+      "subject": "FW: Inspection has been Completed (4843 Pearland TX)",
+      "sender": "Krista Krenz krista.krenz@aptim.com",
+      "sentAt": "2026-03-31T15:36:36",
+      "recommendedCard": "WM 4843 - Pearland Fire Final Inspection"
+    },
+    {
+      "gmailId": "19d45c10b9a34d2a",
+      "threadId": "19d45c10b9a34d2a",
+      "storeNumber": "175",
+      "city": "Collierville",
+      "state": "TN",
+      "workOrderNumber": "175.1016",
+      "subject": "[LxRetail] 175.1016 Collierville TN UCO Tank Replacement Workflow Updated",
+      "sender": "Walmart via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-03-31T21:16:09",
+      "recommendedCard": "WM 175 - Collierville UCO Workflow"
+    },
+    {
+      "gmailId": "19d4054e05d99c6d",
+      "threadId": "19d4054e05d99c6d",
+      "storeNumber": "2928",
+      "city": "Goose Creek",
+      "state": "SC",
+      "subject": "WM 2928 Goose Creek, SC -PROJECT RELEASE",
+      "sender": "John Nester john.nester@reynaldsbrothers.com",
+      "sentAt": "2026-03-30T19:59:45",
+      "recommendedCard": "WM 2928 - Goose Creek Project Release"
+    },
+    {
+      "gmailId": "19d3fa461367e0cb",
+      "threadId": "19cdd214f65152a2",
+      "storeNumber": "4794",
+      "city": "Lakeland",
+      "state": "FL",
+      "workOrderNumber": "344185400",
+      "subject": "Re: Sam’s Club 4794 - Lakeland, FL - Grease Tank",
+      "sender": "James Sbanotto via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-03-30T16:46:23",
+      "recommendedCard": "SC 4794 - Lakeland Grease Tank"
+    }
+  ],
+  "enrichmentCandidates": [
+    {
+      "gmailId": "19d4034e48ab870a",
+      "threadId": "19d3f3645265b0be",
+      "storeNumber": "4702",
+      "city": "Friendswood",
+      "state": "TX",
+      "subject": "Re: Sams 4702 Friendswood TX - Larger Used Cooking Oil Tank Installation",
+      "sender": "Shay Reynalds shay@reynaldsbrothers.com",
+      "sentAt": "2026-03-30T19:24:47",
+      "existingCard": "SC 4702 - Friendswood Project Release"
+    }
+  ],
+  "reviewCandidates": [
+    {
+      "gmailId": "19d49ef471511dd2",
+      "threadId": "19d49ef471511dd2",
+      "subject": "Apr 2026 Frontline Monthly Statement",
+      "sender": "Orders atomlinson@frontlineii.com",
+      "sentAt": "2026-04-01T16:45:01",
+      "reason": "Monthly supplier statement spans multiple invoices and does not expose a single store, WO, or PO for filing."
+    },
+    {
+      "gmailId": "19d45ca4ec0c1b11",
+      "threadId": "19d45ca4ec0c1b11",
+      "storeNumber": "1118",
+      "subject": "Re: store: WM 1118 03-31-2026 skip@reynaldsbrothers.com ACC Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-03-31T21:26:16",
+      "reason": "Store was detected but City/State is incomplete or misspelled as Batch Springs with no state."
+    }
+  ]
+}

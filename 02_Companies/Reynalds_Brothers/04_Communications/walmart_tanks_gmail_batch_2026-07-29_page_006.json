@@ -1,0 +1,124 @@
+{
+  "source": "Gmail",
+  "label": "WalMart Tanks",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "batchDate": "2026-07-29",
+  "page": 6,
+  "indexedThrough": 600,
+  "messageCount": 100,
+  "nextPageToken": "00774033279200523994",
+  "sampledThreadCount": 10,
+  "filingCandidates": [
+    {
+      "gmailId": "19e50d6d9ce5bd80",
+      "threadId": "19e50d6d9ce5bd80",
+      "storeNumber": "1068",
+      "workOrderNumber": "1068.1017",
+      "city": "Sebastian",
+      "state": "FL",
+      "subject": "[LxRetail] 1068.1017 Sebastian FL ACC Tank Replacement Workflow Updated",
+      "sender": "Walmart via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 1068 - Sebastian ACC Tank Replacement"
+    },
+    {
+      "gmailId": "19e50a0a8eff5a23",
+      "threadId": "19e50a0a8eff5a23",
+      "storeNumber": "2214",
+      "city": "Columbia",
+      "state": "SC",
+      "subject": "Ref Walmart 2214 at 5420 Forest dr.",
+      "sender": "Skip Zabel skip@reynaldsbrothers.com",
+      "matchConfidence": "medium",
+      "recommendedCard": "WM 2214 - Columbia Permit Coordination"
+    },
+    {
+      "gmailId": "19e64e2128566437",
+      "threadId": "19e5015789a1cc66",
+      "storeNumber": "5480",
+      "workOrderNumber": "338091191",
+      "city": "Round Rock",
+      "state": "TX",
+      "subject": "Re: WM 5480 Round Rock, TX",
+      "sender": "Krenz, Krista krista.krenz@aptim.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 5480 - Round Rock Tank Scope"
+    },
+    {
+      "gmailId": "19e50830ed624fe8",
+      "threadId": "19de47955513ac59",
+      "storeNumber": "471",
+      "city": "Lancaster",
+      "state": "TX",
+      "subject": "Re: #External - Ref. Walmart 471 at 150 North Interstate 35 east.",
+      "sender": "Skip Zabel skip@reynaldsbrothers.com",
+      "matchConfidence": "medium",
+      "recommendedCard": "WM 471 - Lancaster Permit Valuation"
+    },
+    {
+      "gmailId": "19e4c4bc5ddc0f8c",
+      "threadId": "19e4c4bc5ddc0f8c",
+      "storeNumber": "5094",
+      "city": "Houston",
+      "state": "TX",
+      "subject": "FW: Walmart Neighborhood Market #5094 Houston, TX PAP Notification",
+      "sender": "WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "NHM 5094 - Houston PAP Notification"
+    },
+    {
+      "gmailId": "19e4c010375d0984",
+      "threadId": "19e4c010375d0984",
+      "storeNumber": "3296",
+      "workOrderNumber": "3296.1016",
+      "city": "Houston",
+      "state": "TX",
+      "subject": "[LxRetail] 3296.1016 Houston TX ACC Tank Replacement Workflow Updated",
+      "sender": "Walmart via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 3296 - Houston ACC Tank Replacement"
+    },
+    {
+      "gmailId": "19e4bec1be20a2cb",
+      "threadId": "19e4bcfa25474f61",
+      "storeNumber": "3296",
+      "city": "Houston",
+      "state": "TX",
+      "subject": "RE: FW: 3296 Houston, TX ACC tank replacement",
+      "sender": "Krenz, Krista krista.krenz@aptim.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 3296 - Houston ACC Tank Replacement"
+    },
+    {
+      "gmailId": "19e4be2cdefc64be",
+      "threadId": "19cbe187edd745fc",
+      "storeNumber": "1540",
+      "city": "South Haven",
+      "state": "MI",
+      "subject": "Re: 1540 South Haven, MI - pressure washing needed",
+      "sender": "Shay Reynalds shay@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 1540 - South Haven Pressure Washing"
+    },
+    {
+      "gmailId": "19e4bcc9f5318b82",
+      "threadId": "19e4bcc9f5318b82",
+      "storeNumber": "1168",
+      "city": "Columbia",
+      "state": "MS",
+      "subject": "Re: store: WM 1168 05-21-2026 trey.turner@reynaldsbrothers.com ACC Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "matchConfidence": "high",
+      "recommendedCard": "WM 1168 - Columbia ACC UCO Completion"
+    }
+  ],
+  "reviewCandidates": [
+    {
+      "gmailId": "19e88de31ef4e548",
+      "threadId": "19e02e1a825f7880",
+      "subject": "RE: Next set of 6 stores (Sales Orders #7296 - #7301), adding Sales Order #7348",
+      "sender": "Dave Dooley via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "reviewReason": "Supplier sales-order thread references multiple stores and sales orders; store-level split requires invoice or attachment review before filing."
+    }
+  ]
+}

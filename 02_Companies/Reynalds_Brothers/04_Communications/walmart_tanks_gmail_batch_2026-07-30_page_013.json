@@ -1,0 +1,64 @@
+{
+  "source": "gmail",
+  "label": "WalMart Tanks",
+  "alternateLabel": "wmtanks",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "page": 13,
+  "messageCount": 100,
+  "indexedThrough": 1300,
+  "nextPageToken": "14633006943640916215",
+  "snapshotAt": "2026-07-30T00:15:00-06:00",
+  "filingCandidates": [
+    {
+      "gmailId": "19cfbd0861581739",
+      "threadId": "19cf9400daafdf48",
+      "storeNumber": "970",
+      "city": "Picayune",
+      "state": "MS",
+      "subject": "Re: 970 Picayune MS - Used Cooking Oil Tank replacement",
+      "sender": "Justin Matthews via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-03-17T12:40:42",
+      "recommendedCard": "WM 970 - Picayune UCO Tank Replacement"
+    },
+    {
+      "gmailId": "19cf88622fcf0e9c",
+      "threadId": "19ab7572055eb70b",
+      "storeNumber": "6521",
+      "city": "Houma",
+      "state": "LA",
+      "subject": "Re: EXT: Re: SC 6521 - Houma, LA - Used Cooking Oil Tank Replacement",
+      "sender": "Shay Reynalds shay@reynaldsbrothers.com",
+      "sentAt": "2026-03-16T21:20:28",
+      "recommendedCard": "SC 6521 - Houma UCO Tank Replacement"
+    }
+  ],
+  "reviewCandidates": [
+    {
+      "gmailId": "19cf871d20d1a4eb",
+      "threadId": "19cf871d20d1a4eb",
+      "subject": "Contracts for permitting",
+      "sender": "John Nester john.nester@reynaldsbrothers.com",
+      "sentAt": "2026-03-16T20:58:40",
+      "reason": "Email contains four separate permit-contract attachments for stores 942, 943, 2690, and 563; split by attachment/store before filing."
+    },
+    {
+      "gmailId": "19cf7bbfebb716a7",
+      "threadId": "19cf7bbfebb716a7",
+      "subject": "Re: Store and LES notifications",
+      "sender": "Shay Reynalds shay@reynaldsbrothers.com",
+      "sentAt": "2026-03-16T17:39:41",
+      "reason": "Route notification lists multiple upcoming store deliveries and service windows; split by store before filing."
+    }
+  ],
+  "alreadyFiled": [
+    {
+      "gmailId": "19cdd214f65152a2",
+      "threadId": "19cdd214f65152a2",
+      "storeNumber": "4794",
+      "city": "Lakeland",
+      "state": "FL",
+      "subject": "Sam's Club 4794 - Lakeland, FL - Grease Tank",
+      "reason": "Thread is already represented on the Store 4794 card from page 11."
+    }
+  ]
+}

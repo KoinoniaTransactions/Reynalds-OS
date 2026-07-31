@@ -1,0 +1,106 @@
+{
+  "source": "gmail",
+  "label": "WalMart Tanks",
+  "alternateLabel": "wmtanks",
+  "query": "label:\"WalMart Tanks\" -in:spam -in:trash",
+  "page": 15,
+  "messageCount": 100,
+  "indexedThrough": 1500,
+  "nextPageToken": "05186283183254454331",
+  "snapshotAt": "2026-07-30T00:45:00-06:00",
+  "filingCandidates": [
+    {
+      "gmailId": "19c91c1c290785e0",
+      "threadId": "19c91c1c290785e0",
+      "storeNumber": "5780",
+      "city": "Paragould",
+      "state": "AR",
+      "subject": "Re: store: WM 5780 02-24-2026 jeremiah@reynaldsbrothers.com UCO Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-02-24T22:25:17",
+      "recommendedCard": "WM 5780 - Paragould UCO Completion"
+    },
+    {
+      "gmailId": "19c91899e0447d8d",
+      "threadId": "19c91899e0447d8d",
+      "storeNumber": "1185",
+      "city": "Austin",
+      "state": "TX",
+      "workOrderNumber": "1185.1013",
+      "subject": "[LxRetail] 1185.1013 Austin TX ACC Tank Replacement Workflow Updated",
+      "sender": "Walmart via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-02-24T21:23:58",
+      "recommendedCard": "WM 1185 - Austin ACC Tank Workflow"
+    },
+    {
+      "gmailId": "19c913d687e6e786",
+      "threadId": "19c6c75e60acbdc0",
+      "storeNumber": "5960",
+      "city": "Socorro",
+      "state": "TX",
+      "subject": "Re: WM 5960 Socorro TX - 47gal Caddy",
+      "sender": "Darren Fielder darren@reynaldsbrothers.com",
+      "sentAt": "2026-02-24T20:00:06",
+      "recommendedCard": "WM 5960 - Socorro Caddy Motor Warranty"
+    },
+    {
+      "gmailId": "19c8cd417a7183bd",
+      "threadId": "19c8cd417a7183bd",
+      "storeNumber": "3535",
+      "city": "Epping",
+      "state": "NH",
+      "workOrderNumber": "USEV-004928",
+      "subject": "RE: Wastewater tank gauge issue 3535 Epping NH - Reynalds",
+      "sender": "Rachel Marie Barton via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-02-23T23:27:00",
+      "recommendedCard": "WM 3535 - Epping ACC Gauge"
+    },
+    {
+      "gmailId": "19c7d3d579b28194",
+      "threadId": "19c7d3d579b28194",
+      "storeNumber": "4445",
+      "city": "Clemson",
+      "state": "SC",
+      "subject": "Re: store: WM 4445 02-20-2026 jeremiah@reynaldsbrothers.com UCO Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via Walmart Paperwork wmpw@reynaldsbrothers.com",
+      "sentAt": "2026-02-20T22:48:15",
+      "recommendedCard": "WM 4445 - Clemson UCO Completion"
+    }
+  ],
+  "enrichmentCandidates": [
+    {
+      "gmailId": "19c9223f1a99b1e8",
+      "threadId": "19c7c7bf4d1414ab",
+      "storeNumber": "471",
+      "city": "Lancaster",
+      "state": "TX",
+      "subject": "RE: WM 471 Lancaster TX - Non Standard Order",
+      "sender": "Dave Dooley via WalMart Tanks Program wmtanks@reynaldsbrothers.com",
+      "sentAt": "2026-02-25T00:12:27",
+      "existingCard": "WM 471 - Lancaster Permit Valuation"
+    }
+  ],
+  "reviewCandidates": [
+    {
+      "gmailId": "19c8d1e4cf3c117a",
+      "threadId": "19c8d1e4cf3c117a",
+      "storeNumber": "5182",
+      "city": "Murfreesboro",
+      "subject": "Re: store: WM 5182 02-23-2026 jeremiah@reynaldsbrothers.com UCO Walmart ACC UCO Work Completion [^]",
+      "sender": "Jotform via Walmart Paperwork wmpw@reynaldsbrothers.com",
+      "sentAt": "2026-02-24T00:48:16",
+      "reason": "Jotform has store 5182 and Murfreesboro but no state in the sampled city/state field; confirm state before filing."
+    }
+  ],
+  "alreadyFiled": [
+    {
+      "gmailId": "19c71b6cb551ce9c",
+      "threadId": "19c71b6cb551ce9c",
+      "storeNumber": "3826",
+      "city": "Lubbock",
+      "state": "TX",
+      "subject": "WM Supercenter #3826 - Lubbock, TX - Used Cooking Oil Tank Replacement",
+      "reason": "Thread is already represented on the Store 3826 card from pages 11 and 12."
+    }
+  ]
+}
