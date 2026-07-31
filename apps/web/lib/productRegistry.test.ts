@@ -7,11 +7,61 @@ import {
   getPublicWebsites,
   getWorkspaceNavigationEntries,
   getWorkspaceProducts,
-  productRegistry
+  productRegistry,
+  validateProductRegistry
 } from "./productRegistry";
 import { workspaceNavigation } from "./workspaceNavigation";
 
 describe("product registry", () => {
+  it("passes canonical registry validation", () => {
+    expect(validateProductRegistry()).toEqual([]);
+  });
+
+  it("reports duplicate identifiers, workspace routes, and workspace order", () => {
+    const issues = validateProductRegistry([
+      {
+        id: "duplicate-product",
+        name: "First Internal Product",
+        owner: "Example Owner",
+        type: "company-operating-system",
+        audience: "internal",
+        purpose: "Exercise registry validation.",
+        status: "active",
+        hasPublicWebsite: false,
+        recordAuthority: "reynalds-os",
+        workspaceEntry: {
+          label: "First",
+          href: "/duplicate",
+          enabled: true,
+          order: 100
+        }
+      },
+      {
+        id: "duplicate-product",
+        name: "Second Internal Product",
+        owner: "Example Owner",
+        type: "company-operating-system",
+        audience: "internal",
+        purpose: "Exercise registry validation.",
+        status: "active",
+        hasPublicWebsite: false,
+        recordAuthority: "reynalds-os",
+        workspaceEntry: {
+          label: "Second",
+          href: "/duplicate",
+          enabled: true,
+          order: 100
+        }
+      }
+    ]);
+
+    expect(issues.map((issue) => issue.code)).toEqual([
+      "duplicate-product-id",
+      "duplicate-workspace-href",
+      "duplicate-workspace-order"
+    ]);
+  });
+
   it("uses unique canonical product identifiers", () => {
     const productIds = productRegistry.map((product) => product.id);
 
