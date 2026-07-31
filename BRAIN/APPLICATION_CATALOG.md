@@ -8,6 +8,8 @@ It exists so future AI sessions and developers can quickly determine what they a
 
 This catalog must be read together with `BRAIN/PRODUCT_BOUNDARIES.md`.
 
+The executable counterpart to this catalog is `apps/web/lib/productRegistry.ts`. The Brain defines the meaning and boundaries; the registry provides typed application metadata for code.
+
 ---
 
 # Catalog Rules
@@ -18,6 +20,7 @@ This catalog must be read together with `BRAIN/PRODUCT_BOUNDARIES.md`.
 4. Shared packages and infrastructure do not erase product boundaries.
 5. Business records may be stored in Reynalds OS even when the public or internal product is separate.
 6. Unknown deployment, repository, or synchronization details must remain undecided until verified.
+7. Code that classifies, filters, navigates to, or grants access to products should use the canonical product registry instead of duplicating product identity rules.
 
 ---
 
@@ -119,6 +122,26 @@ It is also not automatically the same user interface, deployment, or product as 
 
 ---
 
+# Executable Registry Contract
+
+`apps/web/lib/productRegistry.ts` is the typed application manifest for cataloged products.
+
+It currently provides:
+
+- canonical product identifiers,
+- product ownership and purpose,
+- product type and audience,
+- product status,
+- record-authority metadata,
+- optional workspace navigation metadata,
+- centralized queries for internal products, public websites, workspace products, and active products.
+
+Consumers should use registry helpers such as `getProductById`, `getInternalProducts`, `getPublicWebsites`, `getWorkspaceProducts`, and `getActiveProducts` rather than repeating classification logic.
+
+The registry does not replace this Brain document. When product meaning, ownership, status, audience, records, or boundaries change, update the Brain first or in the same focused change, then keep the executable registry aligned.
+
+---
+
 # Decision Checklist
 
 Before changing architecture or code, answer all of the following:
@@ -129,6 +152,8 @@ Before changing architecture or code, answer all of the following:
 4. Is the work part of the product interface, shared infrastructure, or a record inside Reynalds OS?
 5. Does the change preserve the boundaries in `BRAIN/PRODUCT_BOUNDARIES.md`?
 6. Are repository, hosting, deployment, and synchronization assumptions verified rather than inferred?
+7. Does the executable registry remain aligned with this catalog?
+8. Does this architectural change require a Brain update before the slice is considered complete?
 
 If any answer is unclear, inspect the Brain and repository before implementing.
 
@@ -143,6 +168,9 @@ Update this catalog when:
 - a public or internal audience changes,
 - record ownership changes,
 - deployment or repository boundaries become canonical,
-- a product is retired or replaced.
+- a product is retired or replaced,
+- registry structure changes how product identity, navigation, access, or classification is represented in code.
+
+Architectural work should document the Brain frequently. A focused code slice that changes canonical product behavior should include a Brain update in the same slice or in the immediate follow-up commit before moving to unrelated work.
 
 Do not add speculative products merely because they may be useful in the future.
