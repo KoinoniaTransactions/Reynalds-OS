@@ -36,6 +36,84 @@ export const seoConfig = {
       title: "Contact Koinonia",
       description:
         "Contact Koinonia for Colorado real estate operations support, transaction coordination, contract support, showing coverage, or monthly business support."
+    },
+    {
+      path: "/properties",
+      title: "Koinonia Properties | Property Management",
+      description:
+        "Koinonia Properties provides property management paths for owners, tenants, rentals, maintenance, portals, pricing, and operating standards."
+    },
+    {
+      path: "/properties/owners",
+      title: "Owner Services | Koinonia Properties",
+      description:
+        "Property management owner services for rental analysis, leasing support, maintenance coordination, owner reporting, and management planning."
+    },
+    {
+      path: "/properties/tenants",
+      title: "Tenant Services | Koinonia Properties",
+      description:
+        "Tenant services for available rentals, applications, maintenance requests, portal access, rent payment direction, and resident support."
+    },
+    {
+      path: "/properties/rentals",
+      title: "Available Rentals | Koinonia Properties",
+      description:
+        "Available rentals and upcoming rental inventory for Koinonia Properties, with listing readiness, application direction, and tenant next steps."
+    },
+    {
+      path: "/properties/portals",
+      title: "Owner and Tenant Portals | Koinonia Properties",
+      description:
+        "Portal access direction for Koinonia Properties owners, tenants, vendors, and applicants using the approved property management platform."
+    },
+    {
+      path: "/properties/rental-analysis",
+      title: "Rental Analysis | Koinonia Properties",
+      description:
+        "Request a rental analysis for property management fit, rental readiness, target rent, owner goals, and service-level planning."
+    },
+    {
+      path: "/properties/pricing",
+      title: "Pricing and Scope | Koinonia Properties",
+      description:
+        "Property management pricing and scope guidance for leasing-only support, full-service management, portfolio support, and owner expectations."
+    },
+    {
+      path: "/properties/service-areas",
+      title: "Service Areas | Koinonia Properties",
+      description:
+        "Property management service area guidance for markets where Koinonia Properties can support owners, tenants, vendors, and rental operations."
+    },
+    {
+      path: "/properties/policies",
+      title: "Policies | Koinonia Properties",
+      description:
+        "Property management policy readiness for applications, tenants, maintenance, vendors, owner agreements, privacy, and compliance."
+    },
+    {
+      path: "/properties/apply",
+      title: "Apply for a Rental | Koinonia Properties",
+      description:
+        "Rental application guidance for applicants before personal information is collected, including criteria, availability, and next steps."
+    },
+    {
+      path: "/properties/maintenance",
+      title: "Maintenance Requests | Koinonia Properties",
+      description:
+        "Maintenance request guidance for routine issues, urgent concerns, vendor coordination, owner approvals, and repair tracking."
+    },
+    {
+      path: "/properties/vendors",
+      title: "Vendor Coordination | Koinonia Properties",
+      description:
+        "Vendor coordination standards for property management work orders, insurance, service areas, invoices, and emergency routing."
+    },
+    {
+      path: "/properties/standards",
+      title: "Operating Standards | Koinonia Properties",
+      description:
+        "Operating standards for property management owner services, tenant services, maintenance, vendors, accounting, compliance, and launch readiness."
     }
   ]
 } as const;
