@@ -174,6 +174,9 @@ const propertiesServiceJsonLd = {
   "@context": "https://schema.org",
   "@type": "Service",
   name: "Koinonia Properties",
+  url: "https://koinoniaadmin.com/properties",
+  description:
+    "Property management services for rental property owners, tenants, and real estate investors, including rental analysis, leasing support, maintenance coordination, and owner communication.",
   serviceType: "Property management and rental property management",
   provider: {
     "@type": "Organization",
