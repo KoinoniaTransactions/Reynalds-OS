@@ -63,6 +63,20 @@ export type ProductRegistryValidationIssue = {
   message: string;
 };
 
+export class ProductRegistryValidationError extends Error {
+  readonly issues: readonly ProductRegistryValidationIssue[];
+
+  constructor(issues: readonly ProductRegistryValidationIssue[]) {
+    super(
+      `Product registry validation failed:\n${issues
+        .map((issue) => `- ${issue.message}`)
+        .join("\n")}`
+    );
+    this.name = "ProductRegistryValidationError";
+    this.issues = issues;
+  }
+}
+
 export const productRegistry = [
   {
     id: "reynalds-os",
@@ -200,6 +214,20 @@ export function validateProductRegistry(
 
   return issues;
 }
+
+export function assertValidProductRegistry(
+  registry: readonly ProductDefinition[] = productRegistry
+) {
+  const issues = validateProductRegistry(registry);
+
+  if (issues.length > 0) {
+    throw new ProductRegistryValidationError(issues);
+  }
+
+  return registry;
+}
+
+assertValidProductRegistry();
 
 export function getProductById(productId: ProductId) {
   return productRegistry.find((product) => product.id === productId);
