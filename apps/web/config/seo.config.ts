@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://koinoniatransactions.com";
 
 export const seoConfig = {
@@ -121,4 +123,54 @@ export const seoConfig = {
 export function absoluteUrl(path = "/") {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return `${siteUrl}${normalizedPath}`;
+}
+
+export function getPublicRouteSeo(path: string) {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const route = seoConfig.publicRoutes.find((candidate) => candidate.path === normalizedPath);
+
+  if (!route) {
+    throw new Error(`Missing public SEO route for ${normalizedPath}`);
+  }
+
+  return route;
+}
+
+export function buildPublicRouteMetadata(path: string, keywords?: string[]): Metadata {
+  const route = getPublicRouteSeo(path);
+  const metadata: Metadata = {
+    title: route.title,
+    description: route.description,
+    alternates: {
+      canonical: absoluteUrl(route.path)
+    },
+    openGraph: {
+      title: route.title,
+      description: route.description,
+      url: absoluteUrl(route.path),
+      siteName: seoConfig.siteName,
+      images: [
+        {
+          url: absoluteUrl(seoConfig.socialPreviewPath),
+          width: seoConfig.socialPreviewWidth,
+          height: seoConfig.socialPreviewHeight,
+          alt: route.title
+        }
+      ],
+      locale: seoConfig.locale,
+      type: "website"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: route.title,
+      description: route.description,
+      images: [absoluteUrl(seoConfig.socialPreviewPath)]
+    }
+  };
+
+  if (keywords?.length) {
+    metadata.keywords = keywords;
+  }
+
+  return metadata;
 }
