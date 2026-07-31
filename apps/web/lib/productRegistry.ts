@@ -14,6 +14,12 @@ export type ProductRecordAuthority =
   | "reynalds-os"
   | "reynalds-os-with-verified-integration";
 
+export type ProductWorkspaceEntry = {
+  label: string;
+  href: string;
+  enabled: boolean;
+};
+
 export type ProductDefinition = {
   id:
     | "reynalds-os"
@@ -28,6 +34,7 @@ export type ProductDefinition = {
   status: ProductStatus;
   hasPublicWebsite: boolean;
   recordAuthority: ProductRecordAuthority;
+  workspaceEntry?: ProductWorkspaceEntry;
 };
 
 export const productRegistry = [
@@ -77,7 +84,12 @@ export const productRegistry = [
       "Support internal company operations, field activity, Walmart Tanks work, and related workflows.",
     status: "active-development",
     hasPublicWebsite: false,
-    recordAuthority: "reynalds-os-with-verified-integration"
+    recordAuthority: "reynalds-os-with-verified-integration",
+    workspaceEntry: {
+      label: "Reynalds Brothers",
+      href: "/reynalds-brothers",
+      enabled: true
+    }
   }
 ] as const satisfies readonly ProductDefinition[];
 
