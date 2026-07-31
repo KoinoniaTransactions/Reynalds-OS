@@ -44,6 +44,10 @@ export type ProductDefinition<TProductId extends string = string> =
   | InternalProductDefinition<TProductId>
   | PublicWebsiteProductDefinition<TProductId>;
 
+export type WorkspaceProductDefinition = InternalProductDefinition & {
+  workspaceEntry: ProductWorkspaceEntry;
+};
+
 export type ProductAudience = ProductDefinition["audience"];
 export type ProductType = ProductDefinition["type"];
 
@@ -174,6 +178,12 @@ function appendDuplicateIssues(
   }
 }
 
+function hasWorkspaceEntry(
+  product: ProductDefinition
+): product is WorkspaceProductDefinition {
+  return product.workspaceEntry !== undefined;
+}
+
 export function validateProductRegistry(
   registry: readonly ProductDefinition[] = productRegistry
 ) {
@@ -257,15 +267,16 @@ export function getPublicWebsites() {
   return productRegistry.filter((product) => product.type === "public-website");
 }
 
-export function getWorkspaceProducts() {
-  return productRegistry.filter(
-    (product): product is Product & { workspaceEntry: ProductWorkspaceEntry } =>
-      "workspaceEntry" in product
-  );
+export function getWorkspaceProducts(
+  registry: readonly ProductDefinition[] = productRegistry
+) {
+  return registry.filter(hasWorkspaceEntry);
 }
 
-export function getWorkspaceNavigationEntries() {
-  return getWorkspaceProducts()
+export function getWorkspaceNavigationEntries(
+  registry: readonly ProductDefinition[] = productRegistry
+) {
+  return getWorkspaceProducts(registry)
     .map((product) => product.workspaceEntry)
     .sort((left, right) => left.order - right.order)
     .map(({ label, href, enabled }) => ({ label, href, enabled }));
