@@ -1,14 +1,7 @@
-export type ProductAudience = "internal" | "public";
-
 export type ProductStatus =
   | "active"
   | "active-development"
   | "planned";
-
-export type ProductType =
-  | "central-operating-system"
-  | "company-operating-system"
-  | "public-website";
 
 export type ProductRecordAuthority =
   | "reynalds-os"
@@ -50,6 +43,9 @@ export type PublicWebsiteProductDefinition<
 export type ProductDefinition<TProductId extends string = string> =
   | InternalProductDefinition<TProductId>
   | PublicWebsiteProductDefinition<TProductId>;
+
+export type ProductAudience = ProductDefinition["audience"];
+export type ProductType = ProductDefinition["type"];
 
 export type ProductRegistryValidationIssueCode =
   | "duplicate-product-id"
