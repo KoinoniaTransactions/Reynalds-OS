@@ -11,6 +11,7 @@
     "dev": "pnpm --filter @reynalds-os/web dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
+    "test:product-registry": "pnpm --filter @reynalds-os/web test:product-registry",
     "lint": "pnpm -r lint",
     "db:generate": "pnpm --filter @reynalds-os/database prisma generate",
     "db:migrate": "pnpm --filter @reynalds-os/database prisma migrate dev",

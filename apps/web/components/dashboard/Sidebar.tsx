@@ -20,7 +20,7 @@ export function Sidebar({ workspace, version }: SidebarProps) {
 
       <nav>
         {workspaceNavigation.map((item) =>
-          item.href ? (
+          item.enabled && item.href ? (
             <a
               key={item.label}
               href={item.href}

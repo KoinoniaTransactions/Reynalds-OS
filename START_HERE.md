@@ -71,16 +71,17 @@ Conversation history is not.
 
 1. BRAIN/README.md
 2. BRAIN/REYNALDS_OS_CONSTITUTION.md
-3. BRAIN/CANONICAL_REGISTRY.md
+3. BRAIN/PRODUCT_BOUNDARIES.md
+4. BRAIN/CANONICAL_REGISTRY.md
 
 ---
 
 ## Phase 2 — Understand Current Development
 
-4. BRAIN/CURRENT_PRIORITIES.md
-5. BRAIN/SESSION_HANDOFF.md
-6. BRAIN/DEVELOPMENT_STANDARDS.md
-7. BRAIN/DECISION_LOG.md
+5. BRAIN/CURRENT_PRIORITIES.md
+6. BRAIN/SESSION_HANDOFF.md
+7. BRAIN/DEVELOPMENT_STANDARDS.md
+8. BRAIN/DECISION_LOG.md
 
 ---
 
@@ -94,6 +95,16 @@ Before recommending or implementing anything:
 - Review existing components and content.
 
 Do not recommend creating architecture, documentation, components, or workflows until repository inspection has been completed.
+
+Before proposing routing, hosting, repositories, deployments, workspaces, tenants, or application boundaries, identify whether the work concerns:
+
+- Reynalds OS,
+- a company,
+- a public website,
+- a company-specific operating system,
+- or a record held inside Reynalds OS.
+
+Do not treat those concepts as interchangeable.
 
 ---
 
