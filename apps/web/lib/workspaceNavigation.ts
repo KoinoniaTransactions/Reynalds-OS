@@ -1,24 +1,25 @@
 export type WorkspaceNavigationItem = {
   label: string;
   href?: string;
+  enabled: boolean;
 };
 
 export const workspaceNavigation: WorkspaceNavigationItem[] = [
-  { label: "Dashboard", href: "/" },
-  { label: "Reynalds Brothers", href: "/reynalds-brothers" },
-  { label: "CRM", href: "/crm" },
-  { label: "Transactions", href: "/transactions" },
-  { label: "Contracts" },
-  { label: "Showings" },
-  { label: "Operations", href: "/operations" },
-  { label: "Finance", href: "/finance" },
-  { label: "Customer Success" },
-  { label: "Knowledge" },
-  { label: "Reports" },
-  { label: "Administration" },
-  { label: "Object Explorer", href: "/objects" },
-  { label: "Timeline" },
-  { label: "Workflows" },
-  { label: "Automations" },
-  { label: "Intelligence" }
+  { label: "Dashboard", href: "/", enabled: true },
+  { label: "Reynalds Brothers", href: "/reynalds-brothers", enabled: true },
+  { label: "CRM", href: "/crm", enabled: true },
+  { label: "Transactions", href: "/transactions", enabled: true },
+  { label: "Contracts", enabled: false },
+  { label: "Showings", enabled: false },
+  { label: "Operations", href: "/operations", enabled: true },
+  { label: "Finance", href: "/finance", enabled: true },
+  { label: "Customer Success", enabled: false },
+  { label: "Knowledge", enabled: false },
+  { label: "Reports", enabled: false },
+  { label: "Administration", enabled: false },
+  { label: "Object Explorer", href: "/objects", enabled: true },
+  { label: "Timeline", enabled: false },
+  { label: "Workflows", enabled: false },
+  { label: "Automations", enabled: false },
+  { label: "Intelligence", enabled: false }
 ];
