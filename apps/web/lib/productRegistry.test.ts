@@ -5,6 +5,7 @@ import {
   getInternalProducts,
   getProductById,
   getPublicWebsites,
+  getWorkspaceNavigationEntries,
   getWorkspaceProducts,
   productRegistry
 } from "./productRegistry";
@@ -40,10 +41,18 @@ describe("product registry", () => {
     ).toBe(true);
   });
 
-  it("derives product workspace navigation from registry entries", () => {
-    const workspaceEntries = getWorkspaceProducts().map(
-      (product) => product.workspaceEntry
-    );
+  it("returns workspace navigation entries in explicit registry order", () => {
+    const entries = getWorkspaceNavigationEntries();
+    const orders = getWorkspaceProducts()
+      .map((product) => product.workspaceEntry.order)
+      .sort((left, right) => left - right);
+
+    expect(entries).toHaveLength(orders.length);
+    expect(entries.every((entry) => !("order" in entry))).toBe(true);
+  });
+
+  it("derives product workspace navigation from ordered registry entries", () => {
+    const workspaceEntries = getWorkspaceNavigationEntries();
 
     expect(workspaceNavigation.slice(1, workspaceEntries.length + 1)).toEqual(
       workspaceEntries
