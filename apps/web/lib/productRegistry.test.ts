@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  assertValidProductRegistry,
   getActiveProducts,
   getInternalProducts,
   getProductById,
   getPublicWebsites,
   getWorkspaceNavigationEntries,
   getWorkspaceProducts,
+  ProductRegistryValidationError,
   productRegistry,
   validateProductRegistry
 } from "./productRegistry";
@@ -15,10 +17,11 @@ import { workspaceNavigation } from "./workspaceNavigation";
 describe("product registry", () => {
   it("passes canonical registry validation", () => {
     expect(validateProductRegistry()).toEqual([]);
+    expect(assertValidProductRegistry()).toBe(productRegistry);
   });
 
   it("reports duplicate identifiers, workspace routes, and workspace order", () => {
-    const issues = validateProductRegistry([
+    const invalidRegistry = [
       {
         id: "duplicate-product",
         name: "First Internal Product",
@@ -53,13 +56,29 @@ describe("product registry", () => {
           order: 100
         }
       }
-    ]);
+    ] as const;
+
+    const issues = validateProductRegistry(invalidRegistry);
 
     expect(issues.map((issue) => issue.code)).toEqual([
       "duplicate-product-id",
       "duplicate-workspace-href",
       "duplicate-workspace-order"
     ]);
+
+    expect(() => assertValidProductRegistry(invalidRegistry)).toThrow(
+      ProductRegistryValidationError
+    );
+
+    try {
+      assertValidProductRegistry(invalidRegistry);
+    } catch (error) {
+      expect(error).toBeInstanceOf(ProductRegistryValidationError);
+      expect((error as ProductRegistryValidationError).issues).toEqual(issues);
+      expect((error as Error).message).toContain("duplicate-product");
+      expect((error as Error).message).toContain("/duplicate");
+      expect((error as Error).message).toContain("100");
+    }
   });
 
   it("uses unique canonical product identifiers", () => {
