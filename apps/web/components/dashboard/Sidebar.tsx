@@ -1,32 +1,4 @@
-const nav = [
-  "Dashboard",
-  "Reynalds Brothers",
-  "CRM",
-  "Transactions",
-  "Contracts",
-  "Showings",
-  "Operations",
-  "Finance",
-  "Customer Success",
-  "Knowledge",
-  "Reports",
-  "Administration",
-  "Object Explorer",
-  "Timeline",
-  "Workflows",
-  "Automations",
-  "Intelligence"
-];
-
-function navHref(item: string) {
-  if (item === "CRM") return "/crm";
-  if (item === "Reynalds Brothers") return "/reynalds-brothers";
-  if (item === "Transactions") return "/transactions";
-  if (item === "Operations") return "/operations";
-  if (item === "Finance") return "/finance";
-  if (item === "Object Explorer") return "/objects";
-  return "#";
-}
+import { workspaceNavigation } from "../../lib/workspaceNavigation";
 
 type SidebarProps = {
   workspace: string;
@@ -40,16 +12,28 @@ export function Sidebar({ workspace, version }: SidebarProps) {
         <div className="ros-mark">R</div>
         <div>
           <strong>ROS</strong>
-          <span>{workspace} · v{version}</span>
+          <span>
+            {workspace} · v{version}
+          </span>
         </div>
       </div>
 
       <nav>
-        {nav.map((item) => (
-          <a key={item} href={navHref(item)} className={item === "Dashboard" ? "active" : ""}>
-            {item}
-          </a>
-        ))}
+        {workspaceNavigation.map((item) =>
+          item.href ? (
+            <a
+              key={item.label}
+              href={item.href}
+              className={item.href === "/" ? "active" : ""}
+            >
+              {item.label}
+            </a>
+          ) : (
+            <span key={item.label} aria-disabled="true">
+              {item.label}
+            </span>
+          )
+        )}
       </nav>
     </aside>
   );
