@@ -14,6 +14,39 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-31 — Client Billing Setup Status Boundary Hardened
+
+### Summary
+
+Client billing setup requests can no longer claim internal Koinonia workflow statuses. The server now derives a safe initial billing status from client consent and the approved service billing model.
+
+### Implemented
+
+- Removed the internal billing-status selector from the client billing setup form.
+- Removed client-submitted billing status from the request payload.
+- Added a source-aware billing setup policy that distinguishes client-created and staff-created requests.
+- Client requests without recorded consent now enter `Consent Needed`.
+- Pay-at-close requests with consent now enter `Pay at Close Watch`.
+- Other client requests with consent now enter `Setup Requested`.
+- Staff-created requests retain access to authorized internal billing workflow statuses.
+- Added focused tests proving clients cannot self-report `Payment Method Ready`.
+- Merged pull request #7 into `feature/app-shell-foundation`.
+
+### Verification
+
+- `pnpm db:generate`
+- `pnpm --filter @reynalds-os/web exec tsc --noEmit`
+- Focused billing setup tests: 8 of 8 passed.
+- Vercel deployment check passed.
+- No browser testing was run.
+- No production build was run.
+
+### Current Status
+
+The verified change is merged at `31e568e2a0d3bb9b93856e2de966c5c054fdb300`. The local `feature/app-shell-foundation` branch is aligned with the remote, the temporary implementation worktree was removed, and the merged integration branch was deleted. The next focused production-readiness pass should audit the remaining client and employee billing surfaces for consistent role and status boundaries.
+
+---
+
 ## 2026-07-29 — Portal Document Version Replacement Added
 
 ### Summary
