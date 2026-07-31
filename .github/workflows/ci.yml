@@ -16,6 +16,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @reynalds-os/database db:generate
       - run: pnpm verify:portal -- --skip-database
         env:
           AUTH_PROVIDER: clerk
