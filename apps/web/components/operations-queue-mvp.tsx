@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { getWalmartTanksReviewCategory } from "../lib/walmart-tanks-review";
+
 type RosObject = {
   id: string;
   objectType: string;
@@ -86,24 +88,6 @@ function formatLocation(city?: unknown, state?: unknown) {
 
   if (!cityText && !stateText) return "Location TBD";
   return [cityText, stateText].filter(Boolean).join(", ");
-}
-
-function getReviewCategory(communication: WalmartTanksCommunication) {
-  const reviewText = [
-    communication.reviewReason,
-    communication.subject,
-    communication.sender,
-    communication.snippet
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  if (!communication.city && !communication.state && /city|state|location|address/.test(reviewText)) return "Needs city/state";
-  if (/multiple|multi-store|several stores|store numbers|split/.test(reviewText)) return "Multi-store";
-  if (/statement|invoice|vendor|remit|balance/.test(reviewText)) return "Vendor statement";
-  if (/no job|not a job|newsletter|marketing|notification|receipt/.test(reviewText)) return "Non-job";
-  return "Manual review";
 }
 
 function getMissingEvidence(data: Record<string, unknown>, communications: WalmartTanksCommunication[]) {
@@ -262,7 +246,7 @@ export function OperationsQueueMvp() {
       ...communication,
       workItemId: item.id,
       workItemName: item.name,
-      reviewCategory: getReviewCategory(communication)
+      reviewCategory: getWalmartTanksReviewCategory(communication)
     }))
   );
   const reviewCategoryCounts = reviewInbox.reduce<Record<string, number>>((counts, item) => {
@@ -705,7 +689,7 @@ export function OperationsQueueMvp() {
                         <li key={communication.gmailId}>
                           <strong>{communication.subject}</strong>
                           <span>
-                            {getReviewCategory(communication)} · {communication.sender}
+                            {getWalmartTanksReviewCategory(communication)} · {communication.sender}
                             {communication.storeNumber ? ` · Store ${communication.storeNumber}` : ""}
                             {communication.workOrderNumber ? ` · WO ${communication.workOrderNumber}` : ""}
                             {communication.purchaseOrderNumber ? ` · PO ${communication.purchaseOrderNumber}` : ""}
