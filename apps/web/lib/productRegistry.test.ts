@@ -118,13 +118,25 @@ describe("product registry", () => {
     );
   });
 
-  it("returns workspace navigation entries in explicit registry order", () => {
+  it("returns complete workspace navigation entries in explicit registry order", () => {
+    const workspaceProducts = getWorkspaceProducts();
+    const expectedWorkspaceProducts = productRegistry.flatMap((product) =>
+      "workspaceEntry" in product ? [product] : []
+    );
+    const expectedEntries = [...expectedWorkspaceProducts]
+      .sort(
+        (left, right) =>
+          left.workspaceEntry.order - right.workspaceEntry.order
+      )
+      .map(({ workspaceEntry: { label, href, enabled } }) => ({
+        label,
+        href,
+        enabled
+      }));
     const entries = getWorkspaceNavigationEntries();
-    const orders = getWorkspaceProducts()
-      .map((product) => product.workspaceEntry.order)
-      .sort((left, right) => left - right);
 
-    expect(entries).toHaveLength(orders.length);
+    expect(workspaceProducts).toEqual(expectedWorkspaceProducts);
+    expect(entries).toEqual(expectedEntries);
     expect(entries.every((entry) => !("order" in entry))).toBe(true);
   });
 
