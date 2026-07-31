@@ -18,6 +18,7 @@ export type ProductWorkspaceEntry = {
   label: string;
   href: string;
   enabled: boolean;
+  order: number;
 };
 
 export type ProductDefinition = {
@@ -88,7 +89,8 @@ export const productRegistry = [
     workspaceEntry: {
       label: "Reynalds Brothers",
       href: "/reynalds-brothers",
-      enabled: true
+      enabled: true,
+      order: 100
     }
   }
 ] as const satisfies readonly ProductDefinition[];
@@ -113,6 +115,13 @@ export function getWorkspaceProducts() {
     (product): product is Product & { workspaceEntry: ProductWorkspaceEntry } =>
       "workspaceEntry" in product
   );
+}
+
+export function getWorkspaceNavigationEntries() {
+  return getWorkspaceProducts()
+    .map((product) => product.workspaceEntry)
+    .sort((left, right) => left.order - right.order)
+    .map(({ label, href, enabled }) => ({ label, href, enabled }));
 }
 
 export function getActiveProducts() {
