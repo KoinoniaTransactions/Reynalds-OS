@@ -14,6 +14,29 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-07-29 — Portal Document Send Package Backend Added
+
+### Summary
+
+Koinonia now has a safe backend workflow for preparing document send packages before a real email, brokerage, or e-signature provider is connected.
+
+### Implemented
+
+- Added document send-package validation for package name, recipients, delivery channel, selected documents, approval confirmation, signature need, requested timing, and notes.
+- Added `/api/portal/document-send-packages` for protected staff send-package list/create workflows.
+- Send packages are stored as `DocumentSendPackage` work objects with safe metadata only.
+- Package creation verifies selected documents belong to the staff workspace and rejects archived or superseded versions.
+- If selected documents are not already approved, the package stays in the `Approval Needed` gate even when staff prepares the package.
+- Package creation writes audit history and timeline history, including related work-item timeline history when all selected documents point to the same live work item.
+- Added a reusable staff send-package form component for the next employee document workspace UI wiring pass.
+- Added focused tests for send-package validation, approval gating, unsafe-note rejection, and display helpers.
+
+### Current Status
+
+The backend send-package workflow is source-backed and covered by focused tests. Full local production build verification is currently blocked by unrelated unstaged Reynalds Brothers work in the same working tree, which was intentionally left untouched. The employee document page still needs a separate approved wiring pass to display and submit live send packages. External e-signature delivery, email delivery, brokerage-platform handoff, and final archive delivery remain separate production integrations.
+
+---
+
 ## 2026-07-29 — Portal Document Version Replacement Added
 
 ### Summary

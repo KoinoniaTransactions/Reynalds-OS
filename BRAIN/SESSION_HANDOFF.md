@@ -44,6 +44,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - Added `/api/portal/documents/[id]/status` and staff status controls on `/employee/documents` so live documents can move through review, approval, sending, revision, and archive states with audit/timeline history.
 - Added `/api/portal/documents/[id]/approval` and client approval/revision controls on `/client/documents` so client-owned review documents can receive auditable Realtor responses.
 - Added `/api/portal/documents/[id]/replacement` and staff replacement controls on `/employee/documents` so newer versions can be uploaded without overwriting prior document records.
+- Added `/api/portal/document-send-packages` and safe send-package helpers so staff can prepare metadata-only delivery/signature packages without storing credentials.
 
 ## Recent Pushed Commits
 
@@ -57,6 +58,7 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - `e0c114c` Add portal work detail pages
 - `0183b04` Add portal document status workflow
 - `45faa55` Add client document approval responses
+- `5af1325` Add portal document version replacement
 
 ## Verified Locally
 
@@ -86,7 +88,9 @@ Push state: Jeremiah approved committing and pushing all completed portal-readin
 - Document status update notes must avoid passwords, access codes, card data, bank details, API keys, and private login details.
 - Client document approval/revision notes must avoid passwords, access codes, card data, bank details, API keys, and private login details.
 - Document replacement notes must avoid passwords, access codes, card data, bank details, API keys, and private login details.
-- In-browser editing, e-signature routing, and final archive delivery still need production integrations.
+- Document send-package notes must avoid passwords, access codes, card data, bank details, API keys, and private login details.
+- Employee document page wiring for live send packages still needs a separate approved edit after the page patch was blocked by the app approval guard.
+- In-browser editing, external e-signature routing, email delivery, brokerage-platform handoff, and final archive delivery still need production integrations.
 - The Staff Review Center is rules-based. AI summarization should stay read-only until privacy controls, citations, audit events, and human approval gates are verified.
 - No real client documents, billing setup, staff assignments, or internal notes should be accepted until the real-provider checklist passes.
 
