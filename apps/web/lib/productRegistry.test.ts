@@ -8,6 +8,7 @@ import {
   getPublicWebsites,
   getWorkspaceNavigationEntries,
   getWorkspaceProducts,
+  ProductNotFoundError,
   ProductRegistryValidationError,
   productRegistry,
   validateProductRegistry
@@ -90,6 +91,20 @@ describe("product registry", () => {
   it("resolves every registered product by its canonical identifier", () => {
     for (const product of productRegistry) {
       expect(getProductById(product.id)).toBe(product);
+    }
+  });
+
+  it("throws a structured error when a canonical lookup cannot resolve", () => {
+    expect(() =>
+      getProductById("missing-product" as Parameters<typeof getProductById>[0])
+    ).toThrow(ProductNotFoundError);
+
+    try {
+      getProductById("missing-product" as Parameters<typeof getProductById>[0]);
+    } catch (error) {
+      expect(error).toBeInstanceOf(ProductNotFoundError);
+      expect((error as ProductNotFoundError).productId).toBe("missing-product");
+      expect((error as Error).message).toContain("missing-product");
     }
   });
 
