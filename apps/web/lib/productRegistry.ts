@@ -93,8 +93,28 @@ export const productRegistry = [
   }
 ] as const satisfies readonly ProductDefinition[];
 
-export type ProductId = (typeof productRegistry)[number]["id"];
+export type Product = (typeof productRegistry)[number];
+export type ProductId = Product["id"];
 
 export function getProductById(productId: ProductId) {
   return productRegistry.find((product) => product.id === productId);
+}
+
+export function getInternalProducts() {
+  return productRegistry.filter((product) => product.audience === "internal");
+}
+
+export function getPublicWebsites() {
+  return productRegistry.filter((product) => product.type === "public-website");
+}
+
+export function getWorkspaceProducts() {
+  return productRegistry.filter(
+    (product): product is Product & { workspaceEntry: ProductWorkspaceEntry } =>
+      "workspaceEntry" in product
+  );
+}
+
+export function getActiveProducts() {
+  return productRegistry.filter((product) => product.status !== "planned");
 }
