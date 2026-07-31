@@ -17,7 +17,10 @@ node_modules/
 
 # Next.js
 .next/
+.open-next/
+.wrangler/
 out/
+dist/
 *.tsbuildinfo
 
 # Environment files
