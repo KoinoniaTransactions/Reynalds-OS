@@ -60,3 +60,9 @@ Reason: Improves consistency, reduces duplicate code, and accelerates launch.
 Decision: Website launch work takes priority over future Reynalds OS expansion unless an architectural improvement directly accelerates the website.
 
 Reason: Prevents feature creep and keeps Koinonia moving toward publication.
+
+## D-011 — AI Sessions Must Execute Repository Preflight
+
+Decision: Repository AI sessions begin with `pnpm ai:preflight`.
+
+Reason: Provides a consistent repository inspection process, discovers canonical governance documents, identifies the active business domain, and standardizes AI startup behavior before implementation.
