@@ -57,6 +57,7 @@ type ServiceLineSummary = {
 type ReviewInboxItem = WalmartTanksCommunication & {
   workItemId: string;
   workItemName: string;
+  reviewCategory: string;
 };
 
 type DashboardBucket = {
@@ -85,6 +86,24 @@ function formatLocation(city?: unknown, state?: unknown) {
 
   if (!cityText && !stateText) return "Location TBD";
   return [cityText, stateText].filter(Boolean).join(", ");
+}
+
+function getReviewCategory(communication: WalmartTanksCommunication) {
+  const reviewText = [
+    communication.reviewReason,
+    communication.subject,
+    communication.sender,
+    communication.snippet
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  if (!communication.city && !communication.state && /city|state|location|address/.test(reviewText)) return "Needs city/state";
+  if (/multiple|multi-store|several stores|store numbers|split/.test(reviewText)) return "Multi-store";
+  if (/statement|invoice|vendor|remit|balance/.test(reviewText)) return "Vendor statement";
+  if (/no job|not a job|newsletter|marketing|notification|receipt/.test(reviewText)) return "Non-job";
+  return "Manual review";
 }
 
 function getMissingEvidence(data: Record<string, unknown>, communications: WalmartTanksCommunication[]) {
@@ -241,9 +260,14 @@ export function OperationsQueueMvp() {
     getReviewQueue(item.data ?? {}).map((communication) => ({
       ...communication,
       workItemId: item.id,
-      workItemName: item.name
+      workItemName: item.name,
+      reviewCategory: getReviewCategory(communication)
     }))
   );
+  const reviewCategoryCounts = reviewInbox.reduce<Record<string, number>>((counts, item) => {
+    counts[item.reviewCategory] = (counts[item.reviewCategory] ?? 0) + 1;
+    return counts;
+  }, {});
   const evidenceReadyCount = objects.filter((item) => {
     const communications = getCommunications(item.data ?? {});
     return communications.length > 0 && getMissingEvidence(item.data ?? {}, communications).length === 0;
@@ -466,9 +490,22 @@ export function OperationsQueueMvp() {
                   type="button"
                 >
                   <strong>{item.subject}</strong>
-                  <span>{item.workItemName}</span>
-                  <small>{item.reviewReason ?? "Needs manual filing."}</small>
+                  <span>{item.reviewCategory} · {item.sender}</span>
+                  <small>
+                    {item.workItemName}
+                    {item.storeNumber ? ` · Store ${item.storeNumber}` : ""}
+                    {item.workOrderNumber ? ` · WO ${item.workOrderNumber}` : ""}
+                    {item.purchaseOrderNumber ? ` · PO ${item.purchaseOrderNumber}` : ""}
+                  </small>
                 </button>
+              ))}
+            </div>
+            <div className="ros-evidence-grid" style={{ marginTop: 14 }}>
+              {Object.entries(reviewCategoryCounts).map(([category, count]) => (
+                <span key={category}>
+                  <strong>{count}</strong>
+                  {category}
+                </span>
               ))}
             </div>
           </section>
@@ -644,7 +681,13 @@ export function OperationsQueueMvp() {
                       {selectedReviewQueue.map((communication) => (
                         <li key={communication.gmailId}>
                           <strong>{communication.subject}</strong>
-                          <span>{communication.reviewReason ?? "Needs manual filing."}</span>
+                          <span>
+                            {getReviewCategory(communication)} · {communication.sender}
+                            {communication.storeNumber ? ` · Store ${communication.storeNumber}` : ""}
+                            {communication.workOrderNumber ? ` · WO ${communication.workOrderNumber}` : ""}
+                            {communication.purchaseOrderNumber ? ` · PO ${communication.purchaseOrderNumber}` : ""}
+                          </span>
+                          <small>{communication.reviewReason ?? "Needs manual filing."}</small>
                         </li>
                       ))}
                     </ul>
