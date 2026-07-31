@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getWalmartTanksReviewCategory } from "./walmart-tanks-review";
+import { getWalmartTanksReviewCategory, getWalmartTanksWorkBuckets } from "./walmart-tanks-review";
 
 describe("WalMart Tanks review categorization", () => {
   it("flags missing city and state review items", () => {
@@ -46,5 +46,33 @@ describe("WalMart Tanks review categorization", () => {
         state: "FL"
       })
     ).toBe("Manual review");
+  });
+});
+
+describe("WalMart Tanks work bucket detection", () => {
+  it("detects ACC, UCO, and paperwork from doubled WM completion subjects", () => {
+    expect(
+      getWalmartTanksWorkBuckets(
+        "Re: store: WM WM- 5172 02-15-2026 ACC Walmart ACC UCO Work Completion [^] Jotform via Walmart Paperwork wmpw@reynaldsbrothers.com"
+      )
+    ).toEqual(["acc", "uco", "pw"]);
+  });
+
+  it("detects NHM UCO replacement subjects", () => {
+    expect(
+      getWalmartTanksWorkBuckets("NHM 7251 - Fort Worth UCO Tank Replacement")
+    ).toEqual(["uco"]);
+  });
+
+  it("detects LxRetail workflow paperwork for UCO projects", () => {
+    expect(
+      getWalmartTanksWorkBuckets("[LxRetail] 4801.1015 Riverview FL UCO Tank Replacement Workflow Updated")
+    ).toEqual(["uco", "pw"]);
+  });
+
+  it("detects ACC gauge work without forcing UCO", () => {
+    expect(
+      getWalmartTanksWorkBuckets("Waste water tank ACC analog gauge store 4201 Edgewood, NM")
+    ).toEqual(["acc"]);
   });
 });

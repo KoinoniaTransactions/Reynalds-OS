@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { getWalmartTanksReviewCategory } from "../lib/walmart-tanks-review";
+import { getWalmartTanksReviewCategory, getWalmartTanksWorkBuckets } from "../lib/walmart-tanks-review";
 
 type RosObject = {
   id: string;
@@ -129,15 +129,13 @@ function getSearchText(item: RosObject) {
 }
 
 function getDashboardBuckets(items: RosObject[]): DashboardBucket[] {
-  const isAcc = (item: RosObject) => /\bacc\b|gauge|new oil|hydraulic|morrison/i.test(getSearchText(item));
-  const isUco = (item: RosObject) => /\buco\b|used cooking oil|grease tank|caddy|fog bin/i.test(getSearchText(item));
-  const isPw = (item: RosObject) => /wmpw|paperwork|jotform|completion|lxretail|workflow|permit|document/i.test(getSearchText(item));
+  const hasBucket = (item: RosObject, bucket: "acc" | "uco" | "pw") => getWalmartTanksWorkBuckets(getSearchText(item)).includes(bucket);
   const isReadyInvoice = (item: RosObject) => String(item.data?.invoiceStatus ?? "").toLowerCase().includes("review");
 
   return [
-    { key: "acc", label: "ACC", count: items.filter(isAcc).length, note: "tank, gauge, hydraulic, and new-oil work" },
-    { key: "uco", label: "UCO", count: items.filter(isUco).length, note: "used cooking oil, caddy, and grease work" },
-    { key: "pw", label: "PW", count: items.filter(isPw).length, note: "paperwork, workflow, permit, and completion docs" },
+    { key: "acc", label: "ACC", count: items.filter((item) => hasBucket(item, "acc")).length, note: "tank, gauge, hydraulic, and new-oil work" },
+    { key: "uco", label: "UCO", count: items.filter((item) => hasBucket(item, "uco")).length, note: "used cooking oil, caddy, and grease work" },
+    { key: "pw", label: "PW", count: items.filter((item) => hasBucket(item, "pw")).length, note: "paperwork, workflow, permit, and completion docs" },
     { key: "review", label: "Review", count: items.filter((item) => getReviewQueue(item.data ?? {}).length > 0).length, note: "unmatched or split-needed email filing" },
     { key: "ready", label: "Ready to Invoice", count: items.filter(isReadyInvoice).length, note: "completion packets marked for invoice review" }
   ];

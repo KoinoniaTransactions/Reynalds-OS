@@ -7,6 +7,8 @@ export type WalmartTanksReviewCommunication = {
   snippet?: string;
 };
 
+export type WalmartTanksWorkBucket = "acc" | "uco" | "pw";
+
 export function getWalmartTanksReviewCategory(communication: WalmartTanksReviewCommunication) {
   const reviewText = [
     communication.reviewReason,
@@ -23,4 +25,15 @@ export function getWalmartTanksReviewCategory(communication: WalmartTanksReviewC
   if (/statement|invoice|vendor|remit|balance/.test(reviewText)) return "Vendor statement";
   if (/no job|not a job|newsletter|marketing|notification|receipt/.test(reviewText)) return "Non-job";
   return "Manual review";
+}
+
+export function getWalmartTanksWorkBuckets(searchText: string): WalmartTanksWorkBucket[] {
+  const normalizedText = searchText.toLowerCase();
+  const buckets = new Set<WalmartTanksWorkBucket>();
+
+  if (/\bacc\b|gauge|new oil|hydraulic|morrison/.test(normalizedText)) buckets.add("acc");
+  if (/\buco\b|used cooking oil|grease tank|caddy|fog bin/.test(normalizedText)) buckets.add("uco");
+  if (/wmpw|paperwork|jotform|completion|lxretail|workflow|permit|document/.test(normalizedText)) buckets.add("pw");
+
+  return Array.from(buckets);
 }
