@@ -2,7 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { getWalmartTanksReviewCategory, getWalmartTanksWorkBuckets } from "../lib/walmart-tanks-review";
+import {
+  extractWalmartTanksIdentifiers,
+  getWalmartTanksReviewCategory,
+  getWalmartTanksWorkBuckets
+} from "../lib/walmart-tanks-review";
 
 type RosObject = {
   id: string;
@@ -88,6 +92,21 @@ function formatLocation(city?: unknown, state?: unknown) {
 
   if (!cityText && !stateText) return "Location TBD";
   return [cityText, stateText].filter(Boolean).join(", ");
+}
+
+function formatDetectedIdentifiers(communication: WalmartTanksCommunication) {
+  const identifiers = extractWalmartTanksIdentifiers(
+    [communication.subject, communication.snippet, communication.sender].filter(Boolean).join(" ")
+  );
+  const storeNumber = communication.storeNumber ?? identifiers.storeNumbers[0];
+  const workOrderNumber = communication.workOrderNumber ?? identifiers.workOrderNumbers[0];
+  const purchaseOrderNumber = communication.purchaseOrderNumber ?? identifiers.purchaseOrderNumbers[0];
+
+  return [
+    storeNumber ? `Store ${storeNumber}` : "",
+    workOrderNumber ? `WO ${workOrderNumber}` : "",
+    purchaseOrderNumber ? `PO ${purchaseOrderNumber}` : ""
+  ].filter(Boolean);
 }
 
 function getMissingEvidence(data: Record<string, unknown>, communications: WalmartTanksCommunication[]) {
@@ -484,26 +503,28 @@ export function OperationsQueueMvp() {
               ))}
             </div>
             <div className="ros-review-strip">
-              {filteredReviewInbox.map((item) => (
-                <button
-                  key={item.gmailId}
-                  className="ros-review-item"
-                  onClick={() => {
-                    setFilter("review");
-                    setSelectedId(item.workItemId);
-                  }}
-                  type="button"
-                >
-                  <strong>{item.subject}</strong>
-                  <span>{item.reviewCategory} · {item.sender}</span>
-                  <small>
-                    {item.workItemName}
-                    {item.storeNumber ? ` · Store ${item.storeNumber}` : ""}
-                    {item.workOrderNumber ? ` · WO ${item.workOrderNumber}` : ""}
-                    {item.purchaseOrderNumber ? ` · PO ${item.purchaseOrderNumber}` : ""}
-                  </small>
-                </button>
-              ))}
+              {filteredReviewInbox.map((item) => {
+                const detectedIdentifiers = formatDetectedIdentifiers(item);
+
+                return (
+                  <button
+                    key={item.gmailId}
+                    className="ros-review-item"
+                    onClick={() => {
+                      setFilter("review");
+                      setSelectedId(item.workItemId);
+                    }}
+                    type="button"
+                  >
+                    <strong>{item.subject}</strong>
+                    <span>{item.reviewCategory} · {item.sender}</span>
+                    <small>
+                      {item.workItemName}
+                      {detectedIdentifiers.length ? ` · ${detectedIdentifiers.join(" · ")}` : " · No identifiers detected"}
+                    </small>
+                  </button>
+                );
+              })}
             </div>
             <div className="ros-evidence-grid" style={{ marginTop: 14 }}>
               {Object.entries(reviewCategoryCounts).map(([category, count]) => (
@@ -683,18 +704,20 @@ export function OperationsQueueMvp() {
                   <>
                     <h3 style={{ marginTop: 22 }}>Review Queue</h3>
                     <ul className="ros-plain-list">
-                      {selectedReviewQueue.map((communication) => (
-                        <li key={communication.gmailId}>
-                          <strong>{communication.subject}</strong>
-                          <span>
-                            {getWalmartTanksReviewCategory(communication)} · {communication.sender}
-                            {communication.storeNumber ? ` · Store ${communication.storeNumber}` : ""}
-                            {communication.workOrderNumber ? ` · WO ${communication.workOrderNumber}` : ""}
-                            {communication.purchaseOrderNumber ? ` · PO ${communication.purchaseOrderNumber}` : ""}
-                          </span>
-                          <small>{communication.reviewReason ?? "Needs manual filing."}</small>
-                        </li>
-                      ))}
+                      {selectedReviewQueue.map((communication) => {
+                        const detectedIdentifiers = formatDetectedIdentifiers(communication);
+
+                        return (
+                          <li key={communication.gmailId}>
+                            <strong>{communication.subject}</strong>
+                            <span>
+                              {getWalmartTanksReviewCategory(communication)} · {communication.sender}
+                              {detectedIdentifiers.length ? ` · ${detectedIdentifiers.join(" · ")}` : " · No identifiers detected"}
+                            </span>
+                            <small>{communication.reviewReason ?? "Needs manual filing."}</small>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </>
                 ) : null}
