@@ -3,10 +3,12 @@ import {
   AccessRequestValidationError,
   buildAccessRequestName,
   buildAccessRequestNextAction,
+  buildAccessRequestStatusNextAction,
   getAccessRequestDetail,
   getAccessRequestHealth,
   getAccessRequestMetaLabels,
-  validateAccessRequestInput
+  validateAccessRequestInput,
+  validateAccessRequestStatusUpdateInput
 } from "./access-requests";
 
 describe("access request helpers", () => {
@@ -72,6 +74,48 @@ describe("access request helpers", () => {
         platformName: "Forms workspace"
       })
     ).toThrow("grantMethod must match an approved safe access method");
+  });
+
+  it("validates safe staff access request status updates", () => {
+    expect(
+      validateAccessRequestStatusUpdateInput({
+        notes: "Client sent the approved platform invitation.",
+        status: "Client Says Granted"
+      })
+    ).toEqual({
+      notes: "Client sent the approved platform invitation.",
+      status: "Client Says Granted"
+    });
+
+    expect(buildAccessRequestStatusNextAction("Waiting on Client")).toContain(
+      "Wait for the client"
+    );
+    expect(buildAccessRequestStatusNextAction("Blocked")).toContain(
+      "blocking safe delegated access"
+    );
+  });
+
+  it("rejects unsafe or invalid access request status updates", () => {
+    expect(() => validateAccessRequestStatusUpdateInput(null)).toThrow(
+      "Access request status update body must be an object"
+    );
+
+    expect(() =>
+      validateAccessRequestStatusUpdateInput({
+        notes: "The password is written in the transaction notes.",
+        status: "Client Says Granted"
+      })
+    ).toThrow("Do not include passwords");
+
+    expect(() =>
+      validateAccessRequestStatusUpdateInput({
+        status: "Approved"
+      })
+    ).toThrow("status must match an approved access request status");
+
+    expect(() => validateAccessRequestStatusUpdateInput({})).toThrow(
+      "status is required"
+    );
   });
 
   it("builds display labels for staff and client queues", () => {
