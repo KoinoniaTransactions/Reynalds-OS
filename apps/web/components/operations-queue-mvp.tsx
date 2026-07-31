@@ -192,6 +192,7 @@ export function OperationsQueueMvp() {
   const [error, setError] = useState("");
   const [filter, setFilter] = useState<WorkFilter>("all");
   const [selectedId, setSelectedId] = useState<string>("");
+  const [reviewCategoryFilter, setReviewCategoryFilter] = useState("all");
   const [liveDataStatus, setLiveDataStatus] = useState<LiveDataStatus | null>(null);
 
   async function loadObjects() {
@@ -268,6 +269,9 @@ export function OperationsQueueMvp() {
     counts[item.reviewCategory] = (counts[item.reviewCategory] ?? 0) + 1;
     return counts;
   }, {});
+  const filteredReviewInbox = reviewCategoryFilter === "all"
+    ? reviewInbox
+    : reviewInbox.filter((item) => item.reviewCategory === reviewCategoryFilter);
   const evidenceReadyCount = objects.filter((item) => {
     const communications = getCommunications(item.data ?? {});
     return communications.length > 0 && getMissingEvidence(item.data ?? {}, communications).length === 0;
@@ -478,8 +482,27 @@ export function OperationsQueueMvp() {
               </div>
               <button type="button" onClick={() => setFilter("review")}>Show Review Jobs</button>
             </div>
+            <div className="ros-filters" aria-label="Review category filters" style={{ marginBottom: 14 }}>
+              <button
+                className={reviewCategoryFilter === "all" ? "active" : ""}
+                onClick={() => setReviewCategoryFilter("all")}
+                type="button"
+              >
+                All Review
+              </button>
+              {Object.entries(reviewCategoryCounts).map(([category, count]) => (
+                <button
+                  key={category}
+                  className={reviewCategoryFilter === category ? "active" : ""}
+                  onClick={() => setReviewCategoryFilter(category)}
+                  type="button"
+                >
+                  {category} ({count})
+                </button>
+              ))}
+            </div>
             <div className="ros-review-strip">
-              {reviewInbox.map((item) => (
+              {filteredReviewInbox.map((item) => (
                 <button
                   key={item.gmailId}
                   className="ros-review-item"
