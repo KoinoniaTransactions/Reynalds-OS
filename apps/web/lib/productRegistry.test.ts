@@ -106,21 +106,16 @@ describe("product registry", () => {
     }
   });
 
-  it("keeps registry query helpers aligned with product metadata", () => {
-    expect(
-      getInternalProducts().every((product) => product.audience === "internal")
-    ).toBe(true);
-    expect(
-      getPublicWebsites().every(
-        (product) =>
-          product.type === "public-website" &&
-          product.audience === "public" &&
-          product.hasPublicWebsite
-      )
-    ).toBe(true);
-    expect(
-      getActiveProducts().every((product) => product.status !== "planned")
-    ).toBe(true);
+  it("keeps registry query helpers complete and aligned with product metadata", () => {
+    expect(getInternalProducts()).toEqual(
+      productRegistry.filter((product) => product.audience === "internal")
+    );
+    expect(getPublicWebsites()).toEqual(
+      productRegistry.filter((product) => product.type === "public-website")
+    );
+    expect(getActiveProducts()).toEqual(
+      productRegistry.filter((product) => product.status !== "planned")
+    );
   });
 
   it("returns workspace navigation entries in explicit registry order", () => {
