@@ -113,6 +113,14 @@ function formatDetectedIdentifiers(communication: WalmartTanksCommunication) {
   ].filter(Boolean);
 }
 
+function getSuggestedFilingTarget(communication: WalmartTanksCommunication) {
+  const detectedIdentifiers = formatDetectedIdentifiers(communication);
+
+  return detectedIdentifiers.length
+    ? detectedIdentifiers.join(" · ")
+    : "Manual review — no filing identifiers detected";
+}
+
 function getMissingEvidence(data: Record<string, unknown>, communications: WalmartTanksCommunication[]) {
   const missing: string[] = [];
   const documentationRequired = Array.isArray(data.documentationRequired) ? data.documentationRequired : [];
@@ -526,6 +534,7 @@ export function OperationsQueueMvp() {
                       {item.workItemName}
                       {detectedIdentifiers.length ? ` · ${detectedIdentifiers.join(" · ")}` : " · No identifiers detected"}
                     </small>
+                    <small>Suggested filing target: {getSuggestedFilingTarget(item)}</small>
                   </button>
                 );
               })}
@@ -719,6 +728,7 @@ export function OperationsQueueMvp() {
                               {detectedIdentifiers.length ? ` · ${detectedIdentifiers.join(" · ")}` : " · No identifiers detected"}
                             </span>
                             <small>{communication.reviewReason ?? "Needs manual filing."}</small>
+                            <small>Suggested filing target: {getSuggestedFilingTarget(communication)}</small>
                           </li>
                         );
                       })}
