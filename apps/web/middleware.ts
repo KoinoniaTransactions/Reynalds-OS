@@ -1,12 +1,31 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
 
+const protectedPortalPrefixes = ["/client", "/employee"];
+
 export default function middleware(request: NextRequest, event: NextFetchEvent) {
   if (!hasClerkConfiguration()) {
     return NextResponse.next();
   }
 
-  return clerkMiddleware()(request, event);
+  return clerkMiddleware(async (auth, clerkRequest) => {
+    const { sessionStatus } = await auth();
+    const pathname = clerkRequest.nextUrl.pathname;
+
+    const requiresCompletedSession = protectedPortalPrefixes.some(
+      (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+    );
+
+    if (sessionStatus === "pending" && requiresCompletedSession) {
+      const taskUrl = clerkRequest.nextUrl.clone();
+      taskUrl.pathname = "/session-tasks/setup-mfa";
+      taskUrl.search = "";
+
+      return NextResponse.redirect(taskUrl);
+    }
+
+    return NextResponse.next();
+  })(request, event);
 }
 
 export const config = {
