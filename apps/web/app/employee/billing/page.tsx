@@ -212,10 +212,18 @@ const billingRules = [
 
 export default async function EmployeeBillingWorkspacePreviewPage() {
   const actor = await requirePortalPermission("billing-workspace:view", "/employee/billing");
+  const canUpdateBillingSetup = actor.permissions.includes(
+    "billing-workspace:payment-methods:request"
+  );
   const [billingSetupView, invoiceView] = await Promise.all([
     getEmployeeBillingSetupView(actor.workspaceId),
     getEmployeeInvoiceView(actor.workspaceId)
   ]);
+  const billingSetupDisabledReason = !billingSetupView.isLiveData
+    ? "Live billing setup storage must be available before staff billing updates can be saved."
+    : canUpdateBillingSetup
+      ? undefined
+      : "Your role can view billing setup requests but cannot change billing readiness.";
 
   return (
     <main className="koinonia-site koinonia-billing-center koinonia-employee-billing">
@@ -312,7 +320,8 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
 
                       <BillingSetupStatusForm
                         currentStatus={request.workflowStatus}
-                        disabled={!billingSetupView.isLiveData}
+                        disabled={Boolean(billingSetupDisabledReason)}
+                        disabledReason={billingSetupDisabledReason}
                         requestId={request.id}
                       />
                     </article>

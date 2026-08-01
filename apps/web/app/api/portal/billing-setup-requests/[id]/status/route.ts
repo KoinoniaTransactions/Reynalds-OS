@@ -22,7 +22,7 @@ export async function PATCH(request: Request, { params }: Params) {
   try {
     const actor = await assertPermission("billing-workspace:payment-methods:request");
     const { id } = await params;
-    const input = validateBillingSetupStatusUpdateInput(await request.json());
+    const requestBody = await request.json();
     const billingSetupRequest = await prisma.rosObject.findFirst({
       where: {
         archivedAt: null,
@@ -36,6 +36,10 @@ export async function PATCH(request: Request, { params }: Params) {
       return NextResponse.json({ error: "Billing setup request not found." }, { status: 404 });
     }
 
+    const input = validateBillingSetupStatusUpdateInput(
+      requestBody,
+      billingSetupRequest.data
+    );
     const previousValue = {
       data: billingSetupRequest.data,
       health: billingSetupRequest.health,
