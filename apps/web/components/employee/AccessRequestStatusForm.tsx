@@ -1,15 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { AccessRequestStatus } from "../../lib/access-requests";
-
-const accessRequestStatusOptions = [
-  "Access Needed",
-  "Waiting on Client",
-  "Client Says Granted",
-  "Blocked",
-  "No Longer Needed"
-] as const satisfies readonly AccessRequestStatus[];
+import {
+  accessRequestStatusOptions,
+  buildAccessRequestStatusFormPayload,
+  normalizeAccessRequestStatusSelection
+} from "../../lib/access-request-status-form";
 
 type AccessRequestStatusFormProps = {
   currentStatus: string;
@@ -30,7 +26,9 @@ export function AccessRequestStatusForm({
   requestId
 }: AccessRequestStatusFormProps) {
   const [message, setMessage] = useState<string | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState(normalizeStatus(currentStatus));
+  const [selectedStatus, setSelectedStatus] = useState(
+    normalizeAccessRequestStatusSelection(currentStatus)
+  );
   const [status, setStatus] = useState<"error" | "success" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isDisabled = disabled || isSubmitting;
@@ -49,10 +47,12 @@ export function AccessRequestStatusForm({
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          notes: String(formData.get("notes") ?? ""),
-          status: String(formData.get("status") ?? "")
-        })
+        body: JSON.stringify(
+          buildAccessRequestStatusFormPayload(
+            String(formData.get("status") ?? ""),
+            String(formData.get("notes") ?? "")
+          )
+        )
       });
       const payload = (await response.json()) as AccessRequestStatusResponse;
 
@@ -61,7 +61,11 @@ export function AccessRequestStatusForm({
       }
 
       form.reset();
-      setSelectedStatus(normalizeStatus(payload.accessRequest?.status ?? selectedStatus));
+      setSelectedStatus(
+        normalizeAccessRequestStatusSelection(
+          payload.accessRequest?.status ?? selectedStatus
+        )
+      );
       setStatus("success");
       setMessage("Access request status updated and recorded in the work history.");
     } catch (error) {
@@ -79,7 +83,11 @@ export function AccessRequestStatusForm({
         <select
           disabled={isDisabled}
           name="status"
-          onChange={(event) => setSelectedStatus(normalizeStatus(event.target.value))}
+          onChange={(event) =>
+            setSelectedStatus(
+              normalizeAccessRequestStatusSelection(event.target.value)
+            )
+          }
           value={selectedStatus}
         >
           {accessRequestStatusOptions.map((option) => (
@@ -115,10 +123,4 @@ export function AccessRequestStatusForm({
       ) : null}
     </form>
   );
-}
-
-function normalizeStatus(status: string): AccessRequestStatus {
-  return accessRequestStatusOptions.includes(status as AccessRequestStatus)
-    ? (status as AccessRequestStatus)
-    : "Access Needed";
 }
