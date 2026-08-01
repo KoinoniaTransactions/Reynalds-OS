@@ -1,4 +1,3 @@
-import { SignOutButton } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Footer, Header } from "../../../components/site";
 import { absoluteUrl } from "../../../config/seo.config";
@@ -75,13 +74,6 @@ export default function PortalAccessStatusPage() {
               Return to Client Portal
             </a>
 
-            {hasClerkPublishableKey() ? (
-              <SignOutButton redirectUrl="/">
-                <button className="koinonia-button secondary" type="button">
-                  Sign Out
-                </button>
-              </SignOutButton>
-            ) : null}
           </div>
         </div>
       </section>
@@ -89,9 +81,4 @@ export default function PortalAccessStatusPage() {
       <Footer />
     </main>
   );
-}
-
-
-function hasClerkPublishableKey(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 }

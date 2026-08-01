@@ -24,11 +24,21 @@ export async function requirePortalPermission(
     }
 
     if (error instanceof PermissionDeniedError) {
-      redirect("/portal/access-status");
+      redirect(getAccessDeniedPath(permission));
     }
 
     throw error;
   }
+}
+
+export function getAccessDeniedPath(permission: Permission): string {
+  const portal = permission.startsWith("employee-portal:")
+    ? "employee"
+    : permission.startsWith("client-portal:")
+      ? "client"
+      : "portal";
+
+  return `/portal/access-denied?portal=${portal}`;
 }
 
 export function getSignInPath(returnTo: string, status?: "configuration"): string {

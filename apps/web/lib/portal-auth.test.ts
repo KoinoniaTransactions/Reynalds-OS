@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
+  getAccessDeniedPath,
   getHostedSignInUrl,
   getSignInPath,
   isAllowedHostedAuthUrl,
@@ -9,6 +10,26 @@ import {
 const originalAuthSignInUrl = process.env.NEXT_PUBLIC_AUTH_SIGN_IN_URL;
 const originalClerkSignInUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL;
 const originalNodeEnv = process.env.NODE_ENV;
+
+describe("portal permission denials", () => {
+  it("identifies employee portal permission failures", () => {
+    expect(getAccessDeniedPath("employee-portal:view")).toBe(
+      "/portal/access-denied?portal=employee"
+    );
+  });
+
+  it("identifies client portal permission failures", () => {
+    expect(getAccessDeniedPath("client-portal:view")).toBe(
+      "/portal/access-denied?portal=client"
+    );
+  });
+
+  it("uses a generic portal denial for other permissions", () => {
+    expect(getAccessDeniedPath("billing-workspace:view")).toBe(
+      "/portal/access-denied?portal=portal"
+    );
+  });
+});
 
 describe("portal auth redirects", () => {
   afterEach(() => {
