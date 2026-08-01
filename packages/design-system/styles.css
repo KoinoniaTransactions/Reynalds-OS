@@ -6734,3 +6734,34 @@ body.koinonia-modal-open {
     justify-content: flex-start;
   }
 }
+
+/* Employee dashboard grid containment */
+.koinonia-employee-dashboard-layout,
+.koinonia-employee-main-stack,
+.koinonia-employee-side-panel,
+.koinonia-employee-work-panel,
+.koinonia-employee-request-card,
+.koinonia-employee-table-wrap {
+  min-width: 0;
+}
+
+.koinonia-employee-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.koinonia-employee-panel-heading {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.koinonia-employee-panel-heading h2 {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1180px) {
+  .koinonia-employee-dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+}
