@@ -1,6 +1,18 @@
 import { createAuthUser } from "@reynalds-os/auth";
 import { describe, expect, it } from "vitest";
-import { getClerkDatabaseUserWhere, getPortalInvitationAcceptanceWhere } from "./auth";
+import {
+  getClerkDatabaseUserWhere,
+  getPortalInvitationAcceptanceWhere,
+  normalizeClerkEmailAddress
+} from "./auth";
+
+describe("Clerk email normalization", () => {
+  it("normalizes mixed-case Clerk emails for invitation matching", () => {
+    expect(normalizeClerkEmailAddress("  JeremiahReynalds@GMAIL.COM  ")).toBe(
+      "jeremiahreynalds@gmail.com"
+    );
+  });
+});
 
 describe("managed auth matching", () => {
   const providerUser = createAuthUser({

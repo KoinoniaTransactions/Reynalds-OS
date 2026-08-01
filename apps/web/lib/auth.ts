@@ -206,6 +206,10 @@ function getClerkDisplayName(clerkUser: ClerkUser | null, role: RoleName, email:
   return fullName ?? email;
 }
 
+export function normalizeClerkEmailAddress(email: string): string {
+  return email.trim().toLowerCase();
+}
+
 function getRequiredClerkEmail(clerkUser: ClerkUser | null): string {
   const email = firstString(
     clerkUser?.primaryEmailAddress?.emailAddress,
@@ -218,7 +222,7 @@ function getRequiredClerkEmail(clerkUser: ClerkUser | null): string {
     );
   }
 
-  return email;
+  return normalizeClerkEmailAddress(email);
 }
 
 async function resolveClerkDatabaseUser(providerUser: AuthUser): Promise<AuthUser> {
