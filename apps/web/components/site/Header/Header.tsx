@@ -68,7 +68,11 @@ export function Header() {
         <button
           className="koinonia-header-menu-button"
           type="button"
-          aria-label={isMenuOpen ? "Close Koinonia navigation" : "Open Koinonia navigation"}
+          aria-label={
+            isMenuOpen
+              ? "Close Koinonia navigation"
+              : "Open Koinonia navigation"
+          }
           aria-expanded={isMenuOpen}
           aria-controls="koinonia-header-menu"
           onClick={() => setIsMenuOpen((current) => !current)}
@@ -82,7 +86,10 @@ export function Header() {
           className={`koinonia-header-menu${isMenuOpen ? " open" : ""}`}
           id="koinonia-header-menu"
         >
-          <nav className="koinonia-header-nav" aria-label="Koinonia navigation">
+          <nav
+            className="koinonia-header-nav"
+            aria-label="Koinonia navigation"
+          >
             {navigationItems.map((item) => (
               <a key={item.href} href={item.href} onClick={closeMenu}>
                 <span className="koinonia-header-nav-label">{item.label}</span>
@@ -94,16 +101,18 @@ export function Header() {
           </nav>
 
           {isPortalPage ? (
-            <a
-              className="koinonia-header-cta"
-              href="/sign-out"
-              onClick={closeMenu}
-            >
-              <span>Sign Out</span>
-              <span className="koinonia-header-cta-detail">
-                End this secure portal session
-              </span>
-            </a>
+            <form action="/sign-out" method="post">
+              <button
+                className="koinonia-header-cta"
+                type="submit"
+                onClick={closeMenu}
+              >
+                <span>Sign Out</span>
+                <span className="koinonia-header-cta-detail">
+                  End this secure portal session
+                </span>
+              </button>
+            </form>
           ) : (
             <a
               className="koinonia-header-cta"
