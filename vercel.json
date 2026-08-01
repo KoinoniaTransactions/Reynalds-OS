@@ -1,0 +1,3 @@
+{
+  "buildCommand": "pnpm --filter @reynalds-os/database exec prisma migrate deploy --schema prisma/schema.prisma && pnpm --filter @reynalds-os/web build"
+}
