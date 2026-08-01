@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
+import { AccessRequestStatusForm } from "../../../components/employee/AccessRequestStatusForm";
 import { PortalAccessActionButton } from "../../../components/employee/PortalAccessActionButton";
 import { PortalInvitationForm } from "../../../components/employee/PortalInvitationForm";
 import { Footer, Header } from "../../../components/site";
@@ -498,6 +499,11 @@ export default async function EmployeeAccessWorkspacePage() {
                       <div className="koinonia-employee-work-meta">
                         <strong>{request.status}</strong>
                         <span>Access request</span>
+                        <AccessRequestStatusForm
+                          currentStatus={request.status}
+                          disabled={!accessWorkspace.isLiveData}
+                          requestId={request.id}
+                        />
                       </div>
                     </article>
                   ))}
