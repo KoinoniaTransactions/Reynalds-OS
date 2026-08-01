@@ -16,12 +16,15 @@ model Workspace {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users             User[]
-  roles             Role[]
-  objects           RosObject[]
-  events            TimelineEvent[]
-  portalInvitations PortalInvitation[]
-  auditEvents       AuditEvent[]
+  users                User[]
+  roles                Role[]
+  objects              RosObject[]
+  events               TimelineEvent[]
+  portalInvitations    PortalInvitation[]
+  auditEvents          AuditEvent[]
+  communications       Communication[]
+  communicationReviews CommunicationReviewItem[]
+  importCheckpoints    ImportCheckpoint[]
 }
 
 model User {
@@ -81,10 +84,12 @@ model RosObject {
   updatedAt           DateTime  @updatedAt
   archivedAt          DateTime?
 
-  workspace   Workspace            @relation(fields: [workspaceId], references: [id])
-  events      TimelineEvent[]
-  sourceLinks ObjectRelationship[] @relation("source")
-  targetLinks ObjectRelationship[] @relation("target")
+  workspace                     Workspace                 @relation(fields: [workspaceId], references: [id])
+  events                        TimelineEvent[]
+  sourceLinks                   ObjectRelationship[]      @relation("source")
+  targetLinks                   ObjectRelationship[]      @relation("target")
+  communications                Communication[]
+  suggestedCommunicationReviews CommunicationReviewItem[] @relation("suggestedWorkItem")
 
   @@index([workspaceId, clientUserId])
   @@index([workspaceId, clientObjectId])
@@ -180,20 +185,20 @@ model Notification {
 }
 
 model Document {
-  id              String   @id @default(cuid())
-  workspaceId     String
-  relatedObjectId String?
-  ownerId          String?
-  uploadedByUserId String?
-  fileName        String
-  fileUrl         String
-  storageKey      String?
-  fileSizeBytes   Int?
-  mimeType        String?
-  documentType    String
-  status          String
-  requestedAction String?
-  notes           String?
+  id                     String    @id @default(cuid())
+  workspaceId            String
+  relatedObjectId        String?
+  ownerId                String?
+  uploadedByUserId       String?
+  fileName               String
+  fileUrl                String
+  storageKey             String?
+  fileSizeBytes          Int?
+  mimeType               String?
+  documentType           String
+  status                 String
+  requestedAction        String?
+  notes                  String?
   accessLevel            String    @default("client_and_staff")
   versionNumber          Int       @default(1)
   versionLabel           String?
@@ -282,4 +287,101 @@ model AuditEvent {
   @@index([workspaceId, createdAt])
   @@index([actorId, createdAt])
   @@index([subjectType, subjectId])
+}
+
+model Communication {
+  id                String    @id @default(cuid())
+  workspaceId       String
+  source            String
+  externalMessageId String
+  externalThreadId  String?
+  workItemId        String?
+  subject           String
+  sender            String
+  recipients        Json?
+  sentAt            DateTime?
+  snippet           String?
+  bodyText          String?
+  bodyHtml          String?
+  sourceUrl         String?
+  status            String    @default("imported")
+  matchConfidence   Int?
+  matchEvidence     Json?
+  identifiers       Json?
+  location          Json?
+  rawMetadata       Json?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  workspace   Workspace                 @relation(fields: [workspaceId], references: [id])
+  workItem    RosObject?                @relation(fields: [workItemId], references: [id])
+  attachments CommunicationAttachment[]
+  reviewItem  CommunicationReviewItem?
+
+  @@unique([workspaceId, source, externalMessageId])
+  @@index([workspaceId, workItemId])
+  @@index([workspaceId, status])
+  @@index([externalThreadId])
+}
+
+model CommunicationAttachment {
+  id                   String   @id @default(cuid())
+  communicationId      String
+  externalAttachmentId String?
+  fileName             String
+  mimeType             String?
+  sizeBytes            Int?
+  sourceUrl            String?
+  storageUrl           String?
+  checksum             String?
+  metadata             Json?
+  createdAt            DateTime @default(now())
+
+  communication Communication @relation(fields: [communicationId], references: [id], onDelete: Cascade)
+
+  @@unique([communicationId, externalAttachmentId])
+  @@index([communicationId])
+}
+
+model CommunicationReviewItem {
+  id                  String    @id @default(cuid())
+  workspaceId         String
+  communicationId     String    @unique
+  suggestedWorkItemId String?
+  category            String
+  reason              String
+  status              String    @default("open")
+  confidence          Int?
+  evidence            Json?
+  resolvedById        String?
+  resolvedAt          DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  workspace         Workspace     @relation(fields: [workspaceId], references: [id])
+  communication     Communication @relation(fields: [communicationId], references: [id], onDelete: Cascade)
+  suggestedWorkItem RosObject?    @relation("suggestedWorkItem", fields: [suggestedWorkItemId], references: [id])
+
+  @@index([workspaceId, status])
+  @@index([suggestedWorkItemId])
+}
+
+model ImportCheckpoint {
+  id           String    @id @default(cuid())
+  workspaceId  String
+  source       String
+  mailbox      String
+  label        String    @default("")
+  cursor       String?
+  historyId    String?
+  lastSyncedAt DateTime?
+  status       String    @default("idle")
+  metadata     Json?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@unique([workspaceId, source, mailbox, label])
+  @@index([workspaceId, source])
 }
