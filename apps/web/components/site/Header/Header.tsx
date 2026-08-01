@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { brandContent } from "@/content/brand";
 
@@ -32,7 +33,14 @@ const navigationItems = [
 ] as const;
 
 export function Header() {
+  const pathname = usePathname() ?? "";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const isPortalPage =
+    pathname === "/client" ||
+    pathname.startsWith("/client/") ||
+    pathname === "/employee" ||
+    pathname.startsWith("/employee/");
 
   const closeMenu = () => {
     setIsMenuOpen(false);
@@ -85,16 +93,29 @@ export function Header() {
             ))}
           </nav>
 
-          <a
-            className="koinonia-header-cta"
-            href={brandContent.cta.primaryHref}
-            onClick={closeMenu}
-          >
-            <span>{brandContent.cta.primaryLabel}</span>
-            <span className="koinonia-header-cta-detail">
-              Start with a clear next step
-            </span>
-          </a>
+          {isPortalPage ? (
+            <a
+              className="koinonia-header-cta"
+              href="/sign-out"
+              onClick={closeMenu}
+            >
+              <span>Sign Out</span>
+              <span className="koinonia-header-cta-detail">
+                End this secure portal session
+              </span>
+            </a>
+          ) : (
+            <a
+              className="koinonia-header-cta"
+              href={brandContent.cta.primaryHref}
+              onClick={closeMenu}
+            >
+              <span>{brandContent.cta.primaryLabel}</span>
+              <span className="koinonia-header-cta-detail">
+                Start with a clear next step
+              </span>
+            </a>
+          )}
         </div>
       </div>
 
