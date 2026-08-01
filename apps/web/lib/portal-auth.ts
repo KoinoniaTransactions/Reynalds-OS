@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { PermissionDeniedError, type AuthUser, type Permission } from "@reynalds-os/auth";
 import {
   assertPermission,
@@ -24,7 +24,7 @@ export async function requirePortalPermission(
     }
 
     if (error instanceof PermissionDeniedError) {
-      notFound();
+      redirect("/portal/access-status");
     }
 
     throw error;
