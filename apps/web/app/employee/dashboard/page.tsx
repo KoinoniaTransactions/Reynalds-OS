@@ -303,7 +303,10 @@ export default async function EmployeeDashboardPreviewPage() {
 
   return (
     <main className="koinonia-site koinonia-employee-dashboard">
-      <Header />
+      <Header
+        canAccessClientPortal={actor.permissions.includes("client-portal:view")}
+        canAccessEmployeePortal={actor.permissions.includes("employee-portal:view")}
+      />
 
       <section className="koinonia-section koinonia-employee-dashboard-hero">
         <div className="koinonia-container">

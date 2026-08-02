@@ -32,15 +32,38 @@ const navigationItems = [
   }
 ] as const;
 
-export function Header() {
+type HeaderProps = {
+  canAccessClientPortal?: boolean;
+  canAccessEmployeePortal?: boolean;
+};
+
+export function Header({
+  canAccessClientPortal = false,
+  canAccessEmployeePortal = false
+}: HeaderProps = {}) {
   const pathname = usePathname() ?? "";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const isPortalPage =
-    pathname === "/client" ||
-    pathname.startsWith("/client/") ||
-    pathname === "/employee" ||
-    pathname.startsWith("/employee/");
+  const isClientPortalPage =
+    pathname === "/client" || pathname.startsWith("/client/");
+  const isEmployeePortalPage =
+    pathname === "/employee" || pathname.startsWith("/employee/");
+  const isPortalPage = isClientPortalPage || isEmployeePortalPage;
+
+  const portalSwitch =
+    isClientPortalPage && canAccessEmployeePortal
+      ? {
+          href: "/employee/dashboard",
+          label: "Employee Portal",
+          description: "Switch to staff workspace"
+        }
+      : isEmployeePortalPage && canAccessClientPortal
+        ? {
+            href: "/client/dashboard",
+            label: "Client Portal",
+            description: "Switch to client workspace"
+          }
+        : null;
 
   const closeMenu = () => {
     setIsMenuOpen(false);
@@ -98,6 +121,17 @@ export function Header() {
                 </span>
               </a>
             ))}
+
+            {portalSwitch ? (
+              <a href={portalSwitch.href} onClick={closeMenu}>
+                <span className="koinonia-header-nav-label">
+                  {portalSwitch.label}
+                </span>
+                <span className="koinonia-header-nav-description">
+                  {portalSwitch.description}
+                </span>
+              </a>
+            ) : null}
           </nav>
 
           {isPortalPage ? (
