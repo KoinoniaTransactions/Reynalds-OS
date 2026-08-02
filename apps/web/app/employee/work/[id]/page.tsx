@@ -68,7 +68,10 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
 
   return (
     <main className="koinonia-site koinonia-workspace-detail koinonia-employee-workspace-detail">
-      <Header />
+      <Header
+        canAccessClientPortal={actor.permissions.includes("client-portal:view")}
+        canAccessEmployeePortal={actor.permissions.includes("employee-portal:view")}
+      />
 
       <section className="koinonia-section koinonia-workspace-hero employee">
         <div className="koinonia-container">
@@ -111,10 +114,63 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
         <div className="koinonia-container">
           <div className="koinonia-workspace-layout">
             <div className="koinonia-workspace-main-stack">
-              <section className="koinonia-workspace-panel employee" aria-labelledby="employee-work-overview">
+              <section
+                className="koinonia-workspace-panel employee"
+                aria-labelledby="employee-action-center"
+              >
+                <div className="koinonia-workspace-panel-heading">
+                  <p className="koinonia-eyebrow">Action Required</p>
+                  <h2 id="employee-action-center">Action Center</h2>
+                </div>
+
+                <div className="koinonia-workspace-meta-grid employee">
+                  <article>
+                    <span>Status</span>
+                    <strong>{workspace.summary.status}</strong>
+                  </article>
+
+                  <article>
+                    <span>Health</span>
+                    <strong>{workspace.summary.health}</strong>
+                  </article>
+
+                  <article>
+                    <span>Due</span>
+                    <strong>{workspace.summary.due}</strong>
+                  </article>
+
+                  <article>
+                    <span>Next Action</span>
+                    <strong>{workspace.summary.nextAction}</strong>
+                  </article>
+                </div>
+              </section>
+
+              <section
+                className="koinonia-workspace-panel employee"
+                aria-labelledby="employee-team-assignment"
+              >
+                <div className="koinonia-workspace-panel-heading">
+                  <p className="koinonia-eyebrow">Ownership</p>
+                  <h2 id="employee-team-assignment">Team Assignment</h2>
+                </div>
+
+                <PortalWorkAssignmentForm
+                  backupStaffUserId={workspace.backupStaffUserId}
+                  canAssign={workspace.canAssign}
+                  primaryStaffUserId={workspace.assignedStaffUserId}
+                  staffOptions={workspace.staffOptions}
+                  workItemId={workspace.summary.id}
+                />
+              </section>
+
+              <section
+                className="koinonia-workspace-panel employee"
+                aria-labelledby="employee-work-overview"
+              >
                 <div className="koinonia-workspace-panel-heading">
                   <p className="koinonia-eyebrow">Overview</p>
-                  <h2 id="employee-work-overview">Work Details</h2>
+                  <h2 id="employee-work-overview">Transaction Overview</h2>
                 </div>
 
                 <div className="koinonia-workspace-meta-grid employee">
@@ -133,28 +189,23 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
 
             <aside className="koinonia-workspace-side-panel" aria-label="Employee work actions">
               <section className="koinonia-workspace-panel employee">
-                <p className="koinonia-eyebrow">Assignment</p>
-                <PortalWorkAssignmentForm
-                  backupStaffUserId={workspace.backupStaffUserId}
-                  canAssign={workspace.canAssign}
-                  primaryStaffUserId={workspace.assignedStaffUserId}
-                  staffOptions={workspace.staffOptions}
-                  workItemId={workspace.summary.id}
-                />
+                <p className="koinonia-eyebrow">Quick Actions</p>
+                <p>
+                  Move directly to the staff workspaces most likely to support
+                  the next action on this item.
+                </p>
+                <a className="koinonia-document-link employee" href="/employee/documents">
+                  Open Documents
+                </a>
+                <a className="koinonia-document-link employee" href="/employee/billing">
+                  Open Billing
+                </a>
+                <a className="koinonia-document-link employee" href="/employee/dashboard">
+                  Return to Dashboard
+                </a>
               </section>
 
               <StaffServiceCuePanel serviceCues={workspace.serviceCues} />
-
-              <section className="koinonia-workspace-panel employee">
-                <p className="koinonia-eyebrow">Next Step</p>
-                <p>{workspace.summary.nextAction}</p>
-                <a className="koinonia-document-link employee" href="/employee/dashboard">
-                  Back to Dashboard
-                </a>
-                <a className="koinonia-document-link employee" href="/employee/documents">
-                  Open Document Workspace
-                </a>
-              </section>
 
               <section className="koinonia-workspace-panel employee koinonia-workspace-boundary-card">
                 <p className="koinonia-eyebrow">Staff Boundary</p>
@@ -182,7 +233,7 @@ function StaffServiceCuePanel({
   if (!serviceCues) {
     return (
       <section className="koinonia-workspace-panel employee">
-        <p className="koinonia-eyebrow">Service Template</p>
+        <p className="koinonia-eyebrow">Service Playbook</p>
         <p>
           No service template matched this work item yet. Confirm the service
           package, billing model, expected documents, and next action before
@@ -194,7 +245,7 @@ function StaffServiceCuePanel({
 
   return (
     <section className="koinonia-workspace-panel employee" aria-labelledby="employee-service-cues">
-      <p className="koinonia-eyebrow">Service Template</p>
+      <p className="koinonia-eyebrow">Service Playbook</p>
       <strong className="koinonia-workspace-service-title" id="employee-service-cues">
         {serviceCues.serviceName}
       </strong>
@@ -266,8 +317,8 @@ function WorkspaceTimeline({ events }: { events: PortalWorkspaceEventItem[] }) {
   return (
     <section className="koinonia-workspace-panel employee" aria-labelledby="employee-work-history">
       <div className="koinonia-workspace-panel-heading">
-        <p className="koinonia-eyebrow">History</p>
-        <h2 id="employee-work-history">Work Timeline</h2>
+        <p className="koinonia-eyebrow">Activity</p>
+        <h2 id="employee-work-history">Activity Timeline</h2>
       </div>
 
       <div className="koinonia-workspace-timeline">
