@@ -298,6 +298,64 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
                   <h2 id="employee-work-overview">Transaction Overview</h2>
                 </div>
 
+                {workspace.transactionHealth ? (
+                  <div className="koinonia-workspace-meta-grid employee">
+                    <article>
+                      <span>Health Score</span>
+                      <strong>{workspace.transactionHealth.score}%</strong>
+                      <p>{workspace.transactionHealth.statusLabel}</p>
+                    </article>
+
+                    <article>
+                      <span>Health Status</span>
+                      <strong>
+                        {workspace.transactionHealth.statusLabel}
+                      </strong>
+                      <p>
+                        {getTransactionHealthSummary(
+                          workspace.transactionHealth.status
+                        )}
+                      </p>
+                    </article>
+                  </div>
+                ) : (
+                  <p className="koinonia-employee-security-note">
+                    Transaction health is unavailable until live workspace data
+                    can be loaded.
+                  </p>
+                )}
+
+                {workspace.transactionHealth ? (
+                  <div className="koinonia-workspace-list">
+                    {getTransactionHealthAttentionFactors(
+                      workspace.transactionHealth
+                    ).length ? (
+                      getTransactionHealthAttentionFactors(
+                        workspace.transactionHealth
+                      ).map((factor) => (
+                        <article
+                          className="koinonia-workspace-list-item employee"
+                          key={factor.key}
+                        >
+                          <div>
+                            <span>
+                              {getTransactionHealthFactorLabel(factor.state)}
+                            </span>
+                            <h3>{factor.label}</h3>
+                            <p>{factor.detail}</p>
+                          </div>
+                          <strong>-{factor.penalty}</strong>
+                        </article>
+                      ))
+                    ) : (
+                      <p className="koinonia-employee-security-note">
+                        No material transaction-health risks are currently
+                        identified.
+                      </p>
+                    )}
+                  </div>
+                ) : null}
+
                 <div className="koinonia-workspace-meta-grid employee">
                   <article>
                     <span>Active Documents</span>
@@ -436,6 +494,41 @@ function StaffCueList({ items, title }: { items: readonly string[]; title: strin
       </ul>
     </div>
   );
+}
+
+function getTransactionHealthSummary(
+  status: PortalTransactionHealth["status"]
+): string {
+  switch (status) {
+    case "healthy":
+      return "The transaction is operating within expected controls.";
+    case "watch":
+      return "One or more workflow signals need staff attention.";
+    default:
+      return "Material transaction risks require prompt review.";
+  }
+}
+
+function getTransactionHealthAttentionFactors(
+  health: PortalTransactionHealth
+): PortalTransactionHealth["factors"] {
+  return health.factors
+    .filter((factor) => factor.state !== "positive")
+    .sort((left, right) => right.penalty - left.penalty)
+    .slice(0, 5);
+}
+
+function getTransactionHealthFactorLabel(
+  state: PortalTransactionHealth["factors"][number]["state"]
+): string {
+  switch (state) {
+    case "critical":
+      return "Critical";
+    case "warning":
+      return "Needs Attention";
+    default:
+      return "Healthy";
+  }
 }
 
 function getActionPriorityLabel(
