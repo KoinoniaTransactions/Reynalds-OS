@@ -237,3 +237,20 @@ describe("non-service portal workflows", () => {
     expect(playbook).toBeNull();
   });
 });
+
+describe("portal evidence records", () => {
+  it("does not force a service playbook onto launch proofs", () => {
+    const playbook = buildPortalPlaybook({
+      data: {
+        checklistItemId: "portal-launch-check",
+        proofDate: "2026-08-03",
+        proofOwner: "Operations",
+        status: "Completed"
+      },
+      name: "Launch Proof - Portal Launch Check",
+      objectType: "PortalLaunchProof"
+    });
+
+    expect(playbook).toBeNull();
+  });
+});
