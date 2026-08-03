@@ -17,13 +17,14 @@ type Params = {
   params: Promise<{ id: string }>;
 };
 
-export async function GET(_request: Request, { params }: Params) {
+export async function GET(request: Request, { params }: Params) {
   try {
     const actor = await assertAnyPermission([
       "client-portal:documents:view",
       "document-workspace:view"
     ]);
     const { id } = await params;
+    const disposition = getRequestedDisposition(request);
     if (!isPortalDocumentR2Configured()) {
       return NextResponse.json(
         { error: "Cloudflare R2 document storage is not configured for downloads." },
@@ -47,19 +48,28 @@ export async function GET(_request: Request, { params }: Params) {
     const storageKey = validatePortalDocumentStorageKey(document.storageKey);
     const fileBuffer = await getPortalDocumentFromR2(storageKey);
 
+    const isInlinePreview = disposition === "inline";
+
     await prisma.auditEvent.create({
       data: {
         workspaceId: actor.workspaceId,
         actorId: actor.id,
         actorEmail: actor.email,
-        action: "portal.document.downloaded",
+        action: isInlinePreview
+          ? "portal.document.previewed"
+          : "portal.document.downloaded",
         subjectType: "Document",
         subjectId: document.id,
-        summary: `Document downloaded: ${document.fileName}`,
+        summary: isInlinePreview
+          ? `Document previewed: ${document.fileName}`
+          : `Document downloaded: ${document.fileName}`,
         metadata: {
+          disposition,
           documentType: document.documentType,
           fileName: document.fileName,
-          requestSource: actor.role === "Client" ? "client-portal" : "employee-portal",
+          mimeType: document.mimeType ?? null,
+          requestSource:
+            actor.role === "Client" ? "client-portal" : "employee-portal",
           storageKey
         }
       }
@@ -68,7 +78,10 @@ export async function GET(_request: Request, { params }: Params) {
     return new NextResponse(new Uint8Array(fileBuffer), {
       headers: {
         "Cache-Control": "private, no-store",
-        "Content-Disposition": buildPortalDocumentContentDisposition(document.fileName),
+        "Content-Disposition": buildRequestedContentDisposition(
+          document.fileName,
+          disposition
+        ),
         "Content-Type": document.mimeType ?? "application/octet-stream",
         "X-Content-Type-Options": "nosniff"
       }
@@ -76,6 +89,29 @@ export async function GET(_request: Request, { params }: Params) {
   } catch (error) {
     return handlePortalDocumentDownloadError(error);
   }
+}
+
+type PortalDocumentDisposition = "attachment" | "inline";
+
+function getRequestedDisposition(
+  request: Request
+): PortalDocumentDisposition {
+  const value = new URL(request.url).searchParams.get("disposition");
+
+  return value === "inline" ? "inline" : "attachment";
+}
+
+function buildRequestedContentDisposition(
+  fileName: string,
+  disposition: PortalDocumentDisposition
+): string {
+  const attachment = buildPortalDocumentContentDisposition(fileName);
+
+  if (disposition === "attachment") {
+    return attachment;
+  }
+
+  return attachment.replace(/^attachment/i, "inline");
 }
 
 async function assertAnyPermission(permissions: Permission[]): Promise<AuthUser> {

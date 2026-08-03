@@ -45,6 +45,9 @@ type ReviewDocumentItem = {
   fileInfo: string;
   id: string;
   lifecycleState: PortalDocumentLifecycleState;
+  mimeType?: string | null;
+  previewHref?: string;
+  previewType: "image" | "pdf" | "unsupported";
   previousDocumentId?: string | null;
   removalReason?: string | null;
   removedAt?: Date | string | null;
@@ -153,6 +156,41 @@ export default async function EmployeeDocumentReviewPage({ params }: Params) {
                   <p className="koinonia-eyebrow">Current File</p>
                   <h2>{current.title} {current.versionLabel}</h2>
                 </div>
+
+                {current.previewType === "pdf" && current.previewHref ? (
+                  <div className="koinonia-document-preview">
+                    <iframe
+                      src={current.previewHref}
+                      title={`Preview of ${current.title}`}
+                      style={{
+                        border: 0,
+                        minHeight: "720px",
+                        width: "100%"
+                      }}
+                    />
+                  </div>
+                ) : null}
+
+                {current.previewType === "image" && current.previewHref ? (
+                  <div className="koinonia-document-preview">
+                    <img
+                      alt={`Preview of ${current.title}`}
+                      src={current.previewHref}
+                      style={{
+                        display: "block",
+                        height: "auto",
+                        maxWidth: "100%"
+                      }}
+                    />
+                  </div>
+                ) : null}
+
+                {current.previewType === "unsupported" ? (
+                  <p className="koinonia-document-security-note employee">
+                    This file type cannot be previewed safely in the browser.
+                    Download the document to review it.
+                  </p>
+                ) : null}
 
                 <article className="koinonia-document-work-item employee">
                   <div>
@@ -338,6 +376,31 @@ async function getDocumentReview(
   };
 }
 
+function getDocumentPreviewType(
+  mimeType: string | null
+): ReviewDocumentItem["previewType"] {
+  const normalized = mimeType?.trim().toLowerCase();
+
+  if (normalized === "application/pdf") {
+    return "pdf";
+  }
+
+  if (
+    normalized === "image/jpeg" ||
+    normalized === "image/png" ||
+    normalized === "image/gif" ||
+    normalized === "image/webp"
+  ) {
+    return "image";
+  }
+
+  return "unsupported";
+}
+
+function isPreviewableMimeType(mimeType: string | null): boolean {
+  return getDocumentPreviewType(mimeType) !== "unsupported";
+}
+
 function mapDocumentRecord(document: PortalDocumentRecord): ReviewDocumentItem {
   const storageReady = isPortalDocumentR2Configured();
 
@@ -357,6 +420,12 @@ function mapDocumentRecord(document: PortalDocumentRecord): ReviewDocumentItem {
     id: document.id,
     lifecycleState:
       document.lifecycleState as PortalDocumentLifecycleState,
+    mimeType: document.mimeType,
+    previewHref:
+      storageReady && document.storageKey && isPreviewableMimeType(document.mimeType)
+        ? `/api/portal/documents/${document.id}/download?disposition=inline`
+        : undefined,
+    previewType: getDocumentPreviewType(document.mimeType),
     previousDocumentId: document.previousDocumentId,
     removalReason: document.removalReason,
     removedAt: document.removedAt,
