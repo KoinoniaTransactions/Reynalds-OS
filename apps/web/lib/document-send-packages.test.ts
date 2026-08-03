@@ -3,6 +3,7 @@ import {
   buildDocumentSendPackageName,
   buildDocumentSendPackageNextAction,
   buildDocumentSendPackageStatusNextAction,
+  documentSendPackageStatusRequiresDeliveryConfirmation,
   documentSendPackageStatusRequiresApproval,
   DocumentSendPackageValidationError,
   getDocumentSendPackageDetail,
@@ -114,7 +115,23 @@ describe("document send package helpers", () => {
       "Monitor signature"
     );
     expect(documentSendPackageStatusRequiresApproval(input.status)).toBe(true);
+    expect(documentSendPackageStatusRequiresDeliveryConfirmation(input.status)).toBe(true);
     expect(isDocumentSendPackageApprovalConfirmed({ approvalConfirmed: true })).toBe(true);
+  });
+
+  it("requires delivery confirmation before sent or completed states", () => {
+    expect(() =>
+      validateDocumentSendPackageStatusUpdateInput({
+        status: "Sent"
+      })
+    ).toThrow("deliveryConfirmation is required");
+
+    expect(() =>
+      validateDocumentSendPackageStatusUpdateInput({
+        notes: "Archive checked.",
+        status: "Completed"
+      })
+    ).toThrow("deliveryConfirmation is required");
   });
 
   it("rejects unsafe send package status update notes", () => {

@@ -101,6 +101,7 @@ export function validateDocumentSendPackageStatusUpdateInput(
     500
   );
   const notes = boundedOptionalString(value.notes, "notes", 1_000);
+  const status = normalizeRequiredSendPackageStatus(value.status);
 
   if (
     (deliveryConfirmation && containsSensitiveDeliveryLanguage(deliveryConfirmation)) ||
@@ -111,10 +112,16 @@ export function validateDocumentSendPackageStatusUpdateInput(
     );
   }
 
+  if (documentSendPackageStatusRequiresDeliveryConfirmation(status) && !deliveryConfirmation) {
+    throw new DocumentSendPackageValidationError(
+      "deliveryConfirmation is required before a send package can be marked sent, signature monitoring, or completed."
+    );
+  }
+
   return {
     deliveryConfirmation,
     notes,
-    status: normalizeRequiredSendPackageStatus(value.status)
+    status
   };
 }
 
@@ -220,6 +227,12 @@ export function documentSendPackageStatusRequiresApproval(
   status: DocumentSendPackageStatus
 ): boolean {
   return ["Ready to Send", "Sent", "Signature Monitoring", "Completed"].includes(status);
+}
+
+export function documentSendPackageStatusRequiresDeliveryConfirmation(
+  status: DocumentSendPackageStatus
+): boolean {
+  return ["Sent", "Signature Monitoring", "Completed"].includes(status);
 }
 
 function normalizeSendPackageStatus(
