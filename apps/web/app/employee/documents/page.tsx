@@ -383,6 +383,13 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
                               </p>
                             ) : null}
 
+                            <a
+                              className="koinonia-document-link employee"
+                              href={`/employee/documents/${current.id}`}
+                            >
+                              Review Document
+                            </a>
+
                             {current.downloadHref ? (
                               <a
                                 className="koinonia-document-link employee"
