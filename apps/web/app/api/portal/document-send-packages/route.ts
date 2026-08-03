@@ -15,6 +15,10 @@ import {
 } from "../../../../lib/document-send-packages";
 import { prisma } from "../../../../lib/db";
 import { getPortalDocumentVersionLabel } from "../../../../lib/portal-documents";
+import {
+  buildPersistedPortalPlaybookSnapshot,
+  buildPortalPlaybook
+} from "../../../../lib/portal-playbook";
 
 export const dynamic = "force-dynamic";
 
@@ -244,6 +248,21 @@ function buildDocumentSendPackageData(
 
   if (relatedObjectId) {
     data.relatedObjectId = relatedObjectId;
+  }
+
+  const playbook = buildPortalPlaybook({
+    data: {
+      ...data,
+      serviceName: "Contract & Document Support"
+    },
+    name: buildDocumentSendPackageName(input),
+    objectType: "Document"
+  });
+
+  if (playbook) {
+    data.playbook = buildPersistedPortalPlaybookSnapshot(
+      playbook
+    );
   }
 
   return data as Prisma.InputJsonObject;
