@@ -58,13 +58,18 @@ type ShowingRequestDetails = {
 };
 
 type EmployeeWorkWorkspaceView = {
+  activeDocumentCount: number;
+  assignedStaffLabel: string;
   assignedStaffUserId?: string | null;
+  backupStaffLabel: string;
   backupStaffUserId?: string | null;
   canAssign: boolean;
   canUpdateShowing: boolean;
   documentUploadReady: boolean;
   documents: PortalWorkspaceDocumentItem[];
   events: PortalWorkspaceEventItem[];
+  outstandingDocumentActionCount: number;
+  recentActivityCount: number;
   isShowingRequest: boolean;
   notice?: string;
   serviceCues: KoinoniaStaffServiceCues | null;
@@ -248,6 +253,31 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
                 </div>
 
                 <div className="koinonia-workspace-meta-grid employee">
+                  <article>
+                    <span>Active Documents</span>
+                    <strong>{workspace.activeDocumentCount}</strong>
+                  </article>
+
+                  <article>
+                    <span>Document Actions</span>
+                    <strong>{workspace.outstandingDocumentActionCount}</strong>
+                  </article>
+
+                  <article>
+                    <span>Recent Activity</span>
+                    <strong>{workspace.recentActivityCount}</strong>
+                  </article>
+
+                  <article>
+                    <span>Primary Staff</span>
+                    <strong>{workspace.assignedStaffLabel}</strong>
+                  </article>
+
+                  <article>
+                    <span>Backup Staff</span>
+                    <strong>{workspace.backupStaffLabel}</strong>
+                  </article>
+
                   {workspace.summary.meta.map((item) => (
                     <article key={item.label}>
                       <span>{item.label}</span>
@@ -378,6 +408,15 @@ function WorkspaceDocuments({ documents }: { documents: PortalWorkspaceDocumentI
               <h3>{document.title}</h3>
               <p>{document.detail}</p>
               <p>{document.fileInfo}</p>
+              {!document.id.startsWith("sample-") ? (
+                <a
+                  className="koinonia-document-link employee"
+                  href={`/employee/documents/${document.id}`}
+                >
+                  Review Document
+                </a>
+              ) : null}
+
               {document.downloadHref ? (
                 <a className="koinonia-document-link employee" href={document.downloadHref}>
                   Download
@@ -476,9 +515,29 @@ async function getEmployeeWorkWorkspace(
         name: staffUser.name,
         role: staffUser.role?.name ?? "Staff"
       }));
+    const assignedStaffLabel =
+      staffOptions.find((staffUser) => staffUser.id === workItem.assignedStaffUserId)
+        ?.name ?? "Unassigned";
+    const backupStaffLabel =
+      staffOptions.find((staffUser) => staffUser.id === workItem.backupStaffUserId)
+        ?.name ?? "Not assigned";
+    const activeDocuments = documents.filter(
+      (document) =>
+        document.archivedAt === null &&
+        document.removedAt === null &&
+        document.lifecycleState === "active"
+    );
+    const outstandingDocumentActionCount = activeDocuments.filter(
+      (document) =>
+        Boolean(document.requestedAction?.trim()) ||
+        ["Uploaded", "In Review", "Revision Requested"].includes(document.status)
+    ).length;
 
     return {
+      activeDocumentCount: activeDocuments.length,
+      assignedStaffLabel,
       assignedStaffUserId: workItem.assignedStaffUserId,
+      backupStaffLabel,
       backupStaffUserId: workItem.backupStaffUserId,
       canAssign: actor.permissions.includes("employee-portal:assignments:update"),
       canUpdateShowing: actor.permissions.includes("employee-portal:assigned-work:update"),
@@ -492,6 +551,8 @@ async function getEmployeeWorkWorkspace(
         })
       ),
       events: withWorkspaceEvents(buildPortalWorkspaceTimeline(events)),
+      outstandingDocumentActionCount,
+      recentActivityCount: events.length,
       isShowingRequest: workItem.objectType === showingRequestObjectType,
       serviceCues: getKoinoniaStaffServiceCuesForWork({
         data: workItem.data,
@@ -508,11 +569,16 @@ async function getEmployeeWorkWorkspace(
     }
 
     return {
+      activeDocumentCount: 0,
+      assignedStaffLabel: "Unavailable",
+      backupStaffLabel: "Unavailable",
       canAssign: false,
       canUpdateShowing: false,
       documentUploadReady: false,
       documents: buildEmptyPortalWorkspaceDocuments(),
       events: buildEmptyPortalWorkspaceTimeline(),
+      outstandingDocumentActionCount: 0,
+      recentActivityCount: 0,
       isShowingRequest: false,
       notice:
         "Work detail storage is not reachable in this preview, so live status, documents, assignment options, and history cannot be shown yet.",
