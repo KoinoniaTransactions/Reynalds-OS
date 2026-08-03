@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { Document as PortalDocumentRecord } from "@reynalds-os/database";
 import { absoluteUrl } from "../../../config/seo.config";
 import { PortalDocumentApprovalForm } from "../../../components/client/PortalDocumentApprovalForm";
+import { PortalDocumentRemoveForm } from "../../../components/client/PortalDocumentRemoveForm";
 import { PortalDocumentUploadForm } from "../../../components/client/PortalDocumentUploadForm";
 import { Footer, Header } from "../../../components/site";
 import { isPortalDocumentR2Configured, isPortalDocumentR2UploadEnabled } from "../../../lib/portal-document-r2";
@@ -308,6 +309,12 @@ export default async function ClientDocumentCenterPreviewPage() {
                               Download File
                             </a>
                           ) : null}
+
+                          <PortalDocumentRemoveForm
+                            disabled={!documentView.isLiveData}
+                            documentId={item.id}
+                            documentName={item.title}
+                          />
                         </div>
 
                         <div className="koinonia-document-work-meta">
@@ -380,7 +387,9 @@ async function getClientDocumentView(
       where: {
         workspaceId,
         ownerId,
-        archivedAt: null
+        archivedAt: null,
+        removedAt: null,
+        lifecycleState: "active"
       },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
       take: 20

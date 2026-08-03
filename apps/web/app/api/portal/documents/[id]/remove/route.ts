@@ -43,6 +43,7 @@ export async function POST(request: Request, { params }: Params) {
       const updated = await tx.document.update({
         where: { id: document.id },
         data: {
+          lifecycleState: "removed",
           removedAt,
           removedByUserId: actor.id,
           removalReason
