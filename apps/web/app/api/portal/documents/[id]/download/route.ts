@@ -1,5 +1,4 @@
-import { readFile } from "node:fs/promises";
-import { resolve, sep } from "node:path";
+import { getPortalDocumentFromR2, isPortalDocumentR2Configured } from "../../../../../../lib/portal-document-r2";
 import { PermissionDeniedError, type AuthUser, type Permission } from "@reynalds-os/auth";
 import { NextResponse } from "next/server";
 import { getAuthErrorResponse } from "../../../../../../lib/api-auth";
@@ -25,11 +24,9 @@ export async function GET(_request: Request, { params }: Params) {
       "document-workspace:view"
     ]);
     const { id } = await params;
-    const uploadRoot = getConfiguredUploadRoot();
-
-    if (!uploadRoot) {
+    if (!isPortalDocumentR2Configured()) {
       return NextResponse.json(
-        { error: "Document storage is not configured for downloads." },
+        { error: "Cloudflare R2 document storage is not configured for downloads." },
         { status: 503 }
       );
     }
@@ -48,8 +45,7 @@ export async function GET(_request: Request, { params }: Params) {
     }
 
     const storageKey = validatePortalDocumentStorageKey(document.storageKey);
-    const filePath = getDocumentLocalPath(uploadRoot, storageKey);
-    const fileBuffer = await readFile(filePath);
+    const fileBuffer = await getPortalDocumentFromR2(storageKey);
 
     await prisma.auditEvent.create({
       data: {
@@ -105,27 +101,6 @@ function canViewAllDocuments(actor: AuthUser): boolean {
   return actor.role !== "Client" && actor.permissions.includes("document-workspace:view");
 }
 
-function getConfiguredUploadRoot(): string | null {
-  const configuredRoot = process.env.PORTAL_DOCUMENT_UPLOAD_DIR;
-
-  if (!configuredRoot?.trim()) {
-    return null;
-  }
-
-  return resolve(configuredRoot);
-}
-
-function getDocumentLocalPath(uploadRoot: string, storageKey: string): string {
-  const root = resolve(uploadRoot);
-  const filePath = resolve(root, storageKey);
-
-  if (filePath !== root && filePath.startsWith(`${root}${sep}`)) {
-    return filePath;
-  }
-
-  throw new PortalDocumentValidationError("Document file reference is invalid.");
-}
-
 function handlePortalDocumentDownloadError(error: unknown) {
   const authResponse = getAuthErrorResponse(error);
 
@@ -160,7 +135,8 @@ function isDatabaseUnavailableError(error: unknown): boolean {
 function isFileNotFoundError(error: unknown): boolean {
   return (
     error instanceof Error &&
-    "code" in error &&
-    (error as { code?: unknown }).code === "ENOENT"
+    ("name" in error &&
+      ((error as { name?: unknown }).name === "NoSuchKey" ||
+        (error as { name?: unknown }).name === "NotFound"))
   );
 }
