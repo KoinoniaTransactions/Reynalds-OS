@@ -23,7 +23,8 @@ import {
 import { requirePortalPermission } from "../../../../lib/portal-auth";
 import {
   buildDeadlineActions,
-  getTransactionDeadlines
+  resolvePortalPlaybookDeadlines,
+  type PortalTransactionDeadline
 } from "../../../../lib/portal-deadlines";
 import {
   calculatePortalTransactionHealth,
@@ -859,7 +860,10 @@ async function getEmployeeWorkWorkspace(
           templateId: playbook.templateId
         }
       : null;
-    const transactionDeadlines = getTransactionDeadlines(workItem.data);
+    const transactionDeadlines = resolvePortalPlaybookDeadlines({
+      data: workItem.data,
+      persistedDeadlines: persistedPlaybook?.deadlinePlaceholders
+    });
     const missingExpectedDocumentCount =
       getMissingExpectedDocumentCount(documents, serviceCues);
     const transactionHealth = calculatePortalTransactionHealth({
@@ -877,6 +881,7 @@ async function getEmployeeWorkWorkspace(
       data: workItem.data,
       documents,
       documentsNeedingAction,
+      deadlines: transactionDeadlines,
       events,
       serviceCues,
       workItemId: workItem.id
@@ -979,6 +984,7 @@ function buildEmployeeWorkspaceActions({
   assignedStaffUserId,
   backupStaffUserId,
   data,
+  deadlines,
   documents,
   documentsNeedingAction,
   events,
@@ -1000,6 +1006,7 @@ function buildEmployeeWorkspaceActions({
     requestedAction: string | null;
     status: string;
   }>;
+  deadlines: readonly PortalTransactionDeadline[];
   events: Array<{
     createdAt: Date;
   }>;
@@ -1008,7 +1015,7 @@ function buildEmployeeWorkspaceActions({
 }): EmployeeWorkspaceAction[] {
   const actions: EmployeeWorkspaceAction[] = [];
   const deadlineActions = buildDeadlineActions(
-    getTransactionDeadlines(data)
+    deadlines
   ).map<EmployeeWorkspaceAction>((action) => ({
     deadlineKey: action.deadlineKey,
     detail: action.detail,

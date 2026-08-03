@@ -411,3 +411,52 @@ export function buildCompletedDeadlineData({
 
   return record;
 }
+
+export function resolvePortalPlaybookDeadlines({
+  data,
+  persistedDeadlines,
+  now = new Date()
+}: {
+  data: unknown;
+  persistedDeadlines?: readonly PortalTransactionDeadline[];
+  now?: Date;
+}): PortalTransactionDeadline[] {
+  if (!persistedDeadlines?.length) {
+    return getTransactionDeadlines(data, now);
+  }
+
+  const today = startOfUtcDay(now);
+
+  return persistedDeadlines
+    .filter(
+      (deadline) =>
+        !isPortalDeadlineCompleted(data, deadline.key)
+    )
+    .map((deadline) => {
+      const date = startOfUtcDay(deadline.date);
+      const daysUntilDue = differenceInUtcDays(date, today);
+
+      return {
+        ...deadline,
+        date,
+        dateLabel: formatPortalDeadlineDate(date),
+        daysUntilDue,
+        risk: getDeadlineRisk(
+          daysUntilDue,
+          getDeadlineWarningDays(deadline.key)
+        )
+      };
+    })
+    .sort(
+      (left, right) =>
+        left.date.getTime() - right.date.getTime()
+    );
+}
+
+function getDeadlineWarningDays(key: string): number {
+  return (
+    portalDeadlineDefinitions.find(
+      (definition) => definition.key === key
+    )?.warningDays ?? 3
+  );
+}
