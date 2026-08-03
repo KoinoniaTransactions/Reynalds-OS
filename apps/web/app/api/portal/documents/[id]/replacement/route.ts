@@ -3,16 +3,16 @@ import { getAuthErrorResponse } from "../../../../../../lib/api-auth";
 import { assertPermission } from "../../../../../../lib/auth";
 import { prisma } from "../../../../../../lib/db";
 import {
-  getConfiguredPortalDocumentScannerCommand,
-  getConfiguredPortalDocumentUploadRoot,
   getPortalDocumentFormFile,
-  persistPortalDocumentFile,
   PortalDocumentScanFailedError,
-  PortalDocumentScanUnavailableError,
-  removeStoredFileQuietly,
-  scanPortalDocumentFile,
-  type StoredPortalDocument
+  PortalDocumentScanUnavailableError
 } from "../../../../../../lib/portal-document-storage";
+import {
+  isPortalDocumentR2Configured,
+  persistPortalDocumentToR2,
+  removePortalDocumentFromR2Quietly,
+  type StoredR2Document
+} from "../../../../../../lib/portal-document-r2";
 import {
   getNextPortalDocumentVersionNumber,
   PortalDocumentValidationError,
@@ -28,25 +28,14 @@ type Params = {
 
 export async function POST(request: Request, { params }: Params) {
   let documentPersisted = false;
-  let storedDocument: StoredPortalDocument | null = null;
+  let storedDocument: StoredR2Document | null = null;
 
   try {
     const actor = await assertPermission("document-workspace:drafts:update");
     const { id } = await params;
-    const uploadRoot = getConfiguredPortalDocumentUploadRoot();
-
-    if (!uploadRoot) {
+    if (!isPortalDocumentR2Configured()) {
       return NextResponse.json(
-        { error: "Document storage is not configured for replacements." },
-        { status: 503 }
-      );
-    }
-
-    const scannerCommand = getConfiguredPortalDocumentScannerCommand();
-
-    if (!scannerCommand) {
-      return NextResponse.json(
-        { error: "Document malware scanning is not configured for replacements." },
+        { error: "Cloudflare R2 document storage is not configured for replacements." },
         { status: 503 }
       );
     }
@@ -91,13 +80,11 @@ export async function POST(request: Request, { params }: Params) {
       );
     }
 
-    storedDocument = await persistPortalDocumentFile({
+    storedDocument = await persistPortalDocumentToR2({
       actor,
       cleanName: input.file.cleanName,
-      file,
-      uploadRoot
+      file
     });
-    await scanPortalDocumentFile(storedDocument.localPath, scannerCommand);
 
     const storedReplacement = storedDocument;
     const nextVersionNumber = getNextPortalDocumentVersionNumber(document.versionNumber);
@@ -190,7 +177,7 @@ export async function POST(request: Request, { params }: Params) {
     return NextResponse.json({ document: replacementDocument }, { status: 201 });
   } catch (error) {
     if (storedDocument && !documentPersisted) {
-      await removeStoredFileQuietly(storedDocument.localPath);
+      await removePortalDocumentFromR2Quietly(storedDocument.storageKey);
     }
 
     return handlePortalDocumentReplacementError(error);
