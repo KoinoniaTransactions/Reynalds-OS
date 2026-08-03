@@ -12,11 +12,11 @@ import { Footer, Header } from "../../../../components/site";
 import { absoluteUrl } from "../../../../config/seo.config";
 import { isPortalDocumentR2Configured, isPortalDocumentR2UploadEnabled } from "../../../../lib/portal-document-r2";
 import { prisma } from "../../../../lib/db";
-import {
-  getKoinoniaBillingModelLabel,
-  type KoinoniaStaffServiceCues
+import type {
+  KoinoniaStaffServiceCues
 } from "../../../../lib/koinonia-service-templates";
 import {
+  buildStaffServiceCuesFromPlaybook,
   getPersistedPortalPlaybook,
   getPortalPlaybookForWork
 } from "../../../../lib/portal-playbook";
@@ -841,24 +841,10 @@ async function getEmployeeWorkWorkspace(
         : "template"
       : null;
     const serviceCues: KoinoniaStaffServiceCues | null = playbook
-      ? {
-          billingModelLabel: getKoinoniaBillingModelLabel(
-            playbook.billingModel
-          ),
-          documentRequests: playbook.expectedDocuments.map(
-            (document) => document.label
-          ),
-          employeePortalQueues: [],
-          requiredStaffRoles: [...playbook.requiredStaffRoles],
-          riskNotes: [],
-          serviceName: playbook.serviceName,
+      ? buildStaffServiceCuesFromPlaybook(playbook, {
           showingRequestRequired:
-            workItem.objectType === "ShowingRequest",
-          staffNextAction:
-            playbook.initialActions[0]?.label ??
-            "Review the active service playbook.",
-          templateId: playbook.templateId
-        }
+            workItem.objectType === "ShowingRequest"
+        })
       : null;
     const transactionDeadlines = resolvePortalPlaybookDeadlines({
       data: workItem.data,

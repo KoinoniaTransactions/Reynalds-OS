@@ -1,7 +1,9 @@
 import {
+  getKoinoniaBillingModelLabel,
   getKoinoniaServiceTemplateForWork,
   type KoinoniaBillingModel,
-  type KoinoniaStaffRole
+  type KoinoniaStaffRole,
+  type KoinoniaStaffServiceCues
 } from "./koinonia-service-templates";
 import {
   getTransactionDeadlines,
@@ -238,6 +240,32 @@ export function getPersistedPortalPlaybook(
     requiredStaffRoles,
     serviceName: stored.serviceName.trim(),
     templateId: stored.templateId.trim()
+  };
+}
+
+export function buildStaffServiceCuesFromPlaybook(
+  playbook: PortalPlaybook,
+  options: {
+    showingRequestRequired?: boolean;
+  } = {}
+): KoinoniaStaffServiceCues {
+  return {
+    billingModelLabel: getKoinoniaBillingModelLabel(
+      playbook.billingModel
+    ),
+    documentRequests: playbook.expectedDocuments.map(
+      (document) => document.label
+    ),
+    employeePortalQueues: [],
+    requiredStaffRoles: [...playbook.requiredStaffRoles],
+    riskNotes: [],
+    serviceName: playbook.serviceName,
+    showingRequestRequired:
+      options.showingRequestRequired ?? false,
+    staffNextAction:
+      playbook.initialActions[0]?.label ??
+      "Review the active service playbook.",
+    templateId: playbook.templateId
   };
 }
 

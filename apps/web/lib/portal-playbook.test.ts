@@ -114,6 +114,48 @@ describe("portal playbook", () => {
   });
 });
 
+describe("playbook staff service cues", () => {
+  it("converts a resolved playbook into employee service cues", async () => {
+    const {
+      buildPortalPlaybook,
+      buildStaffServiceCuesFromPlaybook
+    } = await import("./portal-playbook");
+
+    const playbook = buildPortalPlaybook({
+      data: {
+        packageName: "Licensed Showing Coverage"
+      },
+      name: "West Ridge Showing",
+      objectType: "ShowingRequest"
+    });
+
+    expect(playbook).not.toBeNull();
+
+    const cues = buildStaffServiceCuesFromPlaybook(
+      playbook!,
+      {
+        showingRequestRequired: true
+      }
+    );
+
+    expect(cues).toMatchObject({
+      billingModelLabel: "Per request after completion",
+      serviceName: "Licensed Showing Coverage",
+      showingRequestRequired: true,
+      templateId: "licensed-showing-coverage"
+    });
+    expect(cues.documentRequests).toContain(
+      "Access readiness confirmation"
+    );
+    expect(cues.requiredStaffRoles).toContain(
+      "Showing Provider"
+    );
+    expect(cues.staffNextAction).toContain(
+      "licensed showing provider"
+    );
+  });
+});
+
 describe("persisted portal playbooks", () => {
   it("prefers a valid persisted playbook snapshot", async () => {
     const { getPortalPlaybookForWork } = await import(
