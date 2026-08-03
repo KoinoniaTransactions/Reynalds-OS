@@ -16,7 +16,10 @@ import {
   getKoinoniaBillingModelLabel,
   type KoinoniaStaffServiceCues
 } from "../../../../lib/koinonia-service-templates";
-import { getPortalPlaybookForWork } from "../../../../lib/portal-playbook";
+import {
+  getPersistedPortalPlaybook,
+  getPortalPlaybookForWork
+} from "../../../../lib/portal-playbook";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
 import {
   buildDeadlineActions,
@@ -93,6 +96,7 @@ type EmployeeWorkWorkspaceView = {
   recentActivityCount: number;
   isShowingRequest: boolean;
   notice?: string;
+  playbookSource: "persisted" | "template" | null;
   serviceCues: KoinoniaStaffServiceCues | null;
   showingDetails: ShowingRequestDetails;
   staffOptions: PortalWorkAssignmentStaffOption[];
@@ -452,7 +456,10 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
                 </a>
               </section>
 
-              <StaffServiceCuePanel serviceCues={workspace.serviceCues} />
+              <StaffServiceCuePanel
+                playbookSource={workspace.playbookSource}
+                serviceCues={workspace.serviceCues}
+              />
 
               <section className="koinonia-workspace-panel employee koinonia-workspace-boundary-card">
                 <p className="koinonia-eyebrow">Staff Boundary</p>
@@ -473,8 +480,10 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
 }
 
 function StaffServiceCuePanel({
+  playbookSource,
   serviceCues
 }: {
+  playbookSource: "persisted" | "template" | null;
   serviceCues: KoinoniaStaffServiceCues | null;
 }) {
   if (!serviceCues) {
@@ -506,6 +515,20 @@ function StaffServiceCuePanel({
         <article>
           <span>Showing Request</span>
           <strong>{serviceCues.showingRequestRequired ? "Required" : "Not Required"}</strong>
+        </article>
+
+        <article>
+          <span>Template</span>
+          <strong>{serviceCues.templateId}</strong>
+        </article>
+
+        <article>
+          <span>Playbook Source</span>
+          <strong>
+            {playbookSource === "persisted"
+              ? "Persisted Snapshot"
+              : "Generated from Template"}
+          </strong>
         </article>
       </div>
 
@@ -803,11 +826,19 @@ async function getEmployeeWorkWorkspace(
         ["Uploaded", "In Review", "Revision Requested"].includes(document.status)
     );
     const outstandingDocumentActionCount = documentsNeedingAction.length;
+    const persistedPlaybook = getPersistedPortalPlaybook(
+      workItem.data
+    );
     const playbook = getPortalPlaybookForWork({
       data: workItem.data,
       name: workItem.name,
       objectType: workItem.objectType
     });
+    const playbookSource = playbook
+      ? persistedPlaybook
+        ? "persisted"
+        : "template"
+      : null;
     const serviceCues: KoinoniaStaffServiceCues | null = playbook
       ? {
           billingModelLabel: getKoinoniaBillingModelLabel(
@@ -876,6 +907,7 @@ async function getEmployeeWorkWorkspace(
       ),
       events: withWorkspaceEvents(buildPortalWorkspaceTimeline(events)),
       outstandingDocumentActionCount,
+      playbookSource,
       recentActivityCount: events.length,
       isShowingRequest: workItem.objectType === showingRequestObjectType,
       serviceCues,
@@ -901,6 +933,7 @@ async function getEmployeeWorkWorkspace(
       documents: buildEmptyPortalWorkspaceDocuments(),
       events: buildEmptyPortalWorkspaceTimeline(),
       outstandingDocumentActionCount: 0,
+      playbookSource: null,
       recentActivityCount: 0,
       isShowingRequest: false,
       notice:
