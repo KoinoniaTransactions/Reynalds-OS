@@ -19,7 +19,8 @@
     "@reynalds-os/design-system": "workspace:*",
     "next": "^15.5.20",
     "react": "^19.0.3",
-    "react-dom": "^19.0.3"
+    "react-dom": "^19.0.3",
+    "stripe": "^22.4.0"
   },
   "devDependencies": {
     "@prisma/nextjs-monorepo-workaround-plugin": "^7.9.1",

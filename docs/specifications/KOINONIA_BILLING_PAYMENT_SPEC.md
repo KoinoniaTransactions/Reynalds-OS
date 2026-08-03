@@ -58,6 +58,17 @@ Production readiness requires:
 - `KOINONIA_PAYMENT_WEBHOOK_URL` set to the public HTTPS endpoint configured in the payment processor.
 - `KOINONIA_PAYMENT_WEBHOOK_SECRET` set so processor events can be verified before payment status is trusted.
 
+Stripe setup uses `https://www.koinoniatransactions.com/api/portal/payments/webhook` as the production webhook endpoint.
+Configure Stripe to send setup, checkout, payment success, payment failure, and refund events to that endpoint.
+Stripe Checkout Sessions, SetupIntents, or PaymentIntents should include Koinonia metadata so the portal can match processor events safely:
+
+- `koinoniaWorkspaceId`
+- `koinoniaInvoiceId` for invoice payment events.
+- `koinoniaBillingSetupRequestId` for payment-method setup events.
+
+The webhook should store only safe processor references and safe payment-method summaries.
+Do not place raw card numbers, CVV/CVC, bank details, API keys, or Stripe secrets in metadata, notes, or portal records.
+
 ---
 
 ## 3. Customer Billing Profile
