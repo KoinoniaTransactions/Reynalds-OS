@@ -66,6 +66,13 @@ type PaymentSetupQueueItem = {
   status: string;
 };
 
+type PayAtCloseWatchItem = {
+  closeDate: string;
+  fee: string;
+  file: string;
+  status: string;
+};
+
 const sampleBillingProfiles: BillingProfileItem[] = [
   {
     client: "Bright Homes Team",
@@ -196,7 +203,7 @@ const sampleInvoices: InvoiceItem[] = [
   }
 ];
 
-const payAtCloseWatch = [
+const samplePayAtCloseWatch: PayAtCloseWatchItem[] = [
   {
     file: "Northgate Closing File",
     closeDate: "Aug 12",
@@ -215,7 +222,7 @@ const payAtCloseWatch = [
     fee: "$599",
     status: "Ready to Invoice"
   }
-] as const;
+];
 
 const billingRules = [
   "Use processor-hosted payment setup; do not store card numbers.",
@@ -239,6 +246,10 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
   const paymentSetupQueue = buildPaymentSetupQueue(
     billingSetupView.requests,
     billingSetupView.isLiveData
+  );
+  const payAtCloseWatch = buildPayAtCloseWatch(
+    invoiceView.invoices,
+    invoiceView.isLiveData
   );
 
   return (
@@ -665,6 +676,46 @@ function buildPaymentSetupQueue(
     {
       client: "Setup queue is clear",
       reason: "No active billing setup requests need a processor link right now.",
+      status: "Ready"
+    }
+  ];
+}
+
+function buildPayAtCloseWatch(
+  invoices: InvoiceItem[],
+  isLiveData: boolean
+): PayAtCloseWatchItem[] {
+  if (!isLiveData) {
+    return samplePayAtCloseWatch;
+  }
+
+  const watchItems = invoices.flatMap((invoice) => {
+    if (
+      invoice.id.startsWith("empty-") ||
+      invoice.status !== "Pay at Close Watch"
+    ) {
+      return [];
+    }
+
+    return [
+      {
+        closeDate: invoice.due,
+        fee: invoice.amount,
+        file: invoice.service,
+        status: invoice.status
+      }
+    ];
+  });
+
+  if (watchItems.length > 0) {
+    return watchItems;
+  }
+
+  return [
+    {
+      closeDate: "No close trigger",
+      fee: "$0.00",
+      file: "No pay-at-close invoices",
       status: "Ready"
     }
   ];
