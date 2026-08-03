@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 type PortalDocumentUploadFormProps = {
@@ -13,6 +13,12 @@ export function PortalDocumentUploadForm({
   storageReady
 }: PortalDocumentUploadFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedDocumentType =
+    searchParams?.get("documentType")?.trim() ?? "";
+  const [documentType, setDocumentType] = useState(
+    requestedDocumentType || "Seller Property Disclosure"
+  );
   const [message, setMessage] = useState<string | null>(null);
   const [status, setStatus] = useState<"error" | "success" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,7 +63,7 @@ export function PortalDocumentUploadForm({
   const disabled = !storageReady || isSubmitting;
 
   return (
-    <section className="koinonia-document-panel">
+    <section className="koinonia-document-panel" id="employee-document-upload">
       <p className="koinonia-eyebrow">Upload</p>
       <form className="koinonia-document-upload-form" onSubmit={handleSubmit}>
         {relatedObjectId ? (
@@ -66,7 +72,26 @@ export function PortalDocumentUploadForm({
 
         <label>
           Document Type
-          <select disabled={disabled} name="documentType" required>
+          <select
+            disabled={disabled}
+            name="documentType"
+            onChange={(event) => setDocumentType(event.target.value)}
+            required
+            value={documentType}
+          >
+            {requestedDocumentType &&
+            ![
+              "Seller Property Disclosure",
+              "Executed Agreement",
+              "Inspection Instructions",
+              "Lender Contact Sheet",
+              "Contract Source File",
+              "Other Transaction Document"
+            ].includes(requestedDocumentType) ? (
+              <option value={requestedDocumentType}>
+                {requestedDocumentType}
+              </option>
+            ) : null}
             <option value="Seller Property Disclosure">Seller Property Disclosure</option>
             <option value="Executed Agreement">Executed Agreement</option>
             <option value="Inspection Instructions">Inspection Instructions</option>

@@ -1013,7 +1013,9 @@ function buildEmployeeWorkspaceActions({
       if (!activeDocumentTypes.has(expectedDocument.trim().toLowerCase())) {
         actions.push({
           detail: `The service playbook expects ${expectedDocument}, but no active matching document is attached.`,
-          href: `#employee-work-documents`,
+          href: `/employee/work/${workItemId}?documentType=${encodeURIComponent(
+            expectedDocument
+          )}#employee-document-upload`,
           id: `missing-document-${expectedDocument
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")}`,
