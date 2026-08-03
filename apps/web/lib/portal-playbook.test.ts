@@ -113,3 +113,74 @@ describe("portal playbook", () => {
     );
   });
 });
+
+describe("persisted portal playbooks", () => {
+  it("prefers a valid persisted playbook snapshot", async () => {
+    const { getPortalPlaybookForWork } = await import(
+      "./portal-playbook"
+    );
+
+    const playbook = getPortalPlaybookForWork({
+      data: {
+        packageName: "Transaction Coordination Plus",
+        playbook: {
+          billingModel: "per_request",
+          deadlinePlaceholders: [],
+          expectedDocuments: [
+            {
+              key: "custom-document",
+              label: "Custom persisted document"
+            }
+          ],
+          healthFactorKeys: ["primary_staff"],
+          initialActions: [
+            {
+              id: "custom-action",
+              label: "Follow the persisted workflow",
+              type: "staff_next_action"
+            }
+          ],
+          requiredStaffRoles: ["Operations"],
+          serviceName: "Persisted Service",
+          templateId: "persisted-template"
+        }
+      },
+      name: "Existing Transaction",
+      objectType: "Transaction"
+    });
+
+    expect(playbook).toMatchObject({
+      billingModel: "per_request",
+      serviceName: "Persisted Service",
+      templateId: "persisted-template"
+    });
+
+    expect(playbook?.expectedDocuments).toEqual([
+      {
+        key: "custom-document",
+        label: "Custom persisted document"
+      }
+    ]);
+  });
+
+  it("falls back to template resolution when persisted data is invalid", async () => {
+    const { getPortalPlaybookForWork } = await import(
+      "./portal-playbook"
+    );
+
+    const playbook = getPortalPlaybookForWork({
+      data: {
+        packageName: "Licensed Showing Coverage",
+        playbook: {
+          templateId: ""
+        }
+      },
+      name: "Showing",
+      objectType: "ShowingRequest"
+    });
+
+    expect(playbook?.templateId).toBe(
+      "licensed-showing-coverage"
+    );
+  });
+});

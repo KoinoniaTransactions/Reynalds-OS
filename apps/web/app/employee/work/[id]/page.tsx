@@ -13,9 +13,10 @@ import { absoluteUrl } from "../../../../config/seo.config";
 import { isPortalDocumentR2Configured, isPortalDocumentR2UploadEnabled } from "../../../../lib/portal-document-r2";
 import { prisma } from "../../../../lib/db";
 import {
-  getKoinoniaStaffServiceCuesForWork,
+  getKoinoniaBillingModelLabel,
   type KoinoniaStaffServiceCues
 } from "../../../../lib/koinonia-service-templates";
+import { getPortalPlaybookForWork } from "../../../../lib/portal-playbook";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
 import {
   buildDeadlineActions,
@@ -802,11 +803,31 @@ async function getEmployeeWorkWorkspace(
         ["Uploaded", "In Review", "Revision Requested"].includes(document.status)
     );
     const outstandingDocumentActionCount = documentsNeedingAction.length;
-    const serviceCues = getKoinoniaStaffServiceCuesForWork({
+    const playbook = getPortalPlaybookForWork({
       data: workItem.data,
       name: workItem.name,
       objectType: workItem.objectType
     });
+    const serviceCues: KoinoniaStaffServiceCues | null = playbook
+      ? {
+          billingModelLabel: getKoinoniaBillingModelLabel(
+            playbook.billingModel
+          ),
+          documentRequests: playbook.expectedDocuments.map(
+            (document) => document.label
+          ),
+          employeePortalQueues: [],
+          requiredStaffRoles: [...playbook.requiredStaffRoles],
+          riskNotes: [],
+          serviceName: playbook.serviceName,
+          showingRequestRequired:
+            workItem.objectType === "ShowingRequest",
+          staffNextAction:
+            playbook.initialActions[0]?.label ??
+            "Review the active service playbook.",
+          templateId: playbook.templateId
+        }
+      : null;
     const transactionDeadlines = getTransactionDeadlines(workItem.data);
     const missingExpectedDocumentCount =
       getMissingExpectedDocumentCount(documents, serviceCues);

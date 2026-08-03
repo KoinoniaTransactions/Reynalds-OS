@@ -134,3 +134,163 @@ function slugify(value: string): string {
       .replace(/^-+|-+$/g, "") || "document"
   );
 }
+
+export function getPersistedPortalPlaybook(
+  data: unknown
+): PortalPlaybook | null {
+  const record = toRecord(data);
+  const stored = toRecord(record.playbook);
+
+  if (
+    typeof stored.templateId !== "string" ||
+    !stored.templateId.trim() ||
+    typeof stored.serviceName !== "string" ||
+    !stored.serviceName.trim() ||
+    !isBillingModel(stored.billingModel)
+  ) {
+    return null;
+  }
+
+  const expectedDocuments = Array.isArray(stored.expectedDocuments)
+    ? stored.expectedDocuments.flatMap((value) => {
+        const item = toRecord(value);
+        const key =
+          typeof item.key === "string" ? item.key.trim() : "";
+        const label =
+          typeof item.label === "string" ? item.label.trim() : "";
+
+        return key && label ? [{ key, label }] : [];
+      })
+    : [];
+
+  const requiredStaffRoles = Array.isArray(stored.requiredStaffRoles)
+    ? stored.requiredStaffRoles.filter(isStaffRole)
+    : [];
+
+  const initialActions = Array.isArray(stored.initialActions)
+    ? stored.initialActions.flatMap((value) => {
+        const item = toRecord(value);
+        const id =
+          typeof item.id === "string" ? item.id.trim() : "";
+        const label =
+          typeof item.label === "string" ? item.label.trim() : "";
+
+        return id && label
+          ? [
+              {
+                id,
+                label,
+                type: "staff_next_action" as const
+              }
+            ]
+          : [];
+      })
+    : [];
+
+  const deadlinePlaceholders = Array.isArray(
+    stored.deadlinePlaceholders
+  )
+    ? stored.deadlinePlaceholders.flatMap((value) => {
+        const item = toRecord(value);
+        const date =
+          typeof item.date === "string"
+            ? new Date(item.date)
+            : null;
+
+        if (
+          !date ||
+          Number.isNaN(date.getTime()) ||
+          typeof item.key !== "string" ||
+          typeof item.label !== "string" ||
+          typeof item.dateLabel !== "string" ||
+          typeof item.daysUntilDue !== "number" ||
+          !isDeadlineRisk(item.risk)
+        ) {
+          return [];
+        }
+
+        return [
+          {
+            date,
+            dateLabel: item.dateLabel,
+            daysUntilDue: item.daysUntilDue,
+            key: item.key,
+            label: item.label,
+            risk: item.risk
+          }
+        ];
+      })
+    : [];
+
+  const healthFactorKeys = Array.isArray(stored.healthFactorKeys)
+    ? stored.healthFactorKeys.filter(
+        (value): value is string =>
+          typeof value === "string" && Boolean(value.trim())
+      )
+    : [];
+
+  return {
+    billingModel: stored.billingModel,
+    deadlinePlaceholders,
+    expectedDocuments,
+    healthFactorKeys,
+    initialActions,
+    requiredStaffRoles,
+    serviceName: stored.serviceName.trim(),
+    templateId: stored.templateId.trim()
+  };
+}
+
+export function getPortalPlaybookForWork(input: {
+  data?: unknown;
+  name: string;
+  now?: Date;
+  objectType: string;
+}): PortalPlaybook | null {
+  return (
+    getPersistedPortalPlaybook(input.data) ??
+    buildPortalPlaybook(input)
+  );
+}
+
+function isBillingModel(
+  value: unknown
+): value is KoinoniaBillingModel {
+  return [
+    "prepaid",
+    "pay_at_close",
+    "per_request",
+    "monthly",
+    "custom"
+  ].includes(String(value));
+}
+
+function isStaffRole(value: unknown): value is KoinoniaStaffRole {
+  return [
+    "Operations",
+    "Transaction Coordinator",
+    "Contract Support",
+    "Showing Provider",
+    "Customer Success",
+    "Finance"
+  ].includes(String(value));
+}
+
+function isDeadlineRisk(
+  value: unknown
+): value is PortalDeadlineRisk {
+  return [
+    "overdue",
+    "due_today",
+    "due_soon",
+    "upcoming"
+  ].includes(String(value));
+}
+
+function toRecord(value: unknown): Record<string, unknown> {
+  return value &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
