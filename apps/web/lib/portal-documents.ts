@@ -25,6 +25,91 @@ export const portalDocumentLifecycleStates = [
 export type PortalDocumentLifecycleState =
   (typeof portalDocumentLifecycleStates)[number];
 
+export type PortalDocumentVersionChainItem = {
+  createdAt: Date | string;
+  documentType: string;
+  id: string;
+  lifecycleState: PortalDocumentLifecycleState;
+  previousDocumentId?: string | null;
+  supersededByDocumentId?: string | null;
+  versionNumber: number;
+};
+
+export type PortalDocumentVersionGroup<T extends PortalDocumentVersionChainItem> = {
+  current: T;
+  versions: T[];
+};
+
+export function groupPortalDocumentVersions<
+  T extends PortalDocumentVersionChainItem
+>(documents: T[]): PortalDocumentVersionGroup<T>[] {
+  const byId = new Map(documents.map((document) => [document.id, document]));
+  const rootIdCache = new Map<string, string>();
+
+  function getRootId(document: T): string {
+    const cached = rootIdCache.get(document.id);
+
+    if (cached) {
+      return cached;
+    }
+
+    const visited = new Set<string>();
+    let current = document;
+
+    while (
+      current.previousDocumentId &&
+      !visited.has(current.id) &&
+      byId.has(current.previousDocumentId)
+    ) {
+      visited.add(current.id);
+      current = byId.get(current.previousDocumentId)!;
+    }
+
+    rootIdCache.set(document.id, current.id);
+    return current.id;
+  }
+
+  const groups = new Map<string, T[]>();
+
+  for (const document of documents) {
+    const rootId = getRootId(document);
+    const group = groups.get(rootId) ?? [];
+    group.push(document);
+    groups.set(rootId, group);
+  }
+
+  return Array.from(groups.values())
+    .map((versions) => {
+      const ordered = [...versions].sort((left, right) => {
+        if (right.versionNumber !== left.versionNumber) {
+          return right.versionNumber - left.versionNumber;
+        }
+
+        return (
+          new Date(right.createdAt).getTime() -
+          new Date(left.createdAt).getTime()
+        );
+      });
+
+      const current =
+        ordered.find(
+          (document) =>
+            document.lifecycleState === "active" &&
+            !document.supersededByDocumentId
+        ) ?? ordered[0];
+
+      return {
+        current,
+        versions: ordered
+      };
+    })
+    .sort(
+      (left, right) =>
+        new Date(right.current.createdAt).getTime() -
+        new Date(left.current.createdAt).getTime()
+    );
+}
+
 export function getPortalDocumentLifecycleState(input: {
   archivedAt?: Date | string | null;
   removedAt?: Date | string | null;

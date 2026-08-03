@@ -6,6 +6,7 @@ import {
   getHumanDocumentStatus,
   getNextPortalDocumentVersionNumber,
   getPortalDocumentLifecycleState,
+  groupPortalDocumentVersions,
   getPortalDocumentVersionLabel,
   PortalDocumentValidationError,
   sanitizeDocumentFileName,
@@ -307,6 +308,67 @@ describe("portal document helpers", () => {
         supersededAt: new Date()
       })
     ).toBe("removed");
+  });
+
+  it("groups linked document versions from newest to oldest", () => {
+    const createdAt = new Date("2026-08-03T10:00:00.000Z");
+
+    const groups = groupPortalDocumentVersions([
+      {
+        createdAt,
+        documentType: "Seller Property Disclosure",
+        id: "version-1",
+        lifecycleState: "superseded",
+        previousDocumentId: null,
+        supersededByDocumentId: "version-2",
+        versionNumber: 1
+      },
+      {
+        createdAt: new Date("2026-08-03T11:00:00.000Z"),
+        documentType: "Seller Property Disclosure",
+        id: "version-2",
+        lifecycleState: "active",
+        previousDocumentId: "version-1",
+        supersededByDocumentId: null,
+        versionNumber: 2
+      }
+    ]);
+
+    expect(groups).toHaveLength(1);
+    expect(groups[0]?.current.id).toBe("version-2");
+    expect(groups[0]?.versions.map((version) => version.id)).toEqual([
+      "version-2",
+      "version-1"
+    ]);
+  });
+
+  it("keeps unrelated uploads in separate version groups", () => {
+    const groups = groupPortalDocumentVersions([
+      {
+        createdAt: new Date("2026-08-03T10:00:00.000Z"),
+        documentType: "Seller Property Disclosure",
+        id: "disclosure-1",
+        lifecycleState: "active",
+        previousDocumentId: null,
+        supersededByDocumentId: null,
+        versionNumber: 1
+      },
+      {
+        createdAt: new Date("2026-08-03T09:00:00.000Z"),
+        documentType: "Inspection Instructions",
+        id: "inspection-1",
+        lifecycleState: "removed",
+        previousDocumentId: null,
+        supersededByDocumentId: null,
+        versionNumber: 1
+      }
+    ]);
+
+    expect(groups).toHaveLength(2);
+    expect(groups.map((group) => group.current.id)).toEqual([
+      "disclosure-1",
+      "inspection-1"
+    ]);
   });
 
 });

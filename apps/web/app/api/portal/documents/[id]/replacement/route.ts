@@ -58,7 +58,9 @@ export async function POST(request: Request, { params }: Params) {
       where: {
         id,
         workspaceId: actor.workspaceId,
-        archivedAt: null
+        archivedAt: null,
+        removedAt: null,
+        lifecycleState: "active"
       }
     });
 
@@ -105,6 +107,7 @@ export async function POST(request: Request, { params }: Params) {
           requestedAction: input.requestedAction,
           notes: input.notes,
           accessLevel: document.accessLevel,
+          lifecycleState: "active",
           versionNumber: nextVersionNumber,
           versionLabel: input.versionLabel,
           previousDocumentId: document.id,
@@ -115,6 +118,7 @@ export async function POST(request: Request, { params }: Params) {
       await tx.document.update({
         where: { id: document.id },
         data: {
+          lifecycleState: "superseded",
           requestedAction: `Superseded by document version ${nextVersionNumber}.`,
           status: "Superseded",
           supersededAt: new Date(),
