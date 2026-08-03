@@ -56,6 +56,10 @@ export type PortalDocumentStatusUpdateInput = {
   status: PortalDocumentWorkflowStatus;
 };
 
+export type PortalDocumentRemovalInput = {
+  reason?: string;
+};
+
 export type PortalDocumentClientApprovalAction = "approve" | "request_revision";
 
 export type PortalDocumentClientApprovalInput = {
@@ -111,6 +115,29 @@ export function validatePortalDocumentSubmission(input: unknown): PortalDocument
     requestedAction: optionalString(value.requestedAction) ?? "Review uploaded document",
     transactionName: optionalString(value.transactionName)
   };
+}
+
+export function validatePortalDocumentRemovalInput(
+  input: unknown
+): PortalDocumentRemovalInput {
+  if (input === undefined || input === null) {
+    return {};
+  }
+
+  if (typeof input !== "object") {
+    throw new PortalDocumentValidationError("Document removal must be an object.");
+  }
+
+  const value = input as Record<string, unknown>;
+  const reason = boundedOptionalString(value.reason, "reason", 220);
+
+  if (reason && containsCredentialLanguage(reason)) {
+    throw new PortalDocumentValidationError(
+      "Do not include passwords, access codes, or private login details in the removal reason."
+    );
+  }
+
+  return { reason };
 }
 
 export function validatePortalDocumentClientApprovalInput(

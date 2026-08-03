@@ -9,6 +9,7 @@ import {
   PortalDocumentValidationError,
   sanitizeDocumentFileName,
   validatePortalDocumentClientApprovalInput,
+  validatePortalDocumentRemovalInput,
   validatePortalDocumentReplacementSubmission,
   validatePortalDocumentScannerCommand,
   validatePortalDocumentStatusUpdateInput,
@@ -247,4 +248,29 @@ describe("portal document helpers", () => {
       "Document upload storage is not configured."
     );
   });
+  it("validates an optional document removal reason", () => {
+    expect(validatePortalDocumentRemovalInput(undefined)).toEqual({});
+    expect(
+      validatePortalDocumentRemovalInput({
+        reason: "Duplicate upload"
+      })
+    ).toEqual({
+      reason: "Duplicate upload"
+    });
+  });
+
+  it("rejects unsafe or oversized document removal reasons", () => {
+    expect(() =>
+      validatePortalDocumentRemovalInput({
+        reason: "Password is secret123"
+      })
+    ).toThrow("Do not include passwords");
+
+    expect(() =>
+      validatePortalDocumentRemovalInput({
+        reason: "x".repeat(221)
+      })
+    ).toThrow("reason must be 220 characters or fewer.");
+  });
+
 });
