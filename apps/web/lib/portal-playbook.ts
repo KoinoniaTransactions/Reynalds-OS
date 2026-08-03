@@ -30,6 +30,14 @@ export type PortalPlaybookInitialAction = {
   type: "staff_next_action";
 };
 
+export type PortalPlaybookClientDocumentRequest = {
+  action: string;
+  due: string;
+  status: string;
+  title: string;
+  transaction: string;
+};
+
 export type PortalPlaybook = {
   billingModel: KoinoniaBillingModel;
   deadlinePlaceholders: PortalPlaybookDeadline[];
@@ -289,6 +297,44 @@ export function buildClientServiceCuesFromPlaybook(
       .map((document) => document.label)
       .slice(0, 2)
   ].slice(0, 5);
+}
+
+export function buildClientDocumentRequestsFromPlaybooks(
+  items: readonly {
+    due: string;
+    playbook: PortalPlaybook | null;
+    transaction: string;
+  }[]
+): PortalPlaybookClientDocumentRequest[] {
+  const seen = new Set<string>();
+
+  return items.flatMap((item) => {
+    if (!item.playbook) {
+      return [];
+    }
+
+    return item.playbook.expectedDocuments.flatMap((document) => {
+      const title = document.label.trim();
+      const transaction = item.transaction.trim();
+      const dedupeKey = `${transaction.toLowerCase()}::${title.toLowerCase()}`;
+
+      if (!title || !transaction || seen.has(dedupeKey)) {
+        return [];
+      }
+
+      seen.add(dedupeKey);
+
+      return [
+        {
+          action: `Upload ${title} or add a note if it is already handled.`,
+          due: item.due,
+          status: "Requested",
+          title,
+          transaction
+        }
+      ];
+    });
+  });
 }
 
 export function getPortalPlaybookForWork(input: {

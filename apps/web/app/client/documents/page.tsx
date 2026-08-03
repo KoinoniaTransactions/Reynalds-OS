@@ -16,6 +16,15 @@ import {
   groupPortalDocumentVersions,
   type PortalDocumentLifecycleState
 } from "../../../lib/portal-documents";
+import {
+  buildClientDocumentRequestsFromPlaybooks,
+  getPortalPlaybookForWork,
+  type PortalPlaybookClientDocumentRequest
+} from "../../../lib/portal-playbook";
+import {
+  clientPortalWorkObjectTypes,
+  getPortalWorkDueLabel
+} from "../../../lib/portal-work-items";
 
 export const dynamic = "force-dynamic";
 
@@ -55,9 +64,8 @@ const documentSummary = [
   }
 ] as const;
 
-const documentRequests = [
+const sampleDocumentRequests: PortalPlaybookClientDocumentRequest[] = [
   {
-    documentType: "Seller Property Disclosure",
     title: "Seller Property Disclosure",
     transaction: "Smith Contract-to-Close",
     status: "Requested",
@@ -72,14 +80,13 @@ const documentRequests = [
     action: "Confirm requested repairs, credit amount, or no objection."
   },
   {
-    documentType: "Lender Contact Sheet",
     title: "Lender Contact Sheet",
     transaction: "Buyer Offer Package",
     status: "Needed",
     due: "Before draft",
     action: "Provide lender name, email, and phone for the file."
   }
-] as const;
+];
 
 type ClientDocumentItem = {
   approvalReady: boolean;
@@ -110,6 +117,7 @@ type ClientDocumentView = {
   documentGroups: ClientDocumentGroup[];
   documents: ClientDocumentItem[];
   isLiveData: boolean;
+  neededRequests: PortalPlaybookClientDocumentRequest[];
   notice?: string;
   uploadReady: boolean;
 };
@@ -280,8 +288,11 @@ export default async function ClientDocumentCenterPreviewPage() {
                 </div>
 
                 <div className="koinonia-document-card-list">
-                  {documentRequests.map((request) => (
-                    <article className="koinonia-document-work-item" key={request.title}>
+                  {documentView.neededRequests.map((request) => (
+                    <article
+                      className="koinonia-document-work-item"
+                      key={`${request.transaction}-${request.title}`}
+                    >
                       <div>
                         <span>{request.transaction}</span>
                         <h3>{request.title}</h3>
@@ -490,19 +501,43 @@ async function getClientDocumentView(
 ): Promise<ClientDocumentView> {
   try {
     const downloadReady = isDocumentStorageConfigured();
-    const documents = await prisma.document.findMany({
-      where: {
-        workspaceId,
-        ownerId,
-        archivedAt: null,
-        removedAt: null,
-        lifecycleState: {
-          in: ["active", "superseded"]
-        }
-      },
-      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-      take: 100
-    });
+    const [documents, workObjects] = await Promise.all([
+      prisma.document.findMany({
+        where: {
+          workspaceId,
+          ownerId,
+          archivedAt: null,
+          removedAt: null,
+          lifecycleState: {
+            in: ["active", "superseded"]
+          }
+        },
+        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+        take: 100
+      }),
+      prisma.rosObject.findMany({
+        where: {
+          workspaceId,
+          objectType: { in: [...clientPortalWorkObjectTypes] },
+          archivedAt: null,
+          OR: [{ clientUserId: ownerId }, { ownerId }]
+        },
+        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+        take: 20
+      })
+    ]);
+
+    const neededRequests = buildClientDocumentRequestsFromPlaybooks(
+      workObjects.map((object) => ({
+        due: getPortalWorkDueLabel(object.data),
+        playbook: getPortalPlaybookForWork({
+          data: object.data,
+          name: object.name,
+          objectType: object.objectType
+        }),
+        transaction: object.name
+      }))
+    );
 
     const documentItems = documents.map((document) =>
       mapDocumentRecord(document, downloadReady)
@@ -515,6 +550,7 @@ async function getClientDocumentView(
       documentGroups,
       documents: currentDocuments,
       isLiveData: true,
+      neededRequests: withEmptyDocumentRequests(neededRequests),
       uploadReady: isDocumentUploadConfigured()
     };
   } catch (error) {
@@ -524,6 +560,7 @@ async function getClientDocumentView(
         documentGroups: groupPortalDocumentVersions(sampleUploadedDocuments),
         documents: sampleUploadedDocuments,
         isLiveData: false,
+        neededRequests: sampleDocumentRequests,
         notice: "Document storage is not reachable in this preview, so sample uploads are shown.",
         uploadReady: false
       };
@@ -531,6 +568,24 @@ async function getClientDocumentView(
 
     throw error;
   }
+}
+
+function withEmptyDocumentRequests(
+  requests: PortalPlaybookClientDocumentRequest[]
+): PortalPlaybookClientDocumentRequest[] {
+  if (requests.length > 0) {
+    return requests;
+  }
+
+  return [
+    {
+      action: "Expected transaction document requests will appear here.",
+      due: "No active item",
+      status: "Ready",
+      title: "No documents requested yet",
+      transaction: "Client Document Center"
+    }
+  ];
 }
 
 function mapDocumentRecord(

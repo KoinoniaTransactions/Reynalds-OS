@@ -211,6 +211,71 @@ describe("playbook client service cues", () => {
       "Persisted doc two"
     ]);
   });
+
+  it("builds client document requests from persisted expected documents", async () => {
+    const {
+      buildClientDocumentRequestsFromPlaybooks,
+      getPortalPlaybookForWork
+    } = await import("./portal-playbook");
+
+    const playbook = getPortalPlaybookForWork({
+      data: {
+        packageName: "Transaction Coordination Plus",
+        playbook: {
+          billingModel: "prepaid",
+          deadlinePlaceholders: [],
+          expectedDocuments: [
+            {
+              key: "persisted-doc-one",
+              label: "Persisted doc one"
+            },
+            {
+              key: "persisted-doc-two",
+              label: "Persisted doc two"
+            },
+            {
+              key: "persisted-doc-one-copy",
+              label: "Persisted doc one"
+            }
+          ],
+          healthFactorKeys: ["primary_staff"],
+          initialActions: [],
+          requiredStaffRoles: ["Transaction Coordinator"],
+          serviceName: "Transaction Coordination Plus",
+          templateId: "transaction-support"
+        }
+      },
+      name: "Existing Transaction",
+      objectType: "Transaction"
+    });
+
+    expect(
+      buildClientDocumentRequestsFromPlaybooks([
+        {
+          due: "Today",
+          playbook,
+          transaction: "Smith Contract-to-Close"
+        }
+      ])
+    ).toEqual([
+      {
+        action:
+          "Upload Persisted doc one or add a note if it is already handled.",
+        due: "Today",
+        status: "Requested",
+        title: "Persisted doc one",
+        transaction: "Smith Contract-to-Close"
+      },
+      {
+        action:
+          "Upload Persisted doc two or add a note if it is already handled.",
+        due: "Today",
+        status: "Requested",
+        title: "Persisted doc two",
+        transaction: "Smith Contract-to-Close"
+      }
+    ]);
+  });
 });
 
 describe("persisted portal playbooks", () => {
