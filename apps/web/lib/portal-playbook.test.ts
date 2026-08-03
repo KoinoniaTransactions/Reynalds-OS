@@ -150,6 +150,10 @@ describe("playbook staff service cues", () => {
     expect(cues.requiredStaffRoles).toContain(
       "Showing Provider"
     );
+    expect(cues.employeePortalQueues).toContain("Showings");
+    expect(cues.riskNotes.join(" ")).toContain(
+      "access authorization"
+    );
     expect(cues.staffNextAction).toContain(
       "licensed showing provider"
     );
@@ -260,6 +264,10 @@ describe("persisted playbook snapshots", () => {
     expect(snapshot.deadlinePlaceholders[0]?.date).toBe(
       "2026-08-20T00:00:00.000Z"
     );
+    expect(snapshot.employeePortalQueues).toContain(
+      "Assignments"
+    );
+    expect(snapshot.riskNotes.length).toBeGreaterThan(0);
     expect(JSON.parse(JSON.stringify(snapshot))).toEqual(snapshot);
   });
 });

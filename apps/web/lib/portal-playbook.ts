@@ -33,10 +33,12 @@ export type PortalPlaybookInitialAction = {
 export type PortalPlaybook = {
   billingModel: KoinoniaBillingModel;
   deadlinePlaceholders: PortalPlaybookDeadline[];
+  employeePortalQueues: string[];
   expectedDocuments: PortalPlaybookExpectedDocument[];
   healthFactorKeys: string[];
   initialActions: PortalPlaybookInitialAction[];
   requiredStaffRoles: KoinoniaStaffRole[];
+  riskNotes: string[];
   serviceName: string;
   templateId: string;
 };
@@ -75,6 +77,7 @@ export function buildPortalPlaybook(input: {
       label: deadline.label,
       risk: deadline.risk
     })),
+    employeePortalQueues: [...template.employeePortalQueues],
     expectedDocuments,
     healthFactorKeys: [
       "primary_staff",
@@ -97,6 +100,7 @@ export function buildPortalPlaybook(input: {
         ]
       : [],
     requiredStaffRoles: [...template.requiredStaffRoles],
+    riskNotes: [...template.riskNotes],
     serviceName:
       template.packageNames[0] ?? template.publicServiceTitle,
     templateId: template.id
@@ -152,6 +156,10 @@ export function getPersistedPortalPlaybook(
   ) {
     return null;
   }
+
+  const employeePortalQueues = readStringArray(
+    stored.employeePortalQueues
+  );
 
   const expectedDocuments = Array.isArray(stored.expectedDocuments)
     ? stored.expectedDocuments.flatMap((value) => {
@@ -224,20 +232,20 @@ export function getPersistedPortalPlaybook(
       })
     : [];
 
-  const healthFactorKeys = Array.isArray(stored.healthFactorKeys)
-    ? stored.healthFactorKeys.filter(
-        (value): value is string =>
-          typeof value === "string" && Boolean(value.trim())
-      )
-    : [];
+  const healthFactorKeys = readStringArray(
+    stored.healthFactorKeys
+  );
+  const riskNotes = readStringArray(stored.riskNotes);
 
   return {
     billingModel: stored.billingModel,
     deadlinePlaceholders,
+    employeePortalQueues,
     expectedDocuments,
     healthFactorKeys,
     initialActions,
     requiredStaffRoles,
+    riskNotes,
     serviceName: stored.serviceName.trim(),
     templateId: stored.templateId.trim()
   };
@@ -256,9 +264,9 @@ export function buildStaffServiceCuesFromPlaybook(
     documentRequests: playbook.expectedDocuments.map(
       (document) => document.label
     ),
-    employeePortalQueues: [],
+    employeePortalQueues: [...playbook.employeePortalQueues],
     requiredStaffRoles: [...playbook.requiredStaffRoles],
-    riskNotes: [],
+    riskNotes: [...playbook.riskNotes],
     serviceName: playbook.serviceName,
     showingRequestRequired:
       options.showingRequestRequired ?? false,
@@ -279,6 +287,19 @@ export function getPortalPlaybookForWork(input: {
     getPersistedPortalPlaybook(input.data) ??
     buildPortalPlaybook(input)
   );
+}
+
+function readStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.flatMap((item) => {
+    const text =
+      typeof item === "string" ? item.trim() : "";
+
+    return text ? [text] : [];
+  });
 }
 
 function isBillingModel(
@@ -333,11 +354,13 @@ export type PersistedPortalPlaybookSnapshot = {
     label: string;
     risk: PortalDeadlineRisk;
   }>;
+  employeePortalQueues: string[];
   expectedDocuments: PortalPlaybookExpectedDocument[];
   healthFactorKeys: string[];
   initialActions: PortalPlaybookInitialAction[];
   instantiatedAt: string;
   requiredStaffRoles: KoinoniaStaffRole[];
+  riskNotes: string[];
   serviceName: string;
   templateId: string;
 };
@@ -358,6 +381,7 @@ export function buildPersistedPortalPlaybookSnapshot(
         risk: deadline.risk
       })
     ),
+    employeePortalQueues: [...playbook.employeePortalQueues],
     expectedDocuments: playbook.expectedDocuments.map((document) => ({
       key: document.key,
       label: document.label
@@ -370,6 +394,7 @@ export function buildPersistedPortalPlaybookSnapshot(
     })),
     instantiatedAt: instantiatedAt.toISOString(),
     requiredStaffRoles: [...playbook.requiredStaffRoles],
+    riskNotes: [...playbook.riskNotes],
     serviceName: playbook.serviceName,
     templateId: playbook.templateId
   };
