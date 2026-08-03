@@ -57,7 +57,16 @@ type ShowingRequestDetails = {
   statusUpdatedByEmail: string;
 };
 
+type EmployeeWorkspaceAction = {
+  detail: string;
+  href: string;
+  id: string;
+  label: string;
+  priority: "high" | "medium" | "low";
+};
+
 type EmployeeWorkWorkspaceView = {
+  actionQueue: EmployeeWorkspaceAction[];
   activeDocumentCount: number;
   assignedStaffLabel: string;
   assignedStaffUserId?: string | null;
@@ -164,6 +173,34 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
                     <span>Next Action</span>
                     <strong>{workspace.summary.nextAction}</strong>
                   </article>
+                </div>
+
+                <div className="koinonia-workspace-list">
+                  {workspace.actionQueue.length ? (
+                    workspace.actionQueue.map((action) => (
+                      <article
+                        className="koinonia-workspace-list-item employee"
+                        key={action.id}
+                      >
+                        <div>
+                          <span>{getActionPriorityLabel(action.priority)}</span>
+                          <h3>{action.label}</h3>
+                          <p>{action.detail}</p>
+                          <a
+                            className="koinonia-document-link employee"
+                            href={action.href}
+                          >
+                            Open Action
+                          </a>
+                        </div>
+                        <strong>{action.priority}</strong>
+                      </article>
+                    ))
+                  ) : (
+                    <p className="koinonia-employee-security-note">
+                      No immediate transaction actions are currently identified.
+                    </p>
+                  )}
                 </div>
 
                 {workspace.isShowingRequest ? (
@@ -392,6 +429,19 @@ function StaffCueList({ items, title }: { items: readonly string[]; title: strin
   );
 }
 
+function getActionPriorityLabel(
+  priority: EmployeeWorkspaceAction["priority"]
+): string {
+  switch (priority) {
+    case "high":
+      return "High Priority";
+    case "medium":
+      return "Needs Attention";
+    default:
+      return "Follow Up";
+  }
+}
+
 function WorkspaceDocuments({ documents }: { documents: PortalWorkspaceDocumentItem[] }) {
   return (
     <section className="koinonia-workspace-panel employee" aria-labelledby="employee-work-documents">
@@ -527,13 +577,29 @@ async function getEmployeeWorkWorkspace(
         document.removedAt === null &&
         document.lifecycleState === "active"
     );
-    const outstandingDocumentActionCount = activeDocuments.filter(
+    const documentsNeedingAction = activeDocuments.filter(
       (document) =>
         Boolean(document.requestedAction?.trim()) ||
         ["Uploaded", "In Review", "Revision Requested"].includes(document.status)
-    ).length;
+    );
+    const outstandingDocumentActionCount = documentsNeedingAction.length;
+    const serviceCues = getKoinoniaStaffServiceCuesForWork({
+      data: workItem.data,
+      name: workItem.name,
+      objectType: workItem.objectType
+    });
+    const actionQueue = buildEmployeeWorkspaceActions({
+      assignedStaffUserId: workItem.assignedStaffUserId,
+      backupStaffUserId: workItem.backupStaffUserId,
+      documents,
+      documentsNeedingAction,
+      events,
+      serviceCues,
+      workItemId: workItem.id
+    });
 
     return {
+      actionQueue,
       activeDocumentCount: activeDocuments.length,
       assignedStaffLabel,
       assignedStaffUserId: workItem.assignedStaffUserId,
@@ -554,11 +620,7 @@ async function getEmployeeWorkWorkspace(
       outstandingDocumentActionCount,
       recentActivityCount: events.length,
       isShowingRequest: workItem.objectType === showingRequestObjectType,
-      serviceCues: getKoinoniaStaffServiceCuesForWork({
-        data: workItem.data,
-        name: workItem.name,
-        objectType: workItem.objectType
-      }),
+      serviceCues,
       showingDetails: buildShowingRequestDetails(workItem.data),
       staffOptions,
       summary: buildPortalWorkspaceSummary(workItem)
@@ -569,6 +631,7 @@ async function getEmployeeWorkWorkspace(
     }
 
     return {
+      actionQueue: [],
       activeDocumentCount: 0,
       assignedStaffLabel: "Unavailable",
       backupStaffLabel: "Unavailable",
@@ -588,6 +651,113 @@ async function getEmployeeWorkWorkspace(
       summary: buildUnavailableWorkspaceSummary(workItemId)
     };
   }
+}
+
+function buildEmployeeWorkspaceActions({
+  assignedStaffUserId,
+  backupStaffUserId,
+  documents,
+  documentsNeedingAction,
+  events,
+  serviceCues,
+  workItemId
+}: {
+  assignedStaffUserId: string | null;
+  backupStaffUserId: string | null;
+  documents: Array<{
+    documentType: string;
+    id: string;
+    lifecycleState: string;
+    removedAt: Date | null;
+  }>;
+  documentsNeedingAction: Array<{
+    documentType: string;
+    id: string;
+    requestedAction: string | null;
+    status: string;
+  }>;
+  events: Array<{
+    createdAt: Date;
+  }>;
+  serviceCues: KoinoniaStaffServiceCues | null;
+  workItemId: string;
+}): EmployeeWorkspaceAction[] {
+  const actions: EmployeeWorkspaceAction[] = [];
+
+  if (!assignedStaffUserId) {
+    actions.push({
+      detail: "Assign a primary staff owner before advancing this transaction.",
+      href: `#employee-team-assignment`,
+      id: "assign-primary-staff",
+      label: "Primary staff is not assigned",
+      priority: "high"
+    });
+  }
+
+  if (!backupStaffUserId) {
+    actions.push({
+      detail: "Add backup coverage so the file is not dependent on one team member.",
+      href: `#employee-team-assignment`,
+      id: "assign-backup-staff",
+      label: "Backup staff is not assigned",
+      priority: "medium"
+    });
+  }
+
+  for (const document of documentsNeedingAction.slice(0, 5)) {
+    actions.push({
+      detail:
+        document.requestedAction?.trim() ||
+        `Review the ${document.documentType} currently marked ${document.status}.`,
+      href: `/employee/documents/${document.id}`,
+      id: `document-${document.id}`,
+      label: `${document.documentType} needs attention`,
+      priority:
+        document.status === "Revision Requested" ? "high" : "medium"
+    });
+  }
+
+  if (serviceCues?.documentRequests.length) {
+    const activeDocumentTypes = new Set(
+      documents
+        .filter(
+          (document) =>
+            document.lifecycleState === "active" &&
+            document.removedAt === null
+        )
+        .map((document) => document.documentType.trim().toLowerCase())
+    );
+
+    for (const expectedDocument of serviceCues.documentRequests) {
+      if (!activeDocumentTypes.has(expectedDocument.trim().toLowerCase())) {
+        actions.push({
+          detail: `The service playbook expects ${expectedDocument}, but no active matching document is attached.`,
+          href: `#employee-work-documents`,
+          id: `missing-document-${expectedDocument
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")}`,
+          label: `Missing expected document: ${expectedDocument}`,
+          priority: "medium"
+        });
+      }
+    }
+  }
+
+  const latestEvent = events[0]?.createdAt;
+  const staleThreshold = Date.now() - 3 * 24 * 60 * 60 * 1000;
+
+  if (!latestEvent || latestEvent.getTime() < staleThreshold) {
+    actions.push({
+      detail:
+        "No recent transaction activity has been recorded in the last three days.",
+      href: `#employee-work-history`,
+      id: `stale-work-${workItemId}`,
+      label: "Transaction activity may be stale",
+      priority: "low"
+    });
+  }
+
+  return actions.slice(0, 10);
 }
 
 function buildShowingRequestDetails(data: unknown): ShowingRequestDetails {
