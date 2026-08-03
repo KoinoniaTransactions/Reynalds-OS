@@ -344,41 +344,136 @@ export default async function EmployeeDocumentWorkspacePreviewPage() {
                     <p className="koinonia-document-security-note employee">{documentView.notice}</p>
                   ) : null}
 
-                  {documentView.documents.length ? (
-                    documentView.documents.map((item) => (
-                      <article className="koinonia-document-work-item employee" key={item.id}>
-                        <div>
-                          <span>{item.requestedBy}</span>
-                          <h3>{item.title}</h3>
-                          <p>{item.detail}</p>
-                          <p>
-                            {item.fileInfo} - {item.versionLabel}
-                          </p>
-                          {item.downloadHref ? (
-                            <a className="koinonia-document-link employee" href={item.downloadHref}>
-                              Download Upload
-                            </a>
+                  {documentView.documentGroups.length ? (
+                    documentView.documentGroups.map((group) => {
+                      const current = group.current;
+                      const historicalVersions = group.versions.filter(
+                        (version) => version.id !== current.id
+                      );
+                      const isCurrentActive =
+                        current.lifecycleState === "active" &&
+                        !current.supersededByDocumentId;
+
+                      return (
+                        <article
+                          className="koinonia-document-work-item employee"
+                          key={current.id}
+                        >
+                          <div>
+                            <span>{current.requestedBy}</span>
+                            <h3>{current.title}</h3>
+                            <p>{current.detail}</p>
+                            <p>
+                              {current.fileInfo} - {current.versionLabel}
+                            </p>
+                            <p>
+                              {historicalVersions.length
+                                ? `${historicalVersions.length} prior version${
+                                    historicalVersions.length === 1 ? "" : "s"
+                                  }`
+                                : "Original version"}
+                            </p>
+
+                            {current.lifecycleState === "removed" ? (
+                              <p>
+                                Removed from client portal
+                                {current.removalReason
+                                  ? ` — ${current.removalReason}`
+                                  : ""}
+                              </p>
+                            ) : null}
+
+                            {current.downloadHref ? (
+                              <a
+                                className="koinonia-document-link employee"
+                                href={current.downloadHref}
+                              >
+                                Download Current Version
+                              </a>
+                            ) : null}
+
+                            {historicalVersions.length ? (
+                              <details>
+                                <summary>
+                                  Version History ({historicalVersions.length})
+                                </summary>
+
+                                <div className="koinonia-document-card-list">
+                                  {historicalVersions.map((version) => (
+                                    <article
+                                      className="koinonia-document-work-item employee"
+                                      key={version.id}
+                                    >
+                                      <div>
+                                        <span>
+                                          {version.fileInfo} - {version.versionLabel}
+                                        </span>
+                                        <p>
+                                          {version.lifecycleState === "superseded"
+                                            ? "Superseded version"
+                                            : version.lifecycleState === "removed"
+                                              ? "Removed from client portal"
+                                              : version.status}
+                                        </p>
+
+                                        {version.removalReason ? (
+                                          <p>Removal reason: {version.removalReason}</p>
+                                        ) : null}
+
+                                        {version.downloadHref ? (
+                                          <a
+                                            className="koinonia-document-link employee"
+                                            href={version.downloadHref}
+                                          >
+                                            Download Historical Version
+                                          </a>
+                                        ) : null}
+                                      </div>
+
+                                      <div className="koinonia-document-work-meta employee">
+                                        <strong>{version.status}</strong>
+                                        <span>{version.submitted}</span>
+                                      </div>
+                                    </article>
+                                  ))}
+                                </div>
+                              </details>
+                            ) : null}
+                          </div>
+
+                          <div className="koinonia-document-work-meta employee">
+                            <strong>
+                              {current.lifecycleState === "removed"
+                                ? "Removed"
+                                : current.status}
+                            </strong>
+                            <span>{current.submitted}</span>
+                          </div>
+
+                          {isCurrentActive ? (
+                            <>
+                              <PortalDocumentStatusForm
+                                currentRequestedAction={
+                                  current.requestedAction ?? current.detail
+                                }
+                                currentStatus={current.workflowStatus}
+                                disabled={!documentView.isLiveData}
+                                documentId={current.id}
+                              />
+
+                              <PortalDocumentReplacementForm
+                                disabled={
+                                  !documentView.isLiveData ||
+                                  !current.replacementReady
+                                }
+                                documentId={current.id}
+                                nextVersionLabel={current.nextVersionLabel}
+                              />
+                            </>
                           ) : null}
-                        </div>
-
-                        <div className="koinonia-document-work-meta employee">
-                          <strong>{item.status}</strong>
-                          <span>{item.submitted}</span>
-                        </div>
-
-                        <PortalDocumentStatusForm
-                          currentRequestedAction={item.requestedAction ?? item.detail}
-                          currentStatus={item.workflowStatus}
-                          disabled={!documentView.isLiveData}
-                          documentId={item.id}
-                        />
-                        <PortalDocumentReplacementForm
-                          disabled={!documentView.isLiveData || !item.replacementReady}
-                          documentId={item.id}
-                          nextVersionLabel={item.nextVersionLabel}
-                        />
-                      </article>
-                    ))
+                        </article>
+                      );
+                    })
                   ) : (
                     <p className="koinonia-document-security-note employee">
                       No client documents have been uploaded through the portal yet.
