@@ -21,6 +21,10 @@ import {
   getTransactionDeadlines
 } from "../../../../lib/portal-deadlines";
 import {
+  calculatePortalTransactionHealth,
+  type PortalTransactionHealth
+} from "../../../../lib/portal-transaction-health";
+import {
   buildEmptyPortalWorkspaceDocuments,
   buildEmptyPortalWorkspaceTimeline,
   buildPortalWorkspaceDocuments,
@@ -89,6 +93,7 @@ type EmployeeWorkWorkspaceView = {
   showingDetails: ShowingRequestDetails;
   staffOptions: PortalWorkAssignmentStaffOption[];
   summary: PortalWorkspaceSummary;
+  transactionHealth: PortalTransactionHealth | null;
 };
 
 export default async function EmployeeWorkDetailPage({ params }: Params) {
@@ -592,6 +597,18 @@ async function getEmployeeWorkWorkspace(
       name: workItem.name,
       objectType: workItem.objectType
     });
+    const transactionDeadlines = getTransactionDeadlines(workItem.data);
+    const missingExpectedDocumentCount =
+      getMissingExpectedDocumentCount(documents, serviceCues);
+    const transactionHealth = calculatePortalTransactionHealth({
+      activeDocumentCount: activeDocuments.length,
+      assignedStaffUserId: workItem.assignedStaffUserId,
+      backupStaffUserId: workItem.backupStaffUserId,
+      deadlines: transactionDeadlines,
+      missingExpectedDocumentCount,
+      outstandingDocumentActionCount,
+      recentActivityCount: events.length
+    });
     const actionQueue = buildEmployeeWorkspaceActions({
       assignedStaffUserId: workItem.assignedStaffUserId,
       backupStaffUserId: workItem.backupStaffUserId,
@@ -628,7 +645,8 @@ async function getEmployeeWorkWorkspace(
       serviceCues,
       showingDetails: buildShowingRequestDetails(workItem.data),
       staffOptions,
-      summary: buildPortalWorkspaceSummary(workItem)
+      summary: buildPortalWorkspaceSummary(workItem),
+      transactionHealth
     };
   } catch (error) {
     if (!isDatabaseUnavailableError(error)) {
@@ -653,9 +671,38 @@ async function getEmployeeWorkWorkspace(
       serviceCues: null,
       showingDetails: buildShowingRequestDetails(null),
       staffOptions: [],
-      summary: buildUnavailableWorkspaceSummary(workItemId)
+      summary: buildUnavailableWorkspaceSummary(workItemId),
+      transactionHealth: null
     };
   }
+}
+
+function getMissingExpectedDocumentCount(
+  documents: Array<{
+    documentType: string;
+    lifecycleState: string;
+    removedAt: Date | null;
+  }>,
+  serviceCues: KoinoniaStaffServiceCues | null
+): number {
+  if (!serviceCues?.documentRequests.length) {
+    return 0;
+  }
+
+  const activeDocumentTypes = new Set(
+    documents
+      .filter(
+        (document) =>
+          document.lifecycleState === "active" &&
+          document.removedAt === null
+      )
+      .map((document) => document.documentType.trim().toLowerCase())
+  );
+
+  return serviceCues.documentRequests.filter(
+    (expectedDocument) =>
+      !activeDocumentTypes.has(expectedDocument.trim().toLowerCase())
+  ).length;
 }
 
 function buildEmployeeWorkspaceActions({
