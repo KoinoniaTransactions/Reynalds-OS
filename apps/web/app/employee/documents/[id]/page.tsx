@@ -6,6 +6,7 @@ import { PortalDocumentStatusForm } from "../../../../components/employee/Portal
 import { Footer, Header } from "../../../../components/site";
 import { absoluteUrl } from "../../../../config/seo.config";
 import { prisma } from "../../../../lib/db";
+import { getHumanAuditAction } from "../../../../lib/portal-audit";
 import { isPortalDocumentR2Configured } from "../../../../lib/portal-document-r2";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
 import {
@@ -62,10 +63,19 @@ type ReviewDocumentItem = {
   workflowStatus: string;
 };
 
+type ReviewAuditEvent = {
+  action: string;
+  actorEmail?: string | null;
+  createdAt: Date | string;
+  id: string;
+  summary: string;
+};
+
 type DocumentReviewView = {
   current: ReviewDocumentItem;
   isLiveData: boolean;
   notice?: string;
+  timeline: ReviewAuditEvent[];
   versions: ReviewDocumentItem[];
 };
 
@@ -271,6 +281,45 @@ export default async function EmployeeDocumentReviewPage({ params }: Params) {
                   ))}
                 </div>
               </section>
+
+              <section className="koinonia-document-panel employee">
+                <div className="koinonia-document-panel-heading">
+                  <p className="koinonia-eyebrow">Compliance History</p>
+                  <h2>Document Activity</h2>
+                </div>
+
+                <div className="koinonia-document-card-list">
+                  {review.timeline.length ? (
+                    review.timeline.map((event) => (
+                      <article
+                        className="koinonia-document-work-item employee"
+                        key={event.id}
+                      >
+                        <div>
+                          <span>{formatAuditEventDate(event.createdAt)}</span>
+                          <h3>{getHumanAuditAction(event.action)}</h3>
+                          <p>{event.summary}</p>
+                          <p>
+                            {event.actorEmail
+                              ? `Performed by ${event.actorEmail}`
+                              : "System-recorded activity"}
+                          </p>
+                        </div>
+
+                        <div className="koinonia-document-work-meta employee">
+                          <strong>{getHumanAuditAction(event.action)}</strong>
+                          <span>{formatAuditEventTime(event.createdAt)}</span>
+                        </div>
+                      </article>
+                    ))
+                  ) : (
+                    <p className="koinonia-document-security-note employee">
+                      No document activity has been recorded for this version
+                      chain yet.
+                    </p>
+                  )}
+                </div>
+              </section>
             </div>
 
             <aside
@@ -369,11 +418,62 @@ async function getDocumentReview(
     return null;
   }
 
+  const versionIds = selectedGroup.versions.map((version) => version.id);
+  const timeline = await prisma.auditEvent.findMany({
+    where: {
+      workspaceId,
+      action: {
+        startsWith: "portal.document."
+      },
+      subjectType: "Document",
+      subjectId: {
+        in: versionIds
+      }
+    },
+    select: {
+      action: true,
+      actorEmail: true,
+      createdAt: true,
+      id: true,
+      summary: true
+    },
+    orderBy: {
+      createdAt: "desc"
+    },
+    take: 100
+  });
+
   return {
     current: selectedGroup.current,
     isLiveData: true,
+    timeline,
     versions: selectedGroup.versions
   };
+}
+
+function formatAuditEventDate(value: Date | string): string {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Recorded activity";
+  }
+
+  return date.toLocaleDateString("en-US", {
+    dateStyle: "medium"
+  });
+}
+
+function formatAuditEventTime(value: Date | string): string {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit"
+  });
 }
 
 function getDocumentPreviewType(
