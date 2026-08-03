@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { getAuthErrorResponse } from "../../../../lib/api-auth";
 import { assertPermission } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/db";
+import { buildPortalPlaybook } from "../../../../lib/portal-playbook";
 import {
   buildShowingRequestName,
   buildShowingRequestNextAction,
@@ -48,19 +49,25 @@ export async function POST(request: Request) {
       "employee-portal:assigned-work:update"
     ]);
     const input = validateShowingRequestInput(await request.json());
+    const showingRequestName = buildShowingRequestName(input);
+    const showingRequestData = buildShowingRequestData(
+      input,
+      actor,
+      showingRequestName
+    );
 
     const showingRequest = await prisma.rosObject.create({
       data: {
         workspaceId: actor.workspaceId,
         objectType: showingRequestObjectType,
-        name: buildShowingRequestName(input),
+        name: showingRequestName,
         status: input.authorization ? "Requested" : "Needs Follow-up",
         health: input.authorization ? "Attention" : "Blocked",
         ownerId: actor.id,
         clientUserId: actor.role === "Client" ? actor.id : undefined,
         assignedStaffUserId: actor.role === "Client" ? undefined : actor.id,
         nextAction: buildShowingRequestNextAction(input),
-        data: buildShowingRequestData(input, actor)
+        data: showingRequestData
       }
     });
 
@@ -123,9 +130,10 @@ function canViewAllShowingRequests(actor: AuthUser): boolean {
 
 function buildShowingRequestData(
   input: ReturnType<typeof validateShowingRequestInput>,
-  actor: AuthUser
+  actor: AuthUser,
+  showingRequestName: string
 ): Prisma.InputJsonObject {
-  const data: Record<string, string | boolean> = {
+  const data: Record<string, Prisma.InputJsonValue> = {
     authorization: input.authorization,
     preferredWindow: input.preferredWindow,
     propertyAddress: input.propertyAddress,
@@ -149,6 +157,35 @@ function buildShowingRequestData(
 
   if (input.notes) {
     data.notes = input.notes;
+  }
+
+  const playbook = buildPortalPlaybook({
+    data,
+    name: showingRequestName,
+    objectType: showingRequestObjectType
+  });
+
+  if (playbook) {
+    data.playbook = {
+      billingModel: playbook.billingModel,
+      deadlinePlaceholders: playbook.deadlinePlaceholders.map(
+        (deadline) => ({
+          date: deadline.date.toISOString(),
+          dateLabel: deadline.dateLabel,
+          daysUntilDue: deadline.daysUntilDue,
+          key: deadline.key,
+          label: deadline.label,
+          risk: deadline.risk
+        })
+      ),
+      expectedDocuments: playbook.expectedDocuments,
+      healthFactorKeys: playbook.healthFactorKeys,
+      initialActions: playbook.initialActions,
+      instantiatedAt: new Date().toISOString(),
+      requiredStaffRoles: playbook.requiredStaffRoles,
+      serviceName: playbook.serviceName,
+      templateId: playbook.templateId
+    };
   }
 
   return data as Prisma.InputJsonObject;
