@@ -50,7 +50,14 @@ const billingSummary = [
   }
 ] as const;
 
-const selectedServices = [
+type BillingServiceItem = {
+  billing: string;
+  nextAction: string;
+  service: string;
+  status: string;
+};
+
+const sampleSelectedServices: BillingServiceItem[] = [
   {
     service: "Transaction Coordination Plus",
     billing: "$389 prepaid",
@@ -69,7 +76,7 @@ const selectedServices = [
     status: "Setup Ready",
     nextAction: "Showing charges follow the approved showing request."
   }
-] as const;
+];
 
 const invoices = [
   {
@@ -171,6 +178,11 @@ export default async function ClientBillingCenterPreviewPage() {
     getClientBillingSetupView(actor.workspaceId, actor.id),
     getClientInvoiceView(actor.workspaceId, actor.id)
   ]);
+  const selectedServiceView = buildSelectedServiceItems(
+    billingSetupView.requests,
+    invoiceView.invoices,
+    billingSetupView.isLiveData || invoiceView.isLiveData
+  );
 
   return (
     <main className="koinonia-site koinonia-billing-center koinonia-client-billing">
@@ -216,7 +228,7 @@ export default async function ClientBillingCenterPreviewPage() {
                 </div>
 
                 <div className="koinonia-billing-card-list">
-                  {selectedServices.map((service) => (
+                  {selectedServiceView.map((service) => (
                     <article className="koinonia-billing-work-item" key={service.service}>
                       <div>
                         <span>{service.billing}</span>
@@ -453,6 +465,58 @@ function withEmptyBillingSetupRequests(requests: BillingSetupItem[]): BillingSet
       labels: ["No card stored", "Processor-hosted setup only"]
     }
   ];
+}
+
+function buildSelectedServiceItems(
+  billingSetupRequests: BillingSetupItem[],
+  invoiceItems: InvoiceItem[],
+  isLiveData: boolean
+): BillingServiceItem[] {
+  if (!isLiveData) {
+    return sampleSelectedServices;
+  }
+
+  const services = new Map<string, BillingServiceItem>();
+
+  for (const request of billingSetupRequests) {
+    if (request.id.startsWith("empty-")) {
+      continue;
+    }
+
+    services.set(request.service, {
+      billing: request.detail,
+      nextAction: request.nextAction,
+      service: request.service,
+      status: request.status
+    });
+  }
+
+  for (const invoice of invoiceItems) {
+    if (invoice.id.startsWith("empty-") || services.has(invoice.service)) {
+      continue;
+    }
+
+    services.set(invoice.service, {
+      billing: invoice.amount,
+      nextAction: invoice.nextAction,
+      service: invoice.service,
+      status: invoice.status
+    });
+  }
+
+  if (services.size === 0) {
+    return [
+      {
+        billing: "No active billing setup",
+        nextAction:
+          "Submit a setup request when a service needs processor-hosted billing.",
+        service: "No selected services yet",
+        status: "Ready"
+      }
+    ];
+  }
+
+  return Array.from(services.values()).slice(0, 6);
 }
 
 function withEmptyInvoices(invoiceItems: InvoiceItem[]): InvoiceItem[] {
