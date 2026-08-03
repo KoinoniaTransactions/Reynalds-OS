@@ -89,12 +89,20 @@ Reynalds OS will evolve into a universal operating system capable of managing bu
 - Production environment gates are documented.
 - Stripe webhook utilities, tests, and API handling were added.
 
+### Document Safety Progress
+
+- Portal document readiness now requires Cloudflare R2 account, bucket, access-key, secret-key, and explicit upload enablement.
+- New and replacement document uploads are scanned before R2 persistence.
+- Scanner configuration remains required through an absolute private scan-temp directory and absolute scanner executable.
+- Document send-package statuses now require delivery confirmation before `Sent`, `Signature Monitoring`, or `Completed`.
+
 ### Remaining Verification
 
 - Production Clerk configuration
 - Staff MFA
 - Real invitation acceptance
 - Reachable production database
+- Cloudflare R2 account and bucket configuration
 - Controlled document-storage verification
 - Live Stripe secret configuration
 - External webhook delivery

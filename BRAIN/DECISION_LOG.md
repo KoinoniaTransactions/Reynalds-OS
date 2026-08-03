@@ -116,3 +116,19 @@ Decision: Workspace query helpers must accept an explicit product registry for f
 Reason: A single canonical workspace entry cannot prove ordering behavior. Parameterized queries allow deterministic multi-entry tests that verify public products are excluded, workspace products remain complete, and navigation placement follows metadata even when registry entries are deliberately out of order.
 
 Canonical sources: `BRAIN/APPLICATION_CATALOG.md` and `apps/web/lib/productRegistry.ts`
+
+## D-018 — Portal Documents Use R2 with Scan-Before-Persist
+
+Decision: Live Koinonia portal documents must use private Cloudflare R2 storage and must pass the configured malware scanner before the file is persisted to R2.
+
+Reason: Vercel/local filesystem paths are not durable production document storage, and Koinonia document workflows may contain sensitive transaction files. The portal should use private object storage, protected download routes, audit history, and scan-before-persist handling rather than relying on public assets or unverified local disk writes.
+
+Canonical specification: `docs/specifications/KOINONIA_AUTH_PRODUCTION_READINESS.md`
+
+## D-019 — Send Package Status Requires Delivery Confirmation
+
+Decision: Koinonia document send packages cannot be marked `Sent`, `Signature Monitoring`, or `Completed` unless staff records a safe delivery/signature/archive confirmation.
+
+Reason: Send-package status is operational evidence. Without a confirmation requirement, staff could accidentally mark a document package as delivered or complete without traceable delivery proof. The confirmation must still avoid passwords, access codes, payment details, API keys, and private login details.
+
+Canonical specification: `docs/specifications/KOINONIA_DOCUMENT_WORKSPACE_SPEC.md`

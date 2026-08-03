@@ -174,20 +174,27 @@ Move the Koinonia client and employee portals from guarded source-backed workflo
 - Payment webhook URL verification
 - Production portal environment-gate documentation
 - Stripe webhook handling
+- Cloudflare R2 document-storage readiness enforcement
+- Pre-R2 malware scanning for document uploads and replacements
+- Delivery-confirmation gating for sent, signature-monitoring, and completed document send packages
 
 ## Immediate Priorities
 
-1. Finish and reconcile the active payment-integration work.
-2. Verify Stripe webhook delivery with approved production configuration.
-3. Reconcile webhook events into canonical billing and audit records.
-4. Complete database-backed portal workflow testing.
-5. Verify provider-backed client and employee identities.
-6. Confirm staff MFA and invitation acceptance in production configuration.
-7. Run controlled end-to-end testing for documents, assignments, billing, and payment events.
-8. Preserve focused commits and update the Brain at the end of each meaningful completed slice.
+1. Configure production Clerk live keys outside the repository.
+2. Configure Cloudflare R2 account, bucket, access keys, and explicit upload enablement outside the repository.
+3. Finish and reconcile the deferred Stripe account/payment setup work.
+4. Verify Stripe webhook delivery with approved production configuration.
+5. Reconcile webhook events into canonical billing and audit records.
+6. Complete database-backed portal workflow testing.
+7. Verify provider-backed client and employee identities.
+8. Confirm staff MFA and invitation acceptance in production configuration.
+9. Run controlled end-to-end testing for documents, assignments, billing, send-package delivery, and payment events.
+10. Preserve focused commits and update the Brain at the end of each meaningful completed slice.
 
 ## Production Boundary
 
 Do not describe the portal as production ready merely because source code, helper tests, or webhook routes exist.
 
 Production readiness requires verified infrastructure, real provider configuration, live database behavior, controlled payment-event delivery, access isolation, and end-to-end operational evidence.
+
+The active mission remains Koinonia production completion. Portal work should continue only as production-readiness work tied to real client/employee access and operational safety, not as speculative platform expansion.

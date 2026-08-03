@@ -2693,3 +2693,34 @@ The committed source now supports:
 - Stripe webhook handling.
 
 Production readiness still requires real provider configuration, production secrets, reachable database storage, verified portal users, end-to-end webhook delivery, payment-event reconciliation, and controlled live testing.
+
+## 2026-08-03 — Portal Document Storage and Send Confirmation Gates
+
+### Cloudflare R2 Document Readiness
+
+- Updated portal readiness so live document storage requires Cloudflare R2 account, access key, secret key, bucket name, and explicit `PORTAL_DOCUMENT_R2_UPLOADS_ENABLED=true`.
+- Updated `pnpm verify:portal` to enforce the same R2 document-storage gates.
+- Updated environment templates and production readiness documentation with required R2 variables.
+
+### Scan Before R2 Persistence
+
+- Added a shared upload-scanning helper that writes incoming upload bytes to a private scan-temp path, runs the configured scanner command, and removes the scan-temp file.
+- Applied scan-before-persist behavior to new portal document uploads and staff document replacements before writing to R2.
+- Added a focused storage test that verifies scan-temp cleanup after a successful scan.
+
+### Send Package Delivery Confirmation
+
+- Tightened document send-package status validation so `Sent`, `Signature Monitoring`, and `Completed` require a delivery confirmation.
+- Added focused tests for delivery-confirmation requirements.
+
+### Commits
+
+- `2963398` — Require R2 and scanning for portal documents
+- `1439045` — Require send package delivery confirmation
+
+### Verification
+
+- Focused portal document/readiness/send-package tests passed.
+- TypeScript checks passed.
+- Production web build passed after the R2/scanning slice.
+- Full portal verifier still correctly blocks on missing production Clerk, Stripe, and R2 account configuration.

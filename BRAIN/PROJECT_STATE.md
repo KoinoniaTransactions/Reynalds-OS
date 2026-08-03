@@ -131,10 +131,21 @@ Current implemented architecture includes:
 - live-record employee billing queues,
 - pay-at-close billing monitoring,
 - payment webhook URL readiness checks,
-- Stripe payment webhook handling.
+- Stripe payment webhook handling,
+- Cloudflare R2 document-storage readiness checks,
+- scan-before-R2 document upload and replacement handling,
+- delivery-confirmation gates for document send-package completion states.
 
 The active portal remains pre-production until identity-provider configuration, staff MFA, database-backed testing, private document infrastructure, production payment secrets, real webhook delivery, and controlled end-to-end verification are complete.
 
 The current implementation principle is:
 
 Persist operational service intent when work is created, then let client and employee portal views consume that persisted intent consistently.
+
+Document handling principle:
+
+Live portal documents must use private Cloudflare R2 object storage, must pass malware scanning before R2 persistence, and must remain accessible only through protected portal routes.
+
+Send-package principle:
+
+Prepared document send packages may track delivery state, but sent/signature/completed statuses require safe delivery confirmation and do not by themselves prove external e-signature or brokerage-platform integration.

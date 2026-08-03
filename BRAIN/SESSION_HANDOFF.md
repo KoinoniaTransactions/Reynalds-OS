@@ -1,9 +1,82 @@
 # SESSION HANDOFF — Koinonia Marketing System
 
-Status: Active Session Handoff  
-Repository: Reynalds OS  
-Current Branch: `feature/app-shell-foundation`  
+Status: Active Session Handoff
+Repository: Reynalds OS
+Current Branch: `chatgpt/portal-access-status`
 Primary Business Priority: Koinonia Transactions website launch and client-acquisition system
+
+---
+
+# 2026-08-03 Current Session Handoff — Portal Readiness Re-Anchor
+
+Status: Continue from root project folder
+Local project path: `/Users/jeremiahreynalds/Projects/Reynalds_OS_v11_3_1_Work`
+Current branch: `chatgpt/portal-access-status`
+Remote target branch: `chatgpt/portal-access-status`
+
+## Governing Mission
+
+`START_HERE.md` still identifies the primary mission as completing the Koinonia production website.
+
+The active portal work is valid only as production-readiness work for client and employee access, document safety, billing/payment safety, and operational verification. It should not expand into speculative platform work.
+
+## Latest Completed Portal Slices
+
+- Added Stripe payment webhook handling and focused webhook verification tests.
+- Added Cloudflare R2 document readiness requirements.
+- Restored scan-before-R2 persistence for new document uploads and replacement uploads.
+- Updated the portal verifier and readiness report so R2 credentials, bucket configuration, and explicit upload enablement are required before live document uploads.
+- Added a focused storage test proving scan-temp files are cleaned up after scanning.
+- Added send-package delivery-confirmation gating before packages can be marked `Sent`, `Signature Monitoring`, or `Completed`.
+
+Recent pushed commits:
+
+- `a65e805` — Add Stripe payment webhook handling
+- `2963398` — Require R2 and scanning for portal documents
+- `1439045` — Require send package delivery confirmation
+
+## Verification Completed
+
+- Focused portal/document/send-package tests passed.
+- TypeScript checks passed.
+- Production web build passed after the R2/scanning slice.
+- `pnpm verify:portal` still fails, correctly, on missing production account configuration.
+
+## Current Verifier Blockers
+
+These values must be configured outside the repository before full production verification can continue:
+
+- `CLERK_SECRET_KEY`
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `KOINONIA_PAYMENT_SETUP_URL`
+- `KOINONIA_PAYMENT_WEBHOOK_SECRET`
+- `R2_ACCOUNT_ID`
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
+- `R2_BUCKET_NAME`
+- `PORTAL_DOCUMENT_R2_UPLOADS_ENABLED=true`
+
+Stripe account setup is intentionally deferred by Jeremiah and should be resumed when he provides the Stripe data.
+
+## Next Correct Work
+
+1. Do not continue feature work until the requested BRAIN/startup-doc re-anchor is complete and committed.
+2. After re-anchor, prefer account/configuration support for Clerk and Cloudflare R2 before additional portal features.
+3. Continue portal code only when it closes a verified production-readiness gap.
+4. Preserve small focused commits and update the BRAIN after meaningful slices.
+
+## Do Not Claim
+
+Do not call the portal production-ready until:
+
+- real Clerk live keys are configured,
+- staff MFA is verified,
+- Cloudflare R2 is configured and upload-enabled,
+- Stripe setup/webhook secrets are configured,
+- live database checks pass,
+- one client invite and one staff invite have been accepted,
+- required launch proof records are complete,
+- controlled end-to-end client and employee tests pass.
 
 ---
 
