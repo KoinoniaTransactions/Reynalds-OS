@@ -103,6 +103,11 @@ recordCheck(
   "use a processor-hosted payment setup URL, not a portal card-entry form"
 );
 recordCheck(
+  "KOINONIA_PAYMENT_WEBHOOK_URL is public HTTPS",
+  isPublicHttpsUrl(process.env.KOINONIA_PAYMENT_WEBHOOK_URL),
+  "payment processor events need a public HTTPS webhook endpoint"
+);
+recordCheck(
   "KOINONIA_PAYMENT_WEBHOOK_SECRET is set",
   isConfiguredValue(process.env.KOINONIA_PAYMENT_WEBHOOK_SECRET),
   "verified processor events are required before trusting payment status"
