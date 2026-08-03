@@ -13,6 +13,10 @@ import {
   validateBillingSetupRequestInput
 } from "../../../../lib/billing-setup-requests";
 import { prisma } from "../../../../lib/db";
+import {
+  buildPersistedPortalPlaybookSnapshot,
+  buildPortalPlaybook
+} from "../../../../lib/portal-playbook";
 
 export const dynamic = "force-dynamic";
 
@@ -138,7 +142,7 @@ function buildBillingSetupRequestData(
   input: ReturnType<typeof validateBillingSetupRequestInput>,
   actor: AuthUser
 ): Prisma.InputJsonObject {
-  const data: Record<string, string | boolean> = {
+  const data: Record<string, Prisma.InputJsonValue> = {
     billingModel: input.billingModel,
     consentAcknowledged: input.consentAcknowledged,
     requestedByEmail: actor.email,
@@ -161,6 +165,18 @@ function buildBillingSetupRequestData(
 
   if (input.triggerDescription) {
     data.triggerDescription = input.triggerDescription;
+  }
+
+  const playbook = buildPortalPlaybook({
+    data,
+    name: buildBillingSetupRequestName(input),
+    objectType: billingSetupRequestObjectType
+  });
+
+  if (playbook) {
+    data.playbook = buildPersistedPortalPlaybookSnapshot(
+      playbook
+    ) as Prisma.InputJsonObject;
   }
 
   return data as Prisma.InputJsonObject;
