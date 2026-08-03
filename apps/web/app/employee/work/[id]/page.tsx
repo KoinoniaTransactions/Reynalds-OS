@@ -5,6 +5,7 @@ import {
   PortalWorkAssignmentForm,
   type PortalWorkAssignmentStaffOption
 } from "../../../../components/employee/PortalWorkAssignmentForm";
+import { ShowingRequestStatusForm } from "../../../../components/employee/ShowingRequestStatusForm";
 import { Footer, Header } from "../../../../components/site";
 import { absoluteUrl } from "../../../../config/seo.config";
 import { prisma } from "../../../../lib/db";
@@ -25,6 +26,7 @@ import {
   type PortalWorkspaceSummary
 } from "../../../../lib/portal-workspace";
 import { clientPortalWorkObjectTypes } from "../../../../lib/portal-work-items";
+import { showingRequestObjectType } from "../../../../lib/showing-requests";
 
 export const dynamic = "force-dynamic";
 
@@ -49,8 +51,10 @@ type EmployeeWorkWorkspaceView = {
   assignedStaffUserId?: string | null;
   backupStaffUserId?: string | null;
   canAssign: boolean;
+  canUpdateShowing: boolean;
   documents: PortalWorkspaceDocumentItem[];
   events: PortalWorkspaceEventItem[];
+  isShowingRequest: boolean;
   notice?: string;
   serviceCues: KoinoniaStaffServiceCues | null;
   staffOptions: PortalWorkAssignmentStaffOption[];
@@ -144,6 +148,14 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
                     <strong>{workspace.summary.nextAction}</strong>
                   </article>
                 </div>
+
+                {workspace.isShowingRequest ? (
+                  <ShowingRequestStatusForm
+                    currentStatus={workspace.summary.status}
+                    disabled={!workspace.canUpdateShowing}
+                    requestId={workspace.summary.id}
+                  />
+                ) : null}
               </section>
 
               <section
@@ -402,6 +414,7 @@ async function getEmployeeWorkWorkspace(
       assignedStaffUserId: workItem.assignedStaffUserId,
       backupStaffUserId: workItem.backupStaffUserId,
       canAssign: actor.permissions.includes("employee-portal:assignments:update"),
+      canUpdateShowing: actor.permissions.includes("employee-portal:assigned-work:update"),
       documents: withWorkspaceDocuments(
         buildPortalWorkspaceDocuments(documents, {
           downloadBasePath: "/api/portal/documents",
@@ -409,6 +422,7 @@ async function getEmployeeWorkWorkspace(
         })
       ),
       events: withWorkspaceEvents(buildPortalWorkspaceTimeline(events)),
+      isShowingRequest: workItem.objectType === showingRequestObjectType,
       serviceCues: getKoinoniaStaffServiceCuesForWork({
         data: workItem.data,
         name: workItem.name,
@@ -424,8 +438,10 @@ async function getEmployeeWorkWorkspace(
 
     return {
       canAssign: false,
+      canUpdateShowing: false,
       documents: buildEmptyPortalWorkspaceDocuments(),
       events: buildEmptyPortalWorkspaceTimeline(),
+      isShowingRequest: false,
       notice:
         "Work detail storage is not reachable in this preview, so live status, documents, assignment options, and history cannot be shown yet.",
       serviceCues: null,
