@@ -22,6 +22,8 @@ import {
   getHumanDocumentStatus,
   getNextPortalDocumentVersionNumber,
   getPortalDocumentVersionLabel,
+  groupPortalDocumentVersions,
+  type PortalDocumentLifecycleState
 } from "../../../lib/portal-documents";
 
 export const dynamic = "force-dynamic";
@@ -94,19 +96,32 @@ const draftQueue = [
 ] as const;
 
 type EmployeeDocumentItem = {
+  createdAt: Date | string;
   detail: string;
+  documentType: string;
   downloadHref?: string;
   fileInfo: string;
   id: string;
+  lifecycleState: PortalDocumentLifecycleState;
   nextVersionLabel: string;
+  previousDocumentId?: string | null;
+  removalReason?: string | null;
+  removedAt?: Date | string | null;
   requestedAction?: string | null;
   requestedBy: string;
   replacementReady: boolean;
   status: string;
   submitted: string;
+  supersededByDocumentId?: string | null;
   title: string;
   versionLabel: string;
+  versionNumber: number;
   workflowStatus: string;
+};
+
+type EmployeeDocumentGroup = {
+  current: EmployeeDocumentItem;
+  versions: EmployeeDocumentItem[];
 };
 
 type EmployeeSendPackageItem = {
@@ -120,6 +135,7 @@ type EmployeeSendPackageItem = {
 };
 
 type EmployeeDocumentView = {
+  documentGroups: EmployeeDocumentGroup[];
   documents: EmployeeDocumentItem[];
   isLiveData: boolean;
   notice?: string;
@@ -128,7 +144,14 @@ type EmployeeDocumentView = {
 
 const sampleUploadIntake: EmployeeDocumentItem[] = [
   {
+    createdAt: "2026-08-03T10:00:00.000Z",
+    documentType: "Seller Property Disclosure",
     id: "sample-intake-disclosure",
+    lifecycleState: "active",
+    previousDocumentId: null,
+    removalReason: null,
+    removedAt: null,
+    supersededByDocumentId: null,
     title: "Seller Property Disclosure",
     requestedBy: "Portal upload",
     status: "Uploaded",
@@ -138,10 +161,18 @@ const sampleUploadIntake: EmployeeDocumentItem[] = [
     replacementReady: false,
     submitted: "Today",
     versionLabel: "v1",
+    versionNumber: 1,
     workflowStatus: "Uploaded"
   },
   {
+    createdAt: "2026-08-02T10:00:00.000Z",
+    documentType: "Inspection Instructions",
     id: "sample-intake-inspection",
+    lifecycleState: "active",
+    previousDocumentId: null,
+    removalReason: null,
+    removedAt: null,
+    supersededByDocumentId: null,
     title: "Inspection Instructions",
     requestedBy: "Portal upload",
     status: "In Review",
@@ -151,6 +182,7 @@ const sampleUploadIntake: EmployeeDocumentItem[] = [
     replacementReady: false,
     submitted: "Yesterday",
     versionLabel: "v2",
+    versionNumber: 2,
     workflowStatus: "In Review"
   }
 ];
@@ -452,10 +484,12 @@ async function getEmployeeDocumentView(actor: AuthUser): Promise<EmployeeDocumen
       prisma.document.findMany({
         where: {
           workspaceId: actor.workspaceId,
-          archivedAt: null
+          lifecycleState: {
+            in: ["active", "superseded", "removed"]
+          }
         },
         orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-        take: 25
+        take: 100
       }),
       prisma.rosObject.findMany({
         where: {
@@ -468,14 +502,22 @@ async function getEmployeeDocumentView(actor: AuthUser): Promise<EmployeeDocumen
       })
     ]);
 
+    const documentItems = documents.map((document) =>
+      mapDocumentRecord(document, storageReady)
+    );
+    const documentGroups = groupPortalDocumentVersions(documentItems);
+    const currentDocuments = documentGroups.map((group) => group.current);
+
     return {
-      documents: documents.map((document) => mapDocumentRecord(document, storageReady)),
+      documentGroups,
+      documents: currentDocuments,
       isLiveData: true,
       sendPackages: sendPackageObjects.map(mapDocumentSendPackageRecord)
     };
   } catch (error) {
     if (isDatabaseUnavailableError(error)) {
       return {
+        documentGroups: groupPortalDocumentVersions(sampleUploadIntake),
         documents: sampleUploadIntake,
         isLiveData: false,
         notice: "Document storage is not reachable in this preview, so sample uploads are shown.",
@@ -506,7 +548,14 @@ function mapDocumentRecord(
   storageReady: boolean
 ): EmployeeDocumentItem {
   return {
+    createdAt: document.createdAt,
+    documentType: document.documentType,
     id: document.id,
+    lifecycleState: document.lifecycleState as PortalDocumentLifecycleState,
+    previousDocumentId: document.previousDocumentId,
+    removalReason: document.removalReason,
+    removedAt: document.removedAt,
+    supersededByDocumentId: document.supersededByDocumentId,
     title: document.documentType,
     requestedBy: document.uploadedByUserId ? "Portal user upload" : "Portal upload",
     status: getHumanDocumentStatus(document.status),
@@ -518,7 +567,11 @@ function mapDocumentRecord(
     requestedAction: document.requestedAction,
     replacementReady: !document.supersededByDocumentId && document.status !== "Superseded" && document.status !== "Archived",
     submitted: getDocumentSubmittedLabel(document.createdAt),
-    versionLabel: getPortalDocumentVersionLabel(document.versionNumber, document.versionLabel),
+    versionLabel: getPortalDocumentVersionLabel(
+      document.versionNumber,
+      document.versionLabel
+    ),
+    versionNumber: document.versionNumber,
     workflowStatus: document.status
   };
 }
