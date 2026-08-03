@@ -1,12 +1,18 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type PortalDocumentUploadFormProps = {
+  relatedObjectId?: string;
   storageReady: boolean;
 };
 
-export function PortalDocumentUploadForm({ storageReady }: PortalDocumentUploadFormProps) {
+export function PortalDocumentUploadForm({
+  relatedObjectId,
+  storageReady
+}: PortalDocumentUploadFormProps) {
+  const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [status, setStatus] = useState<"error" | "success" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,7 +44,8 @@ export function PortalDocumentUploadForm({ storageReady }: PortalDocumentUploadF
 
       form.reset();
       setStatus("success");
-      setMessage("Document uploaded. Koinonia can now review it in the staff workspace.");
+      setMessage("Document uploaded and attached to this work item.");
+      router.refresh();
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Unable to upload this document yet.");
@@ -53,6 +60,10 @@ export function PortalDocumentUploadForm({ storageReady }: PortalDocumentUploadF
     <section className="koinonia-document-panel">
       <p className="koinonia-eyebrow">Upload</p>
       <form className="koinonia-document-upload-form" onSubmit={handleSubmit}>
+        {relatedObjectId ? (
+          <input name="relatedObjectId" type="hidden" value={relatedObjectId} />
+        ) : null}
+
         <label>
           Document Type
           <select disabled={disabled} name="documentType" required>

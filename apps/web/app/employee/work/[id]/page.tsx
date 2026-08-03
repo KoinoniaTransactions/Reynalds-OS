@@ -5,6 +5,7 @@ import {
   PortalWorkAssignmentForm,
   type PortalWorkAssignmentStaffOption
 } from "../../../../components/employee/PortalWorkAssignmentForm";
+import { PortalDocumentUploadForm } from "../../../../components/client/PortalDocumentUploadForm";
 import { ShowingRequestStatusForm } from "../../../../components/employee/ShowingRequestStatusForm";
 import { Footer, Header } from "../../../../components/site";
 import { absoluteUrl } from "../../../../config/seo.config";
@@ -61,6 +62,7 @@ type EmployeeWorkWorkspaceView = {
   backupStaffUserId?: string | null;
   canAssign: boolean;
   canUpdateShowing: boolean;
+  documentUploadReady: boolean;
   documents: PortalWorkspaceDocumentItem[];
   events: PortalWorkspaceEventItem[];
   isShowingRequest: boolean;
@@ -254,6 +256,11 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
                   ))}
                 </div>
               </section>
+
+              <PortalDocumentUploadForm
+                relatedObjectId={workspace.summary.id}
+                storageReady={workspace.documentUploadReady}
+              />
 
               <WorkspaceDocuments documents={workspace.documents} />
               <WorkspaceTimeline events={workspace.events} />
@@ -475,6 +482,9 @@ async function getEmployeeWorkWorkspace(
       backupStaffUserId: workItem.backupStaffUserId,
       canAssign: actor.permissions.includes("employee-portal:assignments:update"),
       canUpdateShowing: actor.permissions.includes("employee-portal:assigned-work:update"),
+      documentUploadReady:
+        actor.permissions.includes("document-workspace:drafts:create") &&
+        isDocumentStorageConfigured(),
       documents: withWorkspaceDocuments(
         buildPortalWorkspaceDocuments(documents, {
           downloadBasePath: "/api/portal/documents",
@@ -500,6 +510,7 @@ async function getEmployeeWorkWorkspace(
     return {
       canAssign: false,
       canUpdateShowing: false,
+      documentUploadReady: false,
       documents: buildEmptyPortalWorkspaceDocuments(),
       events: buildEmptyPortalWorkspaceTimeline(),
       isShowingRequest: false,
