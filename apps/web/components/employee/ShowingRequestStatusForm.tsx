@@ -1,11 +1,16 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { showingRequestStatuses } from "../../lib/showing-requests";
 
 type ShowingRequestStatusFormProps = {
   currentStatus: string;
   disabled?: boolean;
+  initialAssignedProvider?: string;
+  initialConfirmedWindow?: string;
+  initialFeedbackSummary?: string;
+  initialNotes?: string;
   requestId: string;
 };
 
@@ -19,9 +24,18 @@ type ShowingRequestStatusResponse = {
 export function ShowingRequestStatusForm({
   currentStatus,
   disabled = false,
+  initialAssignedProvider = "",
+  initialConfirmedWindow = "",
+  initialFeedbackSummary = "",
+  initialNotes = "",
   requestId
 }: ShowingRequestStatusFormProps) {
+  const router = useRouter();
+  const [assignedProvider, setAssignedProvider] = useState(initialAssignedProvider);
+  const [confirmedWindow, setConfirmedWindow] = useState(initialConfirmedWindow);
+  const [feedbackSummary, setFeedbackSummary] = useState(initialFeedbackSummary);
   const [message, setMessage] = useState<string | null>(null);
+  const [notes, setNotes] = useState(initialNotes);
   const [selectedStatus, setSelectedStatus] = useState(normalizeStatus(currentStatus));
   const [status, setStatus] = useState<"error" | "success" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,10 +56,10 @@ export function ShowingRequestStatusForm({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          assignedProvider: String(formData.get("assignedProvider") ?? ""),
-          confirmedWindow: String(formData.get("confirmedWindow") ?? ""),
-          feedbackSummary: String(formData.get("feedbackSummary") ?? ""),
-          notes: String(formData.get("notes") ?? ""),
+          assignedProvider,
+          confirmedWindow,
+          feedbackSummary,
+          notes,
           status: String(formData.get("status") ?? "")
         })
       });
@@ -55,10 +69,10 @@ export function ShowingRequestStatusForm({
         throw new Error(payload.error ?? "Unable to update this showing request yet.");
       }
 
-      form.reset();
       setSelectedStatus(normalizeStatus(payload.showingRequest?.status ?? selectedStatus));
       setStatus("success");
       setMessage("Showing status updated and recorded in the work history.");
+      router.refresh();
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Unable to update this showing request yet.");
@@ -90,8 +104,10 @@ export function ShowingRequestStatusForm({
         <input
           disabled={isDisabled}
           name="assignedProvider"
+          onChange={(event) => setAssignedProvider(event.target.value)}
           placeholder="Licensed provider or staff owner"
           type="text"
+          value={assignedProvider}
         />
       </label>
 
@@ -100,8 +116,10 @@ export function ShowingRequestStatusForm({
         <input
           disabled={isDisabled}
           name="confirmedWindow"
+          onChange={(event) => setConfirmedWindow(event.target.value)}
           placeholder="Confirmed date/time window"
           type="text"
+          value={confirmedWindow}
         />
       </label>
 
@@ -110,8 +128,10 @@ export function ShowingRequestStatusForm({
         <textarea
           disabled={isDisabled}
           name="feedbackSummary"
+          onChange={(event) => setFeedbackSummary(event.target.value)}
           placeholder="Showing feedback or completion summary; no access codes"
           rows={2}
+          value={feedbackSummary}
         />
       </label>
 
@@ -120,8 +140,10 @@ export function ShowingRequestStatusForm({
         <textarea
           disabled={isDisabled}
           name="notes"
+          onChange={(event) => setNotes(event.target.value)}
           placeholder="Status note only; no passwords, gate codes, lockbox codes, or private access secrets"
           rows={2}
+          value={notes}
         />
       </label>
 

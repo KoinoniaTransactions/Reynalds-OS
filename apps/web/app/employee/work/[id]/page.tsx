@@ -47,6 +47,15 @@ type Params = {
   params: Promise<{ id: string }>;
 };
 
+type ShowingRequestDetails = {
+  assignedProvider: string;
+  confirmedWindow: string;
+  feedbackSummary: string;
+  lastStatusNote: string;
+  statusUpdatedAt: string;
+  statusUpdatedByEmail: string;
+};
+
 type EmployeeWorkWorkspaceView = {
   assignedStaffUserId?: string | null;
   backupStaffUserId?: string | null;
@@ -57,6 +66,7 @@ type EmployeeWorkWorkspaceView = {
   isShowingRequest: boolean;
   notice?: string;
   serviceCues: KoinoniaStaffServiceCues | null;
+  showingDetails: ShowingRequestDetails;
   staffOptions: PortalWorkAssignmentStaffOption[];
   summary: PortalWorkspaceSummary;
 };
@@ -150,11 +160,61 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
                 </div>
 
                 {workspace.isShowingRequest ? (
-                  <ShowingRequestStatusForm
-                    currentStatus={workspace.summary.status}
-                    disabled={!workspace.canUpdateShowing}
-                    requestId={workspace.summary.id}
-                  />
+                  <>
+                    <ShowingRequestStatusForm
+                      currentStatus={workspace.summary.status}
+                      disabled={!workspace.canUpdateShowing}
+                      initialAssignedProvider={workspace.showingDetails.assignedProvider}
+                      initialConfirmedWindow={workspace.showingDetails.confirmedWindow}
+                      initialFeedbackSummary={workspace.showingDetails.feedbackSummary}
+                      initialNotes={workspace.showingDetails.lastStatusNote}
+                      requestId={workspace.summary.id}
+                    />
+
+                    <div className="koinonia-workspace-meta-grid employee">
+                    <article>
+                      <span>Assigned Provider</span>
+                      <strong>
+                        {workspace.showingDetails.assignedProvider || "Not assigned"}
+                      </strong>
+                    </article>
+
+                    <article>
+                      <span>Confirmed Window</span>
+                      <strong>
+                        {workspace.showingDetails.confirmedWindow || "Not confirmed"}
+                      </strong>
+                    </article>
+
+                    <article>
+                      <span>Latest Staff Note</span>
+                      <strong>
+                        {workspace.showingDetails.lastStatusNote || "No staff note recorded"}
+                      </strong>
+                    </article>
+
+                    <article>
+                      <span>Latest Feedback</span>
+                      <strong>
+                        {workspace.showingDetails.feedbackSummary || "No feedback recorded"}
+                      </strong>
+                    </article>
+
+                    <article>
+                      <span>Last Updated By</span>
+                      <strong>
+                        {workspace.showingDetails.statusUpdatedByEmail || "Not updated yet"}
+                      </strong>
+                    </article>
+
+                      <article>
+                        <span>Last Updated</span>
+                        <strong>
+                          {workspace.showingDetails.statusUpdatedAt || "Not updated yet"}
+                        </strong>
+                      </article>
+                    </div>
+                  </>
                 ) : null}
               </section>
 
@@ -428,6 +488,7 @@ async function getEmployeeWorkWorkspace(
         name: workItem.name,
         objectType: workItem.objectType
       }),
+      showingDetails: buildShowingRequestDetails(workItem.data),
       staffOptions,
       summary: buildPortalWorkspaceSummary(workItem)
     };
@@ -445,10 +506,48 @@ async function getEmployeeWorkWorkspace(
       notice:
         "Work detail storage is not reachable in this preview, so live status, documents, assignment options, and history cannot be shown yet.",
       serviceCues: null,
+      showingDetails: buildShowingRequestDetails(null),
       staffOptions: [],
       summary: buildUnavailableWorkspaceSummary(workItemId)
     };
   }
+}
+
+function buildShowingRequestDetails(data: unknown): ShowingRequestDetails {
+  const record =
+    data && typeof data === "object" && !Array.isArray(data)
+      ? (data as Record<string, unknown>)
+      : {};
+
+  return {
+    assignedProvider: getShowingDetail(record.assignedProvider),
+    confirmedWindow: getShowingDetail(record.confirmedWindow),
+    feedbackSummary: getShowingDetail(record.feedbackSummary),
+    lastStatusNote: getShowingDetail(record.lastStatusNote),
+    statusUpdatedAt: formatShowingUpdatedAt(record.statusUpdatedAt),
+    statusUpdatedByEmail: getShowingDetail(record.statusUpdatedByEmail)
+  };
+}
+
+function getShowingDetail(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function formatShowingUpdatedAt(value: unknown): string {
+  if (typeof value !== "string" || !value.trim()) {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value.trim();
+  }
+
+  return date.toLocaleString("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
 }
 
 function canViewWorkspaceWork(actor: AuthUser): boolean {
