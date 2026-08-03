@@ -4,7 +4,10 @@ import { NextResponse } from "next/server";
 import { getAuthErrorResponse } from "../../../../lib/api-auth";
 import { assertPermission } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/db";
-import { buildPortalPlaybook } from "../../../../lib/portal-playbook";
+import {
+  buildPersistedPortalPlaybookSnapshot,
+  buildPortalPlaybook
+} from "../../../../lib/portal-playbook";
 import {
   buildShowingRequestName,
   buildShowingRequestNextAction,
@@ -166,26 +169,9 @@ function buildShowingRequestData(
   });
 
   if (playbook) {
-    data.playbook = {
-      billingModel: playbook.billingModel,
-      deadlinePlaceholders: playbook.deadlinePlaceholders.map(
-        (deadline) => ({
-          date: deadline.date.toISOString(),
-          dateLabel: deadline.dateLabel,
-          daysUntilDue: deadline.daysUntilDue,
-          key: deadline.key,
-          label: deadline.label,
-          risk: deadline.risk
-        })
-      ),
-      expectedDocuments: playbook.expectedDocuments,
-      healthFactorKeys: playbook.healthFactorKeys,
-      initialActions: playbook.initialActions,
-      instantiatedAt: new Date().toISOString(),
-      requiredStaffRoles: playbook.requiredStaffRoles,
-      serviceName: playbook.serviceName,
-      templateId: playbook.templateId
-    };
+    data.playbook = buildPersistedPortalPlaybookSnapshot(
+      playbook
+    );
   }
 
   return data as Prisma.InputJsonObject;
