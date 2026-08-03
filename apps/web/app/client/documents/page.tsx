@@ -350,32 +350,86 @@ export default async function ClientDocumentCenterPreviewPage() {
                     <p className="koinonia-document-security-note">{documentView.notice}</p>
                   ) : null}
 
-                  {documentView.documents.length ? (
-                    documentView.documents.map((item) => (
-                      <article className="koinonia-document-work-item" key={item.id}>
-                        <div>
-                          <span>{item.fileName}</span>
-                          <h3>{item.title}</h3>
-                          <p>{item.detail}</p>
-                          {item.downloadHref ? (
-                            <a className="koinonia-document-link" href={item.downloadHref}>
-                              Download File
-                            </a>
-                          ) : null}
+                  {documentView.documentGroups.length ? (
+                    documentView.documentGroups.map((group) => {
+                      const current = group.current;
+                      const historicalVersions = group.versions.filter(
+                        (version) => version.id !== current.id
+                      );
 
-                          <PortalDocumentRemoveForm
-                            disabled={!documentView.isLiveData}
-                            documentId={item.id}
-                            documentName={item.title}
-                          />
-                        </div>
+                      return (
+                        <article className="koinonia-document-work-item" key={current.id}>
+                          <div>
+                            <span>
+                              {current.fileName} - {current.versionLabel}
+                            </span>
+                            <h3>{current.title}</h3>
+                            <p>{current.detail}</p>
 
-                        <div className="koinonia-document-work-meta">
-                          <strong>{item.status}</strong>
-                          <span>{item.submitted}</span>
-                        </div>
-                      </article>
-                    ))
+                            {current.downloadHref ? (
+                              <a className="koinonia-document-link" href={current.downloadHref}>
+                                Download Current Version
+                              </a>
+                            ) : null}
+
+                            <PortalDocumentRemoveForm
+                              disabled={!documentView.isLiveData}
+                              documentId={current.id}
+                              documentName={current.title}
+                            />
+
+                            {historicalVersions.length ? (
+                              <details>
+                                <summary>
+                                  Version History ({historicalVersions.length})
+                                </summary>
+
+                                <div className="koinonia-document-card-list">
+                                  {historicalVersions.map((version) => (
+                                    <article
+                                      className="koinonia-document-work-item"
+                                      key={version.id}
+                                    >
+                                      <div>
+                                        <span>
+                                          {version.fileName} - {version.versionLabel}
+                                        </span>
+                                        <p>
+                                          {version.lifecycleState === "superseded"
+                                            ? "Superseded version"
+                                            : version.lifecycleState === "removed"
+                                              ? "Removed version"
+                                              : version.status}
+                                        </p>
+
+                                        {version.downloadHref ? (
+                                          <a
+                                            className="koinonia-document-link"
+                                            href={version.downloadHref}
+                                          >
+                                            Download Historical Version
+                                          </a>
+                                        ) : null}
+                                      </div>
+
+                                      <div className="koinonia-document-work-meta">
+                                        <strong>{version.status}</strong>
+                                        <span>{version.submitted}</span>
+                                      </div>
+                                    </article>
+                                  ))}
+                                </div>
+                              </details>
+                            ) : null}
+                          </div>
+
+                          <div className="koinonia-document-work-meta">
+                            <strong>{current.status}</strong>
+                            <span>{current.submitted}</span>
+                          </div>
+                        </article>
+                      );
+                    })
                   ) : (
                     <p className="koinonia-document-security-note">
                       No documents have been uploaded through the portal yet.
