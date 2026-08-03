@@ -28,6 +28,11 @@ export type PortalReadinessInput = {
   clerkPublishableKey?: string;
   clerkSecretKey?: string;
   documentMalwareScanCommand?: string;
+  documentR2AccessKeyId?: string;
+  documentR2AccountId?: string;
+  documentR2BucketName?: string;
+  documentR2SecretAccessKey?: string;
+  documentR2UploadsEnabled?: boolean;
   documentUploadDir?: string;
   hostedSignInUrl?: string;
   nodeEnv?: string;
@@ -571,35 +576,45 @@ function getInvitationAcceptanceReadiness(database: PortalDatabaseReadiness): Po
 }
 
 function getDocumentStorageReadiness(input: PortalReadinessInput): PortalReadinessItem {
-  const uploadDir = input.documentUploadDir?.trim();
+  const missingR2Settings = [
+    [input.documentR2AccountId, "R2_ACCOUNT_ID"],
+    [input.documentR2AccessKeyId, "R2_ACCESS_KEY_ID"],
+    [input.documentR2SecretAccessKey, "R2_SECRET_ACCESS_KEY"],
+    [input.documentR2BucketName, "R2_BUCKET_NAME"]
+  ]
+    .filter(([value]) => !isConfiguredValue(String(value ?? "")))
+    .map(([, label]) => label);
 
-  if (uploadDir && isAbsolute(uploadDir)) {
+  if (missingR2Settings.length === 0 && input.documentR2UploadsEnabled) {
     return readyItem(
       "document-storage",
       "Private document storage",
-      "Document upload storage is configured.",
-      "PORTAL_DOCUMENT_UPLOAD_DIR is present and absolute."
+      "Cloudflare R2 private document storage is configured for uploads and downloads.",
+      "R2 credentials, bucket, and PORTAL_DOCUMENT_R2_UPLOADS_ENABLED=true are configured."
     );
   }
 
   return blockedItem(
     "document-storage",
     "Private document storage",
-    "Clients cannot upload real files until private storage is configured.",
-    uploadDir ? "Upload directory must be an absolute path." : "Upload directory is missing.",
-    "Set PORTAL_DOCUMENT_UPLOAD_DIR to an absolute private storage path on the production host."
+    "Clients cannot upload real files until private object storage is configured.",
+    missingR2Settings.length
+      ? `Missing ${missingR2Settings.join(", ")}.`
+      : "R2 credentials are present, but uploads are not explicitly enabled.",
+    "Configure Cloudflare R2 credentials, R2_BUCKET_NAME, and PORTAL_DOCUMENT_R2_UPLOADS_ENABLED=true."
   );
 }
 
 function getDocumentScannerReadiness(input: PortalReadinessInput): PortalReadinessItem {
   const command = input.documentMalwareScanCommand?.trim();
+  const uploadDir = input.documentUploadDir?.trim();
 
-  if (command && isAbsolute(command) && existsSync(command)) {
+  if (command && isAbsolute(command) && existsSync(command) && uploadDir && isAbsolute(uploadDir)) {
     return readyItem(
       "document-scanner",
       "Document malware scanning",
-      "Document upload scanning is configured.",
-      "The scanner command is absolute and exists on disk."
+      "Document upload scanning is configured before R2 persistence.",
+      "Scanner command and private scan-temp directory are configured."
     );
   }
 
@@ -607,8 +622,12 @@ function getDocumentScannerReadiness(input: PortalReadinessInput): PortalReadine
     "document-scanner",
     "Document malware scanning",
     "Clients cannot upload real files until malware scanning is configured.",
-    command ? "Scanner command is missing, relative, or unavailable." : "Scanner command is missing.",
-    "Set PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND to an absolute scanner executable."
+    !uploadDir || !isAbsolute(uploadDir)
+      ? "Scan-temp upload directory is missing or not absolute."
+      : command
+        ? "Scanner command is missing, relative, or unavailable."
+        : "Scanner command is missing.",
+    "Set PORTAL_DOCUMENT_UPLOAD_DIR to an absolute private scan-temp path and PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND to an absolute scanner executable."
   );
 }
 
@@ -812,6 +831,10 @@ function getCredentialProof(secretDetail: string, publishableDetail: string): st
 
 function isPlaceholderCredential(value: string): boolean {
   return /\b(placeholder|changeme|change-me|dummy|example|fake|todo|your-key|your_key)\b/i.test(value);
+}
+
+function isConfiguredValue(value: string): boolean {
+  return isPresent(value) && !isPlaceholderCredential(value.trim());
 }
 
 function getPaymentUrlProof(setupUrl: string | undefined): string {

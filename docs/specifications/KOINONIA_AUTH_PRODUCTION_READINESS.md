@@ -128,6 +128,11 @@ NEXT_PUBLIC_AUTH_SIGN_IN_URL=
 NEXT_PUBLIC_AUTH_SIGN_OUT_URL=
 KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS=
 ROS_DEFAULT_WORKSPACE_ID=
+R2_ACCOUNT_ID=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET_NAME=
+PORTAL_DOCUMENT_R2_UPLOADS_ENABLED=false
 PORTAL_DOCUMENT_UPLOAD_DIR=
 PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND=
 KOINONIA_PAYMENT_PROCESSOR_PROVIDER=
@@ -148,7 +153,7 @@ ROS_ALLOW_MOCK_AUTH=false
 
 Production Clerk values must be real production keys. Placeholder values, example values, and test-key prefixes should fail readiness checks.
 
-`PORTAL_DOCUMENT_UPLOAD_DIR` must be an absolute private storage path outside public web assets.
+Cloudflare R2 must be configured with `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, and `PORTAL_DOCUMENT_R2_UPLOADS_ENABLED=true` before live document uploads are enabled. `PORTAL_DOCUMENT_UPLOAD_DIR` must be an absolute private scan-temp path outside public web assets, and `PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND` must point to the scanner executable used before R2 persistence.
 
 `KOINONIA_PAYMENT_SETUP_URL` must be a public HTTPS processor-hosted setup destination. `KOINONIA_PAYMENT_WEBHOOK_URL` must be the public HTTPS endpoint configured inside the approved payment processor. For Stripe, use `https://www.koinoniatransactions.com/api/portal/payments/webhook` and the Stripe webhook signing secret for `KOINONIA_PAYMENT_WEBHOOK_SECRET`. The portal should not render raw card entry fields.
 
@@ -343,7 +348,8 @@ Before the portal accepts real data:
 - No brokerage passwords, MLS passwords, raw usernames, access codes, raw card numbers, CVV fields, bank details, routing numbers, account numbers, payment passwords, processor secrets, or API keys are accepted.
 - `pnpm verify:portal` passes against the target production environment.
 - The target environment has at least one active Owner portal user and no active staff users missing MFA requirement.
-- The target environment has `PORTAL_DOCUMENT_UPLOAD_DIR` configured as an absolute private storage path before live document uploads are enabled.
+- The target environment has Cloudflare R2 credentials and bucket configuration before live document uploads are enabled.
+- The target environment has `PORTAL_DOCUMENT_UPLOAD_DIR` configured as an absolute private scan-temp path before live document uploads are enabled.
 - The target environment has `PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND` configured to an absolute executable scanner path before live document uploads are enabled.
 - If social login is enabled, it is configured through the managed auth provider and verified against invitation matching, database role source-of-truth checks, and staff MFA.
 - AI review remains read-only until provider configuration, checklist prompts, privacy boundaries, source citations, audit events, and staff approval gates are verified.

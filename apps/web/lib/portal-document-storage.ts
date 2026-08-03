@@ -106,6 +106,33 @@ export async function scanPortalDocumentFile(filePath: string, scannerCommand: s
   }
 }
 
+export async function scanPortalDocumentUpload({
+  cleanName,
+  file,
+  scannerCommand,
+  uploadRoot,
+  workspaceId
+}: {
+  cleanName: string;
+  file: File;
+  scannerCommand: string;
+  uploadRoot: string;
+  workspaceId: string;
+}) {
+  const workspaceSegment = getSafeStorageSegment(workspaceId);
+  const scanFileName = `${randomUUID()}-${cleanName}`;
+  const scanPath = join(uploadRoot, workspaceSegment, ".scan", scanFileName);
+
+  await mkdir(dirname(scanPath), { recursive: true });
+
+  try {
+    await writeFile(scanPath, Buffer.from(await file.arrayBuffer()), { mode: 0o600 });
+    await scanPortalDocumentFile(scanPath, scannerCommand);
+  } finally {
+    await removeStoredFileQuietly(scanPath);
+  }
+}
+
 function getSafeStorageSegment(value: string): string {
   return value.replace(/[^A-Za-z0-9_-]+/g, "_").slice(0, 80) || "workspace";
 }

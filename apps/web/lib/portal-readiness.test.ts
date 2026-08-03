@@ -12,6 +12,11 @@ function getReadyInput(overrides: Partial<PortalReadinessInput> = {}): PortalRea
     clerkPublishableKey: "pk_live_livevalue",
     clerkSecretKey: "sk_live_livevalue",
     documentMalwareScanCommand: "/bin/sh",
+    documentR2AccessKeyId: "r2_access",
+    documentR2AccountId: "r2_account",
+    documentR2BucketName: "koinonia-portal-documents",
+    documentR2SecretAccessKey: "r2_secret",
+    documentR2UploadsEnabled: true,
     documentUploadDir: "/tmp/koinonia-portal-documents",
     hostedSignInUrl: "/sign-in",
     nodeEnv: "production",
@@ -122,6 +127,19 @@ describe("portal readiness report", () => {
 
     expect(report.overallStatus).toBe("blocked");
     expect(mockAuth?.status).toBe("blocked");
+  });
+
+  it("blocks document storage until R2 uploads are configured", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        documentR2SecretAccessKey: "",
+        documentR2UploadsEnabled: false
+      })
+    );
+    const storage = report.groups.flatMap((group) => group.items).find((item) => item.id === "document-storage");
+
+    expect(storage?.status).toBe("blocked");
+    expect(storage?.proof).toContain("R2_SECRET_ACCESS_KEY");
   });
 
   it("blocks unsafe hosted login URLs", () => {
@@ -250,18 +268,18 @@ describe("portal readiness report", () => {
     expect(inviteAcceptance?.proof).toContain("0 staff");
   });
 
-  it("blocks relative document upload storage paths", () => {
+  it("blocks relative document scan-temp paths", () => {
     const report = buildPortalReadinessReport(
       getReadyInput({
         documentUploadDir: "portal-documents"
       })
     );
-    const storage = report.groups
+    const scanner = report.groups
       .flatMap((group) => group.items)
-      .find((item) => item.id === "document-storage");
+      .find((item) => item.id === "document-scanner");
 
-    expect(storage?.status).toBe("blocked");
-    expect(storage?.proof).toContain("absolute");
+    expect(scanner?.status).toBe("blocked");
+    expect(scanner?.proof).toContain("absolute");
   });
 
   it("blocks missing payment processor setup", () => {

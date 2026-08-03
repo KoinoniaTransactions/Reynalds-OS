@@ -227,10 +227,10 @@ export const portalLaunchChecklistPhases: PortalLaunchChecklistPhase[] = [
         owner: "Operations / Document Staff",
         phase: "documents",
         proof:
-          "Readiness shows absolute private upload storage, scanner command, and authorized download checks as ready.",
+          "Readiness shows Cloudflare R2 storage, scan-temp directory, scanner command, and authorized download checks as ready.",
         readinessItemIds: ["document-storage", "document-scanner", "document-downloads"],
         readinessGate:
-          "PORTAL_DOCUMENT_UPLOAD_DIR and PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND are production-safe.",
+          "R2 document storage, PORTAL_DOCUMENT_UPLOAD_DIR, and PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND are production-safe.",
         required: true,
         title: "Private document handling is verified"
       },

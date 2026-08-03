@@ -3,9 +3,12 @@ import { getAuthErrorResponse } from "../../../../../../lib/api-auth";
 import { assertPermission } from "../../../../../../lib/auth";
 import { prisma } from "../../../../../../lib/db";
 import {
+  getConfiguredPortalDocumentScannerCommand,
+  getConfiguredPortalDocumentUploadRoot,
   getPortalDocumentFormFile,
   PortalDocumentScanFailedError,
-  PortalDocumentScanUnavailableError
+  PortalDocumentScanUnavailableError,
+  scanPortalDocumentUpload
 } from "../../../../../../lib/portal-document-storage";
 import {
   isPortalDocumentR2UploadEnabled,
@@ -81,6 +84,12 @@ export async function POST(request: Request, { params }: Params) {
         { status: 400 }
       );
     }
+
+    await scanRequestedDocumentUpload({
+      actor,
+      cleanName: input.file.cleanName,
+      file
+    });
 
     storedDocument = await persistPortalDocumentToR2({
       actor,
@@ -186,6 +195,33 @@ export async function POST(request: Request, { params }: Params) {
 
     return handlePortalDocumentReplacementError(error);
   }
+}
+
+async function scanRequestedDocumentUpload({
+  actor,
+  cleanName,
+  file
+}: {
+  actor: Awaited<ReturnType<typeof assertPermission>>;
+  cleanName: string;
+  file: File;
+}) {
+  const uploadRoot = getConfiguredPortalDocumentUploadRoot();
+  const scannerCommand = getConfiguredPortalDocumentScannerCommand();
+
+  if (!uploadRoot || !scannerCommand) {
+    throw new PortalDocumentScanUnavailableError(
+      "Document malware scanning is temporarily unavailable."
+    );
+  }
+
+  await scanPortalDocumentUpload({
+    cleanName,
+    file,
+    scannerCommand,
+    uploadRoot,
+    workspaceId: actor.workspaceId
+  });
 }
 
 function handlePortalDocumentReplacementError(error: unknown) {

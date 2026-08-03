@@ -185,6 +185,15 @@ if (skipDatabase) {
   recordCheck("document upload storage check skipped", true, "remove --skip-database for production verification");
   recordCheck("document malware scanner check skipped", true, "remove --skip-database for production verification");
 } else {
+  recordCheck("R2_ACCOUNT_ID is set", isConfiguredValue(process.env.R2_ACCOUNT_ID));
+  recordCheck("R2_ACCESS_KEY_ID is set", isConfiguredValue(process.env.R2_ACCESS_KEY_ID));
+  recordCheck("R2_SECRET_ACCESS_KEY is set", isConfiguredValue(process.env.R2_SECRET_ACCESS_KEY));
+  recordCheck("R2_BUCKET_NAME is set", isConfiguredValue(process.env.R2_BUCKET_NAME));
+  recordCheck(
+    "PORTAL_DOCUMENT_R2_UPLOADS_ENABLED is true",
+    process.env.PORTAL_DOCUMENT_R2_UPLOADS_ENABLED === "true",
+    "R2 uploads must be explicitly enabled before clients can upload live documents"
+  );
   recordCheck("PORTAL_DOCUMENT_UPLOAD_DIR is set", isPresent(process.env.PORTAL_DOCUMENT_UPLOAD_DIR));
   recordCheck(
     "PORTAL_DOCUMENT_UPLOAD_DIR is absolute",

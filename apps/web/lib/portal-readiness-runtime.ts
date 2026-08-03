@@ -23,6 +23,11 @@ export async function buildCurrentPortalReadinessReport(): Promise<PortalReadine
     clerkPublishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     clerkSecretKey: process.env.CLERK_SECRET_KEY,
     documentMalwareScanCommand: process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND,
+    documentR2AccessKeyId: process.env.R2_ACCESS_KEY_ID,
+    documentR2AccountId: process.env.R2_ACCOUNT_ID,
+    documentR2BucketName: process.env.R2_BUCKET_NAME,
+    documentR2SecretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+    documentR2UploadsEnabled: process.env.PORTAL_DOCUMENT_R2_UPLOADS_ENABLED === "true",
     documentUploadDir: process.env.PORTAL_DOCUMENT_UPLOAD_DIR,
     hostedSignInUrl: getFirstConfiguredValue(
       process.env.NEXT_PUBLIC_AUTH_SIGN_IN_URL,
