@@ -25,6 +25,7 @@ import {
 } from "../../../lib/portal-work-items";
 import { getKoinoniaServiceTemplateForWork } from "../../../lib/koinonia-service-templates";
 import {
+  buildClientDocumentRequestsFromPlaybooks,
   buildClientServiceCuesFromPlaybook,
   getPortalPlaybookForWork
 } from "../../../lib/portal-playbook";
@@ -62,6 +63,7 @@ type ClientWorkItem = {
 };
 
 type ClientWorkView = {
+  documentRequests: string[];
   isLiveData: boolean;
   items: ClientWorkItem[];
   notice?: string;
@@ -186,12 +188,12 @@ const sampleShowingRequests: ShowingRequestItem[] = [
   }
 ];
 
-const documentRequests = [
+const sampleDocumentRequests = [
   "Executed listing agreement",
   "Seller property disclosure",
   "Inspection objection instructions",
   "Showing access notes for West Ridge"
-] as const;
+];
 
 const sampleAccessRequests: AccessRequestItem[] = [
   {
@@ -336,7 +338,7 @@ export default async function ClientDashboardPreviewPage() {
               <section className="koinonia-client-request-card">
                 <p className="koinonia-eyebrow">Documents Needed</p>
                 <ul>
-                  {documentRequests.map((request) => (
+                  {workItemView.documentRequests.map((request) => (
                     <li key={request}>{request}</li>
                   ))}
                 </ul>
@@ -413,12 +415,13 @@ async function getClientWorkItemView(
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
       take: 20
     });
-    const items = workObjects.map((object) => {
+    const workPlaybooks = workObjects.map((object) => {
       const template = getKoinoniaServiceTemplateForWork({
         data: object.data,
         name: object.name,
         objectType: object.objectType
       });
+      const due = getPortalWorkDueLabel(object.data);
       const playbook = getPortalPlaybookForWork({
         data: object.data,
         name: object.name,
@@ -426,12 +429,21 @@ async function getClientWorkItemView(
       });
 
       return {
+        due,
+        object,
+        playbook,
+        template
+      };
+    });
+
+    const items = workPlaybooks.map(({ due, object, playbook, template }) => {
+      return {
         id: object.id,
         title: object.name,
         type: template?.publicServiceTitle ?? getPortalWorkItemTypeLabel(object.objectType),
         status: object.status,
         nextAction: object.nextAction ?? template?.staffNextAction ?? "Koinonia will update this work item as it moves.",
-        due: getPortalWorkDueLabel(object.data),
+        due,
         detailHref: `/client/work/${object.id}`,
         serviceCues: playbook
           ? buildClientServiceCuesFromPlaybook(playbook, {
@@ -442,6 +454,15 @@ async function getClientWorkItemView(
     });
 
     return {
+      documentRequests: withEmptyDashboardDocumentRequests(
+        buildClientDocumentRequestsFromPlaybooks(
+          workPlaybooks.map(({ due, object, playbook }) => ({
+            due,
+            playbook,
+            transaction: object.name
+          }))
+        ).map((request) => request.title)
+      ),
       isLiveData: true,
       items: withEmptyClientWorkItems(items),
       summaryCards: buildClientSummaryCards(items)
@@ -452,6 +473,7 @@ async function getClientWorkItemView(
     }
 
     return {
+      documentRequests: sampleDocumentRequests,
       isLiveData: false,
       items: sampleWorkItems,
       notice:
@@ -486,6 +508,14 @@ function buildClientSummaryCards(items: ClientWorkItem[]): ClientSummaryCard[] {
       body: "Recently completed work and closed-out support."
     }
   ];
+}
+
+function withEmptyDashboardDocumentRequests(requests: string[]): string[] {
+  if (requests.length > 0) {
+    return requests.slice(0, 4);
+  }
+
+  return ["No active document requests yet"];
 }
 
 function withEmptyClientWorkItems(items: ClientWorkItem[]): ClientWorkItem[] {
