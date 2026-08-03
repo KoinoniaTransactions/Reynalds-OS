@@ -221,3 +221,19 @@ describe("persisted playbook snapshots", () => {
     expect(JSON.parse(JSON.stringify(snapshot))).toEqual(snapshot);
   });
 });
+
+describe("non-service portal workflows", () => {
+  it("does not force a service playbook onto access requests", () => {
+    const playbook = buildPortalPlaybook({
+      data: {
+        accessPurpose: "Delegated transaction platform access",
+        grantMethod: "Team invitation",
+        platformName: "Brokerage Platform"
+      },
+      name: "Access Request - Brokerage Platform",
+      objectType: "AccessRequest"
+    });
+
+    expect(playbook).toBeNull();
+  });
+});
