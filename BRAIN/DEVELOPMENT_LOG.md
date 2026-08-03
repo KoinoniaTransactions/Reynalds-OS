@@ -2524,3 +2524,172 @@ Koinonia work records now have explicit fields for client visibility and staff a
 ### Current Status
 
 The assignment fields compile after Prisma client generation and are covered by validation tests. Employee assignment mutation, assignment history, staff capacity logic, and client account ownership screens remain future production slices.
+
+---
+
+## 2026-08-03 — Portal Playbooks, Client Workspaces, Billing Queues, and Payment Readiness
+
+### Summary
+
+The Koinonia client and employee portals were advanced from template-only and sample-driven presentation toward persisted service playbooks, live document requests, live send-package visibility, record-derived billing queues, pay-at-close monitoring, and Stripe webhook processing.
+
+This work was completed incrementally in focused, tested commits on branch `chatgpt/portal-access-status`.
+
+### Persisted Playbook Deadlines
+
+- Employee work-detail pages now consume deadline placeholders from persisted playbook snapshots.
+- Persisted deadlines are preferred over newly generated template deadlines.
+- Deadline resolution continues to support current transaction data when persisted values are unavailable.
+- Deadline ordering, risk classification, and action generation remain centralized in the portal deadline utilities.
+
+Commit:
+
+- `a2cd297` — Consume persisted playbook deadlines
+
+### Centralized Playbook Service Cues
+
+- Staff service cues are now constructed centrally from the active portal playbook.
+- Employee work-detail pages no longer build partial service cues inline.
+- Billing model labels, expected documents, required staff roles, service name, template identity, showing requirements, and next actions are derived through the shared playbook layer.
+- The centralized builder supports both persisted playbooks and template-generated fallback playbooks.
+
+Commit:
+
+- `69550e4` — Centralize playbook service cues
+
+### Persisted Queue and Risk Metadata
+
+- Portal playbooks now include employee portal queues and risk notes.
+- Queue and risk metadata are copied from service templates when playbooks are generated.
+- Both fields are serialized into persisted playbook snapshots.
+- Persisted playbook parsing restores and validates the string arrays.
+- Staff service cues now retain the original queue and risk guidance instead of substituting empty placeholders.
+
+Commit:
+
+- `76827c4` — Persist playbook queue and risk metadata
+
+### Client Service Cues from Persisted Playbooks
+
+- Client-facing service cues now use active persisted playbooks when available.
+- Template-derived behavior remains available as the fallback path.
+- Client portal displays are therefore tied to the service configuration instantiated for the work item rather than silently changing when templates evolve.
+
+Commit:
+
+- `91c3ce6` — Use persisted playbooks for client service cues
+
+### Client Document Requests from Playbooks
+
+- Client document-request expectations are derived from active portal playbooks.
+- Expected document labels are no longer limited to separately reconstructed service-template data.
+- Persisted service expectations can continue to govern an existing work item even if the source template changes later.
+
+Commit:
+
+- `1065129` — Use playbooks for client document requests
+
+### Client Dashboard Playbook Requests
+
+- The client dashboard now presents document requests associated with active service playbooks.
+- Current client work can communicate the expected supporting documents directly from the instantiated service workflow.
+- Existing fallback behavior remains available when live work or playbook data cannot be reached.
+
+Commit:
+
+- `2d41848` — Show playbook document requests on client dashboard
+
+### Live Send Packages in Client Documents
+
+- The client documents workspace now surfaces live send-package records.
+- Document delivery information is no longer limited to static sample presentation.
+- The page retains fallback behavior when live records or database storage are unavailable.
+- This is a visibility slice; broader signature-provider execution and final archive automation remain separate production work.
+
+Commit:
+
+- `a652b7f` — Show live send packages in client documents
+
+### Client Billing Services from Live Records
+
+- The client billing workspace now derives displayed services from live portal records.
+- Service identity and billing presentation are connected to active work rather than relying only on fixed sample cards.
+- Existing safe fallback behavior remains in place where live storage is unavailable.
+
+Commit:
+
+- `1814b4f` — Derive client billing services from live records
+
+### Employee Billing Queues from Live Records
+
+- Employee billing queues now derive their contents from live portal records.
+- Billing setup activity, service work, and relevant payment-state information can be presented from persisted records.
+- The employee billing view is no longer exclusively sample-driven.
+- Live verification still depends on reachable database storage and valid provider-backed users.
+
+Commit:
+
+- `dfa9d3b` — Derive employee billing queues from live records
+
+### Pay-at-Close Billing Watch
+
+- The employee billing workspace now includes a live pay-at-close monitoring view.
+- Pay-at-close services can be distinguished from prepaid, monthly, and per-request billing models.
+- The workflow supports tracking the successful-close billing trigger without treating the service as collected before closing confirmation.
+
+Commit:
+
+- `f27503c` — Show live pay-at-close billing watch
+
+### Portal Payment Webhook Verification
+
+- The portal production verifier now checks the configured payment webhook URL.
+- Payment readiness validation includes the public webhook destination in addition to provider secrets.
+- Environment documentation was expanded to record the production portal configuration gates.
+
+Commits:
+
+- `e033293` — Check payment webhook URL in portal verifier
+- `d9f570c` — Document production portal environment gates
+
+### Stripe Payment Webhook Handling
+
+- Added the Stripe payment webhook route.
+- Added shared Stripe webhook parsing and verification utilities.
+- Added focused tests for webhook behavior.
+- Added the Stripe package dependency and environment configuration.
+- Webhook handling provides a server-side payment-event integration boundary rather than exposing processor secrets or payment-card data to portal records.
+
+Commit:
+
+- `a65e805` — Add Stripe payment webhook handling
+
+### Verification
+
+The focused playbook and portal tests shown during the session passed, including:
+
+- portal playbook tests
+- portal deadline tests
+- Koinonia service-template tests
+- portal workspace tests
+- Stripe webhook tests associated with the committed payment slice
+
+TypeScript checks passed for the focused playbook work before its commits.
+
+### Current Boundary
+
+The committed source now supports:
+
+- persisted service playbooks,
+- persisted deadline placeholders,
+- persisted staff queue and risk metadata,
+- playbook-driven client service cues,
+- playbook-driven document expectations,
+- live send-package visibility,
+- live-record client billing presentation,
+- live-record employee billing queues,
+- pay-at-close monitoring,
+- payment webhook environment validation,
+- Stripe webhook handling.
+
+Production readiness still requires real provider configuration, production secrets, reachable database storage, verified portal users, end-to-end webhook delivery, payment-event reconciliation, and controlled live testing.

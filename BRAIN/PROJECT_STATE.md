@@ -111,3 +111,30 @@ All reusable website copy above is now driven from shared content rather than em
 Current production build status:
 
 PASSING
+
+---
+
+# 2026-08-03 Portal Platform State
+
+The Koinonia portal has advanced beyond template-only service presentation.
+
+Current implemented architecture includes:
+
+- persisted service playbook snapshots,
+- persisted transaction deadline placeholders,
+- centralized staff service-cue construction,
+- persisted employee queues and risk notes,
+- playbook-driven client service cues,
+- playbook-driven document expectations,
+- live client send-package visibility,
+- live-record client billing service presentation,
+- live-record employee billing queues,
+- pay-at-close billing monitoring,
+- payment webhook URL readiness checks,
+- Stripe payment webhook handling.
+
+The active portal remains pre-production until identity-provider configuration, staff MFA, database-backed testing, private document infrastructure, production payment secrets, real webhook delivery, and controlled end-to-end verification are complete.
+
+The current implementation principle is:
+
+Persist operational service intent when work is created, then let client and employee portal views consume that persisted intent consistently.

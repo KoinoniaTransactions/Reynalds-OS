@@ -596,3 +596,134 @@ Continue from the documented next action.
 The Brain is an advanced operational source of truth.
 
 Treat missing understanding as a reason to read more—not as permission to reinvent the project.
+
+---
+
+# 2026-08-03 Current Session Handoff — Portal Playbooks and Billing Readiness
+
+## Repository State
+
+- Repository: `/Users/jeremiahreynalds/Projects/Reynalds_OS_v11_3_1_Work`
+- Branch: `chatgpt/portal-access-status`
+- Remote branch: `origin/chatgpt/portal-access-status`
+- Last confirmed session commit: `a65e805`
+- Session comparison base used for reconstruction: `6e86bf0`
+
+The branch contains thirteen confirmed commits from this session.
+
+## Completed Commits
+
+1. `a2cd297` — Consume persisted playbook deadlines
+2. `69550e4` — Centralize playbook service cues
+3. `76827c4` — Persist playbook queue and risk metadata
+4. `91c3ce6` — Use persisted playbooks for client service cues
+5. `1065129` — Use playbooks for client document requests
+6. `2d41848` — Show playbook document requests on client dashboard
+7. `a652b7f` — Show live send packages in client documents
+8. `1814b4f` — Derive client billing services from live records
+9. `dfa9d3b` — Derive employee billing queues from live records
+10. `f27503c` — Show live pay-at-close billing watch
+11. `e033293` — Check payment webhook URL in portal verifier
+12. `d9f570c` — Document production portal environment gates
+13. `a65e805` — Add Stripe payment webhook handling
+
+## Playbook Architecture
+
+Portal playbooks now function as persisted operational snapshots rather than disposable template calculations.
+
+Persisted playbooks carry:
+
+- template identity,
+- service name,
+- billing model,
+- expected documents,
+- deadline placeholders,
+- initial staff actions,
+- required staff roles,
+- health-factor keys,
+- employee portal queues,
+- risk notes,
+- instantiation timestamp in the persisted snapshot.
+
+Employee and client consumers prefer the persisted playbook and fall back to generating a playbook from the current service template only when no valid snapshot exists.
+
+This preserves the service expectations attached to an existing work item even when service templates are later refined.
+
+## Employee Portal Progress
+
+The employee work-detail page now uses shared playbook service-cue construction and shows:
+
+- billing model,
+- showing-request requirement,
+- template identity,
+- persisted-versus-generated source,
+- staff roles,
+- expected documents,
+- queues,
+- risk notes,
+- current staff next action.
+
+Employee billing queues are derived from live portal records, and a pay-at-close watch identifies services whose billing trigger depends on successful closing confirmation.
+
+## Client Portal Progress
+
+Client-facing portal areas now use playbook and live-record data for:
+
+- service cues,
+- expected document requests,
+- dashboard document expectations,
+- send-package visibility,
+- billing-service presentation.
+
+Sample or template fallback behavior remains where live records or database storage are unavailable.
+
+## Payment Integration Progress
+
+The committed source includes:
+
+- Stripe webhook utilities,
+- focused webhook tests,
+- `/api/portal/payments/webhook`,
+- Stripe dependency wiring,
+- payment webhook URL verification,
+- documented production environment gates.
+
+This does not by itself establish completed production payment processing. Live readiness still depends on verified production credentials, externally delivered Stripe webhook events, database-backed reconciliation, real portal users, and controlled end-to-end testing.
+
+## Verification Completed
+
+During the playbook slices:
+
+- TypeScript completed without reported errors.
+- Four focused test files passed.
+- Thirty-three focused tests passed after queue and risk metadata persistence.
+- Relevant Git diff checks passed before commits.
+- Each focused slice was committed and pushed before continuing.
+
+## Concurrent Work Warning
+
+At the end of the reconstruction, another AI had active uncommitted payment-related work.
+
+Do not stage, revert, overwrite, or modify these paths without first confirming ownership:
+
+- `apps/web/package.json`
+- `pnpm-lock.yaml`
+- `docs/specifications/KOINONIA_AUTH_PRODUCTION_READINESS.md`
+- `docs/specifications/KOINONIA_BILLING_PAYMENT_SPEC.md`
+- `apps/web/app/api/portal/payments/`
+- `apps/web/lib/stripe-webhooks.ts`
+- `apps/web/lib/stripe-webhooks.test.ts`
+
+The committed `a65e805` Stripe work may overlap those paths, but subsequent uncommitted changes belong to the other active session.
+
+## Recommended Next Focused Improvement
+
+After the concurrent payment work is completed and the working tree is reconciled:
+
+1. Verify the final Stripe webhook implementation and tests.
+2. Confirm that webhook events reconcile into the intended billing records and audit history.
+3. Run focused portal billing and webhook tests.
+4. Perform database-backed testing with controlled provider users.
+5. Verify the configured production webhook destination.
+6. Update the Brain again with the final reconciled payment state.
+7. Keep the next commit limited to one verified production-readiness slice.

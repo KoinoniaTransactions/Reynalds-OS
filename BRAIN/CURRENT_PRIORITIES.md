@@ -150,3 +150,44 @@ The current milestone is achieved when:
 - Changes are committed and pushed to GitHub.
 
 Only then should focus shift back toward broader Reynalds OS expansion.
+
+---
+
+# 2026-08-03 Portal Priority Update
+
+## Active Portal Objective
+
+Move the Koinonia client and employee portals from guarded source-backed workflows into verified production operation.
+
+## Recently Completed
+
+- Persisted playbook deadlines
+- Centralized service-cue construction
+- Persisted queue and risk metadata
+- Persisted-playbook client service cues
+- Playbook-driven client document requests
+- Client dashboard playbook requests
+- Live send-package visibility
+- Live-record client billing services
+- Live-record employee billing queues
+- Pay-at-close billing watch
+- Payment webhook URL verification
+- Production portal environment-gate documentation
+- Stripe webhook handling
+
+## Immediate Priorities
+
+1. Finish and reconcile the active payment-integration work.
+2. Verify Stripe webhook delivery with approved production configuration.
+3. Reconcile webhook events into canonical billing and audit records.
+4. Complete database-backed portal workflow testing.
+5. Verify provider-backed client and employee identities.
+6. Confirm staff MFA and invitation acceptance in production configuration.
+7. Run controlled end-to-end testing for documents, assignments, billing, and payment events.
+8. Preserve focused commits and update the Brain at the end of each meaningful completed slice.
+
+## Production Boundary
+
+Do not describe the portal as production ready merely because source code, helper tests, or webhook routes exist.
+
+Production readiness requires verified infrastructure, real provider configuration, live database behavior, controlled payment-event delivery, access isolation, and end-to-end operational evidence.

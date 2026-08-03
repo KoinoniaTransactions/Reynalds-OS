@@ -61,3 +61,42 @@ Planned:
 ## Long-Term Vision
 
 Reynalds OS will evolve into a universal operating system capable of managing businesses, ministries, projects, organizations, and personal workflows through a shared object model and AI-assisted orchestration.
+
+---
+
+# v11.3.1 — 2026-08-03 Portal Playbook and Billing Milestone
+
+**Status:** Implemented in source; production verification remains incomplete.
+
+### Architecture Added
+
+- Persisted service playbooks now retain operational service intent.
+- Persisted playbooks include deadline placeholders, expected documents, staff roles, queues, risk notes, billing model, and initial actions.
+- Client and employee portal consumers prefer persisted playbooks over recalculating from current templates.
+- Shared playbook utilities centralize service-cue construction.
+
+### Portal Data Progress
+
+- Client dashboards show playbook document expectations.
+- Client document pages show live send packages.
+- Client billing services derive from live records.
+- Employee billing queues derive from live records.
+- Employee billing includes pay-at-close monitoring.
+
+### Payment Readiness Progress
+
+- Portal verification checks the payment webhook URL.
+- Production environment gates are documented.
+- Stripe webhook utilities, tests, and API handling were added.
+
+### Remaining Verification
+
+- Production Clerk configuration
+- Staff MFA
+- Real invitation acceptance
+- Reachable production database
+- Controlled document-storage verification
+- Live Stripe secret configuration
+- External webhook delivery
+- Payment-event reconciliation
+- End-to-end client and employee portal testing
