@@ -1,6 +1,10 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import {
+  usePathname,
+  useRouter,
+  useSearchParams
+} from "next/navigation";
 import { useState } from "react";
 
 type PortalDocumentUploadFormProps = {
@@ -12,6 +16,7 @@ export function PortalDocumentUploadForm({
   relatedObjectId,
   storageReady
 }: PortalDocumentUploadFormProps) {
+  const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedDocumentType =
@@ -50,7 +55,16 @@ export function PortalDocumentUploadForm({
 
       form.reset();
       setStatus("success");
-      setMessage("Document uploaded and attached to this work item.");
+      setMessage(
+        "Document uploaded. It is now ready for staff review."
+      );
+
+      if (pathname) {
+        router.replace(`${pathname}#employee-work-documents`, {
+          scroll: true
+        });
+      }
+
       router.refresh();
     } catch (error) {
       setStatus("error");
