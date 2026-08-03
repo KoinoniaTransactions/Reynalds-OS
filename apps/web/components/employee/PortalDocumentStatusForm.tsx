@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const statusOptions = [
@@ -33,6 +34,7 @@ export function PortalDocumentStatusForm({
   disabled = false,
   documentId
 }: PortalDocumentStatusFormProps) {
+  const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [requestAction, setRequestAction] = useState(currentRequestedAction ?? "");
   const [selectedStatus, setSelectedStatus] = useState(normalizeStatus(currentStatus));
@@ -56,7 +58,10 @@ export function PortalDocumentStatusForm({
         },
         body: JSON.stringify({
           notes: String(formData.get("notes") ?? ""),
-          requestedAction: String(formData.get("requestedAction") ?? ""),
+          requestedAction:
+            selectedStatus === "Approved"
+              ? ""
+              : String(formData.get("requestedAction") ?? ""),
           status: String(formData.get("status") ?? "")
         })
       });
@@ -71,6 +76,7 @@ export function PortalDocumentStatusForm({
       setRequestAction(payload.document?.requestedAction ?? "");
       setStatus("success");
       setMessage("Document status updated and recorded in the file history.");
+      router.refresh();
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Unable to update this document yet.");
@@ -86,7 +92,14 @@ export function PortalDocumentStatusForm({
         <select
           disabled={isDisabled}
           name="status"
-          onChange={(event) => setSelectedStatus(event.target.value)}
+          onChange={(event) => {
+            const nextStatus = event.target.value;
+            setSelectedStatus(nextStatus);
+
+            if (nextStatus === "Approved") {
+              setRequestAction("");
+            }
+          }}
           value={selectedStatus}
         >
           {statusOptions.map((option) => (
@@ -100,13 +113,22 @@ export function PortalDocumentStatusForm({
       <label>
         Next Action
         <input
-          disabled={isDisabled}
+          disabled={isDisabled || selectedStatus === "Approved"}
           name="requestedAction"
           onChange={(event) => setRequestAction(event.target.value)}
-          placeholder="What needs to happen next"
+          placeholder={
+            selectedStatus === "Approved"
+              ? "Approved documents do not require a next action"
+              : "What needs to happen next"
+          }
           type="text"
           value={requestAction}
         />
+        {selectedStatus === "Approved" ? (
+          <small>
+            Approving this document clears the outstanding action.
+          </small>
+        ) : null}
       </label>
 
       <label>
