@@ -12,6 +12,9 @@ import {
   formatDocumentFileSize,
   getDocumentSubmittedLabel,
   getHumanDocumentStatus,
+  getPortalDocumentVersionLabel,
+  groupPortalDocumentVersions,
+  type PortalDocumentLifecycleState
 } from "../../../lib/portal-documents";
 
 export const dynamic = "force-dynamic";
@@ -54,6 +57,7 @@ const documentSummary = [
 
 const documentRequests = [
   {
+    documentType: "Seller Property Disclosure",
     title: "Seller Property Disclosure",
     transaction: "Smith Contract-to-Close",
     status: "Requested",
@@ -68,6 +72,7 @@ const documentRequests = [
     action: "Confirm requested repairs, credit amount, or no objection."
   },
   {
+    documentType: "Lender Contact Sheet",
     title: "Lender Contact Sheet",
     transaction: "Buyer Offer Package",
     status: "Needed",
@@ -78,18 +83,31 @@ const documentRequests = [
 
 type ClientDocumentItem = {
   approvalReady: boolean;
+  createdAt: Date | string;
   detail: string;
+  documentType: string;
   downloadHref?: string;
   fileName: string;
   id: string;
+  lifecycleState: PortalDocumentLifecycleState;
+  previousDocumentId?: string | null;
   status: string;
   submitted: string;
+  supersededByDocumentId?: string | null;
   title: string;
+  versionLabel: string;
+  versionNumber: number;
   workflowStatus: string;
+};
+
+type ClientDocumentGroup = {
+  current: ClientDocumentItem;
+  versions: ClientDocumentItem[];
 };
 
 type ClientDocumentView = {
   approvalRequests: ClientDocumentItem[];
+  documentGroups: ClientDocumentGroup[];
   documents: ClientDocumentItem[];
   isLiveData: boolean;
   notice?: string;
@@ -98,22 +116,36 @@ type ClientDocumentView = {
 
 const sampleUploadedDocuments: ClientDocumentItem[] = [
   {
+    createdAt: "2026-08-03T10:00:00.000Z",
     id: "sample-seller-disclosure",
+    lifecycleState: "active",
+    previousDocumentId: null,
+    supersededByDocumentId: null,
+    documentType: "Seller Property Disclosure",
     title: "Seller Property Disclosure",
     status: "Uploaded",
     detail: "Sample upload waiting for Koinonia review.",
     fileName: "seller-disclosure.pdf",
     submitted: "Today",
+    versionLabel: "v1",
+    versionNumber: 1,
     workflowStatus: "Uploaded",
     approvalReady: false
   },
   {
+    createdAt: "2026-08-02T10:00:00.000Z",
     id: "sample-lender-contact",
+    lifecycleState: "active",
+    previousDocumentId: null,
+    supersededByDocumentId: null,
+    documentType: "Lender Contact Sheet",
     title: "Lender Contact Sheet",
     status: "In Review",
     detail: "Sample document tied to buyer offer preparation.",
     fileName: "lender-contact-sheet.pdf",
     submitted: "Yesterday",
+    versionLabel: "v1",
+    versionNumber: 1,
     workflowStatus: "In Review",
     approvalReady: false
   }
@@ -123,31 +155,52 @@ const sampleApprovalQueue: ClientDocumentItem[] = [
   {
     approvalReady: true,
     fileName: "buyer-offer-package-v2.pdf",
+    createdAt: "2026-08-03T09:00:00.000Z",
     id: "sample-buyer-offer-package",
+    lifecycleState: "active",
+    previousDocumentId: null,
+    supersededByDocumentId: null,
+    documentType: "Buyer Offer Package",
     title: "Buyer Offer Package v2",
     status: "Ready for Review",
     detail: "Review price, concessions, financing terms, and closing date before approval.",
     submitted: "Client action",
+    versionLabel: "v1",
+    versionNumber: 1,
     workflowStatus: "Ready for Client Review"
   },
   {
     approvalReady: false,
     fileName: "inspection-resolution-draft-v1.pdf",
+    createdAt: "2026-08-02T09:00:00.000Z",
     id: "sample-inspection-resolution",
+    lifecycleState: "active",
+    previousDocumentId: null,
+    supersededByDocumentId: null,
+    documentType: "Inspection Resolution Draft",
     title: "Inspection Resolution Draft v1",
     status: "Revision Requested",
     detail: "Koinonia is updating the draft from your requested repair language.",
     submitted: "Client action",
+    versionLabel: "v1",
+    versionNumber: 1,
     workflowStatus: "Revision Requested"
   },
   {
     approvalReady: false,
     fileName: "post-closing-archive-packet.pdf",
+    createdAt: "2026-08-01T09:00:00.000Z",
     id: "sample-archive-packet",
+    lifecycleState: "active",
+    previousDocumentId: null,
+    supersededByDocumentId: null,
+    documentType: "Post-Closing Archive Packet",
     title: "Post-Closing Archive Packet",
     status: "Archived",
     detail: "Final signed documents are available for download.",
     submitted: "Client action",
+    versionLabel: "v1",
+    versionNumber: 1,
     workflowStatus: "Archived"
   }
 ];
@@ -389,17 +442,24 @@ async function getClientDocumentView(
         ownerId,
         archivedAt: null,
         removedAt: null,
-        lifecycleState: "active"
+        lifecycleState: {
+          in: ["active", "superseded"]
+        }
       },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-      take: 20
+      take: 100
     });
 
-    const documentItems = documents.map((document) => mapDocumentRecord(document, downloadReady));
+    const documentItems = documents.map((document) =>
+      mapDocumentRecord(document, downloadReady)
+    );
+    const documentGroups = groupPortalDocumentVersions(documentItems);
+    const currentDocuments = documentGroups.map((group) => group.current);
 
     return {
-      approvalRequests: buildClientApprovalRequests(documentItems),
-      documents: documentItems,
+      approvalRequests: buildClientApprovalRequests(currentDocuments),
+      documentGroups,
+      documents: currentDocuments,
       isLiveData: true,
       uploadReady: isDocumentUploadConfigured()
     };
@@ -407,6 +467,7 @@ async function getClientDocumentView(
     if (isDatabaseUnavailableError(error)) {
       return {
         approvalRequests: sampleApprovalQueue,
+        documentGroups: groupPortalDocumentVersions(sampleUploadedDocuments),
         documents: sampleUploadedDocuments,
         isLiveData: false,
         notice: "Document storage is not reachable in this preview, so sample uploads are shown.",
@@ -426,14 +487,26 @@ function mapDocumentRecord(
 
   return {
     approvalReady: document.status === "Ready for Client Review",
+    createdAt: document.createdAt,
+    documentType: document.documentType,
     id: document.id,
+    lifecycleState: document.lifecycleState as PortalDocumentLifecycleState,
+    previousDocumentId: document.previousDocumentId,
     title: document.documentType,
     status: getHumanDocumentStatus(document.status),
     detail: document.requestedAction ?? "Koinonia can review this uploaded document.",
     downloadHref:
-      storageReady && document.storageKey ? `/api/portal/documents/${document.id}/download` : undefined,
+      storageReady && document.storageKey
+        ? `/api/portal/documents/${document.id}/download`
+        : undefined,
     fileName: `${document.fileName} - ${fileSize}`,
     submitted: getDocumentSubmittedLabel(document.createdAt),
+    supersededByDocumentId: document.supersededByDocumentId,
+    versionLabel: getPortalDocumentVersionLabel(
+      document.versionNumber,
+      document.versionLabel
+    ),
+    versionNumber: document.versionNumber,
     workflowStatus: document.status
   };
 }
