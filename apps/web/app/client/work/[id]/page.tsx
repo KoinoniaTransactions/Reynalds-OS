@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { absoluteUrl } from "../../../../config/seo.config";
 import { Footer, Header } from "../../../../components/site";
+import { isPortalDocumentR2Configured, isPortalDocumentR2UploadEnabled } from "../../../../lib/portal-document-r2";
 import { prisma } from "../../../../lib/db";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
 import {
@@ -15,7 +16,6 @@ import {
   type PortalWorkspaceSummary
 } from "../../../../lib/portal-workspace";
 import { clientPortalWorkObjectTypes } from "../../../../lib/portal-work-items";
-import { validatePortalDocumentUploadRoot } from "../../../../lib/portal-documents";
 
 export const dynamic = "force-dynamic";
 
@@ -294,12 +294,7 @@ function withWorkspaceEvents(events: PortalWorkspaceEventItem[]): PortalWorkspac
 }
 
 function isDocumentStorageConfigured(): boolean {
-  try {
-    validatePortalDocumentUploadRoot(process.env.PORTAL_DOCUMENT_UPLOAD_DIR);
-    return true;
-  } catch {
-    return false;
-  }
+  return isPortalDocumentR2Configured();
 }
 
 function buildUnavailableWorkspaceSummary(workItemId: string): PortalWorkspaceSummary {

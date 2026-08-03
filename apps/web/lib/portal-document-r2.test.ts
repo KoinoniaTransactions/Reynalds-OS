@@ -1,14 +1,16 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
   getPortalDocumentR2Config,
-  isPortalDocumentR2Configured
+  isPortalDocumentR2Configured,
+  isPortalDocumentR2UploadEnabled
 } from "./portal-document-r2";
 
 const variableNames = [
   "R2_ACCOUNT_ID",
   "R2_ACCESS_KEY_ID",
   "R2_SECRET_ACCESS_KEY",
-  "R2_BUCKET_NAME"
+  "R2_BUCKET_NAME",
+  "PORTAL_DOCUMENT_R2_UPLOADS_ENABLED"
 ] as const;
 
 afterEach(() => {
@@ -41,4 +43,17 @@ describe("portal document R2 configuration", () => {
     });
     expect(isPortalDocumentR2Configured()).toBe(true);
   });
+  it("requires an explicit upload flag before R2 uploads are enabled", () => {
+    process.env.R2_ACCOUNT_ID = "account";
+    process.env.R2_ACCESS_KEY_ID = "access";
+    process.env.R2_SECRET_ACCESS_KEY = "secret";
+    process.env.R2_BUCKET_NAME = "koinonia-portal-documents";
+
+    expect(isPortalDocumentR2UploadEnabled()).toBe(false);
+
+    process.env.PORTAL_DOCUMENT_R2_UPLOADS_ENABLED = "true";
+
+    expect(isPortalDocumentR2UploadEnabled()).toBe(true);
+  });
+
 });

@@ -8,7 +8,7 @@ import {
   PortalDocumentScanUnavailableError
 } from "../../../../../../lib/portal-document-storage";
 import {
-  isPortalDocumentR2Configured,
+  isPortalDocumentR2UploadEnabled,
   persistPortalDocumentToR2,
   removePortalDocumentFromR2Quietly,
   type StoredR2Document
@@ -33,9 +33,9 @@ export async function POST(request: Request, { params }: Params) {
   try {
     const actor = await assertPermission("document-workspace:drafts:update");
     const { id } = await params;
-    if (!isPortalDocumentR2Configured()) {
+    if (!isPortalDocumentR2UploadEnabled()) {
       return NextResponse.json(
-        { error: "Cloudflare R2 document storage is not configured for replacements." },
+        { error: "Cloudflare R2 replacement uploads are not enabled for this environment." },
         { status: 503 }
       );
     }

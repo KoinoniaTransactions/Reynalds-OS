@@ -9,13 +9,13 @@ import { PortalDocumentUploadForm } from "../../../../components/client/PortalDo
 import { ShowingRequestStatusForm } from "../../../../components/employee/ShowingRequestStatusForm";
 import { Footer, Header } from "../../../../components/site";
 import { absoluteUrl } from "../../../../config/seo.config";
+import { isPortalDocumentR2Configured, isPortalDocumentR2UploadEnabled } from "../../../../lib/portal-document-r2";
 import { prisma } from "../../../../lib/db";
 import {
   getKoinoniaStaffServiceCuesForWork,
   type KoinoniaStaffServiceCues
 } from "../../../../lib/koinonia-service-templates";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
-import { validatePortalDocumentUploadRoot } from "../../../../lib/portal-documents";
 import {
   buildEmptyPortalWorkspaceDocuments,
   buildEmptyPortalWorkspaceTimeline,
@@ -583,12 +583,7 @@ function isAssignableStaffRole(roleName: string | null | undefined): boolean {
 }
 
 function isDocumentStorageConfigured(): boolean {
-  try {
-    validatePortalDocumentUploadRoot(process.env.PORTAL_DOCUMENT_UPLOAD_DIR);
-    return true;
-  } catch {
-    return false;
-  }
+  return isPortalDocumentR2Configured();
 }
 
 function buildUnavailableWorkspaceSummary(workItemId: string): PortalWorkspaceSummary {

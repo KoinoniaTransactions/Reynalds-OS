@@ -41,6 +41,13 @@ export function isPortalDocumentR2Configured(): boolean {
   return getPortalDocumentR2Config() !== null;
 }
 
+export function isPortalDocumentR2UploadEnabled(): boolean {
+  return (
+    isPortalDocumentR2Configured() &&
+    process.env.PORTAL_DOCUMENT_R2_UPLOADS_ENABLED === "true"
+  );
+}
+
 export async function persistPortalDocumentToR2({
   actor,
   cleanName,

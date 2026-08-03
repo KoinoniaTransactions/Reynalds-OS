@@ -9,7 +9,7 @@ import {
   PortalDocumentScanUnavailableError
 } from "../../../../lib/portal-document-storage";
 import {
-  isPortalDocumentR2Configured,
+  isPortalDocumentR2UploadEnabled,
   persistPortalDocumentToR2,
   removePortalDocumentFromR2Quietly,
   type StoredR2Document
@@ -56,9 +56,9 @@ export async function POST(request: Request) {
       "client-portal:documents:upload",
       "document-workspace:drafts:create"
     ]);
-    if (!isPortalDocumentR2Configured()) {
+    if (!isPortalDocumentR2UploadEnabled()) {
       return NextResponse.json(
-        { error: "Cloudflare R2 document storage is not configured for uploads." },
+        { error: "Cloudflare R2 uploads are not enabled for this environment." },
         { status: 503 }
       );
     }

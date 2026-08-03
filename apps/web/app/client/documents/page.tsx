@@ -4,14 +4,13 @@ import { absoluteUrl } from "../../../config/seo.config";
 import { PortalDocumentApprovalForm } from "../../../components/client/PortalDocumentApprovalForm";
 import { PortalDocumentUploadForm } from "../../../components/client/PortalDocumentUploadForm";
 import { Footer, Header } from "../../../components/site";
+import { isPortalDocumentR2Configured, isPortalDocumentR2UploadEnabled } from "../../../lib/portal-document-r2";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
 import {
   formatDocumentFileSize,
   getDocumentSubmittedLabel,
   getHumanDocumentStatus,
-  validatePortalDocumentScannerCommand,
-  validatePortalDocumentUploadRoot
 } from "../../../lib/portal-documents";
 
 export const dynamic = "force-dynamic";
@@ -445,22 +444,11 @@ function buildClientApprovalRequests(documents: ClientDocumentItem[]): ClientDoc
 }
 
 function isDocumentStorageConfigured(): boolean {
-  try {
-    validatePortalDocumentUploadRoot(process.env.PORTAL_DOCUMENT_UPLOAD_DIR);
-    return true;
-  } catch {
-    return false;
-  }
+  return isPortalDocumentR2Configured();
 }
 
 function isDocumentUploadConfigured(): boolean {
-  try {
-    validatePortalDocumentUploadRoot(process.env.PORTAL_DOCUMENT_UPLOAD_DIR);
-    validatePortalDocumentScannerCommand(process.env.PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND);
-    return true;
-  } catch {
-    return false;
-  }
+  return isPortalDocumentR2UploadEnabled();
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {
