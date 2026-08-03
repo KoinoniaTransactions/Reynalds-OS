@@ -184,3 +184,40 @@ describe("persisted portal playbooks", () => {
     );
   });
 });
+
+describe("persisted playbook snapshots", () => {
+  it("serializes playbooks into JSON-safe snapshots", async () => {
+    const {
+      buildPersistedPortalPlaybookSnapshot,
+      buildPortalPlaybook
+    } = await import("./portal-playbook");
+
+    const playbook = buildPortalPlaybook({
+      data: {
+        closingDate: "2026-08-20",
+        packageName: "Transaction Coordination Plus"
+      },
+      name: "Smith Transaction",
+      now: new Date("2026-08-03T15:00:00.000Z"),
+      objectType: "Transaction"
+    });
+
+    expect(playbook).not.toBeNull();
+
+    const snapshot = buildPersistedPortalPlaybookSnapshot(
+      playbook!,
+      new Date("2026-08-03T18:00:00.000Z")
+    );
+
+    expect(snapshot).toMatchObject({
+      instantiatedAt: "2026-08-03T18:00:00.000Z",
+      serviceName: "Transaction Coordination Plus",
+      templateId: "transaction-support"
+    });
+
+    expect(snapshot.deadlinePlaceholders[0]?.date).toBe(
+      "2026-08-20T00:00:00.000Z"
+    );
+    expect(JSON.parse(JSON.stringify(snapshot))).toEqual(snapshot);
+  });
+});

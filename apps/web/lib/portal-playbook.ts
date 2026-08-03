@@ -294,3 +294,55 @@ function toRecord(value: unknown): Record<string, unknown> {
     ? (value as Record<string, unknown>)
     : {};
 }
+
+export type PersistedPortalPlaybookSnapshot = {
+  billingModel: KoinoniaBillingModel;
+  deadlinePlaceholders: Array<{
+    date: string;
+    dateLabel: string;
+    daysUntilDue: number;
+    key: string;
+    label: string;
+    risk: PortalDeadlineRisk;
+  }>;
+  expectedDocuments: PortalPlaybookExpectedDocument[];
+  healthFactorKeys: string[];
+  initialActions: PortalPlaybookInitialAction[];
+  instantiatedAt: string;
+  requiredStaffRoles: KoinoniaStaffRole[];
+  serviceName: string;
+  templateId: string;
+};
+
+export function buildPersistedPortalPlaybookSnapshot(
+  playbook: PortalPlaybook,
+  instantiatedAt = new Date()
+): PersistedPortalPlaybookSnapshot {
+  return {
+    billingModel: playbook.billingModel,
+    deadlinePlaceholders: playbook.deadlinePlaceholders.map(
+      (deadline) => ({
+        date: deadline.date.toISOString(),
+        dateLabel: deadline.dateLabel,
+        daysUntilDue: deadline.daysUntilDue,
+        key: deadline.key,
+        label: deadline.label,
+        risk: deadline.risk
+      })
+    ),
+    expectedDocuments: playbook.expectedDocuments.map((document) => ({
+      key: document.key,
+      label: document.label
+    })),
+    healthFactorKeys: [...playbook.healthFactorKeys],
+    initialActions: playbook.initialActions.map((action) => ({
+      id: action.id,
+      label: action.label,
+      type: action.type
+    })),
+    instantiatedAt: instantiatedAt.toISOString(),
+    requiredStaffRoles: [...playbook.requiredStaffRoles],
+    serviceName: playbook.serviceName,
+    templateId: playbook.templateId
+  };
+}
