@@ -20,10 +20,12 @@ export type StoredR2Document = {
 };
 
 export function getPortalDocumentR2Config(): PortalDocumentR2Config | null {
-  const accountId = process.env.R2_ACCOUNT_ID?.trim();
-  const accessKeyId = process.env.R2_ACCESS_KEY_ID?.trim();
-  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY?.trim();
-  const bucketName = process.env.R2_BUCKET_NAME?.trim();
+  const accountId = normalizeR2EnvironmentValue(process.env.R2_ACCOUNT_ID);
+  const accessKeyId = normalizeR2EnvironmentValue(process.env.R2_ACCESS_KEY_ID);
+  const secretAccessKey = normalizeR2EnvironmentValue(
+    process.env.R2_SECRET_ACCESS_KEY
+  );
+  const bucketName = normalizeR2EnvironmentValue(process.env.R2_BUCKET_NAME);
 
   if (!accountId || !accessKeyId || !secretAccessKey || !bucketName) {
     return null;
@@ -133,6 +135,35 @@ function createR2Client(config: PortalDocumentR2Config): S3Client {
       secretAccessKey: config.secretAccessKey
     }
   });
+}
+
+function normalizeR2EnvironmentValue(
+  rawValue: string | undefined
+): string | null {
+  if (!rawValue) {
+    return null;
+  }
+
+  const lines = rawValue
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (lines.length === 0) {
+    return null;
+  }
+
+  const [firstLine] = lines;
+
+  if (!lines.every((line) => line === firstLine)) {
+    return null;
+  }
+
+  if (/[^\x20-\x7E]/.test(firstLine)) {
+    return null;
+  }
+
+  return firstLine;
 }
 
 function getSafeStorageSegment(value: string): string {

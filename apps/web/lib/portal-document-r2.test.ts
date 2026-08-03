@@ -56,4 +56,27 @@ describe("portal document R2 configuration", () => {
     expect(isPortalDocumentR2UploadEnabled()).toBe(true);
   });
 
+  it("normalizes repeated multiline R2 credentials", () => {
+    process.env.R2_ACCOUNT_ID = "account";
+    process.env.R2_ACCESS_KEY_ID = "access-key\naccess-key\naccess-key";
+    process.env.R2_SECRET_ACCESS_KEY = "secret-key\nsecret-key\nsecret-key";
+    process.env.R2_BUCKET_NAME = "koinonia-portal-documents";
+
+    expect(getPortalDocumentR2Config()).toEqual({
+      accountId: "account",
+      accessKeyId: "access-key",
+      secretAccessKey: "secret-key",
+      bucketName: "koinonia-portal-documents"
+    });
+  });
+
+  it("rejects conflicting multiline R2 credentials", () => {
+    process.env.R2_ACCOUNT_ID = "account";
+    process.env.R2_ACCESS_KEY_ID = "access-key\ndifferent-access-key";
+    process.env.R2_SECRET_ACCESS_KEY = "secret-key";
+    process.env.R2_BUCKET_NAME = "koinonia-portal-documents";
+
+    expect(getPortalDocumentR2Config()).toBeNull();
+  });
+
 });
