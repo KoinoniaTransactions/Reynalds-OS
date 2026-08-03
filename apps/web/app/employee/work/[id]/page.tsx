@@ -1,6 +1,7 @@
 import type { AuthUser } from "@reynalds-os/auth";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { PortalDeadlineCompletionForm } from "../../../../components/employee/PortalDeadlineCompletionForm";
 import {
   PortalWorkAssignmentForm,
   type PortalWorkAssignmentStaffOption
@@ -66,6 +67,7 @@ type ShowingRequestDetails = {
 };
 
 type EmployeeWorkspaceAction = {
+  deadlineKey?: string;
   detail: string;
   href: string;
   id: string;
@@ -81,6 +83,7 @@ type EmployeeWorkWorkspaceView = {
   backupStaffLabel: string;
   backupStaffUserId?: string | null;
   canAssign: boolean;
+  canCompleteDeadlines: boolean;
   canUpdateShowing: boolean;
   documentUploadReady: boolean;
   documents: PortalWorkspaceDocumentItem[];
@@ -195,14 +198,25 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
                           <span>{getActionPriorityLabel(action.priority)}</span>
                           <h3>{action.label}</h3>
                           <p>{action.detail}</p>
-                          <a
-                            className="koinonia-document-link employee"
-                            href={action.href}
-                          >
-                            Open Action
-                          </a>
+                          {action.deadlineKey ? (
+                            <PortalDeadlineCompletionForm
+                              deadlineKey={action.deadlineKey}
+                              deadlineLabel={action.label}
+                              disabled={!workspace.canCompleteDeadlines}
+                              workItemId={workspace.summary.id}
+                            />
+                          ) : (
+                            <a
+                              className="koinonia-document-link employee"
+                              href={action.href}
+                            >
+                              Open Action
+                            </a>
+                          )}
                         </div>
-                        <strong>{action.priority}</strong>
+                        <strong>
+                          {getActionPriorityLabel(action.priority)}
+                        </strong>
                       </article>
                     ))
                   ) : (
@@ -823,7 +837,12 @@ async function getEmployeeWorkWorkspace(
       backupStaffLabel,
       backupStaffUserId: workItem.backupStaffUserId,
       canAssign: actor.permissions.includes("employee-portal:assignments:update"),
-      canUpdateShowing: actor.permissions.includes("employee-portal:assigned-work:update"),
+      canCompleteDeadlines: actor.permissions.includes(
+        "employee-portal:assigned-work:update"
+      ),
+      canUpdateShowing: actor.permissions.includes(
+        "employee-portal:assigned-work:update"
+      ),
       documentUploadReady:
         actor.permissions.includes("document-workspace:drafts:create") &&
         isDocumentStorageConfigured(),
@@ -854,6 +873,7 @@ async function getEmployeeWorkWorkspace(
       assignedStaffLabel: "Unavailable",
       backupStaffLabel: "Unavailable",
       canAssign: false,
+      canCompleteDeadlines: false,
       canUpdateShowing: false,
       documentUploadReady: false,
       documents: buildEmptyPortalWorkspaceDocuments(),
@@ -935,6 +955,7 @@ function buildEmployeeWorkspaceActions({
   const deadlineActions = buildDeadlineActions(
     getTransactionDeadlines(data)
   ).map<EmployeeWorkspaceAction>((action) => ({
+    deadlineKey: action.deadlineKey,
     detail: action.detail,
     href: "#employee-action-center",
     id: action.id,
