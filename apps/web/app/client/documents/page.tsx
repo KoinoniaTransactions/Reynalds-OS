@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { Document as PortalDocumentRecord } from "@reynalds-os/database";
+import type { Document as PortalDocumentRecord, RosObject } from "@reynalds-os/database";
 import { absoluteUrl } from "../../../config/seo.config";
 import { PortalDocumentApprovalForm } from "../../../components/client/PortalDocumentApprovalForm";
 import { PortalDocumentRemoveForm } from "../../../components/client/PortalDocumentRemoveForm";
@@ -8,6 +8,11 @@ import { Footer, Header } from "../../../components/site";
 import { isPortalDocumentR2Configured, isPortalDocumentR2UploadEnabled } from "../../../lib/portal-document-r2";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
+import {
+  documentSendPackageObjectType,
+  getDocumentSendPackageDetail,
+  getHumanDocumentSendPackageStatus
+} from "../../../lib/document-send-packages";
 import {
   formatDocumentFileSize,
   getDocumentSubmittedLabel,
@@ -112,6 +117,13 @@ type ClientDocumentGroup = {
   versions: ClientDocumentItem[];
 };
 
+type ClientSendPackageItem = {
+  detail: string;
+  id: string;
+  packageName: string;
+  status: string;
+};
+
 type ClientDocumentView = {
   approvalRequests: ClientDocumentItem[];
   documentGroups: ClientDocumentGroup[];
@@ -119,6 +131,7 @@ type ClientDocumentView = {
   isLiveData: boolean;
   neededRequests: PortalPlaybookClientDocumentRequest[];
   notice?: string;
+  sendPackages: ClientSendPackageItem[];
   uploadReady: boolean;
 };
 
@@ -213,23 +226,26 @@ const sampleApprovalQueue: ClientDocumentItem[] = [
   }
 ];
 
-const sendStatus = [
+const sampleSendPackages: ClientSendPackageItem[] = [
   {
+    id: "sample-buyer-offer-signature-package",
     packageName: "Buyer Offer Signature Package",
     status: "Waiting on Realtor Approval",
     detail: "Cannot be sent until final Realtor approval is recorded."
   },
   {
+    id: "sample-inspection-resolution",
     packageName: "Inspection Resolution",
     status: "Sent for Signature",
     detail: "Signature package is pending completion."
   },
   {
+    id: "sample-closing-file-archive",
     packageName: "Closing File Archive",
     status: "Delivered",
     detail: "Final archive copy has been delivered and saved."
   }
-] as const;
+];
 
 const clientTools = [
   "Upload requested files",
@@ -467,8 +483,8 @@ export default async function ClientDocumentCenterPreviewPage() {
               <section className="koinonia-document-panel">
                 <p className="koinonia-eyebrow">Sending Status</p>
                 <div className="koinonia-document-status-list">
-                  {sendStatus.map((item) => (
-                    <article key={item.packageName}>
+                  {documentView.sendPackages.map((item) => (
+                    <article key={item.id}>
                       <span>{item.status}</span>
                       <strong>{item.packageName}</strong>
                       <p>{item.detail}</p>
@@ -501,7 +517,7 @@ async function getClientDocumentView(
 ): Promise<ClientDocumentView> {
   try {
     const downloadReady = isDocumentStorageConfigured();
-    const [documents, workObjects] = await Promise.all([
+    const [documents, workObjects, sendPackageObjects] = await Promise.all([
       prisma.document.findMany({
         where: {
           workspaceId,
@@ -524,6 +540,16 @@ async function getClientDocumentView(
         },
         orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
         take: 20
+      }),
+      prisma.rosObject.findMany({
+        where: {
+          workspaceId,
+          objectType: documentSendPackageObjectType,
+          archivedAt: null,
+          OR: [{ clientUserId: ownerId }, { ownerId }]
+        },
+        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+        take: 10
       })
     ]);
 
@@ -551,6 +577,9 @@ async function getClientDocumentView(
       documents: currentDocuments,
       isLiveData: true,
       neededRequests: withEmptyDocumentRequests(neededRequests),
+      sendPackages: withEmptySendPackages(
+        sendPackageObjects.map(mapDocumentSendPackageRecord)
+      ),
       uploadReady: isDocumentUploadConfigured()
     };
   } catch (error) {
@@ -562,6 +591,7 @@ async function getClientDocumentView(
         isLiveData: false,
         neededRequests: sampleDocumentRequests,
         notice: "Document storage is not reachable in this preview, so sample uploads are shown.",
+        sendPackages: sampleSendPackages,
         uploadReady: false
       };
     }
@@ -586,6 +616,36 @@ function withEmptyDocumentRequests(
       transaction: "Client Document Center"
     }
   ];
+}
+
+function withEmptySendPackages(
+  sendPackages: ClientSendPackageItem[]
+): ClientSendPackageItem[] {
+  if (sendPackages.length > 0) {
+    return sendPackages;
+  }
+
+  return [
+    {
+      detail: "Prepared send packages and signature status will appear here.",
+      id: "empty-client-send-packages",
+      packageName: "No send packages yet",
+      status: "Ready"
+    }
+  ];
+}
+
+function mapDocumentSendPackageRecord(
+  sendPackage: RosObject
+): ClientSendPackageItem {
+  return {
+    detail:
+      sendPackage.nextAction ??
+      getDocumentSendPackageDetail(sendPackage.data),
+    id: sendPackage.id,
+    packageName: sendPackage.name.replace(/^Send Package - /, ""),
+    status: getHumanDocumentSendPackageStatus(sendPackage.status)
+  };
 }
 
 function mapDocumentRecord(
