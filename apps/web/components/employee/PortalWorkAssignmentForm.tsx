@@ -1,7 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import {
+  usePathname,
+  useRouter,
+  useSearchParams
+} from "next/navigation";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent
+} from "react";
 
 export type PortalWorkAssignmentStaffOption = {
   id: string;
@@ -24,7 +33,12 @@ export function PortalWorkAssignmentForm({
   staffOptions,
   workItemId
 }: PortalWorkAssignmentFormProps) {
+  const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const assignmentFocus = searchParams?.get("assignmentFocus");
+  const primarySelectRef = useRef<HTMLSelectElement>(null);
+  const backupSelectRef = useRef<HTMLSelectElement>(null);
   const [assignedStaffUserId, setAssignedStaffUserId] = useState(primaryStaffUserId ?? "");
   const [assignmentNote, setAssignmentNote] = useState("");
   const [backupStaffId, setBackupStaffId] = useState(backupStaffUserId ?? "");
@@ -32,6 +46,21 @@ export function PortalWorkAssignmentForm({
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const disabled = !canAssign || staffOptions.length === 0 || isSubmitting;
+
+  useEffect(() => {
+    if (disabled) {
+      return;
+    }
+
+    if (assignmentFocus === "backup") {
+      backupSelectRef.current?.focus();
+      return;
+    }
+
+    if (assignmentFocus === "primary") {
+      primarySelectRef.current?.focus();
+    }
+  }, [assignmentFocus, disabled]);
 
   async function submitAssignment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -57,6 +86,13 @@ export function PortalWorkAssignmentForm({
 
       setAssignmentNote("");
       setMessage("Assignment updated.");
+
+      if (pathname) {
+        router.replace(`${pathname}#employee-action-center`, {
+          scroll: true
+        });
+      }
+
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Assignment could not be updated.");
@@ -71,6 +107,7 @@ export function PortalWorkAssignmentForm({
         Primary
         <select
           disabled={disabled}
+          ref={primarySelectRef}
           value={assignedStaffUserId}
           onChange={(event) => setAssignedStaffUserId(event.target.value)}
         >
@@ -87,6 +124,7 @@ export function PortalWorkAssignmentForm({
         Backup
         <select
           disabled={disabled}
+          ref={backupSelectRef}
           value={backupStaffId}
           onChange={(event) => setBackupStaffId(event.target.value)}
         >

@@ -287,11 +287,12 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
 
               <section
                 className="koinonia-workspace-panel employee"
-                aria-labelledby="employee-team-assignment"
+                aria-labelledby="employee-team-assignment-title"
+                id="employee-team-assignment"
               >
                 <div className="koinonia-workspace-panel-heading">
                   <p className="koinonia-eyebrow">Ownership</p>
-                  <h2 id="employee-team-assignment">Team Assignment</h2>
+                  <h2 id="employee-team-assignment-title">Team Assignment</h2>
                 </div>
 
                 <PortalWorkAssignmentForm
@@ -599,12 +600,12 @@ function getTransactionHealthFactorAction(
   switch (factor.key) {
     case "primary_staff":
       return {
-        href: "#employee-team-assignment",
+        href: "?assignmentFocus=primary#employee-team-assignment",
         label: "Assign Primary Staff"
       };
     case "backup_staff":
       return {
-        href: "#employee-team-assignment",
+        href: "?assignmentFocus=backup#employee-team-assignment",
         label: "Assign Backup Staff"
       };
     case "active_documents":
@@ -968,7 +969,7 @@ function buildEmployeeWorkspaceActions({
   if (!assignedStaffUserId) {
     actions.push({
       detail: "Assign a primary staff owner before advancing this transaction.",
-      href: `#employee-team-assignment`,
+      href: `/employee/work/${workItemId}?assignmentFocus=primary#employee-team-assignment`,
       id: "assign-primary-staff",
       label: "Primary staff is not assigned",
       priority: "high"
@@ -978,7 +979,7 @@ function buildEmployeeWorkspaceActions({
   if (!backupStaffUserId) {
     actions.push({
       detail: "Add backup coverage so the file is not dependent on one team member.",
-      href: `#employee-team-assignment`,
+      href: `/employee/work/${workItemId}?assignmentFocus=backup#employee-team-assignment`,
       id: "assign-backup-staff",
       label: "Backup staff is not assigned",
       priority: "medium"
