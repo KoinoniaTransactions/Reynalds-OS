@@ -17,6 +17,10 @@ import {
 } from "../../../../lib/koinonia-service-templates";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
 import {
+  buildDeadlineActions,
+  getTransactionDeadlines
+} from "../../../../lib/portal-deadlines";
+import {
   buildEmptyPortalWorkspaceDocuments,
   buildEmptyPortalWorkspaceTimeline,
   buildPortalWorkspaceDocuments,
@@ -591,6 +595,7 @@ async function getEmployeeWorkWorkspace(
     const actionQueue = buildEmployeeWorkspaceActions({
       assignedStaffUserId: workItem.assignedStaffUserId,
       backupStaffUserId: workItem.backupStaffUserId,
+      data: workItem.data,
       documents,
       documentsNeedingAction,
       events,
@@ -656,6 +661,7 @@ async function getEmployeeWorkWorkspace(
 function buildEmployeeWorkspaceActions({
   assignedStaffUserId,
   backupStaffUserId,
+  data,
   documents,
   documentsNeedingAction,
   events,
@@ -664,6 +670,7 @@ function buildEmployeeWorkspaceActions({
 }: {
   assignedStaffUserId: string | null;
   backupStaffUserId: string | null;
+  data: unknown;
   documents: Array<{
     documentType: string;
     id: string;
@@ -683,6 +690,17 @@ function buildEmployeeWorkspaceActions({
   workItemId: string;
 }): EmployeeWorkspaceAction[] {
   const actions: EmployeeWorkspaceAction[] = [];
+  const deadlineActions = buildDeadlineActions(
+    getTransactionDeadlines(data)
+  ).map<EmployeeWorkspaceAction>((action) => ({
+    detail: action.detail,
+    href: "#employee-action-center",
+    id: action.id,
+    label: action.label,
+    priority: action.priority
+  }));
+
+  actions.push(...deadlineActions);
 
   if (!assignedStaffUserId) {
     actions.push({
@@ -757,7 +775,26 @@ function buildEmployeeWorkspaceActions({
     });
   }
 
-  return actions.slice(0, 10);
+  return actions
+    .sort(
+      (left, right) =>
+        getActionPriorityWeight(left.priority) -
+        getActionPriorityWeight(right.priority)
+    )
+    .slice(0, 10);
+}
+
+function getActionPriorityWeight(
+  priority: EmployeeWorkspaceAction["priority"]
+): number {
+  switch (priority) {
+    case "high":
+      return 0;
+    case "medium":
+      return 1;
+    default:
+      return 2;
+  }
 }
 
 function buildShowingRequestDetails(data: unknown): ShowingRequestDetails {
