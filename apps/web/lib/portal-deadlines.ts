@@ -110,7 +110,7 @@ export function getTransactionDeadlines(
       );
       const date = parsePortalDeadlineDate(rawValue);
 
-      if (!date) {
+      if (!date || isPortalDeadlineCompleted(data, definition.key)) {
         return [];
       }
 
@@ -334,4 +334,80 @@ function toRecord(value: unknown): Record<string, unknown> {
     !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : {};
+}
+
+export type PortalCompletedDeadline = {
+  completedAt: string;
+  completedByUserId?: string | null;
+  note?: string | null;
+};
+
+export function getCompletedDeadlines(
+  data: unknown
+): Record<string, PortalCompletedDeadline> {
+  const record = toRecord(data);
+  const value = toRecord(record.completedDeadlines);
+  const completed: Record<string, PortalCompletedDeadline> = {};
+
+  for (const [key, entry] of Object.entries(value)) {
+    const item = toRecord(entry);
+    const completedAt =
+      typeof item.completedAt === "string"
+        ? item.completedAt.trim()
+        : "";
+
+    if (!completedAt || Number.isNaN(new Date(completedAt).getTime())) {
+      continue;
+    }
+
+    completed[key] = {
+      completedAt,
+      completedByUserId:
+        typeof item.completedByUserId === "string"
+          ? item.completedByUserId.trim() || null
+          : null,
+      note:
+        typeof item.note === "string"
+          ? item.note.trim() || null
+          : null
+    };
+  }
+
+  return completed;
+}
+
+export function isPortalDeadlineCompleted(
+  data: unknown,
+  deadlineKey: string
+): boolean {
+  return Boolean(getCompletedDeadlines(data)[deadlineKey]);
+}
+
+export function buildCompletedDeadlineData({
+  completedAt,
+  completedByUserId,
+  currentData,
+  deadlineKey,
+  note
+}: {
+  completedAt: Date;
+  completedByUserId: string;
+  currentData: unknown;
+  deadlineKey: string;
+  note?: string | null;
+}): Record<string, unknown> {
+  const record = { ...toRecord(currentData) };
+  const completedDeadlines = {
+    ...toRecord(record.completedDeadlines)
+  };
+
+  completedDeadlines[deadlineKey] = {
+    completedAt: completedAt.toISOString(),
+    completedByUserId,
+    note: note?.trim() || null
+  };
+
+  record.completedDeadlines = completedDeadlines;
+
+  return record;
 }

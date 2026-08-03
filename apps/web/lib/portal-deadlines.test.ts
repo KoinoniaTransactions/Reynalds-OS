@@ -134,3 +134,26 @@ describe("portal transaction deadlines", () => {
     expect(actions).toEqual([]);
   });
 });
+
+describe("portal deadline completion", () => {
+  it("excludes completed deadlines from active deadline results", () => {
+    const deadlines = getTransactionDeadlines(
+      {
+        earnestMoneyDeadline: "2026-08-04",
+        inspectionObjectionDeadline: "2026-08-06",
+        completedDeadlines: {
+          earnestMoneyDeadline: {
+            completedAt: "2026-08-03T18:00:00.000Z",
+            completedByUserId: "user_1",
+            note: "Receipt confirmed."
+          }
+        }
+      },
+      new Date("2026-08-03T15:00:00.000Z")
+    );
+
+    expect(deadlines.map((deadline) => deadline.key)).toEqual([
+      "inspectionObjectionDeadline"
+    ]);
+  });
+});
