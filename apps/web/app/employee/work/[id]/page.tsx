@@ -302,14 +302,20 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
                   <div className="koinonia-workspace-meta-grid employee">
                     <article>
                       <span>Health Score</span>
-                      <strong>{workspace.transactionHealth.score}%</strong>
-                      <p>{workspace.transactionHealth.statusLabel}</p>
+                      <strong>{workspace.transactionHealth.score} / 100</strong>
+                      <p>
+                        {getTransactionHealthDisplayStatus(
+                          workspace.transactionHealth.status
+                        )}
+                      </p>
                     </article>
 
                     <article>
                       <span>Health Status</span>
                       <strong>
-                        {workspace.transactionHealth.statusLabel}
+                        {getTransactionHealthDisplayStatus(
+                          workspace.transactionHealth.status
+                        )}
                       </strong>
                       <p>
                         {getTransactionHealthSummary(
@@ -341,10 +347,22 @@ export default async function EmployeeWorkDetailPage({ params }: Params) {
                             <span>
                               {getTransactionHealthFactorLabel(factor.state)}
                             </span>
-                            <h3>{factor.label}</h3>
+                            <h3>
+                              {getTransactionHealthFactorTitle(factor)}
+                            </h3>
                             <p>{factor.detail}</p>
+                            <a
+                              className="koinonia-document-link employee"
+                              href={getTransactionHealthFactorAction(factor).href}
+                            >
+                              {getTransactionHealthFactorAction(factor).label}
+                            </a>
                           </div>
-                          <strong>-{factor.penalty}</strong>
+                          <strong>
+                            {factor.state === "critical"
+                              ? "Immediate"
+                              : "Review"}
+                          </strong>
                         </article>
                       ))
                     ) : (
@@ -496,16 +514,29 @@ function StaffCueList({ items, title }: { items: readonly string[]; title: strin
   );
 }
 
+function getTransactionHealthDisplayStatus(
+  status: PortalTransactionHealth["status"]
+): string {
+  switch (status) {
+    case "healthy":
+      return "Operating Normally";
+    case "watch":
+      return "Needs Attention";
+    default:
+      return "Needs Immediate Attention";
+  }
+}
+
 function getTransactionHealthSummary(
   status: PortalTransactionHealth["status"]
 ): string {
   switch (status) {
     case "healthy":
-      return "The transaction is operating within expected controls.";
+      return "Staffing, documents, deadlines, and activity are within expected controls.";
     case "watch":
-      return "One or more workflow signals need staff attention.";
+      return "Review the highlighted items before they become transaction risks.";
     default:
-      return "Material transaction risks require prompt review.";
+      return "Resolve the highest-priority items before advancing this file.";
   }
 }
 
@@ -516,6 +547,77 @@ function getTransactionHealthAttentionFactors(
     .filter((factor) => factor.state !== "positive")
     .sort((left, right) => right.penalty - left.penalty)
     .slice(0, 5);
+}
+
+function getTransactionHealthFactorTitle(
+  factor: PortalTransactionHealth["factors"][number]
+): string {
+  switch (factor.key) {
+    case "primary_staff":
+      return "Assign a Primary Staff Owner";
+    case "backup_staff":
+      return "Add Backup Staff Coverage";
+    case "active_documents":
+      return "Attach Transaction Documents";
+    case "document_actions":
+      return "Complete Outstanding Document Reviews";
+    case "missing_documents":
+      return "Upload Expected Documents";
+    case "recent_activity":
+      return "Record a Transaction Update";
+    case "overdue_deadlines":
+      return "Resolve Overdue Deadlines";
+    case "due_today_deadlines":
+      return "Address Deadlines Due Today";
+    case "due_soon_deadlines":
+      return "Prepare for Upcoming Deadlines";
+    default:
+      return factor.label;
+  }
+}
+
+function getTransactionHealthFactorAction(
+  factor: PortalTransactionHealth["factors"][number]
+): {
+  href: string;
+  label: string;
+} {
+  switch (factor.key) {
+    case "primary_staff":
+      return {
+        href: "#employee-team-assignment",
+        label: "Assign Primary Staff"
+      };
+    case "backup_staff":
+      return {
+        href: "#employee-team-assignment",
+        label: "Assign Backup Staff"
+      };
+    case "active_documents":
+    case "document_actions":
+    case "missing_documents":
+      return {
+        href: "#employee-work-documents",
+        label: "Open Documents"
+      };
+    case "recent_activity":
+      return {
+        href: "#employee-work-history",
+        label: "Open Activity"
+      };
+    case "overdue_deadlines":
+    case "due_today_deadlines":
+    case "due_soon_deadlines":
+      return {
+        href: "#employee-action-center",
+        label: "Review Deadline Actions"
+      };
+    default:
+      return {
+        href: "#employee-action-center",
+        label: "Review Action Center"
+      };
+  }
 }
 
 function getTransactionHealthFactorLabel(
