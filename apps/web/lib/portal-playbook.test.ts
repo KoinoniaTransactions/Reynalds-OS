@@ -160,6 +160,59 @@ describe("playbook staff service cues", () => {
   });
 });
 
+describe("playbook client service cues", () => {
+  it("combines client-facing sections with persisted expected documents", async () => {
+    const {
+      buildClientServiceCuesFromPlaybook,
+      getPortalPlaybookForWork
+    } = await import("./portal-playbook");
+
+    const playbook = getPortalPlaybookForWork({
+      data: {
+        packageName: "Transaction Coordination Plus",
+        playbook: {
+          billingModel: "prepaid",
+          deadlinePlaceholders: [],
+          expectedDocuments: [
+            {
+              key: "persisted-doc-one",
+              label: "Persisted doc one"
+            },
+            {
+              key: "persisted-doc-two",
+              label: "Persisted doc two"
+            },
+            {
+              key: "persisted-doc-three",
+              label: "Persisted doc three"
+            }
+          ],
+          healthFactorKeys: ["primary_staff"],
+          initialActions: [],
+          requiredStaffRoles: ["Transaction Coordinator"],
+          serviceName: "Transaction Coordination Plus",
+          templateId: "transaction-support"
+        }
+      },
+      name: "Existing Transaction",
+      objectType: "Transaction"
+    });
+
+    expect(playbook).not.toBeNull();
+
+    expect(
+      buildClientServiceCuesFromPlaybook(playbook!, {
+        clientPortalSections: ["Documents", "Billing"]
+      })
+    ).toEqual([
+      "Documents",
+      "Billing",
+      "Persisted doc one",
+      "Persisted doc two"
+    ]);
+  });
+});
+
 describe("persisted portal playbooks", () => {
   it("prefers a valid persisted playbook snapshot", async () => {
     const { getPortalPlaybookForWork } = await import(

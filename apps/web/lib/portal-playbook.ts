@@ -277,6 +277,20 @@ export function buildStaffServiceCuesFromPlaybook(
   };
 }
 
+export function buildClientServiceCuesFromPlaybook(
+  playbook: PortalPlaybook,
+  options: {
+    clientPortalSections?: readonly string[];
+  } = {}
+): string[] {
+  return [
+    ...(options.clientPortalSections ?? []),
+    ...playbook.expectedDocuments
+      .map((document) => document.label)
+      .slice(0, 2)
+  ].slice(0, 5);
+}
+
 export function getPortalPlaybookForWork(input: {
   data?: unknown;
   name: string;

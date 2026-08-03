@@ -24,6 +24,10 @@ import {
   getPortalWorkItemTypeLabel
 } from "../../../lib/portal-work-items";
 import { getKoinoniaServiceTemplateForWork } from "../../../lib/koinonia-service-templates";
+import {
+  buildClientServiceCuesFromPlaybook,
+  getPortalPlaybookForWork
+} from "../../../lib/portal-playbook";
 
 export const dynamic = "force-dynamic";
 
@@ -415,6 +419,11 @@ async function getClientWorkItemView(
         name: object.name,
         objectType: object.objectType
       });
+      const playbook = getPortalPlaybookForWork({
+        data: object.data,
+        name: object.name,
+        objectType: object.objectType
+      });
 
       return {
         id: object.id,
@@ -424,7 +433,11 @@ async function getClientWorkItemView(
         nextAction: object.nextAction ?? template?.staffNextAction ?? "Koinonia will update this work item as it moves.",
         due: getPortalWorkDueLabel(object.data),
         detailHref: `/client/work/${object.id}`,
-        serviceCues: buildServiceCues(template)
+        serviceCues: playbook
+          ? buildClientServiceCuesFromPlaybook(playbook, {
+              clientPortalSections: template?.clientPortalSections
+            })
+          : []
       };
     });
 
@@ -491,19 +504,6 @@ function withEmptyClientWorkItems(items: ClientWorkItem[]): ClientWorkItem[] {
       due: "No active item"
     }
   ];
-}
-
-function buildServiceCues(
-  template: ReturnType<typeof getKoinoniaServiceTemplateForWork>
-): string[] {
-  if (!template) {
-    return [];
-  }
-
-  return [
-    ...template.clientPortalSections,
-    ...template.documentRequests.slice(0, 2)
-  ].slice(0, 5);
 }
 
 async function getClientAccessRequestView(
