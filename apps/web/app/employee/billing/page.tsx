@@ -51,7 +51,22 @@ const billingSummary = [
   }
 ] as const;
 
-const billingProfiles = [
+type BillingProfileItem = {
+  client: string;
+  model: string;
+  nextAction: string;
+  payment: string;
+  service: string;
+  status: string;
+};
+
+type PaymentSetupQueueItem = {
+  client: string;
+  reason: string;
+  status: string;
+};
+
+const sampleBillingProfiles: BillingProfileItem[] = [
   {
     client: "Bright Homes Team",
     service: "Transaction Coordination Plus",
@@ -84,9 +99,9 @@ const billingProfiles = [
     status: "Ready to Bill",
     nextAction: "Process approved showing charge after completion."
   }
-] as const;
+];
 
-const paymentSetupQueue = [
+const samplePaymentSetupQueue: PaymentSetupQueueItem[] = [
   {
     client: "Wilson Realty Group",
     reason: "Custom monthly support needs recurring authorization.",
@@ -102,7 +117,7 @@ const paymentSetupQueue = [
     reason: "Payment method expired before new showing request.",
     status: "Update Required"
   }
-] as const;
+];
 
 type BillingSetupItem = {
   detail: string;
@@ -216,6 +231,15 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
     getEmployeeBillingSetupView(actor.workspaceId),
     getEmployeeInvoiceView(actor.workspaceId)
   ]);
+  const billingProfiles = buildBillingProfiles(
+    billingSetupView.requests,
+    invoiceView.invoices,
+    billingSetupView.isLiveData || invoiceView.isLiveData
+  );
+  const paymentSetupQueue = buildPaymentSetupQueue(
+    billingSetupView.requests,
+    billingSetupView.isLiveData
+  );
 
   return (
     <main className="koinonia-site koinonia-billing-center koinonia-employee-billing">
@@ -532,6 +556,116 @@ function withEmptyBillingSetupRequests(requests: BillingSetupItem[]): BillingSet
       nextAction: "Send secure processor links only after consent and service billing terms are clear.",
       labels: ["No card stored", "Processor-hosted setup only"],
       workflowStatus: "Setup Requested"
+    }
+  ];
+}
+
+function buildBillingProfiles(
+  billingSetupRequests: BillingSetupItem[],
+  invoices: InvoiceItem[],
+  isLiveData: boolean
+): BillingProfileItem[] {
+  if (!isLiveData) {
+    return sampleBillingProfiles;
+  }
+
+  const profiles = new Map<string, BillingProfileItem>();
+
+  for (const request of billingSetupRequests) {
+    if (request.id.startsWith("empty-")) {
+      continue;
+    }
+
+    const key = `${request.requestedBy}:${request.service}`;
+
+    profiles.set(key, {
+      client: request.requestedBy,
+      model: request.detail,
+      nextAction: request.nextAction,
+      payment:
+        request.status === "Payment Method Ready"
+          ? "Processor Ready"
+          : request.status === "Pay at Close Watch"
+            ? "Closing Watch"
+            : "Setup Needed",
+      service: request.service,
+      status: request.status
+    });
+  }
+
+  for (const invoice of invoices) {
+    if (invoice.id.startsWith("empty-")) {
+      continue;
+    }
+
+    const key = `${invoice.service}:${invoice.invoice}`;
+
+    if (profiles.has(key)) {
+      continue;
+    }
+
+    profiles.set(key, {
+      client: invoice.service,
+      model: invoice.amount,
+      nextAction: invoice.nextAction,
+      payment: invoice.status === "Paid" ? "Payment Recorded" : "Invoice Active",
+      service: invoice.invoice,
+      status: invoice.status
+    });
+  }
+
+  if (profiles.size === 0) {
+    return [
+      {
+        client: "Billing profiles are clear",
+        model: "No active billing setup",
+        nextAction:
+          "Client billing profiles will appear after setup requests or invoices are created.",
+        payment: "Ready",
+        service: "No billing activity yet",
+        status: "Ready"
+      }
+    ];
+  }
+
+  return Array.from(profiles.values()).slice(0, 8);
+}
+
+function buildPaymentSetupQueue(
+  requests: BillingSetupItem[],
+  isLiveData: boolean
+): PaymentSetupQueueItem[] {
+  if (!isLiveData) {
+    return samplePaymentSetupQueue;
+  }
+
+  const queue = requests.flatMap((request) => {
+    if (
+      request.id.startsWith("empty-") ||
+      request.status === "Payment Method Ready" ||
+      request.status === "Pay at Close Watch"
+    ) {
+      return [];
+    }
+
+    return [
+      {
+        client: request.requestedBy,
+        reason: request.nextAction,
+        status: request.status
+      }
+    ];
+  });
+
+  if (queue.length > 0) {
+    return queue.slice(0, 6);
+  }
+
+  return [
+    {
+      client: "Setup queue is clear",
+      reason: "No active billing setup requests need a processor link right now.",
+      status: "Ready"
     }
   ];
 }
