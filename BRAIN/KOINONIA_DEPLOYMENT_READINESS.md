@@ -118,9 +118,9 @@ Minimum recommended production environment variables:
 
 - NEXT_PUBLIC_SITE_URL=https://koinoniatransactions.com
 - NEXT_PUBLIC_APP_NAME=Koinonia
-- AUTH_PROVIDER=managed for public preview, or AUTH_PROVIDER=clerk before real portal login
+- AUTH_PROVIDER=clerk before real portal login
 - ROS_DEFAULT_WORKSPACE_ID=production workspace value
-- DATABASE_URL=production or placeholder database URL
+- DATABASE_URL=production database URL
 
 Additional portal-login variables before accepting real client or staff data:
 
@@ -129,7 +129,22 @@ Additional portal-login variables before accepting real client or staff data:
 - NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 - NEXT_PUBLIC_AUTH_SIGN_IN_URL
 - NEXT_PUBLIC_AUTH_SIGN_OUT_URL
+- KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS
 - ROS_ALLOW_MOCK_AUTH=false
+
+Document and billing variables before accepting real portal work:
+
+- PORTAL_DOCUMENT_UPLOAD_DIR
+- PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND
+- KOINONIA_PAYMENT_PROCESSOR_PROVIDER
+- KOINONIA_PAYMENT_SETUP_URL
+- KOINONIA_PAYMENT_WEBHOOK_URL
+- KOINONIA_PAYMENT_WEBHOOK_SECRET
+
+Optional gates should stay disabled unless fully configured:
+
+- KOINONIA_SOCIAL_LOGIN_CONFIGURED=false
+- KOINONIA_AI_REVIEW_ENABLED=false
 
 Important:
 
@@ -139,7 +154,7 @@ Important:
 - Treat dashboard and API variables separately from the public website launch
 - Do not enable ROS_ALLOW_MOCK_AUTH on any deployment that can receive real portal data
 - Run `pnpm verify:portal` before accepting real client or staff portal access
-- Confirm `pnpm verify:portal` reports an active Owner portal user and active staff MFA requirement
+- Confirm `pnpm verify:portal` reports production Clerk keys, public HTTPS auth and payment URLs, private document storage, malware scanning, an active Owner portal user, active staff MFA, accepted client/staff invitations, and completed required launch proof
 
 ---
 
