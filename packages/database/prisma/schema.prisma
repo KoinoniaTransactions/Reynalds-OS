@@ -209,6 +209,7 @@ model Document {
   removedAt              DateTime?
   removedByUserId        String?
   removalReason          String?
+  lifecycleState         String    @default("active")
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
   archivedAt             DateTime?
@@ -219,6 +220,7 @@ model Document {
   @@index([workspaceId, previousDocumentId])
   @@index([workspaceId, supersededByDocumentId])
   @@index([workspaceId, removedAt])
+  @@index([workspaceId, lifecycleState])
   @@index([relatedObjectId])
 }
 

@@ -15,6 +15,37 @@ export const portalDocumentWorkflowStatuses = [
 
 export type PortalDocumentWorkflowStatus = (typeof portalDocumentWorkflowStatuses)[number];
 
+export const portalDocumentLifecycleStates = [
+  "active",
+  "superseded",
+  "removed",
+  "archived"
+] as const;
+
+export type PortalDocumentLifecycleState =
+  (typeof portalDocumentLifecycleStates)[number];
+
+export function getPortalDocumentLifecycleState(input: {
+  archivedAt?: Date | string | null;
+  removedAt?: Date | string | null;
+  status?: string | null;
+  supersededAt?: Date | string | null;
+}): PortalDocumentLifecycleState {
+  if (input.removedAt) {
+    return "removed";
+  }
+
+  if (input.archivedAt || input.status === "Archived") {
+    return "archived";
+  }
+
+  if (input.supersededAt || input.status === "Superseded") {
+    return "superseded";
+  }
+
+  return "active";
+}
+
 const allowedMimeTypes = new Set([
   "application/pdf",
   "application/msword",

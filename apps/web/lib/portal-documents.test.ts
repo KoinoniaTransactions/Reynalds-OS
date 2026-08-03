@@ -5,6 +5,7 @@ import {
   formatDocumentFileSize,
   getHumanDocumentStatus,
   getNextPortalDocumentVersionNumber,
+  getPortalDocumentLifecycleState,
   getPortalDocumentVersionLabel,
   PortalDocumentValidationError,
   sanitizeDocumentFileName,
@@ -271,6 +272,41 @@ describe("portal document helpers", () => {
         reason: "x".repeat(221)
       })
     ).toThrow("reason must be 220 characters or fewer.");
+  });
+
+  it("derives document lifecycle states consistently", () => {
+    expect(getPortalDocumentLifecycleState({ status: "Uploaded" })).toBe("active");
+
+    expect(
+      getPortalDocumentLifecycleState({
+        status: "Superseded",
+        supersededAt: new Date()
+      })
+    ).toBe("superseded");
+
+    expect(
+      getPortalDocumentLifecycleState({
+        removedAt: new Date(),
+        status: "Uploaded"
+      })
+    ).toBe("removed");
+
+    expect(
+      getPortalDocumentLifecycleState({
+        archivedAt: new Date(),
+        status: "Archived"
+      })
+    ).toBe("archived");
+  });
+
+  it("prioritizes removal over other lifecycle timestamps", () => {
+    expect(
+      getPortalDocumentLifecycleState({
+        archivedAt: new Date(),
+        removedAt: new Date(),
+        supersededAt: new Date()
+      })
+    ).toBe("removed");
   });
 
 });
