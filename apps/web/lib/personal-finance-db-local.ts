@@ -10,7 +10,7 @@ import path from "node:path";
 
 import Database from "better-sqlite3";
 
-export const PERSONAL_FINANCE_SCHEMA_VERSION = 1;
+export const PERSONAL_FINANCE_SCHEMA_VERSION = 2;
 
 export type PersonalFinanceAccountType =
   | "checking"
@@ -150,6 +150,7 @@ const PERSONAL_FINANCE_SCHEMA_SQL = `
         'reconciled'
       )
     ),
+    reviewed_at TEXT,
     payment_channel TEXT,
     check_number TEXT,
     note TEXT,
@@ -323,9 +324,29 @@ function findRepositoryRoot(
   );
 }
 
+function hasPersonalFinanceSchema(
+  database: Database.Database,
+): boolean {
+  const row = database
+    .prepare(`
+      SELECT 1
+      FROM sqlite_master
+      WHERE
+        type = 'table' AND
+        name = 'pf_meta'
+    `)
+    .get();
+
+  return Boolean(row);
+}
+
 function readSchemaVersion(
   database: Database.Database,
 ): string | undefined {
+  if (!hasPersonalFinanceSchema(database)) {
+    return undefined;
+  }
+
   const row = database
     .prepare(`
       SELECT value
@@ -403,6 +424,30 @@ export function createPersonalFinanceId(
 export function applyPersonalFinanceSchema(
   database: Database.Database,
 ): void {
+  const hasExistingSchema =
+    hasPersonalFinanceSchema(database);
+
+  const existingVersion =
+    readSchemaVersion(database);
+
+  const expectedVersion = String(
+    PERSONAL_FINANCE_SCHEMA_VERSION,
+  );
+
+  if (
+    hasExistingSchema &&
+    existingVersion !== expectedVersion
+  ) {
+    throw new Error(
+      [
+        "Personal Finance database migration required.",
+        `Expected version ${expectedVersion}.`,
+        `Received ${existingVersion ?? "none"}.`,
+        "Run pnpm personal:migrate:database.",
+      ].join(" "),
+    );
+  }
+
   const applySchema = database.transaction(() => {
     database.exec(PERSONAL_FINANCE_SCHEMA_SQL);
     database.pragma(
