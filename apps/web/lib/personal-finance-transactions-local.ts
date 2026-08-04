@@ -39,7 +39,7 @@ export type LocalPersonalFinanceTransactionsResult = {
   reason: string | null;
 };
 
-type ParsedTransactionFile = {
+export type ParsedLocalPersonalFinanceTransactionFile = {
   transactions: LocalPersonalFinanceTransaction[];
   issues: LocalTransactionImportIssue[];
 };
@@ -165,7 +165,7 @@ export async function loadLocalPersonalFinanceTransactions():
         "utf8"
       );
 
-      const parsed = parseTransactionFile(
+      const parsed = parseLocalPersonalFinanceTransactionCsv(
         contents,
         sourceFile
       );
@@ -233,10 +233,10 @@ export function normalizeTransactionDescription(
     .trim();
 }
 
-function parseTransactionFile(
+export function parseLocalPersonalFinanceTransactionCsv(
   input: string,
   sourceFile: string
-): ParsedTransactionFile {
+): ParsedLocalPersonalFinanceTransactionFile {
   const rows = parseLocalCsv(input);
 
   if (rows.length === 0) {
