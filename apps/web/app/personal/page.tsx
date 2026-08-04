@@ -5,8 +5,8 @@ import { notFound } from "next/navigation";
 import { PersonalFinanceMvp } from "../../components/personal-finance-mvp";
 import { loadLocalPersonalFinance } from "../../lib/personal-finance-local";
 import {
-  loadLocalPersonalFinanceTransactions
-} from "../../lib/personal-finance-transactions-local";
+  loadPersonalFinanceTransactionInbox
+} from "../../lib/personal-finance-transaction-inbox-local";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -35,19 +35,22 @@ export default async function PersonalPage() {
     notFound();
   }
 
-  const [budgetResult, transactionResult] = await Promise.all([
+  const [budgetResult, inboxResult] = await Promise.all([
     loadLocalPersonalFinance(),
-    loadLocalPersonalFinanceTransactions()
+    loadPersonalFinanceTransactionInbox()
   ]);
 
   return (
     <PersonalFinanceMvp
       budget={budgetResult.budget}
       unavailableReason={budgetResult.reason}
-      transactions={transactionResult.transactions}
-      transactionSourceFiles={transactionResult.sourceFiles}
-      transactionIssues={transactionResult.issues}
-      transactionReason={transactionResult.reason}
+      transactions={inboxResult.transactions}
+      transactionTotal={inboxResult.totalMatching}
+      transactionAccountCount={inboxResult.summary.accounts}
+      unclassifiedTransactionCount={
+        inboxResult.summary.unclassifiedTransactions
+      }
+      transactionReason={inboxResult.reason}
     />
   );
 }

@@ -6,9 +6,8 @@ import type {
 } from "../lib/personal-finance-local";
 
 import type {
-  LocalPersonalFinanceTransaction,
-  LocalTransactionImportIssue
-} from "../lib/personal-finance-transactions-local";
+  PersonalFinanceInboxTransaction
+} from "../lib/personal-finance-transaction-inbox-local";
 
 import styles from "./personal-finance-mvp.module.css";
 
@@ -44,9 +43,10 @@ type CashFlowItem = {
 type PersonalFinanceMvpProps = {
   budget: PersonalFinanceMonth | null;
   unavailableReason?: string | null;
-  transactions?: LocalPersonalFinanceTransaction[];
-  transactionSourceFiles?: string[];
-  transactionIssues?: LocalTransactionImportIssue[];
+  transactions?: PersonalFinanceInboxTransaction[];
+  transactionTotal?: number;
+  transactionAccountCount?: number;
+  unclassifiedTransactionCount?: number;
   transactionReason?: string | null;
 };
 
@@ -283,8 +283,9 @@ export function PersonalFinanceMvp({
   budget,
   unavailableReason,
   transactions = [],
-  transactionSourceFiles = [],
-  transactionIssues = [],
+  transactionTotal = 0,
+  transactionAccountCount = 0,
+  unclassifiedTransactionCount = 0,
   transactionReason = null
 }: PersonalFinanceMvpProps) {
   if (!budget) {
@@ -811,29 +812,25 @@ export function PersonalFinanceMvp({
 
             <p className={styles.panelDescription}>
               {transactions.length > 0
-                ? `${transactions.length} imported ${
-                    transactions.length === 1
+                ? `${transactionTotal} unreviewed ${
+                    transactionTotal === 1
                       ? "transaction"
                       : "transactions"
-                  } from ${transactionSourceFiles.length} local CSV ${
-                    transactionSourceFiles.length === 1
-                      ? "file"
-                      : "files"
-                  }.${
-                    transactionIssues.length > 0
-                      ? ` ${transactionIssues.length} import ${
-                          transactionIssues.length === 1
-                            ? "issue was"
-                            : "issues were"
-                        } reported.`
-                      : ""
-                  }`
-                : "Local bank and card imports will appear here."}
+                  } from ${transactionAccountCount} local ${
+                    transactionAccountCount === 1
+                      ? "account"
+                      : "accounts"
+                  }. ${unclassifiedTransactionCount} still ${
+                    unclassifiedTransactionCount === 1
+                      ? "needs"
+                      : "need"
+                  } classification.`
+                : "Imported bank and card transactions will appear here after they are stored in the private database."}
             </p>
           </div>
 
           <span className={styles.countBadge}>
-            {transactions.length}
+            {transactionTotal}
           </span>
         </header>
 
@@ -858,7 +855,7 @@ export function PersonalFinanceMvp({
 
                 <span className={styles.cashFlowCopy}>
                   <span className={styles.cashFlowTitle}>
-                    {transaction.description}
+                    {transaction.displayDescription}
                   </span>
 
                   <span className={styles.cashFlowDetail}>
@@ -876,7 +873,9 @@ export function PersonalFinanceMvp({
                   }`}
                 >
                   {transaction.direction === "inflow" ? "+" : "-"}
-                  {money(transaction.amount)}
+                  {money(
+                    Math.abs(transaction.amountCents) / 100
+                  )}
                 </span>
               </div>
             ))}
@@ -892,7 +891,7 @@ export function PersonalFinanceMvp({
 
               <p className={styles.activityText}>
                 {transactionReason ??
-                  "Add bank or card CSV exports to .local/personal-finance/transactions and reload this page."}
+                  "Import bank or card CSV exports into the private Personal Finance database, then reload this page."}
               </p>
 
               <div className={styles.activitySteps}>
@@ -900,7 +899,7 @@ export function PersonalFinanceMvp({
                   <span className={styles.activityStepNumber}>
                     1
                   </span>
-                  Add CSV files
+                  Import CSV files
                 </span>
 
                 <span className={styles.activityStep}>
