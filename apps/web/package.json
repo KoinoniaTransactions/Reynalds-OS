@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test": "vitest",
     "test:product-registry": "vitest run lib/productRegistry.test.ts",
-    "personal:convert:navy-federal": "node scripts/convert-navy-federal-statement.mjs"
+    "personal:convert:navy-federal": "node scripts/convert-navy-federal-statement.mjs",
+    "personal:import:transactions": "node scripts/import-personal-finance-transactions.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.6.2",
