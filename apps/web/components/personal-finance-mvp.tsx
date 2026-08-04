@@ -1,12 +1,11 @@
-import type {
-  CSSProperties,
-  ReactNode
-} from "react";
+import type { ReactNode } from "react";
 
 import type {
   BudgetBill,
   PersonalFinanceMonth
 } from "../lib/personal-finance-local";
+
+import styles from "./personal-finance-mvp.module.css";
 
 type BillStatus =
   | "Paid"
@@ -15,18 +14,46 @@ type BillStatus =
   | "Over budget"
   | "No amount";
 
+type AttentionTone = "critical" | "warning" | "info";
+
+type AttentionItem = {
+  id: string;
+  title: string;
+  detail: string;
+  href: string;
+  signal: string;
+  tone: AttentionTone;
+  amount?: number;
+};
+
+type CashFlowItem = {
+  id: string;
+  title: string;
+  detail: string;
+  dateLabel: string;
+  amount: number;
+  kind: "income" | "bill";
+  sortValue: number;
+};
+
 type PersonalFinanceMvpProps = {
   budget: PersonalFinanceMonth | null;
   unavailableReason?: string | null;
 };
 
-function money(value: number) {
+function money(value: number): string {
   return new Intl.NumberFormat("en-US", {
     currency: "USD",
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
     style: "currency"
   }).format(value);
+}
+
+function sumMoney(values: number[]): number {
+  return Math.round(
+    values.reduce((total, value) => total + value, 0) * 100
+  ) / 100;
 }
 
 function billStatus(bill: BudgetBill): BillStatus {
@@ -49,100 +76,192 @@ function billStatus(bill: BudgetBill): BillStatus {
   return "Unpaid";
 }
 
-function statusStyle(status: BillStatus): CSSProperties {
-  const base: CSSProperties = {
-    borderRadius: 999,
-    display: "inline-flex",
-    fontSize: 12,
-    fontWeight: 700,
-    padding: "5px 9px",
-    whiteSpace: "nowrap"
-  };
+function statusClassName(status: BillStatus): string {
+  const classNames = [styles.status];
 
   if (status === "Paid") {
-    return {
-      ...base,
-      background: "rgba(34, 197, 94, 0.12)",
-      color: "#15803d"
-    };
+    classNames.push(styles.statusPaid);
+  } else if (status === "Partially paid") {
+    classNames.push(styles.statusPartial);
+  } else if (status === "Unpaid") {
+    classNames.push(styles.statusUnpaid);
+  } else if (status === "Over budget") {
+    classNames.push(styles.statusOver);
+  } else {
+    classNames.push(styles.statusMissing);
   }
 
-  if (status === "Partially paid") {
-    return {
-      ...base,
-      background: "rgba(234, 179, 8, 0.15)",
-      color: "#a16207"
-    };
-  }
-
-  if (status === "Unpaid") {
-    return {
-      ...base,
-      background: "rgba(239, 68, 68, 0.12)",
-      color: "#b91c1c"
-    };
-  }
-
-  if (status === "Over budget") {
-    return {
-      ...base,
-      background: "rgba(249, 115, 22, 0.14)",
-      color: "#c2410c"
-    };
-  }
-
-  return {
-    ...base,
-    background: "rgba(100, 116, 139, 0.12)",
-    color: "#475569"
-  };
+  return classNames.join(" ");
 }
 
-function PersonalFinanceShell({
+function attentionClassName(tone: AttentionTone): string {
+  const classNames = [styles.attentionItem];
+
+  if (tone === "critical") {
+    classNames.push(styles.attentionCritical);
+  } else if (tone === "warning") {
+    classNames.push(styles.attentionWarning);
+  } else {
+    classNames.push(styles.attentionInfo);
+  }
+
+  return classNames.join(" ");
+}
+
+function valueClassName(value: number): string {
+  if (value > 0) {
+    return `${styles.heroValue} ${styles.positive}`;
+  }
+
+  if (value < 0) {
+    return `${styles.heroValue} ${styles.negative}`;
+  }
+
+  return `${styles.heroValue} ${styles.neutral}`;
+}
+
+function dateSortValue(
+  label: string,
+  budgetMonth: number,
+  budgetYear: number
+): number {
+  const trimmed = label.trim();
+
+  if (!trimmed || trimmed.toLowerCase() === "not entered") {
+    return Number.MAX_SAFE_INTEGER;
+  }
+
+  const numericDate = trimmed.match(
+    /^(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?$/
+  );
+
+  if (numericDate) {
+    const month = Number(numericDate[1]) - 1;
+    const day = Number(numericDate[2]);
+
+    let year = numericDate[3]
+      ? Number(numericDate[3])
+      : budgetYear;
+
+    if (year < 100) {
+      year += 2000;
+    }
+
+    return new Date(year, month, day).getTime();
+  }
+
+  const dayOnly = trimmed.match(
+    /^(?:due\s*)?(\d{1,2})(?:st|nd|rd|th)?$/i
+  );
+
+  if (dayOnly) {
+    return new Date(
+      budgetYear,
+      budgetMonth,
+      Number(dayOnly[1])
+    ).getTime();
+  }
+
+  const parsed = Date.parse(`${trimmed} ${budgetYear}`);
+
+  return Number.isNaN(parsed)
+    ? Number.MAX_SAFE_INTEGER
+    : parsed;
+}
+
+function PersonalFinanceFrame({
   children,
-  topbarLabel
+  monthLabel,
+  sourceFile
 }: {
   children: ReactNode;
-  topbarLabel: string;
+  monthLabel: string;
+  sourceFile: string;
 }) {
+  const navigation = [
+    ["Overview", "#overview"],
+    ["Activity", "#activity"],
+    ["Bills", "#bills"],
+    ["Income", "#income"],
+    ["Accounts", "#accounts"],
+    ["Rules", "#rules"]
+  ] as const;
+
   return (
-    <main className="ros-app">
-      <aside className="ros-sidebar">
-        <div className="ros-brand">
-          <div className="ros-mark">R</div>
-          <div>
-            <strong>ROS</strong>
-            <span>Personal Finance</span>
+    <main className={styles.app}>
+      <aside className={styles.rail}>
+        <div className={styles.brand}>
+          <div className={styles.brandMark}>R</div>
+
+          <div className={styles.brandCopy}>
+            <span className={styles.brandName}>
+              Personal Finance
+            </span>
+
+            <span className={styles.brandSubtitle}>
+              Local budget workspace
+            </span>
           </div>
         </div>
 
-        <nav>
-          <a href="/dashboard">Dashboard</a>
-          <a href="/personal" className="active">
-            Personal
-          </a>
-          <a href="/finance">Business Finance</a>
-          <a href="/objects">Object Explorer</a>
+        <nav
+          className={styles.nav}
+          aria-label="Personal finance sections"
+        >
+          {navigation.map(([label, href]) => (
+            <a
+              className={styles.navLink}
+              href={href}
+              key={href}
+            >
+              <span className={styles.navDot} />
+              {label}
+            </a>
+          ))}
         </nav>
+
+        <div className={styles.railFooter}>
+          <span className={styles.railFooterLabel}>
+            Data source
+          </span>
+
+          <span className={styles.railFooterValue}>
+            {sourceFile}
+          </span>
+
+          <a className={styles.rosLink} href="/dashboard">
+            Return to ROS
+          </a>
+        </div>
       </aside>
 
-      <section className="ros-main">
-        <header className="ros-topbar">
-          <input
-            placeholder="Local-only household budget"
-            disabled
-          />
+      <section className={styles.workspace}>
+        <header className={styles.header}>
+          <div className={styles.headerCopy}>
+            <p className={styles.eyebrow}>
+              Household command center
+            </p>
 
-          <button type="button" disabled>
-            {topbarLabel}
-          </button>
+            <h1 className={styles.title}>
+              {monthLabel}
+            </h1>
 
-          <a
-            className="ros-button-link"
-            href="/dashboard"
-          >
-            Dashboard
-          </a>
+            <p className={styles.subtitle}>
+              See what is available, what needs attention,
+              and what is expected next without digging
+              through disconnected cards.
+            </p>
+          </div>
+
+          <div className={styles.headerMeta}>
+            <span className={styles.localBadge}>
+              Local only
+            </span>
+
+            <span className={styles.monthBadge}>
+              {monthLabel}
+            </span>
+          </div>
         </header>
 
         {children}
@@ -157,55 +276,247 @@ export function PersonalFinanceMvp({
 }: PersonalFinanceMvpProps) {
   if (!budget) {
     return (
-      <PersonalFinanceShell topbarLabel="Local Only">
-        <div className="ros-eyebrow">
-          Personal Finance · Local Workspace
-        </div>
+      <PersonalFinanceFrame
+        monthLabel="Personal Finance"
+        sourceFile="No local file loaded"
+      >
+        <section className={styles.unavailable}>
+          <h2 className={styles.unavailableTitle}>
+            Local budget is not available
+          </h2>
 
-        <h1>Personal Finance</h1>
-
-        <p className="ros-subtitle">
-          This workspace reads private budget data from an ignored
-          local file and is unavailable on non-localhost requests.
-        </p>
-
-        <section
-          className="ros-card"
-          style={{ marginTop: 18 }}
-        >
-          <h2>Local budget is not available</h2>
-
-          <p>
+          <p className={styles.unavailableText}>
             {unavailableReason ??
               "The local budget file has not been configured."}
           </p>
 
-          <p style={{ marginBottom: 0 }}>
-            Expected local location:{" "}
-            <code>
-              .local/personal-finance/JM_Budget_July_2026.csv
-            </code>
-          </p>
+          <code className={styles.code}>
+            .local/personal-finance/JM_Budget_July_2026.csv
+          </code>
         </section>
-      </PersonalFinanceShell>
+      </PersonalFinanceFrame>
     );
   }
 
   const projectedEndingBalance =
     budget.totals.projectedEndingBalance;
 
+  const safeToSpend = Math.max(
+    budget.totals.totalBankBalance -
+      budget.totals.billsRemaining,
+    0
+  );
+
   const goalGap = Math.max(
     budget.goal - projectedEndingBalance,
     0
   );
 
-  const goalProgress =
-    budget.goal > 0
-      ? Math.min(
-          Math.max(projectedEndingBalance, 0),
-          budget.goal
+  const goalProgress = Math.min(
+    Math.max(projectedEndingBalance, 0),
+    Math.max(budget.goal, 1)
+  );
+
+  const overBudgetBills = budget.bills.filter(
+    (bill) => billStatus(bill) === "Over budget"
+  );
+
+  const partiallyPaidBills = budget.bills.filter(
+    (bill) => billStatus(bill) === "Partially paid"
+  );
+
+  const unpaidBills = budget.bills.filter(
+    (bill) => billStatus(bill) === "Unpaid"
+  );
+
+  const noAmountBills = budget.bills.filter(
+    (bill) => billStatus(bill) === "No amount"
+  );
+
+  const pendingIncome = budget.income.filter(
+    (income) => income.expected - income.received > 0
+  );
+
+  const overBudgetAmount = sumMoney(
+    overBudgetBills.map((bill) =>
+      Math.max(
+        bill.paid - bill.budgeted,
+        Math.abs(Math.min(bill.remaining, 0))
+      )
+    )
+  );
+
+  const partialRemaining = sumMoney(
+    partiallyPaidBills.map((bill) =>
+      Math.max(bill.remaining, 0)
+    )
+  );
+
+  const unpaidRemaining = sumMoney(
+    unpaidBills.map((bill) =>
+      Math.max(bill.remaining, 0)
+    )
+  );
+
+  const pendingIncomeAmount = sumMoney(
+    pendingIncome.map(
+      (income) => income.expected - income.received
+    )
+  );
+
+  const attentionItems: AttentionItem[] = [];
+
+  if (goalGap > 0) {
+    attentionItems.push({
+      id: "goal-gap",
+      title: "Month-end goal is short",
+      detail:
+        "The current projection is below the amount you want left at month-end.",
+      href: "#overview",
+      signal: "!",
+      tone: "critical",
+      amount: goalGap
+    });
+  }
+
+  if (overBudgetBills.length > 0) {
+    attentionItems.push({
+      id: "over-budget",
+      title: `${overBudgetBills.length} ${
+        overBudgetBills.length === 1 ? "bill is" : "bills are"
+      } over budget`,
+      detail:
+        "Recorded payments exceed the planned amount for these obligations.",
+      href: "#bills",
+      signal: "!",
+      tone: "critical",
+      amount: overBudgetAmount
+    });
+  }
+
+  if (partiallyPaidBills.length > 0) {
+    attentionItems.push({
+      id: "partially-paid",
+      title: `${partiallyPaidBills.length} partially paid ${
+        partiallyPaidBills.length === 1 ? "bill" : "bills"
+      }`,
+      detail:
+        "These obligations still have a remaining amount recorded in the plan.",
+      href: "#bills",
+      signal: "~",
+      tone: "warning",
+      amount: partialRemaining
+    });
+  }
+
+  if (unpaidBills.length > 0) {
+    attentionItems.push({
+      id: "unpaid",
+      title: `${unpaidBills.length} unpaid ${
+        unpaidBills.length === 1 ? "bill" : "bills"
+      }`,
+      detail:
+        "These obligations currently have no payment recorded.",
+      href: "#bills",
+      signal: "!",
+      tone: "critical",
+      amount: unpaidRemaining
+    });
+  }
+
+  if (pendingIncome.length > 0) {
+    attentionItems.push({
+      id: "pending-income",
+      title: `${pendingIncome.length} pending income ${
+        pendingIncome.length === 1 ? "entry" : "entries"
+      }`,
+      detail:
+        "These expected deposits are not yet recorded as received.",
+      href: "#income",
+      signal: "+",
+      tone: "info",
+      amount: pendingIncomeAmount
+    });
+  }
+
+  if (noAmountBills.length > 0) {
+    attentionItems.push({
+      id: "missing-amounts",
+      title: `${noAmountBills.length} ${
+        noAmountBills.length === 1 ? "bill has" : "bills have"
+      } no amount`,
+      detail:
+        "These obligations cannot be included accurately until an amount is entered.",
+      href: "#bills",
+      signal: "?",
+      tone: "warning"
+    });
+  }
+
+  if (attentionItems.length === 0) {
+    attentionItems.push({
+      id: "all-clear",
+      title: "No plan exceptions are currently flagged",
+      detail:
+        "The current budget has no unpaid, partial, over-budget, or missing entries.",
+      href: "#overview",
+      signal: "✓",
+      tone: "info"
+    });
+  }
+
+  const monthDate = new Date(`1 ${budget.month}`);
+
+  const budgetMonth = Number.isNaN(monthDate.getTime())
+    ? new Date().getMonth()
+    : monthDate.getMonth();
+
+  const budgetYear = Number.isNaN(monthDate.getTime())
+    ? new Date().getFullYear()
+    : monthDate.getFullYear();
+
+  const cashFlowItems: CashFlowItem[] = [
+    ...pendingIncome.map((income) => ({
+      id: `cash-income-${income.id}`,
+      title: "Expected income",
+      detail: "Pending deposit from the monthly plan",
+      dateLabel: income.date,
+      amount: income.expected - income.received,
+      kind: "income" as const,
+      sortValue: dateSortValue(
+        income.date,
+        budgetMonth,
+        budgetYear
+      )
+    })),
+    ...budget.bills
+      .filter((bill) => bill.remaining > 0)
+      .map((bill) => ({
+        id: `cash-bill-${bill.id}`,
+        title: bill.name,
+        detail: `${bill.paymentMethod} · ${billStatus(bill)}`,
+        dateLabel: bill.due,
+        amount: bill.remaining,
+        kind: "bill" as const,
+        sortValue: dateSortValue(
+          bill.due,
+          budgetMonth,
+          budgetYear
         )
-      : 0;
+      }))
+  ]
+    .sort((left, right) => {
+      if (left.sortValue !== right.sortValue) {
+        return left.sortValue - right.sortValue;
+      }
+
+      if (left.kind !== right.kind) {
+        return left.kind === "income" ? -1 : 1;
+      }
+
+      return left.title.localeCompare(right.title);
+    })
+    .slice(0, 12);
 
   const creditUtilization =
     budget.totals.totalCreditLimit > 0
@@ -214,273 +525,353 @@ export function PersonalFinanceMvp({
         100
       : 0;
 
-  const billCounts = budget.bills.reduce<
-    Record<BillStatus, number>
-  >(
-    (counts, bill) => {
-      const status = billStatus(bill);
-      counts[status] += 1;
-      return counts;
-    },
-    {
-      "No amount": 0,
-      "Over budget": 0,
-      "Partially paid": 0,
-      Paid: 0,
-      Unpaid: 0
-    }
-  );
-
   return (
-    <PersonalFinanceShell topbarLabel={budget.month}>
-      <div className="ros-eyebrow">
-        Personal Finance · Local Budget Data
-      </div>
-
-      <h1>{budget.month} Household Budget</h1>
-
-      <p className="ros-subtitle">
-        A local-only monthly position built from{" "}
-        {budget.sourceFile}. The private CSV remains outside
-        tracked application source.
-      </p>
-
+    <PersonalFinanceFrame
+      monthLabel={`${budget.month} budget`}
+      sourceFile={budget.sourceFile}
+    >
       <section
-        className="ros-grid"
-        style={{ marginBottom: 18 }}
+        className={`${styles.hero} ${styles.sectionAnchor}`}
+        id="overview"
       >
-        <article className="ros-card">
-          <span>Projected Month-End</span>
-          <strong>
+        <div className={styles.heroPrimary}>
+          <span className={styles.label}>
+            Projected month-end
+          </span>
+
+          <strong
+            className={valueClassName(
+              projectedEndingBalance
+            )}
+          >
             {money(projectedEndingBalance)}
           </strong>
-          <p>after remaining income and bills</p>
-        </article>
 
-        <article className="ros-card">
-          <span>Bills Remaining</span>
-          <strong>
-            {money(budget.totals.billsRemaining)}
-          </strong>
-          <p>
-            {billCounts.Unpaid} unpaid ·{" "}
-            {billCounts["Partially paid"]} partial
+          <p className={styles.heroDescription}>
+            Current bank balances plus pending income,
+            minus every bill still recorded as remaining.
           </p>
-        </article>
+        </div>
 
-        <article className="ros-card">
-          <span>Income Remaining</span>
-          <strong>
-            {money(budget.totals.incomeRemaining)}
-          </strong>
-          <p>
-            {money(budget.totals.incomeReceived)} received
+        <div className={styles.heroGoal}>
+          <div className={styles.goalHeader}>
+            <div>
+              <span className={styles.label}>
+                Month-end target
+              </span>
+
+              <strong className={styles.goalValue}>
+                {money(budget.goal)}
+              </strong>
+            </div>
+
+            <span
+              className={
+                goalGap > 0
+                  ? styles.goalGap
+                  : styles.goalMet
+              }
+            >
+              {goalGap > 0
+                ? `${money(goalGap)} short`
+                : "Target met"}
+            </span>
+          </div>
+
+          <progress
+            className={styles.progress}
+            max={Math.max(budget.goal, 1)}
+            value={goalProgress}
+          />
+
+          <p className={styles.goalFormula}>
+            {money(budget.totals.totalBankBalance)} bank
+            balance +{" "}
+            {money(budget.totals.incomeRemaining)} pending
+            income -{" "}
+            {money(budget.totals.billsRemaining)} remaining
+            bills.
           </p>
-        </article>
-
-        <article className="ros-card">
-          <span>Current Bank Balance</span>
-          <strong>
-            {money(budget.totals.totalBankBalance)}
-          </strong>
-          <p>combined balance entered in the CSV</p>
-        </article>
+        </div>
       </section>
 
       <section
-        className="ros-card"
-        style={{
-          marginBottom: 18,
-          marginTop: 18
-        }}
+        className={styles.metrics}
+        aria-label="Budget summary"
       >
-        <div
-          style={{
-            alignItems: "flex-start",
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 24,
-            justifyContent: "space-between"
-          }}
-        >
-          <div>
-            <span>End-of-Month Goal</span>
+        <div className={styles.metric}>
+          <span className={styles.label}>
+            Available now
+          </span>
 
-            <h2 style={{ marginBottom: 6 }}>
-              {money(budget.goal)} left over
+          <strong className={styles.metricValue}>
+            {money(budget.totals.totalBankBalance)}
+          </strong>
+
+          <span className={styles.metricNote}>
+            Combined bank balance entered in the CSV
+          </span>
+        </div>
+
+        <div className={styles.metric}>
+          <span className={styles.label}>
+            Safe to spend
+          </span>
+
+          <strong
+            className={`${styles.metricValue} ${
+              safeToSpend > 0
+                ? styles.positive
+                : styles.negative
+            }`}
+          >
+            {money(safeToSpend)}
+          </strong>
+
+          <span className={styles.metricNote}>
+            Current cash minus every remaining bill
+          </span>
+        </div>
+
+        <div className={styles.metric}>
+          <span className={styles.label}>
+            Bills remaining
+          </span>
+
+          <strong
+            className={`${styles.metricValue} ${styles.negative}`}
+          >
+            {money(budget.totals.billsRemaining)}
+          </strong>
+
+          <span className={styles.metricNote}>
+            {unpaidBills.length} unpaid ·{" "}
+            {partiallyPaidBills.length} partial
+          </span>
+        </div>
+
+        <div className={styles.metric}>
+          <span className={styles.label}>
+            Income pending
+          </span>
+
+          <strong
+            className={`${styles.metricValue} ${styles.positive}`}
+          >
+            {money(budget.totals.incomeRemaining)}
+          </strong>
+
+          <span className={styles.metricNote}>
+            {money(budget.totals.incomeReceived)} already
+            recorded as received
+          </span>
+        </div>
+      </section>
+
+      <div className={styles.primaryGrid}>
+        <section className={styles.panel}>
+          <header className={styles.panelHeader}>
+            <div className={styles.panelHeaderCopy}>
+              <h2 className={styles.panelTitle}>
+                Needs attention
+              </h2>
+
+              <p className={styles.panelDescription}>
+                Exceptions that could change your current
+                month-end result.
+              </p>
+            </div>
+
+            <span className={styles.countBadge}>
+              {attentionItems.length}
+            </span>
+          </header>
+
+          <div className={styles.attentionList}>
+            {attentionItems.map((item) => (
+              <a
+                className={attentionClassName(item.tone)}
+                href={item.href}
+                key={item.id}
+              >
+                <span className={styles.attentionSignal}>
+                  {item.signal}
+                </span>
+
+                <span className={styles.attentionMain}>
+                  <span className={styles.attentionTitle}>
+                    {item.title}
+                  </span>
+
+                  <span className={styles.attentionDetail}>
+                    {item.detail}
+                  </span>
+                </span>
+
+                {typeof item.amount === "number" ? (
+                  <span className={styles.attentionValue}>
+                    {money(item.amount)}
+                  </span>
+                ) : null}
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.panel}>
+          <header className={styles.panelHeader}>
+            <div className={styles.panelHeaderCopy}>
+              <h2 className={styles.panelTitle}>
+                Upcoming cash flow
+              </h2>
+
+              <p className={styles.panelDescription}>
+                Pending deposits and remaining bills in
+                date order when a date can be read.
+              </p>
+            </div>
+
+            <span className={styles.countBadge}>
+              {cashFlowItems.length}
+            </span>
+          </header>
+
+          {cashFlowItems.length > 0 ? (
+            <div className={styles.cashFlowList}>
+              {cashFlowItems.map((item) => (
+                <div
+                  className={styles.cashFlowRow}
+                  key={item.id}
+                >
+                  <span className={styles.cashFlowDate}>
+                    {item.dateLabel}
+                  </span>
+
+                  <span
+                    className={`${styles.cashFlowMarker} ${
+                      item.kind === "income"
+                        ? styles.cashFlowIncome
+                        : styles.cashFlowBill
+                    }`}
+                  />
+
+                  <span className={styles.cashFlowCopy}>
+                    <span className={styles.cashFlowTitle}>
+                      {item.title}
+                    </span>
+
+                    <span className={styles.cashFlowDetail}>
+                      {item.detail}
+                    </span>
+                  </span>
+
+                  <span
+                    className={`${styles.cashFlowAmount} ${
+                      item.kind === "income"
+                        ? styles.positive
+                        : styles.negative
+                    }`}
+                  >
+                    {item.kind === "income" ? "+" : "-"}
+                    {money(item.amount)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyList}>
+              No pending cash-flow items are recorded.
+            </div>
+          )}
+        </section>
+      </div>
+
+      <section
+        className={`${styles.panel} ${styles.activity} ${styles.sectionAnchor}`}
+        id="activity"
+      >
+        <header className={styles.panelHeader}>
+          <div className={styles.panelHeaderCopy}>
+            <h2 className={styles.panelTitle}>
+              Recent activity
             </h2>
 
-            <p style={{ marginBottom: 0 }}>
-              Current projection:{" "}
-              <strong>
-                {money(projectedEndingBalance)}
-              </strong>
+            <p className={styles.panelDescription}>
+              This becomes the confirmation feed for
+              recognized paychecks and processed bills.
             </p>
           </div>
 
-          <div style={{ minWidth: 220 }}>
-            <span>Projected Goal Gap</span>
+          <span className={styles.countBadge}>0</span>
+        </header>
 
-            <strong
-              style={{
-                display: "block",
-                fontSize: 28,
-                marginTop: 8
-              }}
-            >
-              {money(goalGap)}
-            </strong>
+        <div className={styles.activityEmpty}>
+          <div className={styles.activityIcon}>↻</div>
+
+          <div>
+            <h3 className={styles.activityTitle}>
+              No transaction ledger is connected yet
+            </h3>
+
+            <p className={styles.activityText}>
+              The paid and received values shown today come
+              from the monthly budget CSV. The next smart-data
+              slice will import bank and card transactions,
+              match them to income and bills, and send uncertain
+              matches to a review queue.
+            </p>
+
+            <div className={styles.activitySteps}>
+              <span className={styles.activityStep}>
+                <span className={styles.activityStepNumber}>
+                  1
+                </span>
+                Import transactions
+              </span>
+
+              <span className={styles.activityStep}>
+                <span className={styles.activityStepNumber}>
+                  2
+                </span>
+                Match bills and income
+              </span>
+
+              <span className={styles.activityStep}>
+                <span className={styles.activityStepNumber}>
+                  3
+                </span>
+                Review uncertain items
+              </span>
+            </div>
           </div>
         </div>
-
-        <progress
-          max={budget.goal || 1}
-          value={goalProgress}
-          style={{
-            marginTop: 18,
-            width: "100%"
-          }}
-        />
-
-        <p
-          style={{
-            marginBottom: 0,
-            marginTop: 10
-          }}
-        >
-          Calculation:{" "}
-          {money(budget.totals.totalBankBalance)} bank
-          balance +{" "}
-          {money(budget.totals.incomeRemaining)} remaining
-          income -{" "}
-          {money(budget.totals.billsRemaining)} remaining
-          bills = {money(projectedEndingBalance)}.
-        </p>
-      </section>
-
-      <section className="ros-object-layout">
-        <article className="ros-card">
-          <h2>Income Schedule</h2>
-
-          <div style={{ overflowX: "auto" }}>
-            <table className="ros-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Expected</th>
-                  <th>Received</th>
-                  <th>Remaining</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {budget.income.map((income) => {
-                  const remaining = Math.max(
-                    income.expected - income.received,
-                    0
-                  );
-
-                  const received = remaining === 0;
-
-                  return (
-                    <tr key={income.id}>
-                      <td>
-                        <strong>{income.date}</strong>
-                      </td>
-                      <td>{money(income.expected)}</td>
-                      <td>{money(income.received)}</td>
-                      <td>{money(remaining)}</td>
-                      <td>
-                        <span
-                          style={statusStyle(
-                            received ? "Paid" : "Unpaid"
-                          )}
-                        >
-                          {received
-                            ? "Received"
-                            : "Pending"}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-
-              <tfoot>
-                <tr>
-                  <th>Total</th>
-                  <th>
-                    {money(
-                      budget.totals.incomeExpected
-                    )}
-                  </th>
-                  <th>
-                    {money(
-                      budget.totals.incomeReceived
-                    )}
-                  </th>
-                  <th>
-                    {money(
-                      budget.totals.incomeRemaining
-                    )}
-                  </th>
-                  <th />
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </article>
-
-        <aside className="ros-card">
-          <h2>Account Snapshot</h2>
-
-          <div className="ros-form">
-            {budget.accounts.map((account) => (
-              <article
-                className="ros-code"
-                key={account.id}
-              >
-                <span>{account.name}</span>
-
-                <strong
-                  style={{
-                    display: "block",
-                    fontSize: account.emphasis
-                      ? 26
-                      : 20,
-                    marginTop: 6
-                  }}
-                >
-                  {money(account.amount)}
-                </strong>
-              </article>
-            ))}
-          </div>
-        </aside>
       </section>
 
       <section
-        className="ros-card"
+        className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
         id="bills"
-        style={{
-          marginBottom: 18,
-          marginTop: 18
-        }}
       >
-        <h2>Bills and Monthly Obligations</h2>
+        <header className={styles.panelHeader}>
+          <div className={styles.panelHeaderCopy}>
+            <h2 className={styles.panelTitle}>
+              Bills and obligations
+            </h2>
 
-        <p>
-          {billCounts.Paid} paid ·{" "}
-          {billCounts["Partially paid"]} partially paid ·{" "}
-          {billCounts.Unpaid} unpaid ·{" "}
-          {billCounts["Over budget"]} over budget ·{" "}
-          {billCounts["No amount"]} without an entered
-          amount
-        </p>
+            <p className={styles.panelDescription}>
+              {budget.bills.length} entries ·{" "}
+              {money(budget.totals.expensesBudgeted)} planned ·{" "}
+              {money(budget.totals.expensesPaid)} recorded
+              as paid.
+            </p>
+          </div>
 
-        <div style={{ overflowX: "auto" }}>
-          <table className="ros-table">
+          <span className={styles.countBadge}>
+            {budget.bills.length}
+          </span>
+        </header>
+
+        <div className={styles.tableWrap}>
+          <table className={styles.table}>
             <thead>
               <tr>
                 <th>Bill</th>
@@ -488,7 +879,7 @@ export function PersonalFinanceMvp({
                 <th>Paid</th>
                 <th>Remaining</th>
                 <th>Due</th>
-                <th>Payment Method</th>
+                <th>Method</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -500,22 +891,30 @@ export function PersonalFinanceMvp({
                 return (
                   <tr key={bill.id}>
                     <td>
-                      <strong>{bill.name}</strong>
+                      <span className={styles.tableName}>
+                        {bill.name}
+                      </span>
                     </td>
+
                     <td>{money(bill.budgeted)}</td>
                     <td>{money(bill.paid)}</td>
-                    <td>{money(bill.remaining)}</td>
+
                     <td
-                      style={{
-                        whiteSpace: "nowrap"
-                      }}
+                      className={
+                        bill.remaining > 0
+                          ? styles.negative
+                          : styles.positive
+                      }
                     >
-                      {bill.due}
+                      {money(bill.remaining)}
                     </td>
+
+                    <td>{bill.due}</td>
                     <td>{bill.paymentMethod}</td>
+
                     <td>
                       <span
-                        style={statusStyle(status)}
+                        className={statusClassName(status)}
                       >
                         {status}
                       </span>
@@ -526,172 +925,361 @@ export function PersonalFinanceMvp({
             </tbody>
 
             <tfoot>
-              <tr>
-                <th>Total</th>
-                <th>
+              <tr className={styles.tableTotal}>
+                <td>Total</td>
+
+                <td>
                   {money(
                     budget.totals.expensesBudgeted
                   )}
-                </th>
-                <th>
-                  {money(
-                    budget.totals.expensesPaid
-                  )}
-                </th>
-                <th>
-                  {money(
-                    budget.totals.billsRemaining
-                  )}
-                </th>
-                <th />
-                <th />
-                <th />
+                </td>
+
+                <td>
+                  {money(budget.totals.expensesPaid)}
+                </td>
+
+                <td>
+                  {money(budget.totals.billsRemaining)}
+                </td>
+
+                <td />
+                <td />
+                <td />
               </tr>
             </tfoot>
           </table>
         </div>
       </section>
 
-      <section className="ros-object-layout">
-        <article className="ros-card">
-          <h2>Credit Snapshot</h2>
+      <section
+        className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
+        id="income"
+      >
+        <header className={styles.panelHeader}>
+          <div className={styles.panelHeaderCopy}>
+            <h2 className={styles.panelTitle}>
+              Income schedule
+            </h2>
 
-          <p>
-            Total utilization:{" "}
-            <strong>
-              {creditUtilization.toFixed(1)}%
-            </strong>
-          </p>
+            <p className={styles.panelDescription}>
+              Expected deposits and the amount currently
+              recorded as received.
+            </p>
+          </div>
 
-          <div style={{ overflowX: "auto" }}>
-            <table className="ros-table">
-              <thead>
-                <tr>
-                  <th>Account</th>
-                  <th>Limit</th>
-                  <th>Balance</th>
-                  <th>Minimum</th>
-                  <th>Available</th>
-                </tr>
-              </thead>
+          <span className={styles.countBadge}>
+            {budget.income.length}
+          </span>
+        </header>
 
-              <tbody>
-                {budget.creditAccounts.map(
-                  (account) => (
-                    <tr key={account.id}>
-                      <td>
-                        <strong>
-                          {account.name}
-                        </strong>
-                      </td>
-                      <td>
-                        {money(account.limit)}
-                      </td>
-                      <td>
-                        {money(account.balance)}
-                      </td>
-                      <td>
-                        {money(
-                          account.minimumPayment
+        <div className={styles.tableWrap}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Expected</th>
+                <th>Received</th>
+                <th>Remaining</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {budget.income.map((income) => {
+                const remaining = Math.max(
+                  income.expected - income.received,
+                  0
+                );
+
+                const received = remaining === 0;
+
+                return (
+                  <tr key={income.id}>
+                    <td>
+                      <span className={styles.tableName}>
+                        {income.date}
+                      </span>
+                    </td>
+
+                    <td>{money(income.expected)}</td>
+                    <td>{money(income.received)}</td>
+
+                    <td
+                      className={
+                        remaining > 0
+                          ? styles.positive
+                          : styles.neutral
+                      }
+                    >
+                      {money(remaining)}
+                    </td>
+
+                    <td>
+                      <span
+                        className={statusClassName(
+                          received ? "Paid" : "Unpaid"
                         )}
-                      </td>
-                      <td>
-                        {money(account.available)}
-                      </td>
-                    </tr>
-                  )
-                )}
-              </tbody>
+                      >
+                        {received ? "Received" : "Pending"}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
 
-              <tfoot>
-                <tr>
-                  <th>Total</th>
-                  <th>
-                    {money(
-                      budget.totals.totalCreditLimit
-                    )}
-                  </th>
-                  <th>
-                    {money(
-                      budget.totals.totalCreditBalance
-                    )}
-                  </th>
-                  <th>
-                    {money(
-                      budget.totals
-                        .totalMinimumPayments
-                    )}
-                  </th>
-                  <th>
-                    {money(
-                      budget.totals
-                        .totalAvailableCredit
-                    )}
-                  </th>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </article>
+            <tfoot>
+              <tr className={styles.tableTotal}>
+                <td>Total</td>
 
-        <aside className="ros-card">
-          <h2>Irregular Expenses</h2>
+                <td>
+                  {money(budget.totals.incomeExpected)}
+                </td>
 
-          <div className="ros-form">
-            {budget.irregularExpenses.map(
-              (expense) => (
-                <article
-                  className="ros-code"
-                  key={expense.id}
-                >
-                  <strong>{expense.name}</strong>
+                <td>
+                  {money(budget.totals.incomeReceived)}
+                </td>
 
-                  <p>
-                    {expense.amount === null
-                      ? "Amount not entered"
-                      : money(expense.amount)}
-                  </p>
+                <td>
+                  {money(budget.totals.incomeRemaining)}
+                </td>
 
-                  <span>{expense.note}</span>
-                </article>
-              )
-            )}
-          </div>
-        </aside>
+                <td />
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </section>
 
       <section
-        className="ros-card"
-        style={{
-          marginBottom: 18,
-          marginTop: 18
-        }}
+        className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
+        id="accounts"
       >
-        <h2>Local Data Notes</h2>
+        <header className={styles.panelHeader}>
+          <div className={styles.panelHeaderCopy}>
+            <h2 className={styles.panelTitle}>
+              Accounts
+            </h2>
 
-        <ul>
-          <li>
-            This page reads the CSV only on the local
-            Next.js server.
-          </li>
-          <li>
-            The CSV and local environment switch are
-            ignored by Git.
-          </li>
-          <li>
-            Non-localhost requests to this route return
-            the application&apos;s not-found response.
-          </li>
-          <li>
-            Several due dates in the source file are from
-            earlier months and are displayed exactly as
-            entered.
-          </li>
-          <li>
-            No database or bank connection is active.
-          </li>
-        </ul>
+            <p className={styles.panelDescription}>
+              Cash position and credit exposure from the
+              current monthly snapshot.
+            </p>
+          </div>
+
+          <span className={styles.countBadge}>
+            {budget.accounts.length +
+              budget.creditAccounts.length}
+          </span>
+        </header>
+
+        <div className={styles.detailGrid}>
+          <div className={styles.subsection}>
+            <h3 className={styles.subsectionTitle}>
+              Bank balances
+            </h3>
+
+            <div className={styles.accountList}>
+              {budget.accounts.map((account) => (
+                <div
+                  className={styles.accountRow}
+                  key={account.id}
+                >
+                  <span className={styles.accountName}>
+                    {account.name}
+                  </span>
+
+                  <strong
+                    className={`${styles.accountAmount} ${
+                      account.emphasis
+                        ? styles.accountEmphasis
+                        : ""
+                    }`}
+                  >
+                    {money(account.amount)}
+                  </strong>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.subsection}>
+            <h3 className={styles.subsectionTitle}>
+              Credit accounts ·{" "}
+              {creditUtilization.toFixed(1)}% utilized
+            </h3>
+
+            <div className={styles.creditList}>
+              {budget.creditAccounts.map((account) => (
+                <div
+                  className={styles.creditRow}
+                  key={account.id}
+                >
+                  <div className={styles.creditHeader}>
+                    <span className={styles.creditName}>
+                      {account.name}
+                    </span>
+
+                    <strong
+                      className={styles.creditBalance}
+                    >
+                      {money(account.balance)}
+                    </strong>
+                  </div>
+
+                  <progress
+                    className={styles.creditProgress}
+                    max={Math.max(account.limit, 1)}
+                    value={Math.min(
+                      account.balance,
+                      account.limit
+                    )}
+                  />
+
+                  <div className={styles.creditMeta}>
+                    <span>
+                      {money(account.available)} available
+                    </span>
+
+                    <span>
+                      {money(account.minimumPayment)} minimum
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
-    </PersonalFinanceShell>
+
+      <section
+        className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
+        id="rules"
+      >
+        <header className={styles.panelHeader}>
+          <div className={styles.panelHeaderCopy}>
+            <h2 className={styles.panelTitle}>
+              Rules and review
+            </h2>
+
+            <p className={styles.panelDescription}>
+              Current privacy boundaries plus irregular
+              expenses that need clearer classification.
+            </p>
+          </div>
+        </header>
+
+        <div className={styles.rulesLayout}>
+          <div className={styles.ruleColumn}>
+            <h3 className={styles.subsectionTitle}>
+              Active local rules
+            </h3>
+
+            <div className={styles.ruleList}>
+              <div className={styles.ruleItem}>
+                <span className={styles.ruleIndicator} />
+
+                <span>
+                  <span className={styles.ruleTitle}>
+                    Localhost only
+                  </span>
+
+                  <span
+                    className={styles.ruleDescription}
+                  >
+                    Non-localhost requests return the
+                    application not-found response.
+                  </span>
+                </span>
+              </div>
+
+              <div className={styles.ruleItem}>
+                <span className={styles.ruleIndicator} />
+
+                <span>
+                  <span className={styles.ruleTitle}>
+                    Private CSV excluded from Git
+                  </span>
+
+                  <span
+                    className={styles.ruleDescription}
+                  >
+                    Household data stays under the ignored
+                    .local directory.
+                  </span>
+                </span>
+              </div>
+
+              <div className={styles.ruleItem}>
+                <span className={styles.ruleIndicator} />
+
+                <span>
+                  <span className={styles.ruleTitle}>
+                    No external financial connection
+                  </span>
+
+                  <span
+                    className={styles.ruleDescription}
+                  >
+                    No bank, card, database, or cloud account
+                    is connected.
+                  </span>
+                </span>
+              </div>
+
+              <div className={styles.ruleItem}>
+                <span className={styles.ruleIndicator} />
+
+                <span>
+                  <span className={styles.ruleTitle}>
+                    Smart matching not active yet
+                  </span>
+
+                  <span
+                    className={styles.ruleDescription}
+                  >
+                    Current paid and received values come
+                    only from the monthly plan.
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.irregularColumn}>
+            <h3 className={styles.subsectionTitle}>
+              Irregular expense review
+            </h3>
+
+            <div className={styles.irregularList}>
+              {budget.irregularExpenses.map((expense) => (
+                <div
+                  className={styles.irregularRow}
+                  key={expense.id}
+                >
+                  <span>
+                    <span className={styles.irregularName}>
+                      {expense.name}
+                    </span>
+
+                    <span className={styles.irregularNote}>
+                      {expense.note}
+                    </span>
+                  </span>
+
+                  <strong
+                    className={styles.irregularAmount}
+                  >
+                    {expense.amount === null
+                      ? "No amount"
+                      : money(expense.amount)}
+                  </strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    </PersonalFinanceFrame>
   );
 }
