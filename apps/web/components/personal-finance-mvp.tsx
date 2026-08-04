@@ -5,6 +5,11 @@ import type {
   PersonalFinanceMonth
 } from "../lib/personal-finance-local";
 
+import type {
+  LocalPersonalFinanceTransaction,
+  LocalTransactionImportIssue
+} from "../lib/personal-finance-transactions-local";
+
 import styles from "./personal-finance-mvp.module.css";
 
 type BillStatus =
@@ -39,6 +44,10 @@ type CashFlowItem = {
 type PersonalFinanceMvpProps = {
   budget: PersonalFinanceMonth | null;
   unavailableReason?: string | null;
+  transactions?: LocalPersonalFinanceTransaction[];
+  transactionSourceFiles?: string[];
+  transactionIssues?: LocalTransactionImportIssue[];
+  transactionReason?: string | null;
 };
 
 function money(value: number): string {
@@ -272,7 +281,11 @@ function PersonalFinanceFrame({
 
 export function PersonalFinanceMvp({
   budget,
-  unavailableReason
+  unavailableReason,
+  transactions = [],
+  transactionSourceFiles = [],
+  transactionIssues = [],
+  transactionReason = null
 }: PersonalFinanceMvpProps) {
   if (!budget) {
     return (
@@ -797,54 +810,116 @@ export function PersonalFinanceMvp({
             </h2>
 
             <p className={styles.panelDescription}>
-              This becomes the confirmation feed for
-              recognized paychecks and processed bills.
+              {transactions.length > 0
+                ? `${transactions.length} imported ${
+                    transactions.length === 1
+                      ? "transaction"
+                      : "transactions"
+                  } from ${transactionSourceFiles.length} local CSV ${
+                    transactionSourceFiles.length === 1
+                      ? "file"
+                      : "files"
+                  }.${
+                    transactionIssues.length > 0
+                      ? ` ${transactionIssues.length} import ${
+                          transactionIssues.length === 1
+                            ? "issue was"
+                            : "issues were"
+                        } reported.`
+                      : ""
+                  }`
+                : "Local bank and card imports will appear here."}
             </p>
           </div>
 
-          <span className={styles.countBadge}>0</span>
+          <span className={styles.countBadge}>
+            {transactions.length}
+          </span>
         </header>
 
-        <div className={styles.activityEmpty}>
-          <div className={styles.activityIcon}>↻</div>
-
-          <div>
-            <h3 className={styles.activityTitle}>
-              No transaction ledger is connected yet
-            </h3>
-
-            <p className={styles.activityText}>
-              The paid and received values shown today come
-              from the monthly budget CSV. The next smart-data
-              slice will import bank and card transactions,
-              match them to income and bills, and send uncertain
-              matches to a review queue.
-            </p>
-
-            <div className={styles.activitySteps}>
-              <span className={styles.activityStep}>
-                <span className={styles.activityStepNumber}>
-                  1
+        {transactions.length > 0 ? (
+          <div className={styles.cashFlowList}>
+            {transactions.slice(0, 12).map((transaction) => (
+              <div
+                className={styles.cashFlowRow}
+                key={transaction.id}
+              >
+                <span className={styles.cashFlowDate}>
+                  {transaction.postedDate}
                 </span>
-                Import transactions
-              </span>
 
-              <span className={styles.activityStep}>
-                <span className={styles.activityStepNumber}>
-                  2
-                </span>
-                Match bills and income
-              </span>
+                <span
+                  className={`${styles.cashFlowMarker} ${
+                    transaction.direction === "inflow"
+                      ? styles.cashFlowIncome
+                      : styles.cashFlowBill
+                  }`}
+                />
 
-              <span className={styles.activityStep}>
-                <span className={styles.activityStepNumber}>
-                  3
+                <span className={styles.cashFlowCopy}>
+                  <span className={styles.cashFlowTitle}>
+                    {transaction.description}
+                  </span>
+
+                  <span className={styles.cashFlowDetail}>
+                    {transaction.accountName || "Unlabeled account"}
+                    {" - "}
+                    {transaction.sourceFile}
+                  </span>
                 </span>
-                Review uncertain items
-              </span>
+
+                <span
+                  className={`${styles.cashFlowAmount} ${
+                    transaction.direction === "inflow"
+                      ? styles.positive
+                      : styles.negative
+                  }`}
+                >
+                  {transaction.direction === "inflow" ? "+" : "-"}
+                  {money(transaction.amount)}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={styles.activityEmpty}>
+            <div className={styles.activityIcon}>+</div>
+
+            <div>
+              <h3 className={styles.activityTitle}>
+                No transactions imported yet
+              </h3>
+
+              <p className={styles.activityText}>
+                {transactionReason ??
+                  "Add bank or card CSV exports to .local/personal-finance/transactions and reload this page."}
+              </p>
+
+              <div className={styles.activitySteps}>
+                <span className={styles.activityStep}>
+                  <span className={styles.activityStepNumber}>
+                    1
+                  </span>
+                  Add CSV files
+                </span>
+
+                <span className={styles.activityStep}>
+                  <span className={styles.activityStepNumber}>
+                    2
+                  </span>
+                  Reload the page
+                </span>
+
+                <span className={styles.activityStep}>
+                  <span className={styles.activityStepNumber}>
+                    3
+                  </span>
+                  Review activity
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </section>
 
       <section

@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 
 import { PersonalFinanceMvp } from "../../components/personal-finance-mvp";
 import { loadLocalPersonalFinance } from "../../lib/personal-finance-local";
+import {
+  loadLocalPersonalFinanceTransactions
+} from "../../lib/personal-finance-transactions-local";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -32,12 +35,19 @@ export default async function PersonalPage() {
     notFound();
   }
 
-  const result = await loadLocalPersonalFinance();
+  const [budgetResult, transactionResult] = await Promise.all([
+    loadLocalPersonalFinance(),
+    loadLocalPersonalFinanceTransactions()
+  ]);
 
   return (
     <PersonalFinanceMvp
-      budget={result.budget}
-      unavailableReason={result.reason}
+      budget={budgetResult.budget}
+      unavailableReason={budgetResult.reason}
+      transactions={transactionResult.transactions}
+      transactionSourceFiles={transactionResult.sourceFiles}
+      transactionIssues={transactionResult.issues}
+      transactionReason={transactionResult.reason}
     />
   );
 }
