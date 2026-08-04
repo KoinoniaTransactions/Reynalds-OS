@@ -9,6 +9,9 @@ import type {
   PersonalFinanceInboxTransaction
 } from "../lib/personal-finance-transaction-inbox-local";
 
+import {
+  PersonalFinanceTransactionClassificationSelect
+} from "./personal-finance-transaction-classification-select";
 import styles from "./personal-finance-mvp.module.css";
 
 type BillStatus =
@@ -1014,18 +1017,12 @@ export function PersonalFinanceMvp({
                     </td>
 
                     <td>
-                      <span
-                        className={`${styles.status} ${
-                          transaction.classification ===
-                          "unknown"
-                            ? styles.statusMissing
-                            : styles.statusPaid
-                        }`}
-                      >
-                        {labelFromValue(
+                      <PersonalFinanceTransactionClassificationSelect
+                        transactionId={transaction.id}
+                        classification={
                           transaction.classification
-                        )}
-                      </span>
+                        }
+                      />
                     </td>
 
                     <td>
