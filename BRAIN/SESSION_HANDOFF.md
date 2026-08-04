@@ -7,7 +7,7 @@ Primary Business Priority: Koinonia Transactions website launch and client-acqui
 
 ---
 
-# 2026-08-03 Current Session Handoff — Portal Readiness Re-Anchor
+# 2026-08-03 Current Session Handoff — Portal Provider Configuration
 
 Status: Continue from root project folder
 Local project path: `/Users/jeremiahreynalds/Projects/Reynalds_OS_v11_3_1_Work`
@@ -28,42 +28,52 @@ The active portal work is valid only as production-readiness work for client and
 - Updated the portal verifier and readiness report so R2 credentials, bucket configuration, and explicit upload enablement are required before live document uploads.
 - Added a focused storage test proving scan-temp files are cleaned up after scanning.
 - Added send-package delivery-confirmation gating before packages can be marked `Sent`, `Signature Monitoring`, or `Completed`.
+- Guided production Clerk, Stripe, and Cloudflare R2 provider setup outside the repository.
+- Saved the local `.env` values for Clerk live keys, Stripe hosted payment link, Stripe webhook signing secret, Cloudflare R2 account ID, bucket name, R2 access key ID, R2 secret access key, and explicit R2 upload enablement.
+- Started the local Postgres container and ran the standard database seed so approved Koinonia portal roles, role permissions, Owner user, and staff MFA readiness data are present locally.
 
 Recent pushed commits:
 
 - `a65e805` — Add Stripe payment webhook handling
 - `2963398` — Require R2 and scanning for portal documents
 - `1439045` — Require send package delivery confirmation
+- `b4d2185` — Re-anchor portal readiness brain state
 
 ## Verification Completed
 
 - Focused portal/document/send-package tests passed.
 - TypeScript checks passed.
 - Production web build passed after the R2/scanning slice.
-- `pnpm verify:portal` still fails, correctly, on missing production account configuration.
+- `pnpm verify:portal` was rerun after local provider configuration, R2 configuration, database startup, and database seeding.
+- Local provider/configuration checks now pass for Clerk, Stripe, Cloudflare R2, upload enablement, scanner path, database connection, approved roles, role permissions, active Owner user, and active staff MFA requirement.
 
 ## Current Verifier Blockers
 
-These values must be configured outside the repository before full production verification can continue:
+The local readiness verifier now fails only on operational proof gates:
 
-- `CLERK_SECRET_KEY`
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-- `KOINONIA_PAYMENT_SETUP_URL`
-- `KOINONIA_PAYMENT_WEBHOOK_SECRET`
-- `R2_ACCOUNT_ID`
-- `R2_ACCESS_KEY_ID`
-- `R2_SECRET_ACCESS_KEY`
-- `R2_BUCKET_NAME`
-- `PORTAL_DOCUMENT_R2_UPLOADS_ENABLED=true`
+- accepted client invite test exists,
+- accepted staff invite test exists,
+- required launch proof records are complete.
 
-Stripe account setup is intentionally deferred by Jeremiah and should be resumed when he provides the Stripe data.
+The six missing launch proof records are:
+
+- Transaction Support workflow,
+- Contract and document support workflow,
+- Showing request flow,
+- Monthly Operations Partnership workflow,
+- Document sensitive-note filter,
+- End-to-end client dry run.
+
+Important: local `.env` contains live/provider secrets and is intentionally not committed. The next AI must not print, paste, or commit those values.
 
 ## Next Correct Work
 
-1. Do not continue feature work until the requested BRAIN/startup-doc re-anchor is complete and committed.
-2. After re-anchor, prefer account/configuration support for Clerk and Cloudflare R2 before additional portal features.
-3. Continue portal code only when it closes a verified production-readiness gap.
-4. Preserve small focused commits and update the BRAIN after meaningful slices.
+1. Preserve the current code state and do not start speculative feature work.
+2. Help Jeremiah complete one accepted client invite and one accepted staff invite in the real portal flow.
+3. Record the six required launch proof records from `/employee/launch` using metadata-only proof notes. Do not include passwords, access codes, card data, bank data, API keys, or private login details.
+4. Rerun `pnpm verify:portal` with local database access after invite and proof records are complete.
+5. Mirror the required environment variables into the production host only through the provider UI or approved secret-management flow; never commit secrets.
+6. After verifier passes locally, run the focused checks needed for the touched workflow and prepare a small Brain-only commit if requested.
 
 ## Do Not Claim
 
@@ -77,6 +87,8 @@ Do not call the portal production-ready until:
 - one client invite and one staff invite have been accepted,
 - required launch proof records are complete,
 - controlled end-to-end client and employee tests pass.
+
+Current note: the first four infrastructure items above are configured in the local `.env` and passed local verification on 2026-08-03. They still must be confirmed in the actual production host environment before public launch.
 
 ---
 

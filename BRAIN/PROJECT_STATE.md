@@ -138,6 +138,14 @@ Current implemented architecture includes:
 
 The active portal remains pre-production until identity-provider configuration, staff MFA, database-backed testing, private document infrastructure, production payment secrets, real webhook delivery, and controlled end-to-end verification are complete.
 
+2026-08-03 provider-configuration update:
+
+- Local `.env` now has production-shaped Clerk keys, Stripe hosted payment setup URL, Stripe webhook signing secret, Cloudflare R2 account ID, bucket name, access key ID, secret access key, and `PORTAL_DOCUMENT_R2_UPLOADS_ENABLED=true`.
+- `pnpm verify:portal` now passes the local Clerk, Stripe, R2, upload enablement, malware scanner, database connection, approved role seed, role permission seed, active Owner user, and staff MFA checks.
+- The standard database seed was run locally after Postgres was started with Docker.
+- Remaining local readiness failures are operational proof gates: accepted client invite, accepted staff invite, and six required launch proof records.
+- Production host environment variables still need to be confirmed in the deployment provider. Local `.env` success does not by itself prove production deployment readiness.
+
 The current implementation principle is:
 
 Persist operational service intent when work is created, then let client and employee portal views consume that persisted intent consistently.

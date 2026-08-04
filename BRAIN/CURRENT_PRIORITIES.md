@@ -177,17 +177,20 @@ Move the Koinonia client and employee portals from guarded source-backed workflo
 - Cloudflare R2 document-storage readiness enforcement
 - Pre-R2 malware scanning for document uploads and replacements
 - Delivery-confirmation gating for sent, signature-monitoring, and completed document send packages
+- Local production-provider configuration for Clerk, Stripe, and Cloudflare R2
+- Local portal readiness verifier advanced past infrastructure/provider gates
+- Local database seed restored approved portal roles, role permissions, Owner user, and staff MFA readiness
 
 ## Immediate Priorities
 
-1. Configure production Clerk live keys outside the repository.
-2. Configure Cloudflare R2 account, bucket, access keys, and explicit upload enablement outside the repository.
-3. Finish and reconcile the deferred Stripe account/payment setup work.
-4. Verify Stripe webhook delivery with approved production configuration.
-5. Reconcile webhook events into canonical billing and audit records.
-6. Complete database-backed portal workflow testing.
-7. Verify provider-backed client and employee identities.
-8. Confirm staff MFA and invitation acceptance in production configuration.
+1. Create and accept one real client invite and one real staff invite in the Koinonia portal flow.
+2. Record the six required launch proof records from `/employee/launch`.
+3. Rerun `pnpm verify:portal` with local database access and confirm only real operational gates remain, or that the verifier passes.
+4. Mirror the verified Clerk, Stripe, and Cloudflare R2 environment values into the production deployment provider through secret-management UI, not Git.
+5. Verify Stripe webhook delivery with approved production configuration.
+6. Reconcile webhook events into canonical billing and audit records.
+7. Complete database-backed portal workflow testing.
+8. Verify provider-backed client and employee identities.
 9. Run controlled end-to-end testing for documents, assignments, billing, send-package delivery, and payment events.
 10. Preserve focused commits and update the Brain at the end of each meaningful completed slice.
 

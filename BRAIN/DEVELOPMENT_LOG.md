@@ -14,6 +14,39 @@ Each development session should add a new entry with:
 
 ---
 
+## 2026-08-03 — Portal Provider Configuration Advanced
+
+### Summary
+
+Koinonia portal readiness moved past the main local infrastructure/provider blockers. Clerk live-shaped keys, Stripe hosted payment setup, Stripe webhook signing, Cloudflare R2 document storage, malware scanning, local database connectivity, approved portal roles, role permissions, active Owner user, and staff MFA readiness now pass the local `pnpm verify:portal` checks.
+
+### Completed
+
+- Guided production Clerk setup and local `.env` configuration.
+- Guided Stripe account activation flow, hosted payment link creation, and webhook destination setup.
+- Saved the Stripe hosted payment link and webhook signing secret locally without exposing secrets in chat.
+- Guided Cloudflare R2 bucket/API-token configuration for `koinonia-portal-documents`.
+- Saved local R2 account, bucket, access key, secret key, and upload-enable flag without exposing secrets in chat.
+- Started the local Postgres container and ran the standard database seed.
+- Confirmed seeded approved portal roles, role permission lists, active Owner portal user, and active staff MFA requirement.
+
+### Verification
+
+- `pnpm verify:portal` passes local checks for Clerk, Stripe, R2, malware scanner path, database connection, approved roles, role permissions, active Owner user, and staff MFA.
+- `pnpm verify:portal` still fails on accepted client invite, accepted staff invite, and six required launch proof records.
+
+### Known Issues
+
+- Local `.env` is configured, but production host environment variables still need to be confirmed through the deployment provider's secret-management UI.
+- Stripe payment link was created while Stripe account verification/payment links were still pending; verify link activation before collecting live client payments.
+- Operational launch proof must be recorded without secrets or sensitive client data in proof notes.
+
+### Recommended Next Step
+
+Complete one accepted client invite and one accepted staff invite, then record the six launch proof items from `/employee/launch` and rerun `pnpm verify:portal`.
+
+---
+
 ## 2026-07-31 — Client Billing Setup Status Boundary Hardened
 
 ### Summary
