@@ -10,8 +10,8 @@ import type {
 } from "../lib/personal-finance-transaction-inbox-local";
 
 import {
-  PersonalFinanceTransactionClassificationSelect
-} from "./personal-finance-transaction-classification-select";
+  PersonalFinanceTransactionInbox
+} from "./personal-finance-transaction-inbox";
 import styles from "./personal-finance-mvp.module.css";
 
 type BillStatus =
@@ -60,21 +60,6 @@ function money(value: number): string {
     minimumFractionDigits: 2,
     style: "currency"
   }).format(value);
-}
-
-function labelFromValue(value: string): string {
-  const normalized = value
-    .replace(/[_-]+/g, " ")
-    .trim();
-
-  if (!normalized) {
-    return "Unknown";
-  }
-
-  return normalized.replace(
-    /\b\w/g,
-    (letter) => letter.toUpperCase()
-  );
 }
 
 function sumMoney(values: number[]): number {
@@ -940,117 +925,11 @@ export function PersonalFinanceMvp({
         )}
       </section>
 
-      <section
-        className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
-        id="transaction-inbox"
-      >
-        <header className={styles.panelHeader}>
-          <div className={styles.panelHeaderCopy}>
-            <h2 className={styles.panelTitle}>
-              Transaction inbox
-            </h2>
-
-            <p className={styles.panelDescription}>
-              {transactions.length > 0
-                ? `Showing ${transactions.length} of ${transactionTotal} unreviewed ${
-                    transactionTotal === 1
-                      ? "transaction"
-                      : "transactions"
-                  } from the private local database. This view is read-only.`
-                : "Unreviewed transactions stored in the private local database will appear here."}
-            </p>
-          </div>
-
-          <span className={styles.countBadge}>
-            {transactionTotal}
-          </span>
-        </header>
-
-        {transactions.length > 0 ? (
-          <div className={styles.tableWrap}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Account</th>
-                  <th>Amount</th>
-                  <th>Classification</th>
-                  <th>Review status</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {transactions.map((transaction) => (
-                  <tr key={`inbox-${transaction.id}`}>
-                    <td>{transaction.postedDate}</td>
-
-                    <td>
-                      <span className={styles.tableName}>
-                        {transaction.displayDescription}
-                      </span>
-
-                      <br />
-
-                      <span className={styles.tableMuted}>
-                        {transaction.sourceFile}
-                      </span>
-                    </td>
-
-                    <td>{transaction.accountName}</td>
-
-                    <td
-                      className={
-                        transaction.direction === "inflow"
-                          ? styles.positive
-                          : styles.negative
-                      }
-                    >
-                      {transaction.direction === "inflow"
-                        ? "+"
-                        : "-"}
-                      {money(
-                        Math.abs(
-                          transaction.amountCents
-                        ) / 100
-                      )}
-                    </td>
-
-                    <td>
-                      <PersonalFinanceTransactionClassificationSelect
-                        transactionId={transaction.id}
-                        classification={
-                          transaction.classification
-                        }
-                      />
-                    </td>
-
-                    <td>
-                      <span
-                        className={`${styles.status} ${
-                          transaction.reviewStatus ===
-                          "reconciled"
-                            ? styles.statusPaid
-                            : styles.statusPartial
-                        }`}
-                      >
-                        {labelFromValue(
-                          transaction.reviewStatus
-                        )}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className={styles.emptyList}>
-            {transactionReason ??
-              "No unreviewed transactions are currently stored in the private database."}
-          </div>
-        )}
-      </section>
+      <PersonalFinanceTransactionInbox
+        transactions={transactions}
+        transactionTotal={transactionTotal}
+        transactionReason={transactionReason}
+      />
 
       <section
         className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
