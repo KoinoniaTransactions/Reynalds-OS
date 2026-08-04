@@ -1193,8 +1193,8 @@
 
 .classificationControl {
   display: grid;
-  min-width: 132px;
-  gap: 5px;
+  min-width: 148px;
+  gap: 6px;
 }
 
 .classificationSelect {
@@ -1222,13 +1222,86 @@
   outline-offset: 1px;
 }
 
+.classificationSelectPending {
+  border-color: #b7791f;
+  background: #fff4d6;
+  box-shadow: 0 0 0 1px rgb(183 121 31 / 12%);
+}
+
 .classificationSelect:disabled {
   cursor: wait;
   opacity: 0.62;
 }
 
+.classificationPending {
+  display: grid;
+  gap: 5px;
+  padding: 7px;
+  border: 1px solid #ead5a5;
+  border-radius: 7px;
+  background: #fffaf0;
+}
+
+.classificationPendingLabel {
+  color: #8a5a13;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.classificationActions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.classificationSaveButton,
+.classificationCancelButton {
+  min-height: 27px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.classificationSaveButton {
+  border: 1px solid #9a6a16;
+  background: #a87319;
+  color: #ffffff;
+}
+
+.classificationSaveButton:hover {
+  background: #8f6011;
+}
+
+.classificationCancelButton {
+  border: 1px solid var(--pf-border);
+  background: var(--pf-surface);
+  color: #475467;
+}
+
+.classificationCancelButton:hover {
+  border-color: #b8c0cc;
+  background: #f8f9fb;
+}
+
+.classificationSaveButton:focus-visible,
+.classificationCancelButton:focus-visible {
+  outline: 2px solid #e9d3a4;
+  outline-offset: 1px;
+}
+
+.classificationSaveButton:disabled,
+.classificationCancelButton:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
 .classificationError {
-  max-width: 180px;
+  max-width: 190px;
   color: var(--pf-critical);
   font-size: 10px;
   line-height: 1.35;

@@ -156,7 +156,7 @@ export function PersonalFinanceTransactionInbox({
                   </span>
 
                   <span className={styles.editableColumnSubheading}>
-                    Saves changes
+                    Save required
                   </span>
                 </th>
                 <th>Review status</th>
