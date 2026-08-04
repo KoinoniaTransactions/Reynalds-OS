@@ -80,7 +80,7 @@ export function PersonalFinanceTransactionInbox({
           transactionTotal === 1
             ? "transaction"
             : "transactions"
-        } from the private local database. Classification filter: ${filterLabel}.`
+        } from the private local database. View filter: ${filterLabel}. The view filter does not change transactions; row classification menus save changes.`
       : "Unreviewed transactions stored in the private local database will appear here.";
 
   return (
@@ -101,12 +101,18 @@ export function PersonalFinanceTransactionInbox({
 
         <div className={styles.inboxHeaderActions}>
           <label className={styles.inboxFilterControl}>
-            <span className={styles.inboxFilterLabel}>
-              Classification
+            <span className={styles.inboxFilterLabelRow}>
+              <span className={styles.inboxFilterLabel}>
+                View filter
+              </span>
+
+              <span className={styles.inboxFilterMode}>
+                View only
+              </span>
             </span>
 
             <select
-              aria-label="Filter transactions by classification"
+              aria-label="Filter the inbox view by transaction classification"
               className={styles.inboxFilterSelect}
               value={classificationFilter}
               onChange={(event) => {
@@ -144,7 +150,15 @@ export function PersonalFinanceTransactionInbox({
                 <th>Description</th>
                 <th>Account</th>
                 <th>Amount</th>
-                <th>Classification</th>
+                <th>
+                  <span className={styles.editableColumnHeading}>
+                    Classification
+                  </span>
+
+                  <span className={styles.editableColumnSubheading}>
+                    Saves changes
+                  </span>
+                </th>
                 <th>Review status</th>
               </tr>
             </thead>

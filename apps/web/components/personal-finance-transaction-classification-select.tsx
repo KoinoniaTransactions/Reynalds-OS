@@ -114,10 +114,11 @@ export function PersonalFinanceTransactionClassificationSelect({
       }
     >
       <select
-        aria-label="Transaction classification"
+        aria-label="Change transaction classification; saves immediately"
         className={
           styles.classificationSelect
         }
+        title="Change and save transaction classification"
         disabled={isSaving}
         value={value}
         onChange={(event) => {
