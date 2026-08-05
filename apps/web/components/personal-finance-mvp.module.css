@@ -1393,13 +1393,17 @@
 
 .inboxHeaderActions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
 }
 
 .inboxFilterControl {
   display: grid;
-  min-width: 176px;
+  flex: 1 1 160px;
+  min-width: 160px;
+  max-width: 190px;
   gap: 5px;
   padding: 8px 10px;
   border: 1px solid #c9d8e8;
@@ -1483,7 +1487,7 @@
   .inboxHeaderActions {
     width: 100%;
     align-items: flex-end;
-    justify-content: space-between;
+    justify-content: flex-start;
   }
 
   .inboxFilterControl {

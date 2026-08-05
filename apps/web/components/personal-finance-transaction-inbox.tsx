@@ -12,8 +12,11 @@ import type {
 import {
   filterPersonalFinanceTransactions,
   getPersonalFinanceClassificationFilterLabel,
+  getPersonalFinanceReviewedFilterLabel,
   PERSONAL_FINANCE_CLASSIFICATION_FILTER_OPTIONS,
-  type PersonalFinanceClassificationFilter
+  PERSONAL_FINANCE_REVIEWED_FILTER_OPTIONS,
+  type PersonalFinanceClassificationFilter,
+  type PersonalFinanceReviewedFilter
 } from "../lib/personal-finance-transaction-filter";
 
 import {
@@ -61,21 +64,35 @@ export function PersonalFinanceTransactionInbox({
     "all"
   );
 
+  const [
+    reviewedFilter,
+    setReviewedFilter
+  ] = useState<PersonalFinanceReviewedFilter>(
+    "all"
+  );
+
   const filteredTransactions = useMemo(
     () =>
       filterPersonalFinanceTransactions(
         transactions,
-        classificationFilter
+        classificationFilter,
+        reviewedFilter
       ),
     [
       transactions,
-      classificationFilter
+      classificationFilter,
+      reviewedFilter
     ]
   );
 
-  const filterLabel =
+  const classificationFilterLabel =
     getPersonalFinanceClassificationFilterLabel(
       classificationFilter
+    );
+
+  const reviewedFilterLabel =
+    getPersonalFinanceReviewedFilterLabel(
+      reviewedFilter
     );
 
   const description =
@@ -84,7 +101,7 @@ export function PersonalFinanceTransactionInbox({
           transactionTotal === 1
             ? "transaction"
             : "transactions"
-        } from the private local database. View filter: ${filterLabel}. The view filter does not change transactions; classification and reviewed controls save separate changes.`
+        } from the private local database. Classification filter: ${classificationFilterLabel}. Reviewed filter: ${reviewedFilterLabel}. View filters do not change transactions; classification and reviewed controls save separate changes.`
       : "Unreconciled transactions stored in the private local database will appear here.";
 
   return (
@@ -107,7 +124,7 @@ export function PersonalFinanceTransactionInbox({
           <label className={styles.inboxFilterControl}>
             <span className={styles.inboxFilterLabelRow}>
               <span className={styles.inboxFilterLabel}>
-                View filter
+                Classification
               </span>
 
               <span className={styles.inboxFilterMode}>
@@ -127,6 +144,41 @@ export function PersonalFinanceTransactionInbox({
               }}
             >
               {PERSONAL_FINANCE_CLASSIFICATION_FILTER_OPTIONS.map(
+                ([value, label]) => (
+                  <option
+                    key={value}
+                    value={value}
+                  >
+                    {label}
+                  </option>
+                )
+              )}
+            </select>
+          </label>
+
+          <label className={styles.inboxFilterControl}>
+            <span className={styles.inboxFilterLabelRow}>
+              <span className={styles.inboxFilterLabel}>
+                Reviewed
+              </span>
+
+              <span className={styles.inboxFilterMode}>
+                View only
+              </span>
+            </span>
+
+            <select
+              aria-label="Filter the inbox view by reviewed state"
+              className={styles.inboxFilterSelect}
+              value={reviewedFilter}
+              onChange={(event) => {
+                setReviewedFilter(
+                  event.target
+                    .value as PersonalFinanceReviewedFilter
+                );
+              }}
+            >
+              {PERSONAL_FINANCE_REVIEWED_FILTER_OPTIONS.map(
                 ([value, label]) => (
                   <option
                     key={value}
@@ -265,11 +317,18 @@ export function PersonalFinanceTransactionInbox({
         </div>
       ) : transactions.length > 0 ? (
         <div className={styles.inboxFilterEmpty}>
-          No loaded unreviewed transactions match the
+          No loaded unreconciled transactions match
           {" "}
-          <strong>{filterLabel}</strong>
+          <strong>
+            Classification: {classificationFilterLabel}
+          </strong>
           {" "}
-          classification filter.
+          and
+          {" "}
+          <strong>
+            Reviewed: {reviewedFilterLabel}
+          </strong>
+          .
         </div>
       ) : (
         <div className={styles.emptyList}>
