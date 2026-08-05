@@ -32,6 +32,8 @@ import styles from "./personal-finance-mvp.module.css";
 type Props = {
   transactions: PersonalFinanceInboxTransaction[];
   transactionTotal: number;
+  reviewedTransactionCount: number;
+  notReviewedTransactionCount: number;
   transactionReason?: string | null;
 };
 
@@ -55,6 +57,8 @@ function reconciliationStatusLabel(
 export function PersonalFinanceTransactionInbox({
   transactions,
   transactionTotal,
+  reviewedTransactionCount,
+  notReviewedTransactionCount,
   transactionReason = null
 }: Props) {
   const [
@@ -121,6 +125,32 @@ export function PersonalFinanceTransactionInbox({
         </div>
 
         <div className={styles.inboxHeaderActions}>
+          <div
+            aria-label="Transaction review progress"
+            className={styles.inboxReviewProgress}
+            role="group"
+          >
+            <span className={styles.inboxReviewMetric}>
+              <span className={styles.inboxReviewMetricLabel}>
+                Reviewed
+              </span>
+
+              <strong className={styles.inboxReviewMetricValue}>
+                {reviewedTransactionCount}
+              </strong>
+            </span>
+
+            <span className={styles.inboxReviewMetric}>
+              <span className={styles.inboxReviewMetricLabel}>
+                Not reviewed
+              </span>
+
+              <strong className={styles.inboxReviewMetricValue}>
+                {notReviewedTransactionCount}
+              </strong>
+            </span>
+          </div>
+
           <label className={styles.inboxFilterControl}>
             <span className={styles.inboxFilterLabelRow}>
               <span className={styles.inboxFilterLabel}>

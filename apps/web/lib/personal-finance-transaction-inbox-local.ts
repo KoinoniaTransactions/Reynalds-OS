@@ -55,6 +55,8 @@ export type PersonalFinanceTransactionInboxSummary = {
   unreviewedTransactions: number;
   reconciledTransactions: number;
   unclassifiedTransactions: number;
+  reviewedTransactions: number;
+  notReviewedTransactions: number;
   transactionLinks: number;
   budgetAllocations: number;
 };
@@ -105,6 +107,8 @@ type SummaryRow = {
   unreviewed_transactions: number;
   reconciled_transactions: number;
   unclassified_transactions: number;
+  reviewed_transactions: number;
+  not_reviewed_transactions: number;
   transaction_links: number;
   budget_allocations: number;
 };
@@ -168,6 +172,8 @@ function emptySummary(): PersonalFinanceTransactionInboxSummary {
     unreviewedTransactions: 0,
     reconciledTransactions: 0,
     unclassifiedTransactions: 0,
+    reviewedTransactions: 0,
+    notReviewedTransactions: 0,
     transactionLinks: 0,
     budgetAllocations: 0,
   };
@@ -327,6 +333,18 @@ export async function loadPersonalFinanceTransactionInbox(
             WHERE classification = 'unknown'
           ) AS unclassified_transactions,
 
+          (
+            SELECT COUNT(*)
+            FROM transactions
+            WHERE reviewed_at IS NOT NULL
+          ) AS reviewed_transactions,
+
+          (
+            SELECT COUNT(*)
+            FROM transactions
+            WHERE reviewed_at IS NULL
+          ) AS not_reviewed_transactions,
+
           (SELECT COUNT(*) FROM transaction_links)
             AS transaction_links,
 
@@ -432,6 +450,10 @@ export async function loadPersonalFinanceTransactionInbox(
           summaryRow.reconciled_transactions,
         unclassifiedTransactions:
           summaryRow.unclassified_transactions,
+        reviewedTransactions:
+          summaryRow.reviewed_transactions,
+        notReviewedTransactions:
+          summaryRow.not_reviewed_transactions,
         transactionLinks:
           summaryRow.transaction_links,
         budgetAllocations:

@@ -50,6 +50,12 @@ export default async function PersonalPage() {
       unclassifiedTransactionCount={
         inboxResult.summary.unclassifiedTransactions
       }
+      reviewedTransactionCount={
+        inboxResult.summary.reviewedTransactions
+      }
+      notReviewedTransactionCount={
+        inboxResult.summary.notReviewedTransactions
+      }
       transactionReason={inboxResult.reason}
     />
   );

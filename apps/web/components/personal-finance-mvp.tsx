@@ -50,6 +50,8 @@ type PersonalFinanceMvpProps = {
   transactionTotal?: number;
   transactionAccountCount?: number;
   unclassifiedTransactionCount?: number;
+  reviewedTransactionCount?: number;
+  notReviewedTransactionCount?: number;
   transactionReason?: string | null;
 };
 
@@ -290,6 +292,8 @@ export function PersonalFinanceMvp({
   transactionTotal = 0,
   transactionAccountCount = 0,
   unclassifiedTransactionCount = 0,
+  reviewedTransactionCount = 0,
+  notReviewedTransactionCount = 0,
   transactionReason = null
 }: PersonalFinanceMvpProps) {
   if (!budget) {
@@ -928,6 +932,12 @@ export function PersonalFinanceMvp({
       <PersonalFinanceTransactionInbox
         transactions={transactions}
         transactionTotal={transactionTotal}
+        reviewedTransactionCount={
+          reviewedTransactionCount
+        }
+        notReviewedTransactionCount={
+          notReviewedTransactionCount
+        }
         transactionReason={transactionReason}
       />
 
