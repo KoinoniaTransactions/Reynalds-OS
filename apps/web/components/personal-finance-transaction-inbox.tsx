@@ -20,6 +20,10 @@ import {
   PersonalFinanceTransactionClassificationSelect
 } from "./personal-finance-transaction-classification-select";
 
+import {
+  PersonalFinanceTransactionReviewedControl
+} from "./personal-finance-transaction-reviewed-control";
+
 import styles from "./personal-finance-mvp.module.css";
 
 type Props = {
@@ -37,12 +41,12 @@ function money(value: number): string {
   }).format(value);
 }
 
-function reviewStatusLabel(
+function reconciliationStatusLabel(
   value: PersonalFinanceInboxTransaction["reviewStatus"]
 ): string {
   return value === "reconciled"
     ? "Reconciled"
-    : "Unreviewed";
+    : "Unreconciled";
 }
 
 export function PersonalFinanceTransactionInbox({
@@ -76,12 +80,12 @@ export function PersonalFinanceTransactionInbox({
 
   const description =
     transactions.length > 0
-      ? `Showing ${filteredTransactions.length} of ${transactionTotal} unreviewed ${
+      ? `Showing ${filteredTransactions.length} of ${transactionTotal} unreconciled ${
           transactionTotal === 1
             ? "transaction"
             : "transactions"
-        } from the private local database. View filter: ${filterLabel}. The view filter does not change transactions; row classification menus save changes.`
-      : "Unreviewed transactions stored in the private local database will appear here.";
+        } from the private local database. View filter: ${filterLabel}. The view filter does not change transactions; classification and reviewed controls save separate changes.`
+      : "Unreconciled transactions stored in the private local database will appear here.";
 
   return (
     <section
@@ -159,7 +163,16 @@ export function PersonalFinanceTransactionInbox({
                     Save required
                   </span>
                 </th>
-                <th>Review status</th>
+                <th>
+                  <span className={styles.editableColumnHeading}>
+                    Reviewed
+                  </span>
+
+                  <span className={styles.reviewedColumnSubheading}>
+                    Separate state
+                  </span>
+                </th>
+                <th>Reconciliation</th>
               </tr>
             </thead>
 
@@ -220,6 +233,17 @@ export function PersonalFinanceTransactionInbox({
                     </td>
 
                     <td>
+                      <PersonalFinanceTransactionReviewedControl
+                        transactionId={
+                          transaction.id
+                        }
+                        reviewedAt={
+                          transaction.reviewedAt
+                        }
+                      />
+                    </td>
+
+                    <td>
                       <span
                         className={`${styles.status} ${
                           transaction.reviewStatus ===
@@ -228,7 +252,7 @@ export function PersonalFinanceTransactionInbox({
                             : styles.statusPartial
                         }`}
                       >
-                        {reviewStatusLabel(
+                        {reconciliationStatusLabel(
                           transaction.reviewStatus
                         )}
                       </span>
@@ -250,7 +274,7 @@ export function PersonalFinanceTransactionInbox({
       ) : (
         <div className={styles.emptyList}>
           {transactionReason ??
-            "No unreviewed transactions are currently stored in the private database."}
+            "No unreconciled transactions are currently stored in the private database."}
         </div>
       )}
     </section>

@@ -1307,6 +1307,90 @@
   line-height: 1.35;
 }
 
+.reviewedControl {
+  display: grid;
+  min-width: 126px;
+  gap: 6px;
+}
+
+.reviewedState {
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.reviewedStatePending {
+  background: #f2f4f7;
+  color: #667085;
+}
+
+.reviewedStateComplete {
+  background: #e8f5ec;
+  color: #267044;
+}
+
+.reviewedButton {
+  min-height: 30px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.reviewedMarkButton {
+  border: 1px solid #47739a;
+  background: #527fa5;
+  color: #ffffff;
+}
+
+.reviewedMarkButton:hover {
+  background: #3f6b91;
+}
+
+.reviewedUndoButton {
+  border: 1px solid #b8c0cc;
+  background: #ffffff;
+  color: #475467;
+}
+
+.reviewedUndoButton:hover {
+  border-color: #98a2b3;
+  background: #f8f9fb;
+}
+
+.reviewedButton:focus-visible {
+  outline: 2px solid #c9dced;
+  outline-offset: 1px;
+}
+
+.reviewedButton:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.reviewedError {
+  max-width: 170px;
+  color: var(--pf-critical);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.reviewedColumnSubheading {
+  display: block;
+  margin-top: 2px;
+  color: #47739a;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .inboxHeaderActions {
   display: flex;
   align-items: center;

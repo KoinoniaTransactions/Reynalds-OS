@@ -39,6 +39,7 @@ export type PersonalFinanceInboxTransaction = {
   direction: "inflow" | "outflow";
   classification: PersonalFinanceClassification;
   reviewStatus: PersonalFinanceReviewStatus;
+  reviewedAt: string | null;
   paymentChannel: string | null;
   checkNumber: string | null;
   note: string | null;
@@ -84,6 +85,7 @@ type InboxTransactionRow = {
   amount_cents: number;
   classification: PersonalFinanceClassification;
   review_status: PersonalFinanceReviewStatus;
+  reviewed_at: string | null;
   payment_channel: string | null;
   check_number: string | null;
   note: string | null;
@@ -218,6 +220,7 @@ function transactionFromRow(
         : "outflow",
     classification: row.classification,
     reviewStatus: row.review_status,
+    reviewedAt: row.reviewed_at,
     paymentChannel: row.payment_channel,
     checkNumber: row.check_number,
     note: row.note,
@@ -360,6 +363,7 @@ export async function loadPersonalFinanceTransactionInbox(
           t.amount_cents,
           t.classification,
           t.review_status,
+          t.reviewed_at,
           t.payment_channel,
           t.check_number,
           t.note,
