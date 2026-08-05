@@ -235,8 +235,24 @@ describe("product registry", () => {
 
   it("derives product workspace navigation from ordered registry entries", () => {
     const workspaceEntries = getWorkspaceNavigationEntries();
+    const personalWorkspaceEntry = {
+      label: "Personal",
+      href: "/personal",
+      enabled: true
+    };
 
-    expect(workspaceNavigation.slice(1, workspaceEntries.length + 1)).toEqual(
+    expect(workspaceNavigation[1]).toEqual(personalWorkspaceEntry);
+    expect(
+      workspaceEntries.some(
+        (entry) => entry.href === personalWorkspaceEntry.href
+      )
+    ).toBe(false);
+    expect(
+      workspaceNavigation.filter(
+        (item) => item.href === personalWorkspaceEntry.href
+      )
+    ).toHaveLength(1);
+    expect(workspaceNavigation.slice(2, workspaceEntries.length + 2)).toEqual(
       workspaceEntries
     );
 

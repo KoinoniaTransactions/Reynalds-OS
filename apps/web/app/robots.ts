@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: ["/", "/services", "/about", "/contact", "/properties"],
-        disallow: ["/dashboard", "/api", "/client/billing", "/client/dashboard", "/client/documents", "/copilot", "/crm", "/employee", "/employee/launch", "/employee/readiness", "/employee/review", "/finance", "/knowledge", "/notifications", "/objects", "/operations", "/reynalds-brothers", "/transactions", "/workflows"]
+        disallow: ["/dashboard", "/api", "/client/billing", "/client/dashboard", "/client/documents", "/copilot", "/crm", "/employee", "/employee/launch", "/employee/readiness", "/employee/review", "/finance", "/knowledge", "/notifications", "/objects", "/operations", "/personal", "/reynalds-brothers", "/transactions", "/workflows"]
       }
     ],
     sitemap: absoluteUrl("/sitemap.xml")

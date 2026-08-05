@@ -8,6 +8,7 @@ export type WorkspaceNavigationItem = {
 
 export const workspaceNavigation: WorkspaceNavigationItem[] = [
   { label: "Dashboard", href: "/", enabled: true },
+  { label: "Personal", href: "/personal", enabled: true },
   ...getWorkspaceNavigationEntries(),
   { label: "CRM", href: "/crm", enabled: true },
   { label: "Transactions", href: "/transactions", enabled: true },

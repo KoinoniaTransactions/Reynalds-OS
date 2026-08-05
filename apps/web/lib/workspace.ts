@@ -37,6 +37,15 @@ export const workspaces: WorkspaceSummary[] = [
     primaryObjectTypes: ["relationship", "transaction", "task", "invoice", "document"]
   },
   {
+    id: "personal-finance",
+    name: "Personal Finance",
+    category: "personal",
+    status: "active",
+    route: "/personal",
+    description: "Household money position, monthly obligations, card payoff planning, and safe-to-spend awareness.",
+    primaryObjectTypes: ["account", "personal_transaction", "budget_category", "bill", "credit_card", "savings_goal"]
+  },
+  {
     id: "reynalds-brothers",
     name: "Reynalds Brothers",
     category: "business",

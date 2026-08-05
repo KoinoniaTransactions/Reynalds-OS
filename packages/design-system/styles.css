@@ -71,6 +71,16 @@ body {
   font-size: 14px;
 }
 
+.ros-sidebar nav > span[aria-disabled="true"] {
+  display: block;
+  color: #8f8f8f;
+  padding: 12px 14px;
+  border-radius: 14px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  cursor: default;
+}
+
 .ros-sidebar a.active,
 .ros-sidebar a:hover {
   background: rgba(184,138,68,0.22);
