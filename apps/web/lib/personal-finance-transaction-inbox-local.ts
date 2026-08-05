@@ -8,7 +8,7 @@ import {
   openPersonalFinanceDatabase,
   type PersonalFinanceAccountType,
   type PersonalFinanceClassification,
-  type PersonalFinanceReviewStatus,
+  type PersonalFinanceReviewStatus
 } from "./personal-finance-db-local";
 
 export type PersonalFinanceInboxReviewFilter =
@@ -21,6 +21,22 @@ export type PersonalFinanceTransactionInboxOptions = {
   accountId?: string;
   limit?: number;
   offset?: number;
+};
+
+export type PersonalFinanceInboxAllocationDetail = {
+  targetLabel: string;
+  amountCents: number;
+  note: string | null;
+};
+
+export type PersonalFinanceInboxTransferLink = {
+  linkId: string;
+  transactionId: string;
+  accountName: string;
+  postedDate: string;
+  displayDescription: string;
+  amountCents: number;
+  confidence: number | null;
 };
 
 export type PersonalFinanceInboxTransaction = {
@@ -45,7 +61,12 @@ export type PersonalFinanceInboxTransaction = {
   note: string | null;
   allocationCount: number;
   allocatedAmountCents: number;
+  allocationDetails:
+    PersonalFinanceInboxAllocationDetail[];
   transactionLinkCount: number;
+  confirmedTransferLink:
+    | PersonalFinanceInboxTransferLink
+    | null;
 };
 
 export type PersonalFinanceTransactionInboxSummary = {
@@ -96,6 +117,22 @@ type InboxTransactionRow = {
   transaction_link_count: number;
 };
 
+type AllocationRow = {
+  budget_item_label: string;
+  amount_cents: number;
+  note: string | null;
+};
+
+type TransferLinkRow = {
+  link_id: string;
+  confidence: number | null;
+  counterpart_transaction_id: string;
+  counterpart_account_name: string;
+  counterpart_posted_date: string;
+  counterpart_display_description: string;
+  counterpart_amount_cents: number;
+};
+
 type CountRow = {
   count: number;
 };
@@ -116,28 +153,32 @@ type SummaryRow = {
 const DEFAULT_LIMIT = 100;
 const MAX_LIMIT = 500;
 
-function normalizedLimit(value: number | undefined): number {
+function normalizedLimit(
+  value: number | undefined
+): number {
   if (value === undefined) {
     return DEFAULT_LIMIT;
   }
 
   if (!Number.isInteger(value) || value < 1) {
     throw new Error(
-      "Transaction Inbox limit must be a positive integer.",
+      "Transaction Inbox limit must be a positive integer."
     );
   }
 
   return Math.min(value, MAX_LIMIT);
 }
 
-function normalizedOffset(value: number | undefined): number {
+function normalizedOffset(
+  value: number | undefined
+): number {
   if (value === undefined) {
     return 0;
   }
 
   if (!Number.isInteger(value) || value < 0) {
     throw new Error(
-      "Transaction Inbox offset must be a non-negative integer.",
+      "Transaction Inbox offset must be a non-negative integer."
     );
   }
 
@@ -145,7 +186,9 @@ function normalizedOffset(value: number | undefined): number {
 }
 
 function normalizedReviewStatus(
-  value: PersonalFinanceInboxReviewFilter | undefined,
+  value:
+    | PersonalFinanceInboxReviewFilter
+    | undefined
 ): PersonalFinanceInboxReviewFilter {
   if (value === undefined) {
     return "unreviewed";
@@ -157,7 +200,7 @@ function normalizedReviewStatus(
     value !== "all"
   ) {
     throw new Error(
-      `Unsupported Transaction Inbox review status: ${value}`,
+      `Unsupported Transaction Inbox review status: ${value}`
     );
   }
 
@@ -175,7 +218,7 @@ function emptySummary(): PersonalFinanceTransactionInboxSummary {
     reviewedTransactions: 0,
     notReviewedTransactions: 0,
     transactionLinks: 0,
-    budgetAllocations: 0,
+    budgetAllocations: 0
   };
 }
 
@@ -184,7 +227,7 @@ function emptyResult({
   offset,
   reviewStatus,
   accountId,
-  reason,
+  reason
 }: {
   limit: number;
   offset: number;
@@ -200,13 +243,52 @@ function emptyResult({
     reviewStatus,
     accountId,
     summary: emptySummary(),
-    reason,
+    reason
   };
 }
 
-function transactionFromRow(
-  row: InboxTransactionRow,
-): PersonalFinanceInboxTransaction {
+function allocationFromRow(
+  row: AllocationRow
+): PersonalFinanceInboxAllocationDetail {
+  return {
+    targetLabel: row.budget_item_label,
+    amountCents: row.amount_cents,
+    note: row.note
+  };
+}
+
+function transferLinkFromRow(
+  row: TransferLinkRow | undefined
+): PersonalFinanceInboxTransferLink | null {
+  if (!row) {
+    return null;
+  }
+
+  return {
+    linkId: row.link_id,
+    transactionId:
+      row.counterpart_transaction_id,
+    accountName:
+      row.counterpart_account_name,
+    postedDate:
+      row.counterpart_posted_date,
+    displayDescription:
+      row.counterpart_display_description,
+    amountCents:
+      row.counterpart_amount_cents,
+    confidence: row.confidence
+  };
+}
+
+function transactionFromRow({
+  row,
+  allocations,
+  transferLink
+}: {
+  row: InboxTransactionRow;
+  allocations: AllocationRow[];
+  transferLink: TransferLinkRow | undefined;
+}): PersonalFinanceInboxTransaction {
   return {
     id: row.id,
     accountId: row.account_id,
@@ -217,8 +299,10 @@ function transactionFromRow(
     sourceFile: row.source_file_name,
     sourceReference: row.source_reference,
     postedDate: row.posted_date,
-    originalDescription: row.original_description,
-    displayDescription: row.display_description,
+    originalDescription:
+      row.original_description,
+    displayDescription:
+      row.display_description,
     amountCents: row.amount_cents,
     direction:
       row.amount_cents > 0
@@ -233,18 +317,23 @@ function transactionFromRow(
     allocationCount: row.allocation_count,
     allocatedAmountCents:
       row.allocated_amount_cents,
+    allocationDetails:
+      allocations.map(allocationFromRow),
     transactionLinkCount:
       row.transaction_link_count,
+    confirmedTransferLink:
+      transferLinkFromRow(transferLink)
   };
 }
 
 export async function loadPersonalFinanceTransactionInbox(
-  options: PersonalFinanceTransactionInboxOptions = {},
+  options: PersonalFinanceTransactionInboxOptions = {}
 ): Promise<PersonalFinanceTransactionInboxResult> {
   const limit = normalizedLimit(options.limit);
   const offset = normalizedOffset(options.offset);
+
   const reviewStatus = normalizedReviewStatus(
-    options.reviewStatus,
+    options.reviewStatus
   );
 
   const accountId =
@@ -259,13 +348,14 @@ export async function loadPersonalFinanceTransactionInbox(
       offset,
       reviewStatus,
       accountId,
-      reason: "Local personal finance is disabled.",
+      reason:
+        "Local personal finance is disabled."
     });
   }
 
   const databasePath = path.resolve(
     options.databasePath ??
-      getPersonalFinanceDatabasePath(),
+      getPersonalFinanceDatabasePath()
   );
 
   if (!existsSync(databasePath)) {
@@ -275,12 +365,15 @@ export async function loadPersonalFinanceTransactionInbox(
       reviewStatus,
       accountId,
       reason:
-        "The private Personal Finance database was not found.",
+        "The private Personal Finance database was not found."
     });
   }
 
   const conditions: string[] = [];
-  const parameters: Array<string | number> = [];
+
+  const parameters: Array<
+    string | number
+  > = [];
 
   if (reviewStatus !== "all") {
     conditions.push("t.review_status = ?");
@@ -299,142 +392,209 @@ export async function loadPersonalFinanceTransactionInbox(
 
   const database = openPersonalFinanceDatabase({
     databasePath,
-    readonly: true,
+    readonly: true
   });
 
   try {
-    const summaryRow = database
-      .prepare(`
-        SELECT
-          (SELECT COUNT(*) FROM accounts)
-            AS accounts,
+    const summaryRow = database.prepare(`
+      SELECT
+        (SELECT COUNT(*) FROM accounts)
+          AS accounts,
 
-          (SELECT COUNT(*) FROM import_batches)
-            AS import_batches,
+        (SELECT COUNT(*) FROM import_batches)
+          AS import_batches,
 
-          (SELECT COUNT(*) FROM transactions)
-            AS transactions,
+        (SELECT COUNT(*) FROM transactions)
+          AS transactions,
 
+        (
+          SELECT COUNT(*)
+          FROM transactions
+          WHERE review_status = 'unreviewed'
+        ) AS unreviewed_transactions,
+
+        (
+          SELECT COUNT(*)
+          FROM transactions
+          WHERE review_status = 'reconciled'
+        ) AS reconciled_transactions,
+
+        (
+          SELECT COUNT(*)
+          FROM transactions
+          WHERE classification = 'unknown'
+        ) AS unclassified_transactions,
+
+        (
+          SELECT COUNT(*)
+          FROM transactions
+          WHERE reviewed_at IS NOT NULL
+        ) AS reviewed_transactions,
+
+        (
+          SELECT COUNT(*)
+          FROM transactions
+          WHERE reviewed_at IS NULL
+        ) AS not_reviewed_transactions,
+
+        (SELECT COUNT(*) FROM transaction_links)
+          AS transaction_links,
+
+        (SELECT COUNT(*) FROM budget_allocations)
+          AS budget_allocations
+    `).get() as SummaryRow;
+
+    const totalMatchingRow = database.prepare(`
+      SELECT COUNT(*) AS count
+      FROM transactions t
+      ${whereClause}
+    `).get(...parameters) as CountRow;
+
+    const rows = database.prepare(`
+      SELECT
+        t.id,
+        t.account_id,
+        account.name AS account_name,
+        account.institution,
+        account.account_type,
+        t.import_batch_id,
+        batch.source_file_name,
+        t.source_reference,
+        t.posted_date,
+        t.original_description,
+        COALESCE(
+          NULLIF(t.display_description, ''),
+          t.original_description
+        ) AS display_description,
+        t.amount_cents,
+        t.classification,
+        t.review_status,
+        t.reviewed_at,
+        t.payment_channel,
+        t.check_number,
+        t.note,
+
+        (
+          SELECT COUNT(*)
+          FROM budget_allocations allocation
+          WHERE allocation.transaction_id = t.id
+        ) AS allocation_count,
+
+        COALESCE(
           (
-            SELECT COUNT(*)
-            FROM transactions
-            WHERE review_status = 'unreviewed'
-          ) AS unreviewed_transactions,
-
-          (
-            SELECT COUNT(*)
-            FROM transactions
-            WHERE review_status = 'reconciled'
-          ) AS reconciled_transactions,
-
-          (
-            SELECT COUNT(*)
-            FROM transactions
-            WHERE classification = 'unknown'
-          ) AS unclassified_transactions,
-
-          (
-            SELECT COUNT(*)
-            FROM transactions
-            WHERE reviewed_at IS NOT NULL
-          ) AS reviewed_transactions,
-
-          (
-            SELECT COUNT(*)
-            FROM transactions
-            WHERE reviewed_at IS NULL
-          ) AS not_reviewed_transactions,
-
-          (SELECT COUNT(*) FROM transaction_links)
-            AS transaction_links,
-
-          (SELECT COUNT(*) FROM budget_allocations)
-            AS budget_allocations
-      `)
-      .get() as SummaryRow;
-
-    const totalMatchingRow = database
-      .prepare(`
-        SELECT COUNT(*) AS count
-        FROM transactions t
-        ${whereClause}
-      `)
-      .get(...parameters) as CountRow;
-
-    const rows = database
-      .prepare(`
-        SELECT
-          t.id,
-          t.account_id,
-          a.name AS account_name,
-          a.institution,
-          a.account_type,
-          t.import_batch_id,
-          b.source_file_name,
-          t.source_reference,
-          t.posted_date,
-          t.original_description,
-          COALESCE(
-            NULLIF(t.display_description, ''),
-            t.original_description
-          ) AS display_description,
-          t.amount_cents,
-          t.classification,
-          t.review_status,
-          t.reviewed_at,
-          t.payment_channel,
-          t.check_number,
-          t.note,
-
-          (
-            SELECT COUNT(*)
+            SELECT SUM(allocation.amount_cents)
             FROM budget_allocations allocation
             WHERE allocation.transaction_id = t.id
-          ) AS allocation_count,
+          ),
+          0
+        ) AS allocated_amount_cents,
 
+        (
+          SELECT COUNT(*)
+          FROM transaction_links link
+          WHERE
+            link.transaction_a_id = t.id OR
+            link.transaction_b_id = t.id
+        ) AS transaction_link_count
+
+      FROM transactions t
+
+      INNER JOIN accounts account
+        ON account.id = t.account_id
+
+      INNER JOIN import_batches batch
+        ON batch.id = t.import_batch_id
+
+      ${whereClause}
+
+      ORDER BY
+        t.posted_date DESC,
+        t.created_at DESC,
+        t.id ASC
+
+      LIMIT ?
+      OFFSET ?
+    `).all(
+      ...parameters,
+      limit,
+      offset
+    ) as InboxTransactionRow[];
+
+    const readAllocations = database.prepare(`
+      SELECT
+        budget_item_label,
+        amount_cents,
+        note
+      FROM budget_allocations
+      WHERE transaction_id = ?
+      ORDER BY
+        budget_item_label ASC,
+        id ASC
+    `);
+
+    const readConfirmedTransfer =
+      database.prepare(`
+        SELECT
+          link.id AS link_id,
+          link.confidence,
+          counterpart.id
+            AS counterpart_transaction_id,
+          counterpart_account.name
+            AS counterpart_account_name,
+          counterpart.posted_date
+            AS counterpart_posted_date,
           COALESCE(
-            (
-              SELECT SUM(allocation.amount_cents)
-              FROM budget_allocations allocation
-              WHERE allocation.transaction_id = t.id
+            NULLIF(
+              counterpart.display_description,
+              ''
             ),
-            0
-          ) AS allocated_amount_cents,
-
+            counterpart.original_description
+          ) AS counterpart_display_description,
+          counterpart.amount_cents
+            AS counterpart_amount_cents
+        FROM transaction_links link
+        INNER JOIN transactions counterpart
+          ON counterpart.id = CASE
+            WHEN
+              link.transaction_a_id =
+                @transactionId
+              THEN link.transaction_b_id
+            ELSE link.transaction_a_id
+          END
+        INNER JOIN accounts counterpart_account
+          ON counterpart_account.id =
+            counterpart.account_id
+        WHERE
+          link.link_type = 'transfer' AND
+          link.status = 'confirmed' AND
           (
-            SELECT COUNT(*)
-            FROM transaction_links link
-            WHERE
-              link.transaction_a_id = t.id OR
-              link.transaction_b_id = t.id
-          ) AS transaction_link_count
-
-        FROM transactions t
-
-        INNER JOIN accounts a
-          ON a.id = t.account_id
-
-        INNER JOIN import_batches b
-          ON b.id = t.import_batch_id
-
-        ${whereClause}
-
+            link.transaction_a_id =
+              @transactionId OR
+            link.transaction_b_id =
+              @transactionId
+          )
         ORDER BY
-          t.posted_date DESC,
-          t.created_at DESC,
-          t.id ASC
-
-        LIMIT ?
-        OFFSET ?
-      `)
-      .all(
-        ...parameters,
-        limit,
-        offset,
-      ) as InboxTransactionRow[];
+          link.confirmed_at DESC,
+          link.id ASC
+        LIMIT 1
+      `);
 
     return {
-      transactions: rows.map(transactionFromRow),
+      transactions: rows.map((row) =>
+        transactionFromRow({
+          row,
+          allocations:
+            readAllocations.all(
+              row.id
+            ) as AllocationRow[],
+          transferLink:
+            readConfirmedTransfer.get({
+              transactionId: row.id
+            }) as
+              | TransferLinkRow
+              | undefined
+        })
+      ),
       totalMatching: totalMatchingRow.count,
       limit,
       offset,
@@ -442,8 +602,10 @@ export async function loadPersonalFinanceTransactionInbox(
       accountId,
       summary: {
         accounts: summaryRow.accounts,
-        importBatches: summaryRow.import_batches,
-        transactions: summaryRow.transactions,
+        importBatches:
+          summaryRow.import_batches,
+        transactions:
+          summaryRow.transactions,
         unreviewedTransactions:
           summaryRow.unreviewed_transactions,
         reconciledTransactions:
@@ -457,9 +619,9 @@ export async function loadPersonalFinanceTransactionInbox(
         transactionLinks:
           summaryRow.transaction_links,
         budgetAllocations:
-          summaryRow.budget_allocations,
+          summaryRow.budget_allocations
       },
-      reason: null,
+      reason: null
     };
   } finally {
     database.close();

@@ -1694,3 +1694,168 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Personal Finance matching intelligence */
+.inboxMatchingProgress {
+  flex-wrap: wrap;
+  max-width: 390px;
+}
+
+.reconciliationButtonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.reconciliationDetails,
+.transferPairSummary {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid #d9e2ec;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #344054;
+  font-size: 10px;
+}
+
+.reconciliationDetailsTitle {
+  color: #667085;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.allocationSummaryList {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.allocationSummaryItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3px 8px;
+  align-items: baseline;
+}
+
+.allocationSummaryItem span,
+.transferPairSummary strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.allocationSummaryItem small,
+.transferPairSummary small {
+  grid-column: 1 / -1;
+  color: var(--pf-muted);
+  font-size: 9px;
+}
+
+.matchingSuggestionList,
+.transferCandidateList {
+  display: grid;
+  gap: 7px;
+}
+
+.matchingSuggestionCard {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid #c9d8e8;
+  border-radius: 8px;
+  background: #f4f8fc;
+  color: #344054;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.matchingSuggestionCard:hover {
+  border-color: #7da1c0;
+  background: #eaf3fa;
+}
+
+.matchingSuggestionCard > span:first-child,
+.transferCandidateCard > div:first-child {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.matchingSuggestionCard small,
+.transferCandidateCard small {
+  color: var(--pf-muted);
+  font-size: 9px;
+}
+
+.matchingSuggestionUse {
+  flex: 0 0 auto;
+  color: #365f86;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.matchingConfidence {
+  color: #365f86;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.matchingReasons {
+  color: #667085;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.matchingEmpty {
+  padding: 10px;
+  border: 1px dashed #c9d8e8;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #667085;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.transferCandidateCard {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid #d9e2ec;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.transferCandidateActions {
+  display: grid;
+  flex: 0 0 auto;
+  gap: 5px;
+}
+
+@media (max-width: 760px) {
+  .inboxMatchingProgress {
+    width: 100%;
+    max-width: none;
+  }
+
+  .transferCandidateCard {
+    display: grid;
+  }
+
+  .transferCandidateActions {
+    grid-template-columns: 1fr 1fr;
+  }
+}

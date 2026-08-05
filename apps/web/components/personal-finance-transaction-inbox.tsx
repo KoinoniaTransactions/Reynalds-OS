@@ -41,18 +41,16 @@ type Props = {
   transactionReason?: string | null;
 };
 
-function money(value: number): string {
-  return new Intl.NumberFormat("en-US", {
-    currency: "USD",
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
-    style: "currency"
-  }).format(value);
-}
-
 type PersonalFinanceReconciliationFilter =
   | "all"
   | "unreviewed"
+  | "reconciled";
+
+type PersonalFinanceMatchingFilter =
+  | "all"
+  | "needs-classification"
+  | "needs-target"
+  | "unpaired-transfer"
   | "reconciled";
 
 const RECONCILIATION_FILTER_OPTIONS = [
@@ -64,13 +62,174 @@ const RECONCILIATION_FILTER_OPTIONS = [
   string
 ][];
 
+const MATCHING_FILTER_OPTIONS = [
+  ["all", "All"],
+  ["needs-classification", "Needs classification"],
+  ["needs-target", "Needs target"],
+  ["unpaired-transfer", "Unpaired transfer"],
+  ["reconciled", "Reconciled"]
+] as const satisfies readonly [
+  PersonalFinanceMatchingFilter,
+  string
+][];
+
+function money(value: number): string {
+  return new Intl.NumberFormat("en-US", {
+    currency: "USD",
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+    style: "currency"
+  }).format(value);
+}
+
 function reconciliationFilterLabel(
   value: PersonalFinanceReconciliationFilter
 ): string {
   return (
     RECONCILIATION_FILTER_OPTIONS.find(
-      ([optionValue]) => optionValue === value
+      ([optionValue]) =>
+        optionValue === value
     )?.[1] ?? "All"
+  );
+}
+
+function matchingFilterLabel(
+  value: PersonalFinanceMatchingFilter
+): string {
+  return (
+    MATCHING_FILTER_OPTIONS.find(
+      ([optionValue]) =>
+        optionValue === value
+    )?.[1] ?? "All"
+  );
+}
+
+function needsBudgetTarget(
+  transaction: PersonalFinanceInboxTransaction
+): boolean {
+  return (
+    transaction.reviewStatus === "unreviewed" &&
+    (
+      transaction.classification === "expense" ||
+      transaction.classification === "income" ||
+      transaction.classification === "refund"
+    )
+  );
+}
+
+function isUnpairedTransfer(
+  transaction: PersonalFinanceInboxTransaction
+): boolean {
+  return (
+    transaction.classification === "transfer" &&
+    transaction.confirmedTransferLink === null
+  );
+}
+
+function matchesMatchingFilter(
+  transaction: PersonalFinanceInboxTransaction,
+  filter: PersonalFinanceMatchingFilter
+): boolean {
+  if (filter === "all") {
+    return true;
+  }
+
+  if (filter === "needs-classification") {
+    return transaction.classification === "unknown";
+  }
+
+  if (filter === "needs-target") {
+    return needsBudgetTarget(transaction);
+  }
+
+  if (filter === "unpaired-transfer") {
+    return isUnpairedTransfer(transaction);
+  }
+
+  return transaction.reviewStatus === "reconciled";
+}
+
+function AllocationDetails({
+  transaction
+}: {
+  transaction: PersonalFinanceInboxTransaction;
+}) {
+  if (
+    transaction.allocationDetails.length === 0
+  ) {
+    return null;
+  }
+
+  return (
+    <div className={styles.reconciliationDetails}>
+      <span className={styles.reconciliationDetailsTitle}>
+        {transaction.allocationDetails.length === 1
+          ? "Allocation"
+          : `${transaction.allocationDetails.length} allocations`}
+      </span>
+
+      <ul className={styles.allocationSummaryList}>
+        {transaction.allocationDetails.map(
+          (allocation, index) => (
+            <li
+              className={styles.allocationSummaryItem}
+              key={`${transaction.id}-allocation-${index}`}
+            >
+              <span>
+                {allocation.targetLabel}
+              </span>
+
+              <strong>
+                {money(
+                  Math.abs(
+                    allocation.amountCents
+                  ) / 100
+                )}
+              </strong>
+
+              {allocation.note ? (
+                <small title={allocation.note}>
+                  {allocation.note}
+                </small>
+              ) : null}
+            </li>
+          )
+        )}
+      </ul>
+    </div>
+  );
+}
+
+function TransferPairDetails({
+  transaction
+}: {
+  transaction: PersonalFinanceInboxTransaction;
+}) {
+  const link =
+    transaction.confirmedTransferLink;
+
+  if (!link) {
+    return null;
+  }
+
+  return (
+    <div className={styles.transferPairSummary}>
+      <span className={styles.reconciliationDetailsTitle}>
+        Confirmed pair
+      </span>
+
+      <strong title={link.displayDescription}>
+        {link.accountName}
+      </strong>
+
+      <small>
+        {link.postedDate}
+        {" · "}
+        {money(
+          Math.abs(link.amountCents) / 100
+        )}
+      </small>
+    </div>
   );
 }
 
@@ -102,31 +261,72 @@ export function PersonalFinanceTransactionInbox({
     "unreviewed"
   );
 
-  const classifiedAndReviewedTransactions = useMemo(
-    () =>
-      filterPersonalFinanceTransactions(
+  const [
+    matchingFilter,
+    setMatchingFilter
+  ] = useState<PersonalFinanceMatchingFilter>(
+    "all"
+  );
+
+  const counts = useMemo(
+    () => ({
+      unreconciled:
+        transactions.filter(
+          (transaction) =>
+            transaction.reviewStatus ===
+              "unreviewed"
+        ).length,
+      reconciled:
+        transactions.filter(
+          (transaction) =>
+            transaction.reviewStatus ===
+              "reconciled"
+        ).length,
+      needsTarget:
+        transactions.filter(
+          needsBudgetTarget
+        ).length,
+      unpairedTransfer:
+        transactions.filter(
+          isUnpairedTransfer
+        ).length
+    }),
+    [transactions]
+  );
+
+  const classifiedAndReviewedTransactions =
+    useMemo(
+      () =>
+        filterPersonalFinanceTransactions(
+          transactions,
+          classificationFilter,
+          reviewedFilter
+        ),
+      [
         transactions,
         classificationFilter,
         reviewedFilter
-      ),
-    [
-      transactions,
-      classificationFilter,
-      reviewedFilter
-    ]
-  );
+      ]
+    );
 
   const filteredTransactions = useMemo(
     () =>
       classifiedAndReviewedTransactions.filter(
         (transaction) =>
-          reconciliationFilter === "all" ||
-          transaction.reviewStatus ===
-            reconciliationFilter
+          (
+            reconciliationFilter === "all" ||
+            transaction.reviewStatus ===
+              reconciliationFilter
+          ) &&
+          matchesMatchingFilter(
+            transaction,
+            matchingFilter
+          )
       ),
     [
       classifiedAndReviewedTransactions,
-      reconciliationFilter
+      reconciliationFilter,
+      matchingFilter
     ]
   );
 
@@ -145,14 +345,31 @@ export function PersonalFinanceTransactionInbox({
       reconciliationFilter
     );
 
+  const matchingViewLabel =
+    matchingFilterLabel(matchingFilter);
+
   const description =
     transactions.length > 0
       ? `Showing ${filteredTransactions.length} of ${transactionTotal} ${
           transactionTotal === 1
             ? "transaction"
             : "transactions"
-        } from the private local database. Classification filter: ${classificationFilterLabel}. Reviewed filter: ${reviewedFilterLabel}. Reconciliation filter: ${reconciliationViewLabel}. View filters do not change transactions; classification, reviewed, and reconciliation controls save separate changes.`
+        } from the private local database. Classification: ${classificationFilterLabel}. Reviewed: ${reviewedFilterLabel}. Reconciliation: ${reconciliationViewLabel}. Matching: ${matchingViewLabel}. View filters do not change transactions.`
       : "Transactions stored in the private local database will appear here.";
+
+  function showReconciliation(
+    value: PersonalFinanceReconciliationFilter
+  ) {
+    setReconciliationFilter(value);
+    setMatchingFilter("all");
+  }
+
+  function showMatching(
+    value: PersonalFinanceMatchingFilter
+  ) {
+    setReconciliationFilter("all");
+    setMatchingFilter(value);
+  }
 
   return (
     <section
@@ -186,7 +403,6 @@ export function PersonalFinanceTransactionInbox({
                   ? styles.inboxReviewMetricActive
                   : ""
               }`}
-              title="Show reviewed transactions"
               type="button"
               onClick={() => {
                 setReviewedFilter("reviewed");
@@ -211,7 +427,6 @@ export function PersonalFinanceTransactionInbox({
                   ? styles.inboxReviewMetricActive
                   : ""
               }`}
-              title="Show not-reviewed transactions"
               type="button"
               onClick={() => {
                 setReviewedFilter("not-reviewed");
@@ -225,6 +440,80 @@ export function PersonalFinanceTransactionInbox({
                 {notReviewedTransactionCount}
               </strong>
             </button>
+          </div>
+
+          <div
+            aria-label="Transaction reconciliation progress"
+            className={`${styles.inboxReviewProgress} ${styles.inboxMatchingProgress}`}
+            role="group"
+          >
+            {[
+              {
+                label: "Unreconciled",
+                count: counts.unreconciled,
+                active:
+                  reconciliationFilter ===
+                    "unreviewed" &&
+                  matchingFilter === "all",
+                action: () =>
+                  showReconciliation(
+                    "unreviewed"
+                  )
+              },
+              {
+                label: "Reconciled",
+                count: counts.reconciled,
+                active:
+                  reconciliationFilter ===
+                    "reconciled" &&
+                  matchingFilter === "all",
+                action: () =>
+                  showReconciliation(
+                    "reconciled"
+                  )
+              },
+              {
+                label: "Needs target",
+                count: counts.needsTarget,
+                active:
+                  matchingFilter ===
+                    "needs-target",
+                action: () =>
+                  showMatching("needs-target")
+              },
+              {
+                label: "Unpaired",
+                count:
+                  counts.unpairedTransfer,
+                active:
+                  matchingFilter ===
+                    "unpaired-transfer",
+                action: () =>
+                  showMatching(
+                    "unpaired-transfer"
+                  )
+              }
+            ].map((metric) => (
+              <button
+                aria-pressed={metric.active}
+                className={`${styles.inboxReviewMetric} ${
+                  metric.active
+                    ? styles.inboxReviewMetricActive
+                    : ""
+                }`}
+                key={metric.label}
+                type="button"
+                onClick={metric.action}
+              >
+                <span className={styles.inboxReviewMetricLabel}>
+                  {metric.label}
+                </span>
+
+                <strong className={styles.inboxReviewMetricValue}>
+                  {metric.count}
+                </strong>
+              </button>
+            ))}
           </div>
 
           <label className={styles.inboxFilterControl}>
@@ -320,6 +609,41 @@ export function PersonalFinanceTransactionInbox({
               }}
             >
               {RECONCILIATION_FILTER_OPTIONS.map(
+                ([value, label]) => (
+                  <option
+                    key={value}
+                    value={value}
+                  >
+                    {label}
+                  </option>
+                )
+              )}
+            </select>
+          </label>
+
+          <label className={styles.inboxFilterControl}>
+            <span className={styles.inboxFilterLabelRow}>
+              <span className={styles.inboxFilterLabel}>
+                Matching
+              </span>
+
+              <span className={styles.inboxFilterMode}>
+                View only
+              </span>
+            </span>
+
+            <select
+              aria-label="Filter the inbox view by matching status"
+              className={styles.inboxFilterSelect}
+              value={matchingFilter}
+              onChange={(event) => {
+                setMatchingFilter(
+                  event.target
+                    .value as PersonalFinanceMatchingFilter
+                );
+              }}
+            >
+              {MATCHING_FILTER_OPTIONS.map(
                 ([value, label]) => (
                   <option
                     key={value}
@@ -445,6 +769,14 @@ export function PersonalFinanceTransactionInbox({
                     </td>
 
                     <td>
+                      <AllocationDetails
+                        transaction={transaction}
+                      />
+
+                      <TransferPairDetails
+                        transaction={transaction}
+                      />
+
                       <PersonalFinanceTransactionReconciliationControl
                         transactionId={
                           transaction.id
@@ -473,11 +805,17 @@ export function PersonalFinanceTransactionInbox({
           <strong>
             Classification: {classificationFilterLabel}
           </strong>
-          {" "}
-          and
-          {" "}
+          {", "}
           <strong>
             Reviewed: {reviewedFilterLabel}
+          </strong>
+          {", "}
+          <strong>
+            Reconciliation: {reconciliationViewLabel}
+          </strong>
+          {", and "}
+          <strong>
+            Matching: {matchingViewLabel}
           </strong>
           .
         </div>
