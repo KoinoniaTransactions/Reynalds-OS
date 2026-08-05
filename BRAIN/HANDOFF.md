@@ -1,5 +1,46 @@
 # Developer Handoff
 
+<!-- PERSONAL FINANCE HANDOFF 2026-08-05 -->
+## 2026-08-05 Personal Finance Handoff
+
+The local Personal Finance reconciliation and matching foundations are committed and verified at `fa878ea` on `feature/app-shell-foundation`.
+
+The next AI must continue from the documented scoring evidence, not redesign the system.
+
+### Immediate assignment
+
+Implement only the ambiguity-margin and evidence-clarity refinement after Jeremiah approves it:
+
+- expose the first-versus-second target score gap;
+- mark a result ambiguous below a 10-point gap;
+- prevent automatic preselection for ambiguous results;
+- show evidence labels and gap in the editor;
+- preserve the 75% high-confidence threshold;
+- do not increase amount weighting;
+- keep all writes explicit.
+
+### Evidence
+
+The privacy-safe 40-transaction review found:
+
+- zero high-confidence suggestions;
+- seven medium;
+- 17 low;
+- 16 with no suggestion;
+- 18 amount-only matches;
+- only one description-signal row;
+- 10 target ambiguities;
+- median and average first-versus-second gap of 4%.
+
+This makes ambiguity protection the first safe refinement. Merchant-history learning is a separate later decision because confirmed history remains sparse.
+
+### Safety
+
+No automatic classification, allocation, reconciliation, Reviewed change, or transfer-pair confirmation. Protect the real database, budget CSV, and existing port `3003`. Do not expose raw financial data. Do not push without explicit approval.
+<!-- END PERSONAL FINANCE HANDOFF 2026-08-05 -->
+
+---
+
 ## Project Status
 
 Reynalds OS is in repository-first development.

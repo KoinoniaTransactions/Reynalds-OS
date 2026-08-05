@@ -1,5 +1,44 @@
 # Current Priorities
 
+<!-- PERSONAL FINANCE PRIORITY 2026-08-05 -->
+## Focused Personal Finance Priority — 2026-08-05
+
+### Current priority
+
+Improve matching safety and clarity before attempting to increase match coverage.
+
+### Approved next proposal boundary
+
+- expose first-versus-second score gap;
+- mark gaps below 10 percentage points as ambiguous;
+- block suggestion preselection when ambiguous;
+- show evidence labels and gap;
+- keep the 75% high-confidence threshold;
+- do not increase amount weighting;
+- keep no-evidence transactions manual.
+
+### Evidence
+
+- 18 amount-only matches;
+- one description-signal row;
+- 10 target ambiguities;
+- median and average gap of 4%;
+- 16 transactions without a suggestion.
+
+### Deferred
+
+Learned merchant-description history is deferred until the existing confirmed-allocation history is inspected and proves sufficient for safe learning.
+
+### Do not
+
+- do not add automatic classification or reconciliation;
+- do not expand unrelated UI;
+- do not work on the broader dashboard issue;
+- do not push without explicit approval.
+<!-- END PERSONAL FINANCE PRIORITY 2026-08-05 -->
+
+---
+
 ## Active Phase
 
 Koinonia Production Website

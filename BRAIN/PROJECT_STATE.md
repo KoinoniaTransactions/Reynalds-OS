@@ -1,5 +1,26 @@
 # Reynalds OS Project State
 
+<!-- PERSONAL FINANCE PROJECT STATE 2026-08-05 -->
+## Personal Finance Project State — 2026-08-05
+
+The local-only Personal Finance workspace has reached a stable committed reconciliation and matching checkpoint.
+
+- Branch: `feature/app-shell-foundation`
+- Verified code HEAD: `fa878ea`
+- Reconciliation foundation: committed and live-verified
+- Matching intelligence: committed and live-verified
+- Focused tests: 17 passing
+- Existing local server: port `3003`
+- Real database and budget CSV: unchanged during verification
+- Push status: local only
+
+The privacy-safe 40-transaction review shows that amount evidence dominates and that target separation is weak. Ten rows were ambiguous, with a median and average best-versus-second gap of 4%.
+
+Current priority: add an ambiguity-margin guard and transparent evidence metadata without changing confidence thresholds or adding automatic writes.
+<!-- END PERSONAL FINANCE PROJECT STATE 2026-08-05 -->
+
+---
+
 ## Project
 
 **Product:** Reynalds OS

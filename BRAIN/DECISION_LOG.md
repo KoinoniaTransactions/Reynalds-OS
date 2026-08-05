@@ -116,3 +116,41 @@ Decision: Workspace query helpers must accept an explicit product registry for f
 Reason: A single canonical workspace entry cannot prove ordering behavior. Parameterized queries allow deterministic multi-entry tests that verify public products are excluded, workspace products remain complete, and navigation placement follows metadata even when registry entries are deliberately out of order.
 
 Canonical sources: `BRAIN/APPLICATION_CATALOG.md` and `apps/web/lib/productRegistry.ts`
+
+<!-- PERSONAL FINANCE DECISIONS 2026-08-05 -->
+## 2026-08-05 — Personal Finance Matching Refinement Decisions
+
+### Matching remains advisory
+
+Suggestions may rank targets and transfer candidates, but they must not write Classification, Reviewed state, Reconciliation state, allocations, or links without explicit user action.
+
+### Preserve the high-confidence threshold
+
+The 75% high-confidence threshold remains unchanged. Zero high-confidence real-data suggestions is not a reason to lower the threshold.
+
+### Do not increase amount weighting
+
+Eighteen rows matched on amount alone, while only one row received description evidence. Increasing amount weight would create false confidence among similar-dollar targets.
+
+### Add a confidence-margin guard
+
+A best target that leads the second target by less than 10 percentage points is ambiguous and must not be preselected automatically.
+
+The current real-data review found 10 ambiguous rows with a median and average gap of 4%.
+
+### Preserve manual fallback
+
+Sixteen rows had no suggestion. Transactions without evidence remain manual rather than receiving forced weak targets.
+
+### Separate classification from target guidance
+
+Thirty-five saved-Unknown rows required hypothetical classification previews. Classification remains explicit and user-confirmed, separate from budget-target matching.
+
+### Merchant learning is a separate decision
+
+Target-specific merchant-description learning may use only user-confirmed allocations. It must first be proven that enough repeated confirmed history exists to avoid overfitting.
+
+### Protect financial privacy
+
+Brain and handoff documents may contain aggregate counts and architecture decisions, but not raw descriptions, account names, target names, dates, amounts, routing details, addresses, or identifiers.
+<!-- END PERSONAL FINANCE DECISIONS 2026-08-05 -->

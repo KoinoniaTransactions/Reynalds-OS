@@ -2524,3 +2524,45 @@ Koinonia work records now have explicit fields for client visibility and staff a
 ### Current Status
 
 The assignment fields compile after Prisma client generation and are covered by validation tests. Employee assignment mutation, assignment history, staff capacity logic, and client account ownership screens remain future production slices.
+
+<!-- PERSONAL FINANCE DEVELOPMENT LOG 2026-08-05 -->
+## 2026-08-05 — Personal Finance Reconciliation, Matching, and Diagnostics
+
+Completed and committed:
+
+- transaction reconciliation foundation;
+- exact single and split allocations;
+- deterministic target matching;
+- explicit transfer-pair review;
+- matching filters and visibility.
+
+Local commits:
+
+- `5fc347d`
+- `fa878ea`
+
+Verification:
+
+- 17 focused tests;
+- TypeScript;
+- isolated API verification;
+- isolated browser verification;
+- responsive layout verification;
+- real database, CSV, and port `3003` protection.
+
+Privacy-safe diagnostics:
+
+- 40 rows analyzed;
+- 0 high, 7 medium, 17 low, 16 none;
+- 18 amount-only rows;
+- 5 date-signal rows;
+- 1 description-signal row;
+- 10 target ambiguities;
+- 4% median and average score gap;
+- 1 classification ambiguity;
+- 0 transfer candidates.
+
+Next action:
+
+Prepare and approve an ambiguity-margin and evidence-clarity refinement. Do not increase amount weights or lower the high-confidence threshold.
+<!-- END PERSONAL FINANCE DEVELOPMENT LOG 2026-08-05 -->

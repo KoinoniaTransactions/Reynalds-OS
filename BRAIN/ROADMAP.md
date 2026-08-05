@@ -38,3 +38,42 @@ Move from generated ZIP versions into a real Git repository and local developmen
 - Reporting suite.
 - Mobile app.
 - Multi-workspace administration.
+
+<!-- PERSONAL FINANCE ROADMAP 2026-08-05 -->
+## Personal Finance Roadmap Checkpoint — 2026-08-05
+
+### Completed
+
+- local SQLite reconciliation foundation;
+- exact single and split allocations;
+- compatible budget targets;
+- deterministic target matching;
+- explicit transfer-pair intelligence;
+- matching filters and metrics;
+- isolated API and browser verification;
+- privacy-safe review of 40 real transactions.
+
+### Current evidence
+
+- 0 high-confidence;
+- 7 medium-confidence;
+- 17 low-confidence;
+- 16 no suggestion;
+- 18 amount-only;
+- 1 description-signal row;
+- 10 target ambiguities;
+- 4% median and average first-versus-second gap;
+- 0 transfer candidates with one imported account.
+
+### Immediate next milestone
+
+Add ambiguity metadata, a 10-point confidence-margin guard, and transparent score-gap evidence. Prevent preselection when ambiguous.
+
+### Later milestone
+
+Evaluate target-specific merchant-description history only after confirmed allocation history is sufficient to avoid overfitting.
+
+### Guardrails
+
+No threshold reduction, no amount-weight increase, no automatic writes, temporary-copy verification only, and no push without approval.
+<!-- END PERSONAL FINANCE ROADMAP 2026-08-05 -->

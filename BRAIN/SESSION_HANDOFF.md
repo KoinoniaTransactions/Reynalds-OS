@@ -1,5 +1,131 @@
 # SESSION HANDOFF — Koinonia Marketing System
 
+<!-- PERSONAL FINANCE SESSION HANDOFF 2026-08-05 -->
+## 2026-08-05 Current Session Handoff — Personal Finance Matching
+
+Status: Stable local checkpoint; Brain synchronization pending review
+Repository: Reynalds OS
+Local path: `/Users/jeremiahreynalds/Desktop/Reynalds_OS_v11_3_1_Work`
+Branch: `feature/app-shell-foundation`
+Verified code HEAD: `fa878ea`
+Push state: Local only; nothing from this workstream was pushed.
+
+### Governing scope
+
+The active focused workstream is the local-only Personal Finance workspace at `/personal`.
+
+Do not expand or redesign unrelated Reynalds OS areas. A separate broader dashboard issue exists and is explicitly out of scope.
+
+### Completed committed checkpoints
+
+- `5fc347d` — transaction reconciliation foundation
+- `fa878ea` — transaction matching intelligence
+
+The reconciliation foundation supports explicit reconciliation, undo, exact single allocations, exact split allocations, classification-compatible targets, and separate Classification, Reviewed, and Reconciliation states.
+
+The matching checkpoint supports deterministic target suggestions, confidence and reasons, explicit transfer-pair confirmation and rejection, matching filters and metrics, allocation visibility, and confirmed-pair visibility.
+
+### Verification completed
+
+- 17 focused tests passed.
+- TypeScript passed.
+- Patch checks passed.
+- Isolated API verification passed.
+- Isolated Chromium verification passed.
+- Synthetic multi-account transfer pairing passed.
+- Desktop and mobile viewport checks passed.
+- The real database and budget CSV remained unchanged.
+- The existing port `3003` listener remained unchanged.
+
+### Current aggregate ledger evidence
+
+Do not copy raw transaction descriptions, account names, target names, dates, amounts, addresses, routing details, or account identifiers into Brain documents.
+
+The latest privacy-safe diagnostics analyzed 40 transactions:
+
+- 35 saved as Unknown
+- 2 saved as Expense
+- 1 saved as Income
+- 1 saved as Refund
+- 1 saved as Transfer
+- 0 high-confidence suggestions
+- 7 medium-confidence suggestions
+- 17 low-confidence suggestions
+- 16 transactions without a suggestion
+- 18 amount-only matches
+- 5 rows with date evidence
+- 1 row with description evidence
+- 10 target ambiguities
+- 1 classification ambiguity
+- median first-versus-second target gap: 4%
+- average first-versus-second target gap: 4%
+- 0 transfer candidates
+
+Zero real transfer candidates are expected while only one real account is imported.
+
+### Interpretation
+
+The matching system is safe and conservative, but amount similarity dominates the current evidence.
+
+Raising amount weights or lowering the 75% high-confidence threshold would increase false confidence among equal-dollar or near-equal-dollar budget targets.
+
+The immediate implementation priority is not broader UI work and not automatic matching.
+
+### Next exact implementation slice
+
+Implement an ambiguity-margin and evidence-clarity refinement:
+
+1. Add the score gap between the first and second target to matching output.
+2. Mark suggestions ambiguous when the gap is less than 10 percentage points.
+3. Do not preselect a target when the best suggestion is ambiguous.
+4. Preserve manual target selection for no-evidence and ambiguous transactions.
+5. Show transparent evidence labels and the score gap in the editor.
+6. Keep the 75% high-confidence threshold.
+7. Do not increase amount weighting.
+8. Evaluate learned merchant-description history separately after inspecting whether existing confirmed allocations provide enough repeated evidence.
+
+### Required validation
+
+- focused matching unit tests;
+- focused matching route tests if response fields change;
+- focused reconciliation tests;
+- TypeScript;
+- patch check;
+- isolated browser verification of ambiguous and unambiguous preselection;
+- second privacy-safe real-data review;
+- real database, CSV, and port `3003` integrity checks.
+
+Do not stage, commit, or push until the implementation and second review are separately approved.
+
+### Architectural rules that must remain intact
+
+1. Imported transactions are immutable factual records.
+2. Classification does not mean reconciled.
+3. `reviewed_at` means the user examined the transaction.
+4. `review_status` remains reconciliation state.
+5. Budget allocations are explicit reconciliation records.
+6. Transfers are not spending.
+7. Suggestions remain advisory until explicit user confirmation.
+8. Transfer pairing must not silently change Classification, Reviewed, Reconciliation, or allocations.
+9. View filters never write data.
+10. The local SQLite ledger remains separate from the broader Prisma/PostgreSQL OS model.
+11. No raw financial records belong in Brain or handoff documents.
+
+### Workflow for the next AI
+
+- Read the canonical Brain and Finance files before proposing work.
+- Verify path, branch, HEAD, and worktree.
+- Inspect the current matching implementation and tests.
+- Restate the exact proposed slice.
+- Wait for Jeremiah's approval.
+- Use guarded Terminal runners.
+- Run focused tests only.
+- Avoid production builds and unrelated browser testing.
+- Never push without explicit approval.
+<!-- END PERSONAL FINANCE SESSION HANDOFF 2026-08-05 -->
+
+---
+
 Status: Active Session Handoff  
 Repository: Reynalds OS  
 Current Branch: `feature/app-shell-foundation`  

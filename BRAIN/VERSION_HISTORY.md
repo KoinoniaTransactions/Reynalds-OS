@@ -61,3 +61,18 @@ Planned:
 ## Long-Term Vision
 
 Reynalds OS will evolve into a universal operating system capable of managing businesses, ministries, projects, organizations, and personal workflows through a shared object model and AI-assisted orchestration.
+
+<!-- PERSONAL FINANCE VERSION NOTE 2026-08-05 -->
+## 2026-08-05 — Local Personal Finance Reconciliation and Matching Checkpoint
+
+Local commits:
+
+- `5fc347d` — transaction reconciliation foundation
+- `fa878ea` — transaction matching intelligence
+
+Verification included 17 focused tests, TypeScript, patch checks, isolated API checks, isolated Chromium checks, synthetic multi-account transfer pairing, responsive layout checks, and real-data integrity protection.
+
+A privacy-safe 40-transaction review established the next milestone: ambiguity-margin and evidence-clarity refinement.
+
+No release was produced and no push was performed.
+<!-- END PERSONAL FINANCE VERSION NOTE 2026-08-05 -->
