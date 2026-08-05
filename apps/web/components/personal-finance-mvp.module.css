@@ -1405,6 +1405,35 @@
   border: 1px solid #d9e2ec;
   border-radius: 10px;
   background: #f8fafc;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.inboxReviewMetric:hover {
+  border-color: #a9bfd3;
+  background: #f2f7fb;
+}
+
+.inboxReviewMetric:focus-visible {
+  border-color: #47739a;
+  outline: 2px solid #d6e4f1;
+  outline-offset: 1px;
+}
+
+.inboxReviewMetricActive {
+  border-color: #7da1c0;
+  background: #eaf3fa;
+  box-shadow: 0 0 0 1px rgb(71 115 154 / 10%);
+}
+
+.inboxReviewMetricActive .inboxReviewMetricLabel {
+  color: #365f86;
+}
+
+.inboxReviewMetricActive .inboxReviewMetricValue {
+  color: #244d71;
 }
 
 .inboxReviewMetricLabel {

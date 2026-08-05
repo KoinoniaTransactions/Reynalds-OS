@@ -130,7 +130,22 @@ export function PersonalFinanceTransactionInbox({
             className={styles.inboxReviewProgress}
             role="group"
           >
-            <span className={styles.inboxReviewMetric}>
+            <button
+              aria-label={`Show ${reviewedTransactionCount} reviewed transactions`}
+              aria-pressed={
+                reviewedFilter === "reviewed"
+              }
+              className={`${styles.inboxReviewMetric} ${
+                reviewedFilter === "reviewed"
+                  ? styles.inboxReviewMetricActive
+                  : ""
+              }`}
+              title="Show reviewed transactions"
+              type="button"
+              onClick={() => {
+                setReviewedFilter("reviewed");
+              }}
+            >
               <span className={styles.inboxReviewMetricLabel}>
                 Reviewed
               </span>
@@ -138,9 +153,24 @@ export function PersonalFinanceTransactionInbox({
               <strong className={styles.inboxReviewMetricValue}>
                 {reviewedTransactionCount}
               </strong>
-            </span>
+            </button>
 
-            <span className={styles.inboxReviewMetric}>
+            <button
+              aria-label={`Show ${notReviewedTransactionCount} not-reviewed transactions`}
+              aria-pressed={
+                reviewedFilter === "not-reviewed"
+              }
+              className={`${styles.inboxReviewMetric} ${
+                reviewedFilter === "not-reviewed"
+                  ? styles.inboxReviewMetricActive
+                  : ""
+              }`}
+              title="Show not-reviewed transactions"
+              type="button"
+              onClick={() => {
+                setReviewedFilter("not-reviewed");
+              }}
+            >
               <span className={styles.inboxReviewMetricLabel}>
                 Not reviewed
               </span>
@@ -148,7 +178,7 @@ export function PersonalFinanceTransactionInbox({
               <strong className={styles.inboxReviewMetricValue}>
                 {notReviewedTransactionCount}
               </strong>
-            </span>
+            </button>
           </div>
 
           <label className={styles.inboxFilterControl}>
