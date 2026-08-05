@@ -37,7 +37,9 @@ export default async function PersonalPage() {
 
   const [budgetResult, inboxResult] = await Promise.all([
     loadLocalPersonalFinance(),
-    loadPersonalFinanceTransactionInbox()
+    loadPersonalFinanceTransactionInbox({
+      reviewStatus: "all"
+    })
   ]);
 
   return (

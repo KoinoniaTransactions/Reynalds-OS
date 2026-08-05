@@ -27,6 +27,10 @@ import {
   PersonalFinanceTransactionReviewedControl
 } from "./personal-finance-transaction-reviewed-control";
 
+import {
+  PersonalFinanceTransactionReconciliationControl
+} from "./personal-finance-transaction-reconciliation-control";
+
 import styles from "./personal-finance-mvp.module.css";
 
 type Props = {
@@ -46,12 +50,28 @@ function money(value: number): string {
   }).format(value);
 }
 
-function reconciliationStatusLabel(
-  value: PersonalFinanceInboxTransaction["reviewStatus"]
+type PersonalFinanceReconciliationFilter =
+  | "all"
+  | "unreviewed"
+  | "reconciled";
+
+const RECONCILIATION_FILTER_OPTIONS = [
+  ["all", "All"],
+  ["unreviewed", "Unreconciled"],
+  ["reconciled", "Reconciled"]
+] as const satisfies readonly [
+  PersonalFinanceReconciliationFilter,
+  string
+][];
+
+function reconciliationFilterLabel(
+  value: PersonalFinanceReconciliationFilter
 ): string {
-  return value === "reconciled"
-    ? "Reconciled"
-    : "Unreconciled";
+  return (
+    RECONCILIATION_FILTER_OPTIONS.find(
+      ([optionValue]) => optionValue === value
+    )?.[1] ?? "All"
+  );
 }
 
 export function PersonalFinanceTransactionInbox({
@@ -75,7 +95,14 @@ export function PersonalFinanceTransactionInbox({
     "all"
   );
 
-  const filteredTransactions = useMemo(
+  const [
+    reconciliationFilter,
+    setReconciliationFilter
+  ] = useState<PersonalFinanceReconciliationFilter>(
+    "unreviewed"
+  );
+
+  const classifiedAndReviewedTransactions = useMemo(
     () =>
       filterPersonalFinanceTransactions(
         transactions,
@@ -89,6 +116,20 @@ export function PersonalFinanceTransactionInbox({
     ]
   );
 
+  const filteredTransactions = useMemo(
+    () =>
+      classifiedAndReviewedTransactions.filter(
+        (transaction) =>
+          reconciliationFilter === "all" ||
+          transaction.reviewStatus ===
+            reconciliationFilter
+      ),
+    [
+      classifiedAndReviewedTransactions,
+      reconciliationFilter
+    ]
+  );
+
   const classificationFilterLabel =
     getPersonalFinanceClassificationFilterLabel(
       classificationFilter
@@ -99,14 +140,19 @@ export function PersonalFinanceTransactionInbox({
       reviewedFilter
     );
 
+  const reconciliationViewLabel =
+    reconciliationFilterLabel(
+      reconciliationFilter
+    );
+
   const description =
     transactions.length > 0
-      ? `Showing ${filteredTransactions.length} of ${transactionTotal} unreconciled ${
+      ? `Showing ${filteredTransactions.length} of ${transactionTotal} ${
           transactionTotal === 1
             ? "transaction"
             : "transactions"
-        } from the private local database. Classification filter: ${classificationFilterLabel}. Reviewed filter: ${reviewedFilterLabel}. View filters do not change transactions; classification and reviewed controls save separate changes.`
-      : "Unreconciled transactions stored in the private local database will appear here.";
+        } from the private local database. Classification filter: ${classificationFilterLabel}. Reviewed filter: ${reviewedFilterLabel}. Reconciliation filter: ${reconciliationViewLabel}. View filters do not change transactions; classification, reviewed, and reconciliation controls save separate changes.`
+      : "Transactions stored in the private local database will appear here.";
 
   return (
     <section
@@ -251,6 +297,41 @@ export function PersonalFinanceTransactionInbox({
             </select>
           </label>
 
+          <label className={styles.inboxFilterControl}>
+            <span className={styles.inboxFilterLabelRow}>
+              <span className={styles.inboxFilterLabel}>
+                Reconciliation
+              </span>
+
+              <span className={styles.inboxFilterMode}>
+                View only
+              </span>
+            </span>
+
+            <select
+              aria-label="Filter the inbox view by reconciliation state"
+              className={styles.inboxFilterSelect}
+              value={reconciliationFilter}
+              onChange={(event) => {
+                setReconciliationFilter(
+                  event.target
+                    .value as PersonalFinanceReconciliationFilter
+                );
+              }}
+            >
+              {RECONCILIATION_FILTER_OPTIONS.map(
+                ([value, label]) => (
+                  <option
+                    key={value}
+                    value={value}
+                  >
+                    {label}
+                  </option>
+                )
+              )}
+            </select>
+          </label>
+
           <span className={styles.countBadge}>
             {filteredTransactions.length}
           </span>
@@ -284,7 +365,15 @@ export function PersonalFinanceTransactionInbox({
                     Separate state
                   </span>
                 </th>
-                <th>Reconciliation</th>
+                <th>
+                  <span className={styles.editableColumnHeading}>
+                    Reconciliation
+                  </span>
+
+                  <span className={styles.reviewedColumnSubheading}>
+                    Budget link
+                  </span>
+                </th>
               </tr>
             </thead>
 
@@ -356,18 +445,20 @@ export function PersonalFinanceTransactionInbox({
                     </td>
 
                     <td>
-                      <span
-                        className={`${styles.status} ${
-                          transaction.reviewStatus ===
-                          "reconciled"
-                            ? styles.statusPaid
-                            : styles.statusPartial
-                        }`}
-                      >
-                        {reconciliationStatusLabel(
+                      <PersonalFinanceTransactionReconciliationControl
+                        transactionId={
+                          transaction.id
+                        }
+                        classification={
+                          transaction.classification
+                        }
+                        reviewStatus={
                           transaction.reviewStatus
-                        )}
-                      </span>
+                        }
+                        amountCents={
+                          transaction.amountCents
+                        }
+                      />
                     </td>
                   </tr>
                 )
@@ -377,7 +468,7 @@ export function PersonalFinanceTransactionInbox({
         </div>
       ) : transactions.length > 0 ? (
         <div className={styles.inboxFilterEmpty}>
-          No loaded unreconciled transactions match
+          No loaded transactions match
           {" "}
           <strong>
             Classification: {classificationFilterLabel}
@@ -393,7 +484,7 @@ export function PersonalFinanceTransactionInbox({
       ) : (
         <div className={styles.emptyList}>
           {transactionReason ??
-            "No unreconciled transactions are currently stored in the private database."}
+            "No transactions are currently stored in the private database."}
         </div>
       )}
     </section>

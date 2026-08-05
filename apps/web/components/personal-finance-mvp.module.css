@@ -1562,3 +1562,135 @@
     min-width: min(190px, 72vw);
   }
 }
+
+.reconciliationControl {
+  position: relative;
+  display: grid;
+  min-width: 132px;
+  gap: 6px;
+}
+
+.reconciliationPrimaryButton,
+.reconciliationSecondaryButton,
+.reconciliationRemoveButton {
+  min-height: 30px;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.reconciliationPrimaryButton {
+  border: 1px solid #344054;
+  background: #344054;
+  color: #ffffff;
+  padding: 6px 10px;
+}
+
+.reconciliationSecondaryButton {
+  border: 1px solid var(--pf-border);
+  background: var(--pf-surface);
+  color: #344054;
+  padding: 6px 10px;
+}
+
+.reconciliationRemoveButton {
+  border: 0;
+  background: transparent;
+  color: var(--pf-critical);
+  padding: 4px 6px;
+}
+
+.reconciliationPrimaryButton:disabled,
+.reconciliationSecondaryButton:disabled,
+.reconciliationRemoveButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.reconciliationEditor {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(420px, calc(100vw - 56px));
+  margin-top: 2px;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--pf-border);
+  border-radius: 10px;
+  background: var(--pf-surface);
+  box-shadow: 0 14px 34px rgba(16, 24, 40, 0.16);
+}
+
+.reconciliationEditorHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #344054;
+  font-size: 11px;
+}
+
+.reconciliationEditorHeader span {
+  color: var(--pf-muted);
+}
+
+.reconciliationAllocationRow {
+  display: grid;
+  grid-template-columns: minmax(130px, 1.4fr) 88px minmax(110px, 1fr) auto;
+  gap: 6px;
+  align-items: center;
+}
+
+.reconciliationSelect,
+.reconciliationAmountInput,
+.reconciliationNoteInput {
+  width: 100%;
+  min-height: 32px;
+  border: 1px solid var(--pf-border);
+  border-radius: 7px;
+  background: var(--pf-surface);
+  color: #344054;
+  font: inherit;
+  font-size: 11px;
+  padding: 6px 8px;
+}
+
+.reconciliationTotals,
+.reconciliationEditorActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.reconciliationTotals {
+  color: #475467;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.reconciliationError,
+.reconciliationWarning {
+  max-width: 360px;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.reconciliationError {
+  color: var(--pf-critical);
+}
+
+.reconciliationWarning {
+  color: #b54708;
+}
+
+@media (max-width: 760px) {
+  .reconciliationEditor {
+    width: min(420px, calc(100vw - 32px));
+  }
+
+  .reconciliationAllocationRow {
+    grid-template-columns: 1fr;
+  }
+}

@@ -182,6 +182,15 @@ export function updatePersonalFinanceTransactionClassification(
           };
         }
 
+        if (
+          before.review_status === "reconciled" ||
+          before.budget_allocation_count > 0
+        ) {
+          throw new Error(
+            "Unreconcile the transaction before changing its classification.",
+          );
+        }
+
         const result = database
           .prepare(`
             UPDATE transactions

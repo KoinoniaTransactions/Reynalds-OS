@@ -150,6 +150,18 @@ function handleClassificationError(
   if (
     error instanceof Error &&
     error.message.includes(
+      "Unreconcile the transaction before changing its classification"
+    )
+  ) {
+    return NextResponse.json(
+      { error: error.message },
+      { status: 409 }
+    );
+  }
+
+  if (
+    error instanceof Error &&
+    error.message.includes(
       "Unsupported Personal Finance classification"
     )
   ) {
