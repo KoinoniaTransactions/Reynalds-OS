@@ -228,6 +228,121 @@ const PERSONAL_FINANCE_SCHEMA_SQL = `
       ON DELETE RESTRICT
   ) STRICT;
 
+  CREATE TABLE IF NOT EXISTS obligation_homes (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    kind TEXT NOT NULL CHECK (
+      kind IN (
+        'home',
+        'vehicle',
+        'household',
+        'debt',
+        'other'
+      )
+    ),
+    description TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  ) STRICT;
+
+  CREATE TABLE IF NOT EXISTS obligations (
+    id TEXT PRIMARY KEY,
+    home_id TEXT,
+    budget_item_key TEXT,
+    name TEXT NOT NULL,
+    obligation_type TEXT NOT NULL CHECK (
+      obligation_type IN (
+        'mortgage',
+        'rent',
+        'auto',
+        'utility',
+        'insurance',
+        'credit_card',
+        'loan',
+        'subscription',
+        'tax',
+        'membership',
+        'other'
+      )
+    ),
+    provider TEXT,
+    account_last_four TEXT,
+    expected_amount_cents INTEGER CHECK (
+      expected_amount_cents IS NULL OR
+      expected_amount_cents >= 0
+    ),
+    due_day INTEGER CHECK (
+      due_day IS NULL OR
+      (
+        due_day >= 1 AND
+        due_day <= 31
+      )
+    ),
+    frequency TEXT NOT NULL DEFAULT 'monthly' CHECK (
+      frequency IN (
+        'weekly',
+        'biweekly',
+        'monthly',
+        'quarterly',
+        'semiannual',
+        'annual',
+        'variable'
+      )
+    ),
+    payment_method TEXT NOT NULL DEFAULT 'manual' CHECK (
+      payment_method IN (
+        'autopay',
+        'bank_bill_pay',
+        'provider_website',
+        'phone',
+        'check',
+        'manual',
+        'other'
+      )
+    ),
+    funding_account_id TEXT,
+    funding_account_label TEXT,
+    payment_url TEXT,
+    is_autopay INTEGER NOT NULL DEFAULT 0 CHECK (
+      is_autopay IN (0, 1)
+    ),
+    notes TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1 CHECK (
+      is_active IN (0, 1)
+    ),
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (home_id)
+      REFERENCES obligation_homes(id)
+      ON DELETE SET NULL,
+
+    FOREIGN KEY (funding_account_id)
+      REFERENCES accounts(id)
+      ON DELETE SET NULL
+  ) STRICT;
+
+  CREATE INDEX IF NOT EXISTS
+    obligations_home_due_index
+  ON obligations (
+    home_id,
+    is_active,
+    due_day
+  );
+
+  CREATE INDEX IF NOT EXISTS
+    obligations_budget_item_index
+  ON obligations (
+    budget_item_key
+  );
+
+  CREATE INDEX IF NOT EXISTS
+    obligations_funding_account_index
+  ON obligations (
+    funding_account_id,
+    is_active
+  );
+
   CREATE TABLE IF NOT EXISTS budget_allocations (
     id TEXT PRIMARY KEY,
     transaction_id TEXT NOT NULL,
