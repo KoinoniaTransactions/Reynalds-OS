@@ -2542,3 +2542,30 @@
     width: 100%;
   }
 }
+
+/* Personal Finance rail viewport guard */
+
+.app {
+  min-height: 100dvh;
+  align-items: start;
+}
+
+.rail {
+  height: 100dvh;
+  min-height: 100dvh;
+  align-self: start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color:
+    rgba(255, 255, 255, 0.15)
+    transparent;
+}
+
+@media (max-width: 760px) {
+  .rail {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+}

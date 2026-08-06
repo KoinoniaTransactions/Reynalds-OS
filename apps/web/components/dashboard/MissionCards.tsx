@@ -1,33 +1,51 @@
 import { brainState } from "../../lib/brain";
-import { objectEnginePrinciples } from "../../lib/objectEngine";
-import { activeWorkspace } from "../../lib/workspace";
+import {
+  objectEnginePrinciples
+} from "../../lib/objectEngine";
+import {
+  activeWorkspace
+} from "../../lib/workspace";
+
+const missionItems = [
+  {
+    label: "Current sprint",
+    value: brainState.milestone,
+    detail: brainState.nextTask
+  },
+  {
+    label: "Platform",
+    value: `v${brainState.version}`,
+    detail: brainState.branch
+  },
+  {
+    label: "Workspace",
+    value: activeWorkspace.name,
+    detail: activeWorkspace.description
+  },
+  {
+    label: "Architecture",
+    value: brainState.objectEngineStatus,
+    detail:
+      objectEnginePrinciples.currentStatus
+  }
+];
 
 export function MissionCards() {
   return (
-    <section className="ros-grid">
-      <article className="ros-card">
-        <span>Current Sprint</span>
-        <strong>{brainState.milestone}</strong>
-        <p>{brainState.nextTask}</p>
-      </article>
-
-      <article className="ros-card">
-        <span>Platform Version</span>
-        <strong>{brainState.version}</strong>
-        <p>{brainState.branch}</p>
-      </article>
-
-      <article className="ros-card">
-        <span>Active Workspace</span>
-        <strong>{activeWorkspace.name}</strong>
-        <p>{activeWorkspace.description}</p>
-      </article>
-
-      <article className="ros-card">
-        <span>Architecture Status</span>
-        <strong>{brainState.objectEngineStatus}</strong>
-        <p>{objectEnginePrinciples.currentStatus}</p>
-      </article>
+    <section
+      aria-label="Mission status"
+      className="ros-mission-strip"
+    >
+      {missionItems.map((item) => (
+        <article
+          className="ros-mission-item"
+          key={item.label}
+        >
+          <span>{item.label}</span>
+          <strong>{item.value}</strong>
+          <p>{item.detail}</p>
+        </article>
+      ))}
     </section>
   );
 }
