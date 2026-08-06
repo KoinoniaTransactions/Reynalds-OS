@@ -6127,3 +6127,112 @@
       ButtonText;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Personal Finance redundancy and navigation clarity v1                      */
+/* -------------------------------------------------------------------------- */
+
+.app:not(:has(:target)) .navOverview,
+.app:has(#overview:target) .navOverview,
+.app:has(#transaction-inbox:target)
+  .navTransactions,
+.app:has(#bills:target) .navBills,
+.app:has(#income:target) .navIncome,
+.app:has(#accounts:target) .navAccounts,
+.app:has(#rules:target) .navRules {
+  border-color:
+    rgba(211, 167, 88, 0.16);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(184, 138, 68, 0.25),
+      rgba(184, 138, 68, 0.09)
+    );
+  color: #ffffff;
+  box-shadow:
+    inset 3px 0 0 #d3a758,
+    0 7px 18px rgba(0, 0, 0, 0.12);
+}
+
+.app:not(:has(:target))
+  .navOverview
+  .navLabel,
+.app:has(#overview:target)
+  .navOverview
+  .navLabel,
+.app:has(#transaction-inbox:target)
+  .navTransactions
+  .navLabel,
+.app:has(#bills:target)
+  .navBills
+  .navLabel,
+.app:has(#income:target)
+  .navIncome
+  .navLabel,
+.app:has(#accounts:target)
+  .navAccounts
+  .navLabel,
+.app:has(#rules:target)
+  .navRules
+  .navLabel {
+  font-weight: 800;
+}
+
+.app:not(:has(:target))
+  .navOverview
+  .navDot,
+.app:has(#overview:target)
+  .navOverview
+  .navDot,
+.app:has(#transaction-inbox:target)
+  .navTransactions
+  .navDot,
+.app:has(#bills:target)
+  .navBills
+  .navDot,
+.app:has(#income:target)
+  .navIncome
+  .navDot,
+.app:has(#accounts:target)
+  .navAccounts
+  .navDot,
+.app:has(#rules:target)
+  .navRules
+  .navDot {
+  width: 7px;
+  height: 7px;
+  background: #e2b768;
+  box-shadow:
+    0 0 0 4px rgba(226, 183, 104, 0.15);
+}
+
+.inboxTransactionRowExpanded
+  .inboxTransactionStatus {
+  min-height: 23px;
+}
+
+.inboxWorkbenchHeading > strong {
+  letter-spacing: -0.012em;
+}
+
+.inboxWorkbenchSectionHeader,
+.inboxWorkbenchResolutionHeader {
+  grid-template-columns:
+    29px
+    minmax(0, 1fr)
+    auto;
+}
+
+@media (max-width: 700px) {
+  .inboxWorkbenchSectionHeader,
+  .inboxWorkbenchResolutionHeader {
+    grid-template-columns:
+      29px
+      minmax(0, 1fr);
+  }
+
+  .inboxWorkbenchSectionComplete {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

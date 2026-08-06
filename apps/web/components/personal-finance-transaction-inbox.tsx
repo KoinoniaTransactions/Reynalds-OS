@@ -798,9 +798,9 @@ export function PersonalFinanceTransactionInbox({
                 reviewed &&
                 reconciliationComplete;
 
-              const workflowHeadline =
+              const workflowStateLabel =
                 workflowComplete
-                  ? "Workflow complete"
+                  ? "Complete"
                   : actionLabel === "Ready"
                     ? "Ready to reconcile"
                     : actionLabel;
@@ -911,18 +911,20 @@ export function PersonalFinanceTransactionInbox({
                         {classificationLabel}
                       </span>
 
-                      <span
-                        className={`${styles.inboxStatusChip} ${
-                          transaction.reviewStatus ===
-                          "reconciled"
-                            ? styles.inboxStatusChipComplete
-                            : attention
-                              ? styles.inboxStatusChipAttention
-                              : styles.inboxStatusChipPending
-                        }`}
-                      >
-                        {actionLabel}
-                      </span>
+                      {!expanded ? (
+                        <span
+                          className={`${styles.inboxStatusChip} ${
+                            transaction.reviewStatus ===
+                            "reconciled"
+                              ? styles.inboxStatusChipComplete
+                              : attention
+                                ? styles.inboxStatusChipAttention
+                                : styles.inboxStatusChipPending
+                          }`}
+                        >
+                          {actionLabel}
+                        </span>
+                      ) : null}
 
                       {reviewed ? (
                         <span
@@ -960,7 +962,7 @@ export function PersonalFinanceTransactionInbox({
                           </span>
 
                           <strong>
-                            {workflowHeadline}
+                            Review and resolve transaction
                           </strong>
 
                           <small>
@@ -977,9 +979,7 @@ export function PersonalFinanceTransactionInbox({
                               : styles.inboxWorkbenchStateActive
                           }`}
                         >
-                          {workflowComplete
-                            ? "Complete"
-                            : workflowHeadline}
+                          {workflowStateLabel}
                         </span>
 
                         <div
@@ -1107,17 +1107,15 @@ export function PersonalFinanceTransactionInbox({
                                 </small>
                               </span>
 
-                              <span
-                                className={
-                                  classificationComplete
-                                    ? styles.inboxWorkbenchSectionComplete
-                                    : styles.inboxWorkbenchSectionPending
-                                }
-                              >
-                                {classificationComplete
-                                  ? "Set"
-                                  : "Required"}
-                              </span>
+                              {classificationComplete ? (
+                                <span
+                                  className={
+                                    styles.inboxWorkbenchSectionComplete
+                                  }
+                                >
+                                  Set
+                                </span>
+                              ) : null}
                             </header>
 
                             <PersonalFinanceTransactionClassificationSelect
@@ -1159,17 +1157,15 @@ export function PersonalFinanceTransactionInbox({
                                 </small>
                               </span>
 
-                              <span
-                                className={
-                                  reviewed
-                                    ? styles.inboxWorkbenchSectionComplete
-                                    : styles.inboxWorkbenchSectionPending
-                                }
-                              >
-                                {reviewed
-                                  ? "Complete"
-                                  : "Pending"}
-                              </span>
+                              {reviewed ? (
+                                <span
+                                  className={
+                                    styles.inboxWorkbenchSectionComplete
+                                  }
+                                >
+                                  Complete
+                                </span>
+                              ) : null}
                             </header>
 
                             <PersonalFinanceTransactionReviewedControl
@@ -1213,17 +1209,15 @@ export function PersonalFinanceTransactionInbox({
                               </small>
                             </span>
 
-                            <span
-                              className={
-                                reconciliationComplete
-                                  ? styles.inboxWorkbenchSectionComplete
-                                  : styles.inboxWorkbenchSectionPending
-                              }
-                            >
-                              {reconciliationComplete
-                                ? "Complete"
-                                : "Pending"}
-                            </span>
+                            {reconciliationComplete ? (
+                              <span
+                                className={
+                                  styles.inboxWorkbenchSectionComplete
+                                }
+                              >
+                                Complete
+                              </span>
+                            ) : null}
                           </header>
 
                           <div

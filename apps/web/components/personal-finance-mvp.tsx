@@ -326,10 +326,6 @@ function PersonalFinanceFrame({
           </div>
 
           <div className={styles.headerMeta}>
-            <span className={styles.monthBadge}>
-              {monthLabel}
-            </span>
-
             <a
               className={styles.headerRosLink}
               href="/dashboard"
@@ -781,13 +777,6 @@ export function PersonalFinanceMvp({
             </span>
           </div>
 
-          <a
-            className={styles.heroGoalAction}
-            href="#transaction-inbox"
-          >
-            Review financial activity
-            <span aria-hidden="true">→</span>
-          </a>
         </div>
       </section>
 
