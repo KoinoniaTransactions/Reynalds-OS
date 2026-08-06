@@ -42,6 +42,45 @@ export type ConfigureLoanTermsInput = {
   lastAccrualDate?: string | null;
 };
 
+export type ModelLoanScenarioInput = {
+  liabilityId: string;
+  recurringExtraPayment?:
+    number | string | null;
+  oneTimeExtraPayment?:
+    number | string | null;
+  projectionStartDate?: string | null;
+};
+
+export type LoanAmortizationEntry = {
+  paymentNumber: number;
+  paymentDate: string;
+  payment: number;
+  interest: number;
+  principal: number;
+  extraPrincipal: number;
+  closingBalance: number;
+  cumulativeInterest: number;
+  cumulativePrincipal: number;
+};
+
+export type LoanScenarioResult = {
+  liabilityId: string;
+  openingBalance: number;
+  scheduledPrincipalAndInterest: number;
+  modeledPrincipalAndInterest: number;
+  oneTimeExtraPayment: number;
+  recurringExtraPayment: number;
+  baselinePayoffDate: string | null;
+  modeledPayoffDate: string | null;
+  baselinePaymentCount: number | null;
+  modeledPaymentCount: number | null;
+  paymentsSaved: number | null;
+  baselineRemainingInterest: number | null;
+  modeledRemainingInterest: number | null;
+  interestSaved: number | null;
+  amortization: LoanAmortizationEntry[];
+};
+
 export type ReconcileLoanStatementInput = {
   liabilityId: string;
   statementBalance: number | string;
@@ -520,6 +559,222 @@ export function readLoanPaymentWorkspace():
           row.liability_id
         )
     }));
+  } finally {
+    database.close();
+  }
+}
+
+export function modelLoanScenario(
+  input: ModelLoanScenarioInput
+): LoanScenarioResult {
+  assertLocalPersonalFinanceEnabled();
+
+  const liabilityId =
+    requiredText(
+      input.liabilityId,
+      "Liability ID"
+    );
+
+  const recurringExtraPayment =
+    optionalMoney(
+      input.recurringExtraPayment,
+      "Recurring extra payment"
+    ) ?? 0;
+
+  const oneTimeExtraPayment =
+    optionalMoney(
+      input.oneTimeExtraPayment,
+      "One-time extra payment"
+    ) ?? 0;
+
+  const projectionStartDate =
+    optionalDate(
+      input.projectionStartDate,
+      "Projection start date"
+    ) ??
+    new Date()
+      .toISOString()
+      .slice(0, 10);
+
+  const database =
+    openPersonalFinanceDatabase();
+
+  try {
+    const row =
+      database
+        .prepare(`
+          SELECT
+            liabilities.current_balance_cents,
+            loan_terms.calculation_method,
+            loan_terms.annual_interest_rate_basis_points,
+            loan_terms.payment_frequency,
+            loan_terms.scheduled_payment_cents,
+            loan_terms.scheduled_escrow_cents
+          FROM liabilities
+          INNER JOIN loan_terms
+            ON loan_terms.liability_id =
+              liabilities.id
+          WHERE
+            liabilities.id = ? AND
+            liabilities.is_active = 1
+          LIMIT 1
+        `)
+        .get(
+          liabilityId
+        ) as
+        | {
+            current_balance_cents:
+              number;
+            calculation_method:
+              LoanCalculationMethod;
+            annual_interest_rate_basis_points:
+              number;
+            payment_frequency:
+              LoanPaymentFrequency;
+            scheduled_payment_cents:
+              number | null;
+            scheduled_escrow_cents:
+              number;
+          }
+        | undefined;
+
+    if (!row) {
+      throw new Error(
+        "Configured loan terms were not found."
+      );
+    }
+
+    if (
+      row.calculation_method ===
+      "manual"
+    ) {
+      throw new Error(
+        "Manual-allocation loans cannot generate an automatic amortization model."
+      );
+    }
+
+    const openingBalance =
+      centsToDollars(
+        row.current_balance_cents
+      );
+
+    const scheduledPayment =
+      centsToDollars(
+        row.scheduled_payment_cents ??
+        0
+      );
+
+    const scheduledEscrow =
+      centsToDollars(
+        row.scheduled_escrow_cents
+      );
+
+    const scheduledPrincipalAndInterest =
+      roundMoney(
+        Math.max(
+          0,
+          scheduledPayment -
+          scheduledEscrow
+        )
+      );
+
+    if (
+      scheduledPrincipalAndInterest <=
+      0
+    ) {
+      throw new Error(
+        "A scheduled principal-and-interest payment is required."
+      );
+    }
+
+    if (
+      oneTimeExtraPayment >
+      openingBalance
+    ) {
+      throw new Error(
+        "One-time extra payment cannot exceed the current principal balance."
+      );
+    }
+
+    const annualInterestRate =
+      row
+        .annual_interest_rate_basis_points /
+      100;
+
+    const baseline =
+      simulateAmortization({
+        principal:
+          openingBalance,
+        annualInterestRate,
+        payment:
+          scheduledPrincipalAndInterest,
+        oneTimeExtraPayment: 0,
+        recurringExtraPayment: 0,
+        frequency:
+          row.payment_frequency,
+        projectionStartDate
+      });
+
+    const modeled =
+      simulateAmortization({
+        principal:
+          openingBalance,
+        annualInterestRate,
+        payment:
+          scheduledPrincipalAndInterest,
+        oneTimeExtraPayment,
+        recurringExtraPayment,
+        frequency:
+          row.payment_frequency,
+        projectionStartDate
+      });
+
+    return {
+      liabilityId,
+      openingBalance,
+      scheduledPrincipalAndInterest,
+      modeledPrincipalAndInterest:
+        roundMoney(
+          scheduledPrincipalAndInterest +
+          recurringExtraPayment
+        ),
+      oneTimeExtraPayment,
+      recurringExtraPayment,
+      baselinePayoffDate:
+        baseline.payoffDate,
+      modeledPayoffDate:
+        modeled.payoffDate,
+      baselinePaymentCount:
+        baseline.paymentCount,
+      modeledPaymentCount:
+        modeled.paymentCount,
+      paymentsSaved:
+        baseline.paymentCount === null ||
+        modeled.paymentCount === null
+          ? null
+          : Math.max(
+              0,
+              baseline.paymentCount -
+              modeled.paymentCount
+            ),
+      baselineRemainingInterest:
+        baseline.totalInterest,
+      modeledRemainingInterest:
+        modeled.totalInterest,
+      interestSaved:
+        baseline.totalInterest === null ||
+        modeled.totalInterest === null
+          ? null
+          : roundMoney(
+              Math.max(
+                0,
+                baseline.totalInterest -
+                modeled.totalInterest
+              )
+            ),
+      amortization:
+        modeled.entries.slice(0, 12)
+    };
   } finally {
     database.close();
   }
@@ -1415,6 +1670,212 @@ export function calculateScheduledPayment({
     );
 
   return roundMoney(payment);
+}
+
+function simulateAmortization({
+  principal,
+  annualInterestRate,
+  payment,
+  oneTimeExtraPayment,
+  recurringExtraPayment,
+  frequency,
+  projectionStartDate
+}: {
+  principal: number;
+  annualInterestRate: number;
+  payment: number;
+  oneTimeExtraPayment: number;
+  recurringExtraPayment: number;
+  frequency: LoanPaymentFrequency;
+  projectionStartDate: string;
+}): {
+  payoffDate: string | null;
+  paymentCount: number | null;
+  totalInterest: number | null;
+  entries: LoanAmortizationEntry[];
+} {
+  const periodsPerYear =
+    frequency === "weekly"
+      ? 52
+      : frequency === "biweekly"
+        ? 26
+        : 12;
+
+  const periodicRate =
+    annualInterestRate /
+    100 /
+    periodsPerYear;
+
+  let balance =
+    roundMoney(
+      Math.max(
+        0,
+        principal -
+        oneTimeExtraPayment
+      )
+    );
+
+  const totalScheduledPayment =
+    roundMoney(
+      payment +
+      recurringExtraPayment
+    );
+
+  if (
+    balance > 0 &&
+    totalScheduledPayment <=
+      roundMoney(
+        balance *
+        periodicRate
+      )
+  ) {
+    return {
+      payoffDate: null,
+      paymentCount: null,
+      totalInterest: null,
+      entries: []
+    };
+  }
+
+  let paymentNumber = 0;
+  let totalInterest = 0;
+  let cumulativePrincipal =
+    roundMoney(
+      principal -
+      balance
+    );
+
+  const entries:
+    LoanAmortizationEntry[] = [];
+
+  while (
+    balance > 0 &&
+    paymentNumber < 1200
+  ) {
+    paymentNumber += 1;
+
+    const interest =
+      roundMoney(
+        balance *
+        periodicRate
+      );
+
+    const availablePrincipal =
+      Math.max(
+        0,
+        totalScheduledPayment -
+        interest
+      );
+
+    const principalApplied =
+      roundMoney(
+        Math.min(
+          balance,
+          availablePrincipal
+        )
+      );
+
+    if (
+      principalApplied <= 0
+    ) {
+      return {
+        payoffDate: null,
+        paymentCount: null,
+        totalInterest: null,
+        entries: []
+      };
+    }
+
+    const actualPayment =
+      roundMoney(
+        interest +
+        principalApplied
+      );
+
+    const scheduledPrincipal =
+      Math.min(
+        principalApplied,
+        Math.max(
+          0,
+          payment -
+          interest
+        )
+      );
+
+    const extraPrincipal =
+      roundMoney(
+        Math.max(
+          0,
+          principalApplied -
+          scheduledPrincipal
+        )
+      );
+
+    balance =
+      roundMoney(
+        Math.max(
+          0,
+          balance -
+          principalApplied
+        )
+      );
+
+    totalInterest =
+      roundMoney(
+        totalInterest +
+        interest
+      );
+
+    cumulativePrincipal =
+      roundMoney(
+        cumulativePrincipal +
+        principalApplied
+      );
+
+    entries.push({
+      paymentNumber,
+      paymentDate:
+        addPaymentPeriods({
+          date:
+            projectionStartDate,
+          periods:
+            paymentNumber,
+          frequency
+        }),
+      payment:
+        actualPayment,
+      interest,
+      principal:
+        principalApplied,
+      extraPrincipal,
+      closingBalance:
+        balance,
+      cumulativeInterest:
+        totalInterest,
+      cumulativePrincipal
+    });
+  }
+
+  if (balance > 0) {
+    return {
+      payoffDate: null,
+      paymentCount: null,
+      totalInterest: null,
+      entries: entries.slice(0, 12)
+    };
+  }
+
+  return {
+    payoffDate:
+      entries.at(-1)
+        ?.paymentDate ??
+      projectionStartDate,
+    paymentCount:
+      paymentNumber,
+    totalInterest:
+      totalInterest,
+    entries
+  };
 }
 
 function readWorkspaceProjection({

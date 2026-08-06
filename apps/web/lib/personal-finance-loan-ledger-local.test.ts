@@ -24,6 +24,7 @@ import {
   applyLoanPayment,
   calculateScheduledPayment,
   configureLoanTerms,
+  modelLoanScenario,
   previewLoanPayment,
   readLoanPaymentWorkspace,
   reconcileLoanStatement
@@ -632,6 +633,146 @@ describe(
         } finally {
           database.close();
         }
+      }
+    );
+
+    it(
+      "models recurring extra payments without changing the stored balance",
+      () => {
+        configureLoanTerms({
+          liabilityId:
+            "liability_mortgage",
+          calculationMethod:
+            "monthly_amortization",
+          annualInterestRate:
+            6.25,
+          originalTermMonths:
+            360,
+          remainingTermMonths:
+            288,
+          paymentFrequency:
+            "monthly",
+          scheduledPayment:
+            2150,
+          scheduledEscrow:
+            550,
+          firstPaymentDate:
+            "2026-09-01",
+          rateType:
+            "fixed",
+          lastAccrualDate:
+            "2026-08-01"
+        });
+
+        const scenario =
+          modelLoanScenario({
+            liabilityId:
+              "liability_mortgage",
+            recurringExtraPayment:
+              250,
+            projectionStartDate:
+              "2026-09-01"
+          });
+
+        expect(
+          scenario
+            .modeledPaymentCount
+        ).toBeLessThan(
+          scenario
+            .baselinePaymentCount ??
+          Number.MAX_SAFE_INTEGER
+        );
+
+        expect(
+          scenario.interestSaved
+        ).toBeGreaterThan(0);
+
+        expect(
+          scenario.amortization
+        ).toHaveLength(12);
+
+        expect(
+          scenario
+            .amortization[0]
+            ?.extraPrincipal
+        ).toBeGreaterThan(0);
+
+        const database =
+          openPersonalFinanceDatabase({
+            databasePath
+          });
+
+        try {
+          const liability =
+            database
+              .prepare(`
+                SELECT
+                  current_balance_cents
+                FROM liabilities
+                WHERE id =
+                  'liability_mortgage'
+              `)
+              .get() as {
+                current_balance_cents:
+                  number;
+              };
+
+          expect(
+            liability
+              .current_balance_cents
+          ).toBe(24000000);
+        } finally {
+          database.close();
+        }
+      }
+    );
+
+    it(
+      "models a one-time principal payment",
+      () => {
+        configureLoanTerms({
+          liabilityId:
+            "liability_mortgage",
+          calculationMethod:
+            "monthly_amortization",
+          annualInterestRate:
+            6.25,
+          paymentFrequency:
+            "monthly",
+          scheduledPayment:
+            2150,
+          scheduledEscrow:
+            550,
+          firstPaymentDate:
+            "2026-09-01",
+          rateType:
+            "fixed"
+        });
+
+        const scenario =
+          modelLoanScenario({
+            liabilityId:
+              "liability_mortgage",
+            oneTimeExtraPayment:
+              10000,
+            projectionStartDate:
+              "2026-09-01"
+          });
+
+        expect(
+          scenario
+            .oneTimeExtraPayment
+        ).toBe(10000);
+
+        expect(
+          scenario
+            .paymentsSaved
+        ).toBeGreaterThan(0);
+
+        expect(
+          scenario
+            .interestSaved
+        ).toBeGreaterThan(0);
       }
     );
 

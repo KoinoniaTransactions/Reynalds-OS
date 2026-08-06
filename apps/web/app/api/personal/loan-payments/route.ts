@@ -5,6 +5,7 @@ import {
 import {
   applyLoanPayment,
   configureLoanTerms,
+  modelLoanScenario,
   previewLoanPayment,
   readLoanPaymentWorkspace,
   reconcileLoanStatement
@@ -43,7 +44,8 @@ export async function POST(
           | "configure"
           | "preview-payment"
           | "apply-payment"
-          | "reconcile-statement";
+          | "reconcile-statement"
+          | "model-scenario";
         [key: string]: unknown;
       };
 
@@ -87,6 +89,19 @@ export async function POST(
 
     if (
       body.action ===
+        "model-scenario"
+    ) {
+      return NextResponse.json({
+        ok: true,
+        scenario:
+          modelLoanScenario(
+            body as never
+          )
+      });
+    }
+
+    if (
+      body.action ===
         "reconcile-statement"
     ) {
       reconcileLoanStatement(
@@ -101,7 +116,7 @@ export async function POST(
     return NextResponse.json(
       {
         error:
-          "Action must be configure, preview-payment, apply-payment, or reconcile-statement."
+          "Action must be configure, preview-payment, apply-payment, reconcile-statement, or model-scenario."
       },
       {
         status: 400

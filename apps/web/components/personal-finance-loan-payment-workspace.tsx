@@ -64,6 +64,36 @@ type LoanRecord = {
     PaymentHistoryRecord[];
 };
 
+type AmortizationEntry = {
+  paymentNumber: number;
+  paymentDate: string;
+  payment: number;
+  interest: number;
+  principal: number;
+  extraPrincipal: number;
+  closingBalance: number;
+  cumulativeInterest: number;
+  cumulativePrincipal: number;
+};
+
+type LoanScenario = {
+  liabilityId: string;
+  openingBalance: number;
+  scheduledPrincipalAndInterest: number;
+  modeledPrincipalAndInterest: number;
+  oneTimeExtraPayment: number;
+  recurringExtraPayment: number;
+  baselinePayoffDate: string | null;
+  modeledPayoffDate: string | null;
+  baselinePaymentCount: number | null;
+  modeledPaymentCount: number | null;
+  paymentsSaved: number | null;
+  baselineRemainingInterest: number | null;
+  modeledRemainingInterest: number | null;
+  interestSaved: number | null;
+  amortization: AmortizationEntry[];
+};
+
 type PaymentPreview = {
   liabilityId: string;
   obligationId: string | null;
@@ -130,6 +160,27 @@ export function PersonalFinanceLoanPaymentWorkspace() {
     setReconciling
   ] = useState<LoanRecord | null>(
     null
+  );
+
+  const [
+    modeling,
+    setModeling
+  ] = useState<LoanRecord | null>(
+    null
+  );
+
+  const [
+    scenario,
+    setScenario
+  ] = useState<LoanScenario | null>(
+    null
+  );
+
+  const [
+    modeledPayment,
+    setModeledPayment
+  ] = useState<Record<string, number>>(
+    {}
   );
 
   const [
@@ -201,6 +252,92 @@ export function PersonalFinanceLoanPaymentWorkspace() {
   useEffect(() => {
     void loadRecords();
   }, [loadRecords]);
+
+  async function modelExtraPayment(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    if (!modeling) {
+      return;
+    }
+
+    setSaving(true);
+    setError(null);
+    setNotice(null);
+    setScenario(null);
+
+    const data =
+      new FormData(
+        event.currentTarget
+      );
+
+    try {
+      const response =
+        await fetch(
+          "/api/personal/loan-payments",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+            body: JSON.stringify({
+              action:
+                "model-scenario",
+              liabilityId:
+                modeling.liabilityId,
+              recurringExtraPayment:
+                String(
+                  data.get(
+                    "recurringExtraPayment"
+                  ) ?? ""
+                ),
+              oneTimeExtraPayment:
+                String(
+                  data.get(
+                    "oneTimeExtraPayment"
+                  ) ?? ""
+                ),
+              projectionStartDate:
+                String(
+                  data.get(
+                    "projectionStartDate"
+                  ) ?? ""
+                )
+            })
+          }
+        );
+
+      const body =
+        await response.json() as {
+          scenario?: LoanScenario;
+          error?: string;
+        };
+
+      if (
+        !response.ok ||
+        !body.scenario
+      ) {
+        throw new Error(
+          body.error ??
+            "Extra-payment scenario could not be calculated."
+        );
+      }
+
+      setScenario(
+        body.scenario
+      );
+    } catch (modelError) {
+      setError(
+        modelError instanceof Error
+          ? modelError.message
+          : "Extra-payment scenario could not be calculated."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
 
   async function reconcileStatement(
     event: FormEvent<HTMLFormElement>
@@ -857,8 +994,29 @@ export function PersonalFinanceLoanPaymentWorkspace() {
               }
             >
               <button
+                disabled={
+                  !record.hasConfiguredTerms
+                }
+                onClick={() => {
+                  setModeling(record);
+                  setScenario(null);
+                  setReconciling(null);
+                  setConfiguring(null);
+                  setSelected(null);
+                  setPreview(null);
+                  setError(null);
+                  setNotice(null);
+                }}
+                type="button"
+              >
+                Model extra payment
+              </button>
+
+              <button
                 onClick={() => {
                   setReconciling(record);
+                  setModeling(null);
+                  setScenario(null);
                   setConfiguring(null);
                   setSelected(null);
                   setPreview(null);
@@ -873,6 +1031,8 @@ export function PersonalFinanceLoanPaymentWorkspace() {
               <button
                 onClick={() => {
                   setConfiguring(record);
+                  setModeling(null);
+                  setScenario(null);
                   setReconciling(null);
                   setSelected(null);
                   setPreview(null);
@@ -892,6 +1052,8 @@ export function PersonalFinanceLoanPaymentWorkspace() {
                 }
                 onClick={() => {
                   setSelected(record);
+                  setModeling(null);
+                  setScenario(null);
                   setConfiguring(null);
                   setPreview(null);
                   setError(null);
@@ -971,6 +1133,312 @@ export function PersonalFinanceLoanPaymentWorkspace() {
           </article>
         ))}
       </div>
+
+      {modeling ? (
+        <div
+          className={styles.overlay}
+          role="presentation"
+        >
+          <section
+            aria-modal="true"
+            className={styles.dialog}
+            role="dialog"
+          >
+            <header>
+              <div>
+                <span>
+                  Payoff modeling
+                </span>
+
+                <h3>
+                  {modeling.billName}
+                </h3>
+              </div>
+
+              <button
+                aria-label="Close payoff modeling"
+                onClick={() => {
+                  setModeling(null);
+                  setScenario(null);
+                }}
+                type="button"
+              >
+                ×
+              </button>
+            </header>
+
+            <form
+              onSubmit={
+                modelExtraPayment
+              }
+            >
+              <div
+                className={
+                  styles.formGrid
+                }
+              >
+                <label>
+                  <span>
+                    One-time extra principal
+                  </span>
+
+                  <input
+                    defaultValue="0"
+                    min="0"
+                    name="oneTimeExtraPayment"
+                    step="0.01"
+                    type="number"
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    Recurring extra payment
+                  </span>
+
+                  <input
+                    defaultValue="0"
+                    min="0"
+                    name="recurringExtraPayment"
+                    step="0.01"
+                    type="number"
+                  />
+                </label>
+
+                <label
+                  className={
+                    styles.fullWidth
+                  }
+                >
+                  <span>
+                    Projection start date
+                  </span>
+
+                  <input
+                    defaultValue={TODAY}
+                    name="projectionStartDate"
+                    required
+                    type="date"
+                  />
+                </label>
+              </div>
+
+              <button
+                disabled={saving}
+                type="submit"
+              >
+                {saving
+                  ? "Calculating..."
+                  : "Calculate scenario"}
+              </button>
+            </form>
+
+            {scenario ? (
+              <section
+                className={
+                  styles.scenario
+                }
+              >
+                <h4>
+                  Modeled result
+                </h4>
+
+                <div
+                  className={
+                    styles.scenarioSummary
+                  }
+                >
+                  <div>
+                    <span>
+                      Current payoff
+                    </span>
+                    <strong>
+                      {scenario
+                        .baselinePayoffDate ??
+                        "Unavailable"}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>
+                      Modeled payoff
+                    </span>
+                    <strong>
+                      {scenario
+                        .modeledPayoffDate ??
+                        "Unavailable"}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>
+                      Payments saved
+                    </span>
+                    <strong>
+                      {scenario
+                        .paymentsSaved ??
+                        "Unavailable"}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>
+                      Interest saved
+                    </span>
+                    <strong>
+                      {scenario
+                        .interestSaved ===
+                      null
+                        ? "Unavailable"
+                        : money(
+                            scenario
+                              .interestSaved
+                          )}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>
+                      Modeled P&I payment
+                    </span>
+                    <strong>
+                      {money(
+                        scenario
+                          .modeledPrincipalAndInterest
+                      )}
+                    </strong>
+                  </div>
+                </div>
+
+                {scenario
+                  .amortization.length >
+                0 ? (
+                  <div
+                    className={
+                      styles.amortization
+                    }
+                  >
+                    <h4>
+                      Next 12 payments
+                    </h4>
+
+                    <div
+                      className={
+                        styles.amortizationScroll
+                      }
+                    >
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>
+                              Payment
+                            </th>
+                            <th>
+                              Interest
+                            </th>
+                            <th>
+                              Principal
+                            </th>
+                            <th>
+                              Extra
+                            </th>
+                            <th>
+                              Balance
+                            </th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {scenario
+                            .amortization
+                            .map(
+                              (entry) => (
+                                <tr
+                                  key={
+                                    entry
+                                      .paymentNumber
+                                  }
+                                >
+                                  <td>
+                                    {
+                                      entry
+                                        .paymentDate
+                                    }
+                                  </td>
+                                  <td>
+                                    {money(
+                                      entry
+                                        .payment
+                                    )}
+                                  </td>
+                                  <td>
+                                    {money(
+                                      entry
+                                        .interest
+                                    )}
+                                  </td>
+                                  <td>
+                                    {money(
+                                      entry
+                                        .principal
+                                    )}
+                                  </td>
+                                  <td>
+                                    {money(
+                                      entry
+                                        .extraPrincipal
+                                    )}
+                                  </td>
+                                  <td>
+                                    {money(
+                                      entry
+                                        .closingBalance
+                                    )}
+                                  </td>
+                                </tr>
+                              )
+                            )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : null}
+
+                <button
+                  onClick={() => {
+                    const totalPayment =
+                      scenario
+                        .modeledPrincipalAndInterest +
+                      modeling
+                        .scheduledEscrow;
+
+                    setModeledPayment(
+                      (current) => ({
+                        ...current,
+                        [modeling
+                          .liabilityId]:
+                          totalPayment
+                      })
+                    );
+
+                    setSelected(
+                      modeling
+                    );
+
+                    setModeling(null);
+                    setScenario(null);
+                    setPreview(null);
+                  }}
+                  type="button"
+                >
+                  Use modeled payment
+                </button>
+              </section>
+            ) : null}
+          </section>
+        </div>
+      ) : null}
 
       {reconciling ? (
         <div
@@ -1445,6 +1913,9 @@ export function PersonalFinanceLoanPaymentWorkspace() {
                   </span>
                   <input
                     defaultValue={
+                      modeledPayment[
+                        selected.liabilityId
+                      ] ??
                       selected
                         .expectedPayment ??
                       ""
