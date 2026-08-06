@@ -47,6 +47,9 @@ beforeEach(() => {
   process.env.PERSONAL_FINANCE_DB_PATH =
     databasePath;
 
+  process.env.PERSONAL_FINANCE_ENCRYPTION_KEY =
+    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
   const database =
     openPersonalFinanceDatabase({
       databasePath
@@ -82,6 +85,9 @@ afterEach(() => {
 
   delete process.env
     .PERSONAL_FINANCE_DB_PATH;
+
+  delete process.env
+    .PERSONAL_FINANCE_ENCRYPTION_KEY;
 
   rmSync(temporaryDirectory, {
     recursive: true,
@@ -154,6 +160,149 @@ describe(
         expect(
           catalog.accounts
         ).toHaveLength(1);
+      }
+    );
+
+    it(
+      "creates a linked asset and liability from a financed bill",
+      () => {
+        createPersonalFinanceObligation({
+          name: "Mortgage",
+          obligationType: "mortgage",
+          homeName:
+            "Primary residence",
+          homeKind: "home",
+          provider:
+            "Chase Home Lending",
+          expectedAmount: 2150,
+          assetName:
+            "Primary residence",
+          assetValue: 350000,
+          assetValuedOn:
+            "2026-08-06",
+          currentBalance: 240000,
+          originalBalance: 275000,
+          interestRate: 6.25,
+          minimumPayment: 2150,
+          escrowPayment: 550,
+          fullAccountNumber:
+            "1234567890127788"
+        });
+
+        const database =
+          openPersonalFinanceDatabase({
+            databasePath
+          });
+
+        try {
+          const asset = database
+            .prepare(`
+              SELECT
+                id,
+                name,
+                asset_type
+              FROM assets
+            `)
+            .get() as {
+              id: string;
+              name: string;
+              asset_type: string;
+            };
+
+          const liability = database
+            .prepare(`
+              SELECT
+                linked_asset_id,
+                liability_type,
+                current_balance_cents
+              FROM liabilities
+            `)
+            .get() as {
+              linked_asset_id: string;
+              liability_type: string;
+              current_balance_cents:
+                number;
+            };
+
+          const sensitiveCount =
+            database
+              .prepare(`
+                SELECT count(*) AS count
+                FROM sensitive_values
+              `)
+              .get() as {
+                count: number;
+              };
+
+          expect(asset.name).toBe(
+            "Primary residence"
+          );
+
+          expect(asset.asset_type).toBe(
+            "real_estate"
+          );
+
+          expect(
+            liability.linked_asset_id
+          ).toBe(asset.id);
+
+          expect(
+            liability.liability_type
+          ).toBe("mortgage");
+
+          expect(
+            liability.current_balance_cents
+          ).toBe(240_000_00);
+
+          expect(
+            sensitiveCount.count
+          ).toBe(2);
+        } finally {
+          database.close();
+        }
+      }
+    );
+
+    it(
+      "does not create an asset for an ordinary utility bill",
+      () => {
+        createPersonalFinanceObligation({
+          name: "Electricity",
+          obligationType: "utility",
+          expectedAmount: 220
+        });
+
+        const database =
+          openPersonalFinanceDatabase({
+            databasePath
+          });
+
+        try {
+          const assets = database
+            .prepare(`
+              SELECT count(*) AS count
+              FROM assets
+            `)
+            .get() as {
+              count: number;
+            };
+
+          const liabilities = database
+            .prepare(`
+              SELECT count(*) AS count
+              FROM liabilities
+            `)
+            .get() as {
+              count: number;
+            };
+
+          expect(assets.count).toBe(0);
+          expect(
+            liabilities.count
+          ).toBe(0);
+        } finally {
+          database.close();
+        }
       }
     );
 

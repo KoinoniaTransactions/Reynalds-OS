@@ -5,6 +5,10 @@ import {
   openPersonalFinanceDatabase
 } from "./personal-finance-db-local";
 
+import {
+  encryptPersonalFinanceValue
+} from "./personal-finance-sensitive-local";
+
 export type PersonalFinanceObligationHomeKind =
   | "home"
   | "vehicle"
@@ -100,6 +104,17 @@ export type CreatePersonalFinanceObligationInput = {
   paymentUrl?: string | null;
   isAutopay?: boolean;
   notes?: string | null;
+
+  assetName?: string | null;
+  assetValue?: number | string | null;
+  assetValuedOn?: string | null;
+  currentBalance?: number | string | null;
+  originalBalance?: number | string | null;
+  interestRate?: number | string | null;
+  minimumPayment?: number | string | null;
+  escrowPayment?: number | string | null;
+  maturityDate?: string | null;
+  fullAccountNumber?: string | null;
 };
 
 const HOME_KINDS = new Set<PersonalFinanceObligationHomeKind>([
@@ -204,6 +219,42 @@ export function createPersonalFinanceObligation(
     input.paymentUrl
   );
 
+  const financedAssetInput =
+    normalizeFinancedAssetInput({
+      obligationType,
+      assetName:
+        optionalText(input.assetName) ??
+        optionalText(input.homeName),
+      assetValue:
+        optionalAmount(input.assetValue),
+      assetValuedOn:
+        optionalDate(
+          input.assetValuedOn,
+          "Asset valuation date"
+        ),
+      currentBalance:
+        optionalAmount(input.currentBalance),
+      originalBalance:
+        optionalAmount(input.originalBalance),
+      interestRate:
+        optionalInterestRate(
+          input.interestRate
+        ),
+      minimumPayment:
+        optionalAmount(input.minimumPayment),
+      escrowPayment:
+        optionalAmount(input.escrowPayment),
+      maturityDate:
+        optionalDate(
+          input.maturityDate,
+          "Maturity date"
+        ),
+      fullAccountNumber:
+        optionalText(
+          input.fullAccountNumber
+        )
+    });
+
   const database = openPersonalFinanceDatabase();
 
   try {
@@ -306,6 +357,17 @@ export function createPersonalFinanceObligation(
           optionalText(input.notes)
         );
 
+      if (financedAssetInput) {
+        createFinancedAssetRecords({
+          database,
+          obligationId: id,
+          obligationName: name,
+          provider:
+            optionalText(input.provider),
+          input: financedAssetInput
+        });
+      }
+
       const catalog = readCatalog(database);
 
       const created = catalog.obligations.find(
@@ -324,6 +386,349 @@ export function createPersonalFinanceObligation(
     return create.immediate();
   } finally {
     database.close();
+  }
+}
+
+type FinancedAssetInput = {
+  obligationType: "mortgage" | "auto";
+  assetName: string;
+  assetValue: number;
+  assetValuedOn: string;
+  currentBalance: number;
+  originalBalance: number | null;
+  interestRate: number | null;
+  minimumPayment: number | null;
+  escrowPayment: number | null;
+  maturityDate: string | null;
+  fullAccountNumber: string | null;
+};
+
+function normalizeFinancedAssetInput({
+  obligationType,
+  assetName,
+  assetValue,
+  assetValuedOn,
+  currentBalance,
+  originalBalance,
+  interestRate,
+  minimumPayment,
+  escrowPayment,
+  maturityDate,
+  fullAccountNumber
+}: {
+  obligationType:
+    PersonalFinanceObligationType;
+  assetName: string | null;
+  assetValue: number | null;
+  assetValuedOn: string | null;
+  currentBalance: number | null;
+  originalBalance: number | null;
+  interestRate: number | null;
+  minimumPayment: number | null;
+  escrowPayment: number | null;
+  maturityDate: string | null;
+  fullAccountNumber: string | null;
+}): FinancedAssetInput | null {
+  if (
+    obligationType !== "mortgage" &&
+    obligationType !== "auto"
+  ) {
+    return null;
+  }
+
+  const hasFinancialDetails =
+    assetValue !== null ||
+    currentBalance !== null ||
+    originalBalance !== null ||
+    interestRate !== null ||
+    fullAccountNumber !== null;
+
+  if (!hasFinancialDetails) {
+    return null;
+  }
+
+  if (!assetName) {
+    throw new Error(
+      "Asset name is required for a financed asset."
+    );
+  }
+
+  if (assetValue === null) {
+    throw new Error(
+      "Asset value is required for a financed asset."
+    );
+  }
+
+  if (currentBalance === null) {
+    throw new Error(
+      "Current loan balance is required for a financed asset."
+    );
+  }
+
+  return {
+    obligationType,
+    assetName,
+    assetValue,
+    assetValuedOn:
+      assetValuedOn ??
+      new Date().toISOString().slice(0, 10),
+    currentBalance,
+    originalBalance,
+    interestRate,
+    minimumPayment,
+    escrowPayment,
+    maturityDate,
+    fullAccountNumber
+  };
+}
+
+function createFinancedAssetRecords({
+  database,
+  obligationId,
+  obligationName,
+  provider,
+  input
+}: {
+  database: ReturnType<
+    typeof openPersonalFinanceDatabase
+  >;
+  obligationId: string;
+  obligationName: string;
+  provider: string | null;
+  input: FinancedAssetInput;
+}): void {
+  const assetType =
+    input.obligationType === "mortgage"
+      ? "real_estate"
+      : "vehicle";
+
+  const liabilityType =
+    input.obligationType === "mortgage"
+      ? "mortgage"
+      : "auto_loan";
+
+  const existingAsset = database
+    .prepare(`
+      SELECT id
+      FROM assets
+      WHERE
+        lower(name) = lower(?) AND
+        asset_type = ? AND
+        is_active = 1
+      LIMIT 1
+    `)
+    .get(
+      input.assetName,
+      assetType
+    ) as
+    | { id: string }
+    | undefined;
+
+  const assetId =
+    existingAsset?.id ??
+    createPersonalFinanceId(
+      "asset",
+      [
+        assetType,
+        input.assetName
+      ]
+    );
+
+  if (!existingAsset) {
+    database
+      .prepare(`
+        INSERT INTO assets (
+          id,
+          name,
+          asset_type,
+          institution,
+          description
+        )
+        VALUES (?, ?, ?, ?, ?)
+      `)
+      .run(
+        assetId,
+        input.assetName,
+        assetType,
+        provider,
+        `Created from ${obligationName} bill setup.`
+      );
+  }
+
+  database
+    .prepare(`
+      INSERT INTO asset_valuations (
+        id,
+        asset_id,
+        value_cents,
+        valued_on,
+        source,
+        note
+      )
+      VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT (
+        asset_id,
+        valued_on
+      )
+      DO UPDATE SET
+        value_cents =
+          excluded.value_cents,
+        source =
+          excluded.source,
+        note =
+          excluded.note
+    `)
+    .run(
+      createPersonalFinanceId(
+        "asset_valuation",
+        [
+          assetId,
+          input.assetValuedOn
+        ]
+      ),
+      assetId,
+      Math.round(
+        input.assetValue * 100
+      ),
+      input.assetValuedOn,
+      "Bills workspace",
+      `Updated from ${obligationName}.`
+    );
+
+  const liabilityId =
+    createPersonalFinanceId(
+      "liability",
+      [
+        obligationId,
+        liabilityType
+      ]
+    );
+
+  database
+    .prepare(`
+      INSERT INTO liabilities (
+        id,
+        obligation_id,
+        linked_asset_id,
+        name,
+        liability_type,
+        institution,
+        original_balance_cents,
+        current_balance_cents,
+        balance_as_of,
+        interest_rate_basis_points,
+        minimum_payment_cents,
+        escrow_payment_cents,
+        maturity_date
+      )
+      VALUES (
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?
+      )
+    `)
+    .run(
+      liabilityId,
+      obligationId,
+      assetId,
+      obligationName,
+      liabilityType,
+      provider,
+      input.originalBalance === null
+        ? null
+        : Math.round(
+            input.originalBalance * 100
+          ),
+      Math.round(
+        input.currentBalance * 100
+      ),
+      input.assetValuedOn,
+      input.interestRate === null
+        ? null
+        : Math.round(
+            input.interestRate * 100
+          ),
+      input.minimumPayment === null
+        ? null
+        : Math.round(
+            input.minimumPayment * 100
+          ),
+      input.escrowPayment === null
+        ? null
+        : Math.round(
+            input.escrowPayment * 100
+          ),
+      input.maturityDate
+    );
+
+  if (!input.fullAccountNumber) {
+    return;
+  }
+
+  const encrypted =
+    encryptPersonalFinanceValue(
+      input.fullAccountNumber
+    );
+
+  for (
+    const [ownerType, ownerId]
+    of [
+      ["obligation", obligationId],
+      ["liability", liabilityId]
+    ] as const
+  ) {
+    database
+      .prepare(`
+        INSERT INTO sensitive_values (
+          id,
+          owner_type,
+          owner_id,
+          field_name,
+          ciphertext,
+          initialization_vector,
+          authentication_tag,
+          key_version,
+          last_four
+        )
+        VALUES (
+          ?,
+          ?,
+          ?,
+          'account_number',
+          ?,
+          ?,
+          ?,
+          ?,
+          ?
+        )
+      `)
+      .run(
+        createPersonalFinanceId(
+          "sensitive_value",
+          [
+            ownerType,
+            ownerId,
+            "account_number"
+          ]
+        ),
+        ownerType,
+        ownerId,
+        encrypted.ciphertext,
+        encrypted.initializationVector,
+        encrypted.authenticationTag,
+        encrypted.keyVersion,
+        encrypted.lastFour
+      );
   }
 }
 
@@ -587,6 +992,61 @@ function optionalAmount(
   return (
     Math.round(amount * 100) / 100
   );
+}
+
+function optionalInterestRate(
+  value: unknown
+): number | null {
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+    return null;
+  }
+
+  const rate = Number(value);
+
+  if (
+    !Number.isFinite(rate) ||
+    rate < 0 ||
+    rate > 100
+  ) {
+    throw new Error(
+      "Interest rate must be between zero and 100."
+    );
+  }
+
+  return Math.round(rate * 100) / 100;
+}
+
+function optionalDate(
+  value: unknown,
+  label: string
+): string | null {
+  const normalized =
+    optionalText(value);
+
+  if (!normalized) {
+    return null;
+  }
+
+  if (
+    !/^\d{4}-\d{2}-\d{2}$/.test(
+      normalized
+    ) ||
+    Number.isNaN(
+      Date.parse(
+        `${normalized}T00:00:00Z`
+      )
+    )
+  ) {
+    throw new Error(
+      `${label} must use YYYY-MM-DD.`
+    );
+  }
+
+  return normalized;
 }
 
 function optionalDueDay(

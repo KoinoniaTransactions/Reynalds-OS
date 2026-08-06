@@ -264,6 +264,13 @@ export function PersonalFinanceObligationWorkspace({
   ] = useState(false);
 
   const [
+    selectedObligationType,
+    setSelectedObligationType
+  ] = useState<ObligationType>(
+    "mortgage"
+  );
+
+  const [
     statusMessage,
     setStatusMessage
   ] = useState<string | null>(
@@ -547,6 +554,64 @@ export function PersonalFinanceObligationWorkspace({
         String(
           formData.get("notes") ??
             ""
+        ),
+      assetName:
+        String(
+          formData.get("assetName") ??
+            ""
+        ),
+      assetValue:
+        String(
+          formData.get("assetValue") ??
+            ""
+        ),
+      assetValuedOn:
+        String(
+          formData.get(
+            "assetValuedOn"
+          ) ?? ""
+        ),
+      currentBalance:
+        String(
+          formData.get(
+            "currentBalance"
+          ) ?? ""
+        ),
+      originalBalance:
+        String(
+          formData.get(
+            "originalBalance"
+          ) ?? ""
+        ),
+      interestRate:
+        String(
+          formData.get(
+            "interestRate"
+          ) ?? ""
+        ),
+      minimumPayment:
+        String(
+          formData.get(
+            "minimumPayment"
+          ) ?? ""
+        ),
+      escrowPayment:
+        String(
+          formData.get(
+            "escrowPayment"
+          ) ?? ""
+        ),
+      maturityDate:
+        String(
+          formData.get(
+            "maturityDate"
+          ) ?? ""
+        ),
+      fullAccountNumber:
+        String(
+          formData.get(
+            "fullAccountNumber"
+          ) ?? ""
         )
     };
 
@@ -578,6 +643,9 @@ export function PersonalFinanceObligationWorkspace({
       }
 
       form.reset();
+      setSelectedObligationType(
+        "mortgage"
+      );
 
       setStatusMessage(
         "Bill saved successfully."
@@ -725,8 +793,16 @@ export function PersonalFinanceObligationWorkspace({
             <label>
               <span>Bill type</span>
               <select
-                defaultValue="mortgage"
                 name="obligationType"
+                onChange={(event) =>
+                  setSelectedObligationType(
+                    event.target
+                      .value as ObligationType
+                  )
+                }
+                value={
+                  selectedObligationType
+                }
               >
                 {Object.entries(
                   TYPE_LABELS
@@ -808,6 +884,154 @@ export function PersonalFinanceObligationWorkspace({
                 placeholder="Chase Home Lending"
               />
             </label>
+
+            {selectedObligationType ===
+              "mortgage" ||
+            selectedObligationType ===
+              "auto" ? (
+              <>
+                <label>
+                  <span>
+                    {selectedObligationType ===
+                    "mortgage"
+                      ? "Property name"
+                      : "Vehicle name"}
+                  </span>
+                  <input
+                    name="assetName"
+                    placeholder={
+                      selectedObligationType ===
+                      "mortgage"
+                        ? "Primary residence"
+                        : "2024 Chevrolet Tahoe"
+                    }
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    Current asset value
+                  </span>
+                  <input
+                    inputMode="decimal"
+                    min="0"
+                    name="assetValue"
+                    placeholder="350000.00"
+                    step="0.01"
+                    type="number"
+                  />
+                </label>
+
+                <label>
+                  <span>Valuation date</span>
+                  <input
+                    defaultValue={
+                      new Date()
+                        .toISOString()
+                        .slice(0, 10)
+                    }
+                    name="assetValuedOn"
+                    type="date"
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    Current loan balance
+                  </span>
+                  <input
+                    inputMode="decimal"
+                    min="0"
+                    name="currentBalance"
+                    placeholder="240000.00"
+                    step="0.01"
+                    type="number"
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    Original loan amount
+                  </span>
+                  <input
+                    inputMode="decimal"
+                    min="0"
+                    name="originalBalance"
+                    placeholder="275000.00"
+                    step="0.01"
+                    type="number"
+                  />
+                </label>
+
+                <label>
+                  <span>Interest rate</span>
+                  <input
+                    inputMode="decimal"
+                    max="100"
+                    min="0"
+                    name="interestRate"
+                    placeholder="6.25"
+                    step="0.01"
+                    type="number"
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    Regular payment
+                  </span>
+                  <input
+                    inputMode="decimal"
+                    min="0"
+                    name="minimumPayment"
+                    placeholder="2150.00"
+                    step="0.01"
+                    type="number"
+                  />
+                </label>
+
+                {selectedObligationType ===
+                "mortgage" ? (
+                  <label>
+                    <span>
+                      Escrow amount
+                    </span>
+                    <input
+                      inputMode="decimal"
+                      min="0"
+                      name="escrowPayment"
+                      placeholder="550.00"
+                      step="0.01"
+                      type="number"
+                    />
+                  </label>
+                ) : null}
+
+                <label>
+                  <span>Maturity date</span>
+                  <input
+                    name="maturityDate"
+                    type="date"
+                  />
+                </label>
+
+                <label
+                  className={
+                    styles.fullWidth
+                  }
+                >
+                  <span>
+                    Full loan account number
+                  </span>
+                  <input
+                    autoComplete="off"
+                    name="fullAccountNumber"
+                    placeholder="Encrypted before storage"
+                    type="password"
+                  />
+                </label>
+              </>
+            ) : null}
 
             <label>
               <span>
