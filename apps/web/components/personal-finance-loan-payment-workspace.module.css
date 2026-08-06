@@ -470,3 +470,253 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* J&M loan tools: Bright Financial Calm */
+
+.workspace {
+  color: #19324a;
+  gap: 1.5rem;
+}
+
+.header > div > span,
+.card > div > span,
+.dialog header span {
+  color: #16877d;
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+}
+
+.header h2,
+.card h3,
+.dialog h3,
+.preview h4,
+.scenario h4,
+.amortization h4,
+.history h4 {
+  color: #19324a;
+}
+
+.header p,
+.card p {
+  color: #516b80;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.card {
+  border:
+    1px solid #d9e5ec;
+  border-radius: 18px;
+  box-shadow:
+    0 10px 30px
+    rgba(41, 80, 110, 0.08);
+  padding: 1.25rem;
+}
+
+.card dt,
+.preview dt,
+.history dt,
+.projection span,
+.reconciliationSummary span,
+.scenarioSummary span {
+  color: #516b80;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.card dd,
+.preview dd,
+.history dd {
+  color: #19324a;
+  font-size: 1rem;
+}
+
+.card button,
+.dialog form > button,
+.confirmActions button,
+.scenario > button {
+  border-radius: 12px;
+  font-size: 1rem;
+  min-height: 46px;
+}
+
+.card button,
+.dialog form > button,
+.confirmActions button:last-child,
+.scenario > button {
+  background: #2678d4;
+  color: #ffffff;
+}
+
+.card button:hover,
+.dialog form > button:hover,
+.confirmActions button:last-child:hover,
+.scenario > button:hover {
+  background: #1d63b3;
+}
+
+.cardActions button:first-child,
+.cardActions button:nth-child(2),
+.confirmActions button:first-child {
+  background: #ffffff;
+  border:
+    1px solid #b9d9f7;
+  color: #1d63b3;
+}
+
+.warning,
+.reconciliationWarning {
+  background: #fff7e3;
+  border-color: #f2daa1;
+  color: #8a5c0a !important;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.error {
+  background: #fff0f1;
+  border-color: #f1bfc2;
+  color: #a63c43;
+  font-size: 1rem;
+}
+
+.success {
+  background: #eaf8ef;
+  border-color: #bde5cb;
+  color: #237a48;
+  font-size: 1rem;
+}
+
+.empty {
+  background: #edf4f8;
+  color: #516b80;
+  font-size: 1rem;
+}
+
+.overlay {
+  background:
+    rgba(25, 50, 74, 0.42);
+}
+
+.dialog {
+  border:
+    1px solid #d9e5ec;
+  border-radius: 24px;
+  box-shadow:
+    0 28px 80px
+    rgba(25, 50, 74, 0.22);
+}
+
+.formGrid label > span {
+  color: #38566d;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.formGrid input,
+.formGrid textarea,
+.formGrid select {
+  border:
+    1px solid #bdd0db;
+  border-radius: 12px;
+  color: #19324a;
+  font-size: 1rem;
+  min-height: 46px;
+}
+
+.preview,
+.scenario,
+.projection,
+.reconciliationSummary,
+.history > article {
+  background: #f0faf9;
+  border:
+    1px solid #afe2da;
+}
+
+.scenarioSummary > div {
+  border:
+    1px solid #d9e5ec;
+}
+
+.amortization th,
+.amortization td {
+  border-bottom:
+    1px solid #d9e5ec;
+  color: #19324a;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  padding: 0.7rem;
+}
+
+.amortization th {
+  color: #516b80;
+}
+
+@media (max-width: 640px) {
+  .workspace {
+    gap: 1.25rem;
+  }
+
+  .header h2 {
+    font-size: 1.55rem;
+    line-height: 1.2;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .card h3,
+  .dialog h3 {
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .header > div > span,
+  .card > div > span,
+  .dialog header span {
+    font-size: 0.9375rem;
+  }
+
+  .header p,
+  .card p,
+  .card dt,
+  .card dd,
+  .preview dt,
+  .preview dd,
+  .history dt,
+  .history dd,
+  .projection span,
+  .reconciliationSummary span,
+  .scenarioSummary span {
+    font-size: 1rem;
+  }
+
+  .dialog {
+    border-radius: 20px;
+    max-height: calc(100vh - 1rem);
+    padding: 1rem;
+  }
+
+  .formGrid label > span {
+    font-size: 1rem;
+  }
+
+  .formGrid input,
+  .formGrid textarea,
+  .formGrid select,
+  .card button,
+  .dialog form > button,
+  .confirmActions button,
+  .scenario > button {
+    font-size: 1rem;
+    min-height: 48px;
+  }
+
+  .amortization th,
+  .amortization td {
+    font-size: 0.9375rem;
+    padding: 0.75rem;
+  }
+}

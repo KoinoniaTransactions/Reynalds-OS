@@ -6854,3 +6854,336 @@
     font-size: 11px;
   }
 }
+
+/* =========================================================
+   J&M Reynalds Finances
+   Bright Financial Calm foundation
+   ========================================================= */
+
+.app {
+  --jm-blue: #2678d4;
+  --jm-blue-dark: #1d63b3;
+  --jm-blue-soft: #eaf4ff;
+  --jm-blue-border: #b9d9f7;
+  --jm-teal: #22a89a;
+  --jm-teal-dark: #16877d;
+  --jm-teal-soft: #e6f8f5;
+  --jm-teal-border: #afe2da;
+  --jm-green: #36a866;
+  --jm-green-dark: #237a48;
+  --jm-green-soft: #eaf8ef;
+  --jm-green-border: #bde5cb;
+  --jm-amber: #f2b84b;
+  --jm-amber-dark: #8a5c0a;
+  --jm-amber-soft: #fff7e3;
+  --jm-amber-border: #f2daa1;
+  --jm-coral: #d95c62;
+  --jm-coral-dark: #a63c43;
+  --jm-coral-soft: #fff0f1;
+  --jm-coral-border: #f1bfc2;
+  --jm-page: #f5f9fc;
+  --jm-surface: #ffffff;
+  --jm-surface-muted: #edf4f8;
+  --jm-surface-aqua: #f0faf9;
+  --jm-text: #19324a;
+  --jm-text-secondary: #516b80;
+  --jm-text-muted: #6f8496;
+  --jm-border: #d9e5ec;
+  --jm-border-strong: #bdd0db;
+  --jm-shadow:
+    0 10px 30px rgba(41, 80, 110, 0.08);
+
+  background:
+    radial-gradient(
+      circle at 8% 4%,
+      rgba(185, 217, 247, 0.42),
+      transparent 27rem
+    ),
+    radial-gradient(
+      circle at 90% 14%,
+      rgba(175, 226, 218, 0.34),
+      transparent 24rem
+    ),
+    var(--jm-page);
+  color: var(--jm-text);
+  min-height: 100vh;
+}
+
+.rail {
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f7fbfd 100%
+    );
+  border-right:
+    1px solid var(--jm-border);
+  color: var(--jm-text);
+}
+
+.brand {
+  border-bottom:
+    1px solid var(--jm-border);
+}
+
+.brandMark {
+  align-items: center;
+  background:
+    linear-gradient(
+      135deg,
+      var(--jm-blue),
+      var(--jm-teal)
+    );
+  border:
+    1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  box-shadow:
+    0 8px 20px rgba(38, 120, 212, 0.2);
+  color: #ffffff;
+  display: flex;
+  font-size: 0.9rem;
+  font-weight: 800;
+  justify-content: center;
+  letter-spacing: -0.03em;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 0.35rem;
+}
+
+.brandName {
+  color: var(--jm-text);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+.brandSubtitle {
+  color: var(--jm-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.railFooter {
+  background: var(--jm-blue-soft);
+  border:
+    1px solid var(--jm-blue-border);
+  border-radius: 16px;
+  color: var(--jm-text-secondary);
+}
+
+.railFooterLabel {
+  color: var(--jm-blue-dark);
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+
+.railFooterValue {
+  color: var(--jm-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.workspace {
+  background: transparent;
+}
+
+.workspaceBar {
+  background:
+    rgba(255, 255, 255, 0.92);
+  border:
+    1px solid var(--jm-border);
+  border-radius: 18px;
+  box-shadow: var(--jm-shadow);
+  color: var(--jm-text-secondary);
+}
+
+.workspaceContext {
+  color: var(--jm-text-secondary);
+  font-size: 0.9375rem;
+}
+
+.workspaceContext strong {
+  color: var(--jm-text);
+}
+
+.workspaceStatusDot {
+  background: var(--jm-teal);
+  box-shadow:
+    0 0 0 4px var(--jm-teal-soft);
+}
+
+.privateWorkspaceBadge {
+  background: var(--jm-teal-soft);
+  border:
+    1px solid var(--jm-teal-border);
+  color: var(--jm-teal-dark);
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+
+.workspaceAction,
+.headerRosLink {
+  align-items: center;
+  background: var(--jm-blue);
+  border:
+    1px solid var(--jm-blue);
+  border-radius: 12px;
+  color: #ffffff;
+  display: inline-flex;
+  font-size: 0.9375rem;
+  font-weight: 750;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.7rem 1rem;
+  text-decoration: none;
+}
+
+.workspaceAction:hover,
+.headerRosLink:hover {
+  background: var(--jm-blue-dark);
+  border-color: var(--jm-blue-dark);
+}
+
+.header {
+  background:
+    rgba(255, 255, 255, 0.8);
+  border:
+    1px solid rgba(217, 229, 236, 0.85);
+  border-radius: 24px;
+  box-shadow: var(--jm-shadow);
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.eyebrow {
+  color: var(--jm-teal-dark);
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.title {
+  color: var(--jm-text);
+  font-size:
+    clamp(2rem, 4vw, 3.25rem);
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.subtitle {
+  color: var(--jm-text-secondary);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  max-width: 68ch;
+}
+
+.headerRosLink {
+  background: #ffffff;
+  border-color: var(--jm-blue-border);
+  color: var(--jm-blue-dark);
+}
+
+.headerRosLink:hover {
+  background: var(--jm-blue-soft);
+  border-color: var(--jm-blue);
+  color: var(--jm-blue-dark);
+}
+
+.app button,
+.app a,
+.app input,
+.app select,
+.app textarea {
+  font-family: inherit;
+}
+
+.app input,
+.app select,
+.app textarea {
+  color: var(--jm-text);
+  font-size: 1rem;
+}
+
+.app button {
+  font-size: 1rem;
+  min-height: 44px;
+}
+
+.app :focus-visible {
+  outline:
+    3px solid rgba(38, 120, 212, 0.32);
+  outline-offset: 3px;
+}
+
+@media (max-width: 860px) {
+  .app {
+    font-size: 16px;
+  }
+
+  .rail {
+    border-bottom:
+      1px solid var(--jm-border);
+    border-right: 0;
+  }
+
+  .brand {
+    padding-block: 1rem;
+  }
+
+  .workspace {
+    padding:
+      1rem 1rem 2rem;
+  }
+
+  .workspaceBar {
+    align-items: stretch;
+    gap: 0.9rem;
+    padding: 1rem;
+  }
+
+  .workspaceContext {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .workspaceBarActions {
+    align-items: stretch;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 1fr;
+  }
+
+  .privateWorkspaceBadge,
+  .workspaceAction {
+    font-size: 1rem;
+    justify-content: center;
+    min-height: 48px;
+    text-align: center;
+  }
+
+  .header {
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+
+  .eyebrow {
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+
+  .title {
+    font-size:
+      clamp(2rem, 10vw, 2.7rem);
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .headerRosLink {
+    font-size: 1rem;
+    min-height: 48px;
+    width: 100%;
+  }
+}

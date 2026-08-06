@@ -70,7 +70,7 @@ export function PersonalFinanceRouteFrame({
           <div
             className={styles.brandMark}
           >
-            R
+            J&amp;M
           </div>
 
           <div
@@ -79,7 +79,7 @@ export function PersonalFinanceRouteFrame({
             <span
               className={styles.brandName}
             >
-              Personal Finance
+              J&amp;M Reynalds Finances
             </span>
 
             <span
@@ -87,7 +87,7 @@ export function PersonalFinanceRouteFrame({
                 styles.brandSubtitle
               }
             >
-              Local budget workspace
+              Our money, clearly organized
             </span>
           </div>
         </div>
@@ -138,7 +138,7 @@ export function PersonalFinanceRouteFrame({
             />
 
             <span>
-              Personal Finance
+              J&amp;M Finances
             </span>
 
             <span aria-hidden="true">
