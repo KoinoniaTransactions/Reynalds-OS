@@ -5193,3 +5193,937 @@
     justify-self: start;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Personal Finance finishing system v1                                       */
+/* -------------------------------------------------------------------------- */
+
+.app {
+  --pf-focus: #a77a36;
+  --pf-focus-soft: rgba(167, 122, 54, 0.16);
+  --pf-elevation-low:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 8px 24px rgba(15, 23, 42, 0.038);
+  --pf-elevation-medium:
+    0 1px 2px rgba(15, 23, 42, 0.03),
+    0 16px 42px rgba(15, 23, 42, 0.055);
+  --pf-elevation-high:
+    0 2px 5px rgba(15, 23, 42, 0.04),
+    0 24px 58px rgba(15, 23, 42, 0.1);
+
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app *,
+.app *::before,
+.app *::after {
+  box-sizing: border-box;
+}
+
+.app button,
+.app input,
+.app select,
+.app textarea {
+  font: inherit;
+}
+
+.workspace {
+  width: min(100%, 1560px);
+  margin-right: auto;
+  margin-left: auto;
+  scrollbar-gutter: stable;
+}
+
+.title,
+.panelTitle,
+.inboxWorkbenchHeading > strong,
+.portfolioPaneHeader strong,
+.controlPaneHeader strong,
+.inboxWorkbenchSectionHeader strong,
+.inboxWorkbenchResolutionHeader strong {
+  text-wrap: balance;
+}
+
+.subtitle,
+.panelDescription,
+.heroDescription,
+.attentionDetail,
+.cashFlowDetail,
+.controlCopy small,
+.reviewQueueCopy small,
+.inboxWorkbenchHeading > small,
+.inboxWorkbenchSectionHeader small,
+.inboxWorkbenchResolutionHeader small {
+  text-wrap: pretty;
+}
+
+.heroValue,
+.goalValue,
+.metricValue,
+.attentionValue,
+.cashFlowAmount,
+.inboxTransactionAmount,
+.planAmountGroup strong,
+.planTotals strong,
+.portfolioSummary strong,
+.portfolioUtilization strong,
+.cashAccountValue,
+.portfolioTotal strong,
+.creditPortfolioHeader > strong,
+.creditPortfolioMetrics strong,
+.reviewQueueMeta strong,
+.reconciliationTotals,
+.inboxReviewMetricValue {
+  font-variant-numeric:
+    tabular-nums
+    lining-nums;
+}
+
+.sectionAnchor {
+  scroll-margin-top: 78px;
+}
+
+.panel,
+.heroModern,
+.metrics,
+.portfolioSection,
+.controlSection {
+  isolation: isolate;
+}
+
+.panel,
+.metric,
+.heroModern,
+.portfolioSection,
+.controlSection,
+.inboxTransactionRow,
+.planRow,
+.cashAccountCard,
+.creditPortfolioCard,
+.controlRow,
+.reviewQueueItem {
+  transform: translateZ(0);
+}
+
+.app a,
+.app button,
+.app input,
+.app select,
+.app textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app a:focus-visible,
+.app button:focus-visible,
+.app input:focus-visible,
+.app select:focus-visible,
+.app textarea:focus-visible {
+  outline:
+    2px solid
+    var(--pf-focus);
+  outline-offset: 3px;
+}
+
+.app button:disabled,
+.app input:disabled,
+.app select:disabled,
+.app textarea:disabled {
+  cursor: not-allowed;
+}
+
+.rail {
+  box-shadow:
+    12px 0 38px rgba(15, 23, 42, 0.08);
+}
+
+.brand {
+  position: relative;
+  padding-bottom: 24px;
+}
+
+.brand::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+  content: "";
+}
+
+.brandMark {
+  border:
+    1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(
+      145deg,
+      #c89b51,
+      #9d7132
+    );
+}
+
+.brandName {
+  letter-spacing: -0.01em;
+}
+
+.nav {
+  gap: 4px;
+}
+
+.navLink {
+  min-height: 39px;
+  border:
+    1px solid transparent;
+  border-radius: 10px;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.navLink:hover {
+  border-color:
+    rgba(255, 255, 255, 0.045);
+  background:
+    rgba(255, 255, 255, 0.055);
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+.navLink:focus-visible {
+  outline-color: #d3a758;
+  outline-offset: 2px;
+}
+
+.navDot {
+  transition:
+    background 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.navLink:hover .navDot {
+  background: rgba(211, 167, 88, 0.7);
+  transform: scale(1.12);
+}
+
+.railFooter {
+  border:
+    1px solid rgba(255, 255, 255, 0.055);
+  border-radius: 12px;
+  background:
+    rgba(255, 255, 255, 0.025);
+}
+
+.railFooterValue {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspaceBar {
+  box-shadow:
+    0 10px 28px rgba(246, 247, 249, 0.88);
+}
+
+.workspaceAction,
+.headerRosLink,
+.heroGoalAction,
+.inboxFilterTrigger,
+.inboxFocusButton,
+.inboxModernEmpty button,
+.reconciliationPrimaryButton,
+.reconciliationSecondaryButton,
+.reviewedToggle,
+.classificationSelect,
+.inboxAdvancedFilter select {
+  min-height: 36px;
+}
+
+.header {
+  position: relative;
+}
+
+.header::after {
+  position: absolute;
+  right: 0;
+  bottom: -13px;
+  left: 0;
+  height: 1px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.17),
+      transparent 76%
+    );
+  content: "";
+}
+
+.heroModern,
+.portfolioSection,
+.controlSection,
+.attentionPanel,
+.cashFlowPanel {
+  box-shadow:
+    var(--pf-elevation-medium);
+}
+
+.heroModern:hover,
+.portfolioSection:hover,
+.controlSection:hover {
+  box-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.025),
+    0 22px 56px rgba(15, 23, 42, 0.07);
+}
+
+.heroPrimary,
+.heroGoal {
+  min-width: 0;
+}
+
+.heroValue {
+  line-height: 0.96;
+}
+
+.heroBreakdown > span {
+  min-width: 0;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.heroBreakdown > span:hover {
+  border-color:
+    rgba(148, 163, 184, 0.27);
+  background: #ffffff;
+  box-shadow:
+    var(--pf-elevation-low);
+  transform: translateY(-1px);
+}
+
+.metric {
+  min-width: 0;
+}
+
+.metricValue {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metricNote {
+  line-height: 1.42;
+}
+
+.primaryGrid {
+  align-items: stretch;
+}
+
+.attentionPanel,
+.cashFlowPanel {
+  min-width: 0;
+}
+
+.attentionItem,
+.cashFlowRow {
+  min-width: 0;
+}
+
+.attentionItem:focus-visible {
+  position: relative;
+  z-index: 1;
+}
+
+.attentionSignal {
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.45);
+}
+
+.cashFlowMarker {
+  box-shadow:
+    0 0 0 4px
+    rgba(148, 163, 184, 0.08);
+}
+
+.inboxTransactionRow {
+  position: relative;
+}
+
+.inboxTransactionRow::before {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: transparent;
+  content: "";
+  transition:
+    background 150ms ease,
+    top 150ms ease,
+    bottom 150ms ease;
+}
+
+.inboxTransactionRow:hover::before {
+  background:
+    rgba(184, 138, 68, 0.42);
+}
+
+.inboxTransactionRowExpanded::before {
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background:
+    rgba(184, 138, 68, 0.82);
+}
+
+.inboxTransactionRowExpanded {
+  box-shadow:
+    var(--pf-elevation-medium);
+}
+
+.inboxTransactionSummary {
+  border-radius: 0;
+}
+
+.inboxTransactionSummary:focus-visible {
+  position: relative;
+  z-index: 3;
+  outline-offset: -3px;
+}
+
+.inboxTransactionDescription {
+  letter-spacing: -0.005em;
+}
+
+.inboxStatusChip {
+  border:
+    1px solid transparent;
+}
+
+.inboxStatusChipComplete {
+  border-color:
+    rgba(36, 146, 100, 0.12);
+}
+
+.inboxStatusChipAttention {
+  border-color:
+    rgba(164, 75, 19, 0.1);
+}
+
+.inboxStatusChipPending {
+  border-color:
+    rgba(105, 117, 134, 0.08);
+}
+
+.inboxReviewedMark {
+  border:
+    1px solid rgba(36, 146, 100, 0.13);
+}
+
+.inboxWorkbenchHeader,
+.inboxWorkbenchBody,
+.inboxWorkbenchDecisionColumn,
+.inboxWorkbenchResolution {
+  min-width: 0;
+}
+
+.inboxWorkflowStep {
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.inboxWorkflowStep:hover {
+  border-color:
+    rgba(148, 163, 184, 0.28);
+  background: #ffffff;
+  box-shadow:
+    var(--pf-elevation-low);
+  transform: translateY(-1px);
+}
+
+.inboxWorkflowStepComplete:hover {
+  border-color:
+    rgba(36, 146, 100, 0.28);
+  background: #f4fbf7;
+}
+
+.inboxWorkbenchSectionNumber {
+  box-shadow:
+    0 5px 12px
+    rgba(15, 23, 42, 0.12);
+}
+
+.inboxWorkbenchResolution {
+  position: relative;
+}
+
+.inboxWorkbenchResolution::before {
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: 0;
+  width: 1px;
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(184, 138, 68, 0.3),
+      transparent
+    );
+  content: "";
+}
+
+.classificationSelect,
+.inboxAdvancedFilter select,
+.inboxFilterSelect,
+.reconciliationSelect,
+.reconciliationAmountInput,
+.reconciliationNoteInput {
+  appearance: none;
+}
+
+.classificationSelect,
+.inboxAdvancedFilter select,
+.inboxFilterSelect,
+.reconciliationSelect {
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      #7a8494 50%
+    ),
+    linear-gradient(
+      135deg,
+      #7a8494 50%,
+      transparent 50%
+    );
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size:
+    4px 4px,
+    4px 4px;
+}
+
+.classificationSelect:disabled,
+.inboxAdvancedFilter select:disabled,
+.inboxFilterSelect:disabled,
+.reconciliationSelect:disabled {
+  opacity: 0.62;
+}
+
+.planRow,
+.cashAccountCard,
+.creditPortfolioCard,
+.controlRow,
+.reviewQueueItem {
+  contain: layout paint;
+}
+
+.planRow {
+  border-left:
+    3px solid transparent;
+}
+
+.planRow:hover {
+  border-left-color:
+    rgba(184, 138, 68, 0.48);
+}
+
+.planIdentity strong,
+.cashAccountCopy strong,
+.creditPortfolioHeader strong,
+.controlCopy strong,
+.reviewQueueCopy strong {
+  letter-spacing: -0.005em;
+}
+
+.planProgress,
+.creditPortfolioProgress,
+.progress {
+  box-shadow:
+    inset 0 1px 2px
+    rgba(15, 23, 42, 0.08);
+}
+
+.portfolioSummary article,
+.portfolioPane,
+.controlPane {
+  min-width: 0;
+}
+
+.portfolioSummary article {
+  transition:
+    background 150ms ease;
+}
+
+.portfolioSummary article:hover {
+  background:
+    rgba(255, 255, 255, 0.7);
+}
+
+.cashAccountCard,
+.creditPortfolioCard,
+.controlRow,
+.reviewQueueItem {
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.controlRow:hover {
+  border-color:
+    rgba(36, 146, 100, 0.22);
+  background: #ffffff;
+  box-shadow:
+    var(--pf-elevation-low);
+  transform: translateY(-1px);
+}
+
+.reviewQueueItem:hover {
+  border-color:
+    rgba(196, 111, 48, 0.4);
+  background: #ffffff;
+  box-shadow:
+    var(--pf-elevation-low);
+  transform: translateY(-1px);
+}
+
+.reviewQueueSignal,
+.controlIcon,
+.accountAvatar {
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.4);
+}
+
+.status,
+.inboxStatusChip,
+.controlState,
+.reviewQueueCount,
+.goalGap,
+.goalMet,
+.heroStatus,
+.inboxWorkbenchState,
+.inboxWorkbenchSectionComplete,
+.inboxWorkbenchSectionPending {
+  letter-spacing: 0.015em;
+}
+
+.emptyList,
+.inboxModernEmpty,
+.portfolioEmpty {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(248, 250, 252, 0.72),
+      rgba(255, 255, 255, 0.94)
+    );
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .panel,
+  .heroModern,
+  .metric,
+  .portfolioSection,
+  .controlSection,
+  .inboxTransactionRow,
+  .planRow,
+  .cashAccountCard,
+  .creditPortfolioCard,
+  .controlRow,
+  .reviewQueueItem,
+  .heroBreakdown > span,
+  .inboxWorkflowStep {
+    will-change:
+      transform,
+      box-shadow;
+  }
+}
+
+@media (max-width: 1180px) {
+  .workspace {
+    width: 100%;
+  }
+
+  .heroModern {
+    grid-template-columns:
+      minmax(0, 1.1fr)
+      minmax(320px, 0.9fr);
+  }
+
+  .heroModern .heroPrimary {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+
+  .heroModern .heroGoal {
+    padding-right: 22px;
+    padding-left: 22px;
+  }
+}
+
+@media (max-width: 900px) {
+  .heroModern {
+    grid-template-columns: 1fr;
+  }
+
+  .heroModern .heroGoal {
+    border-top:
+      1px solid
+      rgba(148, 163, 184, 0.14);
+    border-left: 0;
+  }
+
+  .inboxWorkbenchResolution::before {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .app {
+    background:
+      linear-gradient(
+        180deg,
+        #f6f7f9,
+        #f2f4f7
+      );
+  }
+
+  .workspace {
+    overflow: hidden;
+  }
+
+  .rail {
+    box-shadow:
+      0 10px 28px
+      rgba(15, 23, 42, 0.1);
+  }
+
+  .nav {
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navLink {
+    min-width: max-content;
+    scroll-snap-align: start;
+  }
+
+  .navLink:hover {
+    transform: none;
+  }
+
+  .sectionAnchor {
+    scroll-margin-top: 18px;
+  }
+
+  .header::after {
+    right: 0;
+    left: 0;
+  }
+
+  .heroValue {
+    overflow-wrap: anywhere;
+  }
+
+  .metrics,
+  .primaryGrid,
+  .portfolioGrid,
+  .controlGrid {
+    min-width: 0;
+  }
+
+  .inboxTransactionSummary,
+  .inboxWorkbenchHeader,
+  .inboxWorkbenchDecisionColumn,
+  .inboxWorkbenchResolution,
+  .planRow,
+  .portfolioPane,
+  .controlPane {
+    min-width: 0;
+  }
+
+  .planTotals {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .workspace {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .title {
+    font-size: 34px;
+  }
+
+  .heroModern {
+    border-radius: 17px;
+  }
+
+  .heroModern .heroPrimary,
+  .heroModern .heroGoal {
+    padding:
+      20px
+      15px;
+  }
+
+  .heroModern .heroValue {
+    font-size: 43px;
+  }
+
+  .heroBreakdown > span {
+    gap: 12px;
+  }
+
+  .metric {
+    min-height: 102px;
+    padding:
+      16px
+      15px;
+  }
+
+  .panelHeader,
+  .portfolioHeader,
+  .controlHeader {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .inboxModernHeader {
+    gap: 13px;
+  }
+
+  .inboxFocusTabs {
+    width: 100%;
+  }
+
+  .inboxFilterTrigger {
+    min-width: 39px;
+    justify-content: center;
+  }
+
+  .inboxTransactionAmount {
+    max-width: 115px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .portfolioSummary strong {
+    font-size: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app {
+    scroll-behavior: auto;
+  }
+
+  .app *,
+  .app *::before,
+  .app *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .navLink:hover,
+  .workspaceAction:hover,
+  .heroGoalAction:hover,
+  .heroBreakdown > span:hover,
+  .planRow:hover,
+  .cashAccountCard:hover,
+  .creditPortfolioCard:hover,
+  .controlRow:hover,
+  .reviewQueueItem:hover,
+  .inboxWorkflowStep:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .app {
+    --pf-border: #c8ced8;
+  }
+
+  .panel,
+  .heroModern,
+  .metric,
+  .portfolioSection,
+  .controlSection,
+  .inboxTransactionRow,
+  .planRow,
+  .cashAccountCard,
+  .creditPortfolioCard,
+  .controlRow,
+  .reviewQueueItem {
+    border-color: #aab2bf;
+  }
+
+  .subtitle,
+  .panelDescription,
+  .metricNote,
+  .attentionDetail,
+  .cashFlowDetail,
+  .controlCopy small,
+  .reviewQueueCopy small {
+    color: #4b5565;
+  }
+}
+
+@media (forced-colors: active) {
+  .app a,
+  .app button,
+  .app input,
+  .app select,
+  .app textarea {
+    forced-color-adjust: auto;
+  }
+
+  .navDot,
+  .workspaceStatusDot,
+  .cashFlowMarker,
+  .attentionSignal,
+  .accountAvatar,
+  .controlIcon,
+  .reviewQueueSignal,
+  .inboxWorkbenchSectionNumber {
+    border:
+      1px solid
+      ButtonText;
+  }
+}
