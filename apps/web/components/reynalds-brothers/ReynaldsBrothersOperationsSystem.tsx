@@ -149,6 +149,13 @@ export function ReynaldsBrothersOperationsSystem() {
   const [trialImportText, setTrialImportText] = useState("");
   const [trialImportPending, setTrialImportPending] = useState(false);
   const [trialImportMessage, setTrialImportMessage] = useState("");
+  const [intakeView, setIntakeView] = useState<
+    "closed" | "create" | "import"
+  >("closed");
+  const [
+    showOperatingReference,
+    setShowOperatingReference
+  ] = useState(false);
 
   async function loadWorkItems() {
     setError("");
@@ -307,6 +314,7 @@ export function ReynaldsBrothersOperationsSystem() {
       const created = createLocalTrialWorkItem(input);
       saveLocalWorkItem(created);
       setCreateForm(defaultCreateForm);
+      setIntakeView("closed");
       setTrialImportMessage("Manual job created in local trial mode.");
       return;
     }
@@ -322,12 +330,14 @@ export function ReynaldsBrothersOperationsSystem() {
       if (!response.ok) throw new Error(payload.error ?? "Work Item could not be created.");
 
       setCreateForm(defaultCreateForm);
+      setIntakeView("closed");
       await loadWorkItems();
       if (payload.workItem?.id) setSelectedId(payload.workItem.id);
     } catch (err) {
       const created = createLocalTrialWorkItem(input);
       saveLocalWorkItem(created);
       setCreateForm(defaultCreateForm);
+      setIntakeView("closed");
       setTrialImportMessage("Live database create was unavailable, so this job was added in local trial mode.");
     }
   }
@@ -701,52 +711,250 @@ export function ReynaldsBrothersOperationsSystem() {
   }
 
   return (
-    <main className={`${styles.brandScope} ros-app rb-os`}>
+    <main
+      className={`${styles.brandScope} ros-app ros-app-modern rb-os rb-modern`}
+    >
       <aside className="ros-sidebar rb-sidebar">
         <div className="ros-brand">
-          <div className="ros-mark">RB</div>
-          <div>
+          <div
+            aria-hidden="true"
+            className="ros-mark"
+          >
+            RB
+          </div>
+
+          <div className="ros-brand-copy">
             <strong>Reynalds Brothers</strong>
-            <span>Company Workspace</span>
+            <span>Operations workspace</span>
           </div>
         </div>
 
-        <nav>
-          <a href="/">Reynalds OS</a>
-          <a href="/reynalds-brothers" className="active">RB Operations</a>
-          <a href="/operations">Shared Queue</a>
-          <a href="/objects">Object Engine</a>
-          <a href="/finance">Finance</a>
-          <a href="/workflows">Workflows</a>
-          <a href="/copilot">AI Copilot</a>
+        <span className="ros-sidebar-section-label">
+          Workspace
+        </span>
+
+        <nav
+          aria-label="Reynalds Brothers navigation"
+          className="ros-sidebar-nav"
+        >
+          {[
+            ["Command center", "/dashboard"],
+            ["RB operations", "/reynalds-brothers"],
+            ["Shared queue", "/operations"],
+            ["Finance", "/finance"],
+            ["Workflows", "/workflows"]
+          ].map(([label, href]) => (
+            <a
+              className={
+                href === "/reynalds-brothers"
+                  ? "active"
+                  : undefined
+              }
+              href={href}
+              key={href}
+            >
+              <span
+                aria-hidden="true"
+                className="ros-nav-indicator"
+              />
+
+              <span className="ros-nav-label">
+                {label}
+              </span>
+            </a>
+          ))}
         </nav>
+
+        <footer className="ros-sidebar-footer">
+          <span>Data mode</span>
+
+          <strong>
+            {source === "database"
+              ? "Live company records"
+              : source === "trial"
+                ? "Local trial records"
+                : "Preview records"}
+          </strong>
+
+          <small>
+            Approval-controlled intake
+          </small>
+        </footer>
       </aside>
 
       <section className="ros-main rb-main">
-        <header className="ros-topbar">
-          <input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search work items, stores, services, blockers..."
-          />
-          <button onClick={() => void loadWorkItems()}>Refresh</button>
-          <a className="ros-button-link" href="/objects">Object Engine</a>
+        <header className="rb-workspace-topbar">
+          <div className="ros-context-path">
+            <span
+              aria-hidden="true"
+              className="ros-status-dot"
+            />
+
+            <span>Reynalds OS</span>
+            <span aria-hidden="true">/</span>
+            <strong>Reynalds Brothers</strong>
+          </div>
+
+          <div className="rb-workspace-actions">
+            <label className="rb-command-search">
+              <svg
+                aria-hidden="true"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+              >
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="6.5"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                />
+
+                <path
+                  d="m16 16 4 4"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeWidth="1.7"
+                />
+              </svg>
+
+              <input
+                aria-label="Search Reynalds Brothers work"
+                placeholder="Search stores, jobs, or blockers"
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                }}
+              />
+            </label>
+
+            <button
+              aria-label="Refresh work items"
+              className="rb-icon-button"
+              title="Refresh work items"
+              type="button"
+              onClick={() => {
+                void loadWorkItems();
+              }}
+            >
+              <svg
+                aria-hidden="true"
+                fill="none"
+                height="16"
+                viewBox="0 0 24 24"
+                width="16"
+              >
+                <path
+                  d="M20 11a8 8 0 1 0-2.34 5.66M20 11V5m0 6h-6"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.8"
+                />
+              </svg>
+            </button>
+
+            <button
+              aria-pressed={
+                intakeView === "import"
+              }
+              className="rb-secondary-action"
+              type="button"
+              onClick={() => {
+                setIntakeView(
+                  intakeView === "import"
+                    ? "closed"
+                    : "import"
+                );
+              }}
+            >
+              Import
+            </button>
+
+            <button
+              aria-pressed={
+                intakeView === "create"
+              }
+              className="rb-primary-action"
+              type="button"
+              onClick={() => {
+                setIntakeView(
+                  intakeView === "create"
+                    ? "closed"
+                    : "create"
+                );
+              }}
+            >
+              <span aria-hidden="true">＋</span>
+              New job
+            </button>
+          </div>
         </header>
 
-        <div className="ros-eyebrow">Company workspace</div>
-        <h1>Reynalds Brothers Operations System</h1>
-        <p className="ros-subtitle">
-          A company-level command center for Walmart tank work and pressure washing: WMTanks email intake,
-          human approval, Lucernex, PO red flags, permits, tank inventory, routes, field proof, and billing pass-off.
-        </p>
+        <header className="rb-workspace-heading">
+          <div>
+            <div className="ros-eyebrow">
+              Field operations
+            </div>
+
+            <h1>
+              Operations Command Center
+            </h1>
+
+            <p className="ros-subtitle">
+              Move Walmart tank and pressure-washing
+              work from intake through field proof
+              and billing.
+            </p>
+          </div>
+
+          <div className="rb-workspace-state">
+            <span>
+              {source === "database"
+                ? "Live"
+                : source === "trial"
+                  ? "Trial"
+                  : "Preview"}
+            </span>
+
+            <strong>
+              {metrics.active} open
+            </strong>
+          </div>
+        </header>
 
         {error ? <p className="ros-error">{error}</p> : null}
 
-        <section className="rb-section rb-create-panel">
-          <div>
-            <div className="ros-eyebrow">Approval-controlled intake</div>
-            <h2>Create ACC/UCO/PW job</h2>
-          </div>
+        {intakeView === "create" ? (
+        <section className="rb-section rb-create-panel rb-intake-panel">
+          <header className="rb-intake-heading">
+            <div>
+              <div className="ros-eyebrow">
+                Approval-controlled intake
+              </div>
+
+              <h2>New ACC, UCO, or PW job</h2>
+
+              <p>
+                New jobs enter the approval queue
+                before operational work begins.
+              </p>
+            </div>
+
+            <button
+              aria-label="Close new-job form"
+              className="rb-panel-close"
+              title="Close"
+              type="button"
+              onClick={() => {
+                setIntakeView("closed");
+              }}
+            >
+              ×
+            </button>
+          </header>
 
           <form className="rb-inline-form" onSubmit={createWorkItem}>
             <input
@@ -812,11 +1020,14 @@ export function ReynaldsBrothersOperationsSystem() {
               onChange={(event) => setCreateForm((current) => ({ ...current, nextAction: event.target.value }))}
               placeholder="Next action"
             />
-            <button type="submit">Create Work Item</button>
+            <button type="submit">Create job</button>
           </form>
         </section>
 
-        <section className="rb-section rb-trial-import">
+        ) : null}
+
+        {intakeView === "import" ? (
+        <section className="rb-section rb-trial-import rb-intake-panel">
           <div className="rb-section-heading">
             <div>
               <div className="ros-eyebrow">First trial data</div>
@@ -835,7 +1046,19 @@ export function ReynaldsBrothersOperationsSystem() {
                 type="button"
                 onClick={clearLocalTrialWorkItems}
               >
-                Clear Trial Jobs
+                Clear trial
+              </button>
+
+              <button
+                aria-label="Close spreadsheet import"
+                className="rb-panel-close"
+                title="Close"
+                type="button"
+                onClick={() => {
+                  setIntakeView("closed");
+                }}
+              >
+                ×
               </button>
             </div>
           </div>
@@ -887,12 +1110,17 @@ export function ReynaldsBrothersOperationsSystem() {
             onClick={() => void createTrialImportRecords()}
             disabled={trialImportPending || trialImportPreview.records.length === 0}
           >
-            {trialImportPending ? "Creating..." : "Create Trial Jobs"}
+            {trialImportPending ? "Creating..." : "Create jobs"}
           </button>
           {trialImportMessage ? <p className="rb-success-note">{trialImportMessage}</p> : null}
         </section>
 
-        <section className="rb-command-strip" aria-label="Reynalds Brothers operational metrics">
+        ) : null}
+
+        <section
+          aria-label="Reynalds Brothers operational metrics"
+          className="rb-command-strip rb-command-strip-modern"
+        >
           <article className="rb-metric">
             <span>Open Work</span>
             <strong>{metrics.active}</strong>
@@ -915,7 +1143,7 @@ export function ReynaldsBrothersOperationsSystem() {
           </article>
         </section>
 
-        <section className="rb-section rb-route-planner">
+        <section className="rb-section rb-route-planner rb-route-planner-modern">
           <div className="rb-section-heading">
             <div>
               <div className="ros-eyebrow">Route planning</div>
@@ -948,8 +1176,11 @@ export function ReynaldsBrothersOperationsSystem() {
           </div>
         </section>
 
-        <section className="rb-layout">
-          <div className="rb-board" aria-label="Work item lanes">
+        <section className="rb-layout rb-workspace-layout">
+          <div
+            aria-label="Work item lanes"
+            className="rb-board rb-board-modern"
+          >
             {reynaldsBrothersBoardLanes.map((lane) => {
               const laneItems = filtered.filter((item) => getWorkItemLane(item) === lane);
 
@@ -995,7 +1226,10 @@ export function ReynaldsBrothersOperationsSystem() {
             })}
           </div>
 
-          <aside className="rb-detail" aria-label="Selected work item details">
+          <aside
+            aria-label="Selected work item details"
+            className="rb-detail rb-detail-modern"
+          >
             {!selected ? (
               <p>Select a work item.</p>
             ) : (
@@ -1472,7 +1706,7 @@ export function ReynaldsBrothersOperationsSystem() {
           </aside>
         </section>
 
-        <section className="rb-section">
+        <section className="rb-section rb-email-workspace">
           <div className="rb-section-heading">
             <div>
               <div className="ros-eyebrow">Email intake</div>
@@ -1570,6 +1804,30 @@ export function ReynaldsBrothersOperationsSystem() {
           </div>
         </section>
 
+        <button
+          aria-expanded={showOperatingReference}
+          className="rb-reference-trigger"
+          type="button"
+          onClick={() => {
+            setShowOperatingReference(
+              (current) => !current
+            );
+          }}
+        >
+          <span>
+            <strong>Operating reference</strong>
+            <small>
+              Build-out map, access, and weekly rhythm
+            </small>
+          </span>
+
+          <span aria-hidden="true">
+            {showOperatingReference ? "−" : "＋"}
+          </span>
+        </button>
+
+        {showOperatingReference ? (
+          <div className="rb-reference-content">
         <section className="rb-section">
           <div className="rb-section-heading">
             <div>
@@ -1612,6 +1870,8 @@ export function ReynaldsBrothersOperationsSystem() {
             </ol>
           </article>
         </section>
+          </div>
+        ) : null}
       </section>
     </main>
   );

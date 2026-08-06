@@ -283,3 +283,606 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Reynalds Brothers workspace modernization v1                               */
+/* -------------------------------------------------------------------------- */
+
+.brandScope {
+  min-height: 100dvh;
+}
+
+.brandScope :global(.rb-main) {
+  width: calc(100% - 236px);
+  max-width: none;
+  min-height: 100dvh;
+  margin: 0 0 0 236px;
+  padding:
+    18px
+    clamp(22px, 3.2vw, 48px)
+    72px;
+}
+
+.brandScope :global(.rb-sidebar) {
+  width: 236px;
+}
+
+.brandScope :global(.rb-sidebar .ros-brand strong) {
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-size: 14px;
+  font-weight: 780;
+}
+
+.brandScope :global(.rb-sidebar .ros-mark) {
+  border-radius: 11px;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-size: 13px;
+}
+
+.brandScope :global(.rb-sidebar a.active) {
+  background: rgba(84, 185, 71, 0.12);
+}
+
+.brandScope
+  :global(.rb-sidebar a.active .ros-nav-indicator) {
+  background: #54b947;
+  box-shadow:
+    0 0 0 4px rgba(84, 185, 71, 0.12);
+}
+
+.brandScope :global(.rb-workspace-topbar) {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 32px;
+  padding-bottom: 14px;
+  border-bottom:
+    1px solid rgba(148, 163, 184, 0.16);
+}
+
+.brandScope :global(.rb-workspace-actions) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.brandScope :global(.rb-command-search) {
+  display: flex;
+  min-width: min(330px, 34vw);
+  min-height: 36px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border:
+    1px solid rgba(148, 163, 184, 0.26);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #8793a2;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.brandScope
+  :global(.rb-command-search:focus-within) {
+  border-color: rgba(30, 115, 190, 0.45);
+  background: #ffffff;
+  box-shadow:
+    0 0 0 3px rgba(30, 115, 190, 0.09);
+}
+
+.brandScope :global(.rb-command-search input) {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #344054;
+  font: inherit;
+  font-size: 11px;
+}
+
+.brandScope :global(.rb-icon-button),
+.brandScope :global(.rb-panel-close) {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  flex: 0 0 auto;
+  padding: 0;
+  border:
+    1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #667085;
+  cursor: pointer;
+  font: inherit;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.brandScope :global(.rb-panel-close) {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 17px;
+}
+
+.brandScope
+  :global(.rb-icon-button:hover),
+.brandScope
+  :global(.rb-panel-close:hover) {
+  border-color: rgba(71, 85, 105, 0.4);
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.brandScope :global(.rb-secondary-action),
+.brandScope :global(.rb-primary-action) {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 780;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.brandScope :global(.rb-secondary-action) {
+  border:
+    1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(255, 255, 255, 0.82);
+  color: #596579;
+}
+
+.brandScope :global(.rb-primary-action) {
+  border: 1px solid transparent;
+  background: #1d2a21;
+  color: #ffffff;
+  box-shadow:
+    0 5px 14px rgba(26, 26, 26, 0.15);
+}
+
+.brandScope
+  :global(.rb-secondary-action:hover),
+.brandScope
+  :global(.rb-secondary-action[aria-pressed="true"]) {
+  border-color: rgba(30, 115, 190, 0.38);
+  background: #ffffff;
+  color: #1e5f91;
+}
+
+.brandScope
+  :global(.rb-primary-action:hover),
+.brandScope
+  :global(.rb-primary-action[aria-pressed="true"]) {
+  background: #101711;
+  box-shadow:
+    0 8px 18px rgba(26, 26, 26, 0.2);
+  transform: translateY(-1px);
+}
+
+.brandScope :global(.rb-workspace-heading) {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.brandScope :global(.rb-workspace-heading h1) {
+  margin: 0;
+  color: #18201a;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size: clamp(34px, 4vw, 50px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.brandScope :global(.rb-workspace-state) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brandScope :global(.rb-workspace-state span),
+.brandScope :global(.rb-workspace-state strong) {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 780;
+}
+
+.brandScope :global(.rb-workspace-state span) {
+  background: #eaf7ec;
+  color: #28763a;
+}
+
+.brandScope :global(.rb-workspace-state strong) {
+  border:
+    1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(255, 255, 255, 0.72);
+  color: #667085;
+}
+
+.brandScope :global(.rb-intake-panel) {
+  margin-bottom: 16px;
+  padding: 20px;
+  border-color:
+    rgba(30, 115, 190, 0.18);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(247, 250, 252, 0.96)
+    );
+  box-shadow:
+    0 16px 42px rgba(26, 26, 26, 0.08);
+}
+
+.brandScope :global(.rb-intake-heading) {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.brandScope :global(.rb-intake-heading h2) {
+  margin: 3px 0 0;
+}
+
+.brandScope :global(.rb-intake-heading p) {
+  max-width: 640px;
+  margin: 6px 0 0;
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.brandScope
+  :global(.rb-command-strip-modern) {
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 0;
+  overflow: hidden;
+  margin: 0 0 16px;
+  border:
+    1px solid rgba(148, 163, 184, 0.19);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 13px 34px rgba(15, 23, 42, 0.045);
+}
+
+.brandScope
+  :global(.rb-command-strip-modern .rb-metric) {
+  min-height: 106px;
+  padding: 16px 18px;
+  border: 0;
+  border-top: 0;
+  border-right:
+    1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.brandScope
+  :global(.rb-command-strip-modern .rb-metric:last-child) {
+  border-right: 0;
+}
+
+.brandScope
+  :global(.rb-command-strip-modern .rb-metric strong) {
+  font-size: 29px;
+  letter-spacing: -0.025em;
+}
+
+.brandScope
+  :global(.rb-command-strip-modern .rb-metric p) {
+  margin: 6px 0 0;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.brandScope
+  :global(.rb-route-planner-modern) {
+  margin-bottom: 16px;
+  border-radius: 16px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 13px 34px rgba(15, 23, 42, 0.045);
+}
+
+.brandScope
+  :global(.rb-route-planner-modern .rb-route-grid) {
+  gap: 8px;
+}
+
+.brandScope
+  :global(.rb-route-planner-modern .rb-route-batch) {
+  border-color:
+    rgba(148, 163, 184, 0.17);
+  border-radius: 12px;
+  background: #f8fafc;
+  box-shadow: none;
+}
+
+.brandScope :global(.rb-workspace-layout) {
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(360px, 430px);
+  gap: 16px;
+}
+
+.brandScope :global(.rb-board-modern) {
+  gap: 9px;
+}
+
+.brandScope
+  :global(.rb-board-modern .rb-lane) {
+  min-width: 220px;
+  padding: 10px;
+  border-color:
+    rgba(148, 163, 184, 0.17);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: none;
+}
+
+.brandScope
+  :global(.rb-board-modern .rb-work-card) {
+  min-height: 150px;
+  border-color:
+    rgba(148, 163, 184, 0.17);
+  border-radius: 11px;
+  box-shadow:
+    0 5px 14px rgba(26, 26, 26, 0.04);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.brandScope
+  :global(.rb-board-modern .rb-work-card:hover) {
+  border-color: rgba(30, 115, 190, 0.32);
+  box-shadow:
+    0 10px 22px rgba(26, 26, 26, 0.08);
+  transform: translateY(-1px);
+}
+
+.brandScope
+  :global(.rb-board-modern .rb-work-card.active) {
+  border-color: #1e73be;
+  outline: 0;
+  box-shadow:
+    inset 3px 0 0 #1e73be,
+    0 10px 24px rgba(30, 115, 190, 0.11);
+}
+
+.brandScope :global(.rb-detail-modern) {
+  position: sticky;
+  top: 18px;
+  max-height: calc(100dvh - 36px);
+  overflow-y: auto;
+  border-radius: 16px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 16px 42px rgba(15, 23, 42, 0.065);
+  scrollbar-width: thin;
+  scrollbar-color:
+    rgba(148, 163, 184, 0.4)
+    transparent;
+}
+
+.brandScope :global(.rb-email-workspace) {
+  margin-top: 16px;
+  border-radius: 16px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 13px 34px rgba(15, 23, 42, 0.045);
+}
+
+.brandScope :global(.rb-reference-trigger) {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border:
+    1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #596579;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.brandScope
+  :global(.rb-reference-trigger:hover) {
+  border-color: rgba(30, 115, 190, 0.3);
+  background: #ffffff;
+}
+
+.brandScope
+  :global(.rb-reference-trigger > span:first-child) {
+  display: grid;
+  gap: 3px;
+}
+
+.brandScope
+  :global(.rb-reference-trigger strong) {
+  color: #344054;
+  font-size: 11px;
+}
+
+.brandScope
+  :global(.rb-reference-trigger small) {
+  color: #8a94a3;
+  font-size: 9px;
+}
+
+.brandScope :global(.rb-reference-content) {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.brandScope
+  :global(.rb-reference-content > .rb-section),
+.brandScope
+  :global(.rb-reference-content > .rb-two-column .rb-section) {
+  border-radius: 14px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.02),
+    0 10px 28px rgba(15, 23, 42, 0.04);
+}
+
+@media (max-width: 1120px) {
+  .brandScope
+    :global(.rb-command-strip-modern) {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .brandScope
+    :global(.rb-command-strip-modern .rb-metric:nth-child(2)) {
+    border-right: 0;
+  }
+
+  .brandScope
+    :global(.rb-command-strip-modern .rb-metric:nth-child(-n + 2)) {
+    border-bottom:
+      1px solid rgba(148, 163, 184, 0.14);
+  }
+
+  .brandScope :global(.rb-workspace-layout) {
+    grid-template-columns: 1fr;
+  }
+
+  .brandScope :global(.rb-detail-modern) {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 820px) {
+  .brandScope :global(.rb-main) {
+    width: 100%;
+    margin-left: 0;
+    padding:
+      16px
+      16px
+      56px;
+  }
+
+  .brandScope :global(.rb-sidebar) {
+    width: auto;
+  }
+
+  .brandScope
+    :global(.rb-workspace-topbar) {
+    display: grid;
+    margin-bottom: 24px;
+  }
+
+  .brandScope
+    :global(.rb-workspace-actions) {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto
+      auto
+      auto;
+    width: 100%;
+  }
+
+  .brandScope
+    :global(.rb-command-search) {
+    min-width: 0;
+  }
+
+  .brandScope
+    :global(.rb-workspace-heading) {
+    display: grid;
+    gap: 12px;
+  }
+
+  .brandScope
+    :global(.rb-workspace-state) {
+    width: fit-content;
+  }
+}
+
+@media (max-width: 620px) {
+  .brandScope
+    :global(.rb-workspace-actions) {
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+  }
+
+  .brandScope
+    :global(.rb-command-search) {
+    grid-column: 1 / -1;
+  }
+
+  .brandScope
+    :global(.rb-command-strip-modern) {
+    grid-template-columns: 1fr;
+  }
+
+  .brandScope
+    :global(.rb-command-strip-modern .rb-metric),
+  .brandScope
+    :global(.rb-command-strip-modern .rb-metric:nth-child(2)) {
+    border-right: 0;
+    border-bottom:
+      1px solid rgba(148, 163, 184, 0.14);
+  }
+
+  .brandScope
+    :global(.rb-command-strip-modern .rb-metric:last-child) {
+    border-bottom: 0;
+  }
+}
