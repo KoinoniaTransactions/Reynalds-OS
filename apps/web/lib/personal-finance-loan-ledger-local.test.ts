@@ -414,6 +414,86 @@ describe(
     );
 
     it(
+      "returns saved terms and recent payment history",
+      () => {
+        configureLoanTerms({
+          liabilityId:
+            "liability_mortgage",
+          calculationMethod:
+            "monthly_amortization",
+          annualInterestRate:
+            6.25,
+          originalTermMonths:
+            360,
+          remainingTermMonths:
+            288,
+          loanStartDate:
+            "2022-08-01",
+          firstPaymentDate:
+            "2022-09-01",
+          paymentFrequency:
+            "monthly",
+          scheduledPayment:
+            2150,
+          scheduledEscrow:
+            550,
+          rateType:
+            "fixed",
+          lastAccrualDate:
+            "2026-07-01"
+        });
+
+        applyLoanPayment({
+          obligationId:
+            "obligation_mortgage",
+          sourceKey:
+            "history-payment",
+          paidOn:
+            "2026-08-01",
+          totalPayment:
+            2150,
+          escrow:
+            550
+        });
+
+        const records =
+          readLoanPaymentWorkspace();
+
+        expect(
+          records[0]
+            ?.originalTermMonths
+        ).toBe(360);
+
+        expect(
+          records[0]
+            ?.remainingTermMonths
+        ).toBe(287);
+
+        expect(
+          records[0]
+            ?.scheduledPayment
+        ).toBe(2150);
+
+        expect(
+          records[0]
+            ?.recentPayments
+        ).toHaveLength(1);
+
+        expect(
+          records[0]
+            ?.recentPayments[0]
+            ?.principal
+        ).toBe(350);
+
+        expect(
+          records[0]
+            ?.recentPayments[0]
+            ?.closingBalance
+        ).toBe(239650);
+      }
+    );
+
+    it(
       "prevents the same payment from being applied twice",
       () => {
         configureLoanTerms({

@@ -56,6 +56,19 @@ export type ApplyLoanPaymentInput = {
   note?: string | null;
 };
 
+export type LoanPaymentHistoryRecord = {
+  paymentId: string;
+  paidOn: string;
+  totalPayment: number;
+  interest: number;
+  principal: number;
+  escrow: number;
+  fees: number;
+  extraPrincipal: number;
+  openingBalance: number;
+  closingBalance: number;
+};
+
 export type LoanPaymentWorkspaceRecord = {
   liabilityId: string;
   obligationId: string;
@@ -72,8 +85,16 @@ export type LoanPaymentWorkspaceRecord = {
   paymentFrequency:
     LoanPaymentFrequency | null;
   scheduledEscrow: number;
+  scheduledPayment: number | null;
+  originalTermMonths: number | null;
+  remainingTermMonths: number | null;
+  loanStartDate: string | null;
+  firstPaymentDate: string | null;
+  rateType: LoanRateType | null;
   lastAccrualDate: string | null;
   hasConfiguredTerms: boolean;
+  recentPayments:
+    LoanPaymentHistoryRecord[];
 };
 
 export type LoanPaymentPreview = {
@@ -320,7 +341,13 @@ export function readLoanPaymentWorkspace():
             loan_terms.annual_interest_rate_basis_points,
             loan_terms.calculation_method,
             loan_terms.payment_frequency,
+            loan_terms.scheduled_payment_cents,
             loan_terms.scheduled_escrow_cents,
+            loan_terms.original_term_months,
+            loan_terms.remaining_term_months,
+            loan_terms.loan_start_date,
+            loan_terms.first_payment_date,
+            loan_terms.rate_type,
             loan_terms.last_accrual_date
           FROM liabilities
           INNER JOIN obligations
@@ -352,8 +379,20 @@ export function readLoanPaymentWorkspace():
             LoanCalculationMethod | null;
           payment_frequency:
             LoanPaymentFrequency | null;
+          scheduled_payment_cents:
+            number | null;
           scheduled_escrow_cents:
             number | null;
+          original_term_months:
+            number | null;
+          remaining_term_months:
+            number | null;
+          loan_start_date:
+            string | null;
+          first_payment_date:
+            string | null;
+          rate_type:
+            LoanRateType | null;
           last_accrual_date:
             string | null;
         }>;
@@ -401,10 +440,32 @@ export function readLoanPaymentWorkspace():
           row.scheduled_escrow_cents ??
             0
         ),
+      scheduledPayment:
+        row.scheduled_payment_cents ===
+          null
+          ? null
+          : centsToDollars(
+              row.scheduled_payment_cents
+            ),
+      originalTermMonths:
+        row.original_term_months,
+      remainingTermMonths:
+        row.remaining_term_months,
+      loanStartDate:
+        row.loan_start_date,
+      firstPaymentDate:
+        row.first_payment_date,
+      rateType:
+        row.rate_type,
       lastAccrualDate:
         row.last_accrual_date,
       hasConfiguredTerms:
-        row.calculation_method !== null
+        row.calculation_method !== null,
+      recentPayments:
+        readRecentPayments(
+          database,
+          row.liability_id
+        )
     }));
   } finally {
     database.close();
@@ -992,6 +1053,84 @@ export function calculateScheduledPayment({
     );
 
   return roundMoney(payment);
+}
+
+function readRecentPayments(
+  database: ReturnType<
+    typeof openPersonalFinanceDatabase
+  >,
+  liabilityId: string
+): LoanPaymentHistoryRecord[] {
+  const rows =
+    database
+      .prepare(`
+        SELECT
+          id,
+          paid_on,
+          total_payment_cents,
+          interest_cents,
+          principal_cents,
+          escrow_cents,
+          fees_cents,
+          extra_principal_cents,
+          opening_balance_cents,
+          closing_balance_cents
+        FROM liability_payments
+        WHERE liability_id = ?
+        ORDER BY
+          paid_on DESC,
+          created_at DESC
+        LIMIT 6
+      `)
+      .all(liabilityId) as Array<{
+        id: string;
+        paid_on: string;
+        total_payment_cents: number;
+        interest_cents: number;
+        principal_cents: number;
+        escrow_cents: number;
+        fees_cents: number;
+        extra_principal_cents: number;
+        opening_balance_cents: number;
+        closing_balance_cents: number;
+      }>;
+
+  return rows.map((row) => ({
+    paymentId: row.id,
+    paidOn: row.paid_on,
+    totalPayment:
+      centsToDollars(
+        row.total_payment_cents
+      ),
+    interest:
+      centsToDollars(
+        row.interest_cents
+      ),
+    principal:
+      centsToDollars(
+        row.principal_cents
+      ),
+    escrow:
+      centsToDollars(
+        row.escrow_cents
+      ),
+    fees:
+      centsToDollars(
+        row.fees_cents
+      ),
+    extraPrincipal:
+      centsToDollars(
+        row.extra_principal_cents
+      ),
+    openingBalance:
+      centsToDollars(
+        row.opening_balance_cents
+      ),
+    closingBalance:
+      centsToDollars(
+        row.closing_balance_cents
+      )
+  }));
 }
 
 function resolveLiability(

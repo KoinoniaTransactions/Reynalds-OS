@@ -9,6 +9,19 @@ import {
 
 import styles from "./personal-finance-loan-payment-workspace.module.css";
 
+type PaymentHistoryRecord = {
+  paymentId: string;
+  paidOn: string;
+  totalPayment: number;
+  interest: number;
+  principal: number;
+  escrow: number;
+  fees: number;
+  extraPrincipal: number;
+  openingBalance: number;
+  closingBalance: number;
+};
+
 type LoanRecord = {
   liabilityId: string;
   obligationId: string;
@@ -23,8 +36,16 @@ type LoanRecord = {
   calculationMethod: string | null;
   paymentFrequency: string | null;
   scheduledEscrow: number;
+  scheduledPayment: number | null;
+  originalTermMonths: number | null;
+  remainingTermMonths: number | null;
+  loanStartDate: string | null;
+  firstPaymentDate: string | null;
+  rateType: string | null;
   lastAccrualDate: string | null;
   hasConfiguredTerms: boolean;
+  recentPayments:
+    PaymentHistoryRecord[];
 };
 
 type PaymentPreview = {
@@ -78,6 +99,13 @@ export function PersonalFinanceLoanPaymentWorkspace() {
     preview,
     setPreview
   ] = useState<PaymentPreview | null>(
+    null
+  );
+
+  const [
+    configuring,
+    setConfiguring
+  ] = useState<LoanRecord | null>(
     null
   );
 
@@ -150,6 +178,138 @@ export function PersonalFinanceLoanPaymentWorkspace() {
   useEffect(() => {
     void loadRecords();
   }, [loadRecords]);
+
+  async function saveLoanTerms(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    if (!configuring) {
+      return;
+    }
+
+    setSaving(true);
+    setError(null);
+    setNotice(null);
+
+    const data =
+      new FormData(
+        event.currentTarget
+      );
+
+    try {
+      const response =
+        await fetch(
+          "/api/personal/loan-payments",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+            body: JSON.stringify({
+              action: "configure",
+              liabilityId:
+                configuring.liabilityId,
+              calculationMethod:
+                String(
+                  data.get(
+                    "calculationMethod"
+                  ) ?? ""
+                ),
+              annualInterestRate:
+                String(
+                  data.get(
+                    "annualInterestRate"
+                  ) ?? ""
+                ),
+              originalTermMonths:
+                String(
+                  data.get(
+                    "originalTermMonths"
+                  ) ?? ""
+                ),
+              remainingTermMonths:
+                String(
+                  data.get(
+                    "remainingTermMonths"
+                  ) ?? ""
+                ),
+              loanStartDate:
+                String(
+                  data.get(
+                    "loanStartDate"
+                  ) ?? ""
+                ),
+              firstPaymentDate:
+                String(
+                  data.get(
+                    "firstPaymentDate"
+                  ) ?? ""
+                ),
+              paymentFrequency:
+                String(
+                  data.get(
+                    "paymentFrequency"
+                  ) ?? ""
+                ),
+              scheduledPayment:
+                String(
+                  data.get(
+                    "scheduledPayment"
+                  ) ?? ""
+                ),
+              scheduledEscrow:
+                String(
+                  data.get(
+                    "scheduledEscrow"
+                  ) ?? ""
+                ),
+              rateType:
+                String(
+                  data.get(
+                    "rateType"
+                  ) ?? ""
+                ),
+              lastAccrualDate:
+                String(
+                  data.get(
+                    "lastAccrualDate"
+                  ) ?? ""
+                )
+            })
+          }
+        );
+
+      const body =
+        await response.json() as {
+          error?: string;
+        };
+
+      if (!response.ok) {
+        throw new Error(
+          body.error ??
+            "Loan terms could not be saved."
+        );
+      }
+
+      setNotice(
+        `Loan terms saved for ${configuring.billName}.`
+      );
+
+      setConfiguring(null);
+
+      await loadRecords();
+    } catch (saveError) {
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : "Loan terms could not be saved."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
 
   async function previewPayment(
     event: FormEvent<HTMLFormElement>
@@ -513,23 +673,393 @@ export function PersonalFinanceLoanPaymentWorkspace() {
               </p>
             ) : null}
 
-            <button
-              disabled={
-                !record.hasConfiguredTerms
+            <div
+              className={
+                styles.cardActions
               }
-              onClick={() => {
-                setSelected(record);
-                setPreview(null);
-                setError(null);
-                setNotice(null);
-              }}
-              type="button"
             >
-              Record payment
-            </button>
+              <button
+                onClick={() => {
+                  setConfiguring(record);
+                  setSelected(null);
+                  setPreview(null);
+                  setError(null);
+                  setNotice(null);
+                }}
+                type="button"
+              >
+                {record.hasConfiguredTerms
+                  ? "Edit loan terms"
+                  : "Configure loan terms"}
+              </button>
+
+              <button
+                disabled={
+                  !record.hasConfiguredTerms
+                }
+                onClick={() => {
+                  setSelected(record);
+                  setConfiguring(null);
+                  setPreview(null);
+                  setError(null);
+                  setNotice(null);
+                }}
+                type="button"
+              >
+                Record payment
+              </button>
+            </div>
+
+            {record.recentPayments.length >
+            0 ? (
+              <section
+                className={
+                  styles.history
+                }
+              >
+                <h4>
+                  Recent payments
+                </h4>
+
+                {record.recentPayments.map(
+                  (payment) => (
+                    <article
+                      key={
+                        payment.paymentId
+                      }
+                    >
+                      <div>
+                        <strong>
+                          {payment.paidOn}
+                        </strong>
+
+                        <span>
+                          {money(
+                            payment.totalPayment
+                          )}
+                        </span>
+                      </div>
+
+                      <dl>
+                        <div>
+                          <dt>Interest</dt>
+                          <dd>
+                            {money(
+                              payment.interest
+                            )}
+                          </dd>
+                        </div>
+
+                        <div>
+                          <dt>Principal</dt>
+                          <dd>
+                            {money(
+                              payment.principal
+                            )}
+                          </dd>
+                        </div>
+
+                        <div>
+                          <dt>
+                            Closing balance
+                          </dt>
+                          <dd>
+                            {money(
+                              payment.closingBalance
+                            )}
+                          </dd>
+                        </div>
+                      </dl>
+                    </article>
+                  )
+                )}
+              </section>
+            ) : null}
           </article>
         ))}
       </div>
+
+      {configuring ? (
+        <div
+          className={styles.overlay}
+          role="presentation"
+        >
+          <section
+            aria-modal="true"
+            className={styles.dialog}
+            role="dialog"
+          >
+            <header>
+              <div>
+                <span>
+                  Loan configuration
+                </span>
+
+                <h3>
+                  {configuring.billName}
+                </h3>
+              </div>
+
+              <button
+                aria-label="Close loan terms"
+                onClick={() =>
+                  setConfiguring(null)
+                }
+                type="button"
+              >
+                ×
+              </button>
+            </header>
+
+            <form
+              onSubmit={saveLoanTerms}
+            >
+              <div
+                className={
+                  styles.formGrid
+                }
+              >
+                <label>
+                  <span>
+                    Calculation method
+                  </span>
+
+                  <select
+                    defaultValue={
+                      configuring
+                        .calculationMethod ??
+                      (
+                        configuring
+                          .liabilityType ===
+                        "auto_loan"
+                          ? "daily_simple_interest"
+                          : "monthly_amortization"
+                      )
+                    }
+                    name="calculationMethod"
+                  >
+                    <option value="monthly_amortization">
+                      Monthly amortization
+                    </option>
+                    <option value="daily_simple_interest">
+                      Daily simple interest
+                    </option>
+                    <option value="interest_only">
+                      Interest only
+                    </option>
+                    <option value="manual">
+                      Manual allocation
+                    </option>
+                  </select>
+                </label>
+
+                <label>
+                  <span>
+                    Interest rate
+                  </span>
+
+                  <input
+                    defaultValue={
+                      configuring
+                        .annualInterestRate ??
+                      ""
+                    }
+                    max="100"
+                    min="0"
+                    name="annualInterestRate"
+                    required
+                    step="0.01"
+                    type="number"
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    Original term, months
+                  </span>
+
+                  <input
+                    defaultValue={
+                      configuring
+                        .originalTermMonths ??
+                      ""
+                    }
+                    min="1"
+                    name="originalTermMonths"
+                    step="1"
+                    type="number"
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    Remaining term, months
+                  </span>
+
+                  <input
+                    defaultValue={
+                      configuring
+                        .remainingTermMonths ??
+                      ""
+                    }
+                    min="0"
+                    name="remainingTermMonths"
+                    step="1"
+                    type="number"
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    Loan start date
+                  </span>
+
+                  <input
+                    defaultValue={
+                      configuring
+                        .loanStartDate ??
+                      ""
+                    }
+                    name="loanStartDate"
+                    type="date"
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    First payment date
+                  </span>
+
+                  <input
+                    defaultValue={
+                      configuring
+                        .firstPaymentDate ??
+                      ""
+                    }
+                    name="firstPaymentDate"
+                    type="date"
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    Payment frequency
+                  </span>
+
+                  <select
+                    defaultValue={
+                      configuring
+                        .paymentFrequency ??
+                      "monthly"
+                    }
+                    name="paymentFrequency"
+                  >
+                    <option value="monthly">
+                      Monthly
+                    </option>
+                    <option value="biweekly">
+                      Every two weeks
+                    </option>
+                    <option value="weekly">
+                      Weekly
+                    </option>
+                  </select>
+                </label>
+
+                <label>
+                  <span>
+                    Rate type
+                  </span>
+
+                  <select
+                    defaultValue={
+                      configuring.rateType ??
+                      "fixed"
+                    }
+                    name="rateType"
+                  >
+                    <option value="fixed">
+                      Fixed
+                    </option>
+                    <option value="variable">
+                      Variable
+                    </option>
+                  </select>
+                </label>
+
+                <label>
+                  <span>
+                    Scheduled payment
+                  </span>
+
+                  <input
+                    defaultValue={
+                      configuring
+                        .scheduledPayment ??
+                      configuring
+                        .expectedPayment ??
+                      ""
+                    }
+                    min="0"
+                    name="scheduledPayment"
+                    step="0.01"
+                    type="number"
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    Scheduled escrow
+                  </span>
+
+                  <input
+                    defaultValue={
+                      configuring
+                        .scheduledEscrow
+                    }
+                    min="0"
+                    name="scheduledEscrow"
+                    step="0.01"
+                    type="number"
+                  />
+                </label>
+
+                <label
+                  className={
+                    styles.fullWidth
+                  }
+                >
+                  <span>
+                    Last confirmed balance
+                    or accrual date
+                  </span>
+
+                  <input
+                    defaultValue={
+                      configuring
+                        .lastAccrualDate ??
+                      configuring
+                        .balanceAsOf ??
+                      TODAY
+                    }
+                    name="lastAccrualDate"
+                    type="date"
+                  />
+                </label>
+              </div>
+
+              <button
+                disabled={saving}
+                type="submit"
+              >
+                {saving
+                  ? "Saving..."
+                  : "Save loan terms"}
+              </button>
+            </form>
+          </section>
+        </div>
+      ) : null}
 
       {selected ? (
         <div
