@@ -3426,3 +3426,689 @@
       repeat(3, minmax(0, 1fr));
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Personal Finance portfolio controls v1                                     */
+/* -------------------------------------------------------------------------- */
+
+.portfolioSection,
+.controlSection {
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 18px 46px rgba(15, 23, 42, 0.055);
+}
+
+.portfolioHeader,
+.controlHeader {
+  align-items: center;
+  padding: 21px 22px 17px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(248, 250, 252, 0.92)
+    );
+}
+
+.sectionKicker {
+  display: block;
+  margin-bottom: 5px;
+  color: #9a722f;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.portfolioUtilization {
+  display: grid;
+  min-width: 112px;
+  justify-items: end;
+  gap: 2px;
+  padding: 9px 11px;
+  border:
+    1px solid rgba(184, 138, 68, 0.22);
+  border-radius: 12px;
+  background: rgba(255, 250, 240, 0.76);
+}
+
+.portfolioUtilization strong {
+  color: #5b4525;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.portfolioUtilization span {
+  color: #8a6a35;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.portfolioSummary {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  border-bottom:
+    1px solid rgba(148, 163, 184, 0.15);
+  background: #fbfcfd;
+}
+
+.portfolioSummary article {
+  display: grid;
+  min-height: 101px;
+  align-content: center;
+  gap: 5px;
+  padding: 16px 18px;
+  border-right:
+    1px solid rgba(148, 163, 184, 0.14);
+}
+
+.portfolioSummary article:last-child {
+  border-right: 0;
+}
+
+.portfolioSummary span {
+  color: #7a8494;
+  font-size: 8px;
+  font-weight: 820;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.portfolioSummary strong {
+  color: #253247;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.portfolioSummary strong.positive {
+  color: var(--pf-positive);
+}
+
+.portfolioSummary small {
+  color: #8a94a3;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.portfolioGrid,
+.controlGrid {
+  display: grid;
+  grid-template-columns:
+    minmax(300px, 0.88fr)
+    minmax(420px, 1.12fr);
+}
+
+.portfolioPane,
+.controlPane {
+  min-width: 0;
+  padding: 19px 21px 21px;
+}
+
+.portfolioPane + .portfolioPane,
+.controlPane + .controlPane {
+  border-left:
+    1px solid rgba(148, 163, 184, 0.15);
+}
+
+.portfolioPaneHeader,
+.controlPaneHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 13px;
+}
+
+.portfolioPaneHeader > div,
+.controlPaneHeader > div {
+  display: grid;
+  gap: 3px;
+}
+
+.portfolioPaneHeader span,
+.controlPaneHeader span {
+  color: #8a94a3;
+  font-size: 8px;
+  font-weight: 820;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.portfolioPaneHeader strong,
+.controlPaneHeader strong {
+  color: #2d394b;
+  font-size: 13px;
+  font-weight: 790;
+}
+
+.portfolioPaneHeader small,
+.controlPaneHeader small {
+  display: inline-grid;
+  min-width: 25px;
+  min-height: 25px;
+  place-items: center;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: #eef1f5;
+  color: #667085;
+  font-size: 8px;
+  font-weight: 850;
+}
+
+.cashAccountGrid,
+.creditPortfolioList,
+.controlList,
+.reviewQueue {
+  display: grid;
+  gap: 7px;
+}
+
+.cashAccountCard {
+  display: grid;
+  grid-template-columns:
+    34px
+    minmax(0, 1fr)
+    auto;
+  gap: 10px;
+  align-items: center;
+  min-height: 62px;
+  padding: 10px 11px;
+  border:
+    1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 11px;
+  background: #f8fafc;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.cashAccountCard:hover {
+  border-color: rgba(71, 85, 105, 0.27);
+  background: #ffffff;
+  box-shadow:
+    0 8px 19px rgba(15, 23, 42, 0.055);
+  transform: translateY(-1px);
+}
+
+.accountAvatar {
+  display: inline-grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      145deg,
+      #263142,
+      #3a475b
+    );
+  color: #ffffff;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cashAccountCopy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.cashAccountCopy strong {
+  overflow: hidden;
+  color: #344054;
+  font-size: 10px;
+  font-weight: 760;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cashAccountCopy small {
+  color: #8a94a3;
+  font-size: 8px;
+}
+
+.cashAccountValue {
+  color: #253247;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.portfolioTotal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 10px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(184, 138, 68, 0.09),
+      rgba(255, 250, 240, 0.52)
+    );
+}
+
+.portfolioTotal span {
+  color: #7f6337;
+  font-size: 8px;
+  font-weight: 820;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.portfolioTotal strong {
+  color: #4e3b20;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.creditPortfolioCard {
+  display: grid;
+  gap: 10px;
+  padding: 12px 13px;
+  border:
+    1px solid rgba(148, 163, 184, 0.17);
+  border-radius: 12px;
+  background: #f8fafc;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.creditPortfolioCard:hover {
+  border-color: rgba(184, 138, 68, 0.31);
+  background: #ffffff;
+  box-shadow:
+    0 8px 20px rgba(15, 23, 42, 0.05);
+}
+
+.creditPortfolioHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.creditPortfolioHeader > div {
+  display: grid;
+  gap: 3px;
+}
+
+.creditPortfolioHeader strong {
+  color: #344054;
+  font-size: 10px;
+  font-weight: 790;
+}
+
+.creditPortfolioHeader > strong {
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.creditPortfolioHeader span {
+  color: #8a94a3;
+  font-size: 8px;
+}
+
+.creditPortfolioProgress {
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: #e7eaf0;
+  appearance: none;
+}
+
+.creditPortfolioProgress::-webkit-progress-bar {
+  border-radius: 999px;
+  background: #e7eaf0;
+}
+
+.creditPortfolioProgress::-webkit-progress-value {
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      90deg,
+      #b88a44,
+      #d5ad6b
+    );
+}
+
+.creditPortfolioProgress::-moz-progress-bar {
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      90deg,
+      #b88a44,
+      #d5ad6b
+    );
+}
+
+.creditPortfolioMetrics {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.creditPortfolioMetrics > span {
+  display: grid;
+  gap: 3px;
+}
+
+.creditPortfolioMetrics small {
+  color: #8a94a3;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.creditPortfolioMetrics strong {
+  color: #465264;
+  font-size: 9px;
+  font-weight: 760;
+}
+
+.portfolioEmpty {
+  padding: 28px 18px;
+  border:
+    1px dashed rgba(148, 163, 184, 0.34);
+  border-radius: 11px;
+  color: #8a94a3;
+  font-size: 9px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.reviewQueueCount {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #fff3e8;
+  color: #9a4e19;
+  font-size: 8px;
+  font-weight: 820;
+  white-space: nowrap;
+}
+
+.controlGrid {
+  grid-template-columns:
+    minmax(340px, 0.9fr)
+    minmax(420px, 1.1fr);
+}
+
+.controlRow {
+  display: grid;
+  grid-template-columns:
+    32px
+    minmax(0, 1fr)
+    auto;
+  gap: 10px;
+  align-items: center;
+  min-height: 67px;
+  padding: 10px 11px;
+  border:
+    1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 11px;
+  background: #f8fafc;
+}
+
+.controlIcon {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 9px;
+  background: #eaf7ef;
+  color: #19714a;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.controlCopy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.controlCopy strong {
+  color: #344054;
+  font-size: 10px;
+  font-weight: 780;
+}
+
+.controlCopy small {
+  color: #7a8494;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.controlState {
+  display: inline-flex;
+  min-height: 22px;
+  align-items: center;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: #eaf7ef;
+  color: #19714a;
+  font-size: 7px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.reviewPane {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.92),
+      rgba(248, 250, 252, 0.78)
+    );
+}
+
+.reviewQueueItem {
+  display: grid;
+  grid-template-columns:
+    32px
+    minmax(0, 1fr)
+    auto;
+  gap: 10px;
+  align-items: center;
+  min-height: 67px;
+  padding: 10px 11px;
+  border:
+    1px solid rgba(240, 178, 122, 0.38);
+  border-radius: 11px;
+  background: #fffaf5;
+}
+
+.reviewQueueSignal {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 9px;
+  background: #fff0df;
+  color: #a44b13;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.reviewQueueCopy,
+.reviewQueueMeta {
+  display: grid;
+  gap: 3px;
+}
+
+.reviewQueueCopy {
+  min-width: 0;
+}
+
+.reviewQueueCopy strong {
+  overflow: hidden;
+  color: #344054;
+  font-size: 10px;
+  font-weight: 780;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reviewQueueCopy small {
+  color: #7a8494;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.reviewQueueMeta {
+  justify-items: end;
+  text-align: right;
+}
+
+.reviewQueueMeta strong {
+  color: #7a4019;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.reviewQueueMeta small {
+  color: #a44b13;
+  font-size: 7px;
+  font-weight: 820;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1080px) {
+  .portfolioSummary {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .portfolioSummary
+    article:nth-child(2) {
+    border-right: 0;
+  }
+
+  .portfolioSummary
+    article:nth-child(-n + 2) {
+    border-bottom:
+      1px solid rgba(148, 163, 184, 0.14);
+  }
+
+  .portfolioGrid,
+  .controlGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .portfolioPane + .portfolioPane,
+  .controlPane + .controlPane {
+    border-top:
+      1px solid rgba(148, 163, 184, 0.15);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .portfolioHeader,
+  .controlHeader {
+    display: grid;
+    align-items: start;
+  }
+
+  .portfolioUtilization {
+    width: fit-content;
+    justify-items: start;
+  }
+
+  .portfolioSummary {
+    grid-template-columns: 1fr;
+  }
+
+  .portfolioSummary article,
+  .portfolioSummary
+    article:nth-child(2) {
+    border-right: 0;
+    border-bottom:
+      1px solid rgba(148, 163, 184, 0.14);
+  }
+
+  .portfolioSummary
+    article:last-child {
+    border-bottom: 0;
+  }
+
+  .portfolioPane,
+  .controlPane {
+    padding: 15px 14px 17px;
+  }
+
+  .cashAccountCard,
+  .controlRow,
+  .reviewQueueItem {
+    grid-template-columns:
+      32px
+      minmax(0, 1fr);
+  }
+
+  .cashAccountValue,
+  .controlState,
+  .reviewQueueMeta {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .reviewQueueMeta {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .creditPortfolioMetrics {
+    grid-template-columns: 1fr;
+  }
+
+  .creditPortfolioMetrics > span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

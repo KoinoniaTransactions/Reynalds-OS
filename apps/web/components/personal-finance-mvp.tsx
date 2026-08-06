@@ -544,6 +544,41 @@ export function PersonalFinanceMvp({
         100
       : 0;
 
+  const cashAccounts = budget.accounts.filter(
+    (account) => !account.emphasis
+  );
+
+  const financialGuardrails = [
+    {
+      id: "localhost",
+      symbol: "L",
+      title: "Localhost only",
+      description:
+        "Requests outside the local environment return the application not-found response."
+    },
+    {
+      id: "private-source",
+      symbol: "P",
+      title: "Private source excluded from Git",
+      description:
+        "Household financial data remains in the ignored local data directory."
+    },
+    {
+      id: "no-external-connection",
+      symbol: "N",
+      title: "No external financial connection",
+      description:
+        "No bank, card, cloud account, or third-party financial service is connected."
+    },
+    {
+      id: "advisory-matching",
+      symbol: "A",
+      title: "Advisory matching only",
+      description:
+        "Suggestions never classify, allocate, reconcile, review, or confirm transfers automatically."
+    }
+  ] as const;
+
   return (
     <PersonalFinanceFrame
       monthLabel={`${budget.month} budget`}
@@ -1156,232 +1191,454 @@ export function PersonalFinanceMvp({
       </section>
 
       <section
-        className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
+        className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor} ${styles.portfolioSection}`}
         id="accounts"
       >
-        <header className={styles.panelHeader}>
+        <header
+          className={`${styles.panelHeader} ${styles.portfolioHeader}`}
+        >
           <div className={styles.panelHeaderCopy}>
+            <span className={styles.sectionKicker}>
+              Financial position
+            </span>
+
             <h2 className={styles.panelTitle}>
-              Accounts
+              Accounts and credit
             </h2>
 
             <p className={styles.panelDescription}>
-              Cash position and credit exposure from the
-              current monthly snapshot.
+              Current cash, revolving balances, available
+              credit, and minimum obligations in one view.
             </p>
           </div>
 
-          <span className={styles.countBadge}>
-            {budget.accounts.length +
-              budget.creditAccounts.length}
-          </span>
+          <div className={styles.portfolioUtilization}>
+            <strong>
+              {creditUtilization.toFixed(1)}%
+            </strong>
+
+            <span>credit utilized</span>
+          </div>
         </header>
 
-        <div className={styles.detailGrid}>
-          <div className={styles.subsection}>
-            <h3 className={styles.subsectionTitle}>
-              Bank balances
-            </h3>
+        <div
+          aria-label="Financial position summary"
+          className={styles.portfolioSummary}
+        >
+          <article>
+            <span>Cash on hand</span>
 
-            <div className={styles.accountList}>
-              {budget.accounts.map((account) => (
-                <div
-                  className={styles.accountRow}
-                  key={account.id}
-                >
-                  <span className={styles.accountName}>
-                    {account.name}
-                  </span>
+            <strong className={styles.positive}>
+              {money(
+                budget.totals.totalBankBalance
+              )}
+            </strong>
 
-                  <strong
-                    className={`${styles.accountAmount} ${
-                      account.emphasis
-                        ? styles.accountEmphasis
-                        : ""
-                    }`}
+            <small>
+              Across {cashAccounts.length}{" "}
+              {cashAccounts.length === 1
+                ? "cash account"
+                : "cash accounts"}
+            </small>
+          </article>
+
+          <article>
+            <span>Credit balance</span>
+
+            <strong>
+              {money(
+                budget.totals.totalCreditBalance
+              )}
+            </strong>
+
+            <small>
+              Of{" "}
+              {money(
+                budget.totals.totalCreditLimit
+              )}{" "}
+              total limit
+            </small>
+          </article>
+
+          <article>
+            <span>Available credit</span>
+
+            <strong>
+              {money(
+                budget.totals.totalAvailableCredit
+              )}
+            </strong>
+
+            <small>
+              Remaining revolving capacity
+            </small>
+          </article>
+
+          <article>
+            <span>Minimum payments</span>
+
+            <strong>
+              {money(
+                budget.totals.totalMinimumPayments
+              )}
+            </strong>
+
+            <small>
+              Current recorded minimums
+            </small>
+          </article>
+        </div>
+
+        <div className={styles.portfolioGrid}>
+          <section className={styles.portfolioPane}>
+            <header className={styles.portfolioPaneHeader}>
+              <div>
+                <span>Cash accounts</span>
+
+                <strong>
+                  Bank balances
+                </strong>
+              </div>
+
+              <small>
+                {cashAccounts.length}
+              </small>
+            </header>
+
+            {cashAccounts.length > 0 ? (
+              <div className={styles.cashAccountGrid}>
+                {cashAccounts.map((account) => (
+                  <article
+                    className={
+                      styles.cashAccountCard
+                    }
+                    key={account.id}
                   >
-                    {money(account.amount)}
-                  </strong>
-                </div>
-              ))}
-            </div>
-          </div>
+                    <span
+                      aria-hidden="true"
+                      className={
+                        styles.accountAvatar
+                      }
+                    >
+                      {account.name
+                        .trim()
+                        .charAt(0)
+                        .toUpperCase() || "A"}
+                    </span>
 
-          <div className={styles.subsection}>
-            <h3 className={styles.subsectionTitle}>
-              Credit accounts ·{" "}
-              {creditUtilization.toFixed(1)}% utilized
-            </h3>
+                    <span
+                      className={
+                        styles.cashAccountCopy
+                      }
+                    >
+                      <strong>
+                        {account.name}
+                      </strong>
 
-            <div className={styles.creditList}>
-              {budget.creditAccounts.map((account) => (
-                <div
-                  className={styles.creditRow}
-                  key={account.id}
-                >
-                  <div className={styles.creditHeader}>
-                    <span className={styles.creditName}>
-                      {account.name}
+                      <small>
+                        Current balance
+                      </small>
                     </span>
 
                     <strong
-                      className={styles.creditBalance}
+                      className={
+                        styles.cashAccountValue
+                      }
                     >
-                      {money(account.balance)}
+                      {money(account.amount)}
                     </strong>
-                  </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className={styles.portfolioEmpty}>
+                No individual cash accounts are recorded.
+              </div>
+            )}
 
-                  <progress
-                    className={styles.creditProgress}
-                    max={Math.max(account.limit, 1)}
-                    value={Math.min(
-                      account.balance,
-                      account.limit
-                    )}
-                  />
+            <footer className={styles.portfolioTotal}>
+              <span>Total bank balance</span>
 
-                  <div className={styles.creditMeta}>
-                    <span>
-                      {money(account.available)} available
-                    </span>
+              <strong>
+                {money(
+                  budget.totals.totalBankBalance
+                )}
+              </strong>
+            </footer>
+          </section>
 
-                    <span>
-                      {money(account.minimumPayment)} minimum
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <section className={styles.portfolioPane}>
+            <header className={styles.portfolioPaneHeader}>
+              <div>
+                <span>Revolving accounts</span>
+
+                <strong>
+                  Credit exposure
+                </strong>
+              </div>
+
+              <small>
+                {budget.creditAccounts.length}
+              </small>
+            </header>
+
+            {budget.creditAccounts.length > 0 ? (
+              <div className={styles.creditPortfolioList}>
+                {budget.creditAccounts.map((account) => {
+                  const accountUtilization =
+                    account.limit > 0
+                      ? (account.balance /
+                          account.limit) *
+                        100
+                      : 0;
+
+                  const displayedUtilization =
+                    Math.round(accountUtilization);
+
+                  return (
+                    <article
+                      className={
+                        styles.creditPortfolioCard
+                      }
+                      key={account.id}
+                    >
+                      <header
+                        className={
+                          styles.creditPortfolioHeader
+                        }
+                      >
+                        <div>
+                          <strong>
+                            {account.name}
+                          </strong>
+
+                          <span>
+                            {displayedUtilization}%
+                            utilized
+                          </span>
+                        </div>
+
+                        <strong>
+                          {money(account.balance)}
+                        </strong>
+                      </header>
+
+                      <progress
+                        aria-label={`${account.name} utilization`}
+                        className={
+                          styles.creditPortfolioProgress
+                        }
+                        max={100}
+                        value={Math.min(
+                          Math.max(
+                            accountUtilization,
+                            0
+                          ),
+                          100
+                        )}
+                      />
+
+                      <div
+                        className={
+                          styles.creditPortfolioMetrics
+                        }
+                      >
+                        <span>
+                          <small>Limit</small>
+
+                          <strong>
+                            {money(account.limit)}
+                          </strong>
+                        </span>
+
+                        <span>
+                          <small>Available</small>
+
+                          <strong>
+                            {money(account.available)}
+                          </strong>
+                        </span>
+
+                        <span>
+                          <small>Minimum</small>
+
+                          <strong>
+                            {money(
+                              account.minimumPayment
+                            )}
+                          </strong>
+                        </span>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className={styles.portfolioEmpty}>
+                No revolving accounts are recorded.
+              </div>
+            )}
+          </section>
         </div>
       </section>
 
       <section
-        className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
+        className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor} ${styles.controlSection}`}
         id="rules"
       >
-        <header className={styles.panelHeader}>
+        <header
+          className={`${styles.panelHeader} ${styles.controlHeader}`}
+        >
           <div className={styles.panelHeaderCopy}>
+            <span className={styles.sectionKicker}>
+              Privacy and oversight
+            </span>
+
             <h2 className={styles.panelTitle}>
-              Rules and review
+              Controls and review
             </h2>
 
             <p className={styles.panelDescription}>
-              Current privacy boundaries plus irregular
-              expenses that need clearer classification.
+              Operating guardrails and financial items
+              that still need a deliberate decision.
             </p>
           </div>
+
+          <span className={styles.reviewQueueCount}>
+            {budget.irregularExpenses.length}{" "}
+            {budget.irregularExpenses.length === 1
+              ? "review item"
+              : "review items"}
+          </span>
         </header>
 
-        <div className={styles.rulesLayout}>
-          <div className={styles.ruleColumn}>
-            <h3 className={styles.subsectionTitle}>
-              Active local rules
-            </h3>
+        <div className={styles.controlGrid}>
+          <section className={styles.controlPane}>
+            <header className={styles.controlPaneHeader}>
+              <div>
+                <span>System boundaries</span>
 
-            <div className={styles.ruleList}>
-              <div className={styles.ruleItem}>
-                <span className={styles.ruleIndicator} />
-
-                <span>
-                  <span className={styles.ruleTitle}>
-                    Localhost only
-                  </span>
-
-                  <span
-                    className={styles.ruleDescription}
-                  >
-                    Non-localhost requests return the
-                    application not-found response.
-                  </span>
-                </span>
+                <strong>
+                  Active guardrails
+                </strong>
               </div>
 
-              <div className={styles.ruleItem}>
-                <span className={styles.ruleIndicator} />
+              <small>
+                {financialGuardrails.length}
+              </small>
+            </header>
 
-                <span>
-                  <span className={styles.ruleTitle}>
-                    Private CSV excluded from Git
-                  </span>
-
-                  <span
-                    className={styles.ruleDescription}
+            <div className={styles.controlList}>
+              {financialGuardrails.map(
+                (guardrail) => (
+                  <article
+                    className={styles.controlRow}
+                    key={guardrail.id}
                   >
-                    Household data stays under the ignored
-                    .local directory.
-                  </span>
-                </span>
-              </div>
-
-              <div className={styles.ruleItem}>
-                <span className={styles.ruleIndicator} />
-
-                <span>
-                  <span className={styles.ruleTitle}>
-                    No external financial connection
-                  </span>
-
-                  <span
-                    className={styles.ruleDescription}
-                  >
-                    No bank, card, database, or cloud account
-                    is connected.
-                  </span>
-                </span>
-              </div>
-
-              <div className={styles.ruleItem}>
-                <span className={styles.ruleIndicator} />
-
-                <span>
-                  <span className={styles.ruleTitle}>
-                    Smart matching not active yet
-                  </span>
-
-                  <span
-                    className={styles.ruleDescription}
-                  >
-                    Current paid and received values come
-                    only from the monthly plan.
-                  </span>
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.irregularColumn}>
-            <h3 className={styles.subsectionTitle}>
-              Irregular expense review
-            </h3>
-
-            <div className={styles.irregularList}>
-              {budget.irregularExpenses.map((expense) => (
-                <div
-                  className={styles.irregularRow}
-                  key={expense.id}
-                >
-                  <span>
-                    <span className={styles.irregularName}>
-                      {expense.name}
+                    <span
+                      aria-hidden="true"
+                      className={styles.controlIcon}
+                    >
+                      {guardrail.symbol}
                     </span>
 
-                    <span className={styles.irregularNote}>
-                      {expense.note}
-                    </span>
-                  </span>
+                    <span className={styles.controlCopy}>
+                      <strong>
+                        {guardrail.title}
+                      </strong>
 
-                  <strong
-                    className={styles.irregularAmount}
-                  >
-                    {expense.amount === null
-                      ? "No amount"
-                      : money(expense.amount)}
-                  </strong>
-                </div>
-              ))}
+                      <small>
+                        {guardrail.description}
+                      </small>
+                    </span>
+
+                    <span className={styles.controlState}>
+                      Active
+                    </span>
+                  </article>
+                )
+              )}
             </div>
-          </div>
+          </section>
+
+          <section
+            className={`${styles.controlPane} ${styles.reviewPane}`}
+          >
+            <header className={styles.controlPaneHeader}>
+              <div>
+                <span>Decision queue</span>
+
+                <strong>
+                  Irregular expenses
+                </strong>
+              </div>
+
+              <small>
+                {budget.irregularExpenses.length}
+              </small>
+            </header>
+
+            {budget.irregularExpenses.length > 0 ? (
+              <div className={styles.reviewQueue}>
+                {budget.irregularExpenses.map(
+                  (expense) => (
+                    <article
+                      className={
+                        styles.reviewQueueItem
+                      }
+                      key={expense.id}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={
+                          styles.reviewQueueSignal
+                        }
+                      >
+                        ?
+                      </span>
+
+                      <span
+                        className={
+                          styles.reviewQueueCopy
+                        }
+                      >
+                        <strong>
+                          {expense.name}
+                        </strong>
+
+                        <small>
+                          {expense.note}
+                        </small>
+                      </span>
+
+                      <span
+                        className={
+                          styles.reviewQueueMeta
+                        }
+                      >
+                        <strong>
+                          {expense.amount === null
+                            ? "Amount missing"
+                            : money(
+                                expense.amount
+                              )}
+                        </strong>
+
+                        <small>
+                          Needs review
+                        </small>
+                      </span>
+                    </article>
+                  )
+                )}
+              </div>
+            ) : (
+              <div className={styles.portfolioEmpty}>
+                No irregular expenses are waiting for
+                review.
+              </div>
+            )}
+          </section>
         </div>
       </section>
     </PersonalFinanceFrame>
