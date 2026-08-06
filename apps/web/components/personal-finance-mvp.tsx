@@ -353,14 +353,6 @@ function PersonalFinanceFrame({
             </p>
           </div>
 
-          <div className={styles.headerMeta}>
-            <a
-              className={styles.headerRosLink}
-              href="/dashboard"
-            >
-              ROS dashboard
-            </a>
-          </div>
         </header>
 
         {children}
