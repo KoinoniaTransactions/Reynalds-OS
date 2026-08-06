@@ -20,6 +20,8 @@ import {
   openPersonalFinanceDatabase
 } from "./personal-finance-db-local";
 import {
+  PERSONAL_FINANCE_TARGET_AMBIGUITY_GAP,
+  personalFinanceTargetSuggestionMetadata,
   readPersonalFinanceTransactionMatching,
   updatePersonalFinanceTransferLink
 } from "./personal-finance-transaction-matching-local";
@@ -225,6 +227,19 @@ function createFixtureDatabase() {
       "unknown",
       null
     );
+
+    insertTransaction.run(
+      "transaction_ambiguous",
+      "account_a",
+      "batch_a",
+      "fingerprint_ambiguous",
+      "2026-07-30",
+      "General Purchase",
+      "General Purchase",
+      -5000,
+      "expense",
+      null
+    );
   } finally {
     database.close();
   }
@@ -332,6 +347,86 @@ describe("personal finance matching", () => {
           suggestion.targetType === "income"
       )
     ).toBe(true);
+  });
+
+  it("adds transparent evidence and protects ambiguous target results", async () => {
+    const expense =
+      await readPersonalFinanceTransactionMatching({
+        transactionId: "transaction_expense",
+        databasePath,
+        budget
+      });
+
+    expect(expense.confidenceGap).not.toBeNull();
+    expect(
+      expense.confidenceGap ?? 0
+    ).toBeGreaterThanOrEqual(
+      PERSONAL_FINANCE_TARGET_AMBIGUITY_GAP
+    );
+    expect(expense.isAmbiguous).toBe(false);
+    expect(
+      expense.suggestions[0]?.evidence
+    ).toEqual([
+      "amount",
+      "description",
+      "date"
+    ]);
+
+    const ambiguous =
+      await readPersonalFinanceTransactionMatching({
+        transactionId: "transaction_ambiguous",
+        databasePath,
+        budget
+      });
+
+    expect(ambiguous.confidenceGap).toBe(0);
+    expect(ambiguous.isAmbiguous).toBe(true);
+    expect(
+      ambiguous.suggestions.slice(0, 2).map(
+        (suggestion) => suggestion.evidence
+      )
+    ).toEqual([
+      ["amount"],
+      ["amount"]
+    ]);
+
+    const below =
+      personalFinanceTargetSuggestionMetadata([
+        { confidence: 0.6 },
+        { confidence: 0.51 }
+      ]);
+
+    expect(below.confidenceGap).toBe(0.09);
+    expect(below.isAmbiguous).toBe(true);
+
+    const equal =
+      personalFinanceTargetSuggestionMetadata([
+        { confidence: 0.6 },
+        { confidence: 0.5 }
+      ]);
+
+    expect(equal.confidenceGap).toBe(
+      PERSONAL_FINANCE_TARGET_AMBIGUITY_GAP
+    );
+    expect(equal.isAmbiguous).toBe(false);
+
+    const above =
+      personalFinanceTargetSuggestionMetadata([
+        { confidence: 0.61 },
+        { confidence: 0.5 }
+      ]);
+
+    expect(above.confidenceGap).toBe(0.11);
+    expect(above.isAmbiguous).toBe(false);
+
+    expect(
+      personalFinanceTargetSuggestionMetadata([
+        { confidence: 0.8 }
+      ])
+    ).toEqual({
+      confidenceGap: null,
+      isAmbiguous: false
+    });
   });
 
   it("finds only opposite amounts across different accounts", async () => {

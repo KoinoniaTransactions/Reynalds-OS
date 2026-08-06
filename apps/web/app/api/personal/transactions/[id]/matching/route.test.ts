@@ -199,6 +199,14 @@ describe("personal finance matching route", () => {
       localBody.matching.transferCandidates
     ).toHaveLength(1);
 
+    expect(
+      localBody.matching.confidenceGap
+    ).toBeNull();
+
+    expect(
+      localBody.matching.isAmbiguous
+    ).toBe(false);
+
     const remote = await GET(
       request("GET", "example.com"),
       params

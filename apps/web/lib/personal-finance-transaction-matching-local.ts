@@ -21,6 +21,11 @@ export type PersonalFinanceMatchConfidence =
   | "medium"
   | "low";
 
+export type PersonalFinanceMatchEvidence =
+  | "amount"
+  | "description"
+  | "date";
+
 export type PersonalFinanceTargetSuggestion = {
   targetKey: string;
   targetLabel: string;
@@ -28,6 +33,7 @@ export type PersonalFinanceTargetSuggestion = {
   confidence: number;
   confidenceLabel: PersonalFinanceMatchConfidence;
   recommendedAmountCents: number;
+  evidence: PersonalFinanceMatchEvidence[];
   reasons: string[];
 };
 
@@ -50,6 +56,8 @@ export type PersonalFinanceTransactionMatchingState = {
   classification: PersonalFinanceClassification;
   reviewStatus: PersonalFinanceReviewStatus;
   suggestions: PersonalFinanceTargetSuggestion[];
+  confidenceGap: number | null;
+  isAmbiguous: boolean;
   transferCandidates: PersonalFinanceTransferCandidate[];
   confirmedTransfer: PersonalFinanceTransferCandidate | null;
 };
@@ -108,6 +116,8 @@ type TargetCandidate = {
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_TARGET_SUGGESTIONS = 5;
 const MAX_TRANSFER_CANDIDATES = 12;
+
+export const PERSONAL_FINANCE_TARGET_AMBIGUITY_GAP = 0.1;
 
 const STOP_WORDS = new Set([
   "ach",
@@ -588,6 +598,23 @@ function targetSuggestions({
           reason !== null
       );
 
+      const evidence = [
+        amount.reason === null
+          ? null
+          : "amount" as const,
+        description.reason === null
+          ? null
+          : "description" as const,
+        date.reason === null
+          ? null
+          : "date" as const
+      ].filter(
+        (
+          item
+        ): item is PersonalFinanceMatchEvidence =>
+          item !== null
+      );
+
       const confidence = roundConfidence(
         amount.score +
         description.score +
@@ -603,6 +630,7 @@ function targetSuggestions({
           confidenceLabel(confidence),
         recommendedAmountCents:
           transaction.amount_cents,
+        evidence,
         reasons
       };
     })
@@ -618,6 +646,55 @@ function targetSuggestions({
         )
     )
     .slice(0, MAX_TARGET_SUGGESTIONS);
+}
+
+export function personalFinanceTargetSuggestionMetadata(
+  suggestions: ReadonlyArray<
+    Pick<PersonalFinanceTargetSuggestion, "confidence">
+  >
+): {
+  confidenceGap: number | null;
+  isAmbiguous: boolean;
+} {
+  if (suggestions.length < 2) {
+    return {
+      confidenceGap: null,
+      isAmbiguous: false
+    };
+  }
+
+  const rankedConfidences = suggestions
+    .map((suggestion) => suggestion.confidence)
+    .sort((left, right) => right - left);
+
+  const firstConfidence =
+    rankedConfidences[0];
+  const secondConfidence =
+    rankedConfidences[1];
+
+  if (
+    firstConfidence === undefined ||
+    secondConfidence === undefined
+  ) {
+    return {
+      confidenceGap: null,
+      isAmbiguous: false
+    };
+  }
+
+  const confidenceGap = roundConfidence(
+    Math.max(
+      0,
+      firstConfidence - secondConfidence
+    )
+  );
+
+  return {
+    confidenceGap,
+    isAmbiguous:
+      confidenceGap <
+      PERSONAL_FINANCE_TARGET_AMBIGUITY_GAP
+  };
 }
 
 function readTransaction(
@@ -905,15 +982,26 @@ export async function readPersonalFinanceTransactionMatching({
       transaction
     );
 
+    const suggestions = targetSuggestions({
+      transaction,
+      budget
+    });
+
+    const suggestionMetadata =
+      personalFinanceTargetSuggestionMetadata(
+        suggestions
+      );
+
     return {
       transactionId: transaction.id,
       classification:
         transaction.classification,
       reviewStatus: transaction.review_status,
-      suggestions: targetSuggestions({
-        transaction,
-        budget
-      }),
+      suggestions,
+      confidenceGap:
+        suggestionMetadata.confidenceGap,
+      isAmbiguous:
+        suggestionMetadata.isAmbiguous,
       transferCandidates: candidates,
       confirmedTransfer:
         candidates.find(

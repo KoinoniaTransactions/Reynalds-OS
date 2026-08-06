@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import type {
   PersonalFinanceInboxTransaction
 } from "../lib/personal-finance-transaction-inbox-local";
+import {
+  recommendedPersonalFinanceTargetKey
+} from "../lib/personal-finance-transaction-reconciliation-guidance";
 
 import styles from "./personal-finance-mvp.module.css";
 
@@ -44,6 +47,9 @@ type TargetSuggestion = {
   confidence: number;
   confidenceLabel: "high" | "medium" | "low";
   recommendedAmountCents: number;
+  evidence: Array<
+    "amount" | "description" | "date"
+  >;
   reasons: string[];
 };
 
@@ -62,6 +68,8 @@ type TransferCandidate = {
 type MatchingResponse = {
   matching?: {
     suggestions: TargetSuggestion[];
+    confidenceGap: number | null;
+    isAmbiguous: boolean;
     transferCandidates: TransferCandidate[];
     confirmedTransfer:
       | TransferCandidate
@@ -142,6 +150,11 @@ export function PersonalFinanceTransactionReconciliationControl({
   const [isOpen, setIsOpen] =
     useState(false);
 
+  const [
+    hasLoadedAllocationEditor,
+    setHasLoadedAllocationEditor
+  ] = useState(false);
+
   const [isLoading, setIsLoading] =
     useState(false);
 
@@ -168,6 +181,14 @@ export function PersonalFinanceTransactionReconciliationControl({
 
   const [suggestions, setSuggestions] =
     useState<TargetSuggestion[]>([]);
+
+  const [confidenceGap, setConfidenceGap] =
+    useState<number | null>(null);
+
+  const [
+    isTargetMatchAmbiguous,
+    setIsTargetMatchAmbiguous
+  ] = useState(false);
 
   const [
     transferCandidates,
@@ -236,6 +257,10 @@ export function PersonalFinanceTransactionReconciliationControl({
     >
   ) {
     setSuggestions(matching.suggestions);
+    setConfidenceGap(matching.confidenceGap);
+    setIsTargetMatchAmbiguous(
+      matching.isAmbiguous
+    );
 
     setTransferCandidates(
       matching.transferCandidates
@@ -322,16 +347,18 @@ export function PersonalFinanceTransactionReconciliationControl({
           }))
         );
       } else {
-        const recommended =
-          matching?.suggestions.find(
-            (suggestion) =>
-              suggestion.confidence >= 0.5
-          );
+        const recommendedTargetKey =
+          recommendedPersonalFinanceTargetKey({
+            suggestions:
+              matching?.suggestions ?? [],
+            isAmbiguous:
+              matching?.isAmbiguous ?? false
+          });
 
         setAllocations([
           {
             targetKey:
-              recommended?.targetKey ?? "",
+              recommendedTargetKey ?? "",
             amount: (
               Math.abs(amountCents) / 100
             ).toFixed(2),
@@ -339,6 +366,8 @@ export function PersonalFinanceTransactionReconciliationControl({
           }
         ]);
       }
+
+      setHasLoadedAllocationEditor(true);
     } catch (loadError) {
       setError(
         loadError instanceof Error
@@ -347,6 +376,23 @@ export function PersonalFinanceTransactionReconciliationControl({
       );
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function retryAllocationMatching() {
+    setMatchingWarning(null);
+
+    try {
+      const matching =
+        await fetchMatching();
+
+      applyMatchingState(matching);
+    } catch (matchingError) {
+      setMatchingWarning(
+        matchingError instanceof Error
+          ? matchingError.message
+          : "Matching suggestions could not be loaded."
+      );
     }
   }
 
@@ -527,8 +573,10 @@ export function PersonalFinanceTransactionReconciliationControl({
 
     if (classification === "transfer") {
       void loadTransferEditor();
-    } else {
+    } else if (!hasLoadedAllocationEditor) {
       void loadAllocationEditor();
+    } else if (matchingWarning) {
+      void retryAllocationMatching();
     }
   }
 
@@ -853,14 +901,34 @@ export function PersonalFinanceTransactionReconciliationControl({
               Match, split, and reconcile
             </strong>
 
-            <span>
-              {budgetMonth ??
-                (
-                  isLoading
-                    ? "Loading budget..."
-                    : "Budget unavailable"
-                )}
-            </span>
+            <div
+              className={
+                styles.reconciliationEditorHeaderActions
+              }
+            >
+              <span>
+                {budgetMonth ??
+                  (
+                    isLoading
+                      ? "Loading budget..."
+                      : "Budget unavailable"
+                  )}
+              </span>
+
+              <button
+                aria-label="Close allocation editor"
+                className={
+                  styles.reconciliationEditorCloseButton
+                }
+                title="Close allocation editor"
+                type="button"
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+              >
+                ×
+              </button>
+            </div>
           </div>
 
           {suggestions.length > 0 ? (
@@ -868,6 +936,30 @@ export function PersonalFinanceTransactionReconciliationControl({
               <span className={styles.reconciliationDetailsTitle}>
                 Suggested targets
               </span>
+
+              {confidenceGap !== null ? (
+                <div
+                  className={
+                    isTargetMatchAmbiguous
+                      ? styles.matchingAmbiguityNotice
+                      : styles.matchingGapNotice
+                  }
+                >
+                  <strong>
+                    {isTargetMatchAmbiguous
+                      ? "Ambiguous target match"
+                      : "Target separation"}
+                  </strong>
+
+                  <span>
+                    Top target leads the second by{" "}
+                    {confidencePercent(confidenceGap)}.
+                    {isTargetMatchAmbiguous
+                      ? " Suggestions are too close to preselect automatically. Choose a target manually."
+                      : ""}
+                  </span>
+                </div>
+              ) : null}
 
               {suggestions.slice(0, 3).map(
                 (suggestion) => (
@@ -905,6 +997,11 @@ export function PersonalFinanceTransactionReconciliationControl({
                           suggestion.confidence
                         )}
                       </small>
+
+                      <span className={styles.matchingEvidence}>
+                        Evidence:{" "}
+                        {suggestion.evidence.join(", ")}
+                      </span>
 
                       <span className={styles.matchingReasons}>
                         {suggestion.reasons.join(" ")}
