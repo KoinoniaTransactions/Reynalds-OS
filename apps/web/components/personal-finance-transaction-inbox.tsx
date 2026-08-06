@@ -799,7 +799,7 @@ export function PersonalFinanceTransactionInbox({
                     aria-label={`${
                       expanded
                         ? "Close"
-                        : "Open"
+                        : actionLabel
                     } ${displayDescription}`}
                     className={
                       styles.inboxTransactionSummary
@@ -891,20 +891,18 @@ export function PersonalFinanceTransactionInbox({
                         {classificationLabel}
                       </span>
 
-                      {actionLabel !== "Classify" ? (
-                        <span
-                          className={`${styles.inboxStatusChip} ${
-                            transaction.reviewStatus ===
-                            "reconciled"
-                              ? styles.inboxStatusChipComplete
-                              : attention
-                                ? styles.inboxStatusChipAttention
-                                : styles.inboxStatusChipPending
-                          }`}
-                        >
-                          {actionLabel}
-                        </span>
-                      ) : null}
+                      <span
+                        className={`${styles.inboxStatusChip} ${
+                          transaction.reviewStatus ===
+                          "reconciled"
+                            ? styles.inboxStatusChipComplete
+                            : attention
+                              ? styles.inboxStatusChipAttention
+                              : styles.inboxStatusChipPending
+                        }`}
+                      >
+                        {actionLabel}
+                      </span>
 
                       {reviewed ? (
                         <span
@@ -919,14 +917,6 @@ export function PersonalFinanceTransactionInbox({
                       ) : null}
                     </span>
 
-                    <span
-                      aria-hidden="true"
-                      className={
-                        styles.inboxTransactionChevron
-                      }
-                    >
-                      {expanded ? "⌃" : "⌄"}
-                    </span>
                   </button>
 
                   {expanded ? (
