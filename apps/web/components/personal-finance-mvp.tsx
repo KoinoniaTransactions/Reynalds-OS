@@ -10,14 +10,8 @@ import type {
 } from "../lib/personal-finance-transaction-inbox-local";
 
 import {
-  PersonalFinanceTransactionInbox
-} from "./personal-finance-transaction-inbox";
-import {
   PersonalFinanceSectionNav
 } from "./personal-finance-section-nav";
-import {
-  PersonalFinanceObligationWorkspace
-} from "./personal-finance-obligation-workspace";
 import styles from "./personal-finance-mvp.module.css";
 
 type BillStatus =
@@ -49,7 +43,14 @@ type CashFlowItem = {
   sortValue: number;
 };
 
+type PersonalFinanceView =
+  | "overview"
+  | "income"
+  | "accounts"
+  | "rules";
+
 type PersonalFinanceMvpProps = {
+  view?: PersonalFinanceView;
   budget: PersonalFinanceMonth | null;
   unavailableReason?: string | null;
   transactions?: PersonalFinanceInboxTransaction[];
@@ -216,17 +217,17 @@ function PersonalFinanceFrame({
     },
     {
       label: "Income",
-      href: "/personal#income",
+      href: "/personal/income",
       className: styles.navIncome
     },
     {
       label: "Accounts",
-      href: "/personal#accounts",
+      href: "/personal/accounts",
       className: styles.navAccounts
     },
     {
       label: "Rules",
-      href: "/personal#rules",
+      href: "/personal/rules",
       className: styles.navRules
     }
   ] as const;
@@ -329,11 +330,7 @@ function PersonalFinanceFrame({
 export function PersonalFinanceMvp({
   budget,
   unavailableReason,
-  transactions = [],
-  transactionTotal = 0,
-  reviewedTransactionCount = 0,
-  notReviewedTransactionCount = 0,
-  transactionReason = null
+  view = "overview"
 }: PersonalFinanceMvpProps) {
   if (!budget) {
     return (
@@ -626,6 +623,8 @@ export function PersonalFinanceMvp({
       monthLabel={`${budget.month} budget`}
       sourceFile={budget.sourceFile}
     >
+      {view === "overview" ? (
+        <>
       <section
         className={`${styles.hero} ${styles.heroModern} ${styles.sectionAnchor}`}
         id="overview"
@@ -960,27 +959,10 @@ export function PersonalFinanceMvp({
         </section>
       </div>
 
-      <PersonalFinanceTransactionInbox
-        transactions={transactions}
-        transactionTotal={transactionTotal}
-        reviewedTransactionCount={
-          reviewedTransactionCount
-        }
-        notReviewedTransactionCount={
-          notReviewedTransactionCount
-        }
-        transactionReason={transactionReason}
-      />
+        </>
+      ) : null}
 
-      <PersonalFinanceObligationWorkspace
-        bills={budget.bills}
-        totals={{
-          planned: budget.totals.expensesBudgeted,
-          paid: budget.totals.expensesPaid,
-          remaining: budget.totals.billsRemaining
-        }}
-      />
-
+      {view === "income" ? (
       <section
         className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
         id="income"
@@ -1153,6 +1135,9 @@ export function PersonalFinanceMvp({
         </footer>
       </section>
 
+      ) : null}
+
+      {view === "accounts" ? (
       <section
         className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor} ${styles.portfolioSection}`}
         id="accounts"
@@ -1445,6 +1430,9 @@ export function PersonalFinanceMvp({
         </div>
       </section>
 
+      ) : null}
+
+      {view === "rules" ? (
       <section
         className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor} ${styles.controlSection}`}
         id="rules"
@@ -1604,6 +1592,7 @@ export function PersonalFinanceMvp({
           </section>
         </div>
       </section>
+      ) : null}
     </PersonalFinanceFrame>
   );
 }

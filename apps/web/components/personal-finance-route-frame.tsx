@@ -35,17 +35,17 @@ const navigation = [
   },
   {
     label: "Income",
-    href: "/personal#income",
+    href: "/personal/income",
     className: styles.navIncome
   },
   {
     label: "Accounts",
-    href: "/personal#accounts",
+    href: "/personal/accounts",
     className: styles.navAccounts
   },
   {
     label: "Rules",
-    href: "/personal#rules",
+    href: "/personal/rules",
     className: styles.navRules
   }
 ] as const;
