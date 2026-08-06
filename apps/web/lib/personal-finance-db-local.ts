@@ -448,6 +448,187 @@ const PERSONAL_FINANCE_SCHEMA_SQL = `
       ON DELETE SET NULL
   ) STRICT;
 
+  CREATE TABLE IF NOT EXISTS loan_terms (
+    liability_id TEXT PRIMARY KEY,
+    calculation_method TEXT NOT NULL DEFAULT
+      'monthly_amortization'
+      CHECK (
+        calculation_method IN (
+          'monthly_amortization',
+          'daily_simple_interest',
+          'interest_only',
+          'manual'
+        )
+      ),
+    annual_interest_rate_basis_points INTEGER
+      NOT NULL DEFAULT 0 CHECK (
+        annual_interest_rate_basis_points >= 0
+      ),
+    original_term_months INTEGER CHECK (
+      original_term_months IS NULL OR
+      original_term_months > 0
+    ),
+    remaining_term_months INTEGER CHECK (
+      remaining_term_months IS NULL OR
+      remaining_term_months >= 0
+    ),
+    loan_start_date TEXT,
+    first_payment_date TEXT,
+    payment_frequency TEXT NOT NULL DEFAULT
+      'monthly'
+      CHECK (
+        payment_frequency IN (
+          'weekly',
+          'biweekly',
+          'monthly'
+        )
+      ),
+    scheduled_payment_cents INTEGER CHECK (
+      scheduled_payment_cents IS NULL OR
+      scheduled_payment_cents >= 0
+    ),
+    scheduled_escrow_cents INTEGER NOT NULL
+      DEFAULT 0 CHECK (
+        scheduled_escrow_cents >= 0
+      ),
+    rate_type TEXT NOT NULL DEFAULT 'fixed'
+      CHECK (
+        rate_type IN (
+          'fixed',
+          'variable'
+        )
+      ),
+    last_accrual_date TEXT,
+    created_at TEXT NOT NULL
+      DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL
+      DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (liability_id)
+      REFERENCES liabilities(id)
+      ON DELETE CASCADE
+  ) STRICT;
+
+  CREATE TABLE IF NOT EXISTS liability_payments (
+    id TEXT PRIMARY KEY,
+    liability_id TEXT NOT NULL,
+    obligation_id TEXT,
+    source_key TEXT NOT NULL UNIQUE,
+    paid_on TEXT NOT NULL,
+    total_payment_cents INTEGER NOT NULL
+      CHECK (
+        total_payment_cents > 0
+      ),
+    interest_cents INTEGER NOT NULL
+      DEFAULT 0 CHECK (
+        interest_cents >= 0
+      ),
+    principal_cents INTEGER NOT NULL
+      DEFAULT 0 CHECK (
+        principal_cents >= 0
+      ),
+    escrow_cents INTEGER NOT NULL
+      DEFAULT 0 CHECK (
+        escrow_cents >= 0
+      ),
+    fees_cents INTEGER NOT NULL
+      DEFAULT 0 CHECK (
+        fees_cents >= 0
+      ),
+    extra_principal_cents INTEGER NOT NULL
+      DEFAULT 0 CHECK (
+        extra_principal_cents >= 0
+      ),
+    opening_balance_cents INTEGER NOT NULL
+      CHECK (
+        opening_balance_cents >= 0
+      ),
+    closing_balance_cents INTEGER NOT NULL
+      CHECK (
+        closing_balance_cents >= 0
+      ),
+    calculation_method TEXT NOT NULL,
+    note TEXT,
+    created_at TEXT NOT NULL
+      DEFAULT CURRENT_TIMESTAMP,
+
+    CHECK (
+      interest_cents +
+      principal_cents +
+      escrow_cents +
+      fees_cents =
+      total_payment_cents
+    ),
+
+    CHECK (
+      extra_principal_cents <=
+      principal_cents
+    ),
+
+    FOREIGN KEY (liability_id)
+      REFERENCES liabilities(id)
+      ON DELETE CASCADE,
+
+    FOREIGN KEY (obligation_id)
+      REFERENCES obligations(id)
+      ON DELETE SET NULL
+  ) STRICT;
+
+  CREATE TABLE IF NOT EXISTS
+    liability_balance_history (
+      id TEXT PRIMARY KEY,
+      liability_id TEXT NOT NULL,
+      payment_id TEXT,
+      balance_cents INTEGER NOT NULL CHECK (
+        balance_cents >= 0
+      ),
+      balance_on TEXT NOT NULL,
+      balance_kind TEXT NOT NULL DEFAULT
+        'calculated'
+        CHECK (
+          balance_kind IN (
+            'opening',
+            'calculated',
+            'statement',
+            'adjustment',
+            'payoff'
+          )
+        ),
+      note TEXT,
+      created_at TEXT NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
+
+      FOREIGN KEY (liability_id)
+        REFERENCES liabilities(id)
+        ON DELETE CASCADE,
+
+      FOREIGN KEY (payment_id)
+        REFERENCES liability_payments(id)
+        ON DELETE SET NULL
+    ) STRICT;
+
+  CREATE INDEX IF NOT EXISTS
+    liability_payments_liability_date_index
+  ON liability_payments (
+    liability_id,
+    paid_on DESC
+  );
+
+  CREATE INDEX IF NOT EXISTS
+    liability_payments_obligation_index
+  ON liability_payments (
+    obligation_id,
+    paid_on DESC
+  );
+
+  CREATE INDEX IF NOT EXISTS
+    liability_balance_history_date_index
+  ON liability_balance_history (
+    liability_id,
+    balance_on DESC,
+    created_at DESC
+  );
+
   CREATE TABLE IF NOT EXISTS sensitive_values (
     id TEXT PRIMARY KEY,
     owner_type TEXT NOT NULL CHECK (
