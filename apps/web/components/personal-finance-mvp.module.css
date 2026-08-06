@@ -6407,3 +6407,195 @@
     min-height: 72px;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Personal Finance workbench proportion correction v1                        */
+/* -------------------------------------------------------------------------- */
+
+.app:not(:has(:target)) a.navOverview,
+.app:has(#overview:target) a.navOverview,
+.app:has(#transaction-inbox:target) a.navTransactions,
+.app:has(#bills:target) a.navBills,
+.app:has(#income:target) a.navIncome,
+.app:has(#accounts:target) a.navAccounts,
+.app:has(#rules:target) a.navRules {
+  position: relative;
+  border-color: rgba(226, 183, 104, 0.28);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(184, 138, 68, 0.34),
+      rgba(184, 138, 68, 0.14)
+    );
+  color: #ffffff;
+  box-shadow:
+    inset 3px 0 0 #e2b768,
+    0 8px 20px rgba(0, 0, 0, 0.16);
+  transform: translateX(2px);
+}
+
+.app:not(:has(:target)) a.navOverview::after,
+.app:has(#overview:target) a.navOverview::after,
+.app:has(#transaction-inbox:target) a.navTransactions::after,
+.app:has(#bills:target) a.navBills::after,
+.app:has(#income:target) a.navIncome::after,
+.app:has(#accounts:target) a.navAccounts::after,
+.app:has(#rules:target) a.navRules::after {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #f0c879;
+  box-shadow: 0 0 0 4px rgba(240, 200, 121, 0.12);
+  content: "";
+  transform: translateY(-50%);
+}
+
+.app:not(:has(:target)) a.navOverview .navLabel,
+.app:has(#overview:target) a.navOverview .navLabel,
+.app:has(#transaction-inbox:target) a.navTransactions .navLabel,
+.app:has(#bills:target) a.navBills .navLabel,
+.app:has(#income:target) a.navIncome .navLabel,
+.app:has(#accounts:target) a.navAccounts .navLabel,
+.app:has(#rules:target) a.navRules .navLabel {
+  font-weight: 850;
+}
+
+.inboxWorkbenchHeader {
+  gap: 12px 20px;
+  padding: 14px 22px 12px;
+}
+
+.inboxWorkbenchHeading {
+  gap: 2px;
+}
+
+.inboxWorkflowProgress {
+  gap: 6px;
+}
+
+.inboxWorkflowStep {
+  min-height: 44px;
+  padding: 6px 8px;
+}
+
+.inboxWorkflowStep > i {
+  width: 27px;
+  height: 27px;
+}
+
+.inboxWorkbenchBody {
+  align-items: start;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(248, 250, 252, 0.72),
+      rgba(244, 246, 249, 0.82)
+    );
+}
+
+.inboxWorkbenchDecisionColumn {
+  align-self: start;
+  padding: 15px 18px 17px;
+  background: rgba(248, 250, 252, 0.78);
+}
+
+.inboxWorkbenchSection {
+  gap: 10px;
+  padding-bottom: 15px;
+}
+
+.inboxWorkbenchSection
+  + .inboxWorkbenchSection {
+  padding-top: 15px;
+}
+
+.inboxWorkbenchResolution {
+  width: calc(100% - 36px);
+  align-self: start;
+  gap: 12px;
+  margin: 16px 18px;
+  padding: 15px 16px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.19);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 12px 28px rgba(15, 23, 42, 0.055);
+}
+
+.inboxWorkbenchResolution::before {
+  display: none;
+}
+
+.inboxWorkbenchResolutionHeader {
+  padding-bottom: 11px;
+}
+
+.inboxWorkbenchResolution .inboxWorkbenchDetails {
+  gap: 9px;
+}
+
+.inboxWorkbenchResolution .reconciliationCompactState {
+  align-items: start;
+  gap: 8px;
+}
+
+.inboxWorkbenchResolution .reconciliationPrimaryButton {
+  width: auto;
+  min-width: 230px;
+  max-width: 320px;
+  justify-self: start;
+  padding-right: 22px;
+  padding-left: 22px;
+}
+
+.inboxWorkbenchResolution .reconciliationDetails,
+.inboxWorkbenchResolution .transferPairSummary {
+  max-width: 640px;
+}
+
+@media (max-width: 980px) {
+  .inboxWorkbenchDecisionColumn {
+    align-self: stretch;
+  }
+
+  .inboxWorkbenchResolution {
+    width: calc(100% - 28px);
+    margin: 14px;
+  }
+}
+
+@media (max-width: 700px) {
+  .app:not(:has(:target)) a.navOverview,
+  .app:has(#overview:target) a.navOverview,
+  .app:has(#transaction-inbox:target) a.navTransactions,
+  .app:has(#bills:target) a.navBills,
+  .app:has(#income:target) a.navIncome,
+  .app:has(#accounts:target) a.navAccounts,
+  .app:has(#rules:target) a.navRules {
+    transform: none;
+  }
+
+  .inboxWorkbenchHeader {
+    padding: 13px 14px 12px;
+  }
+
+  .inboxWorkbenchDecisionColumn {
+    padding: 14px;
+  }
+
+  .inboxWorkbenchResolution {
+    width: calc(100% - 24px);
+    margin: 12px;
+    padding: 14px;
+  }
+
+  .inboxWorkbenchResolution .reconciliationPrimaryButton {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+}
