@@ -6236,3 +6236,174 @@
     justify-self: start;
   }
 }
+
+/* Personal Finance legibility correction v1 */
+
+.workspaceContext,
+.privateWorkspaceBadge {
+  font-size: 10px;
+}
+
+.workspaceAction,
+.headerRosLink {
+  min-height: 38px;
+  padding-right: 13px;
+  padding-left: 13px;
+  font-size: 11px;
+}
+
+.navLink {
+  min-height: 42px;
+  font-size: 12px;
+}
+
+.subtitle {
+  max-width: 760px;
+  font-size: 14px;
+  line-height: 1.58;
+}
+
+.panelTitle {
+  font-size: 20px;
+}
+
+.panelDescription,
+.heroModern .heroDescription {
+  font-size: 12px;
+  line-height: 1.52;
+}
+
+.metricNote {
+  font-size: 11px;
+  line-height: 1.46;
+}
+
+.inboxFocusButton,
+.inboxFilterTrigger,
+.inboxFilterReset,
+.inboxAdvancedFilter select {
+  min-height: 38px;
+  font-size: 11px;
+}
+
+.inboxTransactionSummary {
+  min-height: 76px;
+  padding-top: 13px;
+  padding-bottom: 13px;
+}
+
+.inboxTransactionDate strong {
+  font-size: 11px;
+}
+
+.inboxTransactionDate small {
+  font-size: 9px;
+}
+
+.inboxTransactionDescription {
+  font-size: 13px;
+}
+
+.inboxTransactionAccount {
+  font-size: 10px;
+}
+
+.inboxTransactionAmount {
+  font-size: 13px;
+}
+
+.inboxStatusChip {
+  min-height: 25px;
+  padding: 4px 8px;
+  font-size: 9px;
+}
+
+.inboxWorkbenchHeading > span {
+  font-size: 9px;
+}
+
+.inboxWorkbenchHeading > strong {
+  font-size: 16px;
+}
+
+.inboxWorkbenchHeading > small {
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.inboxWorkbenchState {
+  min-height: 28px;
+  font-size: 9px;
+}
+
+.inboxWorkflowStep {
+  min-height: 52px;
+}
+
+.inboxWorkflowStep strong {
+  font-size: 10px;
+}
+
+.inboxWorkflowStep small {
+  font-size: 9px;
+}
+
+.inboxWorkbenchSectionHeader strong,
+.inboxWorkbenchResolutionHeader strong {
+  font-size: 11px;
+}
+
+.inboxWorkbenchSectionHeader small,
+.inboxWorkbenchResolutionHeader small {
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.classificationSelect,
+.reviewedToggle,
+.reconciliationPrimaryButton,
+.reconciliationSecondaryButton,
+.reconciliationTextButton,
+.reconciliationHint {
+  font-size: 11px;
+}
+
+.classificationSelect,
+.reviewedToggle,
+.reconciliationPrimaryButton,
+.reconciliationSecondaryButton {
+  min-height: 38px;
+}
+
+.planIdentity strong {
+  font-size: 13px;
+}
+
+.planIdentity span,
+.cashAccountCopy small,
+.creditPortfolioHeader span,
+.controlCopy small,
+.reviewQueueCopy small {
+  font-size: 9px;
+}
+
+.cashAccountCopy strong,
+.creditPortfolioHeader strong,
+.controlCopy strong,
+.reviewQueueCopy strong {
+  font-size: 11px;
+}
+
+@media (max-width: 760px) {
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .panelTitle {
+    font-size: 18px;
+  }
+
+  .inboxTransactionSummary {
+    min-height: 72px;
+  }
+}
