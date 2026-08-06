@@ -582,13 +582,15 @@ export function PersonalFinanceTransactionReconciliationControl({
 
   if (reviewStatus === "reconciled") {
     return (
-      <div className={styles.reconciliationControl}>
+      <div
+        className={`${styles.reconciliationControl} ${styles.reconciliationCompactState}`}
+      >
         <span className={`${styles.status} ${styles.statusPaid}`}>
           Reconciled
         </span>
 
         <button
-          className={styles.reconciliationSecondaryButton}
+          className={styles.reconciliationTextButton}
           disabled={isSaving}
           type="button"
           onClick={() => {
@@ -620,19 +622,16 @@ export function PersonalFinanceTransactionReconciliationControl({
 
   if (classification === "unknown") {
     return (
-      <div className={styles.reconciliationControl}>
+      <div
+        className={`${styles.reconciliationControl} ${styles.reconciliationCompactState}`}
+      >
         <span className={`${styles.status} ${styles.statusPartial}`}>
-          Unreconciled
+          Needs classification
         </span>
 
-        <button
-          className={styles.reconciliationSecondaryButton}
-          disabled
-          title="Classify this transaction before reconciling it."
-          type="button"
-        >
-          Classify first
-        </button>
+        <span className={styles.reconciliationHint}>
+          Choose a classification first
+        </span>
       </div>
     );
   }
@@ -644,35 +643,34 @@ export function PersonalFinanceTransactionReconciliationControl({
           Unreconciled
         </span>
 
-        <div className={styles.reconciliationButtonRow}>
-          <button
-            className={styles.reconciliationSecondaryButton}
-            disabled={isLoading || isPairSaving}
-            type="button"
-            onClick={toggleEditor}
-          >
-            {isOpen ? "Close pairs" : "Find pair"}
-          </button>
+        <button
+          className={styles.reconciliationPrimaryButton}
+          disabled={
+            isOpen
+              ? isSaving
+              : isLoading || isPairSaving
+          }
+          type="button"
+          onClick={() => {
+            if (isOpen) {
+              void saveReconciliation({
+                reconciled: true
+              });
 
-          <button
-            className={styles.reconciliationPrimaryButton}
-            disabled={isSaving}
-            type="button"
-            onClick={() => {
-              if (
-                window.confirm(
-                  "Reconcile this transfer without a budget allocation?"
-                )
-              ) {
-                void saveReconciliation({
-                  reconciled: true
-                });
-              }
-            }}
-          >
-            {isSaving ? "Saving..." : "Reconcile"}
-          </button>
-        </div>
+              return;
+            }
+
+            toggleEditor();
+          }}
+        >
+          {isOpen
+            ? isSaving
+              ? "Saving..."
+              : "Mark reconciled"
+            : isLoading
+              ? "Loading..."
+              : "Review transfer"}
+        </button>
 
         {isOpen ? (
           <div className={styles.reconciliationEditor}>
@@ -681,9 +679,29 @@ export function PersonalFinanceTransactionReconciliationControl({
                 Transfer pairing
               </strong>
 
-              <span>
-                Pairing does not reconcile or reclassify.
-              </span>
+              <div
+                className={
+                  styles.reconciliationEditorHeaderActions
+                }
+              >
+                <span>
+                  Pairing stays separate from reconciliation.
+                </span>
+
+                <button
+                  aria-label="Close transfer pairing"
+                  className={
+                    styles.reconciliationEditorCloseButton
+                  }
+                  title="Close transfer pairing"
+                  type="button"
+                  onClick={() => {
+                    setIsOpen(false);
+                  }}
+                >
+                  ×
+                </button>
+              </div>
             </div>
 
             {isLoading ? (
@@ -779,20 +797,14 @@ export function PersonalFinanceTransactionReconciliationControl({
                           disabled={isPairSaving}
                           type="button"
                           onClick={() => {
-                            if (
-                              window.confirm(
-                                "Confirm these two transactions as the two sides of one transfer?"
-                              )
-                            ) {
-                              void saveTransferLink({
-                                candidate,
-                                status:
-                                  "confirmed"
-                              });
-                            }
+                            void saveTransferLink({
+                              candidate,
+                              status:
+                                "confirmed"
+                            });
                           }}
                         >
-                          Confirm pair
+                          Link pair
                         </button>
 
                         <button
@@ -813,8 +825,8 @@ export function PersonalFinanceTransactionReconciliationControl({
                         >
                           {candidate.status ===
                           "rejected"
-                            ? "Rejected"
-                            : "Reject"}
+                            ? "Dismissed"
+                            : "Dismiss"}
                         </button>
                       </div>
                     </div>
@@ -843,9 +855,11 @@ export function PersonalFinanceTransactionReconciliationControl({
 
   if (!needsAllocations) {
     return (
-      <div className={styles.reconciliationControl}>
+      <div
+        className={`${styles.reconciliationControl} ${styles.reconciliationCompactState}`}
+      >
         <span className={`${styles.status} ${styles.statusPartial}`}>
-          Unreconciled
+          Ready
         </span>
 
         <button
@@ -853,18 +867,14 @@ export function PersonalFinanceTransactionReconciliationControl({
           disabled={isSaving}
           type="button"
           onClick={() => {
-            if (
-              window.confirm(
-                `Reconcile this ${classification} transaction without a budget allocation?`
-              )
-            ) {
-              void saveReconciliation({
-                reconciled: true
-              });
-            }
+            void saveReconciliation({
+              reconciled: true
+            });
           }}
         >
-          {isSaving ? "Saving..." : "Reconcile"}
+          {isSaving
+            ? "Saving..."
+            : "Mark reconciled"}
         </button>
 
         {error ? (
@@ -885,20 +895,22 @@ export function PersonalFinanceTransactionReconciliationControl({
         Unreconciled
       </span>
 
-      <button
-        className={styles.reconciliationPrimaryButton}
-        disabled={isLoading || isSaving}
-        type="button"
-        onClick={toggleEditor}
-      >
-        {isOpen ? "Close" : "Allocate"}
-      </button>
+      {!isOpen ? (
+        <button
+          className={styles.reconciliationPrimaryButton}
+          disabled={isLoading || isSaving}
+          type="button"
+          onClick={toggleEditor}
+        >
+          {isLoading ? "Loading..." : "Review"}
+        </button>
+      ) : null}
 
       {isOpen ? (
         <div className={styles.reconciliationEditor}>
           <div className={styles.reconciliationEditorHeader}>
             <strong>
-              Match, split, and reconcile
+              Review and reconcile
             </strong>
 
             <div
@@ -1009,7 +1021,7 @@ export function PersonalFinanceTransactionReconciliationControl({
                     </span>
 
                     <span className={styles.matchingSuggestionUse}>
-                      Use
+                      Apply
                     </span>
                   </button>
                 )
@@ -1098,8 +1110,10 @@ export function PersonalFinanceTransactionReconciliationControl({
 
                 {allocations.length > 1 ? (
                   <button
-                    className={styles.reconciliationRemoveButton}
+                    aria-label={`Remove split ${index + 1}`}
+                    className={styles.reconciliationIconButton}
                     disabled={isSaving}
+                    title="Remove split"
                     type="button"
                     onClick={() => {
                       setAllocations(
@@ -1114,7 +1128,7 @@ export function PersonalFinanceTransactionReconciliationControl({
                       );
                     }}
                   >
-                    Remove
+                    ×
                   </button>
                 ) : null}
               </div>
@@ -1137,7 +1151,7 @@ export function PersonalFinanceTransactionReconciliationControl({
 
           <div className={styles.reconciliationEditorActions}>
             <button
-              className={styles.reconciliationSecondaryButton}
+              className={styles.reconciliationTextButton}
               disabled={
                 isLoading ||
                 isSaving ||
@@ -1155,7 +1169,7 @@ export function PersonalFinanceTransactionReconciliationControl({
                 ]);
               }}
             >
-              Add split
+              + Add split
             </button>
 
             <button
@@ -1175,7 +1189,7 @@ export function PersonalFinanceTransactionReconciliationControl({
             >
               {isSaving
                 ? "Saving..."
-                : "Save reconciliation"}
+                : "Reconcile"}
             </button>
           </div>
 

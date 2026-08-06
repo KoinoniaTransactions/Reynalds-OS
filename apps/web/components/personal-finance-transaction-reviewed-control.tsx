@@ -111,28 +111,17 @@ export function PersonalFinanceTransactionReviewedControl({
 
   return (
     <div className={styles.reviewedControl}>
-      <span
-        className={`${styles.reviewedState} ${
-          isReviewed
-            ? styles.reviewedStateComplete
-            : styles.reviewedStatePending
-        }`}
-      >
-        {isReviewed
-          ? "Reviewed"
-          : "Not reviewed"}
-      </span>
-
       <button
         aria-label={
           isReviewed
-            ? "Undo transaction reviewed state"
+            ? "Mark transaction as not reviewed"
             : "Mark transaction as reviewed"
         }
-        className={`${styles.reviewedButton} ${
+        aria-pressed={isReviewed}
+        className={`${styles.reviewedToggle} ${
           isReviewed
-            ? styles.reviewedUndoButton
-            : styles.reviewedMarkButton
+            ? styles.reviewedToggleActive
+            : ""
         }`}
         disabled={isSaving}
         type="button"
@@ -140,11 +129,20 @@ export function PersonalFinanceTransactionReviewedControl({
           void saveReviewedState();
         }}
       >
-        {isSaving
-          ? "Saving..."
-          : isReviewed
-            ? "Undo reviewed"
-            : "Mark reviewed"}
+        <span
+          aria-hidden="true"
+          className={styles.reviewedToggleIndicator}
+        >
+          {isReviewed ? "✓" : ""}
+        </span>
+
+        <span className={styles.reviewedToggleCopy}>
+          {isSaving
+            ? "Saving..."
+            : isReviewed
+              ? "Reviewed"
+              : "Mark reviewed"}
+        </span>
       </button>
 
       {error ? (

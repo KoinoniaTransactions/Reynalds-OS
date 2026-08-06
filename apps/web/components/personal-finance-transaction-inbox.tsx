@@ -522,9 +522,6 @@ export function PersonalFinanceTransactionInbox({
                 Classification
               </span>
 
-              <span className={styles.inboxFilterMode}>
-                View only
-              </span>
             </span>
 
             <select
@@ -557,9 +554,6 @@ export function PersonalFinanceTransactionInbox({
                 Reviewed
               </span>
 
-              <span className={styles.inboxFilterMode}>
-                View only
-              </span>
             </span>
 
             <select
@@ -592,9 +586,6 @@ export function PersonalFinanceTransactionInbox({
                 Reconciliation
               </span>
 
-              <span className={styles.inboxFilterMode}>
-                View only
-              </span>
             </span>
 
             <select
@@ -627,9 +618,6 @@ export function PersonalFinanceTransactionInbox({
                 Matching
               </span>
 
-              <span className={styles.inboxFilterMode}>
-                View only
-              </span>
             </span>
 
             <select
@@ -677,7 +665,7 @@ export function PersonalFinanceTransactionInbox({
                   </span>
 
                   <span className={styles.editableColumnSubheading}>
-                    Save required
+                    Auto-saves
                   </span>
                 </th>
                 <th>
