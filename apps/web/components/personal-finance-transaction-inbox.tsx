@@ -891,18 +891,20 @@ export function PersonalFinanceTransactionInbox({
                         {classificationLabel}
                       </span>
 
-                      <span
-                        className={`${styles.inboxStatusChip} ${
-                          transaction.reviewStatus ===
-                          "reconciled"
-                            ? styles.inboxStatusChipComplete
-                            : attention
-                              ? styles.inboxStatusChipAttention
-                              : styles.inboxStatusChipPending
-                        }`}
-                      >
-                        {actionLabel}
-                      </span>
+                      {actionLabel !== "Classify" ? (
+                        <span
+                          className={`${styles.inboxStatusChip} ${
+                            transaction.reviewStatus ===
+                            "reconciled"
+                              ? styles.inboxStatusChipComplete
+                              : attention
+                                ? styles.inboxStatusChipAttention
+                                : styles.inboxStatusChipPending
+                          }`}
+                        >
+                          {actionLabel}
+                        </span>
+                      ) : null}
 
                       {reviewed ? (
                         <span
