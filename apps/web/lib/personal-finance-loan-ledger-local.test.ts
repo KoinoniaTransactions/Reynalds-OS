@@ -25,7 +25,8 @@ import {
   calculateScheduledPayment,
   configureLoanTerms,
   previewLoanPayment,
-  readLoanPaymentWorkspace
+  readLoanPaymentWorkspace,
+  reconcileLoanStatement
 } from "./personal-finance-loan-ledger-local";
 
 let temporaryDirectory = "";
@@ -490,6 +491,147 @@ describe(
             ?.recentPayments[0]
             ?.closingBalance
         ).toBe(239650);
+      }
+    );
+
+    it(
+      "projects payoff and remaining interest",
+      () => {
+        configureLoanTerms({
+          liabilityId:
+            "liability_mortgage",
+          calculationMethod:
+            "monthly_amortization",
+          annualInterestRate:
+            6.25,
+          originalTermMonths:
+            360,
+          remainingTermMonths:
+            288,
+          paymentFrequency:
+            "monthly",
+          scheduledPayment:
+            2150,
+          scheduledEscrow:
+            550,
+          firstPaymentDate:
+            "2026-09-01",
+          rateType:
+            "fixed",
+          lastAccrualDate:
+            "2026-08-01"
+        });
+
+        const records =
+          readLoanPaymentWorkspace();
+
+        expect(
+          records[0]
+            ?.projectedPayoffDate
+        ).not.toBeNull();
+
+        expect(
+          records[0]
+            ?.projectedRemainingPayments
+        ).toBeGreaterThan(0);
+
+        expect(
+          records[0]
+            ?.estimatedRemainingInterest
+        ).toBeGreaterThan(0);
+
+        expect(
+          records[0]
+            ?.principalAndInterestPayment
+        ).toBe(1600);
+      }
+    );
+
+    it(
+      "preserves calculated history when accepting a statement balance",
+      () => {
+        configureLoanTerms({
+          liabilityId:
+            "liability_mortgage",
+          calculationMethod:
+            "monthly_amortization",
+          annualInterestRate:
+            6.25,
+          paymentFrequency:
+            "monthly",
+          scheduledPayment:
+            2150,
+          scheduledEscrow:
+            550,
+          lastAccrualDate:
+            "2026-08-01"
+        });
+
+        reconcileLoanStatement({
+          liabilityId:
+            "liability_mortgage",
+          statementBalance:
+            239875.42,
+          statementAsOf:
+            "2026-08-05",
+          note:
+            "August lender statement"
+        });
+
+        const records =
+          readLoanPaymentWorkspace();
+
+        expect(
+          records[0]
+            ?.currentBalance
+        ).toBe(239875.42);
+
+        expect(
+          records[0]
+            ?.statementBalance
+        ).toBe(239875.42);
+
+        expect(
+          records[0]
+            ?.statementAsOf
+        ).toBe("2026-08-05");
+
+        const database =
+          openPersonalFinanceDatabase({
+            databasePath
+          });
+
+        try {
+          const history =
+            database
+              .prepare(`
+                SELECT
+                  balance_kind,
+                  balance_cents
+                FROM
+                  liability_balance_history
+                ORDER BY created_at
+              `)
+              .all() as Array<{
+                balance_kind: string;
+                balance_cents: number;
+              }>;
+
+          expect(history)
+            .toHaveLength(2);
+
+          expect(
+            history[0]
+              ?.balance_kind
+          ).toBe("calculated");
+
+          expect(
+            history[1]
+              ?.balance_kind
+          ).toBe("statement");
+        } finally {
+          database.close();
+        }
       }
     );
 

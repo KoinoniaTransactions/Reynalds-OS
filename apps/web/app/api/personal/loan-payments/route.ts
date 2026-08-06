@@ -6,7 +6,8 @@ import {
   applyLoanPayment,
   configureLoanTerms,
   previewLoanPayment,
-  readLoanPaymentWorkspace
+  readLoanPaymentWorkspace,
+  reconcileLoanStatement
 } from "../../../../lib/personal-finance-loan-ledger-local";
 
 export const dynamic = "force-dynamic";
@@ -41,7 +42,8 @@ export async function POST(
         action?:
           | "configure"
           | "preview-payment"
-          | "apply-payment";
+          | "apply-payment"
+          | "reconcile-statement";
         [key: string]: unknown;
       };
 
@@ -83,10 +85,23 @@ export async function POST(
       });
     }
 
+    if (
+      body.action ===
+        "reconcile-statement"
+    ) {
+      reconcileLoanStatement(
+        body as never
+      );
+
+      return NextResponse.json({
+        ok: true
+      });
+    }
+
     return NextResponse.json(
       {
         error:
-          "Action must be configure, preview-payment, or apply-payment."
+          "Action must be configure, preview-payment, apply-payment, or reconcile-statement."
       },
       {
         status: 400
@@ -98,7 +113,7 @@ export async function POST(
         error:
           error instanceof Error
             ? error.message
-            : "Loan payment could not be processed."
+            : "Loan request could not be processed."
       },
       {
         status: 400

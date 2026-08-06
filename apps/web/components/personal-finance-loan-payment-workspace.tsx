@@ -44,6 +44,22 @@ type LoanRecord = {
   rateType: string | null;
   lastAccrualDate: string | null;
   hasConfiguredTerms: boolean;
+  projectedPayoffDate:
+    string | null;
+  projectedRemainingPayments:
+    number | null;
+  estimatedRemainingInterest:
+    number | null;
+  principalAndInterestPayment:
+    number | null;
+  statementBalance:
+    number | null;
+  statementAsOf:
+    string | null;
+  balanceDifference:
+    number | null;
+  needsReconciliation:
+    boolean;
   recentPayments:
     PaymentHistoryRecord[];
 };
@@ -105,6 +121,13 @@ export function PersonalFinanceLoanPaymentWorkspace() {
   const [
     configuring,
     setConfiguring
+  ] = useState<LoanRecord | null>(
+    null
+  );
+
+  const [
+    reconciling,
+    setReconciling
   ] = useState<LoanRecord | null>(
     null
   );
@@ -178,6 +201,96 @@ export function PersonalFinanceLoanPaymentWorkspace() {
   useEffect(() => {
     void loadRecords();
   }, [loadRecords]);
+
+  async function reconcileStatement(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    if (!reconciling) {
+      return;
+    }
+
+    setSaving(true);
+    setError(null);
+    setNotice(null);
+
+    const data =
+      new FormData(
+        event.currentTarget
+      );
+
+    try {
+      const response =
+        await fetch(
+          "/api/personal/loan-payments",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+            body: JSON.stringify({
+              action:
+                "reconcile-statement",
+              liabilityId:
+                reconciling.liabilityId,
+              statementBalance:
+                String(
+                  data.get(
+                    "statementBalance"
+                  ) ?? ""
+                ),
+              statementAsOf:
+                String(
+                  data.get(
+                    "statementAsOf"
+                  ) ?? ""
+                ),
+              note:
+                String(
+                  data.get("note") ??
+                  ""
+                )
+            })
+          }
+        );
+
+      const body =
+        await response.json() as {
+          error?: string;
+        };
+
+      if (!response.ok) {
+        throw new Error(
+          body.error ??
+            "Statement balance could not be accepted."
+        );
+      }
+
+      setNotice(
+        `Statement balance accepted for ${reconciling.billName}.`
+      );
+
+      setReconciling(null);
+
+      await loadRecords();
+
+      window.dispatchEvent(
+        new Event(
+          "personal-finance-updated"
+        )
+      );
+    } catch (saveError) {
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : "Statement balance could not be accepted."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
 
   async function saveLoanTerms(
     event: FormEvent<HTMLFormElement>
@@ -664,6 +777,71 @@ export function PersonalFinanceLoanPaymentWorkspace() {
               </div>
             </dl>
 
+            {record
+              .projectedPayoffDate ? (
+              <div
+                className={
+                  styles.projection
+                }
+              >
+                <div>
+                  <span>
+                    Projected payoff
+                  </span>
+                  <strong>
+                    {
+                      record
+                        .projectedPayoffDate
+                    }
+                  </strong>
+                </div>
+
+                <div>
+                  <span>
+                    Remaining payments
+                  </span>
+                  <strong>
+                    {
+                      record
+                        .projectedRemainingPayments
+                    }
+                  </strong>
+                </div>
+
+                <div>
+                  <span>
+                    Remaining interest
+                  </span>
+                  <strong>
+                    {money(
+                      record
+                        .estimatedRemainingInterest ??
+                      0
+                    )}
+                  </strong>
+                </div>
+              </div>
+            ) : null}
+
+            {record.needsReconciliation ? (
+              <p
+                className={
+                  styles.reconciliationWarning
+                }
+              >
+                Statement balance differs
+                from the calculated balance
+                by{" "}
+                {money(
+                  Math.abs(
+                    record.balanceDifference ??
+                    0
+                  )
+                )}
+                .
+              </p>
+            ) : null}
+
             {!record.hasConfiguredTerms ? (
               <p
                 className={styles.warning}
@@ -680,7 +858,22 @@ export function PersonalFinanceLoanPaymentWorkspace() {
             >
               <button
                 onClick={() => {
+                  setReconciling(record);
+                  setConfiguring(null);
+                  setSelected(null);
+                  setPreview(null);
+                  setError(null);
+                  setNotice(null);
+                }}
+                type="button"
+              >
+                Reconcile balance
+              </button>
+
+              <button
+                onClick={() => {
                   setConfiguring(record);
+                  setReconciling(null);
                   setSelected(null);
                   setPreview(null);
                   setError(null);
@@ -778,6 +971,137 @@ export function PersonalFinanceLoanPaymentWorkspace() {
           </article>
         ))}
       </div>
+
+      {reconciling ? (
+        <div
+          className={styles.overlay}
+          role="presentation"
+        >
+          <section
+            aria-modal="true"
+            className={styles.dialog}
+            role="dialog"
+          >
+            <header>
+              <div>
+                <span>
+                  Statement reconciliation
+                </span>
+
+                <h3>
+                  {reconciling.billName}
+                </h3>
+              </div>
+
+              <button
+                aria-label="Close statement reconciliation"
+                onClick={() =>
+                  setReconciling(null)
+                }
+                type="button"
+              >
+                ×
+              </button>
+            </header>
+
+            <div
+              className={
+                styles.reconciliationSummary
+              }
+            >
+              <div>
+                <span>
+                  Calculated balance
+                </span>
+                <strong>
+                  {money(
+                    reconciling
+                      .currentBalance
+                  )}
+                </strong>
+              </div>
+
+              {reconciling
+                .statementBalance !==
+              null ? (
+                <div>
+                  <span>
+                    Previous statement
+                  </span>
+                  <strong>
+                    {money(
+                      reconciling
+                        .statementBalance
+                    )}
+                  </strong>
+                </div>
+              ) : null}
+            </div>
+
+            <form
+              onSubmit={
+                reconcileStatement
+              }
+            >
+              <div
+                className={
+                  styles.formGrid
+                }
+              >
+                <label>
+                  <span>
+                    Statement balance
+                  </span>
+
+                  <input
+                    min="0"
+                    name="statementBalance"
+                    required
+                    step="0.01"
+                    type="number"
+                  />
+                </label>
+
+                <label>
+                  <span>
+                    Statement date
+                  </span>
+
+                  <input
+                    defaultValue={TODAY}
+                    name="statementAsOf"
+                    required
+                    type="date"
+                  />
+                </label>
+
+                <label
+                  className={
+                    styles.fullWidth
+                  }
+                >
+                  <span>Note</span>
+
+                  <textarea
+                    name="note"
+                    placeholder="Statement source or reason for the adjustment"
+                    rows={3}
+                  />
+                </label>
+              </div>
+
+              <button
+                disabled={saving}
+                type="submit"
+              >
+                {saving
+                  ? "Accepting..."
+                  : "Accept statement balance"}
+              </button>
+            </form>
+          </section>
+        </div>
+      ) : null}
 
       {configuring ? (
         <div

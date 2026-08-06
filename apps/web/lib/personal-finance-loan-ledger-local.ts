@@ -42,6 +42,23 @@ export type ConfigureLoanTermsInput = {
   lastAccrualDate?: string | null;
 };
 
+export type ReconcileLoanStatementInput = {
+  liabilityId: string;
+  statementBalance: number | string;
+  statementAsOf: string;
+  note?: string | null;
+};
+
+export type LoanPayoffProjection = {
+  projectedPayoffDate: string | null;
+  projectedRemainingPayments:
+    number | null;
+  estimatedRemainingInterest:
+    number | null;
+  principalAndInterestPayment:
+    number | null;
+};
+
 export type ApplyLoanPaymentInput = {
   liabilityId?: string | null;
   obligationId?: string | null;
@@ -93,6 +110,22 @@ export type LoanPaymentWorkspaceRecord = {
   rateType: LoanRateType | null;
   lastAccrualDate: string | null;
   hasConfiguredTerms: boolean;
+  projectedPayoffDate:
+    string | null;
+  projectedRemainingPayments:
+    number | null;
+  estimatedRemainingInterest:
+    number | null;
+  principalAndInterestPayment:
+    number | null;
+  statementBalance:
+    number | null;
+  statementAsOf:
+    string | null;
+  balanceDifference:
+    number | null;
+  needsReconciliation:
+    boolean;
   recentPayments:
     LoanPaymentHistoryRecord[];
 };
@@ -461,6 +494,26 @@ export function readLoanPaymentWorkspace():
         row.last_accrual_date,
       hasConfiguredTerms:
         row.calculation_method !== null,
+      ...readWorkspaceProjection({
+        database,
+        liabilityId:
+          row.liability_id,
+        currentBalanceCents:
+          row.current_balance_cents,
+        calculationMethod:
+          row.calculation_method,
+        annualRateBasisPoints:
+          row
+            .annual_interest_rate_basis_points,
+        paymentFrequency:
+          row.payment_frequency,
+        scheduledPaymentCents:
+          row.scheduled_payment_cents,
+        scheduledEscrowCents:
+          row.scheduled_escrow_cents,
+        firstPaymentDate:
+          row.first_payment_date
+      }),
       recentPayments:
         readRecentPayments(
           database,
@@ -470,6 +523,315 @@ export function readLoanPaymentWorkspace():
   } finally {
     database.close();
   }
+}
+
+export function reconcileLoanStatement(
+  input: ReconcileLoanStatementInput
+): void {
+  assertLocalPersonalFinanceEnabled();
+
+  const liabilityId =
+    requiredText(
+      input.liabilityId,
+      "Liability ID"
+    );
+
+  const statementBalance =
+    optionalMoney(
+      input.statementBalance,
+      "Statement balance"
+    );
+
+  if (statementBalance === null) {
+    throw new Error(
+      "Statement balance is required."
+    );
+  }
+
+  const statementAsOf =
+    requiredDate(
+      input.statementAsOf,
+      "Statement date"
+    );
+
+  const database =
+    openPersonalFinanceDatabase();
+
+  try {
+    const reconcile =
+      database.transaction(() => {
+        const liability =
+          database
+            .prepare(`
+              SELECT
+                current_balance_cents
+              FROM liabilities
+              WHERE
+                id = ? AND
+                is_active = 1
+              LIMIT 1
+            `)
+            .get(
+              liabilityId
+            ) as
+            | {
+                current_balance_cents:
+                  number;
+              }
+            | undefined;
+
+        if (!liability) {
+          throw new Error(
+            "Liability was not found."
+          );
+        }
+
+        const statementBalanceCents =
+          dollarsToCents(
+            statementBalance
+          );
+
+        const calculatedBalanceCents =
+          liability
+            .current_balance_cents;
+
+        database
+          .prepare(`
+            INSERT INTO
+              liability_balance_history (
+                id,
+                liability_id,
+                balance_cents,
+                balance_on,
+                balance_kind,
+                note
+              )
+            VALUES (
+              ?,
+              ?,
+              ?,
+              ?,
+              'calculated',
+              ?
+            )
+          `)
+          .run(
+            createPersonalFinanceId(
+              "liability_balance",
+              [
+                liabilityId,
+                "pre_statement",
+                statementAsOf,
+                calculatedBalanceCents
+              ]
+            ),
+            liabilityId,
+            calculatedBalanceCents,
+            statementAsOf,
+            "Calculated balance preserved before statement reconciliation."
+          );
+
+        database
+          .prepare(`
+            INSERT INTO
+              liability_balance_history (
+                id,
+                liability_id,
+                balance_cents,
+                balance_on,
+                balance_kind,
+                note
+              )
+            VALUES (
+              ?,
+              ?,
+              ?,
+              ?,
+              'statement',
+              ?
+            )
+          `)
+          .run(
+            createPersonalFinanceId(
+              "liability_balance",
+              [
+                liabilityId,
+                "statement",
+                statementAsOf,
+                statementBalanceCents
+              ]
+            ),
+            liabilityId,
+            statementBalanceCents,
+            statementAsOf,
+            optionalText(
+              input.note
+            )
+          );
+
+        database
+          .prepare(`
+            UPDATE liabilities
+            SET
+              current_balance_cents = ?,
+              balance_as_of = ?,
+              updated_at =
+                CURRENT_TIMESTAMP
+            WHERE id = ?
+          `)
+          .run(
+            statementBalanceCents,
+            statementAsOf,
+            liabilityId
+          );
+
+        database
+          .prepare(`
+            UPDATE loan_terms
+            SET
+              last_accrual_date = ?,
+              updated_at =
+                CURRENT_TIMESTAMP
+            WHERE liability_id = ?
+          `)
+          .run(
+            statementAsOf,
+            liabilityId
+          );
+      });
+
+    reconcile.immediate();
+  } finally {
+    database.close();
+  }
+}
+
+export function calculateLoanPayoffProjection({
+  principal,
+  annualInterestRate,
+  payment,
+  frequency,
+  calculationMethod,
+  projectionStartDate
+}: {
+  principal: number;
+  annualInterestRate: number;
+  payment: number;
+  frequency: LoanPaymentFrequency;
+  calculationMethod:
+    LoanCalculationMethod;
+  projectionStartDate: string;
+}): LoanPayoffProjection {
+  if (
+    principal <= 0
+  ) {
+    return {
+      projectedPayoffDate:
+        projectionStartDate,
+      projectedRemainingPayments:
+        0,
+      estimatedRemainingInterest:
+        0,
+      principalAndInterestPayment:
+        payment
+    };
+  }
+
+  if (
+    payment <= 0 ||
+    calculationMethod === "manual"
+  ) {
+    return {
+      projectedPayoffDate: null,
+      projectedRemainingPayments:
+        null,
+      estimatedRemainingInterest:
+        null,
+      principalAndInterestPayment:
+        payment > 0
+          ? roundMoney(payment)
+          : null
+    };
+  }
+
+  const periodsPerYear =
+    frequency === "weekly"
+      ? 52
+      : frequency === "biweekly"
+        ? 26
+        : 12;
+
+  const periodicRate =
+    annualInterestRate /
+    100 /
+    periodsPerYear;
+
+  const firstInterest =
+    principal *
+    periodicRate;
+
+  if (
+    periodicRate > 0 &&
+    payment <= firstInterest
+  ) {
+    return {
+      projectedPayoffDate: null,
+      projectedRemainingPayments:
+        null,
+      estimatedRemainingInterest:
+        null,
+      principalAndInterestPayment:
+        roundMoney(payment)
+    };
+  }
+
+  const paymentCount =
+    periodicRate === 0
+      ? Math.ceil(
+          principal / payment
+        )
+      : Math.ceil(
+          -Math.log(
+            1 -
+            (
+              periodicRate *
+              principal /
+              payment
+            )
+          ) /
+          Math.log(
+            1 + periodicRate
+          )
+        );
+
+  const estimatedInterest =
+    Math.max(
+      0,
+      (
+        payment *
+        paymentCount
+      ) -
+      principal
+    );
+
+  return {
+    projectedPayoffDate:
+      addPaymentPeriods({
+        date:
+          projectionStartDate,
+        periods:
+          paymentCount,
+        frequency
+      }),
+    projectedRemainingPayments:
+      paymentCount,
+    estimatedRemainingInterest:
+      roundMoney(
+        estimatedInterest
+      ),
+    principalAndInterestPayment:
+      roundMoney(payment)
+  };
 }
 
 export function previewLoanPayment(
@@ -1053,6 +1415,205 @@ export function calculateScheduledPayment({
     );
 
   return roundMoney(payment);
+}
+
+function readWorkspaceProjection({
+  database,
+  liabilityId,
+  currentBalanceCents,
+  calculationMethod,
+  annualRateBasisPoints,
+  paymentFrequency,
+  scheduledPaymentCents,
+  scheduledEscrowCents,
+  firstPaymentDate
+}: {
+  database: ReturnType<
+    typeof openPersonalFinanceDatabase
+  >;
+  liabilityId: string;
+  currentBalanceCents: number;
+  calculationMethod:
+    LoanCalculationMethod | null;
+  annualRateBasisPoints:
+    number | null;
+  paymentFrequency:
+    LoanPaymentFrequency | null;
+  scheduledPaymentCents:
+    number | null;
+  scheduledEscrowCents:
+    number | null;
+  firstPaymentDate:
+    string | null;
+}): {
+  projectedPayoffDate:
+    string | null;
+  projectedRemainingPayments:
+    number | null;
+  estimatedRemainingInterest:
+    number | null;
+  principalAndInterestPayment:
+    number | null;
+  statementBalance:
+    number | null;
+  statementAsOf:
+    string | null;
+  balanceDifference:
+    number | null;
+  needsReconciliation:
+    boolean;
+} {
+  const statement =
+    database
+      .prepare(`
+        SELECT
+          balance_cents,
+          balance_on
+        FROM
+          liability_balance_history
+        WHERE
+          liability_id = ? AND
+          balance_kind =
+            'statement'
+        ORDER BY
+          balance_on DESC,
+          created_at DESC
+        LIMIT 1
+      `)
+      .get(
+        liabilityId
+      ) as
+      | {
+          balance_cents: number;
+          balance_on: string;
+        }
+      | undefined;
+
+  const statementBalance =
+    statement
+      ? centsToDollars(
+          statement.balance_cents
+        )
+      : null;
+
+  const currentBalance =
+    centsToDollars(
+      currentBalanceCents
+    );
+
+  const balanceDifference =
+    statementBalance === null
+      ? null
+      : roundMoney(
+          statementBalance -
+          currentBalance
+        );
+
+  const principalAndInterestCents =
+    Math.max(
+      0,
+      (
+        scheduledPaymentCents ??
+        0
+      ) -
+      (
+        scheduledEscrowCents ??
+        0
+      )
+    );
+
+  const projection =
+    calculationMethod &&
+    annualRateBasisPoints !== null &&
+    paymentFrequency &&
+    principalAndInterestCents > 0
+      ? calculateLoanPayoffProjection({
+          principal:
+            currentBalance,
+          annualInterestRate:
+            annualRateBasisPoints /
+            100,
+          payment:
+            centsToDollars(
+              principalAndInterestCents
+            ),
+          frequency:
+            paymentFrequency,
+          calculationMethod,
+          projectionStartDate:
+            firstPaymentDate ??
+            new Date()
+              .toISOString()
+              .slice(0, 10)
+        })
+      : {
+          projectedPayoffDate:
+            null,
+          projectedRemainingPayments:
+            null,
+          estimatedRemainingInterest:
+            null,
+          principalAndInterestPayment:
+            principalAndInterestCents >
+            0
+              ? centsToDollars(
+                  principalAndInterestCents
+                )
+              : null
+        };
+
+  return {
+    ...projection,
+    statementBalance,
+    statementAsOf:
+      statement?.balance_on ??
+      null,
+    balanceDifference,
+    needsReconciliation:
+      balanceDifference !== null &&
+      Math.abs(
+        balanceDifference
+      ) >= 0.01
+  };
+}
+
+function addPaymentPeriods({
+  date,
+  periods,
+  frequency
+}: {
+  date: string;
+  periods: number;
+  frequency:
+    LoanPaymentFrequency;
+}): string {
+  const result =
+    new Date(
+      `${date}T00:00:00Z`
+    );
+
+  if (frequency === "monthly") {
+    result.setUTCMonth(
+      result.getUTCMonth() +
+      periods
+    );
+  } else {
+    result.setUTCDate(
+      result.getUTCDate() +
+      (
+        periods *
+        (
+          frequency === "weekly"
+            ? 7
+            : 14
+        )
+      )
+    );
+  }
+
+  return result
+    .toISOString()
+    .slice(0, 10);
 }
 
 function readRecentPayments(
