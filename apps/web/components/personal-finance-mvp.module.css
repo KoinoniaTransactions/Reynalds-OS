@@ -4112,3 +4112,659 @@
     justify-content: space-between;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Personal Finance shell and outlook v1                                      */
+/* -------------------------------------------------------------------------- */
+
+.app {
+  scroll-behavior: smooth;
+  background:
+    radial-gradient(
+      circle at 78% 0%,
+      rgba(184, 138, 68, 0.075),
+      transparent 34%
+    ),
+    linear-gradient(
+      180deg,
+      #f6f7f9,
+      #f1f3f6
+    );
+}
+
+.workspace {
+  position: relative;
+  min-height: 100dvh;
+}
+
+.workspaceBar {
+  position: sticky;
+  z-index: 15;
+  top: 0;
+  display: flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin:
+    -12px
+    -6px
+    28px;
+  padding:
+    11px
+    6px
+    12px;
+  border-bottom:
+    1px solid rgba(148, 163, 184, 0.17);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(246, 247, 249, 0.96),
+      rgba(246, 247, 249, 0.84)
+    );
+  backdrop-filter: blur(16px);
+}
+
+.workspaceContext,
+.workspaceBarActions {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.workspaceContext {
+  overflow: hidden;
+  color: #8a94a3;
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.workspaceContext strong {
+  overflow: hidden;
+  color: #465264;
+  font-weight: 790;
+  text-overflow: ellipsis;
+}
+
+.workspaceStatusDot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #249264;
+  box-shadow:
+    0 0 0 4px rgba(36, 146, 100, 0.1);
+}
+
+.privateWorkspaceBadge {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 5px 9px;
+  border:
+    1px solid rgba(36, 146, 100, 0.18);
+  border-radius: 999px;
+  background: rgba(234, 247, 239, 0.86);
+  color: #19714a;
+  font-size: 8px;
+  font-weight: 820;
+  white-space: nowrap;
+}
+
+.workspaceAction,
+.headerRosLink {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 9px;
+  font-size: 9px;
+  font-weight: 780;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.workspaceAction {
+  border:
+    1px solid rgba(39, 50, 68, 0.12);
+  background: #273244;
+  color: #ffffff;
+  box-shadow:
+    0 5px 14px rgba(15, 23, 42, 0.12);
+}
+
+.workspaceAction:hover,
+.workspaceAction:focus-visible {
+  background: #1d2635;
+  box-shadow:
+    0 8px 18px rgba(15, 23, 42, 0.17);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.header {
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.title {
+  font-size: clamp(34px, 4.5vw, 50px);
+  letter-spacing: -0.045em;
+}
+
+.subtitle {
+  max-width: 680px;
+  margin-top: 9px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.headerMeta {
+  align-items: stretch;
+}
+
+.headerRosLink {
+  border:
+    1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(255, 255, 255, 0.78);
+  color: #596579;
+}
+
+.headerRosLink:hover,
+.headerRosLink:focus-visible {
+  border-color: rgba(71, 85, 105, 0.37);
+  background: #ffffff;
+  color: #263142;
+  outline: none;
+}
+
+.navLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navOverview,
+.navTransactions,
+.navBills,
+.navIncome,
+.navAccounts,
+.navRules {
+  position: relative;
+}
+
+.app:not(:has(:target)) .navOverview,
+.app:has(#overview:target) .navOverview,
+.app:has(#transaction-inbox:target)
+  .navTransactions,
+.app:has(#bills:target) .navBills,
+.app:has(#income:target) .navIncome,
+.app:has(#accounts:target) .navAccounts,
+.app:has(#rules:target) .navRules {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(184, 138, 68, 0.16),
+      rgba(184, 138, 68, 0.055)
+    );
+  color: #ffffff;
+  box-shadow:
+    inset 2px 0 0 #c4954a;
+}
+
+.app:not(:has(:target))
+  .navOverview
+  .navDot,
+.app:has(#overview:target)
+  .navOverview
+  .navDot,
+.app:has(#transaction-inbox:target)
+  .navTransactions
+  .navDot,
+.app:has(#bills:target)
+  .navBills
+  .navDot,
+.app:has(#income:target)
+  .navIncome
+  .navDot,
+.app:has(#accounts:target)
+  .navAccounts
+  .navDot,
+.app:has(#rules:target)
+  .navRules
+  .navDot {
+  background: #d3a758;
+  box-shadow:
+    0 0 0 4px rgba(211, 167, 88, 0.12);
+}
+
+.sectionAnchor:target {
+  animation:
+    personalFinanceTargetFocus
+    850ms
+    ease-out;
+}
+
+@keyframes personalFinanceTargetFocus {
+  0% {
+    box-shadow:
+      0 0 0 4px rgba(184, 138, 68, 0.2),
+      0 18px 46px rgba(15, 23, 42, 0.055);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(184, 138, 68, 0),
+      0 18px 46px rgba(15, 23, 42, 0.055);
+  }
+}
+
+.heroModern {
+  position: relative;
+  overflow: hidden;
+  border:
+    1px solid rgba(148, 163, 184, 0.17);
+  border-radius: 21px;
+  background: #ffffff;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 20px 52px rgba(15, 23, 42, 0.065);
+}
+
+.heroModern::before {
+  position: absolute;
+  z-index: 0;
+  top: -130px;
+  left: -90px;
+  width: 330px;
+  height: 330px;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      circle,
+      rgba(184, 138, 68, 0.12),
+      transparent 68%
+    );
+  content: "";
+  pointer-events: none;
+}
+
+.heroModern .heroPrimary,
+.heroModern .heroGoal {
+  position: relative;
+  z-index: 1;
+}
+
+.heroModern .heroPrimary {
+  display: grid;
+  align-content: center;
+  padding: 31px 32px 29px;
+}
+
+.heroModern .heroGoal {
+  display: grid;
+  align-content: center;
+  padding: 27px 28px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(248, 250, 252, 0.98),
+      rgba(255, 250, 240, 0.66)
+    );
+}
+
+.heroTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.heroStatus {
+  display: inline-flex;
+  min-height: 25px;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.025em;
+  white-space: nowrap;
+}
+
+.heroStatusAttention {
+  background: #fff1ed;
+  color: #a53a26;
+}
+
+.heroStatusPositive {
+  background: #eaf7ef;
+  color: #19714a;
+}
+
+.heroModern .heroValue {
+  margin-top: 12px;
+  font-size: clamp(44px, 6vw, 64px);
+  letter-spacing: -0.052em;
+}
+
+.heroModern .heroDescription {
+  max-width: 570px;
+  margin-top: 11px;
+  font-size: 12px;
+}
+
+.heroBreakdown {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 23px;
+}
+
+.heroBreakdown > span {
+  display: grid;
+  gap: 4px;
+  padding: 10px 11px;
+  border:
+    1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 11px;
+  background: rgba(248, 250, 252, 0.8);
+}
+
+.heroBreakdown small {
+  color: #8a94a3;
+  font-size: 7px;
+  font-weight: 820;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.heroBreakdown strong {
+  color: #344054;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.heroBreakdown strong.positive {
+  color: var(--pf-positive);
+}
+
+.heroBreakdown strong.negative {
+  color: var(--pf-critical);
+}
+
+.goalProgressHeader,
+.goalScale {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.goalProgressHeader {
+  margin-top: 22px;
+}
+
+.goalProgressHeader span {
+  color: #7a8494;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.goalProgressHeader strong {
+  color: #4e3b20;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.heroModern .progress {
+  height: 7px;
+  margin-top: 8px;
+}
+
+.goalScale {
+  margin-top: 8px;
+  color: #8a94a3;
+  font-size: 8px;
+}
+
+.goalScale strong {
+  color: #596579;
+  font-weight: 800;
+}
+
+.heroGoalAction {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 8px 10px;
+  border:
+    1px solid rgba(184, 138, 68, 0.22);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #664c26;
+  font-size: 9px;
+  font-weight: 790;
+  text-decoration: none;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.heroGoalAction:hover,
+.heroGoalAction:focus-visible {
+  border-color: rgba(184, 138, 68, 0.48);
+  background: #ffffff;
+  box-shadow:
+    0 8px 18px rgba(94, 70, 35, 0.09);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.metrics {
+  position: relative;
+  margin-top: 16px;
+  border:
+    1px solid rgba(148, 163, 184, 0.17);
+  border-radius: 17px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.02),
+    0 13px 34px rgba(15, 23, 42, 0.045);
+}
+
+.metric {
+  position: relative;
+  min-height: 112px;
+  padding: 18px 19px;
+  overflow: hidden;
+  transition:
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.metric::before {
+  position: absolute;
+  top: 0;
+  right: 18px;
+  left: 18px;
+  height: 2px;
+  border-radius: 999px;
+  content: "";
+  opacity: 0.75;
+}
+
+.metricCash::before {
+  background: #667085;
+}
+
+.metricSpend::before {
+  background: #249264;
+}
+
+.metricBills::before {
+  background: #c24135;
+}
+
+.metricIncome::before {
+  background: #4d82b8;
+}
+
+.metric:hover {
+  background: #fcfcfd;
+}
+
+.metricValue {
+  font-size: 25px;
+}
+
+.attentionPanel,
+.cashFlowPanel {
+  overflow: hidden;
+  border:
+    1px solid rgba(148, 163, 184, 0.17);
+  border-radius: 18px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.02),
+    0 14px 38px rgba(15, 23, 42, 0.045);
+}
+
+.attentionPanel .panelHeader,
+.cashFlowPanel .panelHeader {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(248, 250, 252, 0.88)
+    );
+}
+
+.attentionPanel .attentionItem,
+.cashFlowPanel .cashFlowRow {
+  transition:
+    background 150ms ease,
+    padding 150ms ease;
+}
+
+.attentionPanel .attentionItem:hover,
+.cashFlowPanel .cashFlowRow:hover {
+  background: #fafbfc;
+}
+
+.attentionPanel .attentionItem:hover {
+  padding-right: 21px;
+  padding-left: 21px;
+}
+
+.cashFlowPanel .cashFlowRow:hover {
+  padding-right: 21px;
+  padding-left: 21px;
+}
+
+@media (max-width: 900px) {
+  .workspaceBar {
+    align-items: flex-start;
+  }
+
+  .workspaceBarActions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .heroBreakdown {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .workspaceBar {
+    position: static;
+    display: grid;
+    margin:
+      -4px
+      0
+      20px;
+    padding:
+      0
+      0
+      12px;
+    backdrop-filter: none;
+  }
+
+  .workspaceBarActions {
+    justify-content: flex-start;
+  }
+
+  .privateWorkspaceBadge {
+    display: none;
+  }
+
+  .header {
+    align-items: start;
+  }
+
+  .heroModern .heroPrimary,
+  .heroModern .heroGoal {
+    padding: 22px 18px;
+  }
+
+  .heroBreakdown {
+    grid-template-columns: 1fr;
+  }
+
+  .heroBreakdown > span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .workspaceContext {
+    max-width: 100%;
+  }
+
+  .workspaceBarActions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .workspaceAction {
+    width: 100%;
+  }
+
+  .headerMeta {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .heroTopline {
+    align-items: flex-start;
+  }
+
+  .heroStatus {
+    max-width: 120px;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .goalScale {
+    align-items: flex-start;
+  }
+}

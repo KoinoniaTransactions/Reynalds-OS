@@ -193,12 +193,36 @@ function PersonalFinanceFrame({
   sourceFile: string;
 }) {
   const navigation = [
-    ["Overview", "#overview"],
-    ["Transactions", "#transaction-inbox"],
-    ["Bills", "#bills"],
-    ["Income", "#income"],
-    ["Accounts", "#accounts"],
-    ["Rules", "#rules"]
+    {
+      label: "Overview",
+      href: "#overview",
+      className: styles.navOverview
+    },
+    {
+      label: "Transactions",
+      href: "#transaction-inbox",
+      className: styles.navTransactions
+    },
+    {
+      label: "Bills",
+      href: "#bills",
+      className: styles.navBills
+    },
+    {
+      label: "Income",
+      href: "#income",
+      className: styles.navIncome
+    },
+    {
+      label: "Accounts",
+      href: "#accounts",
+      className: styles.navAccounts
+    },
+    {
+      label: "Rules",
+      href: "#rules",
+      className: styles.navRules
+    }
   ] as const;
 
   return (
@@ -222,16 +246,25 @@ function PersonalFinanceFrame({
           className={styles.nav}
           aria-label="Personal finance sections"
         >
-          {navigation.map(([label, href]) => (
-            <a
-              className={styles.navLink}
-              href={href}
-              key={href}
-            >
-              <span className={styles.navDot} />
-              {label}
-            </a>
-          ))}
+          {navigation.map(
+            ({
+              label,
+              href,
+              className
+            }) => (
+              <a
+                className={`${styles.navLink} ${className}`}
+                href={href}
+                key={href}
+              >
+                <span className={styles.navDot} />
+
+                <span className={styles.navLabel}>
+                  {label}
+                </span>
+              </a>
+            )
+          )}
         </nav>
 
         <div className={styles.railFooter}>
@@ -243,13 +276,38 @@ function PersonalFinanceFrame({
             {sourceFile}
           </span>
 
-          <a className={styles.rosLink} href="/dashboard">
-            Return to ROS
-          </a>
         </div>
       </aside>
 
       <section className={styles.workspace}>
+        <div className={styles.workspaceBar}>
+          <div className={styles.workspaceContext}>
+            <span
+              aria-hidden="true"
+              className={styles.workspaceStatusDot}
+            />
+
+            <span>Personal Finance</span>
+
+            <span aria-hidden="true">/</span>
+
+            <strong>{monthLabel}</strong>
+          </div>
+
+          <div className={styles.workspaceBarActions}>
+            <span className={styles.privateWorkspaceBadge}>
+              Private local workspace
+            </span>
+
+            <a
+              className={styles.workspaceAction}
+              href="#transaction-inbox"
+            >
+              Review transactions
+            </a>
+          </div>
+        </div>
+
         <header className={styles.header}>
           <div className={styles.headerCopy}>
             <p className={styles.eyebrow}>
@@ -261,20 +319,23 @@ function PersonalFinanceFrame({
             </h1>
 
             <p className={styles.subtitle}>
-              See what is available, what needs attention,
-              and what is expected next without digging
-              through disconnected cards.
+              Understand the current position, resolve what
+              needs attention, and plan the rest of the month
+              from one private workspace.
             </p>
           </div>
 
           <div className={styles.headerMeta}>
-            <span className={styles.localBadge}>
-              Local only
-            </span>
-
             <span className={styles.monthBadge}>
               {monthLabel}
             </span>
+
+            <a
+              className={styles.headerRosLink}
+              href="/dashboard"
+            >
+              ROS dashboard
+            </a>
           </div>
         </header>
 
@@ -585,13 +646,27 @@ export function PersonalFinanceMvp({
       sourceFile={budget.sourceFile}
     >
       <section
-        className={`${styles.hero} ${styles.sectionAnchor}`}
+        className={`${styles.hero} ${styles.heroModern} ${styles.sectionAnchor}`}
         id="overview"
       >
         <div className={styles.heroPrimary}>
-          <span className={styles.label}>
-            Projected month-end
-          </span>
+          <div className={styles.heroTopline}>
+            <span className={styles.label}>
+              Projected month-end
+            </span>
+
+            <span
+              className={`${styles.heroStatus} ${
+                goalGap > 0
+                  ? styles.heroStatusAttention
+                  : styles.heroStatusPositive
+              }`}
+            >
+              {goalGap > 0
+                ? "Attention needed"
+                : "On track"}
+            </span>
+          </div>
 
           <strong
             className={valueClassName(
@@ -602,9 +677,46 @@ export function PersonalFinanceMvp({
           </strong>
 
           <p className={styles.heroDescription}>
-            Current bank balances plus pending income,
-            minus every bill still recorded as remaining.
+            The expected balance after pending income and
+            every remaining bill in the current plan.
           </p>
+
+          <div
+            aria-label="Projection breakdown"
+            className={styles.heroBreakdown}
+          >
+            <span>
+              <small>Cash available</small>
+
+              <strong>
+                {money(
+                  budget.totals.totalBankBalance
+                )}
+              </strong>
+            </span>
+
+            <span>
+              <small>Pending income</small>
+
+              <strong className={styles.positive}>
+                +
+                {money(
+                  budget.totals.incomeRemaining
+                )}
+              </strong>
+            </span>
+
+            <span>
+              <small>Remaining bills</small>
+
+              <strong className={styles.negative}>
+                -
+                {money(
+                  budget.totals.billsRemaining
+                )}
+              </strong>
+            </span>
+          </div>
         </div>
 
         <div className={styles.heroGoal}>
@@ -632,20 +744,50 @@ export function PersonalFinanceMvp({
             </span>
           </div>
 
+          <div className={styles.goalProgressHeader}>
+            <span>Projection progress</span>
+
+            <strong>
+              {budget.goal > 0
+                ? `${Math.round(
+                    (
+                      goalProgress /
+                      budget.goal
+                    ) * 100
+                  )}%`
+                : "—"}
+            </strong>
+          </div>
+
           <progress
             className={styles.progress}
             max={Math.max(budget.goal, 1)}
             value={goalProgress}
           />
 
-          <p className={styles.goalFormula}>
-            {money(budget.totals.totalBankBalance)} bank
-            balance +{" "}
-            {money(budget.totals.incomeRemaining)} pending
-            income -{" "}
-            {money(budget.totals.billsRemaining)} remaining
-            bills.
-          </p>
+          <div className={styles.goalScale}>
+            <span>
+              Projected{" "}
+              <strong>
+                {money(projectedEndingBalance)}
+              </strong>
+            </span>
+
+            <span>
+              Target{" "}
+              <strong>
+                {money(budget.goal)}
+              </strong>
+            </span>
+          </div>
+
+          <a
+            className={styles.heroGoalAction}
+            href="#transaction-inbox"
+          >
+            Review financial activity
+            <span aria-hidden="true">→</span>
+          </a>
         </div>
       </section>
 
@@ -653,7 +795,7 @@ export function PersonalFinanceMvp({
         className={styles.metrics}
         aria-label="Budget summary"
       >
-        <div className={styles.metric}>
+        <div className={`${styles.metric} ${styles.metricCash}`}>
           <span className={styles.label}>
             Available now
           </span>
@@ -667,7 +809,7 @@ export function PersonalFinanceMvp({
           </span>
         </div>
 
-        <div className={styles.metric}>
+        <div className={`${styles.metric} ${styles.metricSpend}`}>
           <span className={styles.label}>
             Safe to spend
           </span>
@@ -687,7 +829,7 @@ export function PersonalFinanceMvp({
           </span>
         </div>
 
-        <div className={styles.metric}>
+        <div className={`${styles.metric} ${styles.metricBills}`}>
           <span className={styles.label}>
             Bills remaining
           </span>
@@ -704,7 +846,7 @@ export function PersonalFinanceMvp({
           </span>
         </div>
 
-        <div className={styles.metric}>
+        <div className={`${styles.metric} ${styles.metricIncome}`}>
           <span className={styles.label}>
             Income pending
           </span>
@@ -723,7 +865,9 @@ export function PersonalFinanceMvp({
       </section>
 
       <div className={styles.primaryGrid}>
-        <section className={styles.panel}>
+        <section
+          className={`${styles.panel} ${styles.attentionPanel}`}
+        >
           <header className={styles.panelHeader}>
             <div className={styles.panelHeaderCopy}>
               <h2 className={styles.panelTitle}>
@@ -772,7 +916,9 @@ export function PersonalFinanceMvp({
           </div>
         </section>
 
-        <section className={styles.panel}>
+        <section
+          className={`${styles.panel} ${styles.cashFlowPanel}`}
+        >
           <header className={styles.panelHeader}>
             <div className={styles.panelHeaderCopy}>
               <h2 className={styles.panelTitle}>
