@@ -10,7 +10,8 @@ import type {
 } from "../lib/personal-finance-transaction-inbox-local";
 
 import {
-  PersonalFinanceSectionNav
+  PersonalFinanceSectionNav,
+  type PersonalFinanceSectionNavGroup
 } from "./personal-finance-section-nav";
 import styles from "./personal-finance-mvp.module.css";
 
@@ -199,74 +200,110 @@ function PersonalFinanceFrame({
   monthLabel: string;
   sourceFile: string;
 }) {
-  const navigation = [
-    {
-      label: "Overview",
-      href: "/personal",
-      className: styles.navOverview
-    },
-    {
-      label: "Transactions",
-      href: "/personal/transactions",
-      className: styles.navTransactions
-    },
-    {
-      label: "Bills",
-      href: "/personal/bills",
-      className: styles.navBills
-    },
-    {
-      label: "Income",
-      href: "/personal/income",
-      className: styles.navIncome
-    },
-    {
-      label: "Accounts",
-      href: "/personal/accounts",
-      className: styles.navAccounts
-    },
-    {
-      label: "Net Worth",
-      href: "/personal/net-worth",
-      className: styles.navAccounts
-    },
-    {
-      label: "Rules",
-      href: "/personal/rules",
-      className: styles.navRules
-    }
-  ] as const;
+  const navigation:
+    readonly PersonalFinanceSectionNavGroup[] = [
+      {
+        label: "Plan",
+        items: [
+          {
+            label: "Overview",
+            shortLabel: "Overview",
+            icon: "⌂",
+            href: "/personal"
+          },
+          {
+            label: "Bills",
+            shortLabel: "Bills",
+            icon: "✓",
+            href: "/personal/bills"
+          },
+          {
+            label: "Income",
+            shortLabel: "Income",
+            icon: "+",
+            href: "/personal/income"
+          }
+        ]
+      },
+      {
+        label: "Money",
+        items: [
+          {
+            label: "Transactions",
+            shortLabel: "Activity",
+            icon: "↔",
+            href: "/personal/transactions"
+          },
+          {
+            label: "Accounts",
+            shortLabel: "Accounts",
+            icon: "▤",
+            href: "/personal/accounts"
+          },
+          {
+            label: "Net Worth",
+            shortLabel: "Net Worth",
+            icon: "↗",
+            href: "/personal/net-worth"
+          }
+        ]
+      },
+      {
+        label: "Setup",
+        items: [
+          {
+            label: "Rules",
+            shortLabel: "Rules",
+            icon: "⚙",
+            href: "/personal/rules"
+          }
+        ]
+      }
+    ] as const;
 
   return (
     <main className={styles.app}>
       <aside className={styles.rail}>
         <div className={styles.brand}>
-          <div className={styles.brandMark}>R</div>
+          <div className={styles.brandMark}>
+            J&amp;M
+          </div>
 
           <div className={styles.brandCopy}>
             <span className={styles.brandName}>
-              Personal Finance
+              Reynalds Finances
             </span>
 
             <span className={styles.brandSubtitle}>
-              Local budget workspace
+              Our money, clearly organized
             </span>
           </div>
         </div>
 
         <PersonalFinanceSectionNav
-          items={navigation}
+          groups={navigation}
         />
 
         <div className={styles.railFooter}>
-          <span className={styles.railFooterLabel}>
-            Data source
+          <span
+            aria-hidden="true"
+            className={styles.railFooterIcon}
+          >
+            ●
           </span>
 
-          <span className={styles.railFooterValue}>
-            {sourceFile}
-          </span>
+          <div className={styles.railFooterCopy}>
+            <span className={styles.railFooterLabel}>
+              Local data
+            </span>
 
+            <span
+              className={styles.railFooterValue}
+              title={sourceFile}
+            >
+              {sourceFile}
+            </span>
+          </div>
         </div>
       </aside>
 

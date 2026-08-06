@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+
 import {
   usePathname
 } from "next/navigation";
@@ -14,12 +15,20 @@ import styles from "./personal-finance-section-nav.module.css";
 
 type PersonalFinanceSectionNavItem = {
   label: string;
+  shortLabel: string;
+  icon: string;
   href: string;
-  className: string;
+};
+
+export type PersonalFinanceSectionNavGroup = {
+  label: string;
+  items:
+    readonly PersonalFinanceSectionNavItem[];
 };
 
 type Props = {
-  items: readonly PersonalFinanceSectionNavItem[];
+  groups:
+    readonly PersonalFinanceSectionNavGroup[];
 };
 
 function pathnameFromHref(
@@ -29,7 +38,7 @@ function pathnameFromHref(
 }
 
 export function PersonalFinanceSectionNav({
-  items
+  groups
 }: Props) {
   const pathname = usePathname();
 
@@ -51,55 +60,78 @@ export function PersonalFinanceSectionNav({
 
   return (
     <nav
-      aria-label="Personal finance sections"
+      aria-label="J&M finance sections"
       className={styles.nav}
       ref={navRef}
     >
-      {items.map(
-        ({
-          label,
-          href,
-          className
-        }) => {
-          const targetPath =
-            pathnameFromHref(href);
+      {groups.map((group) => (
+        <section
+          className={styles.group}
+          key={group.label}
+        >
+          <h2
+            className={styles.groupLabel}
+          >
+            {group.label}
+          </h2>
 
-          const active =
-            pathname === targetPath;
+          <div
+            className={styles.groupLinks}
+          >
+            {group.items.map((item) => {
+              const targetPath =
+                pathnameFromHref(
+                  item.href
+                );
 
-          return (
-            <Link
-              aria-current={
-                active
-                  ? "page"
-                  : undefined
-              }
-              className={[
-                styles.link,
-                className,
-                active
-                  ? styles.active
-                  : ""
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              href={href}
-              key={href}
-            >
-              <span
-                aria-hidden="true"
-                className={styles.dot}
-              />
+              const active =
+                pathname === targetPath;
 
-              <span
-                className={styles.label}
-              >
-                {label}
-              </span>
-            </Link>
-          );
-        }
-      )}
+              return (
+                <Link
+                  aria-current={
+                    active
+                      ? "page"
+                      : undefined
+                  }
+                  className={[
+                    styles.link,
+                    active
+                      ? styles.active
+                      : ""
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  href={item.href}
+                  key={item.href}
+                  title={item.label}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={styles.icon}
+                  >
+                    {item.icon}
+                  </span>
+
+                  <span
+                    className={styles.label}
+                  >
+                    {item.label}
+                  </span>
+
+                  <span
+                    className={
+                      styles.mobileLabel
+                    }
+                  >
+                    {item.shortLabel}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      ))}
     </nav>
   );
 }

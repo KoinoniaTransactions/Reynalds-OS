@@ -3,7 +3,8 @@ import type {
 } from "react";
 
 import {
-  PersonalFinanceSectionNav
+  PersonalFinanceSectionNav,
+  type PersonalFinanceSectionNavGroup
 } from "./personal-finance-section-nav";
 
 import styles from "./personal-finance-mvp.module.css";
@@ -17,43 +18,66 @@ type Props = {
   title: string;
 };
 
-const navigation = [
-  {
-    label: "Overview",
-    href: "/personal",
-    className: styles.navOverview
-  },
-  {
-    label: "Transactions",
-    href: "/personal/transactions",
-    className: styles.navTransactions
-  },
-  {
-    label: "Bills",
-    href: "/personal/bills",
-    className: styles.navBills
-  },
-  {
-    label: "Income",
-    href: "/personal/income",
-    className: styles.navIncome
-  },
-  {
-    label: "Accounts",
-    href: "/personal/accounts",
-    className: styles.navAccounts
-  },
-  {
-    label: "Net Worth",
-    href: "/personal/net-worth",
-    className: styles.navAccounts
-  },
-  {
-    label: "Rules",
-    href: "/personal/rules",
-    className: styles.navRules
-  }
-] as const;
+const navigation:
+  readonly PersonalFinanceSectionNavGroup[] = [
+    {
+      label: "Plan",
+      items: [
+        {
+          label: "Overview",
+          shortLabel: "Overview",
+          icon: "⌂",
+          href: "/personal"
+        },
+        {
+          label: "Bills",
+          shortLabel: "Bills",
+          icon: "✓",
+          href: "/personal/bills"
+        },
+        {
+          label: "Income",
+          shortLabel: "Income",
+          icon: "+",
+          href: "/personal/income"
+        }
+      ]
+    },
+    {
+      label: "Money",
+      items: [
+        {
+          label: "Transactions",
+          shortLabel: "Activity",
+          icon: "↔",
+          href: "/personal/transactions"
+        },
+        {
+          label: "Accounts",
+          shortLabel: "Accounts",
+          icon: "▤",
+          href: "/personal/accounts"
+        },
+        {
+          label: "Net Worth",
+          shortLabel: "Net Worth",
+          icon: "↗",
+          href: "/personal/net-worth"
+        }
+      ]
+    },
+    {
+      label: "Setup",
+      items: [
+        {
+          label: "Rules",
+          shortLabel: "Rules",
+          icon: "⚙",
+          href: "/personal/rules"
+        }
+      ]
+    }
+  ] as const;
 
 export function PersonalFinanceRouteFrame({
   children,
@@ -79,7 +103,7 @@ export function PersonalFinanceRouteFrame({
             <span
               className={styles.brandName}
             >
-              J&amp;M Reynalds Finances
+              Reynalds Finances
             </span>
 
             <span
@@ -93,27 +117,43 @@ export function PersonalFinanceRouteFrame({
         </div>
 
         <PersonalFinanceSectionNav
-          items={navigation}
+          groups={navigation}
         />
 
         <div
           className={styles.railFooter}
         >
           <span
+            aria-hidden="true"
             className={
-              styles.railFooterLabel
+              styles.railFooterIcon
             }
           >
-            Data source
+            ●
           </span>
 
-          <span
+          <div
             className={
-              styles.railFooterValue
+              styles.railFooterCopy
             }
           >
-            {sourceFile}
-          </span>
+            <span
+              className={
+                styles.railFooterLabel
+              }
+            >
+              Local data
+            </span>
+
+            <span
+              className={
+                styles.railFooterValue
+              }
+              title={sourceFile}
+            >
+              {sourceFile}
+            </span>
+          </div>
         </div>
       </aside>
 
