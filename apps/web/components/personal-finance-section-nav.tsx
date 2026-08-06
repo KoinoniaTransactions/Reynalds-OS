@@ -1,221 +1,53 @@
 "use client";
 
+import Link from "next/link";
 import {
-  useCallback,
+  usePathname
+} from "next/navigation";
+
+import {
   useEffect,
-  useRef,
-  useState,
-  type MouseEvent
+  useRef
 } from "react";
 
 import styles from "./personal-finance-section-nav.module.css";
 
 type PersonalFinanceSectionNavItem = {
   label: string;
-  href: `#${string}`;
+  href: string;
   className: string;
 };
 
-type PersonalFinanceSectionNavProps = {
+type Props = {
   items: readonly PersonalFinanceSectionNavItem[];
 };
 
-const DEFAULT_SECTION = "#overview";
-const SCROLL_ATTEMPTS = 24;
-const SCROLL_RETRY_DELAY = 80;
-
-function browserHash(): string {
-  return window.location.hash || DEFAULT_SECTION;
-}
-
-function targetForHash(
-  hash: string
-): HTMLElement | null {
-  const id = hash.replace(/^#/, "");
-
-  if (!id) {
-    return null;
-  }
-
-  return document.getElementById(id);
+function pathnameFromHref(
+  href: string
+): string {
+  return href.split("#")[0] || "/";
 }
 
 export function PersonalFinanceSectionNav({
   items
-}: PersonalFinanceSectionNavProps) {
-  const [activeHash, setActiveHash] =
-    useState(DEFAULT_SECTION);
+}: Props) {
+  const pathname = usePathname();
 
   const navRef =
     useRef<HTMLElement | null>(null);
 
-  const scrollTargetIntoView =
-    useCallback(
-      (
-        hash: string,
-        behavior: ScrollBehavior
-      ) => {
-        let attempt = 0;
-        let cancelled = false;
-        let timer: number | undefined;
-
-        const performScroll = () => {
-          if (cancelled) {
-            return;
-          }
-
-          const target =
-            targetForHash(hash);
-
-          if (target) {
-            target.scrollIntoView({
-              behavior,
-              block: "start"
-            });
-
-            return;
-          }
-
-          attempt += 1;
-
-          if (
-            attempt < SCROLL_ATTEMPTS
-          ) {
-            timer = window.setTimeout(
-              performScroll,
-              SCROLL_RETRY_DELAY
-            );
-          }
-        };
-
-        performScroll();
-
-        return () => {
-          cancelled = true;
-
-          if (timer !== undefined) {
-            window.clearTimeout(timer);
-          }
-        };
-      },
-      []
-    );
-
-  const revealActiveTab =
-    useCallback(
-      (hash: string) => {
-        const activeLink =
-          navRef.current?.querySelector<
-            HTMLAnchorElement
-          >(
-            `[data-section-href="${hash}"]`
-          );
-
-        activeLink?.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "center"
-        });
-      },
-      []
-    );
-
   useEffect(() => {
-    if (
-      "scrollRestoration" in
-      window.history
-    ) {
-      window.history.scrollRestoration =
-        "manual";
-    }
+    const activeLink =
+      navRef.current?.querySelector<
+        HTMLAnchorElement
+      >('[aria-current="page"]');
 
-    const initialHash = browserHash();
-
-    setActiveHash(initialHash);
-
-    const cancelInitialScroll =
-      scrollTargetIntoView(
-        initialHash,
-        "auto"
-      );
-
-    const revealTimer =
-      window.setTimeout(
-        () =>
-          revealActiveTab(
-            initialHash
-          ),
-        120
-      );
-
-    const syncFromHash = () => {
-      const hash = browserHash();
-
-      setActiveHash(hash);
-
-      scrollTargetIntoView(
-        hash,
-        "smooth"
-      );
-
-      revealActiveTab(hash);
-    };
-
-    window.addEventListener(
-      "hashchange",
-      syncFromHash
-    );
-
-    return () => {
-      cancelInitialScroll();
-
-      window.clearTimeout(
-        revealTimer
-      );
-
-      window.removeEventListener(
-        "hashchange",
-        syncFromHash
-      );
-    };
-  }, [
-    revealActiveTab,
-    scrollTargetIntoView
-  ]);
-
-  function navigate(
-    event: MouseEvent<HTMLAnchorElement>,
-    href: `#${string}`
-  ) {
-    event.preventDefault();
-
-    setActiveHash(href);
-
-    if (
-      window.location.hash === href
-    ) {
-      scrollTargetIntoView(
-        href,
-        "smooth"
-      );
-
-      revealActiveTab(href);
-
-      return;
-    }
-
-    window.history.pushState(
-      null,
-      "",
-      href
-    );
-
-    window.dispatchEvent(
-      new HashChangeEvent(
-        "hashchange"
-      )
-    );
-  }
+    activeLink?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center"
+    });
+  }, [pathname]);
 
   return (
     <nav
@@ -229,11 +61,14 @@ export function PersonalFinanceSectionNav({
           href,
           className
         }) => {
+          const targetPath =
+            pathnameFromHref(href);
+
           const active =
-            activeHash === href;
+            pathname === targetPath;
 
           return (
-            <a
+            <Link
               aria-current={
                 active
                   ? "page"
@@ -248,12 +83,8 @@ export function PersonalFinanceSectionNav({
               ]
                 .filter(Boolean)
                 .join(" ")}
-              data-section-href={href}
               href={href}
               key={href}
-              onClick={(event) =>
-                navigate(event, href)
-              }
             >
               <span
                 aria-hidden="true"
@@ -265,7 +96,7 @@ export function PersonalFinanceSectionNav({
               >
                 {label}
               </span>
-            </a>
+            </Link>
           );
         }
       )}

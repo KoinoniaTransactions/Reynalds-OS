@@ -201,32 +201,32 @@ function PersonalFinanceFrame({
   const navigation = [
     {
       label: "Overview",
-      href: "#overview",
+      href: "/personal",
       className: styles.navOverview
     },
     {
       label: "Transactions",
-      href: "#transaction-inbox",
+      href: "/personal/transactions",
       className: styles.navTransactions
     },
     {
       label: "Bills",
-      href: "#bills",
+      href: "/personal/bills",
       className: styles.navBills
     },
     {
       label: "Income",
-      href: "#income",
+      href: "/personal#income",
       className: styles.navIncome
     },
     {
       label: "Accounts",
-      href: "#accounts",
+      href: "/personal#accounts",
       className: styles.navAccounts
     },
     {
       label: "Rules",
-      href: "#rules",
+      href: "/personal#rules",
       className: styles.navRules
     }
   ] as const;
@@ -286,7 +286,7 @@ function PersonalFinanceFrame({
 
             <a
               className={styles.workspaceAction}
-              href="#transaction-inbox"
+              href="/personal/transactions"
             >
               Review transactions
             </a>
