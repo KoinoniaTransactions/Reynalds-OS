@@ -343,6 +343,176 @@ const PERSONAL_FINANCE_SCHEMA_SQL = `
     is_active
   );
 
+  CREATE TABLE IF NOT EXISTS assets (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    asset_type TEXT NOT NULL CHECK (
+      asset_type IN (
+        'cash',
+        'checking',
+        'savings',
+        'investment',
+        'real_estate',
+        'vehicle',
+        'business',
+        'personal_property',
+        'other'
+      )
+    ),
+    institution TEXT,
+    description TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1 CHECK (
+      is_active IN (0, 1)
+    ),
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  ) STRICT;
+
+  CREATE TABLE IF NOT EXISTS asset_valuations (
+    id TEXT PRIMARY KEY,
+    asset_id TEXT NOT NULL,
+    value_cents INTEGER NOT NULL CHECK (
+      value_cents >= 0
+    ),
+    valued_on TEXT NOT NULL,
+    source TEXT,
+    note TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (asset_id)
+      REFERENCES assets(id)
+      ON DELETE CASCADE,
+
+    UNIQUE (
+      asset_id,
+      valued_on
+    )
+  ) STRICT;
+
+  CREATE TABLE IF NOT EXISTS liabilities (
+    id TEXT PRIMARY KEY,
+    obligation_id TEXT,
+    linked_asset_id TEXT,
+    name TEXT NOT NULL,
+    liability_type TEXT NOT NULL CHECK (
+      liability_type IN (
+        'mortgage',
+        'home_equity',
+        'auto_loan',
+        'credit_card',
+        'personal_loan',
+        'student_loan',
+        'tax_debt',
+        'medical_debt',
+        'other'
+      )
+    ),
+    institution TEXT,
+    original_balance_cents INTEGER CHECK (
+      original_balance_cents IS NULL OR
+      original_balance_cents >= 0
+    ),
+    current_balance_cents INTEGER NOT NULL DEFAULT 0 CHECK (
+      current_balance_cents >= 0
+    ),
+    balance_as_of TEXT,
+    interest_rate_basis_points INTEGER CHECK (
+      interest_rate_basis_points IS NULL OR
+      interest_rate_basis_points >= 0
+    ),
+    minimum_payment_cents INTEGER CHECK (
+      minimum_payment_cents IS NULL OR
+      minimum_payment_cents >= 0
+    ),
+    escrow_payment_cents INTEGER CHECK (
+      escrow_payment_cents IS NULL OR
+      escrow_payment_cents >= 0
+    ),
+    credit_limit_cents INTEGER CHECK (
+      credit_limit_cents IS NULL OR
+      credit_limit_cents >= 0
+    ),
+    maturity_date TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1 CHECK (
+      is_active IN (0, 1)
+    ),
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (obligation_id)
+      REFERENCES obligations(id)
+      ON DELETE SET NULL,
+
+    FOREIGN KEY (linked_asset_id)
+      REFERENCES assets(id)
+      ON DELETE SET NULL
+  ) STRICT;
+
+  CREATE TABLE IF NOT EXISTS sensitive_values (
+    id TEXT PRIMARY KEY,
+    owner_type TEXT NOT NULL CHECK (
+      owner_type IN (
+        'account',
+        'obligation',
+        'asset',
+        'liability'
+      )
+    ),
+    owner_id TEXT NOT NULL,
+    field_name TEXT NOT NULL CHECK (
+      field_name IN (
+        'account_number',
+        'routing_number',
+        'vin',
+        'policy_number',
+        'other_identifier'
+      )
+    ),
+    ciphertext TEXT NOT NULL,
+    initialization_vector TEXT NOT NULL,
+    authentication_tag TEXT NOT NULL,
+    key_version INTEGER NOT NULL DEFAULT 1 CHECK (
+      key_version >= 1
+    ),
+    last_four TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE (
+      owner_type,
+      owner_id,
+      field_name
+    )
+  ) STRICT;
+
+  CREATE INDEX IF NOT EXISTS
+    asset_valuations_asset_date_index
+  ON asset_valuations (
+    asset_id,
+    valued_on DESC
+  );
+
+  CREATE INDEX IF NOT EXISTS
+    liabilities_asset_index
+  ON liabilities (
+    linked_asset_id,
+    is_active
+  );
+
+  CREATE INDEX IF NOT EXISTS
+    liabilities_obligation_index
+  ON liabilities (
+    obligation_id,
+    is_active
+  );
+
+  CREATE INDEX IF NOT EXISTS
+    sensitive_values_owner_index
+  ON sensitive_values (
+    owner_type,
+    owner_id
+  );
+
   CREATE TABLE IF NOT EXISTS budget_allocations (
     id TEXT PRIMARY KEY,
     transaction_id TEXT NOT NULL,
