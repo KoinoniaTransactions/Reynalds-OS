@@ -23,7 +23,9 @@ import {
 import {
   applyLoanPayment,
   calculateScheduledPayment,
-  configureLoanTerms
+  configureLoanTerms,
+  previewLoanPayment,
+  readLoanPaymentWorkspace
 } from "./personal-finance-loan-ledger-local";
 
 let temporaryDirectory = "";
@@ -285,6 +287,129 @@ describe(
         } finally {
           database.close();
         }
+      }
+    );
+
+    it(
+      "previews a payment without changing the balance",
+      () => {
+        configureLoanTerms({
+          liabilityId:
+            "liability_mortgage",
+          calculationMethod:
+            "monthly_amortization",
+          annualInterestRate:
+            6.25,
+          paymentFrequency:
+            "monthly",
+          scheduledEscrow:
+            550,
+          lastAccrualDate:
+            "2026-07-01"
+        });
+
+        const preview =
+          previewLoanPayment({
+            obligationId:
+              "obligation_mortgage",
+            sourceKey:
+              "preview-only",
+            paidOn:
+              "2026-08-01",
+            totalPayment:
+              2150,
+            escrow:
+              550
+          });
+
+        expect(preview.interest)
+          .toBe(1250);
+
+        expect(preview.principal)
+          .toBe(350);
+
+        expect(
+          preview.projectedBalance
+        ).toBe(239650);
+
+        const database =
+          openPersonalFinanceDatabase({
+            databasePath
+          });
+
+        try {
+          const liability =
+            database
+              .prepare(`
+                SELECT
+                  current_balance_cents
+                FROM liabilities
+                WHERE id =
+                  'liability_mortgage'
+              `)
+              .get() as {
+                current_balance_cents:
+                  number;
+              };
+
+          const payments =
+            database
+              .prepare(`
+                SELECT count(*) AS count
+                FROM liability_payments
+              `)
+              .get() as {
+                count: number;
+              };
+
+          expect(
+            liability
+              .current_balance_cents
+          ).toBe(24000000);
+
+          expect(payments.count)
+            .toBe(0);
+        } finally {
+          database.close();
+        }
+      }
+    );
+
+    it(
+      "returns linked bills for the payment workspace",
+      () => {
+        configureLoanTerms({
+          liabilityId:
+            "liability_mortgage",
+          calculationMethod:
+            "monthly_amortization",
+          annualInterestRate:
+            6.25,
+          paymentFrequency:
+            "monthly",
+          scheduledEscrow:
+            550
+        });
+
+        const records =
+          readLoanPaymentWorkspace();
+
+        expect(records)
+          .toHaveLength(1);
+
+        expect(
+          records[0]?.billName
+        ).toBe("Mortgage");
+
+        expect(
+          records[0]
+            ?.hasConfiguredTerms
+        ).toBe(true);
+
+        expect(
+          records[0]
+            ?.currentBalance
+        ).toBe(240000);
       }
     );
 

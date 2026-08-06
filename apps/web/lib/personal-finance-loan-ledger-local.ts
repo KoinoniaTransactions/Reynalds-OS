@@ -56,6 +56,42 @@ export type ApplyLoanPaymentInput = {
   note?: string | null;
 };
 
+export type LoanPaymentWorkspaceRecord = {
+  liabilityId: string;
+  obligationId: string;
+  billName: string;
+  liabilityName: string;
+  liabilityType: string;
+  institution: string | null;
+  currentBalance: number;
+  balanceAsOf: string | null;
+  expectedPayment: number | null;
+  annualInterestRate: number | null;
+  calculationMethod:
+    LoanCalculationMethod | null;
+  paymentFrequency:
+    LoanPaymentFrequency | null;
+  scheduledEscrow: number;
+  lastAccrualDate: string | null;
+  hasConfiguredTerms: boolean;
+};
+
+export type LoanPaymentPreview = {
+  liabilityId: string;
+  obligationId: string | null;
+  openingBalance: number;
+  totalPayment: number;
+  interest: number;
+  principal: number;
+  extraPrincipal: number;
+  escrow: number;
+  fees: number;
+  projectedBalance: number;
+  calculationMethod:
+    LoanCalculationMethod;
+  paidOn: string;
+};
+
 export type LoanPaymentResult = {
   paymentId: string;
   liabilityId: string;
@@ -255,6 +291,287 @@ export function configureLoanTerms(
         rateType,
         lastAccrualDate
       );
+  } finally {
+    database.close();
+  }
+}
+
+export function readLoanPaymentWorkspace():
+  LoanPaymentWorkspaceRecord[] {
+  assertLocalPersonalFinanceEnabled();
+
+  const database =
+    openPersonalFinanceDatabase();
+
+  try {
+    const rows =
+      database
+        .prepare(`
+          SELECT
+            liabilities.id AS liability_id,
+            obligations.id AS obligation_id,
+            obligations.name AS bill_name,
+            liabilities.name AS liability_name,
+            liabilities.liability_type,
+            liabilities.institution,
+            liabilities.current_balance_cents,
+            liabilities.balance_as_of,
+            obligations.expected_amount_cents,
+            loan_terms.annual_interest_rate_basis_points,
+            loan_terms.calculation_method,
+            loan_terms.payment_frequency,
+            loan_terms.scheduled_escrow_cents,
+            loan_terms.last_accrual_date
+          FROM liabilities
+          INNER JOIN obligations
+            ON obligations.id =
+              liabilities.obligation_id
+          LEFT JOIN loan_terms
+            ON loan_terms.liability_id =
+              liabilities.id
+          WHERE
+            liabilities.is_active = 1 AND
+            obligations.is_active = 1
+          ORDER BY
+            obligations.name COLLATE NOCASE
+        `)
+        .all() as Array<{
+          liability_id: string;
+          obligation_id: string;
+          bill_name: string;
+          liability_name: string;
+          liability_type: string;
+          institution: string | null;
+          current_balance_cents: number;
+          balance_as_of: string | null;
+          expected_amount_cents:
+            number | null;
+          annual_interest_rate_basis_points:
+            number | null;
+          calculation_method:
+            LoanCalculationMethod | null;
+          payment_frequency:
+            LoanPaymentFrequency | null;
+          scheduled_escrow_cents:
+            number | null;
+          last_accrual_date:
+            string | null;
+        }>;
+
+    return rows.map((row) => ({
+      liabilityId:
+        row.liability_id,
+      obligationId:
+        row.obligation_id,
+      billName:
+        row.bill_name,
+      liabilityName:
+        row.liability_name,
+      liabilityType:
+        row.liability_type,
+      institution:
+        row.institution,
+      currentBalance:
+        centsToDollars(
+          row.current_balance_cents
+        ),
+      balanceAsOf:
+        row.balance_as_of,
+      expectedPayment:
+        row.expected_amount_cents ===
+          null
+          ? null
+          : centsToDollars(
+              row.expected_amount_cents
+            ),
+      annualInterestRate:
+        row
+          .annual_interest_rate_basis_points ===
+          null
+          ? null
+          : row
+              .annual_interest_rate_basis_points /
+            100,
+      calculationMethod:
+        row.calculation_method,
+      paymentFrequency:
+        row.payment_frequency,
+      scheduledEscrow:
+        centsToDollars(
+          row.scheduled_escrow_cents ??
+            0
+        ),
+      lastAccrualDate:
+        row.last_accrual_date,
+      hasConfiguredTerms:
+        row.calculation_method !== null
+    }));
+  } finally {
+    database.close();
+  }
+}
+
+export function previewLoanPayment(
+  input: ApplyLoanPaymentInput
+): LoanPaymentPreview {
+  assertLocalPersonalFinanceEnabled();
+
+  const paidOn = requiredDate(
+    input.paidOn,
+    "Payment date"
+  );
+
+  const totalPayment =
+    requiredPositiveMoney(
+      input.totalPayment,
+      "Total payment"
+    );
+
+  const escrow =
+    optionalMoney(
+      input.escrow,
+      "Escrow"
+    ) ?? 0;
+
+  const fees =
+    optionalMoney(
+      input.fees,
+      "Fees"
+    ) ?? 0;
+
+  const requestedExtraPrincipal =
+    optionalMoney(
+      input.extraPrincipal,
+      "Extra principal"
+    ) ?? 0;
+
+  const interestOverride =
+    optionalMoney(
+      input.interestOverride,
+      "Interest override"
+    );
+
+  const database =
+    openPersonalFinanceDatabase();
+
+  try {
+    const liability =
+      resolveLiability(
+        database,
+        input
+      );
+
+    const terms =
+      readLoanTerms(
+        database,
+        liability.id
+      );
+
+    if (!terms) {
+      throw new Error(
+        "Loan terms must be configured before previewing a payment."
+      );
+    }
+
+    const openingBalanceCents =
+      liability.current_balance_cents;
+
+    const totalPaymentCents =
+      dollarsToCents(
+        totalPayment
+      );
+
+    const escrowCents =
+      dollarsToCents(escrow);
+
+    const feesCents =
+      dollarsToCents(fees);
+
+    const interestCents =
+      interestOverride === null
+        ? calculateInterestCents({
+            balanceCents:
+              openingBalanceCents,
+            annualRateBasisPoints:
+              terms
+                .annual_interest_rate_basis_points,
+            method:
+              terms.calculation_method,
+            frequency:
+              terms.payment_frequency,
+            previousAccrualDate:
+              terms.last_accrual_date,
+            paidOn
+          })
+        : dollarsToCents(
+            interestOverride
+          );
+
+    const availableForPrincipal =
+      totalPaymentCents -
+      escrowCents -
+      feesCents -
+      interestCents;
+
+    if (availableForPrincipal < 0) {
+      throw new Error(
+        "Payment is not large enough to cover interest, escrow, and fees."
+      );
+    }
+
+    const principalCents =
+      Math.min(
+        openingBalanceCents,
+        availableForPrincipal
+      );
+
+    const extraPrincipalCents =
+      dollarsToCents(
+        requestedExtraPrincipal
+      );
+
+    if (
+      extraPrincipalCents >
+      principalCents
+    ) {
+      throw new Error(
+        "Extra principal cannot exceed the total principal applied."
+      );
+    }
+
+    return {
+      liabilityId:
+        liability.id,
+      obligationId:
+        liability.obligation_id,
+      openingBalance:
+        centsToDollars(
+          openingBalanceCents
+        ),
+      totalPayment,
+      interest:
+        centsToDollars(
+          interestCents
+        ),
+      principal:
+        centsToDollars(
+          principalCents
+        ),
+      extraPrincipal:
+        centsToDollars(
+          extraPrincipalCents
+        ),
+      escrow,
+      fees,
+      projectedBalance:
+        centsToDollars(
+          openingBalanceCents -
+          principalCents
+        ),
+      calculationMethod:
+        terms.calculation_method,
+      paidOn
+    };
   } finally {
     database.close();
   }

@@ -12,6 +12,10 @@ import type {
   BudgetBill
 } from "../lib/personal-finance-local";
 
+import {
+  PersonalFinanceLoanPaymentWorkspace
+} from "./personal-finance-loan-payment-workspace";
+
 import styles from "./personal-finance-obligation-workspace.module.css";
 
 type ObligationHomeKind =
@@ -748,6 +752,8 @@ export function PersonalFinanceObligationWorkspace({
           </strong>
         </article>
       </div>
+
+      <PersonalFinanceLoanPaymentWorkspace />
 
       {isFormOpen ? (
         <form

@@ -4,10 +4,33 @@ import {
 
 import {
   applyLoanPayment,
-  configureLoanTerms
+  configureLoanTerms,
+  previewLoanPayment,
+  readLoanPaymentWorkspace
 } from "../../../../lib/personal-finance-loan-ledger-local";
 
 export const dynamic = "force-dynamic";
+
+export async function GET() {
+  try {
+    return NextResponse.json({
+      records:
+        readLoanPaymentWorkspace()
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Loan-payment information could not be loaded."
+      },
+      {
+        status: 400
+      }
+    );
+  }
+}
 
 export async function POST(
   request: Request
@@ -17,6 +40,7 @@ export async function POST(
       await request.json() as {
         action?:
           | "configure"
+          | "preview-payment"
           | "apply-payment";
         [key: string]: unknown;
       };
@@ -35,23 +59,34 @@ export async function POST(
 
     if (
       body.action ===
-        "apply-payment"
+        "preview-payment"
     ) {
-      const payment =
-        applyLoanPayment(
-          body as never
-        );
-
       return NextResponse.json({
         ok: true,
-        payment
+        preview:
+          previewLoanPayment(
+            body as never
+          )
+      });
+    }
+
+    if (
+      body.action ===
+        "apply-payment"
+    ) {
+      return NextResponse.json({
+        ok: true,
+        payment:
+          applyLoanPayment(
+            body as never
+          )
       });
     }
 
     return NextResponse.json(
       {
         error:
-          "Action must be configure or apply-payment."
+          "Action must be configure, preview-payment, or apply-payment."
       },
       {
         status: 400
