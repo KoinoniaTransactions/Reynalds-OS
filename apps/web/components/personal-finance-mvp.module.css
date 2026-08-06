@@ -2569,3 +2569,585 @@
     overflow: visible;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Personal Finance inbox progressive disclosure v1                           */
+/* -------------------------------------------------------------------------- */
+
+.inboxModernHeader {
+  align-items: flex-end;
+  gap: 18px;
+}
+
+.inboxModernActions {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.inboxFocusTabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 12px;
+  background: #eef1f5;
+}
+
+.inboxFocusButton {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 9px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #697586;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 720;
+  white-space: nowrap;
+  transition:
+    background 150ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease;
+}
+
+.inboxFocusButton:hover {
+  background: rgba(255, 255, 255, 0.62);
+  color: #344054;
+}
+
+.inboxFocusButton strong {
+  display: inline-grid;
+  min-width: 19px;
+  min-height: 19px;
+  place-items: center;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: rgba(102, 112, 133, 0.1);
+  color: inherit;
+  font-size: 8px;
+  font-weight: 850;
+}
+
+.inboxFocusButtonActive {
+  background: #ffffff;
+  color: #253247;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 5px 14px rgba(15, 23, 42, 0.055);
+}
+
+.inboxFilterTrigger {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.86);
+  color: #596579;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 750;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.inboxFilterTrigger:hover,
+.inboxFilterTriggerActive {
+  border-color: rgba(71, 85, 105, 0.4);
+  background: #ffffff;
+  color: #273244;
+}
+
+.inboxFilterTriggerActive {
+  box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.08);
+}
+
+.inboxFilterBadge {
+  display: inline-grid;
+  min-width: 18px;
+  min-height: 18px;
+  place-items: center;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: #273244;
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: 850;
+}
+
+.inboxFilterPanel {
+  display: grid;
+  gap: 13px;
+  margin: 0 22px 18px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(248, 250, 252, 0.95),
+      rgba(255, 255, 255, 0.96)
+    );
+}
+
+.inboxFilterPanelSummary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.inboxFilterPanelSummary > div {
+  display: grid;
+  gap: 3px;
+}
+
+.inboxFilterPanelSummary strong {
+  color: #344054;
+  font-size: 11px;
+}
+
+.inboxFilterPanelSummary span {
+  color: #7a8494;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.inboxFilterPanelControls {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(130px, 1fr))
+    auto;
+  gap: 9px;
+  align-items: end;
+}
+
+.inboxAdvancedFilter {
+  display: grid;
+  gap: 5px;
+}
+
+.inboxAdvancedFilter > span {
+  color: #7a8494;
+  font-size: 9px;
+  font-weight: 760;
+}
+
+.inboxAdvancedFilter select {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 30px 6px 10px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #344054;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.inboxAdvancedFilter select:focus-visible {
+  border-color: #667085;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.09);
+}
+
+.inboxFilterReset {
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #667085;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.inboxFilterReset:hover:not(:disabled) {
+  background: rgba(148, 163, 184, 0.1);
+  color: #344054;
+}
+
+.inboxFilterReset:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.inboxTransactionList {
+  display: grid;
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.inboxTransactionRow {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(255, 255, 255, 0.72);
+  transition:
+    background 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.inboxTransactionRow:last-child {
+  border-bottom: 0;
+}
+
+.inboxTransactionRowExpanded {
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
+  box-shadow:
+    inset 3px 0 0 rgba(184, 138, 68, 0.78),
+    0 12px 28px rgba(15, 23, 42, 0.055);
+}
+
+.inboxTransactionSummary {
+  display: grid;
+  width: 100%;
+  grid-template-columns:
+    84px
+    minmax(190px, 1.55fr)
+    minmax(100px, 0.55fr)
+    minmax(230px, 1fr)
+    24px;
+  gap: 14px;
+  align-items: center;
+  min-height: 70px;
+  padding: 12px 22px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    background 150ms ease,
+    padding 150ms ease;
+}
+
+.inboxTransactionSummary:hover,
+.inboxTransactionSummary:focus-visible {
+  background: rgba(248, 250, 252, 0.8);
+  outline: none;
+}
+
+.inboxTransactionRowExpanded
+  .inboxTransactionSummary {
+  background: rgba(248, 250, 252, 0.72);
+}
+
+.inboxTransactionDate {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.inboxTransactionDate strong {
+  color: #596579;
+  font-size: 10px;
+  font-weight: 780;
+}
+
+.inboxTransactionDate small {
+  overflow: hidden;
+  color: #98a2b3;
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inboxTransactionIdentity {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.inboxTransactionDescription {
+  overflow: hidden;
+  color: #263142;
+  font-size: 12px;
+  font-weight: 770;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inboxTransactionAccount {
+  overflow: hidden;
+  color: #7a8494;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inboxTransactionAmount {
+  justify-self: end;
+  font-size: 12px;
+  font-weight: 820;
+  white-space: nowrap;
+}
+
+.inboxTransactionStatus {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.inboxStatusChip {
+  display: inline-flex;
+  min-height: 23px;
+  align-items: center;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #eef1f5;
+  color: #667085;
+  font-size: 8px;
+  font-weight: 790;
+  white-space: nowrap;
+}
+
+.inboxStatusChipComplete {
+  background: #eaf7ef;
+  color: #19714a;
+}
+
+.inboxStatusChipAttention {
+  background: #fff3e8;
+  color: #a44b13;
+}
+
+.inboxStatusChipPending {
+  background: #f0f2f5;
+  color: #697586;
+}
+
+.inboxTransactionChevron {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  justify-self: end;
+  border-radius: 999px;
+  color: #98a2b3;
+  font-size: 13px;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.inboxTransactionSummary:hover
+  .inboxTransactionChevron {
+  background: rgba(148, 163, 184, 0.12);
+  color: #344054;
+}
+
+.inboxTransactionWorkbench {
+  display: grid;
+  grid-template-columns:
+    minmax(150px, 0.75fr)
+    minmax(150px, 0.75fr)
+    minmax(300px, 1.5fr);
+  gap: 14px;
+  padding: 16px 22px 19px;
+  border-top: 1px solid rgba(148, 163, 184, 0.13);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(248, 250, 252, 0.75),
+      rgba(255, 255, 255, 0.96)
+    );
+}
+
+.inboxWorkbenchGroup {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.inboxWorkbenchGroupWide {
+  min-width: 0;
+}
+
+.inboxWorkbenchLabel {
+  color: #7a8494;
+  font-size: 8px;
+  font-weight: 820;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.inboxWorkbenchDetails {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+
+.inboxWorkbenchDetails
+  .reconciliationControl {
+  min-width: 0;
+}
+
+.inboxModernEmpty {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 42px 22px;
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+  text-align: center;
+}
+
+.inboxModernEmpty strong {
+  color: #344054;
+  font-size: 13px;
+}
+
+.inboxModernEmpty span {
+  color: #7a8494;
+  font-size: 10px;
+}
+
+.inboxModernEmpty button {
+  margin-top: 4px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: #273244;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 760;
+}
+
+@media (max-width: 1120px) {
+  .inboxModernHeader {
+    align-items: stretch;
+  }
+
+  .inboxModernActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .inboxTransactionSummary {
+    grid-template-columns:
+      78px
+      minmax(0, 1fr)
+      auto
+      24px;
+  }
+
+  .inboxTransactionStatus {
+    grid-column: 2 / 5;
+    justify-content: flex-start;
+  }
+
+  .inboxTransactionWorkbench {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .inboxWorkbenchGroupWide {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .inboxModernActions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .inboxFocusTabs {
+    overflow-x: auto;
+  }
+
+  .inboxFocusButton {
+    min-width: max-content;
+  }
+
+  .inboxFilterPanel {
+    margin: 0 12px 14px;
+    padding: 12px;
+  }
+
+  .inboxFilterPanelSummary {
+    display: grid;
+    gap: 6px;
+  }
+
+  .inboxFilterPanelControls {
+    grid-template-columns: 1fr;
+  }
+
+  .inboxFilterReset {
+    justify-self: start;
+  }
+
+  .inboxTransactionSummary {
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto
+      24px;
+    gap: 6px 10px;
+    padding: 13px 14px;
+  }
+
+  .inboxTransactionDate {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .inboxTransactionIdentity {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .inboxTransactionAmount {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .inboxTransactionStatus {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-content: flex-start;
+    margin-top: 3px;
+  }
+
+  .inboxTransactionChevron {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+
+  .inboxTransactionWorkbench {
+    grid-template-columns: 1fr;
+    padding: 12px 14px 16px;
+  }
+
+  .inboxWorkbenchGroupWide {
+    grid-column: auto;
+  }
+}

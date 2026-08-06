@@ -24,12 +24,12 @@ import {
 } from "./personal-finance-transaction-classification-select";
 
 import {
-  PersonalFinanceTransactionReviewedControl
-} from "./personal-finance-transaction-reviewed-control";
-
-import {
   PersonalFinanceTransactionReconciliationControl
 } from "./personal-finance-transaction-reconciliation-control";
+
+import {
+  PersonalFinanceTransactionReviewedControl
+} from "./personal-finance-transaction-reviewed-control";
 
 import styles from "./personal-finance-mvp.module.css";
 
@@ -41,35 +41,38 @@ type Props = {
   transactionReason?: string | null;
 };
 
-type PersonalFinanceReconciliationFilter =
+type PersonalFinanceFocusFilter =
   | "all"
-  | "unreviewed"
+  | "needs-attention"
+  | "unreconciled"
   | "reconciled";
 
-type PersonalFinanceMatchingFilter =
+type PersonalFinanceTaskFilter =
   | "all"
   | "needs-classification"
   | "needs-target"
-  | "unpaired-transfer"
-  | "reconciled";
+  | "unpaired-transfer";
 
-const RECONCILIATION_FILTER_OPTIONS = [
+const FOCUS_OPTIONS = [
   ["all", "All"],
-  ["unreviewed", "Unreconciled"],
+  ["needs-attention", "Needs attention"],
+  ["unreconciled", "Unreconciled"],
   ["reconciled", "Reconciled"]
 ] as const satisfies readonly [
-  PersonalFinanceReconciliationFilter,
+  PersonalFinanceFocusFilter,
   string
 ][];
 
-const MATCHING_FILTER_OPTIONS = [
-  ["all", "All"],
-  ["needs-classification", "Needs classification"],
+const TASK_FILTER_OPTIONS = [
+  ["all", "All tasks"],
+  [
+    "needs-classification",
+    "Needs classification"
+  ],
   ["needs-target", "Needs target"],
-  ["unpaired-transfer", "Unpaired transfer"],
-  ["reconciled", "Reconciled"]
+  ["unpaired-transfer", "Unpaired transfer"]
 ] as const satisfies readonly [
-  PersonalFinanceMatchingFilter,
+  PersonalFinanceTaskFilter,
   string
 ][];
 
@@ -80,28 +83,6 @@ function money(value: number): string {
     minimumFractionDigits: 2,
     style: "currency"
   }).format(value);
-}
-
-function reconciliationFilterLabel(
-  value: PersonalFinanceReconciliationFilter
-): string {
-  return (
-    RECONCILIATION_FILTER_OPTIONS.find(
-      ([optionValue]) =>
-        optionValue === value
-    )?.[1] ?? "All"
-  );
-}
-
-function matchingFilterLabel(
-  value: PersonalFinanceMatchingFilter
-): string {
-  return (
-    MATCHING_FILTER_OPTIONS.find(
-      ([optionValue]) =>
-        optionValue === value
-    )?.[1] ?? "All"
-  );
 }
 
 function needsBudgetTarget(
@@ -126,27 +107,80 @@ function isUnpairedTransfer(
   );
 }
 
-function matchesMatchingFilter(
+function needsAttention(
+  transaction: PersonalFinanceInboxTransaction
+): boolean {
+  return (
+    transaction.classification === "unknown" ||
+    needsBudgetTarget(transaction) ||
+    isUnpairedTransfer(transaction)
+  );
+}
+
+function matchesFocusFilter(
   transaction: PersonalFinanceInboxTransaction,
-  filter: PersonalFinanceMatchingFilter
+  filter: PersonalFinanceFocusFilter
+): boolean {
+  if (filter === "all") {
+    return true;
+  }
+
+  if (filter === "needs-attention") {
+    return needsAttention(transaction);
+  }
+
+  if (filter === "unreconciled") {
+    return (
+      transaction.reviewStatus === "unreviewed"
+    );
+  }
+
+  return (
+    transaction.reviewStatus === "reconciled"
+  );
+}
+
+function matchesTaskFilter(
+  transaction: PersonalFinanceInboxTransaction,
+  filter: PersonalFinanceTaskFilter
 ): boolean {
   if (filter === "all") {
     return true;
   }
 
   if (filter === "needs-classification") {
-    return transaction.classification === "unknown";
+    return (
+      transaction.classification === "unknown"
+    );
   }
 
   if (filter === "needs-target") {
     return needsBudgetTarget(transaction);
   }
 
-  if (filter === "unpaired-transfer") {
-    return isUnpairedTransfer(transaction);
-  }
+  return isUnpairedTransfer(transaction);
+}
 
-  return transaction.reviewStatus === "reconciled";
+function focusFilterLabel(
+  value: PersonalFinanceFocusFilter
+): string {
+  return (
+    FOCUS_OPTIONS.find(
+      ([optionValue]) =>
+        optionValue === value
+    )?.[1] ?? "All"
+  );
+}
+
+function taskFilterLabel(
+  value: PersonalFinanceTaskFilter
+): string {
+  return (
+    TASK_FILTER_OPTIONS.find(
+      ([optionValue]) =>
+        optionValue === value
+    )?.[1] ?? "All tasks"
+  );
 }
 
 function AllocationDetails({
@@ -162,17 +196,27 @@ function AllocationDetails({
 
   return (
     <div className={styles.reconciliationDetails}>
-      <span className={styles.reconciliationDetailsTitle}>
+      <span
+        className={
+          styles.reconciliationDetailsTitle
+        }
+      >
         {transaction.allocationDetails.length === 1
           ? "Allocation"
           : `${transaction.allocationDetails.length} allocations`}
       </span>
 
-      <ul className={styles.allocationSummaryList}>
+      <ul
+        className={
+          styles.allocationSummaryList
+        }
+      >
         {transaction.allocationDetails.map(
           (allocation, index) => (
             <li
-              className={styles.allocationSummaryItem}
+              className={
+                styles.allocationSummaryItem
+              }
               key={`${transaction.id}-allocation-${index}`}
             >
               <span>
@@ -214,7 +258,11 @@ function TransferPairDetails({
 
   return (
     <div className={styles.transferPairSummary}>
-      <span className={styles.reconciliationDetailsTitle}>
+      <span
+        className={
+          styles.reconciliationDetailsTitle
+        }
+      >
         Confirmed pair
       </span>
 
@@ -241,6 +289,13 @@ export function PersonalFinanceTransactionInbox({
   transactionReason = null
 }: Props) {
   const [
+    focusFilter,
+    setFocusFilter
+  ] = useState<PersonalFinanceFocusFilter>(
+    "unreconciled"
+  );
+
+  const [
     classificationFilter,
     setClassificationFilter
   ] = useState<PersonalFinanceClassificationFilter>(
@@ -255,21 +310,29 @@ export function PersonalFinanceTransactionInbox({
   );
 
   const [
-    reconciliationFilter,
-    setReconciliationFilter
-  ] = useState<PersonalFinanceReconciliationFilter>(
-    "unreviewed"
-  );
-
-  const [
-    matchingFilter,
-    setMatchingFilter
-  ] = useState<PersonalFinanceMatchingFilter>(
+    taskFilter,
+    setTaskFilter
+  ] = useState<PersonalFinanceTaskFilter>(
     "all"
   );
 
-  const counts = useMemo(
+  const [
+    filtersOpen,
+    setFiltersOpen
+  ] = useState(false);
+
+  const [
+    expandedTransactionId,
+    setExpandedTransactionId
+  ] = useState<string | null>(null);
+
+  const focusCounts = useMemo(
     () => ({
+      all: transactions.length,
+      "needs-attention":
+        transactions.filter(
+          needsAttention
+        ).length,
       unreconciled:
         transactions.filter(
           (transaction) =>
@@ -281,94 +344,94 @@ export function PersonalFinanceTransactionInbox({
           (transaction) =>
             transaction.reviewStatus ===
               "reconciled"
-        ).length,
-      needsTarget:
-        transactions.filter(
-          needsBudgetTarget
-        ).length,
-      unpairedTransfer:
-        transactions.filter(
-          isUnpairedTransfer
         ).length
     }),
     [transactions]
   );
 
-  const classifiedAndReviewedTransactions =
-    useMemo(
-      () =>
-        filterPersonalFinanceTransactions(
-          transactions,
-          classificationFilter,
-          reviewedFilter
-        ),
-      [
+  const filteredTransactions = useMemo(
+    () =>
+      filterPersonalFinanceTransactions(
         transactions,
         classificationFilter,
         reviewedFilter
-      ]
-    );
-
-  const filteredTransactions = useMemo(
-    () =>
-      classifiedAndReviewedTransactions.filter(
+      ).filter(
         (transaction) =>
-          (
-            reconciliationFilter === "all" ||
-            transaction.reviewStatus ===
-              reconciliationFilter
-          ) &&
-          matchesMatchingFilter(
+          matchesFocusFilter(
             transaction,
-            matchingFilter
+            focusFilter
+          ) &&
+          matchesTaskFilter(
+            transaction,
+            taskFilter
           )
       ),
     [
-      classifiedAndReviewedTransactions,
-      reconciliationFilter,
-      matchingFilter
+      transactions,
+      classificationFilter,
+      reviewedFilter,
+      focusFilter,
+      taskFilter
     ]
   );
 
-  const classificationFilterLabel =
-    getPersonalFinanceClassificationFilterLabel(
-      classificationFilter
-    );
+  const advancedFilterCount = [
+    classificationFilter !== "all",
+    reviewedFilter !== "all",
+    taskFilter !== "all"
+  ].filter(Boolean).length;
 
-  const reviewedFilterLabel =
-    getPersonalFinanceReviewedFilterLabel(
-      reviewedFilter
-    );
+  const hasActiveFilters =
+    focusFilter !== "all" ||
+    advancedFilterCount > 0;
 
-  const reconciliationViewLabel =
-    reconciliationFilterLabel(
-      reconciliationFilter
-    );
-
-  const matchingViewLabel =
-    matchingFilterLabel(matchingFilter);
+  const activeFilterLabels = [
+    focusFilter !== "all"
+      ? focusFilterLabel(focusFilter)
+      : null,
+    classificationFilter !== "all"
+      ? `Classification: ${getPersonalFinanceClassificationFilterLabel(
+          classificationFilter
+        )}`
+      : null,
+    reviewedFilter !== "all"
+      ? `Review: ${getPersonalFinanceReviewedFilterLabel(
+          reviewedFilter
+        )}`
+      : null,
+    taskFilter !== "all"
+      ? `Task: ${taskFilterLabel(
+          taskFilter
+        )}`
+      : null
+  ].filter(
+    (value): value is string =>
+      value !== null
+  );
 
   const description =
     transactions.length > 0
-      ? `Showing ${filteredTransactions.length} of ${transactionTotal} ${
+      ? `${filteredTransactions.length} of ${transactionTotal} ${
           transactionTotal === 1
             ? "transaction"
             : "transactions"
-        } from the private local database. Classification: ${classificationFilterLabel}. Reviewed: ${reviewedFilterLabel}. Reconciliation: ${reconciliationViewLabel}. Matching: ${matchingViewLabel}. View filters do not change transactions.`
+        }. Open a row to classify, review, or reconcile it.`
       : "Transactions stored in the private local database will appear here.";
 
-  function showReconciliation(
-    value: PersonalFinanceReconciliationFilter
+  function selectFocus(
+    value: PersonalFinanceFocusFilter
   ) {
-    setReconciliationFilter(value);
-    setMatchingFilter("all");
+    setFocusFilter(value);
+    setTaskFilter("all");
+    setExpandedTransactionId(null);
   }
 
-  function showMatching(
-    value: PersonalFinanceMatchingFilter
-  ) {
-    setReconciliationFilter("all");
-    setMatchingFilter(value);
+  function resetFilters() {
+    setFocusFilter("all");
+    setClassificationFilter("all");
+    setReviewedFilter("all");
+    setTaskFilter("all");
+    setExpandedTransactionId(null);
   }
 
   return (
@@ -376,7 +439,9 @@ export function PersonalFinanceTransactionInbox({
       className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
       id="transaction-inbox"
     >
-      <header className={styles.panelHeader}>
+      <header
+        className={`${styles.panelHeader} ${styles.inboxModernHeader}`}
+      >
         <div className={styles.panelHeaderCopy}>
           <h2 className={styles.panelTitle}>
             Transaction inbox
@@ -387,341 +452,345 @@ export function PersonalFinanceTransactionInbox({
           </p>
         </div>
 
-        <div className={styles.inboxHeaderActions}>
+        <div
+          className={
+            styles.inboxModernActions
+          }
+        >
           <div
-            aria-label="Transaction review progress"
-            className={styles.inboxReviewProgress}
+            aria-label="Transaction focus"
+            className={styles.inboxFocusTabs}
             role="group"
           >
-            <button
-              aria-label={`Show ${reviewedTransactionCount} reviewed transactions`}
-              aria-pressed={
-                reviewedFilter === "reviewed"
-              }
-              className={`${styles.inboxReviewMetric} ${
-                reviewedFilter === "reviewed"
-                  ? styles.inboxReviewMetricActive
-                  : ""
-              }`}
-              type="button"
-              onClick={() => {
-                setReviewedFilter("reviewed");
-              }}
-            >
-              <span className={styles.inboxReviewMetricLabel}>
-                Reviewed
-              </span>
+            {FOCUS_OPTIONS.map(
+              ([value, label]) => (
+                <button
+                  aria-pressed={
+                    focusFilter === value
+                  }
+                  className={`${styles.inboxFocusButton} ${
+                    focusFilter === value
+                      ? styles.inboxFocusButtonActive
+                      : ""
+                  }`}
+                  key={value}
+                  type="button"
+                  onClick={() => {
+                    selectFocus(value);
+                  }}
+                >
+                  <span>{label}</span>
 
-              <strong className={styles.inboxReviewMetricValue}>
-                {reviewedTransactionCount}
-              </strong>
-            </button>
-
-            <button
-              aria-label={`Show ${notReviewedTransactionCount} not-reviewed transactions`}
-              aria-pressed={
-                reviewedFilter === "not-reviewed"
-              }
-              className={`${styles.inboxReviewMetric} ${
-                reviewedFilter === "not-reviewed"
-                  ? styles.inboxReviewMetricActive
-                  : ""
-              }`}
-              type="button"
-              onClick={() => {
-                setReviewedFilter("not-reviewed");
-              }}
-            >
-              <span className={styles.inboxReviewMetricLabel}>
-                Not reviewed
-              </span>
-
-              <strong className={styles.inboxReviewMetricValue}>
-                {notReviewedTransactionCount}
-              </strong>
-            </button>
+                  <strong>
+                    {focusCounts[value]}
+                  </strong>
+                </button>
+              )
+            )}
           </div>
 
-          <div
-            aria-label="Transaction reconciliation progress"
-            className={`${styles.inboxReviewProgress} ${styles.inboxMatchingProgress}`}
-            role="group"
+          <button
+            aria-expanded={filtersOpen}
+            className={`${styles.inboxFilterTrigger} ${
+              filtersOpen
+                ? styles.inboxFilterTriggerActive
+                : ""
+            }`}
+            type="button"
+            onClick={() => {
+              setFiltersOpen(
+                (current) => !current
+              );
+            }}
           >
-            {[
-              {
-                label: "Unreconciled",
-                count: counts.unreconciled,
-                active:
-                  reconciliationFilter ===
-                    "unreviewed" &&
-                  matchingFilter === "all",
-                action: () =>
-                  showReconciliation(
-                    "unreviewed"
-                  )
-              },
-              {
-                label: "Reconciled",
-                count: counts.reconciled,
-                active:
-                  reconciliationFilter ===
-                    "reconciled" &&
-                  matchingFilter === "all",
-                action: () =>
-                  showReconciliation(
-                    "reconciled"
-                  )
-              },
-              {
-                label: "Needs target",
-                count: counts.needsTarget,
-                active:
-                  matchingFilter ===
-                    "needs-target",
-                action: () =>
-                  showMatching("needs-target")
-              },
-              {
-                label: "Unpaired",
-                count:
-                  counts.unpairedTransfer,
-                active:
-                  matchingFilter ===
-                    "unpaired-transfer",
-                action: () =>
-                  showMatching(
-                    "unpaired-transfer"
-                  )
-              }
-            ].map((metric) => (
-              <button
-                aria-pressed={metric.active}
-                className={`${styles.inboxReviewMetric} ${
-                  metric.active
-                    ? styles.inboxReviewMetricActive
-                    : ""
-                }`}
-                key={metric.label}
-                type="button"
-                onClick={metric.action}
+            <svg
+              aria-hidden="true"
+              fill="none"
+              height="15"
+              viewBox="0 0 24 24"
+              width="15"
+            >
+              <path
+                d="M4 7h10m4 0h2M4 17h2m4 0h10M14 4v6M8 14v6"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeWidth="1.8"
+              />
+            </svg>
+
+            <span>Filters</span>
+
+            {advancedFilterCount > 0 ? (
+              <strong
+                className={
+                  styles.inboxFilterBadge
+                }
               >
-                <span className={styles.inboxReviewMetricLabel}>
-                  {metric.label}
-                </span>
-
-                <strong className={styles.inboxReviewMetricValue}>
-                  {metric.count}
-                </strong>
-              </button>
-            ))}
-          </div>
-
-          <label className={styles.inboxFilterControl}>
-            <span className={styles.inboxFilterLabelRow}>
-              <span className={styles.inboxFilterLabel}>
-                Classification
-              </span>
-
-            </span>
-
-            <select
-              aria-label="Filter the inbox view by transaction classification"
-              className={styles.inboxFilterSelect}
-              value={classificationFilter}
-              onChange={(event) => {
-                setClassificationFilter(
-                  event.target
-                    .value as PersonalFinanceClassificationFilter
-                );
-              }}
-            >
-              {PERSONAL_FINANCE_CLASSIFICATION_FILTER_OPTIONS.map(
-                ([value, label]) => (
-                  <option
-                    key={value}
-                    value={value}
-                  >
-                    {label}
-                  </option>
-                )
-              )}
-            </select>
-          </label>
-
-          <label className={styles.inboxFilterControl}>
-            <span className={styles.inboxFilterLabelRow}>
-              <span className={styles.inboxFilterLabel}>
-                Reviewed
-              </span>
-
-            </span>
-
-            <select
-              aria-label="Filter the inbox view by reviewed state"
-              className={styles.inboxFilterSelect}
-              value={reviewedFilter}
-              onChange={(event) => {
-                setReviewedFilter(
-                  event.target
-                    .value as PersonalFinanceReviewedFilter
-                );
-              }}
-            >
-              {PERSONAL_FINANCE_REVIEWED_FILTER_OPTIONS.map(
-                ([value, label]) => (
-                  <option
-                    key={value}
-                    value={value}
-                  >
-                    {label}
-                  </option>
-                )
-              )}
-            </select>
-          </label>
-
-          <label className={styles.inboxFilterControl}>
-            <span className={styles.inboxFilterLabelRow}>
-              <span className={styles.inboxFilterLabel}>
-                Reconciliation
-              </span>
-
-            </span>
-
-            <select
-              aria-label="Filter the inbox view by reconciliation state"
-              className={styles.inboxFilterSelect}
-              value={reconciliationFilter}
-              onChange={(event) => {
-                setReconciliationFilter(
-                  event.target
-                    .value as PersonalFinanceReconciliationFilter
-                );
-              }}
-            >
-              {RECONCILIATION_FILTER_OPTIONS.map(
-                ([value, label]) => (
-                  <option
-                    key={value}
-                    value={value}
-                  >
-                    {label}
-                  </option>
-                )
-              )}
-            </select>
-          </label>
-
-          <label className={styles.inboxFilterControl}>
-            <span className={styles.inboxFilterLabelRow}>
-              <span className={styles.inboxFilterLabel}>
-                Matching
-              </span>
-
-            </span>
-
-            <select
-              aria-label="Filter the inbox view by matching status"
-              className={styles.inboxFilterSelect}
-              value={matchingFilter}
-              onChange={(event) => {
-                setMatchingFilter(
-                  event.target
-                    .value as PersonalFinanceMatchingFilter
-                );
-              }}
-            >
-              {MATCHING_FILTER_OPTIONS.map(
-                ([value, label]) => (
-                  <option
-                    key={value}
-                    value={value}
-                  >
-                    {label}
-                  </option>
-                )
-              )}
-            </select>
-          </label>
-
-          <span className={styles.countBadge}>
-            {filteredTransactions.length}
-          </span>
+                {advancedFilterCount}
+              </strong>
+            ) : null}
+          </button>
         </div>
       </header>
 
+      {filtersOpen ? (
+        <div className={styles.inboxFilterPanel}>
+          <div
+            className={
+              styles.inboxFilterPanelSummary
+            }
+          >
+            <div>
+              <strong>
+                Refine this view
+              </strong>
+
+              <span>
+                {activeFilterLabels.length > 0
+                  ? activeFilterLabels.join(
+                      " · "
+                    )
+                  : "All transactions"}
+              </span>
+            </div>
+
+            <span>
+              {reviewedTransactionCount} reviewed
+              {" · "}
+              {notReviewedTransactionCount} pending
+            </span>
+          </div>
+
+          <div
+            className={
+              styles.inboxFilterPanelControls
+            }
+          >
+            <label
+              className={
+                styles.inboxAdvancedFilter
+              }
+            >
+              <span>Classification</span>
+
+              <select
+                aria-label="Filter by transaction classification"
+                value={classificationFilter}
+                onChange={(event) => {
+                  setClassificationFilter(
+                    event.target
+                      .value as PersonalFinanceClassificationFilter
+                  );
+
+                  setExpandedTransactionId(
+                    null
+                  );
+                }}
+              >
+                {PERSONAL_FINANCE_CLASSIFICATION_FILTER_OPTIONS.map(
+                  ([value, label]) => (
+                    <option
+                      key={value}
+                      value={value}
+                    >
+                      {label}
+                    </option>
+                  )
+                )}
+              </select>
+            </label>
+
+            <label
+              className={
+                styles.inboxAdvancedFilter
+              }
+            >
+              <span>Reviewed</span>
+
+              <select
+                aria-label="Filter by reviewed state"
+                value={reviewedFilter}
+                onChange={(event) => {
+                  setReviewedFilter(
+                    event.target
+                      .value as PersonalFinanceReviewedFilter
+                  );
+
+                  setExpandedTransactionId(
+                    null
+                  );
+                }}
+              >
+                {PERSONAL_FINANCE_REVIEWED_FILTER_OPTIONS.map(
+                  ([value, label]) => (
+                    <option
+                      key={value}
+                      value={value}
+                    >
+                      {label}
+                    </option>
+                  )
+                )}
+              </select>
+            </label>
+
+            <label
+              className={
+                styles.inboxAdvancedFilter
+              }
+            >
+              <span>Task</span>
+
+              <select
+                aria-label="Filter by required transaction task"
+                value={taskFilter}
+                onChange={(event) => {
+                  setTaskFilter(
+                    event.target
+                      .value as PersonalFinanceTaskFilter
+                  );
+
+                  setExpandedTransactionId(
+                    null
+                  );
+                }}
+              >
+                {TASK_FILTER_OPTIONS.map(
+                  ([value, label]) => (
+                    <option
+                      key={value}
+                      value={value}
+                    >
+                      {label}
+                    </option>
+                  )
+                )}
+              </select>
+            </label>
+
+            <button
+              className={
+                styles.inboxFilterReset
+              }
+              disabled={!hasActiveFilters}
+              type="button"
+              onClick={resetFilters}
+            >
+              Clear filters
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       {filteredTransactions.length > 0 ? (
-        <div className={styles.tableWrap}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Account</th>
-                <th>Amount</th>
-                <th>
-                  <span className={styles.editableColumnHeading}>
-                    Classification
-                  </span>
+        <div
+          className={
+            styles.inboxTransactionList
+          }
+        >
+          {filteredTransactions.map(
+            (transaction) => {
+              const expanded =
+                expandedTransactionId ===
+                transaction.id;
 
-                  <span className={styles.editableColumnSubheading}>
-                    Auto-saves
-                  </span>
-                </th>
-                <th>
-                  <span className={styles.editableColumnHeading}>
-                    Reviewed
-                  </span>
+              const attention =
+                needsAttention(transaction);
 
-                  <span className={styles.reviewedColumnSubheading}>
-                    Separate state
-                  </span>
-                </th>
-                <th>
-                  <span className={styles.editableColumnHeading}>
-                    Reconciliation
-                  </span>
+              const reviewed =
+                transaction.reviewedAt !== null;
 
-                  <span className={styles.reviewedColumnSubheading}>
-                    Budget link
-                  </span>
-                </th>
-              </tr>
-            </thead>
+              const classificationLabel =
+                getPersonalFinanceClassificationFilterLabel(
+                  transaction.classification
+                );
 
-            <tbody>
-              {filteredTransactions.map(
-                (transaction) => (
-                  <tr
-                    key={`inbox-${transaction.id}`}
+              const workflowLabel =
+                transaction.reviewStatus ===
+                "reconciled"
+                  ? "Reconciled"
+                  : attention
+                    ? "Needs attention"
+                    : "Unreconciled";
+
+              return (
+                <article
+                  className={`${styles.inboxTransactionRow} ${
+                    expanded
+                      ? styles.inboxTransactionRowExpanded
+                      : ""
+                  }`}
+                  key={transaction.id}
+                >
+                  <button
+                    aria-expanded={expanded}
+                    aria-label={`${
+                      expanded
+                        ? "Close"
+                        : "Open"
+                    } ${transaction.displayDescription}`}
+                    className={
+                      styles.inboxTransactionSummary
+                    }
+                    type="button"
+                    onClick={() => {
+                      setExpandedTransactionId(
+                        expanded
+                          ? null
+                          : transaction.id
+                      );
+                    }}
                   >
-                    <td>
-                      {transaction.postedDate}
-                    </td>
-
-                    <td>
-                      <span className={styles.tableName}>
-                        {transaction.displayDescription}
-                      </span>
-
-                      <br />
-
-                      <span className={styles.tableMuted}>
-                        {transaction.sourceFile}
-                      </span>
-                    </td>
-
-                    <td>
-                      {transaction.accountName}
-                    </td>
-
-                    <td
+                    <span
                       className={
+                        styles.inboxTransactionDate
+                      }
+                    >
+                      <strong>
+                        {transaction.postedDate}
+                      </strong>
+
+                      <small>
+                        {transaction.sourceFile}
+                      </small>
+                    </span>
+
+                    <span
+                      className={
+                        styles.inboxTransactionIdentity
+                      }
+                    >
+                      <strong
+                        className={
+                          styles.inboxTransactionDescription
+                        }
+                        title={
+                          transaction.displayDescription
+                        }
+                      >
+                        {
+                          transaction.displayDescription
+                        }
+                      </strong>
+
+                      <small
+                        className={
+                          styles.inboxTransactionAccount
+                        }
+                      >
+                        {transaction.accountName}
+                        {" · "}
+                        {transaction.institution}
+                      </small>
+                    </span>
+
+                    <strong
+                      className={`${styles.inboxTransactionAmount} ${
                         transaction.direction ===
                         "inflow"
                           ? styles.positive
                           : styles.negative
-                      }
+                      }`}
                     >
                       {transaction.direction ===
                       "inflow"
@@ -732,80 +801,182 @@ export function PersonalFinanceTransactionInbox({
                           transaction.amountCents
                         ) / 100
                       )}
-                    </td>
+                    </strong>
 
-                    <td>
-                      <PersonalFinanceTransactionClassificationSelect
-                        transactionId={
-                          transaction.id
-                        }
-                        classification={
-                          transaction.classification
-                        }
-                      />
-                    </td>
+                    <span
+                      className={
+                        styles.inboxTransactionStatus
+                      }
+                    >
+                      <span
+                        className={`${styles.inboxStatusChip} ${
+                          transaction.classification ===
+                          "unknown"
+                            ? styles.inboxStatusChipAttention
+                            : ""
+                        }`}
+                      >
+                        {classificationLabel}
+                      </span>
 
-                    <td>
-                      <PersonalFinanceTransactionReviewedControl
-                        transactionId={
-                          transaction.id
-                        }
-                        reviewedAt={
-                          transaction.reviewedAt
-                        }
-                      />
-                    </td>
+                      <span
+                        className={`${styles.inboxStatusChip} ${
+                          reviewed
+                            ? styles.inboxStatusChipComplete
+                            : styles.inboxStatusChipPending
+                        }`}
+                      >
+                        {reviewed
+                          ? "Reviewed"
+                          : "Not reviewed"}
+                      </span>
 
-                    <td>
-                      <AllocationDetails
-                        transaction={transaction}
-                      />
+                      <span
+                        className={`${styles.inboxStatusChip} ${
+                          transaction.reviewStatus ===
+                          "reconciled"
+                            ? styles.inboxStatusChipComplete
+                            : attention
+                              ? styles.inboxStatusChipAttention
+                              : styles.inboxStatusChipPending
+                        }`}
+                      >
+                        {workflowLabel}
+                      </span>
+                    </span>
 
-                      <TransferPairDetails
-                        transaction={transaction}
-                      />
+                    <span
+                      aria-hidden="true"
+                      className={
+                        styles.inboxTransactionChevron
+                      }
+                    >
+                      {expanded ? "⌃" : "⌄"}
+                    </span>
+                  </button>
 
-                      <PersonalFinanceTransactionReconciliationControl
-                        transactionId={
-                          transaction.id
+                  {expanded ? (
+                    <div
+                      className={
+                        styles.inboxTransactionWorkbench
+                      }
+                    >
+                      <div
+                        className={
+                          styles.inboxWorkbenchGroup
                         }
-                        classification={
-                          transaction.classification
+                      >
+                        <span
+                          className={
+                            styles.inboxWorkbenchLabel
+                          }
+                        >
+                          Classification
+                        </span>
+
+                        <PersonalFinanceTransactionClassificationSelect
+                          classification={
+                            transaction.classification
+                          }
+                          transactionId={
+                            transaction.id
+                          }
+                        />
+                      </div>
+
+                      <div
+                        className={
+                          styles.inboxWorkbenchGroup
                         }
-                        reviewStatus={
-                          transaction.reviewStatus
-                        }
-                        amountCents={
-                          transaction.amountCents
-                        }
-                      />
-                    </td>
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
+                      >
+                        <span
+                          className={
+                            styles.inboxWorkbenchLabel
+                          }
+                        >
+                          Review
+                        </span>
+
+                        <PersonalFinanceTransactionReviewedControl
+                          reviewedAt={
+                            transaction.reviewedAt
+                          }
+                          transactionId={
+                            transaction.id
+                          }
+                        />
+                      </div>
+
+                      <div
+                        className={`${styles.inboxWorkbenchGroup} ${styles.inboxWorkbenchGroupWide}`}
+                      >
+                        <span
+                          className={
+                            styles.inboxWorkbenchLabel
+                          }
+                        >
+                          Reconciliation
+                        </span>
+
+                        <div
+                          className={
+                            styles.inboxWorkbenchDetails
+                          }
+                        >
+                          <AllocationDetails
+                            transaction={
+                              transaction
+                            }
+                          />
+
+                          <TransferPairDetails
+                            transaction={
+                              transaction
+                            }
+                          />
+
+                          <PersonalFinanceTransactionReconciliationControl
+                            amountCents={
+                              transaction.amountCents
+                            }
+                            classification={
+                              transaction.classification
+                            }
+                            reviewStatus={
+                              transaction.reviewStatus
+                            }
+                            transactionId={
+                              transaction.id
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+                </article>
+              );
+            }
+          )}
         </div>
       ) : transactions.length > 0 ? (
-        <div className={styles.inboxFilterEmpty}>
-          No loaded transactions match
-          {" "}
+        <div className={styles.inboxModernEmpty}>
           <strong>
-            Classification: {classificationFilterLabel}
+            No transactions match this view
           </strong>
-          {", "}
-          <strong>
-            Reviewed: {reviewedFilterLabel}
-          </strong>
-          {", "}
-          <strong>
-            Reconciliation: {reconciliationViewLabel}
-          </strong>
-          {", and "}
-          <strong>
-            Matching: {matchingViewLabel}
-          </strong>
-          .
+
+          <span>
+            Adjust the focus or clear the active
+            filters.
+          </span>
+
+          {hasActiveFilters ? (
+            <button
+              type="button"
+              onClick={resetFilters}
+            >
+              Show all transactions
+            </button>
+          ) : null}
         </div>
       ) : (
         <div className={styles.emptyList}>
