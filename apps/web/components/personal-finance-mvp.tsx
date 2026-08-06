@@ -194,8 +194,7 @@ function PersonalFinanceFrame({
 }) {
   const navigation = [
     ["Overview", "#overview"],
-    ["Activity", "#activity"],
-    ["Inbox", "#transaction-inbox"],
+    ["Transactions", "#transaction-inbox"],
     ["Bills", "#bills"],
     ["Income", "#income"],
     ["Accounts", "#accounts"],
@@ -290,8 +289,6 @@ export function PersonalFinanceMvp({
   unavailableReason,
   transactions = [],
   transactionTotal = 0,
-  transactionAccountCount = 0,
-  unclassifiedTransactionCount = 0,
   reviewedTransactionCount = 0,
   notReviewedTransactionCount = 0,
   transactionReason = null
@@ -807,127 +804,6 @@ export function PersonalFinanceMvp({
           )}
         </section>
       </div>
-
-      <section
-        className={`${styles.panel} ${styles.activity} ${styles.sectionAnchor}`}
-        id="activity"
-      >
-        <header className={styles.panelHeader}>
-          <div className={styles.panelHeaderCopy}>
-            <h2 className={styles.panelTitle}>
-              Recent activity
-            </h2>
-
-            <p className={styles.panelDescription}>
-              {transactions.length > 0
-                ? `${transactionTotal} unreviewed ${
-                    transactionTotal === 1
-                      ? "transaction"
-                      : "transactions"
-                  } from ${transactionAccountCount} local ${
-                    transactionAccountCount === 1
-                      ? "account"
-                      : "accounts"
-                  }. ${unclassifiedTransactionCount} still ${
-                    unclassifiedTransactionCount === 1
-                      ? "needs"
-                      : "need"
-                  } classification.`
-                : "Imported bank and card transactions will appear here after they are stored in the private database."}
-            </p>
-          </div>
-
-          <span className={styles.countBadge}>
-            {transactionTotal}
-          </span>
-        </header>
-
-        {transactions.length > 0 ? (
-          <div className={styles.cashFlowList}>
-            {transactions.slice(0, 12).map((transaction) => (
-              <div
-                className={styles.cashFlowRow}
-                key={transaction.id}
-              >
-                <span className={styles.cashFlowDate}>
-                  {transaction.postedDate}
-                </span>
-
-                <span
-                  className={`${styles.cashFlowMarker} ${
-                    transaction.direction === "inflow"
-                      ? styles.cashFlowIncome
-                      : styles.cashFlowBill
-                  }`}
-                />
-
-                <span className={styles.cashFlowCopy}>
-                  <span className={styles.cashFlowTitle}>
-                    {transaction.displayDescription}
-                  </span>
-
-                  <span className={styles.cashFlowDetail}>
-                    {transaction.accountName || "Unlabeled account"}
-                    {" - "}
-                    {transaction.sourceFile}
-                  </span>
-                </span>
-
-                <span
-                  className={`${styles.cashFlowAmount} ${
-                    transaction.direction === "inflow"
-                      ? styles.positive
-                      : styles.negative
-                  }`}
-                >
-                  {transaction.direction === "inflow" ? "+" : "-"}
-                  {money(
-                    Math.abs(transaction.amountCents) / 100
-                  )}
-                </span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className={styles.activityEmpty}>
-            <div className={styles.activityIcon}>+</div>
-
-            <div>
-              <h3 className={styles.activityTitle}>
-                No transactions imported yet
-              </h3>
-
-              <p className={styles.activityText}>
-                {transactionReason ??
-                  "Import bank or card CSV exports into the private Personal Finance database, then reload this page."}
-              </p>
-
-              <div className={styles.activitySteps}>
-                <span className={styles.activityStep}>
-                  <span className={styles.activityStepNumber}>
-                    1
-                  </span>
-                  Import CSV files
-                </span>
-
-                <span className={styles.activityStep}>
-                  <span className={styles.activityStepNumber}>
-                    2
-                  </span>
-                  Reload the page
-                </span>
-
-                <span className={styles.activityStep}>
-                  <span className={styles.activityStepNumber}>
-                    3
-                  </span>
-                  Review activity
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
 
       <PersonalFinanceTransactionInbox
         transactions={transactions}
