@@ -6599,3 +6599,258 @@
     max-width: none;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Personal Finance hash navigation and comfortable transaction scale v1      */
+/* -------------------------------------------------------------------------- */
+
+.navLinkActive,
+.app .navLinkActive {
+  border-color:
+    rgba(226, 183, 104, 0.34);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(184, 138, 68, 0.34),
+      rgba(184, 138, 68, 0.13)
+    );
+  color: #ffffff;
+  box-shadow:
+    inset 4px 0 0 #e2b768,
+    0 9px 22px rgba(0, 0, 0, 0.18);
+}
+
+.navLinkActive .navLabel {
+  font-weight: 850;
+}
+
+.navLinkActive .navDot {
+  width: 8px;
+  height: 8px;
+  background: #f0c779;
+  box-shadow:
+    0 0 0 5px rgba(240, 199, 121, 0.16);
+}
+
+.inboxModernHeader {
+  padding-top: 20px;
+  padding-bottom: 18px;
+}
+
+.inboxModernHeader h2,
+.inboxModernTitle {
+  font-size: 22px;
+  letter-spacing: -0.025em;
+}
+
+.inboxModernHeader p,
+.inboxModernDescription {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.inboxFocusButton,
+.inboxFilterTrigger {
+  min-height: 42px;
+  font-size: 13px;
+}
+
+.inboxFocusButton span,
+.inboxFilterTrigger span {
+  font-size: 11px;
+}
+
+.inboxTransactionSummary {
+  min-height: 88px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.inboxTransactionDate strong {
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.inboxTransactionDate small {
+  margin-top: 3px;
+  font-size: 10.5px;
+  line-height: 1.35;
+}
+
+.inboxTransactionDescription {
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.inboxTransactionAccount {
+  margin-top: 4px;
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+
+.inboxTransactionAmount {
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.inboxStatusChip {
+  min-height: 28px;
+  padding: 5px 9px;
+  font-size: 10px;
+}
+
+.inboxReviewedMark {
+  width: 28px;
+  height: 28px;
+  font-size: 11px;
+}
+
+.inboxWorkbenchHeader {
+  padding-top: 18px;
+  padding-bottom: 17px;
+}
+
+.inboxWorkbenchHeading > span {
+  font-size: 10px;
+}
+
+.inboxWorkbenchHeading > strong {
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.inboxWorkbenchHeading > small {
+  margin-top: 2px;
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.inboxWorkbenchState {
+  min-height: 31px;
+  padding: 6px 10px;
+  font-size: 10px;
+}
+
+.inboxWorkflowStep {
+  min-height: 58px;
+  padding: 10px 11px;
+}
+
+.inboxWorkflowStep > i {
+  width: 31px;
+  height: 31px;
+  font-size: 11px;
+}
+
+.inboxWorkflowStep strong {
+  font-size: 11.5px;
+}
+
+.inboxWorkflowStep small {
+  font-size: 10px;
+}
+
+.inboxWorkbenchSectionHeader strong,
+.inboxWorkbenchResolutionHeader strong {
+  font-size: 12.5px;
+}
+
+.inboxWorkbenchSectionHeader small,
+.inboxWorkbenchResolutionHeader small {
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+
+.inboxWorkbenchSectionNumber {
+  width: 31px;
+  height: 31px;
+  font-size: 10px;
+}
+
+.inboxWorkbenchSectionComplete,
+.inboxWorkbenchSectionPending {
+  min-height: 25px;
+  padding: 4px 8px;
+  font-size: 9px;
+}
+
+.classificationSelect,
+.reviewedToggle,
+.reconciliationPrimaryButton,
+.reconciliationSecondaryButton,
+.reconciliationTextButton,
+.reconciliationHint,
+.reconciliationSelect,
+.reconciliationAmountInput,
+.reconciliationNoteInput {
+  font-size: 13.5px;
+}
+
+.classificationSelect,
+.reviewedToggle,
+.reconciliationPrimaryButton,
+.reconciliationSecondaryButton,
+.reconciliationSelect,
+.reconciliationAmountInput,
+.reconciliationNoteInput {
+  min-height: 42px;
+}
+
+.reconciliationCompactState,
+.reconciliationDetails,
+.transferPairSummary {
+  font-size: 11.5px;
+}
+
+@media (max-width: 760px) {
+  .navLinkActive,
+  .app .navLinkActive {
+    box-shadow:
+      inset 0 -3px 0 #e2b768,
+      0 6px 16px rgba(0, 0, 0, 0.13);
+  }
+
+  .inboxTransactionSummary {
+    min-height: 82px;
+  }
+
+  .inboxTransactionDescription {
+    font-size: 14px;
+  }
+
+  .inboxTransactionAccount {
+    font-size: 11px;
+  }
+
+  .inboxWorkbenchHeading > strong {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 480px) {
+  .inboxModernHeader h2,
+  .inboxModernTitle {
+    font-size: 20px;
+  }
+
+  .inboxFocusButton,
+  .inboxFilterTrigger {
+    font-size: 12px;
+  }
+
+  .inboxTransactionSummary {
+    min-height: 78px;
+  }
+
+  .inboxTransactionDescription {
+    font-size: 13.5px;
+  }
+
+  .inboxTransactionAmount {
+    font-size: 14px;
+  }
+
+  .inboxWorkbenchHeading > small {
+    font-size: 11px;
+  }
+}

@@ -12,6 +12,9 @@ import type {
 import {
   PersonalFinanceTransactionInbox
 } from "./personal-finance-transaction-inbox";
+import {
+  PersonalFinanceSectionNav
+} from "./personal-finance-section-nav";
 import styles from "./personal-finance-mvp.module.css";
 
 type BillStatus =
@@ -242,30 +245,9 @@ function PersonalFinanceFrame({
           </div>
         </div>
 
-        <nav
-          className={styles.nav}
-          aria-label="Personal finance sections"
-        >
-          {navigation.map(
-            ({
-              label,
-              href,
-              className
-            }) => (
-              <a
-                className={`${styles.navLink} ${className}`}
-                href={href}
-                key={href}
-              >
-                <span className={styles.navDot} />
-
-                <span className={styles.navLabel}>
-                  {label}
-                </span>
-              </a>
-            )
-          )}
-        </nav>
+        <PersonalFinanceSectionNav
+          items={navigation}
+        />
 
         <div className={styles.railFooter}>
           <span className={styles.railFooterLabel}>
