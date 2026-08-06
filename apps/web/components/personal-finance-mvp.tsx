@@ -830,8 +830,7 @@ export function PersonalFinanceMvp({
             <p className={styles.panelDescription}>
               {budget.bills.length} entries ·{" "}
               {money(budget.totals.expensesBudgeted)} planned ·{" "}
-              {money(budget.totals.expensesPaid)} recorded
-              as paid.
+              {money(budget.totals.expensesPaid)} paid.
             </p>
           </div>
 
@@ -840,36 +839,97 @@ export function PersonalFinanceMvp({
           </span>
         </header>
 
-        <div className={styles.tableWrap}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Bill</th>
-                <th>Budgeted</th>
-                <th>Paid</th>
-                <th>Remaining</th>
-                <th>Due</th>
-                <th>Method</th>
-                <th>Status</th>
-              </tr>
-            </thead>
+        <div className={styles.planList}>
+          {budget.bills.map((bill) => {
+            const status = billStatus(bill);
 
-            <tbody>
-              {budget.bills.map((bill) => {
-                const status = billStatus(bill);
+            const progressMaximum = Math.max(
+              bill.budgeted,
+              bill.paid,
+              1
+            );
 
-                return (
-                  <tr key={bill.id}>
-                    <td>
-                      <span className={styles.tableName}>
-                        {bill.name}
-                      </span>
-                    </td>
+            const progressValue = Math.min(
+              Math.max(bill.paid, 0),
+              progressMaximum
+            );
 
-                    <td>{money(bill.budgeted)}</td>
-                    <td>{money(bill.paid)}</td>
+            const progressPercent =
+              bill.budgeted > 0
+                ? Math.round(
+                    (
+                      bill.paid /
+                      bill.budgeted
+                    ) * 100
+                  )
+                : null;
 
-                    <td
+            return (
+              <article
+                className={styles.planRow}
+                key={bill.id}
+              >
+                <div className={styles.planIdentity}>
+                  <strong>{bill.name}</strong>
+
+                  <span>
+                    {bill.paymentMethod}
+                    {" · "}
+                    {bill.due.toLowerCase() ===
+                    "not entered"
+                      ? "No due date"
+                      : `Due ${bill.due}`}
+                  </span>
+                </div>
+
+                <div
+                  className={
+                    styles.planProgressWrap
+                  }
+                >
+                  <div
+                    className={
+                      styles.planProgressMeta
+                    }
+                  >
+                    <span>Payment progress</span>
+
+                    <strong>
+                      {progressPercent === null
+                        ? "—"
+                        : `${progressPercent}%`}
+                    </strong>
+                  </div>
+
+                  <progress
+                    className={styles.planProgress}
+                    max={progressMaximum}
+                    value={progressValue}
+                  />
+                </div>
+
+                <div
+                  className={
+                    styles.planAmountGroup
+                  }
+                >
+                  <span>
+                    <small>Planned</small>
+                    <strong>
+                      {money(bill.budgeted)}
+                    </strong>
+                  </span>
+
+                  <span>
+                    <small>Paid</small>
+                    <strong>
+                      {money(bill.paid)}
+                    </strong>
+                  </span>
+
+                  <span>
+                    <small>Remaining</small>
+                    <strong
                       className={
                         bill.remaining > 0
                           ? styles.negative
@@ -877,48 +937,50 @@ export function PersonalFinanceMvp({
                       }
                     >
                       {money(bill.remaining)}
-                    </td>
+                    </strong>
+                  </span>
+                </div>
 
-                    <td>{bill.due}</td>
-                    <td>{bill.paymentMethod}</td>
-
-                    <td>
-                      <span
-                        className={statusClassName(status)}
-                      >
-                        {status}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-
-            <tfoot>
-              <tr className={styles.tableTotal}>
-                <td>Total</td>
-
-                <td>
-                  {money(
-                    budget.totals.expensesBudgeted
-                  )}
-                </td>
-
-                <td>
-                  {money(budget.totals.expensesPaid)}
-                </td>
-
-                <td>
-                  {money(budget.totals.billsRemaining)}
-                </td>
-
-                <td />
-                <td />
-                <td />
-              </tr>
-            </tfoot>
-          </table>
+                <span
+                  className={
+                    statusClassName(status)
+                  }
+                >
+                  {status}
+                </span>
+              </article>
+            );
+          })}
         </div>
+
+        <footer className={styles.planTotals}>
+          <div>
+            <span>Planned</span>
+            <strong>
+              {money(
+                budget.totals.expensesBudgeted
+              )}
+            </strong>
+          </div>
+
+          <div>
+            <span>Paid</span>
+            <strong>
+              {money(
+                budget.totals.expensesPaid
+              )}
+            </strong>
+          </div>
+
+          <div>
+            <span>Remaining</span>
+            <strong className={styles.negative}>
+              {money(
+                budget.totals.billsRemaining
+              )}
+            </strong>
+          </div>
+        </footer>
       </section>
 
       <section
@@ -932,8 +994,8 @@ export function PersonalFinanceMvp({
             </h2>
 
             <p className={styles.panelDescription}>
-              Expected deposits and the amount currently
-              recorded as received.
+              Expected deposits and what has already
+              arrived this month.
             </p>
           </div>
 
@@ -942,83 +1004,155 @@ export function PersonalFinanceMvp({
           </span>
         </header>
 
-        <div className={styles.tableWrap}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Expected</th>
-                <th>Received</th>
-                <th>Remaining</th>
-                <th>Status</th>
-              </tr>
-            </thead>
+        <div className={styles.planList}>
+          {budget.income.map((income) => {
+            const remaining = Math.max(
+              income.expected -
+                income.received,
+              0
+            );
 
-            <tbody>
-              {budget.income.map((income) => {
-                const remaining = Math.max(
-                  income.expected - income.received,
-                  0
-                );
+            const received =
+              remaining === 0;
 
-                const received = remaining === 0;
+            const progressMaximum = Math.max(
+              income.expected,
+              income.received,
+              1
+            );
 
-                return (
-                  <tr key={income.id}>
-                    <td>
-                      <span className={styles.tableName}>
-                        {income.date}
-                      </span>
-                    </td>
+            const progressValue = Math.min(
+              Math.max(
+                income.received,
+                0
+              ),
+              progressMaximum
+            );
 
-                    <td>{money(income.expected)}</td>
-                    <td>{money(income.received)}</td>
+            const progressPercent =
+              income.expected > 0
+                ? Math.round(
+                    (
+                      income.received /
+                      income.expected
+                    ) * 100
+                  )
+                : null;
 
-                    <td
+            return (
+              <article
+                className={styles.planRow}
+                key={income.id}
+              >
+                <div className={styles.planIdentity}>
+                  <strong>{income.date}</strong>
+
+                  <span>
+                    Expected household income
+                  </span>
+                </div>
+
+                <div
+                  className={
+                    styles.planProgressWrap
+                  }
+                >
+                  <div
+                    className={
+                      styles.planProgressMeta
+                    }
+                  >
+                    <span>Deposit progress</span>
+
+                    <strong>
+                      {progressPercent === null
+                        ? "—"
+                        : `${progressPercent}%`}
+                    </strong>
+                  </div>
+
+                  <progress
+                    className={`${styles.planProgress} ${styles.planProgressIncome}`}
+                    max={progressMaximum}
+                    value={progressValue}
+                  />
+                </div>
+
+                <div
+                  className={
+                    styles.planAmountGroup
+                  }
+                >
+                  <span>
+                    <small>Expected</small>
+                    <strong>
+                      {money(income.expected)}
+                    </strong>
+                  </span>
+
+                  <span>
+                    <small>Received</small>
+                    <strong
                       className={
-                        remaining > 0
-                          ? styles.positive
-                          : styles.neutral
+                        styles.positive
                       }
                     >
+                      {money(income.received)}
+                    </strong>
+                  </span>
+
+                  <span>
+                    <small>Remaining</small>
+                    <strong>
                       {money(remaining)}
-                    </td>
+                    </strong>
+                  </span>
+                </div>
 
-                    <td>
-                      <span
-                        className={statusClassName(
-                          received ? "Paid" : "Unpaid"
-                        )}
-                      >
-                        {received ? "Received" : "Pending"}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-
-            <tfoot>
-              <tr className={styles.tableTotal}>
-                <td>Total</td>
-
-                <td>
-                  {money(budget.totals.incomeExpected)}
-                </td>
-
-                <td>
-                  {money(budget.totals.incomeReceived)}
-                </td>
-
-                <td>
-                  {money(budget.totals.incomeRemaining)}
-                </td>
-
-                <td />
-              </tr>
-            </tfoot>
-          </table>
+                <span
+                  className={statusClassName(
+                    received
+                      ? "Paid"
+                      : "Unpaid"
+                  )}
+                >
+                  {received
+                    ? "Received"
+                    : "Pending"}
+                </span>
+              </article>
+            );
+          })}
         </div>
+
+        <footer className={styles.planTotals}>
+          <div>
+            <span>Expected</span>
+            <strong>
+              {money(
+                budget.totals.incomeExpected
+              )}
+            </strong>
+          </div>
+
+          <div>
+            <span>Received</span>
+            <strong className={styles.positive}>
+              {money(
+                budget.totals.incomeReceived
+              )}
+            </strong>
+          </div>
+
+          <div>
+            <span>Pending</span>
+            <strong>
+              {money(
+                budget.totals.incomeRemaining
+              )}
+            </strong>
+          </div>
+        </footer>
       </section>
 
       <section

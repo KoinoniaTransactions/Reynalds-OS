@@ -85,6 +85,76 @@ function money(value: number): string {
   }).format(value);
 }
 
+
+function friendlyTransactionDescription(
+  value: string
+): string {
+  const normalized = value
+    .trim()
+    .replace(/\s+/g, " ");
+
+  const noisePatterns = [
+    /^POS Debit-Debit Card \d+ \d{2}-\d{2}-\d{2}\s+/i,
+    /^POS Debit Card \d+ \d{2}-\d{2}-\d{2}\s+/i,
+    /^Debit Card Purchase \d+ \d{2}-\d{2}-\d{2}\s+/i,
+    /^Card Purchase \d+ \d{2}-\d{2}-\d{2}\s+/i
+  ];
+
+  for (const pattern of noisePatterns) {
+    const cleaned = normalized
+      .replace(pattern, "")
+      .trim();
+
+    if (cleaned !== normalized) {
+      return cleaned || normalized;
+    }
+  }
+
+  return normalized;
+}
+
+function transactionSourceLabel(
+  transaction: PersonalFinanceInboxTransaction
+): string {
+  const paymentChannel =
+    transaction.paymentChannel?.trim();
+
+  return (
+    paymentChannel ||
+    transaction.accountType
+  ).replaceAll("_", " ");
+}
+
+function transactionActionLabel(
+  transaction: PersonalFinanceInboxTransaction
+): string {
+  if (
+    transaction.reviewStatus === "reconciled"
+  ) {
+    return "Reconciled";
+  }
+
+  if (
+    transaction.classification === "unknown"
+  ) {
+    return "Classify";
+  }
+
+  if (isUnpairedTransfer(transaction)) {
+    return "Pair transfer";
+  }
+
+  if (needsBudgetTarget(transaction)) {
+    return "Choose target";
+  }
+
+  if (transaction.reviewedAt === null) {
+    return "Review";
+  }
+
+  return "Ready";
+}
+
 function needsBudgetTarget(
   transaction: PersonalFinanceInboxTransaction
 ): boolean {
@@ -292,7 +362,7 @@ export function PersonalFinanceTransactionInbox({
     focusFilter,
     setFocusFilter
   ] = useState<PersonalFinanceFocusFilter>(
-    "unreconciled"
+    "needs-attention"
   );
 
   const [
@@ -705,13 +775,15 @@ export function PersonalFinanceTransactionInbox({
                   transaction.classification
                 );
 
-              const workflowLabel =
-                transaction.reviewStatus ===
-                "reconciled"
-                  ? "Reconciled"
-                  : attention
-                    ? "Needs attention"
-                    : "Unreconciled";
+              const actionLabel =
+                transactionActionLabel(
+                  transaction
+                );
+
+              const displayDescription =
+                friendlyTransactionDescription(
+                  transaction.displayDescription
+                );
 
               return (
                 <article
@@ -728,7 +800,7 @@ export function PersonalFinanceTransactionInbox({
                       expanded
                         ? "Close"
                         : "Open"
-                    } ${transaction.displayDescription}`}
+                    } ${displayDescription}`}
                     className={
                       styles.inboxTransactionSummary
                     }
@@ -751,7 +823,9 @@ export function PersonalFinanceTransactionInbox({
                       </strong>
 
                       <small>
-                        {transaction.sourceFile}
+                        {transactionSourceLabel(
+                          transaction
+                        )}
                       </small>
                     </span>
 
@@ -768,9 +842,7 @@ export function PersonalFinanceTransactionInbox({
                           transaction.displayDescription
                         }
                       >
-                        {
-                          transaction.displayDescription
-                        }
+                        {displayDescription}
                       </strong>
 
                       <small
@@ -821,18 +893,6 @@ export function PersonalFinanceTransactionInbox({
 
                       <span
                         className={`${styles.inboxStatusChip} ${
-                          reviewed
-                            ? styles.inboxStatusChipComplete
-                            : styles.inboxStatusChipPending
-                        }`}
-                      >
-                        {reviewed
-                          ? "Reviewed"
-                          : "Not reviewed"}
-                      </span>
-
-                      <span
-                        className={`${styles.inboxStatusChip} ${
                           transaction.reviewStatus ===
                           "reconciled"
                             ? styles.inboxStatusChipComplete
@@ -841,8 +901,20 @@ export function PersonalFinanceTransactionInbox({
                               : styles.inboxStatusChipPending
                         }`}
                       >
-                        {workflowLabel}
+                        {actionLabel}
                       </span>
+
+                      {reviewed ? (
+                        <span
+                          aria-label="Reviewed"
+                          className={
+                            styles.inboxReviewedMark
+                          }
+                          title="Reviewed"
+                        >
+                          ✓
+                        </span>
+                      ) : null}
                     </span>
 
                     <span

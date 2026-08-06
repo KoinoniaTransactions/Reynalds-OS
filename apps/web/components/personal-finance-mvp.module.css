@@ -3151,3 +3151,306 @@
     grid-column: auto;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Personal Finance planning rows v1                                          */
+/* -------------------------------------------------------------------------- */
+
+.inboxTransactionDate small {
+  text-transform: capitalize;
+}
+
+.inboxReviewedMark {
+  display: inline-grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #eaf7ef;
+  color: #19714a;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.planList {
+  display: grid;
+  border-top:
+    1px solid rgba(148, 163, 184, 0.14);
+}
+
+.planRow {
+  display: grid;
+  grid-template-columns:
+    minmax(160px, 0.9fr)
+    minmax(150px, 0.75fr)
+    minmax(260px, 1.25fr)
+    auto;
+  gap: 18px;
+  align-items: center;
+  min-height: 78px;
+  padding: 14px 22px;
+  border-bottom:
+    1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(255, 255, 255, 0.72);
+  transition:
+    background 150ms ease,
+    padding 150ms ease;
+}
+
+.planRow:last-child {
+  border-bottom: 0;
+}
+
+.planRow:hover {
+  padding-left: 25px;
+  background: rgba(248, 250, 252, 0.84);
+}
+
+.planIdentity {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.planIdentity strong {
+  overflow: hidden;
+  color: #293548;
+  font-size: 12px;
+  font-weight: 780;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.planIdentity span {
+  overflow: hidden;
+  color: #7a8494;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.planProgressWrap {
+  display: grid;
+  gap: 7px;
+}
+
+.planProgressMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.planProgressMeta span {
+  color: #8a94a3;
+  font-size: 8px;
+  font-weight: 760;
+}
+
+.planProgressMeta strong {
+  color: #596579;
+  font-size: 8px;
+  font-weight: 820;
+}
+
+.planProgress {
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: #e8ebef;
+  appearance: none;
+}
+
+.planProgress::-webkit-progress-bar {
+  border-radius: 999px;
+  background: #e8ebef;
+}
+
+.planProgress::-webkit-progress-value {
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      90deg,
+      #b88a44,
+      #d5ad6b
+    );
+}
+
+.planProgress::-moz-progress-bar {
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      90deg,
+      #b88a44,
+      #d5ad6b
+    );
+}
+
+.planProgressIncome::-webkit-progress-value {
+  background:
+    linear-gradient(
+      90deg,
+      #19714a,
+      #3ba36f
+    );
+}
+
+.planProgressIncome::-moz-progress-bar {
+  background:
+    linear-gradient(
+      90deg,
+      #19714a,
+      #3ba36f
+    );
+}
+
+.planAmountGroup {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(72px, 1fr));
+  gap: 10px;
+}
+
+.planAmountGroup > span {
+  display: grid;
+  gap: 3px;
+}
+
+.planAmountGroup small {
+  color: #8a94a3;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.planAmountGroup strong {
+  color: #344054;
+  font-size: 10px;
+  font-weight: 780;
+  white-space: nowrap;
+}
+
+.planAmountGroup strong.positive {
+  color: var(--pf-positive);
+}
+
+.planAmountGroup strong.negative {
+  color: var(--pf-critical);
+}
+
+.planTotals {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 28px;
+  padding: 14px 22px;
+  border-top:
+    1px solid rgba(148, 163, 184, 0.14);
+  background: #f8fafc;
+}
+
+.planTotals > div {
+  display: grid;
+  gap: 3px;
+  text-align: right;
+}
+
+.planTotals span {
+  color: #8a94a3;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.planTotals strong {
+  color: #344054;
+  font-size: 11px;
+  font-weight: 820;
+}
+
+.planTotals strong.positive {
+  color: var(--pf-positive);
+}
+
+.planTotals strong.negative {
+  color: var(--pf-critical);
+}
+
+@media (max-width: 1050px) {
+  .planRow {
+    grid-template-columns:
+      minmax(160px, 1fr)
+      minmax(230px, 1.3fr)
+      auto;
+  }
+
+  .planProgressWrap {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 760px) {
+  .planRow {
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+    gap: 11px;
+    padding: 14px;
+  }
+
+  .planRow:hover {
+    padding-left: 14px;
+  }
+
+  .planIdentity {
+    grid-column: 1;
+  }
+
+  .planRow > .status {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .planProgressWrap,
+  .planAmountGroup {
+    grid-column: 1 / -1;
+  }
+
+  .planProgressWrap {
+    grid-row: auto;
+  }
+
+  .planAmountGroup {
+    padding-top: 3px;
+  }
+
+  .planTotals {
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .planAmountGroup {
+    grid-template-columns: 1fr;
+  }
+
+  .planAmountGroup > span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .planTotals {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+}
