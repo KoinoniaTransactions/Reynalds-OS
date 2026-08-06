@@ -15,6 +15,9 @@ import {
 import {
   PersonalFinanceSectionNav
 } from "./personal-finance-section-nav";
+import {
+  PersonalFinanceObligationWorkspace
+} from "./personal-finance-obligation-workspace";
 import styles from "./personal-finance-mvp.module.css";
 
 type BillStatus =
@@ -969,171 +972,14 @@ export function PersonalFinanceMvp({
         transactionReason={transactionReason}
       />
 
-      <section
-        className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
-        id="bills"
-      >
-        <header className={styles.panelHeader}>
-          <div className={styles.panelHeaderCopy}>
-            <h2 className={styles.panelTitle}>
-              Bills and obligations
-            </h2>
-
-            <p className={styles.panelDescription}>
-              {budget.bills.length} entries ·{" "}
-              {money(budget.totals.expensesBudgeted)} planned ·{" "}
-              {money(budget.totals.expensesPaid)} paid.
-            </p>
-          </div>
-
-          <span className={styles.countBadge}>
-            {budget.bills.length}
-          </span>
-        </header>
-
-        <div className={styles.planList}>
-          {budget.bills.map((bill) => {
-            const status = billStatus(bill);
-
-            const progressMaximum = Math.max(
-              bill.budgeted,
-              bill.paid,
-              1
-            );
-
-            const progressValue = Math.min(
-              Math.max(bill.paid, 0),
-              progressMaximum
-            );
-
-            const progressPercent =
-              bill.budgeted > 0
-                ? Math.round(
-                    (
-                      bill.paid /
-                      bill.budgeted
-                    ) * 100
-                  )
-                : null;
-
-            return (
-              <article
-                className={styles.planRow}
-                key={bill.id}
-              >
-                <div className={styles.planIdentity}>
-                  <strong>{bill.name}</strong>
-
-                  <span>
-                    {bill.paymentMethod}
-                    {" · "}
-                    {bill.due.toLowerCase() ===
-                    "not entered"
-                      ? "No due date"
-                      : `Due ${bill.due}`}
-                  </span>
-                </div>
-
-                <div
-                  className={
-                    styles.planProgressWrap
-                  }
-                >
-                  <div
-                    className={
-                      styles.planProgressMeta
-                    }
-                  >
-                    <span>Payment progress</span>
-
-                    <strong>
-                      {progressPercent === null
-                        ? "—"
-                        : `${progressPercent}%`}
-                    </strong>
-                  </div>
-
-                  <progress
-                    className={styles.planProgress}
-                    max={progressMaximum}
-                    value={progressValue}
-                  />
-                </div>
-
-                <div
-                  className={
-                    styles.planAmountGroup
-                  }
-                >
-                  <span>
-                    <small>Planned</small>
-                    <strong>
-                      {money(bill.budgeted)}
-                    </strong>
-                  </span>
-
-                  <span>
-                    <small>Paid</small>
-                    <strong>
-                      {money(bill.paid)}
-                    </strong>
-                  </span>
-
-                  <span>
-                    <small>Remaining</small>
-                    <strong
-                      className={
-                        bill.remaining > 0
-                          ? styles.negative
-                          : styles.positive
-                      }
-                    >
-                      {money(bill.remaining)}
-                    </strong>
-                  </span>
-                </div>
-
-                <span
-                  className={
-                    statusClassName(status)
-                  }
-                >
-                  {status}
-                </span>
-              </article>
-            );
-          })}
-        </div>
-
-        <footer className={styles.planTotals}>
-          <div>
-            <span>Planned</span>
-            <strong>
-              {money(
-                budget.totals.expensesBudgeted
-              )}
-            </strong>
-          </div>
-
-          <div>
-            <span>Paid</span>
-            <strong>
-              {money(
-                budget.totals.expensesPaid
-              )}
-            </strong>
-          </div>
-
-          <div>
-            <span>Remaining</span>
-            <strong className={styles.negative}>
-              {money(
-                budget.totals.billsRemaining
-              )}
-            </strong>
-          </div>
-        </footer>
-      </section>
+      <PersonalFinanceObligationWorkspace
+        bills={budget.bills}
+        totals={{
+          planned: budget.totals.expensesBudgeted,
+          paid: budget.totals.expensesPaid,
+          remaining: budget.totals.billsRemaining
+        }}
+      />
 
       <section
         className={`${styles.panel} ${styles.sectionPanel} ${styles.sectionAnchor}`}
