@@ -90,6 +90,26 @@ type AssetFormState = {
   valuedOn: string;
   valuationSource: string;
   accountNumber: string;
+
+  hasAttachedLiability: boolean;
+  liabilityName: string;
+  liabilityType: LiabilityType;
+  liabilityInstitution: string;
+  originalBalance: string;
+  currentBalance: string;
+  balanceAsOf: string;
+  interestRate: string;
+  minimumPayment: string;
+  escrowPayment: string;
+  maturityDate: string;
+  liabilityAccountNumber: string;
+
+  createRecurringBill: boolean;
+  billName: string;
+  billDueDay: string;
+  billFrequency: string;
+  billPaymentMethod: string;
+  billIsAutopay: boolean;
 };
 
 type LiabilityFormState = {
@@ -118,7 +138,27 @@ const EMPTY_ASSET: AssetFormState = {
   value: "",
   valuedOn: TODAY,
   valuationSource: "",
-  accountNumber: ""
+  accountNumber: "",
+
+  hasAttachedLiability: false,
+  liabilityName: "",
+  liabilityType: "mortgage",
+  liabilityInstitution: "",
+  originalBalance: "",
+  currentBalance: "",
+  balanceAsOf: TODAY,
+  interestRate: "",
+  minimumPayment: "",
+  escrowPayment: "",
+  maturityDate: "",
+  liabilityAccountNumber: "",
+
+  createRecurringBill: false,
+  billName: "",
+  billDueDay: "",
+  billFrequency: "monthly",
+  billPaymentMethod: "manual",
+  billIsAutopay: false
 };
 
 const EMPTY_LIABILITY: LiabilityFormState = {
@@ -318,7 +358,69 @@ export function PersonalFinanceNetWorthWorkspace() {
             ),
             accountNumber: optionalValue(
               assetForm.accountNumber
-            )
+            ),
+
+            hasAttachedLiability:
+              assetForm.hasAttachedLiability,
+            liabilityName: optionalValue(
+              assetForm.liabilityName
+            ),
+            liabilityType:
+              assetForm.liabilityType,
+            liabilityInstitution:
+              optionalValue(
+                assetForm.liabilityInstitution
+              ),
+            originalBalance:
+              inputPayloadValue(
+                assetForm.originalBalance
+              ),
+            currentBalance:
+              inputPayloadValue(
+                assetForm.currentBalance
+              ),
+            balanceAsOf:
+              optionalValue(
+                assetForm.balanceAsOf
+              ),
+            interestRate:
+              inputPayloadValue(
+                assetForm.interestRate
+              ),
+            minimumPayment:
+              inputPayloadValue(
+                assetForm.minimumPayment
+              ),
+            escrowPayment:
+              inputPayloadValue(
+                assetForm.escrowPayment
+              ),
+            maturityDate:
+              optionalValue(
+                assetForm.maturityDate
+              ),
+            liabilityAccountNumber:
+              optionalValue(
+                assetForm
+                  .liabilityAccountNumber
+              ),
+
+            createRecurringBill:
+              assetForm.createRecurringBill,
+            billName:
+              optionalValue(
+                assetForm.billName
+              ),
+            billDueDay:
+              inputPayloadValue(
+                assetForm.billDueDay
+              ),
+            billFrequency:
+              assetForm.billFrequency,
+            billPaymentMethod:
+              assetForm.billPaymentMethod,
+            billIsAutopay:
+              assetForm.billIsAutopay
           }
         : {
             recordType: "liability",
@@ -574,14 +676,26 @@ export function PersonalFinanceNetWorthWorkspace() {
                   <label>
                     <span>Asset type</span>
                     <select
-                      onChange={(event) =>
-                        setAssetForm((current) => ({
-                          ...current,
-                          assetType:
-                            event.target
-                              .value as AssetType
-                        }))
-                      }
+                      onChange={(event) => {
+                        const assetType =
+                          event.target
+                            .value as AssetType;
+
+                        setAssetForm(
+                          (current) => ({
+                            ...current,
+                            assetType,
+                            liabilityType:
+                              assetType ===
+                              "real_estate"
+                                ? "mortgage"
+                                : assetType ===
+                                    "vehicle"
+                                  ? "auto_loan"
+                                  : "other"
+                          })
+                        );
+                      }}
                       value={assetForm.assetType}
                     >
                       {Object.entries(
@@ -687,6 +801,573 @@ export function PersonalFinanceNetWorthWorkspace() {
                       value={assetForm.accountNumber}
                     />
                   </label>
+
+                  <label
+                    className={
+                      styles.fullWidth
+                    }
+                  >
+                    <span>
+                      Does this asset have
+                      a liability attached?
+                    </span>
+
+                    <select
+                      onChange={(event) =>
+                        setAssetForm(
+                          (current) => ({
+                            ...current,
+                            hasAttachedLiability:
+                              event.target
+                                .value ===
+                              "yes"
+                          })
+                        )
+                      }
+                      value={
+                        assetForm
+                          .hasAttachedLiability
+                          ? "yes"
+                          : "no"
+                      }
+                    >
+                      <option value="no">
+                        No — this asset is
+                        owned free and clear
+                      </option>
+
+                      <option value="yes">
+                        Yes — link a loan or
+                        other liability
+                      </option>
+                    </select>
+                  </label>
+
+                  {assetForm
+                    .hasAttachedLiability ? (
+                    <>
+                      <label>
+                        <span>
+                          Liability name
+                        </span>
+                        <input
+                          onChange={(event) =>
+                            setAssetForm(
+                              (current) => ({
+                                ...current,
+                                liabilityName:
+                                  event.target
+                                    .value
+                              })
+                            )
+                          }
+                          placeholder={
+                            assetForm
+                              .assetType ===
+                            "real_estate"
+                              ? "Primary mortgage"
+                              : assetForm
+                                    .assetType ===
+                                  "vehicle"
+                                ? "Auto loan"
+                                : "Attached liability"
+                          }
+                          value={
+                            assetForm
+                              .liabilityName
+                          }
+                        />
+                      </label>
+
+                      <label>
+                        <span>
+                          Liability type
+                        </span>
+                        <select
+                          onChange={(event) =>
+                            setAssetForm(
+                              (current) => ({
+                                ...current,
+                                liabilityType:
+                                  event.target
+                                    .value as LiabilityType
+                              })
+                            )
+                          }
+                          value={
+                            assetForm
+                              .liabilityType
+                          }
+                        >
+                          {assetForm
+                            .assetType ===
+                          "real_estate" ? (
+                            <>
+                              <option value="mortgage">
+                                Mortgage
+                              </option>
+                              <option value="home_equity">
+                                Home-equity loan
+                              </option>
+                            </>
+                          ) : assetForm
+                              .assetType ===
+                            "vehicle" ? (
+                            <option value="auto_loan">
+                              Auto loan
+                            </option>
+                          ) : (
+                            <option value="other">
+                              Other liability
+                            </option>
+                          )}
+                        </select>
+                      </label>
+
+                      <label>
+                        <span>
+                          Lender or institution
+                        </span>
+                        <input
+                          onChange={(event) =>
+                            setAssetForm(
+                              (current) => ({
+                                ...current,
+                                liabilityInstitution:
+                                  event.target
+                                    .value
+                              })
+                            )
+                          }
+                          placeholder="Lender"
+                          value={
+                            assetForm
+                              .liabilityInstitution
+                          }
+                        />
+                      </label>
+
+                      <label>
+                        <span>
+                          Current balance
+                        </span>
+                        <input
+                          inputMode="decimal"
+                          min="0"
+                          onChange={(event) =>
+                            setAssetForm(
+                              (current) => ({
+                                ...current,
+                                currentBalance:
+                                  event.target
+                                    .value
+                              })
+                            )
+                          }
+                          required
+                          step="0.01"
+                          type="number"
+                          value={
+                            assetForm
+                              .currentBalance
+                          }
+                        />
+                      </label>
+
+                      <label>
+                        <span>
+                          Original balance
+                        </span>
+                        <input
+                          inputMode="decimal"
+                          min="0"
+                          onChange={(event) =>
+                            setAssetForm(
+                              (current) => ({
+                                ...current,
+                                originalBalance:
+                                  event.target
+                                    .value
+                              })
+                            )
+                          }
+                          step="0.01"
+                          type="number"
+                          value={
+                            assetForm
+                              .originalBalance
+                          }
+                        />
+                      </label>
+
+                      <label>
+                        <span>
+                          Balance date
+                        </span>
+                        <input
+                          onChange={(event) =>
+                            setAssetForm(
+                              (current) => ({
+                                ...current,
+                                balanceAsOf:
+                                  event.target
+                                    .value
+                              })
+                            )
+                          }
+                          type="date"
+                          value={
+                            assetForm
+                              .balanceAsOf
+                          }
+                        />
+                      </label>
+
+                      <label>
+                        <span>
+                          Interest rate
+                        </span>
+                        <input
+                          inputMode="decimal"
+                          max="100"
+                          min="0"
+                          onChange={(event) =>
+                            setAssetForm(
+                              (current) => ({
+                                ...current,
+                                interestRate:
+                                  event.target
+                                    .value
+                              })
+                            )
+                          }
+                          step="0.01"
+                          type="number"
+                          value={
+                            assetForm
+                              .interestRate
+                          }
+                        />
+                      </label>
+
+                      <label>
+                        <span>
+                          Regular payment
+                        </span>
+                        <input
+                          inputMode="decimal"
+                          min="0"
+                          onChange={(event) =>
+                            setAssetForm(
+                              (current) => ({
+                                ...current,
+                                minimumPayment:
+                                  event.target
+                                    .value
+                              })
+                            )
+                          }
+                          step="0.01"
+                          type="number"
+                          value={
+                            assetForm
+                              .minimumPayment
+                          }
+                        />
+                      </label>
+
+                      {assetForm.assetType ===
+                      "real_estate" ? (
+                        <label>
+                          <span>
+                            Escrow amount
+                          </span>
+                          <input
+                            inputMode="decimal"
+                            min="0"
+                            onChange={(event) =>
+                              setAssetForm(
+                                (current) => ({
+                                  ...current,
+                                  escrowPayment:
+                                    event.target
+                                      .value
+                                })
+                              )
+                            }
+                            step="0.01"
+                            type="number"
+                            value={
+                              assetForm
+                                .escrowPayment
+                            }
+                          />
+                        </label>
+                      ) : null}
+
+                      <label>
+                        <span>
+                          Maturity date
+                        </span>
+                        <input
+                          onChange={(event) =>
+                            setAssetForm(
+                              (current) => ({
+                                ...current,
+                                maturityDate:
+                                  event.target
+                                    .value
+                              })
+                            )
+                          }
+                          type="date"
+                          value={
+                            assetForm
+                              .maturityDate
+                          }
+                        />
+                      </label>
+
+                      <label
+                        className={
+                          styles.fullWidth
+                        }
+                      >
+                        <span>
+                          Full loan account
+                          number
+                          <small>
+                            Encrypted before
+                            storage
+                          </small>
+                        </span>
+
+                        <input
+                          autoComplete="off"
+                          onChange={(event) =>
+                            setAssetForm(
+                              (current) => ({
+                                ...current,
+                                liabilityAccountNumber:
+                                  event.target
+                                    .value
+                              })
+                            )
+                          }
+                          type="password"
+                          value={
+                            assetForm
+                              .liabilityAccountNumber
+                          }
+                        />
+                      </label>
+
+                      <label
+                        className={
+                          styles.fullWidth
+                        }
+                      >
+                        <span>
+                          Create a recurring
+                          bill for this
+                          liability?
+                        </span>
+
+                        <select
+                          onChange={(event) =>
+                            setAssetForm(
+                              (current) => ({
+                                ...current,
+                                createRecurringBill:
+                                  event.target
+                                    .value ===
+                                  "yes"
+                              })
+                            )
+                          }
+                          value={
+                            assetForm
+                              .createRecurringBill
+                              ? "yes"
+                              : "no"
+                          }
+                        >
+                          <option value="no">
+                            No — track only the
+                            balance
+                          </option>
+                          <option value="yes">
+                            Yes — add the payment
+                            to Bills
+                          </option>
+                        </select>
+                      </label>
+
+                      {assetForm
+                        .createRecurringBill ? (
+                        <>
+                          <label>
+                            <span>Bill name</span>
+                            <input
+                              onChange={(event) =>
+                                setAssetForm(
+                                  (current) => ({
+                                    ...current,
+                                    billName:
+                                      event.target
+                                        .value
+                                  })
+                                )
+                              }
+                              placeholder="Mortgage payment"
+                              value={
+                                assetForm
+                                  .billName
+                              }
+                            />
+                          </label>
+
+                          <label>
+                            <span>
+                              Due day of month
+                            </span>
+                            <input
+                              inputMode="numeric"
+                              max="31"
+                              min="1"
+                              onChange={(event) =>
+                                setAssetForm(
+                                  (current) => ({
+                                    ...current,
+                                    billDueDay:
+                                      event.target
+                                        .value
+                                  })
+                                )
+                              }
+                              type="number"
+                              value={
+                                assetForm
+                                  .billDueDay
+                              }
+                            />
+                          </label>
+
+                          <label>
+                            <span>
+                              Frequency
+                            </span>
+                            <select
+                              onChange={(event) =>
+                                setAssetForm(
+                                  (current) => ({
+                                    ...current,
+                                    billFrequency:
+                                      event.target
+                                        .value
+                                  })
+                                )
+                              }
+                              value={
+                                assetForm
+                                  .billFrequency
+                              }
+                            >
+                              <option value="monthly">
+                                Monthly
+                              </option>
+                              <option value="biweekly">
+                                Every two weeks
+                              </option>
+                              <option value="weekly">
+                                Weekly
+                              </option>
+                              <option value="quarterly">
+                                Quarterly
+                              </option>
+                              <option value="annual">
+                                Annual
+                              </option>
+                            </select>
+                          </label>
+
+                          <label>
+                            <span>
+                              Payment method
+                            </span>
+                            <select
+                              onChange={(event) =>
+                                setAssetForm(
+                                  (current) => ({
+                                    ...current,
+                                    billPaymentMethod:
+                                      event.target
+                                        .value
+                                  })
+                                )
+                              }
+                              value={
+                                assetForm
+                                  .billPaymentMethod
+                              }
+                            >
+                              <option value="manual">
+                                Manual
+                              </option>
+                              <option value="autopay">
+                                Autopay
+                              </option>
+                              <option value="bank_bill_pay">
+                                Bank bill pay
+                              </option>
+                              <option value="provider_website">
+                                Provider website
+                              </option>
+                              <option value="check">
+                                Check
+                              </option>
+                            </select>
+                          </label>
+
+                          <label
+                            className={
+                              styles.fullWidth
+                            }
+                          >
+                            <span>
+                              Autopay enabled?
+                            </span>
+                            <select
+                              onChange={(event) =>
+                                setAssetForm(
+                                  (current) => ({
+                                    ...current,
+                                    billIsAutopay:
+                                      event.target
+                                        .value ===
+                                      "yes"
+                                  })
+                                )
+                              }
+                              value={
+                                assetForm
+                                  .billIsAutopay
+                                  ? "yes"
+                                  : "no"
+                              }
+                            >
+                              <option value="no">
+                                No
+                              </option>
+                              <option value="yes">
+                                Yes
+                              </option>
+                            </select>
+                          </label>
+                        </>
+                      ) : null}
+                    </>
+                  ) : null}
 
                   <label className={styles.fullWidth}>
                     <span>Description</span>

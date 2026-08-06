@@ -82,6 +82,41 @@ export type CreatePersonalFinanceAssetInput = {
   valuedOn: string;
   valuationSource?: string | null;
   accountNumber?: string | null;
+
+  hasAttachedLiability?: boolean;
+  liabilityName?: string | null;
+  liabilityType?:
+    PersonalFinanceLiabilityType | null;
+  liabilityInstitution?: string | null;
+  originalBalance?: number | string | null;
+  currentBalance?: number | string | null;
+  balanceAsOf?: string | null;
+  interestRate?: number | string | null;
+  minimumPayment?: number | string | null;
+  escrowPayment?: number | string | null;
+  maturityDate?: string | null;
+  liabilityAccountNumber?: string | null;
+
+  createRecurringBill?: boolean;
+  billName?: string | null;
+  billDueDay?: number | string | null;
+  billFrequency?:
+    | "weekly"
+    | "biweekly"
+    | "monthly"
+    | "quarterly"
+    | "semiannual"
+    | "annual"
+    | "variable";
+  billPaymentMethod?:
+    | "autopay"
+    | "bank_bill_pay"
+    | "provider_website"
+    | "phone"
+    | "check"
+    | "manual"
+    | "other";
+  billIsAutopay?: boolean;
 };
 
 export type CreatePersonalFinanceLiabilityInput = {
@@ -189,6 +224,92 @@ function createAsset(
       "Valuation date"
     );
 
+  const attachedLiability =
+    input.hasAttachedLiability
+      ? normalizeAttachedLiability({
+          assetName: name,
+          assetType,
+          institution:
+            optionalText(
+              input.liabilityInstitution
+            ) ??
+            optionalText(
+              input.institution
+            ),
+          liabilityName:
+            optionalText(
+              input.liabilityName
+            ),
+          liabilityType:
+            input.liabilityType,
+          originalBalance:
+            optionalMoney(
+              input.originalBalance,
+              "Original balance"
+            ),
+          currentBalance:
+            requiredMoney(
+              input.currentBalance,
+              "Current balance"
+            ),
+          balanceAsOf:
+            optionalDate(
+              input.balanceAsOf,
+              "Balance date"
+            ) ??
+            valuedOn,
+          interestRate:
+            optionalRate(
+              input.interestRate
+            ),
+          minimumPayment:
+            optionalMoney(
+              input.minimumPayment,
+              "Regular payment"
+            ),
+          escrowPayment:
+            optionalMoney(
+              input.escrowPayment,
+              "Escrow payment"
+            ),
+          maturityDate:
+            optionalDate(
+              input.maturityDate,
+              "Maturity date"
+            ),
+          accountNumber:
+            optionalText(
+              input.liabilityAccountNumber
+            ),
+          createRecurringBill:
+            Boolean(
+              input.createRecurringBill
+            ),
+          billName:
+            optionalText(
+              input.billName
+            ),
+          billDueDay:
+            optionalDueDay(
+              input.billDueDay
+            ),
+          billFrequency:
+            input.billFrequency ??
+            "monthly",
+          billPaymentMethod:
+            input.billPaymentMethod ??
+            (
+              input.billIsAutopay
+                ? "autopay"
+                : "manual"
+            ),
+          billIsAutopay:
+            Boolean(
+              input.billIsAutopay
+            )
+        })
+      : null;
+
   const database =
     openPersonalFinanceDatabase();
 
@@ -269,12 +390,441 @@ function createAsset(
             )
         });
 
+        if (attachedLiability) {
+          createAttachedLiability({
+            database,
+            assetId: id,
+            assetName: name,
+            assetType,
+            input: attachedLiability
+          });
+        }
+
         return readCatalog(database);
       });
 
     return create.immediate();
   } finally {
     database.close();
+  }
+}
+
+type AttachedLiabilityInput = {
+  liabilityName: string;
+  liabilityType:
+    PersonalFinanceLiabilityType;
+  institution: string | null;
+  originalBalance: number | null;
+  currentBalance: number;
+  balanceAsOf: string;
+  interestRate: number | null;
+  minimumPayment: number | null;
+  escrowPayment: number | null;
+  maturityDate: string | null;
+  accountNumber: string | null;
+  createRecurringBill: boolean;
+  billName: string;
+  billDueDay: number | null;
+  billFrequency:
+    | "weekly"
+    | "biweekly"
+    | "monthly"
+    | "quarterly"
+    | "semiannual"
+    | "annual"
+    | "variable";
+  billPaymentMethod:
+    | "autopay"
+    | "bank_bill_pay"
+    | "provider_website"
+    | "phone"
+    | "check"
+    | "manual"
+    | "other";
+  billIsAutopay: boolean;
+};
+
+function normalizeAttachedLiability({
+  assetName,
+  assetType,
+  institution,
+  liabilityName,
+  liabilityType,
+  originalBalance,
+  currentBalance,
+  balanceAsOf,
+  interestRate,
+  minimumPayment,
+  escrowPayment,
+  maturityDate,
+  accountNumber,
+  createRecurringBill,
+  billName,
+  billDueDay,
+  billFrequency,
+  billPaymentMethod,
+  billIsAutopay
+}: {
+  assetName: string;
+  assetType:
+    PersonalFinanceAssetType;
+  institution: string | null;
+  liabilityName: string | null;
+  liabilityType:
+    PersonalFinanceLiabilityType |
+    null |
+    undefined;
+  originalBalance: number | null;
+  currentBalance: number;
+  balanceAsOf: string;
+  interestRate: number | null;
+  minimumPayment: number | null;
+  escrowPayment: number | null;
+  maturityDate: string | null;
+  accountNumber: string | null;
+  createRecurringBill: boolean;
+  billName: string | null;
+  billDueDay: number | null;
+  billFrequency:
+    AttachedLiabilityInput[
+      "billFrequency"
+    ];
+  billPaymentMethod:
+    AttachedLiabilityInput[
+      "billPaymentMethod"
+    ];
+  billIsAutopay: boolean;
+}): AttachedLiabilityInput {
+  const defaultLiabilityType:
+    PersonalFinanceLiabilityType =
+      assetType === "real_estate"
+        ? "mortgage"
+        : assetType === "vehicle"
+          ? "auto_loan"
+          : "other";
+
+  const resolvedLiabilityType =
+    liabilityType ??
+    defaultLiabilityType;
+
+  if (
+    !LIABILITY_TYPES.has(
+      resolvedLiabilityType
+    )
+  ) {
+    throw new Error(
+      "Liability type is not valid."
+    );
+  }
+
+  if (
+    assetType === "real_estate" &&
+    resolvedLiabilityType !==
+      "mortgage" &&
+    resolvedLiabilityType !==
+      "home_equity"
+  ) {
+    throw new Error(
+      "Real estate must be linked to a mortgage or home-equity liability."
+    );
+  }
+
+  if (
+    assetType === "vehicle" &&
+    resolvedLiabilityType !==
+      "auto_loan"
+  ) {
+    throw new Error(
+      "A vehicle must be linked to an auto-loan liability."
+    );
+  }
+
+  if (
+    !Number.isInteger(billDueDay) &&
+    billDueDay !== null
+  ) {
+    throw new Error(
+      "Due day must be between 1 and 31."
+    );
+  }
+
+  const resolvedName =
+    liabilityName ??
+    (
+      assetType === "real_estate"
+        ? `${assetName} mortgage`
+        : assetType === "vehicle"
+          ? `${assetName} auto loan`
+          : `${assetName} liability`
+    );
+
+  return {
+    liabilityName: resolvedName,
+    liabilityType:
+      resolvedLiabilityType,
+    institution,
+    originalBalance,
+    currentBalance,
+    balanceAsOf,
+    interestRate,
+    minimumPayment,
+    escrowPayment,
+    maturityDate,
+    accountNumber,
+    createRecurringBill,
+    billName:
+      billName ??
+      resolvedName,
+    billDueDay,
+    billFrequency,
+    billPaymentMethod,
+    billIsAutopay
+  };
+}
+
+function createAttachedLiability({
+  database,
+  assetId,
+  assetName,
+  assetType,
+  input
+}: {
+  database: ReturnType<
+    typeof openPersonalFinanceDatabase
+  >;
+  assetId: string;
+  assetName: string;
+  assetType:
+    PersonalFinanceAssetType;
+  input: AttachedLiabilityInput;
+}): void {
+  let obligationId: string | null =
+    null;
+
+  if (input.createRecurringBill) {
+    const homeKind =
+      assetType === "real_estate"
+        ? "home"
+        : assetType === "vehicle"
+          ? "vehicle"
+          : "other";
+
+    const existingHome =
+      database
+        .prepare(`
+          SELECT id
+          FROM obligation_homes
+          WHERE
+            lower(name) = lower(?) AND
+            kind = ?
+          LIMIT 1
+        `)
+        .get(
+          assetName,
+          homeKind
+        ) as
+        | { id: string }
+        | undefined;
+
+    const homeId =
+      existingHome?.id ??
+      createPersonalFinanceId(
+        "obligation_home",
+        [
+          assetName,
+          homeKind
+        ]
+      );
+
+    if (!existingHome) {
+      database
+        .prepare(`
+          INSERT INTO obligation_homes (
+            id,
+            name,
+            kind
+          )
+          VALUES (?, ?, ?)
+        `)
+        .run(
+          homeId,
+          assetName,
+          homeKind
+        );
+    }
+
+    obligationId =
+      createPersonalFinanceId(
+        "obligation",
+        [
+          assetId,
+          input.billName,
+          input.liabilityType
+        ]
+      );
+
+    const obligationType =
+      input.liabilityType ===
+        "mortgage" ||
+      input.liabilityType ===
+        "home_equity"
+        ? "mortgage"
+        : input.liabilityType ===
+            "auto_loan"
+          ? "auto"
+          : "loan";
+
+    database
+      .prepare(`
+        INSERT INTO obligations (
+          id,
+          home_id,
+          name,
+          obligation_type,
+          provider,
+          account_last_four,
+          expected_amount_cents,
+          due_day,
+          frequency,
+          payment_method,
+          is_autopay,
+          notes
+        )
+        VALUES (
+          ?,
+          ?,
+          ?,
+          ?,
+          ?,
+          ?,
+          ?,
+          ?,
+          ?,
+          ?,
+          ?,
+          ?
+        )
+      `)
+      .run(
+        obligationId,
+        homeId,
+        input.billName,
+        obligationType,
+        input.institution,
+        lastFour(
+          input.accountNumber
+        ),
+        input.minimumPayment === null
+          ? null
+          : dollarsToCents(
+              input.minimumPayment
+            ),
+        input.billDueDay,
+        input.billFrequency,
+        input.billPaymentMethod,
+        input.billIsAutopay
+          ? 1
+          : 0,
+        "Created from the Net Worth asset workflow."
+      );
+  }
+
+  const liabilityId =
+    createPersonalFinanceId(
+      "liability",
+      [
+        assetId,
+        input.liabilityName,
+        input.liabilityType
+      ]
+    );
+
+  database
+    .prepare(`
+      INSERT INTO liabilities (
+        id,
+        obligation_id,
+        linked_asset_id,
+        name,
+        liability_type,
+        institution,
+        original_balance_cents,
+        current_balance_cents,
+        balance_as_of,
+        interest_rate_basis_points,
+        minimum_payment_cents,
+        escrow_payment_cents,
+        maturity_date
+      )
+      VALUES (
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?
+      )
+    `)
+    .run(
+      liabilityId,
+      obligationId,
+      assetId,
+      input.liabilityName,
+      input.liabilityType,
+      input.institution,
+      input.originalBalance === null
+        ? null
+        : dollarsToCents(
+            input.originalBalance
+          ),
+      dollarsToCents(
+        input.currentBalance
+      ),
+      input.balanceAsOf,
+      input.interestRate === null
+        ? null
+        : Math.round(
+            input.interestRate * 100
+          ),
+      input.minimumPayment === null
+        ? null
+        : dollarsToCents(
+            input.minimumPayment
+          ),
+      input.escrowPayment === null
+        ? null
+        : dollarsToCents(
+            input.escrowPayment
+          ),
+      input.maturityDate
+    );
+
+  storeSensitiveAccountNumber({
+    database,
+    ownerType: "liability",
+    ownerId: liabilityId,
+    accountNumber:
+      input.accountNumber
+  });
+
+  if (
+    obligationId &&
+    input.accountNumber
+  ) {
+    storeSensitiveAccountNumber({
+      database,
+      ownerType: "obligation",
+      ownerId: obligationId,
+      accountNumber:
+        input.accountNumber
+    });
   }
 }
 
@@ -704,7 +1254,8 @@ function storeSensitiveAccountNumber({
   >;
   ownerType:
     | "asset"
-    | "liability";
+    | "liability"
+    | "obligation";
   ownerId: string;
   accountNumber: string | null;
 }): void {
@@ -861,6 +1412,49 @@ function optionalMoney(
     Math.round(amount * 100) /
     100
   );
+}
+
+function optionalDueDay(
+  value: unknown
+): number | null {
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+    return null;
+  }
+
+  const dueDay = Number(value);
+
+  if (
+    !Number.isInteger(dueDay) ||
+    dueDay < 1 ||
+    dueDay > 31
+  ) {
+    throw new Error(
+      "Due day must be between 1 and 31."
+    );
+  }
+
+  return dueDay;
+}
+
+function lastFour(
+  value: string | null
+): string | null {
+  if (!value) {
+    return null;
+  }
+
+  const normalized =
+    value.replace(
+      /[^A-Za-z0-9]/g,
+      ""
+    );
+
+  return normalized.slice(-4) ||
+    null;
 }
 
 function optionalRate(
