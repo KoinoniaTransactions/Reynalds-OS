@@ -1,0 +1,370 @@
+.workspace {
+  display: grid;
+  gap: 22px;
+  padding-bottom: 40px;
+}
+
+.stateCard {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(240, 243, 248, 0.82);
+}
+
+.errorCard {
+  border-color: rgba(218, 103, 92, 0.38);
+  background: rgba(130, 45, 39, 0.18);
+}
+
+.successCard {
+  border-color: rgba(105, 190, 141, 0.32);
+  background: rgba(38, 111, 68, 0.16);
+}
+
+.equation {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    minmax(0, 1fr)
+    auto
+    minmax(0, 1.1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.equationCard {
+  display: grid;
+  min-height: 150px;
+  align-content: center;
+  gap: 7px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(49, 50, 53, 0.96),
+      rgba(31, 32, 34, 0.98)
+    );
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.17);
+}
+
+.equationCard span,
+.equationCard small {
+  color: rgba(226, 231, 239, 0.64);
+}
+
+.equationCard strong {
+  color: #f5f7fb;
+  font-size: clamp(24px, 2.5vw, 36px);
+}
+
+.netWorthCard {
+  border-color: rgba(210, 167, 89, 0.42);
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(210, 167, 89, 0.16),
+      transparent 48%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(54, 49, 40, 0.98),
+      rgba(31, 31, 32, 0.99)
+    );
+}
+
+.operator {
+  color: rgba(210, 167, 89, 0.88);
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.15fr)
+    minmax(340px, 0.85fr);
+  align-items: start;
+  gap: 20px;
+}
+
+.formCard,
+.listCard {
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  background: rgba(34, 35, 38, 0.97);
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.14);
+}
+
+.formCard {
+  padding: 22px;
+}
+
+.formHeader,
+.listHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.formHeader h2,
+.listHeader h2 {
+  margin: 4px 0 0;
+  color: #f5f7fb;
+  font-size: 22px;
+}
+
+.kicker {
+  color: #d3a755;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.modeSwitch {
+  display: inline-flex;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  background: rgba(16, 17, 18, 0.42);
+}
+
+.modeSwitch button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: rgba(235, 239, 246, 0.66);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 750;
+}
+
+.modeSwitch button[aria-pressed="true"] {
+  background: rgba(210, 167, 89, 0.18);
+  color: #f7e4bd;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.formGrid label {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  color: rgba(232, 236, 243, 0.72);
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.formGrid label > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.formGrid label small {
+  color: rgba(232, 236, 243, 0.45);
+  font-weight: 600;
+}
+
+.formGrid input,
+.formGrid select,
+.formGrid textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 11px;
+  outline: none;
+  background: rgba(16, 17, 19, 0.72);
+  color: #f4f6fa;
+  font: inherit;
+}
+
+.formGrid textarea {
+  resize: vertical;
+}
+
+.formGrid input:focus,
+.formGrid select:focus,
+.formGrid textarea:focus {
+  border-color: rgba(210, 167, 89, 0.68);
+  box-shadow: 0 0 0 3px rgba(210, 167, 89, 0.1);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.formFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.formFooter span {
+  max-width: 440px;
+  color: rgba(231, 235, 242, 0.52);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.formFooter button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid rgba(210, 167, 89, 0.55);
+  border-radius: 11px;
+  background: rgba(210, 167, 89, 0.18);
+  color: #f8e5bc;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.formFooter button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+.recordColumn {
+  display: grid;
+  gap: 20px;
+}
+
+.listCard {
+  overflow: hidden;
+}
+
+.listHeader {
+  margin: 0;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.listHeader > strong {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(210, 167, 89, 0.14);
+  color: #e2ba70;
+}
+
+.recordList {
+  display: grid;
+}
+
+.record {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 17px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.record:last-child {
+  border-bottom: 0;
+}
+
+.record > div {
+  display: grid;
+  gap: 4px;
+}
+
+.record strong {
+  color: #f1f3f7;
+}
+
+.record small {
+  color: rgba(230, 234, 241, 0.5);
+}
+
+.recordType {
+  color: #d3a755;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.recordValues {
+  justify-items: end;
+  text-align: right;
+}
+
+.emptyState {
+  padding: 24px 20px;
+  color: rgba(230, 234, 241, 0.52);
+  line-height: 1.55;
+}
+
+@media (max-width: 1080px) {
+  .equation {
+    grid-template-columns: 1fr;
+  }
+
+  .operator {
+    display: none;
+  }
+
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .formCard {
+    padding: 17px;
+  }
+
+  .formHeader,
+  .formFooter,
+  .record {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: auto;
+  }
+
+  .modeSwitch {
+    width: 100%;
+  }
+
+  .modeSwitch button {
+    flex: 1;
+  }
+
+  .formFooter button {
+    width: 100%;
+  }
+
+  .recordValues {
+    justify-items: start;
+    text-align: left;
+  }
+}

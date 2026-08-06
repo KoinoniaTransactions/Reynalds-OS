@@ -226,6 +226,11 @@ function PersonalFinanceFrame({
       className: styles.navAccounts
     },
     {
+      label: "Net Worth",
+      href: "/personal/net-worth",
+      className: styles.navAccounts
+    },
+    {
       label: "Rules",
       href: "/personal/rules",
       className: styles.navRules
