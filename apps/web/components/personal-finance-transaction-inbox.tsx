@@ -785,6 +785,26 @@ export function PersonalFinanceTransactionInbox({
                   transaction.displayDescription
                 );
 
+              const classificationComplete =
+                transaction.classification !==
+                "unknown";
+
+              const reconciliationComplete =
+                transaction.reviewStatus ===
+                "reconciled";
+
+              const workflowComplete =
+                classificationComplete &&
+                reviewed &&
+                reconciliationComplete;
+
+              const workflowHeadline =
+                workflowComplete
+                  ? "Workflow complete"
+                  : actionLabel === "Ready"
+                    ? "Ready to reconcile"
+                    : actionLabel;
+
               return (
                 <article
                   className={`${styles.inboxTransactionRow} ${
@@ -925,98 +945,324 @@ export function PersonalFinanceTransactionInbox({
                         styles.inboxTransactionWorkbench
                       }
                     >
-                      <div
+                      <header
                         className={
-                          styles.inboxWorkbenchGroup
+                          styles.inboxWorkbenchHeader
                         }
                       >
-                        <span
+                        <div
                           className={
-                            styles.inboxWorkbenchLabel
+                            styles.inboxWorkbenchHeading
                           }
                         >
-                          Classification
-                        </span>
+                          <span>
+                            Transaction workflow
+                          </span>
 
-                        <PersonalFinanceTransactionClassificationSelect
-                          classification={
-                            transaction.classification
-                          }
-                          transactionId={
-                            transaction.id
-                          }
-                        />
-                      </div>
+                          <strong>
+                            {workflowHeadline}
+                          </strong>
 
-                      <div
-                        className={
-                          styles.inboxWorkbenchGroup
-                        }
-                      >
+                          <small>
+                            Complete only the decisions that
+                            apply to this transaction. Nothing
+                            is confirmed automatically.
+                          </small>
+                        </div>
+
                         <span
-                          className={
-                            styles.inboxWorkbenchLabel
-                          }
+                          className={`${styles.inboxWorkbenchState} ${
+                            workflowComplete
+                              ? styles.inboxWorkbenchStateComplete
+                              : styles.inboxWorkbenchStateActive
+                          }`}
                         >
-                          Review
-                        </span>
-
-                        <PersonalFinanceTransactionReviewedControl
-                          reviewedAt={
-                            transaction.reviewedAt
-                          }
-                          transactionId={
-                            transaction.id
-                          }
-                        />
-                      </div>
-
-                      <div
-                        className={`${styles.inboxWorkbenchGroup} ${styles.inboxWorkbenchGroupWide}`}
-                      >
-                        <span
-                          className={
-                            styles.inboxWorkbenchLabel
-                          }
-                        >
-                          Reconciliation
+                          {workflowComplete
+                            ? "Complete"
+                            : workflowHeadline}
                         </span>
 
                         <div
+                          aria-label="Transaction workflow progress"
                           className={
-                            styles.inboxWorkbenchDetails
+                            styles.inboxWorkflowProgress
                           }
                         >
-                          <AllocationDetails
-                            transaction={
-                              transaction
-                            }
-                          />
+                          <span
+                            className={`${styles.inboxWorkflowStep} ${
+                              classificationComplete
+                                ? styles.inboxWorkflowStepComplete
+                                : styles.inboxWorkflowStepPending
+                            }`}
+                          >
+                            <i>
+                              {classificationComplete
+                                ? "✓"
+                                : "1"}
+                            </i>
 
-                          <TransferPairDetails
-                            transaction={
-                              transaction
-                            }
-                          />
+                            <span>
+                              <strong>
+                                Classify
+                              </strong>
 
-                          <PersonalFinanceTransactionReconciliationControl
-                            amountCents={
-                              transaction.amountCents
-                            }
-                            classification={
-                              transaction.classification
-                            }
-                            reviewStatus={
-                              transaction.reviewStatus
-                            }
-                            transactionId={
-                              transaction.id
-                            }
-                          />
+                              <small>
+                                {classificationComplete
+                                  ? classificationLabel
+                                  : "Needed"}
+                              </small>
+                            </span>
+                          </span>
+
+                          <span
+                            className={`${styles.inboxWorkflowStep} ${
+                              reviewed
+                                ? styles.inboxWorkflowStepComplete
+                                : styles.inboxWorkflowStepPending
+                            }`}
+                          >
+                            <i>
+                              {reviewed
+                                ? "✓"
+                                : "2"}
+                            </i>
+
+                            <span>
+                              <strong>
+                                Review
+                              </strong>
+
+                              <small>
+                                {reviewed
+                                  ? "Reviewed"
+                                  : "Pending"}
+                              </small>
+                            </span>
+                          </span>
+
+                          <span
+                            className={`${styles.inboxWorkflowStep} ${
+                              reconciliationComplete
+                                ? styles.inboxWorkflowStepComplete
+                                : styles.inboxWorkflowStepPending
+                            }`}
+                          >
+                            <i>
+                              {reconciliationComplete
+                                ? "✓"
+                                : "3"}
+                            </i>
+
+                            <span>
+                              <strong>
+                                Reconcile
+                              </strong>
+
+                              <small>
+                                {reconciliationComplete
+                                  ? "Reconciled"
+                                  : "Pending"}
+                              </small>
+                            </span>
+                          </span>
                         </div>
+                      </header>
+
+                      <div
+                        className={
+                          styles.inboxWorkbenchBody
+                        }
+                      >
+                        <div
+                          className={
+                            styles.inboxWorkbenchDecisionColumn
+                          }
+                        >
+                          <section
+                            className={
+                              styles.inboxWorkbenchSection
+                            }
+                          >
+                            <header
+                              className={
+                                styles.inboxWorkbenchSectionHeader
+                              }
+                            >
+                              <span
+                                className={
+                                  styles.inboxWorkbenchSectionNumber
+                                }
+                              >
+                                1
+                              </span>
+
+                              <span>
+                                <strong>
+                                  Classification
+                                </strong>
+
+                                <small>
+                                  Identify the transaction
+                                  type.
+                                </small>
+                              </span>
+
+                              <span
+                                className={
+                                  classificationComplete
+                                    ? styles.inboxWorkbenchSectionComplete
+                                    : styles.inboxWorkbenchSectionPending
+                                }
+                              >
+                                {classificationComplete
+                                  ? "Set"
+                                  : "Required"}
+                              </span>
+                            </header>
+
+                            <PersonalFinanceTransactionClassificationSelect
+                              classification={
+                                transaction.classification
+                              }
+                              transactionId={
+                                transaction.id
+                              }
+                            />
+                          </section>
+
+                          <section
+                            className={
+                              styles.inboxWorkbenchSection
+                            }
+                          >
+                            <header
+                              className={
+                                styles.inboxWorkbenchSectionHeader
+                              }
+                            >
+                              <span
+                                className={
+                                  styles.inboxWorkbenchSectionNumber
+                                }
+                              >
+                                2
+                              </span>
+
+                              <span>
+                                <strong>
+                                  Review
+                                </strong>
+
+                                <small>
+                                  Mark the transaction after
+                                  checking its details.
+                                </small>
+                              </span>
+
+                              <span
+                                className={
+                                  reviewed
+                                    ? styles.inboxWorkbenchSectionComplete
+                                    : styles.inboxWorkbenchSectionPending
+                                }
+                              >
+                                {reviewed
+                                  ? "Complete"
+                                  : "Pending"}
+                              </span>
+                            </header>
+
+                            <PersonalFinanceTransactionReviewedControl
+                              reviewedAt={
+                                transaction.reviewedAt
+                              }
+                              transactionId={
+                                transaction.id
+                              }
+                            />
+                          </section>
+                        </div>
+
+                        <section
+                          className={
+                            styles.inboxWorkbenchResolution
+                          }
+                        >
+                          <header
+                            className={
+                              styles.inboxWorkbenchResolutionHeader
+                            }
+                          >
+                            <span
+                              className={
+                                styles.inboxWorkbenchSectionNumber
+                              }
+                            >
+                              3
+                            </span>
+
+                            <span>
+                              <strong>
+                                Reconciliation
+                              </strong>
+
+                              <small>
+                                Resolve the budget target,
+                                transfer pair, or allocation
+                                that applies.
+                              </small>
+                            </span>
+
+                            <span
+                              className={
+                                reconciliationComplete
+                                  ? styles.inboxWorkbenchSectionComplete
+                                  : styles.inboxWorkbenchSectionPending
+                              }
+                            >
+                              {reconciliationComplete
+                                ? "Complete"
+                                : "Pending"}
+                            </span>
+                          </header>
+
+                          <div
+                            className={
+                              styles.inboxWorkbenchDetails
+                            }
+                          >
+                            <AllocationDetails
+                              transaction={
+                                transaction
+                              }
+                            />
+
+                            <TransferPairDetails
+                              transaction={
+                                transaction
+                              }
+                            />
+
+                            <PersonalFinanceTransactionReconciliationControl
+                              amountCents={
+                                transaction.amountCents
+                              }
+                              classification={
+                                transaction.classification
+                              }
+                              reviewStatus={
+                                transaction.reviewStatus
+                              }
+                              transactionId={
+                                transaction.id
+                              }
+                            />
+                          </div>
+                        </section>
                       </div>
                     </div>
                   ) : null}
+
                 </article>
               );
             }

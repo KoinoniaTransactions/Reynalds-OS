@@ -4768,3 +4768,428 @@
     align-items: flex-start;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Personal Finance transaction workbench v2                                  */
+/* -------------------------------------------------------------------------- */
+
+.inboxTransactionWorkbench {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(248, 250, 252, 0.86),
+      rgba(255, 255, 255, 0.98)
+    );
+  animation:
+    personalFinanceWorkbenchReveal
+    220ms
+    ease-out;
+}
+
+@keyframes personalFinanceWorkbenchReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inboxWorkbenchHeader {
+  display: grid;
+  grid-template-columns:
+    minmax(220px, 0.8fr)
+    auto;
+  gap: 15px 22px;
+  align-items: start;
+  padding: 18px 22px 16px;
+  border-bottom:
+    1px solid rgba(148, 163, 184, 0.14);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.97),
+      rgba(248, 250, 252, 0.9)
+    );
+}
+
+.inboxWorkbenchHeading {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.inboxWorkbenchHeading > span {
+  color: #9a722f;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.065em;
+  text-transform: uppercase;
+}
+
+.inboxWorkbenchHeading > strong {
+  color: #293548;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+.inboxWorkbenchHeading > small {
+  max-width: 560px;
+  color: #7a8494;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.inboxWorkbenchState {
+  display: inline-flex;
+  min-height: 27px;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 8px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.inboxWorkbenchStateActive {
+  background: #fff3e8;
+  color: #9a4e19;
+}
+
+.inboxWorkbenchStateComplete {
+  background: #eaf7ef;
+  color: #19714a;
+}
+
+.inboxWorkflowProgress {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.inboxWorkflowStep {
+  display: grid;
+  grid-template-columns:
+    27px
+    minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px 9px;
+  border:
+    1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 11px;
+  background: rgba(248, 250, 252, 0.78);
+}
+
+.inboxWorkflowStep > i {
+  display: inline-grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  border-radius: 9px;
+  background: #e9edf2;
+  color: #667085;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.inboxWorkflowStep > span {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.inboxWorkflowStep strong {
+  color: #465264;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.inboxWorkflowStep small {
+  overflow: hidden;
+  color: #8a94a3;
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inboxWorkflowStepComplete {
+  border-color: rgba(36, 146, 100, 0.17);
+  background: rgba(234, 247, 239, 0.72);
+}
+
+.inboxWorkflowStepComplete > i {
+  background: #d9f0e2;
+  color: #19714a;
+}
+
+.inboxWorkflowStepComplete strong,
+.inboxWorkflowStepComplete small {
+  color: #19714a;
+}
+
+.inboxWorkflowStepPending > i {
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(148, 163, 184, 0.12);
+}
+
+.inboxWorkbenchBody {
+  display: grid;
+  grid-template-columns:
+    minmax(230px, 0.62fr)
+    minmax(400px, 1.38fr);
+  min-width: 0;
+}
+
+.inboxWorkbenchDecisionColumn {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  padding: 18px 20px;
+  border-right:
+    1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(248, 250, 252, 0.52);
+}
+
+.inboxWorkbenchSection {
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+  padding-bottom: 18px;
+}
+
+.inboxWorkbenchSection
+  + .inboxWorkbenchSection {
+  padding-top: 18px;
+  border-top:
+    1px solid rgba(148, 163, 184, 0.15);
+}
+
+.inboxWorkbenchSectionHeader,
+.inboxWorkbenchResolutionHeader {
+  display: grid;
+  grid-template-columns:
+    29px
+    minmax(0, 1fr)
+    auto;
+  gap: 9px;
+  align-items: center;
+}
+
+.inboxWorkbenchSectionNumber {
+  display: inline-grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border-radius: 9px;
+  background:
+    linear-gradient(
+      145deg,
+      #273244,
+      #3a475b
+    );
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.inboxWorkbenchSectionHeader
+  > span:nth-child(2),
+.inboxWorkbenchResolutionHeader
+  > span:nth-child(2) {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.inboxWorkbenchSectionHeader strong,
+.inboxWorkbenchResolutionHeader strong {
+  color: #344054;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.inboxWorkbenchSectionHeader small,
+.inboxWorkbenchResolutionHeader small {
+  color: #7a8494;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.inboxWorkbenchSectionComplete,
+.inboxWorkbenchSectionPending {
+  display: inline-flex;
+  min-height: 22px;
+  align-items: center;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 7px;
+  font-weight: 850;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.inboxWorkbenchSectionComplete {
+  background: #eaf7ef;
+  color: #19714a;
+}
+
+.inboxWorkbenchSectionPending {
+  background: #f0f2f5;
+  color: #697586;
+}
+
+.inboxWorkbenchResolution {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: 14px;
+  padding: 18px 20px 21px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.inboxWorkbenchResolutionHeader {
+  padding-bottom: 13px;
+  border-bottom:
+    1px solid rgba(148, 163, 184, 0.14);
+}
+
+.inboxWorkbenchSection
+  .classificationControl,
+.inboxWorkbenchSection
+  .reviewedControl,
+.inboxWorkbenchResolution
+  .reconciliationControl {
+  width: 100%;
+  min-width: 0;
+}
+
+.inboxWorkbenchSection
+  .classificationSelect,
+.inboxWorkbenchSection
+  .reviewedToggle {
+  width: 100%;
+}
+
+.inboxWorkbenchResolution
+  .inboxWorkbenchDetails {
+  gap: 10px;
+}
+
+.inboxWorkbenchResolution
+  .reconciliationCompactState {
+  display: grid;
+  gap: 9px;
+}
+
+.inboxWorkbenchResolution
+  .reconciliationPrimaryButton {
+  width: 100%;
+}
+
+.inboxWorkbenchResolution
+  .reconciliationDetails,
+.inboxWorkbenchResolution
+  .transferPairSummary {
+  margin-bottom: 0;
+  padding: 10px 11px;
+  border-color:
+    rgba(148, 163, 184, 0.17);
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+@media (max-width: 980px) {
+  .inboxWorkbenchBody {
+    grid-template-columns: 1fr;
+  }
+
+  .inboxWorkbenchDecisionColumn {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    border-right: 0;
+    border-bottom:
+      1px solid rgba(148, 163, 184, 0.14);
+  }
+
+  .inboxWorkbenchSection {
+    padding: 0;
+  }
+
+  .inboxWorkbenchSection
+    + .inboxWorkbenchSection {
+    padding: 0 0 0 18px;
+    border-top: 0;
+    border-left:
+      1px solid rgba(148, 163, 184, 0.15);
+  }
+}
+
+@media (max-width: 700px) {
+  .inboxWorkbenchHeader {
+    grid-template-columns: 1fr;
+    padding: 15px 14px 14px;
+  }
+
+  .inboxWorkbenchState {
+    justify-self: start;
+  }
+
+  .inboxWorkflowProgress {
+    grid-template-columns: 1fr;
+  }
+
+  .inboxWorkflowStep {
+    min-height: 44px;
+  }
+
+  .inboxWorkbenchDecisionColumn {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 15px 14px;
+  }
+
+  .inboxWorkbenchSection
+    + .inboxWorkbenchSection {
+    margin-top: 16px;
+    padding:
+      16px
+      0
+      0;
+    border-top:
+      1px solid rgba(148, 163, 184, 0.15);
+    border-left: 0;
+  }
+
+  .inboxWorkbenchResolution {
+    padding: 15px 14px 17px;
+  }
+
+  .inboxWorkbenchSectionHeader,
+  .inboxWorkbenchResolutionHeader {
+    grid-template-columns:
+      29px
+      minmax(0, 1fr);
+  }
+
+  .inboxWorkbenchSectionComplete,
+  .inboxWorkbenchSectionPending {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
