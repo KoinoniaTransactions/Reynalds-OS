@@ -68,6 +68,7 @@ type PeriodAccountRow = {
   account_kind: "cash" | "credit";
   opening_balance_cents: number | null;
   current_balance_cents: number;
+  closing_balance_cents: number | null;
   credit_limit_cents: number | null;
   minimum_payment_cents: number | null;
 };
@@ -1134,6 +1135,7 @@ function copyAccountsIntoNextPeriod({
         account_kind,
         opening_balance_cents,
         current_balance_cents,
+        closing_balance_cents,
         credit_limit_cents,
         minimum_payment_cents
       FROM pf_period_accounts
@@ -1176,6 +1178,10 @@ function copyAccountsIntoNextPeriod({
   for (
     const account of accounts
   ) {
+    const carryBalance =
+      account.closing_balance_cents ??
+      account.current_balance_cents;
+
     insert.run(
       createPersonalFinanceId(
         "period_account",
@@ -1188,8 +1194,8 @@ function copyAccountsIntoNextPeriod({
       account.account_key,
       account.name,
       account.account_kind,
-      account.current_balance_cents,
-      account.current_balance_cents,
+      carryBalance,
+      carryBalance,
       account.credit_limit_cents,
       account.minimum_payment_cents,
       sourcePeriodKey
@@ -1369,6 +1375,10 @@ function ensurePeriodSchema(
           INTEGER NOT NULL
           DEFAULT 0,
 
+        closing_balance_cents INTEGER,
+
+        reconciled_at TEXT,
+
         credit_limit_cents INTEGER
           CHECK (
             credit_limit_cents
@@ -1431,6 +1441,69 @@ function ensurePeriodSchema(
       account_kind,
       name
     );
+  `);
+
+  ensurePeriodAccountReconciliationColumns(
+    database
+  );
+}
+
+function ensurePeriodAccountReconciliationColumns(
+  database: PersonalFinanceDatabase
+): void {
+  const columns =
+    database
+      .prepare(
+        "PRAGMA table_info(pf_period_accounts)"
+      )
+      .all() as
+      {
+        name: string;
+      }[];
+
+  const names =
+    new Set(
+      columns.map(
+        (column) =>
+          column.name
+      )
+    );
+
+  if (
+    !names.has(
+      "closing_balance_cents"
+    )
+  ) {
+    database.exec(`
+      ALTER TABLE
+        pf_period_accounts
+      ADD COLUMN
+        closing_balance_cents INTEGER;
+    `);
+  }
+
+  if (
+    !names.has(
+      "reconciled_at"
+    )
+  ) {
+    database.exec(`
+      ALTER TABLE
+        pf_period_accounts
+      ADD COLUMN
+        reconciled_at TEXT;
+    `);
+  }
+
+  database.exec(`
+    UPDATE
+      pf_period_accounts
+    SET
+      opening_balance_cents =
+        current_balance_cents
+    WHERE
+      opening_balance_cents
+        IS NULL;
   `);
 }
 
