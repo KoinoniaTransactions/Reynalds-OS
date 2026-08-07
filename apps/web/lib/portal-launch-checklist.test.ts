@@ -31,6 +31,8 @@ function getReadyInput(overrides: Partial<PortalReadinessInput> = {}): PortalRea
     database: {
       acceptedClientInvitationCount: 1,
       acceptedStaffInvitationCount: 1,
+      activeClientClerkUserCount: 1,
+      activeStaffClerkUserCount: 1,
       activeOwnerCount: 1,
       connected: true,
       missingRoles: [],

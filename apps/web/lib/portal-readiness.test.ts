@@ -31,6 +31,8 @@ function getReadyInput(overrides: Partial<PortalReadinessInput> = {}): PortalRea
     database: {
       acceptedClientInvitationCount: 1,
       acceptedStaffInvitationCount: 1,
+      activeClientClerkUserCount: 1,
+      activeStaffClerkUserCount: 1,
       activeOwnerCount: 1,
       connected: true,
       missingRoles: [],
@@ -326,4 +328,40 @@ describe("portal readiness report", () => {
     expect(setupUrl?.status).toBe("blocked");
     expect(setupUrl?.proof).toContain("HTTPS");
   });
+
+  it("blocks production readiness when accepted invites are not backed by real Clerk-linked users", () => {
+    const report = buildPortalReadinessReport(
+      getReadyInput({
+        database: {
+          acceptedClientInvitationCount: 1,
+          acceptedStaffInvitationCount: 1,
+          activeClientClerkUserCount: 0,
+          activeStaffClerkUserCount: 0,
+          activeOwnerCount: 1,
+          connected: true,
+          missingRoles: [],
+          rolesMissingPermissions: [],
+          staffWithoutMfaCount: 0,
+          workspaceExists: true
+        }
+      })
+    );
+
+    const item = report.groups
+      .flatMap((group) => group.items)
+      .find((candidate) => candidate.id === "provider-user-verification");
+
+    expect(item?.status).toBe("blocked");
+  });
+
+  it("marks real provider user verification ready with active Clerk-linked client and staff users", () => {
+    const report = buildPortalReadinessReport(getReadyInput());
+
+    const item = report.groups
+      .flatMap((group) => group.items)
+      .find((candidate) => candidate.id === "provider-user-verification");
+
+    expect(item?.status).toBe("ready");
+  });
+
 });

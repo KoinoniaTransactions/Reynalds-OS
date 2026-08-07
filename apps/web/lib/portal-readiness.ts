@@ -6,6 +6,8 @@ export type PortalReadinessStatus = "attention" | "blocked" | "ready";
 export type PortalDatabaseReadiness = {
   acceptedClientInvitationCount?: number;
   acceptedStaffInvitationCount?: number;
+  activeClientClerkUserCount?: number;
+  activeStaffClerkUserCount?: number;
   activeOwnerCount?: number;
   connected: boolean;
   detail?: string;
@@ -112,7 +114,8 @@ export function buildPortalReadinessReport(input: PortalReadinessInput): PortalR
         getRoleSeedReadiness(input.database),
         getOwnerReadiness(input.database),
         getStaffMfaReadiness(input.database),
-        getInvitationAcceptanceReadiness(input.database)
+        getInvitationAcceptanceReadiness(input.database),
+        getProviderUserVerificationReadiness(input.database)
       ]
     },
     {
@@ -572,6 +575,39 @@ function getInvitationAcceptanceReadiness(database: PortalDatabaseReadiness): Po
     "Production login needs a real accepted invite test for both client and staff access.",
     `${clientCount} client invite(s) and ${staffCount} staff invite(s) accepted.`,
     "Send and accept one real client invite and one real staff invite before production launch."
+  );
+}
+
+
+function getProviderUserVerificationReadiness(database: PortalDatabaseReadiness): PortalReadinessItem {
+  if (!database.connected) {
+    return blockedItem(
+      "provider-user-verification",
+      "Real provider user verification",
+      "The real provider user verification check could not run.",
+      "Provider-backed portal user verification did not complete.",
+      "Run the full readiness verifier with a production DATABASE_URL."
+    );
+  }
+
+  const clientCount = database.activeClientClerkUserCount ?? 0;
+  const staffCount = database.activeStaffClerkUserCount ?? 0;
+
+  if (clientCount > 0 && staffCount > 0) {
+    return readyItem(
+      "provider-user-verification",
+      "Real provider user verification",
+      "At least one active client and one active staff user are linked to Clerk identities.",
+      `${clientCount} active client user(s) and ${staffCount} active staff user(s) linked to Clerk.`
+    );
+  }
+
+  return blockedItem(
+    "provider-user-verification",
+    "Real provider user verification",
+    "Production login requires real Clerk-linked client and staff users.",
+    `${clientCount} active client user(s) and ${staffCount} active staff user(s) linked to Clerk.`,
+    "Complete real Clerk login for at least one client and one staff user before production launch."
   );
 }
 

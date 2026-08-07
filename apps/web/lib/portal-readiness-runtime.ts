@@ -73,6 +73,8 @@ export async function getPortalDatabaseReadiness(
           status: "active"
         },
         select: {
+          authProvider: true,
+          authProviderUserId: true,
           mfaRequired: true,
           portalAccessStatus: true,
           role: {
@@ -99,6 +101,20 @@ export async function getPortalDatabaseReadiness(
     const rolesMissingPermissions = roles
       .filter((role) => !Array.isArray(role.permissions) || role.permissions.length === 0)
       .map((role) => role.name);
+    const activeClientClerkUserCount = users.filter(
+      (user) =>
+        user.role?.name === "Client" &&
+        user.portalAccessStatus === "active" &&
+        user.authProvider === "clerk" &&
+        Boolean(user.authProviderUserId?.trim())
+    ).length;
+    const activeStaffClerkUserCount = users.filter(
+      (user) =>
+        user.role?.name !== "Client" &&
+        user.portalAccessStatus === "active" &&
+        user.authProvider === "clerk" &&
+        Boolean(user.authProviderUserId?.trim())
+    ).length;
     const activeOwnerCount = users.filter(
       (user) => user.role?.name === "Owner" && user.portalAccessStatus === "active"
     ).length;
@@ -115,6 +131,8 @@ export async function getPortalDatabaseReadiness(
     return {
       acceptedClientInvitationCount,
       acceptedStaffInvitationCount,
+      activeClientClerkUserCount,
+      activeStaffClerkUserCount,
       activeOwnerCount,
       connected: true,
       detail: "Database connection check passed.",
