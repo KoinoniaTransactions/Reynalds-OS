@@ -201,3 +201,25 @@ Do not describe the portal as production ready merely because source code, helpe
 Production readiness requires verified infrastructure, real provider configuration, live database behavior, controlled payment-event delivery, access isolation, and end-to-end operational evidence.
 
 The active mission remains Koinonia production completion. Portal work should continue only as production-readiness work tied to real client/employee access and operational safety, not as speculative platform expansion.
+
+---
+
+# 2026-08-07 Portal Billing Priority Update
+
+## Recently Completed
+
+- Real provider-user production-readiness gate for active Clerk-linked client and staff identities.
+- Direct runtime tests for provider-user database derivation.
+- Canonical Object Engine schemas for `CustomerBillingProfile`.
+- Canonical Object Engine schemas for `ServiceActivation`.
+
+## Immediate Portal Billing Priority
+
+1. Persist canonical billing profiles and service activations through live portal workflows with correct customer ownership.
+2. Require explicit customer/client targeting for staff-created billing setup work.
+3. Add the processor customer/payment-method reference layer.
+4. Create the Stripe-hosted setup flow with Koinonia workspace/request metadata.
+5. Verify real Stripe webhook delivery and database reconciliation.
+6. Complete controlled client/staff billing QA before accepting live payment methods.
+
+The Stripe account itself does not need to be recreated. Local Stripe configuration is already present; remaining work is application linkage, production deployment configuration, and live operational proof.

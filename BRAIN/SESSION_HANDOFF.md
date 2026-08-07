@@ -812,3 +812,75 @@ After the concurrent payment work is completed and the working tree is reconcile
 5. Verify the configured production webhook destination.
 6. Update the Brain again with the final reconciled payment state.
 7. Keep the next commit limited to one verified production-readiness slice.
+
+---
+
+# 2026-08-07 Current Session Handoff — Portal Provider Verification and Billing Foundation
+
+## Repository State
+
+- Repository: `/Users/jeremiahreynalds/Projects/Reynalds_OS_v11_3_1_Work`
+- Branch: `chatgpt/portal-access-status`
+- Remote: `origin/chatgpt/portal-access-status`
+- Working tree was clean after the latest confirmed push.
+
+## Latest Confirmed Commits
+
+- `a86ab42` — Verify real provider portal users
+- `ed10824` — Add portal billing entity schemas
+
+## Provider Readiness State
+
+Portal readiness now requires more than accepted invitations.
+
+A production-ready identity path requires:
+
+- at least one accepted client invitation,
+- at least one accepted staff invitation,
+- at least one active Clerk-linked client database user,
+- at least one active Clerk-linked staff database user.
+
+The runtime database derivation is directly tested.
+
+## Stripe State
+
+The Stripe account/setup work has already been performed locally.
+
+The repository/Brain confirms:
+
+- Stripe processor configuration is present locally,
+- a hosted Stripe setup/payment destination was created,
+- the webhook destination and webhook signing secret are configured locally,
+- the Stripe webhook implementation already verifies signed events,
+- recognized events can update billing setup status, invoice status, Payment records, timeline history, and audit history.
+
+Do not store Stripe secrets, webhook secrets, raw card numbers, CVV/CVC, or bank credentials in the Brain or portal records.
+
+The remaining Stripe bridge is not account creation. The later processor-hosted flow must attach Koinonia metadata so webhook events can reconcile to the correct workspace, billing setup request, or invoice.
+
+## Billing Architecture State
+
+Canonical Object Engine contracts now exist for:
+
+- `CustomerBillingProfile`
+- `ServiceActivation`
+
+These are implemented as `RosObject` domain contracts rather than standalone Prisma tables.
+
+The current foundation is schema/domain behavior only. Live persistence wiring is not complete yet.
+
+## Next Recommended Billing Slice
+
+Complete Step 5B:
+
+1. Define safe client/customer ownership rules for billing profiles.
+2. Wire client billing setup creation into the canonical billing profile/service activation entities.
+3. Require explicit customer targeting for employee-created billing setup work rather than assigning the employee as the customer.
+4. Add focused persistence tests.
+5. Keep Stripe customer/payment-method references out of this slice.
+
+After Step 5B is proven, continue with:
+
+- Step 6 — processor customer/payment-method reference model.
+- Step 7 — processor-hosted Stripe setup flow carrying Koinonia metadata.
+- Controlled webhook delivery and reconciliation verification.

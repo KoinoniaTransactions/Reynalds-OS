@@ -2757,3 +2757,59 @@ Production readiness still requires real provider configuration, production secr
 - TypeScript checks passed.
 - Production web build passed after the R2/scanning slice.
 - Full portal verifier still correctly blocks on missing production Clerk, Stripe, and R2 account configuration.
+
+---
+
+## 2026-08-07 Portal Provider Verification and Billing Schema Foundation
+
+### Summary
+
+Koinonia portal production-readiness work advanced in two focused, verified slices on `chatgpt/portal-access-status`.
+
+### Real Provider User Verification
+
+Commit:
+
+- `a86ab42` — Verify real provider portal users
+
+Implemented:
+
+- Portal readiness now distinguishes accepted invitations from actual provider-backed portal identities.
+- Production readiness requires at least one active Clerk-linked client user and one active Clerk-linked staff user.
+- Database readiness derives those counts from active Koinonia users with active portal access, `authProvider=clerk`, and a nonblank provider user ID.
+- Runtime database derivation received direct regression coverage in addition to readiness-report and launch-checklist tests.
+
+Verification:
+
+- 3 focused test files passed.
+- 31 focused tests passed.
+
+### Billing Profile and Service Activation Foundation
+
+Commit:
+
+- `ed10824` — Add portal billing entity schemas
+
+Implemented:
+
+- Added canonical Object Engine contracts for `CustomerBillingProfile`.
+- Added canonical Object Engine contracts for `ServiceActivation`.
+- Billing profiles capture consent state, approved billing models, billing-contact metadata, and safe billing notes without storing raw card or bank credentials.
+- Service activations capture service identity, billing model, consent state, billing trigger, terms version, and work/client linkage.
+- The implementation intentionally uses `RosObject` contracts rather than creating a disconnected billing database.
+- Stripe processor customer IDs and payment-method references remain a later processor-reference slice and were not mixed into this foundation.
+
+Verification:
+
+- 3 focused billing test files passed.
+- 17 focused billing tests passed.
+- Web TypeScript check passed.
+- Git diff checks passed.
+
+### Current Boundary
+
+The schema foundation does not yet create live `CustomerBillingProfile` or `ServiceActivation` records.
+
+The next billing slice should wire these canonical entities into live billing workflows with correct client ownership and service linkage before adding Stripe processor customer/payment-method references.
+
+Employee-created billing setup requests must not silently treat the employee as the customer; they need an explicit customer/client target before canonical billing-profile persistence is created.

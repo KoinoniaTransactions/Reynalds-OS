@@ -108,3 +108,13 @@ Reynalds OS will evolve into a universal operating system capable of managing bu
 - External webhook delivery
 - Payment-event reconciliation
 - End-to-end client and employee portal testing
+
+---
+
+## 2026-08-07 — Portal Identity and Billing Foundation
+
+- Added production-readiness verification for real active Clerk-linked client and staff users.
+- Added direct runtime coverage for provider-user readiness derivation.
+- Added canonical Object Engine contracts for customer billing profiles and service activations.
+- Preserved the processor-hosted payment security boundary; no raw payment credentials are stored in the new billing contracts.
+- Confirmed Stripe account/configuration work already exists; remaining work is application linkage and live verification.

@@ -157,3 +157,23 @@ Live portal documents must use private Cloudflare R2 object storage, must pass m
 Send-package principle:
 
 Prepared document send packages may track delivery state, but sent/signature/completed statuses require safe delivery confirmation and do not by themselves prove external e-signature or brokerage-platform integration.
+
+---
+
+# 2026-08-07 Portal Provider and Billing State
+
+Portal readiness now verifies actual provider-backed identities rather than relying only on invitation acceptance.
+
+Implemented:
+
+- active Clerk-linked client-user readiness check,
+- active Clerk-linked staff-user readiness check,
+- direct database-runtime regression tests,
+- canonical `CustomerBillingProfile` Object Engine contract,
+- canonical `ServiceActivation` Object Engine contract.
+
+Billing architecture continues to follow the existing Reynalds OS Object Engine and finance models rather than creating a separate billing database.
+
+The billing-profile/service-activation contracts are currently a domain foundation. Live persistence and ownership linkage remain the next implementation step.
+
+Stripe account/configuration work is already represented in the local environment and prior Brain entries. Remaining Stripe readiness work is transaction-aware processor linkage, production-host configuration confirmation, real webhook delivery, reconciliation proof, and controlled end-to-end testing.
