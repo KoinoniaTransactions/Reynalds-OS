@@ -167,6 +167,9 @@ export default async function BillsPage({
         bills={
           budget.bills
         }
+        periodKey={
+          periodKey
+        }
         totals={{
           planned:
             budget.totals

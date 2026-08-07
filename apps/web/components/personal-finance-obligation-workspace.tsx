@@ -98,6 +98,8 @@ type ObligationCatalog = {
 
 type Props = {
   bills: BudgetBill[];
+  periodKey: string;
+
   totals: {
     planned: number;
     paid: number;
@@ -243,6 +245,7 @@ function obligationMatchesBill(
 
 export function PersonalFinanceObligationWorkspace({
   bills,
+  periodKey,
   totals
 }: Props) {
   const [
@@ -753,7 +756,11 @@ export function PersonalFinanceObligationWorkspace({
         </article>
       </div>
 
-      <PersonalFinanceLoanPaymentWorkspace />
+      <PersonalFinanceLoanPaymentWorkspace
+        periodKey={
+          periodKey
+        }
+      />
 
       {isFormOpen ? (
         <form

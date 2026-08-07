@@ -484,3 +484,249 @@
     grid-column: auto;
   }
 }
+
+/* Payment safeguards and correction controls */
+
+.debtAction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border:
+    1px solid #afe2da;
+  border-radius: 12px;
+  background: #f0faf9;
+}
+
+.debtAction > div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.debtAction > div > span {
+  color: #16877d;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.debtAction strong {
+  color: #19324a;
+  font-size: 1rem;
+}
+
+.debtAction p {
+  max-width: 720px;
+  margin: 0;
+  color: #516b80;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.debtAction > button {
+  min-height: 46px;
+  flex: 0 0 auto;
+  padding: 0.7rem 0.95rem;
+  border:
+    1px solid #16877d;
+  border-radius: 11px;
+  background: #16877d;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 780;
+}
+
+.historyRow {
+  grid-template-columns:
+    110px
+    120px
+    minmax(0, 1fr)
+    auto;
+}
+
+.historyNote {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.debtSourceBadge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  background: #e6f8f5;
+  color: #16877d !important;
+  font-size: 0.8125rem !important;
+  font-weight: 780;
+}
+
+.historyActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.editButton,
+.cancelButton,
+.dangerButton {
+  min-height: 40px;
+  padding: 0.5rem 0.7rem;
+  border-radius: 9px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+
+.editButton {
+  border:
+    1px solid #b9d9f7;
+  background: #eaf4ff;
+  color: #1d63b3;
+}
+
+.cancelButton {
+  border:
+    1px solid #bdd0db;
+  background: #ffffff;
+  color: #516b80;
+}
+
+.dangerButton {
+  border:
+    1px solid #f1bfc2;
+  background: #fff0f1;
+  color: #a63c43;
+}
+
+.editButton:disabled,
+.cancelButton:disabled,
+.dangerButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.historyEditForm {
+  display: grid;
+  grid-template-columns:
+    minmax(130px, 0.8fr)
+    minmax(150px, 0.8fr)
+    minmax(180px, 1.2fr)
+    auto;
+  gap: 0.65rem;
+  align-items: end;
+  padding: 0.75rem;
+  border:
+    1px solid #b9d9f7;
+  border-radius: 10px;
+  background: #f7fbff;
+}
+
+.historyEditForm label {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.historyEditForm label > span {
+  color: #38566d;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.historyEditForm input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0.6rem 0.7rem;
+  border:
+    1px solid #bdd0db;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #19324a;
+  font: inherit;
+  font-size: 1rem;
+}
+
+.historyEditActions {
+  display: flex;
+  gap: 0.45rem;
+}
+
+@media (max-width: 900px) {
+  .debtAction {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .debtAction > button {
+    width: fit-content;
+  }
+
+  .historyEditForm {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .historyEditActions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .debtAction > div > span,
+  .debtAction strong,
+  .debtAction p,
+  .debtSourceBadge,
+  .historyEditForm label > span,
+  .editButton,
+  .cancelButton,
+  .dangerButton {
+    font-size: 1rem !important;
+  }
+
+  .debtAction > button {
+    width: 100%;
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  .historyEditForm {
+    grid-template-columns: 1fr;
+  }
+
+  .historyEditForm input {
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  .historyEditActions {
+    display: grid;
+    grid-column: auto;
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .editButton,
+  .cancelButton,
+  .dangerButton {
+    min-height: 48px;
+  }
+
+  .historyActions {
+    justify-content: stretch;
+  }
+
+  .historyActions button {
+    flex: 1 1 0;
+  }
+}

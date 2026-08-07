@@ -7,6 +7,10 @@ import {
   type FormEvent
 } from "react";
 
+import {
+  useRouter
+} from "next/navigation";
+
 import styles from "./personal-finance-loan-payment-workspace.module.css";
 
 type PaymentHistoryRecord = {
@@ -94,6 +98,10 @@ type LoanScenario = {
   amortization: AmortizationEntry[];
 };
 
+type Props = {
+  periodKey: string;
+};
+
 type PaymentPreview = {
   liabilityId: string;
   obligationId: string | null;
@@ -128,7 +136,12 @@ function money(
   ).format(value);
 }
 
-export function PersonalFinanceLoanPaymentWorkspace() {
+export function PersonalFinanceLoanPaymentWorkspace({
+  periodKey
+}: Props) {
+  const router =
+    useRouter();
+
   const [
     records,
     setRecords
@@ -252,6 +265,90 @@ export function PersonalFinanceLoanPaymentWorkspace() {
   useEffect(() => {
     void loadRecords();
   }, [loadRecords]);
+
+  useEffect(
+    () => {
+      function openLinkedDebt(
+        event: Event
+      ) {
+        const customEvent =
+          event as CustomEvent<{
+            billName?: string;
+          }>;
+
+        const billName =
+          customEvent.detail
+            ?.billName
+            ?.trim()
+            .toLowerCase();
+
+        if (!billName) {
+          return;
+        }
+
+        const record =
+          records.find(
+            (candidate) =>
+              candidate.billName
+                .trim()
+                .toLowerCase() ===
+              billName
+          );
+
+        if (!record) {
+          return;
+        }
+
+        setModeling(null);
+        setScenario(null);
+        setReconciling(null);
+        setPreview(null);
+        setError(null);
+        setNotice(null);
+
+        if (
+          record.hasConfiguredTerms
+        ) {
+          setConfiguring(null);
+          setSelected(record);
+        } else {
+          setSelected(null);
+          setConfiguring(record);
+        }
+
+        window.requestAnimationFrame(
+          () => {
+            document
+              .getElementById(
+                "loan-payment-ledger"
+              )
+              ?.scrollIntoView({
+                behavior:
+                  "smooth",
+
+                block:
+                  "start"
+              });
+          }
+        );
+      }
+
+      window.addEventListener(
+        "personal-finance-open-debt-ledger",
+        openLinkedDebt
+      );
+
+      return () => {
+        window.removeEventListener(
+          "personal-finance-open-debt-ledger",
+          openLinkedDebt
+        );
+      };
+    },
+    [
+      records
+    ]
+  );
 
   async function modelExtraPayment(
     event: FormEvent<HTMLFormElement>
@@ -704,6 +801,9 @@ export function PersonalFinanceLoanPaymentWorkspace() {
             body: JSON.stringify({
               action:
                 "apply-payment",
+
+              periodKey,
+
               obligationId:
                 selected.obligationId,
               sourceKey:
@@ -756,7 +856,17 @@ export function PersonalFinanceLoanPaymentWorkspace() {
 
       const body =
         await response.json() as {
-          error?: string;
+          periodSync?:
+            {
+              synced:
+                boolean;
+
+              error?:
+                string;
+            } | null;
+
+          error?:
+            string;
         };
 
       if (!response.ok) {
@@ -766,16 +876,45 @@ export function PersonalFinanceLoanPaymentWorkspace() {
         );
       }
 
-      setNotice(
+      const principalNotice =
         `Payment applied. New principal balance: ${money(
           preview.projectedBalance
-        )}.`
-      );
+        )}.`;
+
+      if (
+        body.periodSync?.error
+      ) {
+        setError(
+          `The debt payment was applied, but ${periodKey} could not be synchronized: ${body.periodSync.error}`
+        );
+      }
+
+      if (
+        body.periodSync?.synced
+      ) {
+        setNotice(
+          `${principalNotice} The selected month's bill was updated automatically.`
+        );
+      } else if (
+        body.periodSync &&
+        !body.periodSync.synced &&
+        !body.periodSync.error
+      ) {
+        setNotice(
+          `${principalNotice} No matching monthly bill needed synchronization.`
+        );
+      } else {
+        setNotice(
+          principalNotice
+        );
+      }
 
       setPreview(null);
       setSelected(null);
 
       await loadRecords();
+
+      router.refresh();
 
       window.dispatchEvent(
         new Event(
@@ -796,6 +935,7 @@ export function PersonalFinanceLoanPaymentWorkspace() {
   return (
     <section
       className={styles.workspace}
+      id="loan-payment-ledger"
     >
       <header
         className={styles.header}

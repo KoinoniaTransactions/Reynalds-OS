@@ -11,6 +11,7 @@ import {
 } from "next/navigation";
 
 import type {
+  PersonalFinanceBillPayment,
   PersonalFinanceReconciliationBill,
   PersonalFinanceReconciliationWorkspace
 } from "../lib/personal-finance-reconciliation-types";
@@ -125,6 +126,109 @@ function statusLabel(
   return "Unpaid";
 }
 
+function paymentMethodLabel(
+  value: string
+): string {
+  const normalized =
+    value
+      .trim()
+      .toLowerCase();
+
+  if (
+    normalized ===
+    "not entered"
+  ) {
+    return "Payment method not set";
+  }
+
+  return value;
+}
+
+function debtTypeLabel(
+  value:
+    string | null
+): string {
+  if (!value) {
+    return "linked debt";
+  }
+
+  return value
+    .replaceAll(
+      "_",
+      " "
+    )
+    .replace(
+      /\b\w/g,
+      (character) =>
+        character.toUpperCase()
+    );
+}
+
+function formAmount(
+  value:
+    FormDataEntryValue |
+    null
+): number {
+  const parsed =
+    Number(
+      String(
+        value ?? ""
+      )
+        .replace(
+          /[$,\s]/g,
+          ""
+        )
+    );
+
+  return parsed;
+}
+
+function confirmOverpayment({
+  bill,
+  amount,
+  replacedAmount = 0
+}: {
+  bill:
+    PersonalFinanceReconciliationBill;
+
+  amount:
+    number;
+
+  replacedAmount?:
+    number;
+}): boolean {
+  if (
+    !Number.isFinite(
+      amount
+    ) ||
+    amount <= 0
+  ) {
+    return true;
+  }
+
+  const projectedPaid =
+    bill.paid -
+    replacedAmount +
+    amount;
+
+  if (
+    projectedPaid <=
+    bill.planned + 0.005
+  ) {
+    return true;
+  }
+
+  const overBy =
+    projectedPaid -
+    bill.planned;
+
+  return window.confirm(
+    `${bill.name} will be ${money(
+      overBy
+    )} over its planned amount after this payment.\n\nRecord it anyway?`
+  );
+}
+
 export function PersonalFinanceBillReconciliationWorkspace({
   initialWorkspace
 }: Props) {
@@ -142,6 +246,22 @@ export function PersonalFinanceBillReconciliationWorkspace({
   const [
     busyBillKey,
     setBusyBillKey
+  ] =
+    useState<
+      string | null
+    >(null);
+
+  const [
+    busyPaymentId,
+    setBusyPaymentId
+  ] =
+    useState<
+      string | null
+    >(null);
+
+  const [
+    editingPaymentId,
+    setEditingPaymentId
   ] =
     useState<
       string | null
@@ -174,6 +294,55 @@ export function PersonalFinanceBillReconciliationWorkspace({
     ]
   );
 
+  async function postAction(
+    action: string,
+    payload:
+      Record<
+        string,
+        unknown
+      >
+  ): Promise<
+    PersonalFinanceReconciliationWorkspace
+  > {
+    const response =
+      await fetch(
+        "/api/personal/reconciliation",
+        {
+          method:
+            "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              action,
+              periodKey:
+                workspace.periodKey,
+              ...payload
+            })
+        }
+      );
+
+    const body =
+      await response.json() as
+        ReconciliationResponse;
+
+    if (
+      !response.ok ||
+      !body.workspace
+    ) {
+      throw new Error(
+        body.error ??
+          "The payment change could not be saved."
+      );
+    }
+
+    return body.workspace;
+  }
+
   async function submitPayment(
     event:
       FormEvent<
@@ -192,6 +361,22 @@ export function PersonalFinanceBillReconciliationWorkspace({
         form
       );
 
+    const amount =
+      formAmount(
+        data.get(
+          "amount"
+        )
+      );
+
+    if (
+      !confirmOverpayment({
+        bill,
+        amount
+      })
+    ) {
+      return;
+    }
+
     setBusyBillKey(
       bill.budgetItemKey
     );
@@ -203,69 +388,38 @@ export function PersonalFinanceBillReconciliationWorkspace({
     );
 
     try {
-      const response =
-        await fetch(
-          "/api/personal/reconciliation",
+      const updated =
+        await postAction(
+          "record-bill-payment",
           {
-            method:
-              "POST",
+            budgetItemKey:
+              bill.budgetItemKey,
 
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
+            amount:
+              String(
+                data.get(
+                  "amount"
+                ) ?? ""
+              ),
 
-            body:
-              JSON.stringify({
-                action:
-                  "record-bill-payment",
+            paidOn:
+              String(
+                data.get(
+                  "paidOn"
+                ) ?? ""
+              ),
 
-                periodKey:
-                  workspace.periodKey,
-
-                budgetItemKey:
-                  bill.budgetItemKey,
-
-                amount:
-                  String(
-                    data.get(
-                      "amount"
-                    ) ?? ""
-                  ),
-
-                paidOn:
-                  String(
-                    data.get(
-                      "paidOn"
-                    ) ?? ""
-                  ),
-
-                note:
-                  String(
-                    data.get(
-                      "note"
-                    ) ?? ""
-                  )
-              })
+            note:
+              String(
+                data.get(
+                  "note"
+                ) ?? ""
+              )
           }
         );
 
-      const body =
-        await response.json() as
-          ReconciliationResponse;
-
-      if (
-        !response.ok ||
-        !body.workspace
-      ) {
-        throw new Error(
-          body.error ??
-            "The bill payment could not be recorded."
-        );
-      }
-
       setWorkspace(
-        body.workspace
+        updated
       );
 
       form.reset();
@@ -295,6 +449,224 @@ export function PersonalFinanceBillReconciliationWorkspace({
         null
       );
     }
+  }
+
+  async function submitPaymentEdit(
+    event:
+      FormEvent<
+        HTMLFormElement
+      >,
+    bill:
+      PersonalFinanceReconciliationBill,
+    payment:
+      PersonalFinanceBillPayment
+  ) {
+    event.preventDefault();
+
+    const data =
+      new FormData(
+        event.currentTarget
+      );
+
+    const amount =
+      formAmount(
+        data.get(
+          "amount"
+        )
+      );
+
+    if (
+      !confirmOverpayment({
+        bill,
+        amount,
+        replacedAmount:
+          payment.amount
+      })
+    ) {
+      return;
+    }
+
+    setBusyPaymentId(
+      payment.id
+    );
+    setError(
+      null
+    );
+    setNotice(
+      null
+    );
+
+    try {
+      const updated =
+        await postAction(
+          "update-bill-payment",
+          {
+            paymentId:
+              payment.id,
+
+            amount:
+              String(
+                data.get(
+                  "amount"
+                ) ?? ""
+              ),
+
+            paidOn:
+              String(
+                data.get(
+                  "paidOn"
+                ) ?? ""
+              ),
+
+            note:
+              String(
+                data.get(
+                  "note"
+                ) ?? ""
+              )
+          }
+        );
+
+      setWorkspace(
+        updated
+      );
+
+      setEditingPaymentId(
+        null
+      );
+
+      setNotice(
+        `Payment corrected for ${bill.name}.`
+      );
+
+      window.dispatchEvent(
+        new Event(
+          "personal-finance-updated"
+        )
+      );
+
+      router.refresh();
+    } catch (
+      saveError
+    ) {
+      setError(
+        saveError instanceof
+          Error
+          ? saveError.message
+          : "The payment could not be updated."
+      );
+    } finally {
+      setBusyPaymentId(
+        null
+      );
+    }
+  }
+
+  async function deletePayment(
+    bill:
+      PersonalFinanceReconciliationBill,
+    payment:
+      PersonalFinanceBillPayment
+  ) {
+    const confirmed =
+      window.confirm(
+        `Delete the ${money(
+          payment.amount
+        )} payment recorded for ${bill.name} on ${displayDate(
+          payment.paidOn
+        )}?\n\nThe bill's Paid total will decrease by the same amount.`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setBusyPaymentId(
+      payment.id
+    );
+    setError(
+      null
+    );
+    setNotice(
+      null
+    );
+
+    try {
+      const updated =
+        await postAction(
+          "delete-bill-payment",
+          {
+            paymentId:
+              payment.id
+          }
+        );
+
+      setWorkspace(
+        updated
+      );
+
+      setEditingPaymentId(
+        null
+      );
+
+      setNotice(
+        `Payment deleted from ${bill.name}.`
+      );
+
+      window.dispatchEvent(
+        new Event(
+          "personal-finance-updated"
+        )
+      );
+
+      router.refresh();
+    } catch (
+      saveError
+    ) {
+      setError(
+        saveError instanceof
+          Error
+          ? saveError.message
+          : "The payment could not be deleted."
+      );
+    } finally {
+      setBusyPaymentId(
+        null
+      );
+    }
+  }
+
+  function openDebtLedger(
+    bill:
+      PersonalFinanceReconciliationBill
+  ) {
+    window.dispatchEvent(
+      new CustomEvent(
+        "personal-finance-open-debt-ledger",
+        {
+          detail: {
+            billName:
+              bill.name
+          }
+        }
+      )
+    );
+
+    window.requestAnimationFrame(
+      () => {
+        document
+          .getElementById(
+            "loan-payment-ledger"
+          )
+          ?.scrollIntoView({
+            behavior:
+              "smooth",
+
+            block:
+              "start"
+          });
+      }
+    );
   }
 
   return (
@@ -404,20 +776,19 @@ export function PersonalFinanceBillReconciliationWorkspace({
         }
       >
         <strong>
-          Debt payments have a
-          separate workflow.
+          Linked debt bills are
+          protected.
         </strong>
 
         <span>
-          For mortgage, vehicle,
-          or loan payments where
-          principal and interest
-          must update the linked
-          liability and net worth,
-          use the Record debt
-          payments ledger below.
-          Do not record the same
-          payment in both ledgers.
+          Mortgage, vehicle, and
+          loan bills linked to an
+          active liability are
+          recorded only through
+          the debt ledger. A debt
+          payment will then update
+          this monthly bill
+          automatically.
         </span>
       </aside>
 
@@ -479,9 +850,9 @@ export function PersonalFinanceBillReconciliationWorkspace({
                     </h3>
 
                     <p>
-                      {
+                      {paymentMethodLabel(
                         bill.paymentMethod
-                      }
+                      )}
                     </p>
                   </div>
 
@@ -547,86 +918,130 @@ export function PersonalFinanceBillReconciliationWorkspace({
                   </span>
                 </div>
 
-                <form
-                  className={
-                    styles.paymentForm
-                  }
-                  onSubmit={(
-                    event
-                  ) =>
-                    void submitPayment(
-                      event,
-                      bill
-                    )
-                  }
-                >
-                  <label>
-                    <span>
-                      Payment amount
-                    </span>
+                {bill.requiresDebtLedger ? (
+                  <div
+                    className={
+                      styles.debtAction
+                    }
+                  >
+                    <div>
+                      <span>
+                        {
+                          debtTypeLabel(
+                            bill.debtLedgerLabel
+                          )
+                        }
+                      </span>
 
-                    <input
-                      min="0.01"
-                      name="amount"
-                      placeholder={
-                        bill.remaining >
-                        0
-                          ? `Remaining ${money(
-                              bill.remaining
-                            )}`
-                          : "Enter payment"
-                      }
-                      required
-                      step="0.01"
-                      type="number"
-                    />
-                  </label>
+                      <strong>
+                        Record this payment
+                        in the debt ledger
+                      </strong>
 
-                  <label>
-                    <span>
-                      Paid date
-                    </span>
+                      <p>
+                        Principal,
+                        interest, the
+                        linked liability,
+                        net worth, and this
+                        month's Paid total
+                        will stay
+                        synchronized.
+                      </p>
+                    </div>
 
-                    <input
-                      defaultValue={
-                        defaultPaymentDate(
-                          workspace.periodKey
+                    <button
+                      onClick={() =>
+                        openDebtLedger(
+                          bill
                         )
                       }
-                      name="paidOn"
-                      required
-                      type="date"
-                    />
-                  </label>
-
-                  <label
+                      type="button"
+                    >
+                      Record in debt ledger
+                    </button>
+                  </div>
+                ) : (
+                  <form
                     className={
-                      styles.noteField
+                      styles.paymentForm
+                    }
+                    onSubmit={(
+                      event
+                    ) =>
+                      void submitPayment(
+                        event,
+                        bill
+                      )
                     }
                   >
-                    <span>
-                      Note
-                    </span>
+                    <label>
+                      <span>
+                        Payment amount
+                      </span>
 
-                    <input
-                      name="note"
-                      placeholder="Optional"
-                    />
-                  </label>
+                      <input
+                        min="0.01"
+                        name="amount"
+                        placeholder={
+                          bill.remaining >
+                          0
+                            ? `Remaining ${money(
+                                bill.remaining
+                              )}`
+                            : "Enter payment"
+                        }
+                        required
+                        step="0.01"
+                        type="number"
+                      />
+                    </label>
 
-                  <button
-                    disabled={
-                      busyBillKey ===
+                    <label>
+                      <span>
+                        Paid date
+                      </span>
+
+                      <input
+                        defaultValue={
+                          defaultPaymentDate(
+                            workspace.periodKey
+                          )
+                        }
+                        name="paidOn"
+                        required
+                        type="date"
+                      />
+                    </label>
+
+                    <label
+                      className={
+                        styles.noteField
+                      }
+                    >
+                      <span>
+                        Note
+                      </span>
+
+                      <input
+                        name="note"
+                        placeholder="Optional"
+                      />
+                    </label>
+
+                    <button
+                      disabled={
+                        busyBillKey ===
+                        bill.budgetItemKey
+                      }
+                      type="submit"
+                    >
+                      {busyBillKey ===
                       bill.budgetItemKey
-                    }
-                    type="submit"
-                  >
-                    {busyBillKey ===
-                    bill.budgetItemKey
-                      ? "Recording..."
-                      : "Record payment"}
-                  </button>
-                </form>
+                        ? "Recording..."
+                        : "Record payment"}
+                    </button>
+                  </form>
+                )}
 
                 <details
                   className={
@@ -652,42 +1067,217 @@ export function PersonalFinanceBillReconciliationWorkspace({
                       {bill.payments.map(
                         (
                           payment
-                        ) => (
-                          <div
-                            className={
-                              styles.historyRow
-                            }
-                            key={
-                              payment.id
-                            }
-                          >
-                            <span>
-                              {displayDate(
-                                payment.paidOn
-                              )}
-                            </span>
+                        ) =>
+                          editingPaymentId ===
+                            payment.id &&
+                          payment.sourceKind ===
+                            "ordinary" ? (
+                            <form
+                              className={
+                                styles.historyEditForm
+                              }
+                              key={
+                                payment.id
+                              }
+                              onSubmit={(
+                                event
+                              ) =>
+                                void submitPaymentEdit(
+                                  event,
+                                  bill,
+                                  payment
+                                )
+                              }
+                            >
+                              <label>
+                                <span>
+                                  Amount
+                                </span>
 
-                            <strong>
-                              {money(
-                                payment.amount
-                              )}
-                            </strong>
+                                <input
+                                  defaultValue={
+                                    payment.amount
+                                  }
+                                  min="0.01"
+                                  name="amount"
+                                  required
+                                  step="0.01"
+                                  type="number"
+                                />
+                              </label>
 
-                            <small>
-                              {payment.note ??
-                                "No note"}
-                            </small>
-                          </div>
-                        )
+                              <label>
+                                <span>
+                                  Paid date
+                                </span>
+
+                                <input
+                                  defaultValue={
+                                    payment.paidOn
+                                  }
+                                  name="paidOn"
+                                  required
+                                  type="date"
+                                />
+                              </label>
+
+                              <label>
+                                <span>
+                                  Note
+                                </span>
+
+                                <input
+                                  defaultValue={
+                                    payment.note ??
+                                    ""
+                                  }
+                                  name="note"
+                                />
+                              </label>
+
+                              <div
+                                className={
+                                  styles.historyEditActions
+                                }
+                              >
+                                <button
+                                  className={
+                                    styles.editButton
+                                  }
+                                  disabled={
+                                    busyPaymentId ===
+                                    payment.id
+                                  }
+                                  type="submit"
+                                >
+                                  {busyPaymentId ===
+                                  payment.id
+                                    ? "Saving..."
+                                    : "Save"}
+                                </button>
+
+                                <button
+                                  className={
+                                    styles.cancelButton
+                                  }
+                                  disabled={
+                                    busyPaymentId ===
+                                    payment.id
+                                  }
+                                  onClick={() =>
+                                    setEditingPaymentId(
+                                      null
+                                    )
+                                  }
+                                  type="button"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </form>
+                          ) : (
+                            <div
+                              className={
+                                styles.historyRow
+                              }
+                              key={
+                                payment.id
+                              }
+                            >
+                              <span>
+                                {displayDate(
+                                  payment.paidOn
+                                )}
+                              </span>
+
+                              <strong>
+                                {money(
+                                  payment.amount
+                                )}
+                              </strong>
+
+                              <div
+                                className={
+                                  styles.historyNote
+                                }
+                              >
+                                <small>
+                                  {payment.note ??
+                                    "No note"}
+                                </small>
+
+                                {payment.sourceKind ===
+                                "debt" ? (
+                                  <span
+                                    className={
+                                      styles.debtSourceBadge
+                                    }
+                                  >
+                                    Debt ledger
+                                  </span>
+                                ) : null}
+                              </div>
+
+                              {payment.sourceKind ===
+                              "ordinary" ? (
+                                <div
+                                  className={
+                                    styles.historyActions
+                                  }
+                                >
+                                  <button
+                                    className={
+                                      styles.editButton
+                                    }
+                                    disabled={
+                                      busyPaymentId ===
+                                      payment.id
+                                    }
+                                    onClick={() =>
+                                      setEditingPaymentId(
+                                        payment.id
+                                      )
+                                    }
+                                    type="button"
+                                  >
+                                    Edit
+                                  </button>
+
+                                  <button
+                                    className={
+                                      styles.dangerButton
+                                    }
+                                    disabled={
+                                      busyPaymentId ===
+                                      payment.id
+                                    }
+                                    onClick={() =>
+                                      void deletePayment(
+                                        bill,
+                                        payment
+                                      )
+                                    }
+                                    type="button"
+                                  >
+                                    {busyPaymentId ===
+                                    payment.id
+                                      ? "Working..."
+                                      : "Delete"}
+                                  </button>
+                                </div>
+                              ) : (
+                                <div />
+                              )}
+                            </div>
+                          )
                       )}
                     </div>
                   ) : (
                     <p>
-                      No ordinary
-                      payment entries
-                      have been
-                      recorded for
-                      this bill in{" "}
+                      No payment ledger
+                      entries have been
+                      recorded for this
+                      bill in{" "}
                       {
                         workspace.periodLabel
                       }.

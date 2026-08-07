@@ -382,7 +382,7 @@ export function PersonalFinanceAccountReconciliationWorkspace({
             </strong>
 
             <small>
-              Latest reconciled balance
+              Latest recorded balance
             </small>
           </div>
 
