@@ -112,17 +112,85 @@ describe("billing setup request helpers", () => {
   });
 
   it("validates safe billing setup status updates", () => {
-    const input = validateBillingSetupStatusUpdateInput({
-      notes: "Processor setup completed by client through hosted setup link.",
-      paymentMethodSummary: "Visa ending 4242, expires 12/29",
-      processorReference: "pm_koinonia_reference_123",
-      status: "Payment Method Ready"
-    });
+    const input = validateBillingSetupStatusUpdateInput(
+      {
+        notes: "Processor setup completed by client through hosted setup link.",
+        paymentMethodSummary: "Visa ending 4242, expires 12/29",
+        processorReference: "pm_koinonia_reference_123",
+        status: "Payment Method Ready"
+      },
+      { consentAcknowledged: true }
+    );
 
     expect(input.status).toBe("Payment Method Ready");
     expect(buildBillingSetupStatusNextAction(input.status)).toContain(
       "safe payment method metadata"
     );
+  });
+
+  it("requires recorded consent before advancing billing setup", () => {
+    expect(() =>
+      validateBillingSetupStatusUpdateInput(
+        { status: "Processor Link Needed" },
+        { consentAcknowledged: false }
+      )
+    ).toThrow("Recorded billing consent is required");
+
+    expect(
+      validateBillingSetupStatusUpdateInput(
+        { status: "Consent Needed" },
+        { consentAcknowledged: false }
+      ).status
+    ).toBe("Consent Needed");
+  });
+
+  it("requires processor evidence before marking a payment method ready", () => {
+    expect(() =>
+      validateBillingSetupStatusUpdateInput(
+        { status: "Payment Method Ready" },
+        { consentAcknowledged: true }
+      )
+    ).toThrow("requires a processor reference");
+
+    expect(() =>
+      validateBillingSetupStatusUpdateInput(
+        {
+          processorReference: "pm_reference_only",
+          status: "Payment Method Ready"
+        },
+        { consentAcknowledged: true }
+      )
+    ).toThrow("requires a processor reference");
+
+    expect(
+      validateBillingSetupStatusUpdateInput(
+        { status: "Payment Method Ready" },
+        {
+          consentAcknowledged: true,
+          paymentMethodSummary: "Visa ending 4242",
+          processorReference: "pm_existing_reference"
+        }
+      ).status
+    ).toBe("Payment Method Ready");
+  });
+
+  it("requires a billing trigger before pay-at-close watch", () => {
+    expect(() =>
+      validateBillingSetupStatusUpdateInput(
+        { status: "Pay at Close Watch" },
+        { consentAcknowledged: true }
+      )
+    ).toThrow("requires a recorded billing trigger");
+
+    expect(
+      validateBillingSetupStatusUpdateInput(
+        { status: "Pay at Close Watch" },
+        {
+          consentAcknowledged: true,
+          triggerDescription: "Charge only after confirmed successful close"
+        }
+      ).status
+    ).toBe("Pay at Close Watch");
   });
 
   it("rejects raw payment details in billing setup updates", () => {

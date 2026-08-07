@@ -14,6 +14,7 @@ const billingSetupStatusOptions = [
 type BillingSetupStatusFormProps = {
   currentStatus: string;
   disabled?: boolean;
+  disabledReason?: string;
   requestId: string;
 };
 
@@ -27,6 +28,7 @@ type BillingSetupStatusResponse = {
 export function BillingSetupStatusForm({
   currentStatus,
   disabled = false,
+  disabledReason,
   requestId
 }: BillingSetupStatusFormProps) {
   const [message, setMessage] = useState<string | null>(null);
@@ -34,6 +36,8 @@ export function BillingSetupStatusForm({
   const [status, setStatus] = useState<"error" | "success" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isDisabled = disabled || isSubmitting;
+  const requiresPaymentMethodEvidence = selectedStatus === "Payment Method Ready";
+  const requiresTriggerDescription = selectedStatus === "Pay at Close Watch";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -99,6 +103,7 @@ export function BillingSetupStatusForm({
           disabled={isDisabled}
           name="processorReference"
           placeholder="Processor customer or payment method reference"
+          required={requiresPaymentMethodEvidence}
           type="text"
         />
       </label>
@@ -109,6 +114,7 @@ export function BillingSetupStatusForm({
           disabled={isDisabled}
           name="paymentMethodSummary"
           placeholder="Visa ending 4242, expiration, or setup status"
+          required={requiresPaymentMethodEvidence}
           type="text"
         />
       </label>
@@ -119,6 +125,7 @@ export function BillingSetupStatusForm({
           disabled={isDisabled}
           name="triggerDescription"
           placeholder="Before work begins, after close, monthly cycle"
+          required={requiresTriggerDescription}
           type="text"
         />
       </label>
@@ -133,13 +140,26 @@ export function BillingSetupStatusForm({
         />
       </label>
 
+      {requiresPaymentMethodEvidence ? (
+        <p className="koinonia-billing-security-note employee">
+          Payment Method Ready requires recorded consent, a processor reference, and a safe
+          payment method summary.
+        </p>
+      ) : null}
+
+      {requiresTriggerDescription ? (
+        <p className="koinonia-billing-security-note employee">
+          Pay at Close Watch requires recorded consent and a clear successful-closing trigger.
+        </p>
+      ) : null}
+
       <button className="koinonia-button primary" disabled={isDisabled} type="submit">
         {isSubmitting ? "Saving" : "Save Billing Status"}
       </button>
 
       {disabled ? (
         <p className="koinonia-billing-security-note employee">
-          Live billing setup storage must be available before staff billing updates can be saved.
+          {disabledReason ?? "Billing setup updates are unavailable."}
         </p>
       ) : null}
 

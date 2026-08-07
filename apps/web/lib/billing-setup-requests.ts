@@ -108,16 +108,22 @@ export function getClientBillingSetupInitialStatus(
 }
 
 export function validateBillingSetupStatusUpdateInput(
-  input: unknown
+  input: unknown,
+  currentData?: unknown
 ): BillingSetupStatusUpdateInput {
   if (!input || typeof input !== "object") {
     throw new BillingSetupValidationError("Billing setup update body must be an object.");
   }
 
   const value = input as Record<string, unknown>;
+  const currentValue =
+    currentData && typeof currentData === "object" && !Array.isArray(currentData)
+      ? (currentData as Record<string, unknown>)
+      : {};
   const notes = optionalString(value.notes);
   const paymentMethodSummary = optionalString(value.paymentMethodSummary);
   const processorReference = optionalString(value.processorReference);
+  const status = normalizeRequiredBillingSetupStatus(value.status);
   const triggerDescription = optionalString(value.triggerDescription);
 
   if (
@@ -130,11 +136,43 @@ export function validateBillingSetupStatusUpdateInput(
     );
   }
 
+  const consentAcknowledged = currentValue.consentAcknowledged === true;
+
+  if (!consentAcknowledged && status !== "Consent Needed" && status !== "Blocked") {
+    throw new BillingSetupValidationError(
+      "Recorded billing consent is required before advancing billing setup."
+    );
+  }
+
+  if (status === "Payment Method Ready") {
+    const effectivePaymentMethodSummary =
+      paymentMethodSummary ?? optionalString(currentValue.paymentMethodSummary);
+    const effectiveProcessorReference =
+      processorReference ?? optionalString(currentValue.processorReference);
+
+    if (!effectiveProcessorReference || !effectivePaymentMethodSummary) {
+      throw new BillingSetupValidationError(
+        "Payment Method Ready requires a processor reference and safe payment method summary."
+      );
+    }
+  }
+
+  if (status === "Pay at Close Watch") {
+    const effectiveTriggerDescription =
+      triggerDescription ?? optionalString(currentValue.triggerDescription);
+
+    if (!effectiveTriggerDescription) {
+      throw new BillingSetupValidationError(
+        "Pay at Close Watch requires a recorded billing trigger or terms description."
+      );
+    }
+  }
+
   return {
     notes,
     paymentMethodSummary,
     processorReference,
-    status: normalizeRequiredBillingSetupStatus(value.status),
+    status,
     triggerDescription
   };
 }
