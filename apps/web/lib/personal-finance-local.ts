@@ -3,6 +3,11 @@ import "server-only";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
+import {
+  createPersonalFinanceDemoBudget,
+  readPersonalFinanceBootstrapMode
+} from "./personal-finance-bootstrap-local";
+
 export type BudgetBill = {
   id: string;
   name: string;
@@ -85,7 +90,37 @@ export async function loadLocalPersonalFinance(): Promise<PersonalFinanceLoadRes
   }
 
   try {
-    const source = await readLocalCsv();
+    const bootstrapMode =
+      await readPersonalFinanceBootstrapMode();
+
+    if (
+      bootstrapMode ===
+      "clean"
+    ) {
+      return {
+        budget:
+          null,
+
+        reason:
+          "Personal Finance is in clean launch mode. Legacy budget data is intentionally disabled."
+      };
+    }
+
+    if (
+      bootstrapMode ===
+      "demo"
+    ) {
+      return {
+        budget:
+          createPersonalFinanceDemoBudget(),
+
+        reason:
+          null
+      };
+    }
+
+    const source =
+      await readLocalCsv();
 
     if (!source) {
       return {
@@ -108,7 +143,7 @@ export async function loadLocalPersonalFinance(): Promise<PersonalFinanceLoadRes
     return {
       budget: null,
       reason:
-        "The local budget CSV could not be read or validated. Review the terminal for the local parsing error."
+        "The local Personal Finance bootstrap source could not be read or validated. Review the terminal for the parsing error."
     };
   }
 }
