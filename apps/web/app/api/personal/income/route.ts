@@ -9,14 +9,20 @@ import {
 import {
   createPersonalFinanceIncomeSource,
   createPersonalFinanceMiscIncome,
+  deletePersonalFinanceIncomeSource,
   readPersonalFinanceIncomeWorkspace,
-  updatePersonalFinanceIncomeReceipt
+  setPersonalFinanceIncomeSourceActive,
+  updatePersonalFinanceIncomeReceipt,
+  updatePersonalFinanceIncomeSource
 } from "../../../../lib/personal-finance-income-local";
 
 import type {
   CreatePersonalFinanceIncomeSourceInput,
   CreatePersonalFinanceMiscIncomeInput,
-  UpdatePersonalFinanceIncomeReceiptInput
+  DeletePersonalFinanceIncomeSourceInput,
+  SetPersonalFinanceIncomeSourceActiveInput,
+  UpdatePersonalFinanceIncomeReceiptInput,
+  UpdatePersonalFinanceIncomeSourceInput
 } from "../../../../lib/personal-finance-income-types";
 
 export const dynamic =
@@ -28,11 +34,7 @@ export const runtime =
 export async function GET(
   request: Request
 ) {
-  if (
-    !isAllowedRequest(
-      request
-    )
-  ) {
+  if (!isAllowedRequest(request)) {
     return NextResponse.json(
       {
         error:
@@ -61,20 +63,14 @@ export async function GET(
         )
     });
   } catch (error) {
-    return handleError(
-      error
-    );
+    return handleError(error);
   }
 }
 
 export async function POST(
   request: Request
 ) {
-  if (
-    !isAllowedRequest(
-      request
-    )
-  ) {
+  if (!isAllowedRequest(request)) {
     return NextResponse.json(
       {
         error:
@@ -120,11 +116,10 @@ export async function POST(
   }
 
   const record =
-    body as
-      Record<
-        string,
-        unknown
-      >;
+    body as Record<
+      string,
+      unknown
+    >;
 
   const action =
     typeof record.action ===
@@ -157,6 +152,51 @@ export async function POST(
           status: 201
         }
       );
+    }
+
+    if (
+      action ===
+      "update-source"
+    ) {
+      return NextResponse.json({
+        workspace:
+          updatePersonalFinanceIncomeSource(
+            periodKey,
+            record as
+              unknown as
+              UpdatePersonalFinanceIncomeSourceInput
+          )
+      });
+    }
+
+    if (
+      action ===
+      "set-source-active"
+    ) {
+      return NextResponse.json({
+        workspace:
+          setPersonalFinanceIncomeSourceActive(
+            periodKey,
+            record as
+              unknown as
+              SetPersonalFinanceIncomeSourceActiveInput
+          )
+      });
+    }
+
+    if (
+      action ===
+      "delete-source"
+    ) {
+      return NextResponse.json({
+        workspace:
+          deletePersonalFinanceIncomeSource(
+            periodKey,
+            record as
+              unknown as
+              DeletePersonalFinanceIncomeSourceInput
+          )
+      });
     }
 
     if (
@@ -204,9 +244,7 @@ export async function POST(
       }
     );
   } catch (error) {
-    return handleError(
-      error
-    );
+    return handleError(error);
   }
 }
 

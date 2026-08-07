@@ -107,6 +107,52 @@ function sourceTypeLabel(
   }
 }
 
+function sourceStatusLabel(
+  source:
+    PersonalFinanceIncomeSource,
+  periodKey: string
+): {
+  label: string;
+  tone:
+    "active" |
+    "future" |
+    "paused" |
+    "ended";
+} {
+  if (!source.isActive) {
+    return {
+      label: "Paused",
+      tone: "paused"
+    };
+  }
+
+  if (
+    source.activeFromPeriod >
+      periodKey
+  ) {
+    return {
+      label: "Future",
+      tone: "future"
+    };
+  }
+
+  if (
+    source.endPeriod !== null &&
+    source.endPeriod <
+      periodKey
+  ) {
+    return {
+      label: "Ended",
+      tone: "ended"
+    };
+  }
+
+  return {
+    label: "Active",
+    tone: "active"
+  };
+}
+
 function occurrenceKindLabel(
   occurrence:
     PersonalFinanceIncomeOccurrence
@@ -188,6 +234,28 @@ export function PersonalFinanceIncomeWorkspace({
   ] = useState<
     string | null
   >(null);
+
+  const [
+    sourceActionId,
+    setSourceActionId
+  ] = useState<
+    string | null
+  >(null);
+
+  const [
+    editingSourceId,
+    setEditingSourceId
+  ] = useState<
+    string | null
+  >(null);
+
+  const [
+    editingSchedule,
+    setEditingSchedule
+  ] =
+    useState<
+      PersonalFinanceIncomeSchedule
+    >("biweekly");
 
   const [
     loadingPeriod,
@@ -504,6 +572,260 @@ export function PersonalFinanceIncomeWorkspace({
       );
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function submitSourceEdit(
+    event:
+      FormEvent<
+        HTMLFormElement
+      >,
+    source:
+      PersonalFinanceIncomeSource
+  ) {
+    event.preventDefault();
+
+    setSourceActionId(
+      source.id
+    );
+    setError(null);
+    setNotice(null);
+
+    const data =
+      new FormData(
+        event.currentTarget
+      );
+
+    try {
+      const updated =
+        await postAction(
+          "update-source",
+          {
+            sourceId:
+              source.id,
+
+            recipientName:
+              String(
+                data.get(
+                  "recipientName"
+                ) ?? ""
+              ),
+
+            sourceName:
+              String(
+                data.get(
+                  "sourceName"
+                ) ?? ""
+              ),
+
+            sourceType:
+              String(
+                data.get(
+                  "sourceType"
+                ) ?? ""
+              ),
+
+            schedule:
+              String(
+                data.get(
+                  "schedule"
+                ) ?? ""
+              ),
+
+            expectedAmount:
+              String(
+                data.get(
+                  "expectedAmount"
+                ) ?? ""
+              ),
+
+            anchorDate:
+              String(
+                data.get(
+                  "anchorDate"
+                ) ?? ""
+              ),
+
+            secondPayDay:
+              String(
+                data.get(
+                  "secondPayDay"
+                ) ?? ""
+              ),
+
+            activeFromPeriod:
+              String(
+                data.get(
+                  "activeFromPeriod"
+                ) ?? ""
+              ),
+
+            endPeriod:
+              String(
+                data.get(
+                  "endPeriod"
+                ) ?? ""
+              ),
+
+            depositAccountLabel:
+              String(
+                data.get(
+                  "depositAccountLabel"
+                ) ?? ""
+              ),
+
+            notes:
+              String(
+                data.get(
+                  "notes"
+                ) ?? ""
+              )
+          }
+        );
+
+      setWorkspace(
+        updated
+      );
+
+      setEditingSourceId(
+        null
+      );
+
+      setNotice(
+        `Income source updated: ${source.recipientName} — ${source.sourceName}. Unreceived scheduled deposits from ${workspace.periodLabel} forward were refreshed.`
+      );
+
+      window.dispatchEvent(
+        new Event(
+          "personal-finance-updated"
+        )
+      );
+    } catch (saveError) {
+      setError(
+        saveError instanceof
+          Error
+          ? saveError.message
+          : "Income source could not be updated."
+      );
+    } finally {
+      setSourceActionId(
+        null
+      );
+    }
+  }
+
+  async function setSourceActive(
+    source:
+      PersonalFinanceIncomeSource,
+    isActive: boolean
+  ) {
+    setSourceActionId(
+      source.id
+    );
+    setError(null);
+    setNotice(null);
+
+    try {
+      const updated =
+        await postAction(
+          "set-source-active",
+          {
+            sourceId:
+              source.id,
+            isActive
+          }
+        );
+
+      setWorkspace(
+        updated
+      );
+
+      setEditingSourceId(
+        null
+      );
+
+      setNotice(
+        isActive
+          ? `Income source reactivated: ${source.recipientName} — ${source.sourceName}.`
+          : `Income source paused: ${source.recipientName} — ${source.sourceName}. Unreceived future schedule entries were removed.`
+      );
+
+      window.dispatchEvent(
+        new Event(
+          "personal-finance-updated"
+        )
+      );
+    } catch (saveError) {
+      setError(
+        saveError instanceof
+          Error
+          ? saveError.message
+          : "Income source status could not be updated."
+      );
+    } finally {
+      setSourceActionId(
+        null
+      );
+    }
+  }
+
+  async function deleteSource(
+    source:
+      PersonalFinanceIncomeSource
+  ) {
+    const confirmed =
+      window.confirm(
+        `Delete ${source.recipientName} — ${source.sourceName}?\n\nThe recurring source and all unreceived generated schedule entries will be removed. Income receipts already recorded will remain in history.`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setSourceActionId(
+      source.id
+    );
+    setError(null);
+    setNotice(null);
+
+    try {
+      const updated =
+        await postAction(
+          "delete-source",
+          {
+            sourceId:
+              source.id
+          }
+        );
+
+      setWorkspace(
+        updated
+      );
+
+      setEditingSourceId(
+        null
+      );
+
+      setNotice(
+        `Income source deleted: ${source.recipientName} — ${source.sourceName}. Recorded receipt history was preserved.`
+      );
+
+      window.dispatchEvent(
+        new Event(
+          "personal-finance-updated"
+        )
+      );
+    } catch (saveError) {
+      setError(
+        saveError instanceof
+          Error
+          ? saveError.message
+          : "Income source could not be deleted."
+      );
+    } finally {
+      setSourceActionId(
+        null
+      );
     }
   }
 
@@ -1310,6 +1632,35 @@ export function PersonalFinanceIncomeWorkspace({
                         source.sourceType
                       )}
                     </span>
+
+                    {(() => {
+                      const status =
+                        sourceStatusLabel(
+                          source,
+                          workspace.periodKey
+                        );
+
+                      return (
+                        <span
+                          className={`${styles.sourceStatusBadge} ${
+                            status.tone ===
+                            "active"
+                              ? styles.sourceStatusActive
+                              : status.tone ===
+                                  "future"
+                                ? styles.sourceStatusFuture
+                                : status.tone ===
+                                    "ended"
+                                  ? styles.sourceStatusEnded
+                                  : styles.sourceStatusPaused
+                          }`}
+                        >
+                          {
+                            status.label
+                          }
+                        </span>
+                      );
+                    })()}
                   </div>
 
                   <h3>
@@ -1363,7 +1714,408 @@ export function PersonalFinanceIncomeWorkspace({
                           "Not assigned"}
                       </dd>
                     </div>
+
+                    <div>
+                      <dt>
+                        Ends
+                      </dt>
+
+                      <dd>
+                        {source.endPeriod
+                          ? personalFinancePeriodLabel(
+                              source.endPeriod
+                            )
+                          : "No end month"}
+                      </dd>
+                    </div>
                   </dl>
+
+                  <div
+                    className={
+                      styles.sourceActions
+                    }
+                  >
+                    <button
+                      className={
+                        styles.secondaryButton
+                      }
+                      disabled={
+                        sourceActionId ===
+                        source.id
+                      }
+                      onClick={() => {
+                        setEditingSourceId(
+                          editingSourceId ===
+                          source.id
+                            ? null
+                            : source.id
+                        );
+
+                        setEditingSchedule(
+                          source.schedule
+                        );
+                      }}
+                      type="button"
+                    >
+                      {editingSourceId ===
+                      source.id
+                        ? "Close edit"
+                        : "Edit"}
+                    </button>
+
+                    <button
+                      className={
+                        styles.secondaryButton
+                      }
+                      disabled={
+                        sourceActionId ===
+                        source.id
+                      }
+                      onClick={() =>
+                        void setSourceActive(
+                          source,
+                          !source.isActive
+                        )
+                      }
+                      type="button"
+                    >
+                      {source.isActive
+                        ? "Pause"
+                        : "Reactivate"}
+                    </button>
+
+                    <button
+                      className={
+                        styles.dangerButton
+                      }
+                      disabled={
+                        sourceActionId ===
+                        source.id
+                      }
+                      onClick={() =>
+                        void deleteSource(
+                          source
+                        )
+                      }
+                      type="button"
+                    >
+                      {sourceActionId ===
+                      source.id
+                        ? "Working..."
+                        : "Delete"}
+                    </button>
+                  </div>
+
+                  {editingSourceId ===
+                  source.id ? (
+                    <form
+                      className={`${styles.editor} ${styles.sourceEditor}`}
+                      onSubmit={(
+                        event
+                      ) =>
+                        submitSourceEdit(
+                          event,
+                          source
+                        )
+                      }
+                    >
+                      <div
+                        className={
+                          styles.editorHeading
+                        }
+                      >
+                        <div>
+                          <span>
+                            Edit recurring source
+                          </span>
+
+                          <h3>
+                            {
+                              source.sourceName
+                            }
+                          </h3>
+                        </div>
+
+                        <p>
+                          Recorded receipts are preserved.
+                          Unreceived scheduled deposits from
+                          {` ${workspace.periodLabel} `}
+                          forward will refresh from these settings.
+                        </p>
+                      </div>
+
+                      <div
+                        className={
+                          styles.formGrid
+                        }
+                      >
+                        <label>
+                          <span>
+                            Assigned to
+                          </span>
+
+                          <input
+                            defaultValue={
+                              source.recipientName
+                            }
+                            name="recipientName"
+                            required
+                          />
+                        </label>
+
+                        <label>
+                          <span>
+                            Employer or source
+                          </span>
+
+                          <input
+                            defaultValue={
+                              source.sourceName
+                            }
+                            name="sourceName"
+                            required
+                          />
+                        </label>
+
+                        <label>
+                          <span>
+                            Income type
+                          </span>
+
+                          <select
+                            defaultValue={
+                              source.sourceType
+                            }
+                            name="sourceType"
+                          >
+                            <option value="employment">
+                              Employment
+                            </option>
+
+                            <option value="self_employment">
+                              Self-employment
+                            </option>
+
+                            <option value="retirement">
+                              Retirement
+                            </option>
+
+                            <option value="benefit">
+                              Benefit
+                            </option>
+
+                            <option value="other">
+                              Other
+                            </option>
+                          </select>
+                        </label>
+
+                        <label>
+                          <span>
+                            Pay schedule
+                          </span>
+
+                          <select
+                            name="schedule"
+                            onChange={(
+                              event
+                            ) =>
+                              setEditingSchedule(
+                                event.target
+                                  .value as
+                                  PersonalFinanceIncomeSchedule
+                              )
+                            }
+                            value={
+                              editingSchedule
+                            }
+                          >
+                            <option value="weekly">
+                              Weekly
+                            </option>
+
+                            <option value="biweekly">
+                              Every two weeks
+                            </option>
+
+                            <option value="semimonthly">
+                              Twice monthly
+                            </option>
+
+                            <option value="monthly">
+                              Monthly
+                            </option>
+
+                            <option value="irregular">
+                              Irregular / manual
+                            </option>
+                          </select>
+                        </label>
+
+                        <label>
+                          <span>
+                            Typical net pay
+                          </span>
+
+                          <input
+                            defaultValue={
+                              source.expectedAmount
+                            }
+                            min="0"
+                            name="expectedAmount"
+                            required
+                            step="0.01"
+                            type="number"
+                          />
+                        </label>
+
+                        <label>
+                          <span>
+                            Known payday / anchor
+                          </span>
+
+                          <input
+                            defaultValue={
+                              source.anchorDate ??
+                              ""
+                            }
+                            name="anchorDate"
+                            required={
+                              editingSchedule !==
+                              "irregular"
+                            }
+                            type="date"
+                          />
+                        </label>
+
+                        {editingSchedule ===
+                        "semimonthly" ? (
+                          <label>
+                            <span>
+                              Second pay day
+                            </span>
+
+                            <input
+                              defaultValue={
+                                source.secondPayDay ??
+                                ""
+                              }
+                              max="31"
+                              min="1"
+                              name="secondPayDay"
+                              required
+                              type="number"
+                            />
+                          </label>
+                        ) : (
+                          <input
+                            name="secondPayDay"
+                            type="hidden"
+                            value=""
+                          />
+                        )}
+
+                        <label>
+                          <span>
+                            Start month
+                          </span>
+
+                          <input
+                            defaultValue={
+                              source.activeFromPeriod
+                            }
+                            name="activeFromPeriod"
+                            required
+                            type="month"
+                          />
+                        </label>
+
+                        <label>
+                          <span>
+                            End month
+                          </span>
+
+                          <input
+                            defaultValue={
+                              source.endPeriod ??
+                              ""
+                            }
+                            name="endPeriod"
+                            type="month"
+                          />
+                        </label>
+
+                        <label>
+                          <span>
+                            Deposit account
+                          </span>
+
+                          <input
+                            defaultValue={
+                              source.depositAccountLabel ??
+                              ""
+                            }
+                            name="depositAccountLabel"
+                          />
+                        </label>
+
+                        <label
+                          className={
+                            styles.fullWidth
+                          }
+                        >
+                          <span>
+                            Notes
+                          </span>
+
+                          <textarea
+                            defaultValue={
+                              source.notes ??
+                              ""
+                            }
+                            name="notes"
+                            rows={3}
+                          />
+                        </label>
+                      </div>
+
+                      <div
+                        className={
+                          styles.formActions
+                        }
+                      >
+                        <button
+                          className={
+                            styles.secondaryButton
+                          }
+                          onClick={() =>
+                            setEditingSourceId(
+                              null
+                            )
+                          }
+                          type="button"
+                        >
+                          Cancel
+                        </button>
+
+                        <button
+                          className={
+                            styles.primaryButton
+                          }
+                          disabled={
+                            sourceActionId ===
+                            source.id
+                          }
+                          type="submit"
+                        >
+                          {sourceActionId ===
+                          source.id
+                            ? "Saving..."
+                            : "Save changes"}
+                        </button>
+                      </div>
+                    </form>
+                  ) : null}
                 </article>
               )
             )}

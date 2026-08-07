@@ -13,6 +13,7 @@ import {
 import type {
   CreatePersonalFinanceIncomeSourceInput,
   CreatePersonalFinanceMiscIncomeInput,
+  DeletePersonalFinanceIncomeSourceInput,
   PersonalFinanceIncomeOccurrence,
   PersonalFinanceIncomeOccurrenceKind,
   PersonalFinanceIncomeOccurrenceStatus,
@@ -20,7 +21,9 @@ import type {
   PersonalFinanceIncomeSource,
   PersonalFinanceIncomeSourceType,
   PersonalFinanceIncomeWorkspaceData,
-  UpdatePersonalFinanceIncomeReceiptInput
+  SetPersonalFinanceIncomeSourceActiveInput,
+  UpdatePersonalFinanceIncomeReceiptInput,
+  UpdatePersonalFinanceIncomeSourceInput
 } from "./personal-finance-income-types";
 
 type PersonalFinanceDatabase =
@@ -38,6 +41,7 @@ type IncomeSourceRow = {
   anchor_date: string | null;
   second_pay_day: number | null;
   active_from_period: string;
+  end_period: string | null;
   deposit_account_label:
     string | null;
   notes: string | null;
@@ -277,6 +281,16 @@ export function createPersonalFinanceIncomeSource(
         )
       : normalizedPeriod;
 
+  const endPeriod =
+    optionalPeriodKey(
+      input.endPeriod
+    );
+
+  assertIncomeSourcePeriodRange(
+    activeFromPeriod,
+    endPeriod
+  );
+
   const anchorDate =
     schedule === "irregular"
       ? optionalText(
@@ -326,10 +340,12 @@ export function createPersonalFinanceIncomeSource(
                   anchor_date,
                   second_pay_day,
                   active_from_period,
+                  end_period,
                   deposit_account_label,
                   notes
                 )
               VALUES (
+                ?,
                 ?,
                 ?,
                 ?,
@@ -355,6 +371,7 @@ export function createPersonalFinanceIncomeSource(
               anchorDate,
               secondPayDay,
               activeFromPeriod,
+              endPeriod,
               optionalText(
                 input.depositAccountLabel
               ),
@@ -371,6 +388,327 @@ export function createPersonalFinanceIncomeSource(
       );
 
     return create.immediate();
+  } finally {
+    database.close();
+  }
+}
+
+export function updatePersonalFinanceIncomeSource(
+  periodKey: string,
+  input:
+    UpdatePersonalFinanceIncomeSourceInput
+): PersonalFinanceIncomeWorkspaceData {
+  assertLocalPersonalFinanceEnabled();
+
+  const normalizedPeriod =
+    requiredPeriodKey(
+      periodKey
+    );
+
+  const sourceId =
+    requiredText(
+      input.sourceId,
+      "Income source"
+    );
+
+  const recipientName =
+    requiredText(
+      input.recipientName,
+      "Assigned person"
+    );
+
+  const sourceName =
+    requiredText(
+      input.sourceName,
+      "Income source name"
+    );
+
+  const sourceType =
+    validateSetValue(
+      input.sourceType,
+      SOURCE_TYPES,
+      "Income type"
+    );
+
+  const schedule =
+    validateSetValue(
+      input.schedule,
+      SCHEDULES,
+      "Pay schedule"
+    );
+
+  const expectedAmount =
+    requiredAmount(
+      input.expectedAmount,
+      "Expected pay"
+    );
+
+  const activeFromPeriod =
+    input.activeFromPeriod
+      ? requiredPeriodKey(
+          String(
+            input.activeFromPeriod
+          )
+        )
+      : normalizedPeriod;
+
+  const endPeriod =
+    optionalPeriodKey(
+      input.endPeriod
+    );
+
+  assertIncomeSourcePeriodRange(
+    activeFromPeriod,
+    endPeriod
+  );
+
+  const anchorDate =
+    schedule === "irregular"
+      ? optionalText(
+          input.anchorDate
+        )
+      : requiredDate(
+          input.anchorDate,
+          "Known payday"
+        );
+
+  const secondPayDay =
+    schedule ===
+    "semimonthly"
+      ? requiredPayDay(
+          input.secondPayDay
+        )
+      : null;
+
+  const database =
+    openIncomeDatabase();
+
+  try {
+    const update =
+      database.transaction(
+        () => {
+          assertIncomeSourceExists(
+            database,
+            sourceId
+          );
+
+          database
+            .prepare(`
+              UPDATE
+                pf_income_sources
+              SET
+                recipient_name = ?,
+                source_name = ?,
+                source_type = ?,
+                schedule = ?,
+                expected_amount_cents = ?,
+                anchor_date = ?,
+                second_pay_day = ?,
+                active_from_period = ?,
+                end_period = ?,
+                deposit_account_label = ?,
+                notes = ?,
+                updated_at =
+                  CURRENT_TIMESTAMP
+              WHERE
+                id = ?
+            `)
+            .run(
+              recipientName,
+              sourceName,
+              sourceType,
+              schedule,
+              toCents(
+                expectedAmount
+              ),
+              anchorDate,
+              secondPayDay,
+              activeFromPeriod,
+              endPeriod,
+              optionalText(
+                input.depositAccountLabel
+              ),
+              optionalText(
+                input.notes
+              ),
+              sourceId
+            );
+
+          deleteUnreceivedScheduledOccurrences(
+            database,
+            sourceId,
+            normalizedPeriod
+          );
+
+          return readWorkspace(
+            database,
+            normalizedPeriod
+          );
+        }
+      );
+
+    return update.immediate();
+  } finally {
+    database.close();
+  }
+}
+
+export function setPersonalFinanceIncomeSourceActive(
+  periodKey: string,
+  input:
+    SetPersonalFinanceIncomeSourceActiveInput
+): PersonalFinanceIncomeWorkspaceData {
+  assertLocalPersonalFinanceEnabled();
+
+  const normalizedPeriod =
+    requiredPeriodKey(
+      periodKey
+    );
+
+  const sourceId =
+    requiredText(
+      input.sourceId,
+      "Income source"
+    );
+
+  if (
+    typeof input.isActive !==
+    "boolean"
+  ) {
+    throw new Error(
+      "Income source status must be true or false."
+    );
+  }
+
+  const database =
+    openIncomeDatabase();
+
+  try {
+    const update =
+      database.transaction(
+        () => {
+          assertIncomeSourceExists(
+            database,
+            sourceId
+          );
+
+          database
+            .prepare(`
+              UPDATE
+                pf_income_sources
+              SET
+                is_active = ?,
+                updated_at =
+                  CURRENT_TIMESTAMP
+              WHERE
+                id = ?
+            `)
+            .run(
+              input.isActive
+                ? 1
+                : 0,
+              sourceId
+            );
+
+          if (!input.isActive) {
+            deleteUnreceivedScheduledOccurrences(
+              database,
+              sourceId,
+              normalizedPeriod
+            );
+          }
+
+          return readWorkspace(
+            database,
+            normalizedPeriod
+          );
+        }
+      );
+
+    return update.immediate();
+  } finally {
+    database.close();
+  }
+}
+
+export function deletePersonalFinanceIncomeSource(
+  periodKey: string,
+  input:
+    DeletePersonalFinanceIncomeSourceInput
+): PersonalFinanceIncomeWorkspaceData {
+  assertLocalPersonalFinanceEnabled();
+
+  const normalizedPeriod =
+    requiredPeriodKey(
+      periodKey
+    );
+
+  const sourceId =
+    requiredText(
+      input.sourceId,
+      "Income source"
+    );
+
+  const database =
+    openIncomeDatabase();
+
+  try {
+    const remove =
+      database.transaction(
+        () => {
+          assertIncomeSourceExists(
+            database,
+            sourceId
+          );
+
+          database
+            .prepare(`
+              DELETE FROM
+                pf_income_occurrences
+              WHERE
+                source_id = ? AND
+                occurrence_kind =
+                  'scheduled' AND
+                received_cents = 0
+            `)
+            .run(
+              sourceId
+            );
+
+          database
+            .prepare(`
+              UPDATE
+                pf_income_occurrences
+              SET
+                source_id = NULL,
+                updated_at =
+                  CURRENT_TIMESTAMP
+              WHERE
+                source_id = ?
+            `)
+            .run(
+              sourceId
+            );
+
+          database
+            .prepare(`
+              DELETE FROM
+                pf_income_sources
+              WHERE
+                id = ?
+            `)
+            .run(
+              sourceId
+            );
+
+          return readWorkspace(
+            database,
+            normalizedPeriod
+          );
+        }
+      );
+
+    return remove.immediate();
   } finally {
     database.close();
   }
@@ -695,6 +1033,7 @@ function ensureIncomeSchema(
         ),
         active_from_period
           TEXT NOT NULL,
+        end_period TEXT,
         deposit_account_label TEXT,
         notes TEXT,
         is_active INTEGER NOT NULL
@@ -768,6 +1107,42 @@ function ensureIncomeSchema(
       source_id,
       period_key
     );
+  `);
+
+  ensureIncomeSourceEndPeriodColumn(
+    database
+  );
+}
+
+function ensureIncomeSourceEndPeriodColumn(
+  database:
+    PersonalFinanceDatabase
+): void {
+  const columns =
+    database
+      .prepare(
+        "PRAGMA table_info(pf_income_sources)"
+      )
+      .all() as
+      {
+        name: string;
+      }[];
+
+  if (
+    columns.some(
+      (column) =>
+        column.name ===
+        "end_period"
+    )
+  ) {
+    return;
+  }
+
+  database.exec(`
+    ALTER TABLE
+      pf_income_sources
+    ADD COLUMN
+      end_period TEXT;
   `);
 }
 
@@ -906,13 +1281,12 @@ function readSources(
           anchor_date,
           second_pay_day,
           active_from_period,
+          end_period,
           deposit_account_label,
           notes,
           is_active
         FROM
           pf_income_sources
-        WHERE
-          is_active = 1
         ORDER BY
           recipient_name COLLATE NOCASE,
           source_name COLLATE NOCASE
@@ -943,6 +1317,8 @@ function readSources(
         row.second_pay_day,
       activeFromPeriod:
         row.active_from_period,
+      endPeriod:
+        row.end_period,
       depositAccountLabel:
         row.deposit_account_label,
       notes:
@@ -1000,7 +1376,12 @@ function ensureRecurringOccurrences(
     if (
       !source.isActive ||
       source.activeFromPeriod >
-        periodKey
+        periodKey ||
+      (
+        source.endPeriod !== null &&
+        source.endPeriod <
+          periodKey
+      )
     ) {
       continue;
     }
@@ -1113,6 +1494,87 @@ function mapOccurrence(
       row.notes,
     status
   };
+}
+
+function assertIncomeSourceExists(
+  database:
+    PersonalFinanceDatabase,
+  sourceId: string
+): void {
+  const row =
+    database
+      .prepare(`
+        SELECT
+          id
+        FROM
+          pf_income_sources
+        WHERE
+          id = ?
+      `)
+      .get(
+        sourceId
+      );
+
+  if (!row) {
+    throw new Error(
+      "Income source was not found."
+    );
+  }
+}
+
+function deleteUnreceivedScheduledOccurrences(
+  database:
+    PersonalFinanceDatabase,
+  sourceId: string,
+  fromPeriod: string
+): void {
+  database
+    .prepare(`
+      DELETE FROM
+        pf_income_occurrences
+      WHERE
+        source_id = ? AND
+        occurrence_kind =
+          'scheduled' AND
+        period_key >= ? AND
+        received_cents = 0
+    `)
+    .run(
+      sourceId,
+      fromPeriod
+    );
+}
+
+function optionalPeriodKey(
+  value: unknown
+): string | null {
+  const text =
+    optionalText(
+      value
+    );
+
+  if (!text) {
+    return null;
+  }
+
+  return requiredPeriodKey(
+    text
+  );
+}
+
+function assertIncomeSourcePeriodRange(
+  activeFromPeriod: string,
+  endPeriod: string | null
+): void {
+  if (
+    endPeriod !== null &&
+    endPeriod <
+      activeFromPeriod
+  ) {
+    throw new Error(
+      "Income source end month cannot be before its start month."
+    );
+  }
 }
 
 function assertLocalPersonalFinanceEnabled():
