@@ -7313,3 +7313,13 @@
     display: none;
   }
 }
+
+/* =========================================================
+   J&M desktop sidebar-to-workspace seam cleanup
+   ========================================================= */
+
+@media (min-width: 901px) {
+  .workspace {
+    padding-left: 18px;
+  }
+}

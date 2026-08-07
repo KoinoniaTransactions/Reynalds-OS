@@ -89,7 +89,10 @@ export function PersonalFinanceRouteFrame({
 }: Props) {
   return (
     <main className={styles.app}>
-      <aside className={styles.rail}>
+      <aside
+        className={styles.rail}
+        data-source-file={sourceFile}
+      >
         <div className={styles.brand}>
           <div
             className={styles.brandMark}
@@ -120,41 +123,6 @@ export function PersonalFinanceRouteFrame({
           groups={navigation}
         />
 
-        <div
-          className={styles.railFooter}
-        >
-          <span
-            aria-hidden="true"
-            className={
-              styles.railFooterIcon
-            }
-          >
-            ●
-          </span>
-
-          <div
-            className={
-              styles.railFooterCopy
-            }
-          >
-            <span
-              className={
-                styles.railFooterLabel
-              }
-            >
-              Local data
-            </span>
-
-            <span
-              className={
-                styles.railFooterValue
-              }
-              title={sourceFile}
-            >
-              {sourceFile}
-            </span>
-          </div>
-        </div>
       </aside>
 
       <section
