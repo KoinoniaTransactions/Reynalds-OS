@@ -1,6 +1,6 @@
 # Koinonia Deployment Readiness
 
-Status: Production release line established; digital business card live
+Status: Production release line established; digital business card live; production branch tracking locked
 Decision Date: 2026-07-13
 Latest Production Verification: 2026-08-07
 Owner: Koinonia Transactions / Reynalds OS
@@ -54,6 +54,8 @@ Alias routes still available unless intentionally removed later:
 - Project ID: `prj_7WLWYfFPKfmzLNPzaA0247ENMGjd`
 - Primary public domain: `https://www.koinoniatransactions.com`
 - Apex domain: `https://koinoniatransactions.com`
+- Production Branch Tracking: `koinonia-production`
+- Auto-assign Custom Production Domains: Enabled
 
 Apex behavior is verified as a permanent redirect to the `www` domain.
 
@@ -68,7 +70,7 @@ Historical live rollback baseline:
 - Commit: `83d3dda31c500e36ac42f7258d5fdb79fef69c0e`
 - Message: `Add Koinonia meaning to About page`
 
-Current GitHub `main` at the time of the investigation was:
+GitHub `main` at the time of the investigation was:
 
 - Commit: `ab00ef5d0784de2c352a1fb7cfe2f96ee7be1f16`
 - Message: `Add Koinonia digital business card`
@@ -162,25 +164,25 @@ Post-cutover verification completed on 2026-08-07:
 - `https://www.koinoniatransactions.com/jeremiah-reynalds.vcf` returned HTTP 200 with the approved Jeremiah Reynalds vCard.
 - Vercel reported no runtime errors for `/` or `/jeremiah` during the release verification window.
 
-The digital business card is now live.
+The digital business card is live.
 
 ---
 
-## Remaining Production Safeguard
+## 2026-08-07 Production Branch Safeguard Complete
 
-The successful manual promotion made the verified `koinonia-production` release the current production deployment.
+After the manual production promotion, Vercel still showed the prior production branch tracking rule for `main`. This was corrected in Project Settings → Environments → Production → Branch Tracking.
 
-However, manual promotion does not by itself prove that the Vercel Git Integration **Production Branch** setting has changed from its previous value of `main`.
+Verified saved configuration:
 
-Before routine development resumes, verify the Vercel project Git setting and set the Production Branch to:
+- Branch condition: `Branch is`
+- Production branch: `koinonia-production`
+- Vercel confirmation text: every commit pushed to `koinonia-production` will create a Production Deployment.
+- Auto-assign Custom Production Domains remains Enabled.
+- Vercel displayed `Branch tracking saved successfully.`
 
-- `koinonia-production`
+This means pushes to shared-repository `main` are no longer the normal automatic source for Koinonia Production deployments.
 
-if it is still `main`.
-
-This prevents a later push to shared-repository `main` from unintentionally becoming the Koinonia production source.
-
-Do not assume this safeguard is complete until the Vercel Git setting is visually or programmatically verified.
+Do not change this branch-tracking rule back to `main` unless the Koinonia release architecture is intentionally redesigned and documented first.
 
 ---
 
@@ -200,8 +202,14 @@ Production must move forward cumulatively.
 
 ---
 
-## Next Safe Action
+## Current Production Baseline
 
-Verify and, if necessary, change Vercel's Git Integration Production Branch from `main` to `koinonia-production`.
+As of 2026-08-07, the authoritative Koinonia public production baseline is:
 
-This is a separate configuration change from the completed manual production promotion and requires explicit approval before execution.
+- Branch: `koinonia-production`
+- Commit: `3a4e8517420243cc21720ab86c6a74e9e844482d`
+- Live Vercel deployment: `dpl_CnP7Q6ELnWdeamrHjLto1DJpmf1L`
+- `/jeremiah`: live and verified
+- Vercel Production Branch Tracking: `koinonia-production`
+
+Future Koinonia production changes must build forward from this baseline.
