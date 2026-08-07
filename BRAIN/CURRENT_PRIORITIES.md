@@ -223,3 +223,35 @@ The active mission remains Koinonia production completion. Portal work should co
 6. Complete controlled client/staff billing QA before accepting live payment methods.
 
 The Stripe account itself does not need to be recreated. Local Stripe configuration is already present; remaining work is application linkage, production deployment configuration, and live operational proof.
+
+---
+
+# 2026-08-07 Koinonia Production Release Priority
+
+## Immediate Production Objective
+
+Establish an isolated, cumulative Koinonia production release line before publishing the approved `/jeremiah` digital business card.
+
+Verified production state:
+
+- Live public Koinonia is still pinned by Vercel Instant Rollback to commit `83d3dda31c500e36ac42f7258d5fdb79fef69c0e`.
+- Current `main` is `ab00ef5d0784de2c352a1fb7cfe2f96ee7be1f16` and includes the approved digital business card, but `main` also includes unrelated repository work that must not be promoted as a Koinonia release.
+- Koinonia portal development remains on `chatgpt/portal-access-status` and is pre-live. It must not be promoted directly to the public domain.
+
+Approved next release sequence:
+
+1. Create permanent branch `koinonia-production` from the currently live commit `83d3dda31c500e36ac42f7258d5fdb79fef69c0e`.
+2. Add only the four approved business-card files.
+3. Verify an isolated Vercel preview, including existing public routes and `/jeremiah`.
+4. Stop for approval before changing production domain routing or undoing the existing rollback.
+5. After approval, use `koinonia-production` as the permanent cumulative Koinonia release baseline.
+
+Important status: `koinonia-production` is approved but has **not yet been created**. No live domain change has been made as part of this plan.
+
+## Permanent Isolation Boundary
+
+Koinonia production work is isolated. Do not include, merge, modify, or deploy Personal Finance, Reynalds Brothers, or unrelated Reynalds OS work during Koinonia releases.
+
+Future portal launch must be integrated into the then-current `koinonia-production` baseline so already-live public features, including the business card, remain present.
+
+Canonical details: `BRAIN/KOINONIA_DEPLOYMENT_READINESS.md` and decision `D-020` in `BRAIN/DECISION_LOG.md`.
