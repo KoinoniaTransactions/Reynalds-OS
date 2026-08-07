@@ -87,6 +87,21 @@ export type PersonalFinanceObligationCatalog = {
   obligations: PersonalFinanceObligation[];
 };
 
+export type CompletePersonalFinanceObligationDebtSetupInput = {
+  obligationId: string;
+
+  assetName?: string | null;
+  assetValue?: number | string | null;
+  assetValuedOn?: string | null;
+  currentBalance?: number | string | null;
+  originalBalance?: number | string | null;
+  interestRate?: number | string | null;
+  minimumPayment?: number | string | null;
+  escrowPayment?: number | string | null;
+  maturityDate?: string | null;
+  fullAccountNumber?: string | null;
+};
+
 export type CreatePersonalFinanceObligationInput = {
   name: string;
   obligationType: PersonalFinanceObligationType;
@@ -384,6 +399,210 @@ export function createPersonalFinanceObligation(
     });
 
     return create.immediate();
+  } finally {
+    database.close();
+  }
+}
+
+export function completePersonalFinanceObligationDebtSetup(
+  input:
+    CompletePersonalFinanceObligationDebtSetupInput
+): PersonalFinanceObligation {
+  assertLocalPersonalFinanceEnabled();
+
+  const obligationId =
+    requiredText(
+      input.obligationId,
+      "Obligation"
+    );
+
+  const database =
+    openPersonalFinanceDatabase();
+
+  try {
+    const complete =
+      database.transaction(
+        () => {
+          const obligation =
+            database
+              .prepare(`
+                SELECT
+                  id,
+                  name,
+                  obligation_type,
+                  provider,
+                  is_active
+                FROM
+                  obligations
+                WHERE
+                  id = ?
+                LIMIT 1
+              `)
+              .get(
+                obligationId
+              ) as
+              | {
+                  id: string;
+                  name: string;
+                  obligation_type:
+                    PersonalFinanceObligationType;
+                  provider:
+                    string | null;
+                  is_active:
+                    number;
+                }
+              | undefined;
+
+          if (
+            !obligation ||
+            obligation.is_active !==
+              1
+          ) {
+            throw new Error(
+              "The selected active obligation was not found."
+            );
+          }
+
+          if (
+            obligation.obligation_type !==
+              "mortgage" &&
+            obligation.obligation_type !==
+              "auto"
+          ) {
+            throw new Error(
+              "Debt completion currently supports mortgage and auto obligations."
+            );
+          }
+
+          const existingLiability =
+            database
+              .prepare(`
+                SELECT
+                  id
+                FROM
+                  liabilities
+                WHERE
+                  obligation_id = ? AND
+                  is_active = 1
+                LIMIT 1
+              `)
+              .get(
+                obligationId
+              );
+
+          if (
+            existingLiability
+          ) {
+            throw new Error(
+              "Debt setup is already complete for this obligation."
+            );
+          }
+
+          const financedAssetInput =
+            normalizeFinancedAssetInput({
+              obligationType:
+                obligation.obligation_type,
+
+              assetName:
+                optionalText(
+                  input.assetName
+                ),
+
+              assetValue:
+                optionalAmount(
+                  input.assetValue
+                ),
+
+              assetValuedOn:
+                optionalDate(
+                  input.assetValuedOn,
+                  "Asset valuation date"
+                ),
+
+              currentBalance:
+                optionalAmount(
+                  input.currentBalance
+                ),
+
+              originalBalance:
+                optionalAmount(
+                  input.originalBalance
+                ),
+
+              interestRate:
+                optionalInterestRate(
+                  input.interestRate
+                ),
+
+              minimumPayment:
+                optionalAmount(
+                  input.minimumPayment
+                ),
+
+              escrowPayment:
+                optionalAmount(
+                  input.escrowPayment
+                ),
+
+              maturityDate:
+                optionalDate(
+                  input.maturityDate,
+                  "Maturity date"
+                ),
+
+              fullAccountNumber:
+                optionalText(
+                  input.fullAccountNumber
+                )
+            });
+
+          if (
+            !financedAssetInput
+          ) {
+            throw new Error(
+              "Asset value and current loan balance are required to complete debt setup."
+            );
+          }
+
+          createFinancedAssetRecords({
+            database,
+
+            obligationId:
+              obligation.id,
+
+            obligationName:
+              obligation.name,
+
+            provider:
+              obligation.provider,
+
+            input:
+              financedAssetInput
+          });
+
+          const catalog =
+            readCatalog(
+              database
+            );
+
+          const completed =
+            catalog.obligations.find(
+              (candidate) =>
+                candidate.id ===
+                obligation.id
+            );
+
+          if (!completed) {
+            throw new Error(
+              "The completed obligation could not be loaded."
+            );
+          }
+
+          return completed;
+        }
+      );
+
+    return complete.immediate();
   } finally {
     database.close();
   }

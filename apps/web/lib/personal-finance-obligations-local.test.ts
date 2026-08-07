@@ -21,6 +21,7 @@ import {
 } from "./personal-finance-db-local";
 
 import {
+  completePersonalFinanceObligationDebtSetup,
   createPersonalFinanceObligation,
   readPersonalFinanceObligationCatalog
 } from "./personal-finance-obligations-local";
@@ -260,6 +261,165 @@ describe(
         } finally {
           database.close();
         }
+      }
+    );
+
+    it(
+      "completes financed debt setup after the obligation already exists",
+      () => {
+        const obligation =
+          createPersonalFinanceObligation({
+            name:
+              "Mortgage",
+
+            obligationType:
+              "mortgage",
+
+            homeName:
+              "Primary residence",
+
+            homeKind:
+              "home",
+
+            provider:
+              "Chase Home Lending",
+
+            budgetItemKey:
+              "mortgage-bill",
+
+            expectedAmount:
+              2150
+          });
+
+        const databaseBefore =
+          openPersonalFinanceDatabase({
+            databasePath
+          });
+
+        try {
+          const before =
+            databaseBefore
+              .prepare(`
+                SELECT
+                  count(*) AS count
+                FROM
+                  liabilities
+                WHERE
+                  obligation_id = ?
+              `)
+              .get(
+                obligation.id
+              ) as {
+                count: number;
+              };
+
+          expect(
+            before.count
+          ).toBe(
+            0
+          );
+        } finally {
+          databaseBefore.close();
+        }
+
+        completePersonalFinanceObligationDebtSetup({
+          obligationId:
+            obligation.id,
+
+          assetName:
+            "Primary residence",
+
+          assetValue:
+            350000,
+
+          assetValuedOn:
+            "2026-08-06",
+
+          currentBalance:
+            240000,
+
+          originalBalance:
+            275000,
+
+          interestRate:
+            6.25,
+
+          minimumPayment:
+            2150,
+
+          escrowPayment:
+            550
+        });
+
+        const databaseAfter =
+          openPersonalFinanceDatabase({
+            databasePath
+          });
+
+        try {
+          const liability =
+            databaseAfter
+              .prepare(`
+                SELECT
+                  obligation_id,
+                  liability_type,
+                  current_balance_cents
+                FROM
+                  liabilities
+                WHERE
+                  obligation_id = ?
+              `)
+              .get(
+                obligation.id
+              ) as {
+                obligation_id:
+                  string;
+
+                liability_type:
+                  string;
+
+                current_balance_cents:
+                  number;
+              };
+
+          expect(
+            liability.obligation_id
+          ).toBe(
+            obligation.id
+          );
+
+          expect(
+            liability.liability_type
+          ).toBe(
+            "mortgage"
+          );
+
+          expect(
+            liability.current_balance_cents
+          ).toBe(
+            240_000_00
+          );
+        } finally {
+          databaseAfter.close();
+        }
+
+        expect(() =>
+          completePersonalFinanceObligationDebtSetup({
+            obligationId:
+              obligation.id,
+
+            assetName:
+              "Primary residence",
+
+            assetValue:
+              350000,
+
+            currentBalance:
+              240000
+          })
+        ).toThrow(
+          "Debt setup is already complete"
+        );
       }
     );
 

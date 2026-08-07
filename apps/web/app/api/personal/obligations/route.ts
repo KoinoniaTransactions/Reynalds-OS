@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 
 import {
+  completePersonalFinanceObligationDebtSetup,
   createPersonalFinanceObligation,
   readPersonalFinanceObligationCatalog,
+  type CompletePersonalFinanceObligationDebtSetupInput,
   type CreatePersonalFinanceObligationInput
 } from "../../../../lib/personal-finance-obligations-local";
 
@@ -67,6 +69,27 @@ export async function POST(
   }
 
   try {
+    const record =
+      body as Record<
+        string,
+        unknown
+      >;
+
+    if (
+      record.action ===
+      "complete-debt-setup"
+    ) {
+      const obligation =
+        completePersonalFinanceObligationDebtSetup(
+          body as
+            CompletePersonalFinanceObligationDebtSetupInput
+        );
+
+      return NextResponse.json({
+        obligation
+      });
+    }
+
     const obligation =
       createPersonalFinanceObligation(
         body as

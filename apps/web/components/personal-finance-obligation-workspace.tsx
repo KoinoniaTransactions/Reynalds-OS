@@ -8,6 +8,10 @@ import {
   type FormEvent
 } from "react";
 
+import {
+  useRouter
+} from "next/navigation";
+
 import type {
   BudgetBill
 } from "../lib/personal-finance-local";
@@ -94,6 +98,27 @@ type ObligationCatalog = {
   homes: ObligationHome[];
   accounts: ObligationAccount[];
   obligations: Obligation[];
+};
+
+type ObligationSetupTarget = {
+  mode:
+    | "create"
+    | "complete";
+
+  billKey: string;
+  billName: string;
+
+  plannedAmount:
+    number | null;
+
+  dueDay:
+    number | null;
+
+  obligationId:
+    string | null;
+
+  obligationType:
+    ObligationType | null;
 };
 
 type Props = {
@@ -248,6 +273,9 @@ export function PersonalFinanceObligationWorkspace({
   periodKey,
   totals
 }: Props) {
+  const router =
+    useRouter();
+
   const [
     catalog,
     setCatalog
@@ -276,6 +304,13 @@ export function PersonalFinanceObligationWorkspace({
   ] = useState<ObligationType>(
     "mortgage"
   );
+
+  const [
+    setupTarget,
+    setSetupTarget
+  ] = useState<
+    ObligationSetupTarget | null
+  >(null);
 
   const [
     statusMessage,
@@ -336,6 +371,80 @@ export function PersonalFinanceObligationWorkspace({
   useEffect(() => {
     void loadCatalog();
   }, [loadCatalog]);
+
+  useEffect(
+    () => {
+      function openSetup(
+        event: Event
+      ) {
+        const customEvent =
+          event as CustomEvent<
+            ObligationSetupTarget
+          >;
+
+        const detail =
+          customEvent.detail;
+
+        if (
+          !detail ||
+          !detail.billKey ||
+          !detail.billName
+        ) {
+          return;
+        }
+
+        setSetupTarget(
+          detail
+        );
+
+        setSelectedObligationType(
+          detail.obligationType ??
+          "other"
+        );
+
+        setStatusMessage(
+          null
+        );
+
+        setErrorMessage(
+          null
+        );
+
+        setIsFormOpen(
+          true
+        );
+
+        window.requestAnimationFrame(
+          () => {
+            document
+              .getElementById(
+                "obligation-setup-form"
+              )
+              ?.scrollIntoView({
+                behavior:
+                  "smooth",
+
+                block:
+                  "start"
+              });
+          }
+        );
+      }
+
+      window.addEventListener(
+        "personal-finance-open-obligation-setup",
+        openSetup
+      );
+
+      return () => {
+        window.removeEventListener(
+          "personal-finance-open-obligation-setup",
+          openSetup
+        );
+      };
+    },
+    []
+  );
 
   const homeNameById = useMemo(
     () =>
@@ -455,165 +564,215 @@ export function PersonalFinanceObligationWorkspace({
     );
 
   async function submitBill(
-    event: FormEvent<HTMLFormElement>
+    event:
+      FormEvent<
+        HTMLFormElement
+      >
   ) {
     event.preventDefault();
 
-    setIsSaving(true);
-    setErrorMessage(null);
-    setStatusMessage(null);
+    setIsSaving(
+      true
+    );
+
+    setErrorMessage(
+      null
+    );
+
+    setStatusMessage(
+      null
+    );
 
     const form =
       event.currentTarget;
 
     const formData =
-      new FormData(form);
+      new FormData(
+        form
+      );
 
     const isAutopay =
-      formData.get("isAutopay") ===
+      formData.get(
+        "isAutopay"
+      ) ===
       "on";
 
     const payload = {
       name:
         String(
-          formData.get("name") ?? ""
+          formData.get(
+            "name"
+          ) ?? ""
         ),
+
       obligationType:
         String(
           formData.get(
             "obligationType"
           ) ?? "other"
         ),
+
       homeName:
         String(
-          formData.get("homeName") ??
-            ""
+          formData.get(
+            "homeName"
+          ) ?? ""
         ),
+
       homeKind:
         String(
-          formData.get("homeKind") ??
-            "other"
+          formData.get(
+            "homeKind"
+          ) ?? "other"
         ),
+
       budgetItemKey:
         String(
           formData.get(
             "budgetItemKey"
           ) ?? ""
         ),
+
       provider:
         String(
-          formData.get("provider") ??
-            ""
+          formData.get(
+            "provider"
+          ) ?? ""
         ),
+
       accountLastFour:
         String(
           formData.get(
             "accountLastFour"
           ) ?? ""
         ),
+
       expectedAmount:
         String(
           formData.get(
             "expectedAmount"
           ) ?? ""
         ),
+
       dueDay:
         String(
-          formData.get("dueDay") ??
-            ""
+          formData.get(
+            "dueDay"
+          ) ?? ""
         ),
+
       frequency:
         String(
-          formData.get("frequency") ??
-            "monthly"
+          formData.get(
+            "frequency"
+          ) ?? "monthly"
         ),
+
       paymentMethod:
         String(
           formData.get(
             "paymentMethod"
           ) ??
-            (
-              isAutopay
-                ? "autopay"
-                : "manual"
-            )
+          (
+            isAutopay
+              ? "autopay"
+              : "manual"
+          )
         ),
+
       fundingAccountId:
         String(
           formData.get(
             "fundingAccountId"
           ) ?? ""
         ),
+
       fundingAccountLabel:
         String(
           formData.get(
             "fundingAccountLabel"
           ) ?? ""
         ),
+
       paymentUrl:
         String(
           formData.get(
             "paymentUrl"
           ) ?? ""
         ),
+
       isAutopay,
+
       notes:
         String(
-          formData.get("notes") ??
-            ""
+          formData.get(
+            "notes"
+          ) ?? ""
         ),
+
       assetName:
         String(
-          formData.get("assetName") ??
-            ""
+          formData.get(
+            "assetName"
+          ) ?? ""
         ),
+
       assetValue:
         String(
-          formData.get("assetValue") ??
-            ""
+          formData.get(
+            "assetValue"
+          ) ?? ""
         ),
+
       assetValuedOn:
         String(
           formData.get(
             "assetValuedOn"
           ) ?? ""
         ),
+
       currentBalance:
         String(
           formData.get(
             "currentBalance"
           ) ?? ""
         ),
+
       originalBalance:
         String(
           formData.get(
             "originalBalance"
           ) ?? ""
         ),
+
       interestRate:
         String(
           formData.get(
             "interestRate"
           ) ?? ""
         ),
+
       minimumPayment:
         String(
           formData.get(
             "minimumPayment"
           ) ?? ""
         ),
+
       escrowPayment:
         String(
           formData.get(
             "escrowPayment"
           ) ?? ""
         ),
+
       maturityDate:
         String(
           formData.get(
             "maturityDate"
           ) ?? ""
         ),
+
       fullAccountNumber:
         String(
           formData.get(
@@ -623,52 +782,179 @@ export function PersonalFinanceObligationWorkspace({
     };
 
     try {
-      const response = await fetch(
-        "/api/personal/obligations",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-          body: JSON.stringify(
-            payload
-          )
-        }
-      );
+      const completing =
+        setupTarget?.mode ===
+        "complete";
+
+      const obligationResponse =
+        await fetch(
+          "/api/personal/obligations",
+          {
+            method:
+              "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(
+                completing
+                  ? {
+                      action:
+                        "complete-debt-setup",
+
+                      obligationId:
+                        setupTarget
+                          ?.obligationId,
+
+                      assetName:
+                        payload.assetName,
+
+                      assetValue:
+                        payload.assetValue,
+
+                      assetValuedOn:
+                        payload.assetValuedOn,
+
+                      currentBalance:
+                        payload.currentBalance,
+
+                      originalBalance:
+                        payload.originalBalance,
+
+                      interestRate:
+                        payload.interestRate,
+
+                      minimumPayment:
+                        payload.minimumPayment,
+
+                      escrowPayment:
+                        payload.escrowPayment,
+
+                      maturityDate:
+                        payload.maturityDate,
+
+                      fullAccountNumber:
+                        payload.fullAccountNumber
+                    }
+                  : payload
+              )
+          }
+        );
 
       const result =
-        await response.json() as {
-          error?: string;
+        await obligationResponse.json() as {
+          obligation?:
+            Obligation;
+
+          error?:
+            string;
         };
 
-      if (!response.ok) {
+      if (
+        !obligationResponse.ok ||
+        !result.obligation
+      ) {
         throw new Error(
           result.error ??
-            "The bill could not be saved."
+          (
+            completing
+              ? "Debt setup could not be completed."
+              : "The bill could not be saved."
+          )
         );
       }
 
+      if (
+        !completing &&
+        payload.budgetItemKey
+      ) {
+        const linkResponse =
+          await fetch(
+            "/api/personal/reconciliation",
+            {
+              method:
+                "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:
+                JSON.stringify({
+                  action:
+                    "link-bill-obligation",
+
+                  periodKey,
+
+                  budgetItemKey:
+                    payload.budgetItemKey,
+
+                  obligationId:
+                    result.obligation.id
+                })
+            }
+          );
+
+        const linkResult =
+          await linkResponse.json() as {
+            error?:
+              string;
+          };
+
+        if (!linkResponse.ok) {
+          throw new Error(
+            linkResult.error ??
+            "The obligation was created, but the monthly bill could not be linked."
+          );
+        }
+      }
+
       form.reset();
+
       setSelectedObligationType(
         "mortgage"
       );
 
-      setStatusMessage(
-        "Bill saved successfully."
+      setSetupTarget(
+        null
       );
 
-      setIsFormOpen(false);
+      setStatusMessage(
+        completing
+          ? "Debt setup completed successfully."
+          : payload.budgetItemKey
+            ? "Bill saved and linked to the selected budget item."
+            : "Bill saved successfully."
+      );
+
+      setIsFormOpen(
+        false
+      );
 
       await loadCatalog();
+
+      window.dispatchEvent(
+        new Event(
+          "personal-finance-obligation-updated"
+        )
+      );
+
+      router.refresh();
     } catch (error) {
       setErrorMessage(
-        error instanceof Error
+        error instanceof
+          Error
           ? error.message
           : "The bill could not be saved."
       );
     } finally {
-      setIsSaving(false);
+      setIsSaving(
+        false
+      );
     }
   }
 
@@ -700,11 +986,16 @@ export function PersonalFinanceObligationWorkspace({
 
         <button
           className={styles.addButton}
-          onClick={() =>
+          onClick={() => {
+            setSetupTarget(
+              null
+            );
+
             setIsFormOpen(
-              (current) => !current
-            )
-          }
+              (current) =>
+                !current
+            );
+          }}
           type="button"
         >
           {isFormOpen
@@ -765,6 +1056,12 @@ export function PersonalFinanceObligationWorkspace({
       {isFormOpen ? (
         <form
           className={styles.form}
+          id="obligation-setup-form"
+          key={
+            setupTarget
+              ? `${setupTarget.mode}:${setupTarget.billKey}:${setupTarget.obligationId ?? ""}`
+              : "manual-obligation"
+          }
           onSubmit={submitBill}
         >
           <div
@@ -774,12 +1071,19 @@ export function PersonalFinanceObligationWorkspace({
           >
             <div>
               <span>
-                Guided bill setup
+                {setupTarget?.mode ===
+                "complete"
+                  ? "Debt setup"
+                  : "Guided bill setup"}
               </span>
 
               <h3>
-                Add a financial
-                obligation
+                {setupTarget?.mode ===
+                "complete"
+                  ? "Complete financial details"
+                  : setupTarget
+                    ? "Set up this monthly bill"
+                    : "Add a financial obligation"}
               </h3>
             </div>
 
@@ -797,9 +1101,21 @@ export function PersonalFinanceObligationWorkspace({
             <label>
               <span>Bill name</span>
               <input
+                defaultValue={
+                  setupTarget
+                    ?.billName ??
+                  ""
+                }
                 name="name"
                 placeholder="Mortgage"
-                required
+                readOnly={
+                  setupTarget?.mode ===
+                  "complete"
+                }
+                required={
+                  setupTarget?.mode !==
+                  "complete"
+                }
               />
             </label>
 
@@ -870,7 +1186,15 @@ export function PersonalFinanceObligationWorkspace({
                 Link to current plan
               </span>
               <select
-                defaultValue=""
+                defaultValue={
+                  setupTarget
+                    ?.billKey ??
+                  ""
+                }
+                disabled={
+                  setupTarget?.mode ===
+                  "complete"
+                }
                 name="budgetItemKey"
               >
                 <option value="">
@@ -1063,6 +1387,11 @@ export function PersonalFinanceObligationWorkspace({
                 Expected amount
               </span>
               <input
+                defaultValue={
+                  setupTarget
+                    ?.plannedAmount ??
+                  undefined
+                }
                 inputMode="decimal"
                 min="0"
                 name="expectedAmount"
@@ -1077,6 +1406,11 @@ export function PersonalFinanceObligationWorkspace({
                 Due day of month
               </span>
               <input
+                defaultValue={
+                  setupTarget
+                    ?.dueDay ??
+                  undefined
+                }
                 inputMode="numeric"
                 max="31"
                 min="1"
@@ -1218,7 +1552,10 @@ export function PersonalFinanceObligationWorkspace({
             >
               {isSaving
                 ? "Saving..."
-                : "Save bill"}
+                : setupTarget?.mode ===
+                    "complete"
+                  ? "Complete debt setup"
+                  : "Save bill"}
             </button>
           </div>
         </form>
