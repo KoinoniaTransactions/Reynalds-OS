@@ -145,6 +145,6 @@ Portal rule: when the client/employee portal is ready, integrate the approved po
 
 Isolation rule: Koinonia production work must not include or modify Personal Finance, Reynalds Brothers, or unrelated Reynalds OS work.
 
-Status as of 2026-08-07: decision approved and documented; `koinonia-production` has not yet been created and no live domain change has been made.
+Status as of 2026-08-07: `koinonia-production` was created from `83d3dda31c500e36ac42f7258d5fdb79fef69c0e`. Its isolated card commit is `3a4e8517420243cc21720ab86c6a74e9e844482d`. GitHub comparison verifies the branch is exactly one commit ahead of the live rollback baseline and changes only the four approved business-card files. Vercel deployment `dpl_476JZYzZXGPJoJBCpomCfbQEvpxh` is READY as a Preview, and the user visually approved `/jeremiah`. No live production branch/domain change has been made yet.
 
 Canonical deployment record: `BRAIN/KOINONIA_DEPLOYMENT_READINESS.md`.
