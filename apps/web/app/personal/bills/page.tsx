@@ -11,6 +11,10 @@ import {
 } from "next/navigation";
 
 import {
+  PersonalFinanceBillReconciliationWorkspace
+} from "../../../components/personal-finance-bill-reconciliation-workspace";
+
+import {
   PersonalFinanceObligationWorkspace
 } from "../../../components/personal-finance-obligation-workspace";
 
@@ -33,6 +37,10 @@ import {
 import {
   normalizePersonalFinancePeriodKey
 } from "../../../lib/personal-finance-period-types";
+
+import {
+  readPersonalFinanceReconciliationWorkspace
+} from "../../../lib/personal-finance-reconciliation-local";
 
 export const dynamic =
   "force-dynamic";
@@ -109,7 +117,13 @@ export default async function BillsPage({
   const budget =
     periodWorkspace.budget;
 
-  if (!budget) {
+  const periodKey =
+    periodWorkspace.periodKey;
+
+  if (
+    !budget ||
+    !periodKey
+  ) {
     return (
       <PersonalFinanceRouteFrame
         eyebrow="Household obligations"
@@ -126,6 +140,11 @@ export default async function BillsPage({
     );
   }
 
+  const reconciliation =
+    readPersonalFinanceReconciliationWorkspace(
+      periodKey
+    );
+
   return (
     <PersonalFinanceRouteFrame
       eyebrow="Household obligations"
@@ -135,9 +154,15 @@ export default async function BillsPage({
       sourceFile={
         budget.sourceFile
       }
-      subtitle="Organize each recurring payment around the home, vehicle, account, or service it supports."
+      subtitle="Track monthly payments, preserve payment history, and organize each recurring obligation around the home, vehicle, account, or service it supports."
       title="Bills and financial homes"
     >
+      <PersonalFinanceBillReconciliationWorkspace
+        initialWorkspace={
+          reconciliation
+        }
+      />
+
       <PersonalFinanceObligationWorkspace
         bills={
           budget.bills

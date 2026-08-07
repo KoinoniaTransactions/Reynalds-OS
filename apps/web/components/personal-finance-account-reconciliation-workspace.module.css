@@ -1,0 +1,491 @@
+.workspace {
+  display: grid;
+  gap: 1.25rem;
+  color: #19324a;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+  overflow: hidden;
+  border:
+    1px solid #d9e5ec;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow:
+    0 8px 24px
+    rgba(
+      41,
+      80,
+      110,
+      0.05
+    );
+}
+
+.summary article {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.1rem 1.2rem;
+  border-right:
+    1px solid #d9e5ec;
+}
+
+.summary article:last-child {
+  border-right: 0;
+}
+
+.summary span,
+.balanceGrid span,
+.creditFacts small,
+.accountFooter {
+  color: #6f8496;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.summary strong {
+  color: #19324a;
+  font-size: 1.5rem;
+}
+
+.summary small,
+.balanceGrid small {
+  color: #516b80;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.currentValue {
+  color: #16877d !important;
+}
+
+.explanation {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.9rem 1rem;
+  border:
+    1px solid #afe2da;
+  border-radius: 14px;
+  background: #f0faf9;
+}
+
+.explanation strong {
+  color: #16877d;
+  font-size: 1rem;
+}
+
+.explanation span {
+  color: #516b80;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.error,
+.success {
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.error {
+  border:
+    1px solid #f1bfc2;
+  background: #fff0f1;
+  color: #a63c43;
+}
+
+.success {
+  border:
+    1px solid #bde5cb;
+  background: #eaf8ef;
+  color: #237a48;
+}
+
+.accountSection {
+  overflow: hidden;
+  border:
+    1px solid #d9e5ec;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow:
+    0 8px 24px
+    rgba(
+      41,
+      80,
+      110,
+      0.05
+    );
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content:
+    space-between;
+  gap: 1rem;
+  padding: 1.2rem 1.3rem;
+  border-bottom:
+    1px solid #d9e5ec;
+  background:
+    linear-gradient(
+      135deg,
+      #f5f9fc,
+      #ffffff
+    );
+}
+
+.sectionHeader > div {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.sectionHeader span,
+.accountType {
+  color: #16877d;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  color: #19324a;
+  font-size: 1.35rem;
+}
+
+.sectionHeader p {
+  max-width: 720px;
+  margin: 0;
+  color: #516b80;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.sectionHeader > strong {
+  display: grid;
+  min-width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 999px;
+  background: #eaf4ff;
+  color: #1d63b3;
+}
+
+.accountList {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.accountCard {
+  display: grid;
+  gap: 1rem;
+  padding: 1.1rem;
+  border:
+    1px solid #d9e5ec;
+  border-radius: 16px;
+  background: #fbfdff;
+}
+
+.accountHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content:
+    space-between;
+  gap: 1rem;
+}
+
+.accountIdentity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.accountIdentity > div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.accountIdentity h3 {
+  margin: 0;
+  color: #19324a;
+  font-size: 1.125rem;
+}
+
+.accountAvatar {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 14px;
+  background:
+    linear-gradient(
+      145deg,
+      #2678d4,
+      #22a89a
+    );
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.openBadge,
+.closedBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+
+.openBadge {
+  background: #fff7e3;
+  color: #8a5c0a;
+}
+
+.closedBadge {
+  background: #eaf8ef;
+  color: #237a48;
+}
+
+.balanceGrid {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+  gap: 0.75rem;
+}
+
+.balanceGrid > div {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem;
+  border:
+    1px solid #e1ebf0;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.balanceGrid strong {
+  color: #19324a;
+  font-size: 1.1rem;
+}
+
+.creditFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 0.8rem;
+  border:
+    1px solid #d9e5ec;
+  border-radius: 12px;
+  background: #f5f9fc;
+}
+
+.creditFacts span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.creditFacts strong {
+  color: #19324a;
+  font-size: 0.9375rem;
+}
+
+.forms {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+  gap: 0.85rem;
+}
+
+.balanceForm {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+  gap: 0.65rem;
+  align-items: end;
+  padding: 0.85rem;
+  border:
+    1px solid #d9e5ec;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.balanceForm label {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.balanceForm label > span {
+  color: #38566d;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.balanceForm input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.7rem 0.75rem;
+  border:
+    1px solid #bdd0db;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #19324a;
+  font: inherit;
+  font-size: 1rem;
+}
+
+.balanceForm button {
+  min-height: 46px;
+  padding: 0.7rem 0.9rem;
+  border:
+    1px solid #2678d4;
+  border-radius: 11px;
+  background: #2678d4;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 780;
+}
+
+.balanceForm .closeButton {
+  border-color: #16877d;
+  background: #16877d;
+}
+
+.balanceForm button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.accountFooter {
+  padding-top: 0.3rem;
+  border-top:
+    1px solid #edf4f8;
+}
+
+.empty {
+  padding: 1.2rem;
+  color: #516b80;
+  font-size: 1rem;
+}
+
+.workspace :focus-visible {
+  outline:
+    3px solid
+    rgba(
+      38,
+      120,
+      212,
+      0.3
+    );
+  outline-offset: 2px;
+}
+
+@media (max-width: 800px) {
+  .summary,
+  .balanceGrid,
+  .forms {
+    grid-template-columns: 1fr;
+  }
+
+  .summary article {
+    border-right: 0;
+    border-bottom:
+      1px solid #d9e5ec;
+  }
+
+  .summary article:last-child {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .workspace {
+    gap: 1rem;
+  }
+
+  .summary span,
+  .summary small,
+  .balanceGrid span,
+  .balanceGrid small,
+  .creditFacts small,
+  .accountFooter,
+  .sectionHeader span,
+  .accountType,
+  .openBadge,
+  .closedBadge {
+    font-size: 1rem;
+  }
+
+  .summary strong {
+    font-size: 1.5rem;
+  }
+
+  .sectionHeader {
+    padding: 1rem;
+  }
+
+  .sectionHeader h2 {
+    font-size: 1.35rem;
+  }
+
+  .sectionHeader p,
+  .explanation span {
+    font-size: 1rem;
+  }
+
+  .accountList {
+    padding: 0.8rem;
+  }
+
+  .accountHeader {
+    display: grid;
+  }
+
+  .openBadge,
+  .closedBadge {
+    width: fit-content;
+  }
+
+  .balanceGrid strong,
+  .creditFacts strong {
+    font-size: 1rem;
+  }
+
+  .balanceForm {
+    grid-template-columns: 1fr;
+  }
+
+  .balanceForm label > span,
+  .balanceForm input,
+  .balanceForm button {
+    font-size: 1rem;
+  }
+
+  .balanceForm input,
+  .balanceForm button {
+    min-height: 48px;
+  }
+
+  .balanceForm button {
+    width: 100%;
+  }
+}

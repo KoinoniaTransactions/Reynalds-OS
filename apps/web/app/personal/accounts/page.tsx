@@ -11,8 +11,12 @@ import {
 } from "next/navigation";
 
 import {
-  PersonalFinanceMvp
-} from "../../../components/personal-finance-mvp";
+  PersonalFinanceAccountReconciliationWorkspace
+} from "../../../components/personal-finance-account-reconciliation-workspace";
+
+import {
+  PersonalFinanceRouteFrame
+} from "../../../components/personal-finance-route-frame";
 
 import {
   isAllowedPersonalFinanceHost
@@ -29,6 +33,10 @@ import {
 import {
   normalizePersonalFinancePeriodKey
 } from "../../../lib/personal-finance-period-types";
+
+import {
+  readPersonalFinanceReconciliationWorkspace
+} from "../../../lib/personal-finance-reconciliation-local";
 
 export const dynamic =
   "force-dynamic";
@@ -102,16 +110,54 @@ export default async function AccountsPage({
       requestedPeriodKey
     });
 
+  const budget =
+    periodWorkspace.budget;
+
+  const periodKey =
+    periodWorkspace.periodKey;
+
+  if (
+    !budget ||
+    !periodKey
+  ) {
+    return (
+      <PersonalFinanceRouteFrame
+        eyebrow="Household accounts"
+        monthLabel="Personal Finance"
+        sourceFile="No budget period loaded"
+        subtitle="Create or import a budget month before account balances can be reconciled."
+        title="Accounts"
+      >
+        <p>
+          {periodWorkspace.reason ??
+            budgetResult.reason}
+        </p>
+      </PersonalFinanceRouteFrame>
+    );
+  }
+
+  const reconciliation =
+    readPersonalFinanceReconciliationWorkspace(
+      periodKey
+    );
+
   return (
-    <PersonalFinanceMvp
-      budget={
-        periodWorkspace.budget
+    <PersonalFinanceRouteFrame
+      eyebrow="Household accounts"
+      monthLabel={
+        budget.month
       }
-      unavailableReason={
-        periodWorkspace.reason ??
-        budgetResult.reason
+      sourceFile={
+        budget.sourceFile
       }
-      view="accounts"
-    />
+      subtitle="Reconcile opening, current, and month-end balances so each budget period starts from the correct financial position."
+      title="Accounts and reconciliation"
+    >
+      <PersonalFinanceAccountReconciliationWorkspace
+        initialWorkspace={
+          reconciliation
+        }
+      />
+    </PersonalFinanceRouteFrame>
   );
 }
