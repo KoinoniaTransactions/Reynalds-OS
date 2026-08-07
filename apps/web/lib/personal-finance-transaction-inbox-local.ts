@@ -11,6 +11,14 @@ import {
   type PersonalFinanceReviewStatus
 } from "./personal-finance-db-local";
 
+import {
+  personalFinanceNextPeriodKey
+} from "./personal-finance-income-schedule";
+
+import {
+  normalizePersonalFinancePeriodKey
+} from "./personal-finance-period-types";
+
 export type PersonalFinanceInboxReviewFilter =
   | PersonalFinanceReviewStatus
   | "all";
@@ -19,6 +27,7 @@ export type PersonalFinanceTransactionInboxOptions = {
   databasePath?: string;
   reviewStatus?: PersonalFinanceInboxReviewFilter;
   accountId?: string;
+  periodKey?: string;
   limit?: number;
   offset?: number;
 };
@@ -339,6 +348,20 @@ export async function loadPersonalFinanceTransactionInbox(
   const accountId =
     options.accountId?.trim() || null;
 
+  const periodKey =
+    normalizePersonalFinancePeriodKey(
+      options.periodKey
+    );
+
+  if (
+    options.periodKey &&
+    !periodKey
+  ) {
+    throw new Error(
+      "Transaction period must use YYYY-MM."
+    );
+  }
+
   if (
     process.env.ENABLE_LOCAL_PERSONAL_FINANCE !==
     "true"
@@ -383,6 +406,26 @@ export async function loadPersonalFinanceTransactionInbox(
   if (accountId) {
     conditions.push("t.account_id = ?");
     parameters.push(accountId);
+  }
+
+  if (periodKey) {
+    conditions.push(
+      "t.posted_date >= ?"
+    );
+
+    parameters.push(
+      `${periodKey}-01`
+    );
+
+    conditions.push(
+      "t.posted_date < ?"
+    );
+
+    parameters.push(
+      `${personalFinanceNextPeriodKey(
+        periodKey
+      )}-01`
+    );
   }
 
   const whereClause =

@@ -1,0 +1,414 @@
+.switcher {
+  display: grid;
+  grid-template-columns:
+    auto 1fr;
+  gap:
+    0.7rem
+    1rem;
+  align-items: center;
+  margin:
+    0 0 1rem;
+  padding:
+    0.85rem 1rem;
+  border:
+    1px solid #b9d9f7;
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      135deg,
+      #f5f9fc,
+      #f0faf9
+    );
+}
+
+.identity {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 150px;
+}
+
+.identity span {
+  color: #6f8496;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.identity strong {
+  color: #19324a;
+  font-size: 1.1rem;
+  line-height: 1.3;
+}
+
+.controls {
+  display: flex;
+  align-items: end;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.monthPicker {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.monthPicker span {
+  color: #516b80;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.monthPicker select,
+.iconButton,
+.buildButton,
+.closeButton,
+.cancelButton,
+.confirmButton {
+  font: inherit;
+}
+
+.monthPicker select {
+  min-width: 170px;
+  min-height: 44px;
+  padding:
+    0.55rem 0.7rem;
+  border:
+    1px solid #bdd0db;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #19324a;
+  font-size: 1rem;
+}
+
+.iconButton {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border:
+    1px solid #b9d9f7;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #1d63b3;
+  cursor: pointer;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.buildButton {
+  min-height: 44px;
+  padding:
+    0.55rem 0.9rem;
+  border:
+    1px solid #2678d4;
+  border-radius: 11px;
+  background: #2678d4;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  font-weight: 780;
+}
+
+.context {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  color: #516b80;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.error {
+  grid-column: 1 / -1;
+  padding: 0.7rem;
+  border:
+    1px solid #f1bfc2;
+  border-radius: 10px;
+  background: #fff0f1;
+  color: #a63c43;
+  font-size: 0.9375rem;
+}
+
+.iconButton:disabled,
+.buildButton:disabled,
+.cancelButton:disabled,
+.confirmButton:disabled,
+.monthPicker select:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.switcher :focus-visible,
+.builder :focus-visible {
+  outline:
+    3px solid
+    rgba(
+      38,
+      120,
+      212,
+      0.28
+    );
+  outline-offset: 2px;
+}
+
+.overlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background:
+    rgba(
+      25,
+      50,
+      74,
+      0.42
+    );
+}
+
+.builder {
+  display: grid;
+  gap: 1.15rem;
+  width:
+    min(
+      620px,
+      100%
+    );
+  max-height:
+    calc(
+      100vh - 2rem
+    );
+  overflow-y: auto;
+  padding: 1.35rem;
+  border:
+    1px solid #d9e5ec;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow:
+    0 28px 80px
+    rgba(
+      25,
+      50,
+      74,
+      0.24
+    );
+}
+
+.builder header {
+  display: flex;
+  align-items: flex-start;
+  justify-content:
+    space-between;
+  gap: 1rem;
+}
+
+.builder header span {
+  color: #16877d;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.builder h2 {
+  margin:
+    0.25rem 0 0;
+  color: #19324a;
+  font-size: 1.55rem;
+  line-height: 1.25;
+}
+
+.closeButton {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border:
+    1px solid #d9e5ec;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #516b80;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.builderIntro {
+  margin: 0;
+  color: #516b80;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.optionList {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.optionList label {
+  display: grid;
+  grid-template-columns:
+    24px minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.9rem;
+  border:
+    1px solid #d9e5ec;
+  border-radius: 13px;
+  background: #f9fcff;
+  cursor: pointer;
+}
+
+.optionList input {
+  width: 20px;
+  height: 20px;
+  margin-top: 0.15rem;
+}
+
+.optionList label > span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.optionList strong {
+  color: #19324a;
+  font-size: 1rem;
+}
+
+.optionList small {
+  color: #516b80;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.incomeNote {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.9rem;
+  border:
+    1px solid #afe2da;
+  border-radius: 13px;
+  background: #f0faf9;
+}
+
+.incomeNote strong {
+  color: #16877d;
+  font-size: 1rem;
+}
+
+.incomeNote span {
+  color: #516b80;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.builder footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.cancelButton,
+.confirmButton {
+  min-height: 46px;
+  padding:
+    0.65rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 760;
+}
+
+.cancelButton {
+  border:
+    1px solid #b9d9f7;
+  background: #ffffff;
+  color: #1d63b3;
+}
+
+.confirmButton {
+  border:
+    1px solid #2678d4;
+  background: #2678d4;
+  color: #ffffff;
+}
+
+@media (max-width: 700px) {
+  .switcher {
+    grid-template-columns:
+      1fr;
+    padding: 1rem;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns:
+      48px
+      minmax(
+        0,
+        1fr
+      )
+      auto;
+    align-items: end;
+  }
+
+  .monthPicker select {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  .iconButton {
+    width: 48px;
+    height: 48px;
+  }
+
+  .buildButton {
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  .context {
+    grid-column: auto;
+    font-size: 1rem;
+  }
+
+  .identity span,
+  .monthPicker span,
+  .builder header span {
+    font-size: 1rem;
+  }
+
+  .identity strong {
+    font-size: 1.25rem;
+  }
+
+  .builder {
+    padding: 1rem;
+    border-radius: 18px;
+  }
+
+  .builder h2 {
+    font-size: 1.4rem;
+  }
+
+  .builderIntro,
+  .optionList strong,
+  .optionList small,
+  .incomeNote strong,
+  .incomeNote span {
+    font-size: 1rem;
+  }
+
+  .builder footer {
+    display: grid;
+  }
+
+  .cancelButton,
+  .confirmButton {
+    width: 100%;
+    min-height: 48px;
+  }
+}

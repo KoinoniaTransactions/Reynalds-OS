@@ -1,6 +1,14 @@
-import type { Metadata } from "next";
-import { headers } from "next/headers";
-import { notFound } from "next/navigation";
+import type {
+  Metadata
+} from "next";
+
+import {
+  headers
+} from "next/headers";
+
+import {
+  notFound
+} from "next/navigation";
 
 import {
   PersonalFinanceMvp
@@ -14,39 +22,95 @@ import {
   loadLocalPersonalFinance
 } from "../../../lib/personal-finance-local";
 
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
+import {
+  preparePersonalFinancePeriodWorkspace
+} from "../../../lib/personal-finance-period-local";
 
-export const metadata: Metadata = {
-  title: "Accounts | Personal Finance",
-  robots: {
-    index: false,
-    follow: false
-  }
+import {
+  normalizePersonalFinancePeriodKey
+} from "../../../lib/personal-finance-period-types";
+
+export const dynamic =
+  "force-dynamic";
+
+export const runtime =
+  "nodejs";
+
+export const metadata:
+  Metadata = {
+    title:
+      "Accounts | Personal Finance",
+
+    robots: {
+      index: false,
+      follow: false
+    }
+  };
+
+type PageProps = {
+  searchParams?:
+    Promise<{
+      period?:
+        string | string[];
+    }>;
 };
 
-export default async function AccountsPage() {
-  const requestHeaders = await headers();
+export default async function AccountsPage({
+  searchParams
+}: PageProps) {
+  const requestHeaders =
+    await headers();
 
   const requestHost = (
-    requestHeaders.get("x-forwarded-host") ??
-    requestHeaders.get("host") ??
+    requestHeaders.get(
+      "x-forwarded-host"
+    ) ??
+    requestHeaders.get(
+      "host"
+    ) ??
     ""
   )
     .split(",")[0]
     ?.trim();
 
-  if (!isAllowedPersonalFinanceHost(requestHost)) {
+  if (
+    !isAllowedPersonalFinanceHost(
+      requestHost
+    )
+  ) {
     notFound();
   }
+
+  const params =
+    searchParams
+      ? await searchParams
+      : {};
+
+  const requestedPeriodKey =
+    normalizePersonalFinancePeriodKey(
+      params.period
+    );
 
   const budgetResult =
     await loadLocalPersonalFinance();
 
+  const periodWorkspace =
+    preparePersonalFinancePeriodWorkspace({
+      legacyBudget:
+        budgetResult.budget,
+
+      requestedPeriodKey
+    });
+
   return (
     <PersonalFinanceMvp
-      budget={budgetResult.budget}
-      unavailableReason={budgetResult.reason}
+      budget={
+        periodWorkspace.budget
+      }
+      unavailableReason={
+        periodWorkspace.reason ??
+        budgetResult.reason
+      }
       view="accounts"
     />
   );

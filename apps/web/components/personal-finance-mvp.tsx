@@ -13,6 +13,10 @@ import {
   PersonalFinanceSectionNav,
   type PersonalFinanceSectionNavGroup
 } from "./personal-finance-section-nav";
+
+import {
+  PersonalFinancePeriodSwitcher
+} from "./personal-finance-period-switcher";
 import styles from "./personal-finance-mvp.module.css";
 
 type BillStatus =
@@ -317,6 +321,8 @@ function PersonalFinanceFrame({
             </a>
           </div>
         </div>
+
+        <PersonalFinancePeriodSwitcher />
 
         <header className={styles.header}>
           <div className={styles.headerCopy}>
@@ -794,7 +800,7 @@ export function PersonalFinanceMvp({
           </strong>
 
           <span className={styles.metricNote}>
-            Combined bank balance entered in the CSV
+            Combined cash balance for the selected month
           </span>
         </div>
 

@@ -445,5 +445,53 @@ describe(
         );
       }
     );
+
+    it(
+      "persists a valid month requested through the route",
+      () => {
+        preparePersonalFinancePeriodWorkspace({
+          legacyBudget:
+            legacyBudget(),
+          requestedPeriodKey:
+            "2026-07"
+        });
+
+        createNextPersonalFinancePeriod(
+          "2026-07"
+        );
+
+        selectPersonalFinancePeriod(
+          "2026-07"
+        );
+
+        const requested =
+          preparePersonalFinancePeriodWorkspace({
+            legacyBudget:
+              null,
+            requestedPeriodKey:
+              "2026-08"
+          });
+
+        expect(
+          requested.periodKey
+        ).toBe(
+          "2026-08"
+        );
+
+        const persisted =
+          preparePersonalFinancePeriodWorkspace({
+            legacyBudget:
+              null,
+            requestedPeriodKey:
+              null
+          });
+
+        expect(
+          persisted.periodKey
+        ).toBe(
+          "2026-08"
+        );
+      }
+    );
   }
 );

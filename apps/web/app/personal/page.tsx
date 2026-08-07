@@ -23,25 +23,48 @@ import {
 } from "../../lib/personal-finance-local";
 
 import {
+  preparePersonalFinancePeriodWorkspace
+} from "../../lib/personal-finance-period-local";
+
+import {
+  normalizePersonalFinancePeriodKey
+} from "../../lib/personal-finance-period-types";
+
+import {
   loadPersonalFinanceTransactionInbox
 } from "../../lib/personal-finance-transaction-inbox-local";
 
 export const dynamic =
   "force-dynamic";
 
-export const runtime = "nodejs";
+export const runtime =
+  "nodejs";
 
-export const metadata: Metadata = {
-  title: "Personal Finance",
-  description:
-    "Local-only household budget workspace.",
-  robots: {
-    index: false,
-    follow: false
-  }
+export const metadata:
+  Metadata = {
+    title:
+      "Personal Finance",
+
+    description:
+      "Local-only household budget workspace.",
+
+    robots: {
+      index: false,
+      follow: false
+    }
+  };
+
+type PageProps = {
+  searchParams?:
+    Promise<{
+      period?:
+        string | string[];
+    }>;
 };
 
-export default async function PersonalPage() {
+export default async function PersonalPage({
+  searchParams
+}: PageProps) {
   const requestHeaders =
     await headers();
 
@@ -49,7 +72,9 @@ export default async function PersonalPage() {
     requestHeaders.get(
       "x-forwarded-host"
     ) ??
-    requestHeaders.get("host") ??
+    requestHeaders.get(
+      "host"
+    ) ??
     ""
   )
     .split(",")[0]
@@ -63,42 +88,99 @@ export default async function PersonalPage() {
     notFound();
   }
 
-  const [
-    budgetResult,
-    inboxResult
-  ] = await Promise.all([
-    loadLocalPersonalFinance(),
-    loadPersonalFinanceTransactionInbox({
-      reviewStatus: "all"
-    })
-  ]);
+  const params =
+    searchParams
+      ? await searchParams
+      : {};
+
+  const requestedPeriodKey =
+    normalizePersonalFinancePeriodKey(
+      params.period
+    );
+
+  const budgetResult =
+    await loadLocalPersonalFinance();
+
+  const periodWorkspace =
+    preparePersonalFinancePeriodWorkspace({
+      legacyBudget:
+        budgetResult.budget,
+
+      requestedPeriodKey
+    });
+
+  const inboxResult =
+    await loadPersonalFinanceTransactionInbox({
+      reviewStatus:
+        "all",
+
+      limit:
+        500,
+
+      periodKey:
+        periodWorkspace
+          .periodKey ??
+        undefined
+    });
+
+  const transactions =
+    inboxResult.transactions;
+
+  const transactionAccountCount =
+    new Set(
+      transactions.map(
+        (transaction) =>
+          transaction.accountId
+      )
+    ).size;
+
+  const unclassifiedTransactionCount =
+    transactions.filter(
+      (transaction) =>
+        transaction.classification ===
+        "unknown"
+    ).length;
+
+  const reviewedTransactionCount =
+    transactions.filter(
+      (transaction) =>
+        transaction.reviewedAt !==
+        null
+    ).length;
+
+  const notReviewedTransactionCount =
+    transactions.filter(
+      (transaction) =>
+        transaction.reviewedAt ===
+        null
+    ).length;
 
   return (
     <PersonalFinanceMvp
-      budget={budgetResult.budget}
+      budget={
+        periodWorkspace.budget
+      }
       unavailableReason={
+        periodWorkspace.reason ??
         budgetResult.reason
       }
       transactions={
-        inboxResult.transactions
+        transactions
       }
       transactionTotal={
         inboxResult.totalMatching
       }
       transactionAccountCount={
-        inboxResult.summary.accounts
+        transactionAccountCount
       }
       unclassifiedTransactionCount={
-        inboxResult.summary
-          .unclassifiedTransactions
+        unclassifiedTransactionCount
       }
       reviewedTransactionCount={
-        inboxResult.summary
-          .reviewedTransactions
+        reviewedTransactionCount
       }
       notReviewedTransactionCount={
-        inboxResult.summary
-          .notReviewedTransactions
+        notReviewedTransactionCount
       }
       transactionReason={
         inboxResult.reason

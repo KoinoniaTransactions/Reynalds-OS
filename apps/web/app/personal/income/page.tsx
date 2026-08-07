@@ -23,17 +23,20 @@ import {
 } from "../../../lib/personal-finance-access-local";
 
 import {
-  readPersonalFinanceIncomeWorkspace,
-  seedPersonalFinanceIncomeFromLegacy
+  readPersonalFinanceIncomeWorkspace
 } from "../../../lib/personal-finance-income-local";
-
-import {
-  personalFinancePeriodKeyFromMonthLabel
-} from "../../../lib/personal-finance-income-schedule";
 
 import {
   loadLocalPersonalFinance
 } from "../../../lib/personal-finance-local";
+
+import {
+  preparePersonalFinancePeriodWorkspace
+} from "../../../lib/personal-finance-period-local";
+
+import {
+  normalizePersonalFinancePeriodKey
+} from "../../../lib/personal-finance-period-types";
 
 export const dynamic =
   "force-dynamic";
@@ -43,14 +46,26 @@ export const runtime =
 
 export const metadata:
   Metadata = {
-    title: "Income",
+    title:
+      "Income",
+
     robots: {
       index: false,
       follow: false
     }
   };
 
-export default async function IncomePage() {
+type PageProps = {
+  searchParams?:
+    Promise<{
+      period?:
+        string | string[];
+    }>;
+};
+
+export default async function IncomePage({
+  searchParams
+}: PageProps) {
   const requestHeaders =
     await headers();
 
@@ -74,65 +89,63 @@ export default async function IncomePage() {
     notFound();
   }
 
+  const params =
+    searchParams
+      ? await searchParams
+      : {};
+
+  const requestedPeriodKey =
+    normalizePersonalFinancePeriodKey(
+      params.period
+    );
+
   const budgetResult =
     await loadLocalPersonalFinance();
 
-  const currentDate =
-    new Date();
+  const periodWorkspace =
+    preparePersonalFinancePeriodWorkspace({
+      legacyBudget:
+        budgetResult.budget,
 
-  const fallbackPeriodKey =
-    [
-      currentDate
-        .getFullYear(),
-      String(
-        currentDate
-          .getMonth() + 1
-      ).padStart(
-        2,
-        "0"
-      )
-    ].join("-");
-
-  const periodKey =
-    budgetResult.budget
-      ? (
-          personalFinancePeriodKeyFromMonthLabel(
-            budgetResult
-              .budget
-              .month
-          ) ??
-          fallbackPeriodKey
-        )
-      : fallbackPeriodKey;
+      requestedPeriodKey
+    });
 
   if (
-    budgetResult.budget
+    !periodWorkspace.periodKey ||
+    !periodWorkspace.budget
   ) {
-    seedPersonalFinanceIncomeFromLegacy({
-      periodKey,
-      entries:
-        budgetResult
-          .budget
-          .income
-    });
+    return (
+      <PersonalFinanceRouteFrame
+        eyebrow="Household income"
+        monthLabel="Personal Finance"
+        sourceFile="No budget period loaded"
+        subtitle="Create or import a budget month before income can be planned."
+        title="Income"
+      >
+        <p>
+          {periodWorkspace.reason ??
+            budgetResult.reason}
+        </p>
+      </PersonalFinanceRouteFrame>
+    );
   }
 
   const incomeWorkspace =
     readPersonalFinanceIncomeWorkspace(
-      periodKey
+      periodWorkspace.periodKey
     );
 
   return (
     <PersonalFinanceRouteFrame
       eyebrow="Household income"
       monthLabel={
-        incomeWorkspace.periodLabel
+        incomeWorkspace
+          .periodLabel
       }
       sourceFile={
-        budgetResult
+        periodWorkspace
           .budget
-          ?.sourceFile ??
-        "personal-finance.sqlite3"
+          .sourceFile
       }
       subtitle="Define each income source, assign who earns it, track actual deposits, and add clearly labeled miscellaneous income."
       title="Income"

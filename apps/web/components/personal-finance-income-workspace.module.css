@@ -847,3 +847,9 @@
     margin: 1rem;
   }
 }
+
+
+/* App-wide Budget Month control is now authoritative. */
+.periodToolbar {
+  display: none;
+}

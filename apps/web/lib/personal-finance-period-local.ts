@@ -98,6 +98,22 @@ export function preparePersonalFinancePeriodWorkspace({
       periods,
       requestedPeriodKey
     });
+
+    const normalizedRequested =
+      normalizePersonalFinancePeriodKey(
+        requestedPeriodKey
+      );
+
+    if (
+      periodKey &&
+      normalizedRequested ===
+        periodKey
+    ) {
+      writeSelectedPeriodKey(
+        database,
+        periodKey
+      );
+    }
   } finally {
     database.close();
   }

@@ -7,6 +7,10 @@ import {
   type PersonalFinanceSectionNavGroup
 } from "./personal-finance-section-nav";
 
+import {
+  PersonalFinancePeriodSwitcher
+} from "./personal-finance-period-switcher";
+
 import styles from "./personal-finance-mvp.module.css";
 
 type Props = {
@@ -181,6 +185,8 @@ export function PersonalFinanceRouteFrame({
             </a>
           </div>
         </div>
+
+        <PersonalFinancePeriodSwitcher />
 
         <header
           className={styles.header}
