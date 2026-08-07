@@ -1199,3 +1199,260 @@
       repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Contextual Financial Setup drawer */
+
+.setupBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1090;
+  background:
+    rgba(
+      25,
+      50,
+      74,
+      0.28
+    );
+  backdrop-filter:
+    blur(2px);
+  cursor: default;
+}
+
+.drawerForm {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1100;
+
+  display: flex;
+  width:
+    min(
+      720px,
+      calc(100vw - 72px)
+    );
+  max-width: 100%;
+  flex-direction: column;
+
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  border: 0;
+  border-left:
+    1px solid #d9e5ec;
+  border-radius:
+    22px 0 0 22px;
+
+  background: #f9fcff;
+
+  box-shadow:
+    -18px 0 55px
+    rgba(
+      25,
+      50,
+      74,
+      0.16
+    );
+}
+
+.drawerForm .formHeading {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+
+  background:
+    rgba(
+      249,
+      252,
+      255,
+      0.97
+    );
+
+  backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    0 1px 0
+    rgba(
+      217,
+      229,
+      236,
+      0.9
+    );
+}
+
+.drawerForm .formGrid {
+  flex: 1 0 auto;
+}
+
+.drawerForm .formActions {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+
+  background:
+    rgba(
+      249,
+      252,
+      255,
+      0.98
+    );
+
+  backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    0 -8px 24px
+    rgba(
+      25,
+      50,
+      74,
+      0.07
+    );
+}
+
+.formHeadingAside {
+  display: flex;
+  min-width: 0;
+  align-items:
+    flex-start;
+  justify-content:
+    flex-end;
+  gap: 14px;
+}
+
+.formHeadingAside p {
+  max-width: 320px;
+}
+
+.drawerCloseButton {
+  display: grid;
+  width: 46px;
+  min-width: 46px;
+  height: 46px;
+  min-height: 46px;
+  flex: 0 0 auto;
+  place-items: center;
+
+  padding: 0;
+  border:
+    1px solid #d9e5ec;
+  border-radius: 999px;
+
+  background: #ffffff;
+  color: #516b80;
+
+  cursor: pointer;
+
+  font: inherit;
+  font-size: 1.7rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.drawerCloseButton:hover {
+  border-color: #b9d9f7;
+  background: #eaf4ff;
+  color: #1d63b3;
+}
+
+.drawerCloseButton:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+.setupContext {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.setupContext span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding:
+    0.28rem
+    0.6rem;
+
+  border:
+    1px solid #d9e5ec;
+  border-radius: 999px;
+
+  background: #ffffff;
+  color: #516b80;
+
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.25;
+  text-transform: none;
+}
+
+@media (max-width: 700px) {
+  .drawerForm {
+    inset: 0;
+    width: 100%;
+    border-left: 0;
+    border-radius: 0;
+  }
+
+  .drawerForm .formHeading {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+    gap: 12px;
+    padding:
+      16px 16px 14px;
+  }
+
+  .formHeadingAside {
+    display: contents;
+  }
+
+  .formHeadingAside p {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    max-width: none;
+    margin: 0;
+  }
+
+  .drawerCloseButton {
+    grid-column: 2;
+    grid-row: 1;
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+    min-height: 48px;
+  }
+
+  .setupContext {
+    gap: 6px;
+  }
+
+  .setupContext span {
+    min-height: 32px;
+    font-size: 0.9375rem;
+  }
+
+  .drawerForm .formGrid {
+    padding:
+      18px 16px
+      22px;
+  }
+
+  .drawerForm .formActions {
+    padding:
+      14px 16px
+      calc(
+        14px +
+        env(
+          safe-area-inset-bottom
+        )
+      );
+  }
+}

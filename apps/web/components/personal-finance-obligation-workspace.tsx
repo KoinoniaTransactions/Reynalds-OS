@@ -326,6 +326,32 @@ export function PersonalFinanceObligationWorkspace({
     null
   );
 
+  function closeSetupPanel() {
+    if (isSaving) {
+      return;
+    }
+
+    setIsFormOpen(
+      false
+    );
+
+    setSetupTarget(
+      null
+    );
+
+    setSelectedObligationType(
+      "mortgage"
+    );
+
+    setErrorMessage(
+      null
+    );
+
+    setStatusMessage(
+      null
+    );
+  }
+
   const loadCatalog = useCallback(
     async () => {
       setIsLoading(true);
@@ -413,22 +439,6 @@ export function PersonalFinanceObligationWorkspace({
         setIsFormOpen(
           true
         );
-
-        window.requestAnimationFrame(
-          () => {
-            document
-              .getElementById(
-                "obligation-setup-form"
-              )
-              ?.scrollIntoView({
-                behavior:
-                  "smooth",
-
-                block:
-                  "start"
-              });
-          }
-        );
       }
 
       window.addEventListener(
@@ -444,6 +454,73 @@ export function PersonalFinanceObligationWorkspace({
       };
     },
     []
+  );
+
+  useEffect(
+    () => {
+      if (
+        !isFormOpen ||
+        !setupTarget
+      ) {
+        return;
+      }
+
+      const previousOverflow =
+        document.body.style.overflow;
+
+      document.body.style.overflow =
+        "hidden";
+
+      function handleKeyDown(
+        event: KeyboardEvent
+      ) {
+        if (
+          event.key ===
+            "Escape" &&
+          !isSaving
+        ) {
+          setIsFormOpen(
+            false
+          );
+
+          setSetupTarget(
+            null
+          );
+
+          setSelectedObligationType(
+            "mortgage"
+          );
+
+          setErrorMessage(
+            null
+          );
+
+          setStatusMessage(
+            null
+          );
+        }
+      }
+
+      window.addEventListener(
+        "keydown",
+        handleKeyDown
+      );
+
+      return () => {
+        window.removeEventListener(
+          "keydown",
+          handleKeyDown
+        );
+
+        document.body.style.overflow =
+          previousOverflow;
+      };
+    },
+    [
+      isFormOpen,
+      isSaving,
+      setupTarget
+    ]
   );
 
   const homeNameById = useMemo(
@@ -1053,10 +1130,42 @@ export function PersonalFinanceObligationWorkspace({
         }
       />
 
+      {isFormOpen &&
+      setupTarget ? (
+        <div
+          aria-hidden="true"
+          className={
+            styles.setupBackdrop
+          }
+          onMouseDown={
+            closeSetupPanel
+          }
+        />
+      ) : null}
+
       {isFormOpen ? (
         <form
-          className={styles.form}
+          aria-labelledby={
+            setupTarget
+              ? "obligation-setup-title"
+              : undefined
+          }
+          aria-modal={
+            setupTarget
+              ? "true"
+              : undefined
+          }
+          className={`${styles.form} ${
+            setupTarget
+              ? styles.drawerForm
+              : ""
+          }`}
           id="obligation-setup-form"
+          role={
+            setupTarget
+              ? "dialog"
+              : undefined
+          }
           key={
             setupTarget
               ? `${setupTarget.mode}:${setupTarget.billKey}:${setupTarget.obligationId ?? ""}`
@@ -1077,22 +1186,80 @@ export function PersonalFinanceObligationWorkspace({
                   : "Guided bill setup"}
               </span>
 
-              <h3>
+              <h3
+                id={
+                  setupTarget
+                    ? "obligation-setup-title"
+                    : undefined
+                }
+              >
                 {setupTarget?.mode ===
                 "complete"
-                  ? "Complete financial details"
+                  ? `Complete ${setupTarget.billName}`
                   : setupTarget
-                    ? "Set up this monthly bill"
+                    ? `Set up ${setupTarget.billName}`
                     : "Add a financial obligation"}
               </h3>
+
+              {setupTarget ? (
+                <div
+                  className={
+                    styles.setupContext
+                  }
+                >
+                  <span>
+                    {money(
+                      setupTarget
+                        .plannedAmount
+                    )}
+                    {" planned"}
+                  </span>
+
+                  <span>
+                    {dueLabel(
+                      setupTarget
+                        .dueDay
+                    )}
+                  </span>
+
+                  <span>
+                    Current monthly plan
+                  </span>
+                </div>
+              ) : null}
             </div>
 
-            <p>
-              Store provider and
-              payment instructions,
-              but never passwords,
-              PINs, or security codes.
-            </p>
+            <div
+              className={
+                styles.formHeadingAside
+              }
+            >
+              <p>
+                Store provider and
+                payment instructions,
+                but never passwords,
+                PINs, or security codes.
+              </p>
+
+              {setupTarget ? (
+                <button
+                  aria-label="Close financial setup"
+                  autoFocus
+                  className={
+                    styles.drawerCloseButton
+                  }
+                  disabled={
+                    isSaving
+                  }
+                  onClick={
+                    closeSetupPanel
+                  }
+                  type="button"
+                >
+                  ×
+                </button>
+              ) : null}
+            </div>
           </div>
 
           <div
