@@ -730,3 +730,263 @@
     flex: 1 1 0;
   }
 }
+
+/* Explicit monthly bill-to-obligation linkage */
+
+.financialLink {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border:
+    1px solid #d9e5ec;
+  border-radius: 12px;
+  background: #fbfdff;
+}
+
+.linkSummary {
+  display: flex;
+  align-items: center;
+  justify-content:
+    space-between;
+  gap: 1rem;
+}
+
+.linkIdentity {
+  display: flex;
+  align-items:
+    flex-start;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.linkIdentity > div {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.linkIdentity strong {
+  color: #19324a;
+  font-size: 0.9375rem;
+}
+
+.linkIdentity p {
+  max-width: 680px;
+  margin: 0;
+  color: #516b80;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.linkedBadge,
+.unlinkedBadge {
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-height: 30px;
+  align-items: center;
+  padding:
+    0.3rem
+    0.55rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+
+.linkedBadge {
+  background: #e6f8f5;
+  color: #16877d;
+}
+
+.unlinkedBadge {
+  background: #edf4f8;
+  color: #516b80;
+}
+
+.linkActions,
+.linkEditorActions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex: 0 0 auto;
+}
+
+.setupButton,
+.secondaryButton,
+.unlinkButton {
+  min-height: 42px;
+  padding:
+    0.55rem
+    0.75rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 760;
+}
+
+.setupButton {
+  border:
+    1px solid #2678d4;
+  background: #2678d4;
+  color: #ffffff;
+}
+
+.secondaryButton {
+  border:
+    1px solid #b9d9f7;
+  background: #eaf4ff;
+  color: #1d63b3;
+}
+
+.unlinkButton {
+  border:
+    1px solid #f1bfc2;
+  background: #fff0f1;
+  color: #a63c43;
+}
+
+.setupButton:disabled,
+.secondaryButton:disabled,
+.unlinkButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.linkEditor {
+  display: grid;
+  grid-template-columns:
+    minmax(
+      220px,
+      1fr
+    )
+    auto;
+  gap: 0.65rem;
+  align-items: end;
+  padding-top: 0.75rem;
+  border-top:
+    1px solid #edf4f8;
+}
+
+.linkEditor label {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.linkEditor label > span {
+  color: #38566d;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.linkEditor select {
+  width: 100%;
+  min-height: 44px;
+  padding:
+    0.65rem
+    0.7rem;
+  border:
+    1px solid #bdd0db;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #19324a;
+  font: inherit;
+  font-size: 1rem;
+}
+
+.noObligations {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #6f8496;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.debtSetupAction {
+  border-color: #f2daa1;
+  background: #fff7e3;
+}
+
+.debtSetupAction > div > span {
+  color: #8a5c0a;
+}
+
+.debtSetupAction > button {
+  border-color: #f2b84b;
+  background: #f2b84b;
+  color: #19324a;
+}
+
+.debtSetupPending {
+  max-width: 260px;
+  color: #8a5c0a;
+  font-size: 0.875rem;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .linkSummary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .linkActions {
+    justify-content:
+      flex-start;
+  }
+
+  .linkEditor {
+    grid-template-columns: 1fr;
+  }
+
+  .linkEditorActions {
+    justify-content:
+      flex-start;
+  }
+}
+
+@media (max-width: 700px) {
+  .financialLink {
+    padding: 0.8rem;
+  }
+
+  .linkIdentity {
+    display: grid;
+  }
+
+  .linkIdentity strong,
+  .linkIdentity p,
+  .linkedBadge,
+  .unlinkedBadge,
+  .linkEditor label > span,
+  .noObligations,
+  .debtSetupPending,
+  .setupButton,
+  .secondaryButton,
+  .unlinkButton {
+    font-size: 1rem;
+  }
+
+  .linkActions,
+  .linkEditorActions {
+    display: grid;
+    grid-template-columns:
+      1fr 1fr;
+    width: 100%;
+  }
+
+  .setupButton,
+  .secondaryButton,
+  .unlinkButton,
+  .linkEditor select {
+    min-height: 48px;
+  }
+
+  .linkActions button,
+  .linkEditorActions button {
+    width: 100%;
+  }
+
+  .debtSetupPending {
+    max-width: none;
+  }
+}

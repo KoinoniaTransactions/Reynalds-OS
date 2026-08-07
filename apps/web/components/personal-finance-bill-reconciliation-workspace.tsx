@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useState,
   type FormEvent
@@ -26,6 +27,30 @@ type Props = {
 type ReconciliationResponse = {
   workspace?:
     PersonalFinanceReconciliationWorkspace;
+
+  error?:
+    string;
+};
+
+type ObligationOption = {
+  id: string;
+  name: string;
+
+  obligationType:
+    string;
+
+  budgetItemKey:
+    string | null;
+
+  isActive:
+    boolean;
+};
+
+type ObligationCatalogResponse = {
+  catalog?: {
+    obligations:
+      ObligationOption[];
+  };
 
   error?:
     string;
@@ -164,6 +189,57 @@ function debtTypeLabel(
     );
 }
 
+function obligationTypeLabel(
+  value:
+    string | null
+): string {
+  if (!value) {
+    return "Financial obligation";
+  }
+
+  return value
+    .replaceAll(
+      "_",
+      " "
+    )
+    .replace(
+      /\b\w/g,
+      (character) =>
+        character.toUpperCase()
+    );
+}
+
+function dueDayFromDate(
+  value:
+    string | null
+): number | null {
+  if (!value) {
+    return null;
+  }
+
+  const match =
+    value.match(
+      /^\d{4}-\d{2}-(\d{2})$/
+    );
+
+  if (!match) {
+    return null;
+  }
+
+  const day =
+    Number(
+      match[1]
+    );
+
+  return (
+    Number.isInteger(day) &&
+    day >= 1 &&
+    day <= 31
+  )
+    ? day
+    : null;
+}
+
 function formAmount(
   value:
     FormDataEntryValue |
@@ -283,6 +359,111 @@ export function PersonalFinanceBillReconciliationWorkspace({
       string | null
     >(null);
 
+
+  const [
+    obligations,
+    setObligations
+  ] =
+    useState<
+      ObligationOption[]
+    >([]);
+
+  const [
+    linkEditorBillKey,
+    setLinkEditorBillKey
+  ] =
+    useState<
+      string | null
+    >(null);
+
+  const [
+    linkBusyBillKey,
+    setLinkBusyBillKey
+  ] =
+    useState<
+      string | null
+    >(null);
+
+  const loadObligations =
+    useCallback(
+      async () => {
+        try {
+          const response =
+            await fetch(
+              "/api/personal/obligations",
+              {
+                cache:
+                  "no-store"
+              }
+            );
+
+          const body =
+            await response.json() as
+              ObligationCatalogResponse;
+
+          if (
+            !response.ok ||
+            !body.catalog
+          ) {
+            return;
+          }
+
+          setObligations(
+            body.catalog
+              .obligations
+              .filter(
+                (obligation) =>
+                  obligation.isActive
+              )
+          );
+        } catch {
+          // The monthly ledger remains usable
+          // if the optional setup catalog
+          // cannot be loaded.
+        }
+      },
+      []
+    );
+
+  const refreshWorkspace =
+    useCallback(
+      async () => {
+        try {
+          const response =
+            await fetch(
+              `/api/personal/reconciliation?period=${encodeURIComponent(
+                initialWorkspace.periodKey
+              )}`,
+              {
+                cache:
+                  "no-store"
+              }
+            );
+
+          const body =
+            await response.json() as
+              ReconciliationResponse;
+
+          if (
+            response.ok &&
+            body.workspace
+          ) {
+            setWorkspace(
+              body.workspace
+            );
+          }
+        } catch {
+          // Server refresh remains the
+          // fallback if the local refresh
+          // request is unavailable.
+        }
+      },
+      [
+        initialWorkspace
+          .periodKey
+      ]
+    );
+
   useEffect(
     () => {
       setWorkspace(
@@ -291,6 +472,42 @@ export function PersonalFinanceBillReconciliationWorkspace({
     },
     [
       initialWorkspace
+    ]
+  );
+
+  useEffect(
+    () => {
+      void loadObligations();
+    },
+    [
+      loadObligations
+    ]
+  );
+
+  useEffect(
+    () => {
+      function handleObligationUpdate() {
+        void Promise.all([
+          refreshWorkspace(),
+          loadObligations()
+        ]);
+      }
+
+      window.addEventListener(
+        "personal-finance-obligation-updated",
+        handleObligationUpdate
+      );
+
+      return () => {
+        window.removeEventListener(
+          "personal-finance-obligation-updated",
+          handleObligationUpdate
+        );
+      };
+    },
+    [
+      loadObligations,
+      refreshWorkspace
     ]
   );
 
@@ -636,6 +853,266 @@ export function PersonalFinanceBillReconciliationWorkspace({
     }
   }
 
+  function linkedObligationForBill(
+    bill:
+      PersonalFinanceReconciliationBill
+  ): ObligationOption | null {
+    if (!bill.obligationId) {
+      return null;
+    }
+
+    return (
+      obligations.find(
+        (obligation) =>
+          obligation.id ===
+          bill.obligationId
+      ) ??
+      null
+    );
+  }
+
+  function openFinancialSetup(
+    bill:
+      PersonalFinanceReconciliationBill,
+    mode:
+      "create" |
+      "complete"
+  ) {
+    if (
+      mode ===
+        "complete" &&
+      !bill.obligationId
+    ) {
+      setError(
+        "This monthly bill must be linked before debt setup can be completed."
+      );
+
+      return;
+    }
+
+    setError(
+      null
+    );
+
+    setNotice(
+      null
+    );
+
+    setLinkEditorBillKey(
+      null
+    );
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "personal-finance-open-obligation-setup",
+        {
+          detail: {
+            mode,
+
+            billKey:
+              bill.budgetItemKey,
+
+            billName:
+              bill.name,
+
+            plannedAmount:
+              bill.planned,
+
+            dueDay:
+              dueDayFromDate(
+                bill.dueDate
+              ),
+
+            obligationId:
+              mode ===
+              "complete"
+                ? bill.obligationId
+                : null,
+
+            obligationType:
+              mode ===
+              "complete"
+                ? bill.obligationType
+                : null
+          }
+        }
+      )
+    );
+  }
+
+  async function saveExistingLink(
+    event:
+      FormEvent<
+        HTMLFormElement
+      >,
+    bill:
+      PersonalFinanceReconciliationBill
+  ) {
+    event.preventDefault();
+
+    const data =
+      new FormData(
+        event.currentTarget
+      );
+
+    const obligationId =
+      String(
+        data.get(
+          "obligationId"
+        ) ?? ""
+      ).trim();
+
+    if (!obligationId) {
+      setError(
+        "Choose an existing financial obligation first."
+      );
+
+      return;
+    }
+
+    setLinkBusyBillKey(
+      bill.budgetItemKey
+    );
+
+    setError(
+      null
+    );
+
+    setNotice(
+      null
+    );
+
+    try {
+      const updated =
+        await postAction(
+          "link-bill-obligation",
+          {
+            budgetItemKey:
+              bill.budgetItemKey,
+
+            obligationId
+          }
+        );
+
+      setWorkspace(
+        updated
+      );
+
+      setLinkEditorBillKey(
+        null
+      );
+
+      setNotice(
+        `${bill.name} is now linked to its financial setup.`
+      );
+
+      await loadObligations();
+
+      window.dispatchEvent(
+        new Event(
+          "personal-finance-updated"
+        )
+      );
+
+      router.refresh();
+    } catch (
+      saveError
+    ) {
+      setError(
+        saveError instanceof
+          Error
+          ? saveError.message
+          : "The financial link could not be saved."
+      );
+    } finally {
+      setLinkBusyBillKey(
+        null
+      );
+    }
+  }
+
+  async function unlinkObligation(
+    bill:
+      PersonalFinanceReconciliationBill
+  ) {
+    if (!bill.obligationId) {
+      return;
+    }
+
+    const linked =
+      linkedObligationForBill(
+        bill
+      );
+
+    const confirmed =
+      window.confirm(
+        `Unlink ${bill.name} from ${
+          linked?.name ??
+          "its financial obligation"
+        }?\n\nThis does not delete the obligation, asset, liability, or payment history. It only removes this month's explicit relationship.`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setLinkBusyBillKey(
+      bill.budgetItemKey
+    );
+
+    setError(
+      null
+    );
+
+    setNotice(
+      null
+    );
+
+    try {
+      const updated =
+        await postAction(
+          "unlink-bill-obligation",
+          {
+            budgetItemKey:
+              bill.budgetItemKey
+          }
+        );
+
+      setWorkspace(
+        updated
+      );
+
+      setLinkEditorBillKey(
+        null
+      );
+
+      setNotice(
+        `${bill.name} was unlinked.`
+      );
+
+      window.dispatchEvent(
+        new Event(
+          "personal-finance-updated"
+        )
+      );
+
+      router.refresh();
+    } catch (
+      saveError
+    ) {
+      setError(
+        saveError instanceof
+          Error
+          ? saveError.message
+          : "The financial link could not be removed."
+      );
+    } finally {
+      setLinkBusyBillKey(
+        null
+      );
+    }
+  }
+
   function openDebtLedger(
     bill:
       PersonalFinanceReconciliationBill
@@ -781,14 +1258,14 @@ export function PersonalFinanceBillReconciliationWorkspace({
         </strong>
 
         <span>
-          Mortgage, vehicle, and
-          loan bills linked to an
-          active liability are
-          recorded only through
-          the debt ledger. A debt
-          payment will then update
-          this monthly bill
-          automatically.
+          Use Financial setup to
+          explicitly connect a
+          monthly bill to the
+          obligation it belongs to.
+          Linked mortgage, vehicle,
+          and loan payments are
+          then kept out of the
+          ordinary ledger.
         </span>
       </aside>
 
@@ -918,7 +1395,320 @@ export function PersonalFinanceBillReconciliationWorkspace({
                   </span>
                 </div>
 
-                {bill.requiresDebtLedger ? (
+                <div
+                  className={
+                    styles.financialLink
+                  }
+                >
+                  <div
+                    className={
+                      styles.linkSummary
+                    }
+                  >
+                    <div
+                      className={
+                        styles.linkIdentity
+                      }
+                    >
+                      <span
+                        className={
+                          bill.obligationId
+                            ? styles.linkedBadge
+                            : styles.unlinkedBadge
+                        }
+                      >
+                        {bill.obligationId
+                          ? "Linked"
+                          : "Not linked"}
+                      </span>
+
+                      <div>
+                        <strong>
+                          {bill.obligationId
+                            ? `${obligationTypeLabel(
+                                bill.obligationType ??
+                                linkedObligationForBill(
+                                  bill
+                                )?.obligationType ??
+                                null
+                              )} · ${
+                                linkedObligationForBill(
+                                  bill
+                                )?.name ??
+                                "Financial obligation"
+                              }`
+                            : "Financial setup"}
+                        </strong>
+
+                        <p>
+                          {bill.obligationId
+                            ? "This month carries an explicit obligation relationship."
+                            : "Link ordinary bills for organization, or set up mortgage and auto debt before using their payment workflow."}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div
+                      className={
+                        styles.linkActions
+                      }
+                    >
+                      {bill.obligationId ? (
+                        <>
+                          <button
+                            className={
+                              styles.secondaryButton
+                            }
+                            disabled={
+                              linkBusyBillKey ===
+                              bill.budgetItemKey
+                            }
+                            onClick={() =>
+                              setLinkEditorBillKey(
+                                linkEditorBillKey ===
+                                bill.budgetItemKey
+                                  ? null
+                                  : bill.budgetItemKey
+                              )
+                            }
+                            type="button"
+                          >
+                            Change link
+                          </button>
+
+                          <button
+                            className={
+                              styles.unlinkButton
+                            }
+                            disabled={
+                              linkBusyBillKey ===
+                              bill.budgetItemKey
+                            }
+                            onClick={() =>
+                              void unlinkObligation(
+                                bill
+                              )
+                            }
+                            type="button"
+                          >
+                            {linkBusyBillKey ===
+                            bill.budgetItemKey
+                              ? "Working..."
+                              : "Unlink"}
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className={
+                              styles.setupButton
+                            }
+                            onClick={() =>
+                              openFinancialSetup(
+                                bill,
+                                "create"
+                              )
+                            }
+                            type="button"
+                          >
+                            Financial setup
+                          </button>
+
+                          <button
+                            className={
+                              styles.secondaryButton
+                            }
+                            onClick={() =>
+                              setLinkEditorBillKey(
+                                linkEditorBillKey ===
+                                bill.budgetItemKey
+                                  ? null
+                                  : bill.budgetItemKey
+                              )
+                            }
+                            type="button"
+                          >
+                            Link existing
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {linkEditorBillKey ===
+                  bill.budgetItemKey ? (
+                    <form
+                      className={
+                        styles.linkEditor
+                      }
+                      onSubmit={(
+                        event
+                      ) =>
+                        void saveExistingLink(
+                          event,
+                          bill
+                        )
+                      }
+                    >
+                      <label>
+                        <span>
+                          Existing obligation
+                        </span>
+
+                        <select
+                          defaultValue={
+                            bill.obligationId ??
+                            ""
+                          }
+                          name="obligationId"
+                          required
+                        >
+                          <option
+                            disabled
+                            value=""
+                          >
+                            Choose an obligation
+                          </option>
+
+                          {obligations.map(
+                            (
+                              obligation
+                            ) => (
+                              <option
+                                key={
+                                  obligation.id
+                                }
+                                value={
+                                  obligation.id
+                                }
+                              >
+                                {obligationTypeLabel(
+                                  obligation
+                                    .obligationType
+                                )}
+                                {" · "}
+                                {
+                                  obligation.name
+                                }
+                              </option>
+                            )
+                          )}
+                        </select>
+                      </label>
+
+                      <div
+                        className={
+                          styles.linkEditorActions
+                        }
+                      >
+                        <button
+                          className={
+                            styles.setupButton
+                          }
+                          disabled={
+                            obligations.length ===
+                              0 ||
+                            linkBusyBillKey ===
+                              bill.budgetItemKey
+                          }
+                          type="submit"
+                        >
+                          {linkBusyBillKey ===
+                          bill.budgetItemKey
+                            ? "Saving..."
+                            : "Save link"}
+                        </button>
+
+                        <button
+                          className={
+                            styles.secondaryButton
+                          }
+                          disabled={
+                            linkBusyBillKey ===
+                            bill.budgetItemKey
+                          }
+                          onClick={() =>
+                            setLinkEditorBillKey(
+                              null
+                            )
+                          }
+                          type="button"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+
+                      {obligations.length ===
+                      0 ? (
+                        <p
+                          className={
+                            styles.noObligations
+                          }
+                        >
+                          No existing financial
+                          obligations are
+                          available. Use
+                          Financial setup to
+                          create one.
+                        </p>
+                      ) : null}
+                    </form>
+                  ) : null}
+                </div>
+
+                {bill.requiresDebtSetup ? (
+                  <div
+                    className={`${styles.debtAction} ${styles.debtSetupAction}`}
+                  >
+                    <div>
+                      <span>
+                        {debtTypeLabel(
+                          bill.obligationType
+                        )}
+                      </span>
+
+                      <strong>
+                        Complete debt setup
+                        before recording
+                        payments
+                      </strong>
+
+                      <p>
+                        This bill is already
+                        protected as debt.
+                        Add the real financial
+                        details before any
+                        payment can be posted.
+                      </p>
+                    </div>
+
+                    {bill.obligationType ===
+                    "loan" ? (
+                      <span
+                        className={
+                          styles.debtSetupPending
+                        }
+                      >
+                        Generic loan
+                        liability setup is
+                        not yet available
+                        from this form.
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          openFinancialSetup(
+                            bill,
+                            "complete"
+                          )
+                        }
+                        type="button"
+                      >
+                        Complete debt setup
+                      </button>
+                    )}
+                  </div>
+                ) : bill.requiresDebtLedger ? (
                   <div
                     className={
                       styles.debtAction
