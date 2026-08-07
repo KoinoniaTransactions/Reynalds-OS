@@ -1,25 +1,16 @@
 # Koinonia Production Release Handoff — 2026-08-07
 
-Status: Investigation complete; production-isolation plan approved; no production branch or domain change executed yet.
+Status: Koinonia production branch created and isolated preview visually approved; no live production/domain change executed yet.
 
 ## Objective
 
-Investigate why the approved Jeremiah digital business card at `/jeremiah` was present in GitHub and successful Vercel previews but returned the Reynalds OS 404 on the public Koinonia domain.
-
-The investigation also needed to separate three states that had become easy to confuse:
-
-1. the public Koinonia website currently serving production traffic,
-2. Koinonia client/employee portal development,
-3. unrelated work elsewhere in the shared monorepo.
+Investigate why the approved Jeremiah digital business card at `/jeremiah` was present in GitHub and successful Vercel previews but returned the Reynalds OS 404 on the public Koinonia domain, then establish a safe Koinonia-only production release line.
 
 ## Verified Local / GitHub State
 
-The user's local repository was checked with read-only Git commands.
-
-- Local repository: `/Users/jeremiahreynalds/Projects/Reynalds_OS_v11_3_1_Work`
+- Local repository checked: `/Users/jeremiahreynalds/Projects/Reynalds_OS_v11_3_1_Work`
 - Local branch at the start of the audit: `chatgpt/portal-access-status`
-- Local branch was clean.
-- Local and remote portal branch both pointed to `8263f9f72ff6dbb6dcbcfed97757be459df253b7` before this documentation pass.
+- Local branch was clean and synchronized with its remote before Brain-document updates.
 - `origin/main` pointed to `ab00ef5d0784de2c352a1fb7cfe2f96ee7be1f16` after fetch.
 - The local-vs-main count `191 17` reflected diverged branch history, not unpushed local changes.
 
@@ -33,42 +24,40 @@ Vercel project:
 - Project: `reynalds-os-web`
 - Project ID: `prj_7WLWYfFPKfmzLNPzaA0247ENMGjd`
 
-The public domains are attached to the project:
+Project domains include:
 
 - `koinoniatransactions.com`
 - `www.koinoniatransactions.com`
 
-However, those domains are still assigned to an older deployment because Vercel is honoring an Instant Rollback.
+The custom domains are still serving an older deployment because Vercel is honoring an Instant Rollback.
 
-Current live deployment commit:
+Current live production baseline:
 
-- `83d3dda31c500e36ac42f7258d5fdb79fef69c0e`
-- Commit message: `Add Koinonia meaning to About page`
+- Commit: `83d3dda31c500e36ac42f7258d5fdb79fef69c0e`
+- Message: `Add Koinonia meaning to About page`
 
-That deployment predates `/jeremiah`, so the public route correctly returned the old app's 404.
+That deployment predates `/jeremiah`, so the public route returns the older app's 404.
 
-## Verified Staged Main Deployment
+## Why Current Main Must Not Be Promoted
 
 Current GitHub `main`:
 
-- `ab00ef5d0784de2c352a1fb7cfe2f96ee7be1f16`
-- Commit message: `Add Koinonia digital business card`
+- Commit: `ab00ef5d0784de2c352a1fb7cfe2f96ee7be1f16`
+- Message: `Add Koinonia digital business card`
 
-Vercel successfully built this commit as a production-target deployment, but the deployment remained `Production Staged` because the Instant Rollback kept the custom domains on the older deployment.
+Vercel successfully built this as a production-target deployment, but it remained staged behind the Instant Rollback.
 
-The Vercel promotion dialog explicitly warned that promotion would undo the existing Instant Rollback.
+Comparison from the live baseline to current `main` showed unrelated repository work in addition to the card. Therefore direct promotion of `main` is rejected for Koinonia production.
 
-## Why Direct Main Promotion Was Rejected
+## Koinonia Isolation Boundary
 
-A comparison from live commit `83d3dda31c500e36ac42f7258d5fdb79fef69c0e` to current `main` showed that `main` was 17 commits ahead and included unrelated repository work in addition to the business card.
+Koinonia release work is isolated.
 
-Therefore, promoting current `main` would not be a Koinonia-only release.
-
-User instruction is explicit: Koinonia is isolated. Do not touch, merge, deploy, modify, or reorganize Personal Finance, Reynalds Brothers, or unrelated Reynalds OS work as part of Koinonia work.
+Do not include, merge, deploy, modify, or reorganize Personal Finance, Reynalds Brothers, or unrelated Reynalds OS work as part of a Koinonia production release.
 
 ## Approved Digital Business Card Scope
 
-The approved card release is only these files:
+Only these four files belong to the approved card release:
 
 - `apps/web/app/jeremiah/page.tsx`
 - `apps/web/app/jeremiah/digital-card.module.css`
@@ -79,61 +68,68 @@ Approved public route:
 
 - `https://koinoniatransactions.com/jeremiah`
 
-The card includes contact actions, Koinonia pronunciation/meaning, QR sharing, and the approved scripture footer.
+## Permanent Koinonia Release Architecture
 
-## Portal Development Boundary
-
-Active Koinonia portal-development branch:
-
-- `chatgpt/portal-access-status`
-- pre-documentation head: `8263f9f72ff6dbb6dcbcfed97757be459df253b7`
-
-Vercel treats this branch as preview development, not the live custom-domain production source.
-
-The unfinished portal is therefore not what caused the `/jeremiah` 404.
-
-Important future rule: never promote the portal-development branch directly to the public domain. Doing so could replace production with a branch that does not contain already-live public features.
-
-## Approved Permanent Release Architecture
-
-Create a permanent branch named:
+Canonical production branch:
 
 `koinonia-production`
 
-This is the canonical cumulative production line for Koinonia.
+Verified status as of 2026-08-07:
 
-Status as of this handoff:
+- `koinonia-production` now exists.
+- It was created exactly from live commit `83d3dda31c500e36ac42f7258d5fdb79fef69c0e`.
+- Isolated card commit: `3a4e8517420243cc21720ab86c6a74e9e844482d` (`Add approved Koinonia digital business card`).
+- GitHub comparison verifies this branch is exactly one commit ahead of the live rollback baseline.
+- The only changed files are the four approved business-card files listed above.
 
-- Decision approved.
-- Brain documentation updated.
-- `koinonia-production` has **not yet been created**.
-- No Vercel production alias/domain change has been made.
-- The existing Instant Rollback remains in effect.
+## Verified Vercel Preview
 
-Initial branch plan:
+Vercel deployment:
 
-1. Create `koinonia-production` exactly from live commit `83d3dda31c500e36ac42f7258d5fdb79fef69c0e`.
-2. Add only the four approved digital-business-card files.
-3. Allow Vercel to create an isolated preview.
-4. Verify existing public Koinonia pages plus `/jeremiah` and contact-save behavior.
-5. Stop for explicit approval.
-6. Only then change the Koinonia production source/domain routing.
+- Deployment ID: `dpl_476JZYzZXGPJoJBCpomCfbQEvpxh`
+- Branch: `koinonia-production`
+- Commit: `3a4e8517420243cc21720ab86c6a74e9e844482d`
+- Ready state: `READY`
+- Deployment target: Preview (`target: null`)
+- Branch alias: `reynalds-os-web-git-koinonia-production-koinonia3.vercel.app`
 
-## Future Portal Launch Model
+The user visually confirmed the isolated `/jeremiah` preview on 2026-08-07.
 
-Production must move forward cumulatively:
+No live production source, custom-domain assignment, or rollback state was changed during preview verification.
 
-- current public website
-- then public website + digital business card
-- later public website + digital business card + approved client/employee portal
+## Portal Development Boundary
 
-When the portal is ready, start from the then-current `koinonia-production` branch and integrate only the approved Koinonia portal feature set into a controlled release/integration branch. Verify the combined release before advancing production.
+The Koinonia client/employee portal remains pre-live development and must not be promoted directly to the public domain.
 
-Never replace `koinonia-production` with a development branch.
+Future portal launch rule:
+
+1. Start from the then-current `koinonia-production` baseline.
+2. Integrate only the approved Koinonia portal feature set through a controlled release/integration branch.
+3. Preserve every already-live Koinonia public feature, including `/jeremiah`.
+4. Verify the combined release.
+5. Advance the cumulative Koinonia production line only after approval.
+
+Never replace `koinonia-production` with a portal-development branch.
+
+## Current Vercel Transition Boundary
+
+Vercel project inspection confirms the isolated Koinonia release is still only a Preview while the public project domains remain attached to the project and the Instant Rollback remains in effect.
+
+The next action changes live production and therefore requires explicit approval immediately before execution.
+
+Approved transition target:
+
+- Production source/release: `koinonia-production`
+- Exact verified release commit: `3a4e8517420243cc21720ab86c6a74e9e844482d`
+- Exact verified Vercel deployment: `dpl_476JZYzZXGPJoJBCpomCfbQEvpxh`
+
+Do not promote current `main`.
 
 ## Next Safe Action
 
-Create `koinonia-production` from `83d3dda31c500e36ac42f7258d5fdb79fef69c0e`, add only the approved four card files, and inspect the isolated preview. Do not alter live custom-domain routing until the user explicitly approves that preview.
+Change Vercel production routing/source only to the verified `koinonia-production` release, thereby moving the Koinonia custom domains to the exact isolated card deployment and ending the stale rollback state. Verify the public homepage and `/jeremiah` immediately after the change.
+
+No such live change has been executed as of this handoff.
 
 ## Canonical Continuity References
 
