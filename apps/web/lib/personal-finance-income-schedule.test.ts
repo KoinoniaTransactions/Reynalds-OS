@@ -7,6 +7,7 @@ import {
 import {
   generateIncomeOccurrenceDates,
   personalFinanceNextPeriodKey,
+  personalFinancePreviousPeriodKey,
   personalFinancePeriodKeyFromMonthLabel,
   personalFinancePeriodLabel
 } from "./personal-finance-income-schedule";
@@ -44,6 +45,19 @@ describe(
           )
         ).toBe(
           "2027-01"
+        );
+      }
+    );
+
+    it(
+      "moves to the previous period",
+      () => {
+        expect(
+          personalFinancePreviousPeriodKey(
+            "2026-01"
+          )
+        ).toBe(
+          "2025-12"
         );
       }
     );

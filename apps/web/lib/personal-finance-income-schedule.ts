@@ -108,6 +108,30 @@ export function personalFinanceNextPeriodKey(
   ].join("-");
 }
 
+export function personalFinancePreviousPeriodKey(
+  periodKey: string
+): string {
+  const {
+    year,
+    month
+  } = parsePeriodKey(periodKey);
+
+  const date = new Date(
+    Date.UTC(
+      year,
+      month - 2,
+      1
+    )
+  );
+
+  return [
+    date.getUTCFullYear(),
+    String(
+      date.getUTCMonth() + 1
+    ).padStart(2, "0")
+  ].join("-");
+}
+
 export function generateIncomeOccurrenceDates({
   periodKey,
   schedule,

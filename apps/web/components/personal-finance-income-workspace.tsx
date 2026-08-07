@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useState
 } from "react";
 
@@ -10,7 +11,8 @@ import type {
 
 import {
   personalFinanceNextPeriodKey,
-  personalFinancePeriodLabel
+  personalFinancePeriodLabel,
+  personalFinancePreviousPeriodKey
 } from "../lib/personal-finance-income-schedule";
 
 import type {
@@ -181,6 +183,18 @@ export function PersonalFinanceIncomeWorkspace({
   ] = useState(false);
 
   const [
+    savingOccurrenceId,
+    setSavingOccurrenceId
+  ] = useState<
+    string | null
+  >(null);
+
+  const [
+    loadingPeriod,
+    setLoadingPeriod
+  ] = useState(false);
+
+  const [
     error,
     setError
   ] = useState<
@@ -217,6 +231,111 @@ export function PersonalFinanceIncomeWorkspace({
         occurrence.kind ===
         "misc"
     );
+
+  async function loadPeriod(
+    periodKey: string,
+    updateUrl = true
+  ) {
+    if (
+      !/^\d{4}-(0[1-9]|1[0-2])$/.test(
+        periodKey
+      )
+    ) {
+      setError(
+        "Choose a valid income month."
+      );
+      return;
+    }
+
+    setLoadingPeriod(true);
+    setError(null);
+    setNotice(null);
+
+    try {
+      const response =
+        await fetch(
+          `/api/personal/income?period=${encodeURIComponent(
+            periodKey
+          )}`,
+          {
+            method: "GET",
+            cache: "no-store"
+          }
+        );
+
+      const body =
+        await response.json() as {
+          workspace?:
+            PersonalFinanceIncomeWorkspaceData;
+          error?: string;
+        };
+
+      if (
+        !response.ok ||
+        !body.workspace
+      ) {
+        throw new Error(
+          body.error ??
+            "Income month could not be loaded."
+        );
+      }
+
+      setWorkspace(
+        body.workspace
+      );
+
+      if (
+        updateUrl &&
+        typeof window !==
+          "undefined"
+      ) {
+        const url =
+          new URL(
+            window.location.href
+          );
+
+        url.searchParams.set(
+          "period",
+          body.workspace.periodKey
+        );
+
+        window.history.replaceState(
+          {},
+          "",
+          url
+        );
+      }
+    } catch (loadError) {
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : "Income month could not be loaded."
+      );
+    } finally {
+      setLoadingPeriod(false);
+    }
+  }
+
+  useEffect(() => {
+    const queryPeriod =
+      new URLSearchParams(
+        window.location.search
+      ).get("period");
+
+    if (
+      queryPeriod &&
+      queryPeriod !==
+        workspace.periodKey &&
+      /^\d{4}-(0[1-9]|1[0-2])$/.test(
+        queryPeriod
+      )
+    ) {
+      void loadPeriod(
+        queryPeriod,
+        false
+      );
+    }
+  }, []);
 
   async function postAction(
     action: string,
@@ -492,25 +611,48 @@ export function PersonalFinanceIncomeWorkspace({
       FormEvent<
         HTMLFormElement
       >,
-    occurrenceId: string
+    occurrence:
+      PersonalFinanceIncomeOccurrence
   ) {
     event.preventDefault();
-
-    setSaving(true);
-    setError(null);
-    setNotice(null);
 
     const data =
       new FormData(
         event.currentTarget
       );
 
+    const targetOccurrenceId =
+      String(
+        data.get(
+          "occurrenceId"
+        ) ?? ""
+      ).trim();
+
+    if (
+      !targetOccurrenceId ||
+      targetOccurrenceId !==
+        occurrence.id
+    ) {
+      setError(
+        "The receipt target could not be resolved. No income record was changed."
+      );
+      return;
+    }
+
+    setSaving(true);
+    setSavingOccurrenceId(
+      occurrence.id
+    );
+    setError(null);
+    setNotice(null);
+
     try {
       const updated =
         await postAction(
           "update-receipt",
           {
-            occurrenceId,
+            occurrenceId:
+              targetOccurrenceId,
             receivedAmount:
               String(
                 data.get(
@@ -531,7 +673,9 @@ export function PersonalFinanceIncomeWorkspace({
       );
 
       setNotice(
-        "Actual income received was updated."
+        `Receipt updated for ${occurrence.recipientName} — ${occurrence.label} (${readableDate(
+          occurrence.expectedDate
+        )}).`
       );
 
       window.dispatchEvent(
@@ -548,6 +692,9 @@ export function PersonalFinanceIncomeWorkspace({
       );
     } finally {
       setSaving(false);
+      setSavingOccurrenceId(
+        null
+      );
     }
   }
 
@@ -572,6 +719,100 @@ export function PersonalFinanceIncomeWorkspace({
           {notice}
         </div>
       ) : null}
+
+      <section
+        aria-label="Income month"
+        className={
+          styles.periodToolbar
+        }
+      >
+        <div
+          className={
+            styles.periodIdentity
+          }
+        >
+          <span>
+            Viewing income month
+          </span>
+
+          <strong>
+            {workspace.periodLabel}
+          </strong>
+        </div>
+
+        <div
+          className={
+            styles.periodControls
+          }
+        >
+          <button
+            className={
+              styles.secondaryButton
+            }
+            disabled={
+              loadingPeriod
+            }
+            onClick={() =>
+              void loadPeriod(
+                personalFinancePreviousPeriodKey(
+                  workspace.periodKey
+                )
+              )
+            }
+            type="button"
+          >
+            Previous
+          </button>
+
+          <label
+            className={
+              styles.periodPicker
+            }
+          >
+            <span>
+              Month
+            </span>
+
+            <input
+              aria-label="Select income month"
+              disabled={
+                loadingPeriod
+              }
+              onChange={(
+                event
+              ) =>
+                void loadPeriod(
+                  event.target
+                    .value
+                )
+              }
+              type="month"
+              value={
+                workspace.periodKey
+              }
+            />
+          </label>
+
+          <button
+            className={
+              styles.secondaryButton
+            }
+            disabled={
+              loadingPeriod
+            }
+            onClick={() =>
+              void loadPeriod(
+                personalFinanceNextPeriodKey(
+                  workspace.periodKey
+                )
+              )
+            }
+            type="button"
+          >
+            Next
+          </button>
+        </div>
+      </section>
 
       <section
         aria-label="Income summary"
@@ -1204,7 +1445,8 @@ export function PersonalFinanceIncomeWorkspace({
                     submitReceipt
                   }
                   saving={
-                    saving
+                    savingOccurrenceId ===
+                    occurrence.id
                   }
                 />
               )
@@ -1459,7 +1701,8 @@ export function PersonalFinanceIncomeWorkspace({
                     submitReceipt
                   }
                   saving={
-                    saving
+                    savingOccurrenceId ===
+                    occurrence.id
                   }
                 />
               )
@@ -1492,7 +1735,8 @@ function IncomeOccurrenceRow({
       FormEvent<
         HTMLFormElement
       >,
-    occurrenceId: string
+    occurrence:
+      PersonalFinanceIncomeOccurrence
   ) => Promise<void>;
   saving: boolean;
 }) {
@@ -1614,15 +1858,50 @@ function IncomeOccurrenceRow({
         className={
           styles.receiptForm
         }
+        data-target-occurrence={
+          occurrence.id
+        }
+        id={`income-receipt-${occurrence.id}`}
         onSubmit={(
           event
         ) =>
           onSubmit(
             event,
-            occurrence.id
+            occurrence
           )
         }
       >
+        <input
+          name="occurrenceId"
+          type="hidden"
+          value={
+            occurrence.id
+          }
+        />
+
+        <div
+          className={
+            styles.receiptTarget
+          }
+        >
+          <span>
+            Receipt target
+          </span>
+
+          <strong>
+            {occurrence.recipientName}
+            {" · "}
+            {occurrence.label}
+          </strong>
+
+          <small>
+            Expected{" "}
+            {readableDate(
+              occurrence.expectedDate
+            )}
+          </small>
+        </div>
+
         <label>
           <span>
             Actual received
@@ -1656,16 +1935,25 @@ function IncomeOccurrenceRow({
         </label>
 
         <button
+          aria-label={`${
+            occurrence.received > 0
+              ? "Update"
+              : "Record"
+          } receipt for ${occurrence.recipientName} ${occurrence.label}`}
           className={
             styles.secondaryButton
           }
           disabled={saving}
+          title={`Receipt target: ${occurrence.recipientName} · ${occurrence.label} · ${readableDate(
+            occurrence.expectedDate
+          )}`}
           type="submit"
         >
-          {occurrence.received >
-          0
-            ? "Update receipt"
-            : "Record received"}
+          {saving
+            ? "Updating..."
+            : occurrence.received > 0
+              ? "Update receipt"
+              : "Record received"}
         </button>
       </form>
     </article>

@@ -4,6 +4,70 @@
   min-width: 0;
 }
 
+.periodToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border:
+    1px solid #b9d9f7;
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      135deg,
+      #f5f9fc,
+      #f0faf9
+    );
+}
+
+.periodIdentity {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.periodIdentity span {
+  color: #6f8496;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.periodIdentity strong {
+  color: #19324a;
+  font-size: 1.2rem;
+}
+
+.periodControls {
+  display: flex;
+  align-items: end;
+  gap: 0.65rem;
+}
+
+.periodPicker {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.periodPicker span {
+  color: #516b80;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.periodPicker input {
+  min-height: 46px;
+  padding: 0.65rem 0.75rem;
+  border:
+    1px solid #bdd0db;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #19324a;
+  font: inherit;
+  font-size: 1rem;
+}
+
 .summary {
   display: grid;
   grid-template-columns:
@@ -493,6 +557,10 @@
   display: grid;
   grid-template-columns:
     minmax(
+      220px,
+      1fr
+    )
+    minmax(
       160px,
       220px
     )
@@ -506,6 +574,38 @@
   padding-top: 0.85rem;
   border-top:
     1px solid #edf4f8;
+}
+
+.receiptTarget {
+  display: grid;
+  gap: 0.2rem;
+  align-self: stretch;
+  align-content: center;
+  padding: 0.65rem 0.8rem;
+  border:
+    1px solid #afe2da;
+  border-radius: 12px;
+  background: #f0faf9;
+}
+
+.receiptTarget span {
+  color: #16877d;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.receiptTarget strong {
+  color: #19324a;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+.receiptTarget small {
+  color: #516b80;
+  font-size: 0.875rem;
+  line-height: 1.35;
 }
 
 .empty {
@@ -564,11 +664,52 @@
   .amounts {
     grid-column: 1 / -1;
   }
+
+  .receiptForm {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .receiptTarget {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 700px) {
   .workspace {
     gap: 1.2rem;
+  }
+
+  .periodToolbar,
+  .periodControls {
+    display: grid;
+  }
+
+  .periodToolbar {
+    align-items: stretch;
+  }
+
+  .periodControls {
+    grid-template-columns: 1fr;
+  }
+
+  .periodControls button,
+  .periodPicker input {
+    width: 100%;
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  .periodIdentity span,
+  .periodPicker span {
+    font-size: 1rem;
+  }
+
+  .periodIdentity strong {
+    font-size: 1.25rem;
   }
 
   .summary {
@@ -643,7 +784,10 @@
   .amounts strong,
   .recipientBadge,
   .typeBadge,
-  .status {
+  .status,
+  .receiptTarget span,
+  .receiptTarget strong,
+  .receiptTarget small {
     font-size: 1rem;
   }
 
