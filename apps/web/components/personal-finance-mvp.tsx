@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import type {
   BudgetBill,
+  PersonalFinanceDataMode,
   PersonalFinanceMonth
 } from "../lib/personal-finance-local";
 
@@ -57,6 +58,7 @@ type PersonalFinanceView =
 type PersonalFinanceMvpProps = {
   view?: PersonalFinanceView;
   budget: PersonalFinanceMonth | null;
+  dataMode?: PersonalFinanceDataMode | null;
   unavailableReason?: string | null;
   transactions?: PersonalFinanceInboxTransaction[];
   transactionTotal?: number;
@@ -195,12 +197,35 @@ function dateSortValue(
     : parsed;
 }
 
+function workspaceModeLabel(
+  dataMode:
+    PersonalFinanceDataMode |
+    null |
+    undefined
+): string {
+  if (dataMode === "demo") {
+    return "Synthetic demo workspace";
+  }
+
+  if (dataMode === "clean") {
+    return "Clean launch workspace";
+  }
+
+  if (dataMode === "legacy_csv") {
+    return "Legacy import workspace";
+  }
+
+  return "Private local workspace";
+}
+
 function PersonalFinanceFrame({
   children,
+  dataMode,
   monthLabel,
   sourceFile
 }: {
   children: ReactNode;
+  dataMode?: PersonalFinanceDataMode | null;
   monthLabel: string;
   sourceFile: string;
 }) {
@@ -269,7 +294,6 @@ function PersonalFinanceFrame({
     <main className={styles.app}>
       <aside
         className={styles.rail}
-        data-source-file={sourceFile}
       >
         <div className={styles.brand}>
           <div className={styles.brandMark}>
@@ -301,7 +325,7 @@ function PersonalFinanceFrame({
               className={styles.workspaceStatusDot}
             />
 
-            <span>Personal Finance</span>
+            <span>J&amp;M Finances</span>
 
             <span aria-hidden="true">/</span>
 
@@ -310,7 +334,9 @@ function PersonalFinanceFrame({
 
           <div className={styles.workspaceBarActions}>
             <span className={styles.privateWorkspaceBadge}>
-              Private local workspace
+              {workspaceModeLabel(
+                dataMode
+              )}
             </span>
 
             <a
@@ -322,7 +348,9 @@ function PersonalFinanceFrame({
           </div>
         </div>
 
-        <PersonalFinancePeriodSwitcher />
+        <PersonalFinancePeriodSwitcher
+          dataMode={dataMode}
+        />
 
         <header className={styles.header}>
           <div className={styles.headerCopy}>
@@ -351,12 +379,14 @@ function PersonalFinanceFrame({
 
 export function PersonalFinanceMvp({
   budget,
+  dataMode = null,
   unavailableReason,
   view = "overview"
 }: PersonalFinanceMvpProps) {
   if (!budget) {
     return (
       <PersonalFinanceFrame
+        dataMode={dataMode}
         monthLabel="Personal Finance"
         sourceFile="No local file loaded"
       >
@@ -642,6 +672,7 @@ export function PersonalFinanceMvp({
 
   return (
     <PersonalFinanceFrame
+      dataMode={dataMode}
       monthLabel={`${budget.month} budget`}
       sourceFile={budget.sourceFile}
     >

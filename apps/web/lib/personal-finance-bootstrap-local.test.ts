@@ -126,6 +126,15 @@ describe(
         ).resolves.toBe(
           "legacy_csv"
         );
+
+        const result =
+          await loadLocalPersonalFinance();
+
+        expect(
+          result.dataMode
+        ).toBe(
+          "legacy_csv"
+        );
       }
     );
 
@@ -142,6 +151,12 @@ describe(
         expect(
           result.budget
         ).toBeNull();
+
+        expect(
+          result.dataMode
+        ).toBe(
+          "clean"
+        );
 
         expect(
           result.reason
@@ -164,6 +179,12 @@ describe(
         expect(
           result.reason
         ).toBeNull();
+
+        expect(
+          result.dataMode
+        ).toBe(
+          "demo"
+        );
 
         expect(
           result.budget

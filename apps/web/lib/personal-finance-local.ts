@@ -73,9 +73,15 @@ export type PersonalFinanceMonth = {
   irregularExpenses: IrregularExpense[];
 };
 
+export type PersonalFinanceDataMode =
+  | "legacy_csv"
+  | "demo"
+  | "clean";
+
 export type PersonalFinanceLoadResult = {
   budget: PersonalFinanceMonth | null;
   reason: string | null;
+  dataMode: PersonalFinanceDataMode | null;
 };
 
 const LOCAL_FILE_NAME = "JM_Budget_July_2026.csv";
@@ -85,7 +91,8 @@ export async function loadLocalPersonalFinance(): Promise<PersonalFinanceLoadRes
     return {
       budget: null,
       reason:
-        "Local personal finance is disabled. Enable it in apps/web/.env.local and restart the development server."
+        "Local personal finance is disabled. Enable it in apps/web/.env.local and restart the development server.",
+      dataMode: null
     };
   }
 
@@ -102,7 +109,10 @@ export async function loadLocalPersonalFinance(): Promise<PersonalFinanceLoadRes
           null,
 
         reason:
-          "Personal Finance is in clean launch mode. Legacy budget data is intentionally disabled."
+          "Personal Finance is in clean launch mode. Legacy budget data is intentionally disabled.",
+
+        dataMode:
+          "clean"
       };
     }
 
@@ -115,7 +125,10 @@ export async function loadLocalPersonalFinance(): Promise<PersonalFinanceLoadRes
           createPersonalFinanceDemoBudget(),
 
         reason:
-          null
+          null,
+
+        dataMode:
+          "demo"
       };
     }
 
@@ -126,13 +139,17 @@ export async function loadLocalPersonalFinance(): Promise<PersonalFinanceLoadRes
       return {
         budget: null,
         reason:
-          "The private budget CSV was not found in the ignored .local/personal-finance directory."
+          "The private budget CSV was not found in the ignored .local/personal-finance directory.",
+        dataMode:
+          "legacy_csv"
       };
     }
 
     return {
       budget: normalizeBudget(source.contents, source.fileName),
-      reason: null
+      reason: null,
+      dataMode:
+        "legacy_csv"
     };
   } catch (error) {
     console.error(
@@ -143,7 +160,8 @@ export async function loadLocalPersonalFinance(): Promise<PersonalFinanceLoadRes
     return {
       budget: null,
       reason:
-        "The local Personal Finance bootstrap source could not be read or validated. Review the terminal for the parsing error."
+        "The local Personal Finance bootstrap source could not be read or validated. Review the terminal for the parsing error.",
+      dataMode: null
     };
   }
 }

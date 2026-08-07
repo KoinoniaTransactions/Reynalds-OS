@@ -47,7 +47,7 @@ export const runtime =
 export const metadata:
   Metadata = {
     title:
-      "Accounts | Personal Finance",
+      "Accounts",
 
     robots: {
       index: false,

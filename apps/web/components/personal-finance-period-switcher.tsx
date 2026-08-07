@@ -30,6 +30,17 @@ const PERIOD_AWARE_PATHS =
     "/personal/accounts"
   ]);
 
+type PersonalFinanceDataMode =
+  | "legacy_csv"
+  | "demo"
+  | "clean";
+
+type PersonalFinancePeriodSwitcherProps = {
+  dataMode?:
+    PersonalFinanceDataMode |
+    null;
+};
+
 type PeriodResponse = {
   periods?:
     PersonalFinancePeriodSummary[];
@@ -45,7 +56,9 @@ type PeriodResponse = {
   error?: string;
 };
 
-export function PersonalFinancePeriodSwitcher() {
+export function PersonalFinancePeriodSwitcher({
+  dataMode = null
+}: PersonalFinancePeriodSwitcherProps) {
   const pathname =
     usePathname();
 
@@ -586,15 +599,21 @@ export function PersonalFinancePeriodSwitcher() {
           }
         >
           <span>
-            {selectedPeriod
-              ?.sourceKind ===
-            "imported"
-              ? "Imported starting month"
-              : selectedPeriod
-                    ?.status ===
-                  "draft"
-                ? "Draft month"
-                : "Budget period"}
+            {dataMode ===
+            "demo"
+              ? "Synthetic demo month"
+              : dataMode ===
+                "clean"
+                ? "Clean launch month"
+                : selectedPeriod
+                      ?.sourceKind ===
+                    "imported"
+                  ? "Imported starting month"
+                  : selectedPeriod
+                        ?.status ===
+                      "draft"
+                    ? "Draft month"
+                    : "Budget period"}
           </span>
 
           <span

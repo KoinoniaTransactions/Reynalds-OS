@@ -33,7 +33,7 @@ export const runtime = "nodejs";
 
 export const metadata: Metadata = {
   title:
-    "Net Worth | Personal Finance",
+    "Net Worth",
   description:
     "Private household assets, liabilities, and equity workspace.",
   robots: {

@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Rules | Personal Finance",
+  title: "Rules",
   robots: {
     index: false,
     follow: false
@@ -46,6 +46,7 @@ export default async function RulesPage() {
   return (
     <PersonalFinanceMvp
       budget={budgetResult.budget}
+      dataMode={budgetResult.dataMode}
       unavailableReason={budgetResult.reason}
       view="rules"
     />

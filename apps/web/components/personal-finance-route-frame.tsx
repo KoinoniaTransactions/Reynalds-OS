@@ -11,6 +11,14 @@ import {
   PersonalFinancePeriodSwitcher
 } from "./personal-finance-period-switcher";
 
+import {
+  readPersonalFinanceBootstrapMode
+} from "../lib/personal-finance-bootstrap-local";
+
+import type {
+  PersonalFinanceBootstrapMode
+} from "../lib/personal-finance-bootstrap-local";
+
 import styles from "./personal-finance-mvp.module.css";
 
 type Props = {
@@ -83,7 +91,27 @@ const navigation:
     }
   ] as const;
 
-export function PersonalFinanceRouteFrame({
+function workspaceModeLabel(
+  dataMode:
+    PersonalFinanceBootstrapMode |
+    null
+): string {
+  if (dataMode === "demo") {
+    return "Synthetic demo workspace";
+  }
+
+  if (dataMode === "clean") {
+    return "Clean launch workspace";
+  }
+
+  if (dataMode === "legacy_csv") {
+    return "Legacy import workspace";
+  }
+
+  return "Private local workspace";
+}
+
+export async function PersonalFinanceRouteFrame({
   children,
   eyebrow,
   monthLabel,
@@ -91,11 +119,28 @@ export function PersonalFinanceRouteFrame({
   subtitle,
   title
 }: Props) {
+  let dataMode:
+    PersonalFinanceBootstrapMode |
+    null = null;
+
+  if (
+    process.env
+      .ENABLE_LOCAL_PERSONAL_FINANCE ===
+    "true"
+  ) {
+    try {
+      dataMode =
+        await readPersonalFinanceBootstrapMode();
+    } catch {
+      dataMode =
+        null;
+    }
+  }
+
   return (
     <main className={styles.app}>
       <aside
         className={styles.rail}
-        data-source-file={sourceFile}
       >
         <div className={styles.brand}>
           <div
@@ -172,7 +217,9 @@ export function PersonalFinanceRouteFrame({
                 styles.privateWorkspaceBadge
               }
             >
-              Private local workspace
+              {workspaceModeLabel(
+                dataMode
+              )}
             </span>
 
             <a
@@ -186,7 +233,9 @@ export function PersonalFinanceRouteFrame({
           </div>
         </div>
 
-        <PersonalFinancePeriodSwitcher />
+        <PersonalFinancePeriodSwitcher
+          dataMode={dataMode}
+        />
 
         <header
           className={styles.header}

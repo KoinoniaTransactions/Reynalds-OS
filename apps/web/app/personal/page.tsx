@@ -42,8 +42,10 @@ export const runtime =
 
 export const metadata:
   Metadata = {
-    title:
-      "Personal Finance",
+    title: {
+      absolute:
+        "Overview | J&M Reynalds Finances"
+    },
 
     description:
       "Local-only household budget workspace.",
@@ -159,6 +161,9 @@ export default async function PersonalPage({
     <PersonalFinanceMvp
       budget={
         periodWorkspace.budget
+      }
+      dataMode={
+        budgetResult.dataMode
       }
       unavailableReason={
         periodWorkspace.reason ??
