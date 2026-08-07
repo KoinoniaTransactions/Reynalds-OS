@@ -67,9 +67,10 @@ export default function JeremiahDigitalCardPage() {
           </div>
         </div>
 
-        <p className={styles.intro}>
-          Calm, dependable real estate operations support behind the client relationship.
-        </p>
+        <div className={styles.intro}>
+          <strong>/koy-noh-NEE-uh/</strong>
+          <span>fellowship · joint participation · sharing in common</span>
+        </div>
 
         <div className={styles.actions}>
           {actions.map((action) => (
@@ -104,8 +105,8 @@ export default function JeremiahDigitalCardPage() {
         </div>
 
         <footer className={styles.footer}>
-          <span>/koy-noh-NEE-uh/</span>
-          <p>fellowship · joint participation · sharing in common</p>
+          <span>Bear one another’s burdens. Work heartily, as for the Lord.</span>
+          <p>Galatians 6:2 · Colossians 3:23</p>
         </footer>
       </section>
     </main>
