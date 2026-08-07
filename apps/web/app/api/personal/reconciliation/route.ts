@@ -9,15 +9,19 @@ import {
 import {
   closePersonalFinanceAccountBalance,
   deletePersonalFinanceBillPayment,
+  linkPersonalFinancePeriodBillToObligation,
   readPersonalFinanceReconciliationWorkspace,
   recordPersonalFinanceBillPayment,
+  unlinkPersonalFinancePeriodBillFromObligation,
   updatePersonalFinanceAccountCurrentBalance,
   updatePersonalFinanceBillPayment
 } from "../../../../lib/personal-finance-reconciliation-local";
 
 import type {
   DeletePersonalFinanceBillPaymentInput,
+  LinkPersonalFinancePeriodBillInput,
   RecordPersonalFinanceBillPaymentInput,
+  UnlinkPersonalFinancePeriodBillInput,
   UpdatePersonalFinanceAccountBalanceInput,
   UpdatePersonalFinanceBillPaymentInput
 } from "../../../../lib/personal-finance-reconciliation-types";
@@ -171,6 +175,36 @@ export async function POST(
             record as
               unknown as
               UpdatePersonalFinanceAccountBalanceInput
+          )
+      });
+    }
+
+    if (
+      action ===
+      "link-bill-obligation"
+    ) {
+      return NextResponse.json({
+        workspace:
+          linkPersonalFinancePeriodBillToObligation(
+            periodKey,
+            record as
+              unknown as
+              LinkPersonalFinancePeriodBillInput
+          )
+      });
+    }
+
+    if (
+      action ===
+      "unlink-bill-obligation"
+    ) {
+      return NextResponse.json({
+        workspace:
+          unlinkPersonalFinancePeriodBillFromObligation(
+            periodKey,
+            record as
+              unknown as
+              UnlinkPersonalFinancePeriodBillInput
           )
       });
     }

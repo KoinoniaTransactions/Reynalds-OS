@@ -51,6 +51,7 @@ type PeriodBillRow = {
   id: string;
   period_key: string;
   budget_item_key: string;
+  obligation_id: string | null;
   name: string;
   planned_amount_cents: number;
   paid_amount_cents: number;
@@ -1036,6 +1037,7 @@ function copyBillsIntoNextPeriod({
         id,
         period_key,
         budget_item_key,
+        obligation_id,
         name,
         planned_amount_cents,
         paid_amount_cents,
@@ -1058,6 +1060,7 @@ function copyBillsIntoNextPeriod({
         id,
         period_key,
         budget_item_key,
+        obligation_id,
         name,
         planned_amount_cents,
         paid_amount_cents,
@@ -1068,6 +1071,7 @@ function copyBillsIntoNextPeriod({
         source_kind
       )
       VALUES (
+        ?,
         ?,
         ?,
         ?,
@@ -1102,6 +1106,7 @@ function copyBillsIntoNextPeriod({
       ),
       targetPeriodKey,
       bill.budget_item_key,
+      bill.obligation_id,
       bill.name,
       bill.planned_amount_cents,
       dueDate,
@@ -1280,6 +1285,8 @@ function ensurePeriodSchema(
 
         budget_item_key TEXT NOT NULL,
 
+        obligation_id TEXT,
+
         name TEXT NOT NULL,
 
         planned_amount_cents
@@ -1336,6 +1343,15 @@ function ensurePeriodSchema(
               period_key
             )
           ON DELETE CASCADE,
+
+        FOREIGN KEY (
+          obligation_id
+        )
+          REFERENCES
+            obligations(
+              id
+            )
+          ON DELETE SET NULL,
 
         UNIQUE (
           period_key,
@@ -1446,6 +1462,73 @@ function ensurePeriodSchema(
   ensurePeriodAccountReconciliationColumns(
     database
   );
+
+  ensurePeriodBillObligationColumn(
+    database
+  );
+}
+
+function ensurePeriodBillObligationColumn(
+  database: PersonalFinanceDatabase
+): void {
+  const columns =
+    database
+      .prepare(
+        "PRAGMA table_info(pf_period_bills)"
+      )
+      .all() as
+      {
+        name: string;
+      }[];
+
+  const hasObligationId =
+    columns.some(
+      (column) =>
+        column.name ===
+        "obligation_id"
+    );
+
+  if (!hasObligationId) {
+    database.exec(`
+      ALTER TABLE
+        pf_period_bills
+      ADD COLUMN
+        obligation_id TEXT
+        REFERENCES obligations(id)
+        ON DELETE SET NULL;
+    `);
+  }
+
+  database.exec(`
+    UPDATE
+      pf_period_bills
+    SET
+      obligation_id = (
+        SELECT
+          obligations.id
+        FROM
+          obligations
+        WHERE
+          obligations.is_active = 1 AND
+          obligations.budget_item_key =
+            pf_period_bills.budget_item_key
+        LIMIT 1
+      ),
+      updated_at =
+        CURRENT_TIMESTAMP
+    WHERE
+      obligation_id IS NULL AND
+      (
+        SELECT
+          COUNT(*)
+        FROM
+          obligations
+        WHERE
+          obligations.is_active = 1 AND
+          obligations.budget_item_key =
+            pf_period_bills.budget_item_key
+      ) = 1;
+  `);
 }
 
 function ensurePeriodAccountReconciliationColumns(

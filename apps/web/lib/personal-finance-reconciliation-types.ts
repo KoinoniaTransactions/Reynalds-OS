@@ -29,6 +29,11 @@ export type PersonalFinanceBillPaymentSourceKind =
   | "ordinary"
   | "debt";
 
+export type PersonalFinanceBillPaymentRoute =
+  | "ordinary"
+  | "complete_debt_setup"
+  | "debt_ledger";
+
 export type PersonalFinanceBillPayment = {
   id: string;
   periodKey: string;
@@ -50,6 +55,13 @@ export type PersonalFinanceBillPayment = {
 
 export type PersonalFinanceReconciliationBill = {
   budgetItemKey: string;
+
+  obligationId:
+    string | null;
+
+  obligationType:
+    string | null;
+
   name: string;
   planned: number;
   paid: number;
@@ -61,7 +73,13 @@ export type PersonalFinanceReconciliationBill = {
   dueLabel: string;
   paymentMethod: string;
 
+  paymentRoute:
+    PersonalFinanceBillPaymentRoute;
+
   requiresDebtLedger:
+    boolean;
+
+  requiresDebtSetup:
     boolean;
 
   debtLedgerLabel:
@@ -121,6 +139,15 @@ export type UpdatePersonalFinanceBillPaymentInput = {
 
 export type DeletePersonalFinanceBillPaymentInput = {
   paymentId: unknown;
+};
+
+export type LinkPersonalFinancePeriodBillInput = {
+  budgetItemKey: unknown;
+  obligationId: unknown;
+};
+
+export type UnlinkPersonalFinancePeriodBillInput = {
+  budgetItemKey: unknown;
 };
 
 export type SyncPersonalFinanceDebtPaymentInput = {

@@ -37,9 +37,11 @@ import {
 import {
   closePersonalFinanceAccountBalance,
   deletePersonalFinanceBillPayment,
+  linkPersonalFinancePeriodBillToObligation,
   readPersonalFinanceReconciliationWorkspace,
   recordPersonalFinanceBillPayment,
   syncPersonalFinanceDebtPayment,
+  unlinkPersonalFinancePeriodBillFromObligation,
   updatePersonalFinanceAccountCurrentBalance,
   updatePersonalFinanceBillPayment
 } from "./personal-finance-reconciliation-local";
@@ -505,6 +507,161 @@ describe(
     );
 
     it(
+      "persists an explicit debt link, blocks ordinary payment before liability setup, and carries the link forward",
+      () => {
+        preparePersonalFinancePeriodWorkspace({
+          legacyBudget:
+            legacyBudget(),
+
+          requestedPeriodKey:
+            "2026-07"
+        });
+
+        const obligation =
+          createPersonalFinanceObligation({
+            name:
+              "Mortgage setup pending",
+
+            obligationType:
+              "mortgage",
+
+            homeName:
+              "Test home",
+
+            homeKind:
+              "home",
+
+            budgetItemKey:
+              "different-source-key",
+
+            provider:
+              "Test Bank",
+
+            expectedAmount:
+              100,
+
+            dueDay:
+              5,
+
+            frequency:
+              "monthly",
+
+            paymentMethod:
+              "manual"
+          });
+
+        const linked =
+          linkPersonalFinancePeriodBillToObligation(
+            "2026-07",
+            {
+              budgetItemKey:
+                "electric",
+
+              obligationId:
+                obligation.id
+            }
+          );
+
+        expect(
+          linked.bills[0]
+            ?.obligationId
+        ).toBe(
+          obligation.id
+        );
+
+        expect(
+          linked.bills[0]
+            ?.obligationType
+        ).toBe(
+          "mortgage"
+        );
+
+        expect(
+          linked.bills[0]
+            ?.paymentRoute
+        ).toBe(
+          "complete_debt_setup"
+        );
+
+        expect(
+          linked.bills[0]
+            ?.requiresDebtSetup
+        ).toBe(
+          true
+        );
+
+        expect(
+          linked.bills[0]
+            ?.requiresDebtLedger
+        ).toBe(
+          false
+        );
+
+        expect(() =>
+          recordPersonalFinanceBillPayment(
+            "2026-07",
+            {
+              budgetItemKey:
+                "electric",
+
+              amount:
+                30,
+
+              paidOn:
+                "2026-07-05"
+            }
+          )
+        ).toThrow(
+          "still needs financial setup"
+        );
+
+        createNextPersonalFinancePeriod(
+          "2026-07"
+        );
+
+        const august =
+          readPersonalFinanceReconciliationWorkspace(
+            "2026-08"
+          );
+
+        expect(
+          august.bills[0]
+            ?.obligationId
+        ).toBe(
+          obligation.id
+        );
+
+        expect(
+          august.bills[0]
+            ?.paymentRoute
+        ).toBe(
+          "complete_debt_setup"
+        );
+
+        const unlinked =
+          unlinkPersonalFinancePeriodBillFromObligation(
+            "2026-08",
+            {
+              budgetItemKey:
+                "electric"
+            }
+          );
+
+        expect(
+          unlinked.bills[0]
+            ?.obligationId
+        ).toBeNull();
+
+        expect(
+          unlinked.bills[0]
+            ?.paymentRoute
+        ).toBe(
+          "ordinary"
+        );
+      }
+    );
+
+    it(
       "protects linked debt bills and synchronizes a debt-ledger payment exactly once",
       () => {
         preparePersonalFinancePeriodWorkspace({
@@ -563,6 +720,17 @@ describe(
               250000
           });
 
+        linkPersonalFinancePeriodBillToObligation(
+          "2026-07",
+          {
+            budgetItemKey:
+              "electric",
+
+            obligationId:
+              obligation.id
+          }
+        );
+
         const protectedWorkspace =
           readPersonalFinanceReconciliationWorkspace(
             "2026-07"
@@ -574,6 +742,22 @@ describe(
             ?.requiresDebtLedger
         ).toBe(
           true
+        );
+
+        expect(
+          protectedWorkspace
+            .bills[0]
+            ?.obligationId
+        ).toBe(
+          obligation.id
+        );
+
+        expect(
+          protectedWorkspace
+            .bills[0]
+            ?.paymentRoute
+        ).toBe(
+          "debt_ledger"
         );
 
         expect(
