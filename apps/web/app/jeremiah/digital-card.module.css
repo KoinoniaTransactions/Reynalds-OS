@@ -145,6 +145,15 @@
   line-height: 1.7;
 }
 
+.intro strong,
+.intro span {
+  display: block;
+}
+
+.intro span {
+  margin-top: 3px;
+}
+
 .actions {
   display: grid;
   gap: 10px;
