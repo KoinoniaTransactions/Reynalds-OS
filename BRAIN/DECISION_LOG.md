@@ -132,3 +132,19 @@ Decision: Koinonia document send packages cannot be marked `Sent`, `Signature Mo
 Reason: Send-package status is operational evidence. Without a confirmation requirement, staff could accidentally mark a document package as delivered or complete without traceable delivery proof. The confirmation must still avoid passwords, access codes, payment details, API keys, and private login details.
 
 Canonical specification: `docs/specifications/KOINONIA_DOCUMENT_WORKSPACE_SPEC.md`
+
+## D-020 — Koinonia Uses a Dedicated Cumulative Production Release Line
+
+Decision: Establish `koinonia-production` as the permanent Koinonia production/release branch. Public Koinonia releases must advance cumulatively from that branch rather than promoting `main`, `chatgpt/portal-access-status`, `feature/app-shell-foundation`, or another development branch directly.
+
+Reason: The shared monorepo contains unrelated project changes and Koinonia portal development that must not be published merely because a public website feature is ready. A dedicated Koinonia production line protects the live site, keeps unrelated work isolated, and ensures later releases preserve previously approved public features such as `/jeremiah`.
+
+Initial release plan: create `koinonia-production` from the currently live Koinonia commit `83d3dda31c500e36ac42f7258d5fdb79fef69c0e`, then add only the four approved digital-business-card files and verify an isolated preview before changing live Vercel routing.
+
+Portal rule: when the client/employee portal is ready, integrate the approved portal feature set into the then-current Koinonia production baseline. Do not replace production with the portal development branch.
+
+Isolation rule: Koinonia production work must not include or modify Personal Finance, Reynalds Brothers, or unrelated Reynalds OS work.
+
+Status as of 2026-08-07: decision approved and documented; `koinonia-production` has not yet been created and no live domain change has been made.
+
+Canonical deployment record: `BRAIN/KOINONIA_DEPLOYMENT_READINESS.md`.
