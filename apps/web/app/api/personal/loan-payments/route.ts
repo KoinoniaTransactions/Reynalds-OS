@@ -11,7 +11,12 @@ import {
   reconcileLoanStatement
 } from "../../../../lib/personal-finance-loan-ledger-local";
 
-export const dynamic = "force-dynamic";
+import {
+  syncPersonalFinanceDebtPayment
+} from "../../../../lib/personal-finance-reconciliation-local";
+
+export const dynamic =
+  "force-dynamic";
 
 export async function GET() {
   try {
@@ -46,11 +51,20 @@ export async function POST(
           | "apply-payment"
           | "reconcile-statement"
           | "model-scenario";
-        [key: string]: unknown;
+
+        periodKey?:
+          unknown;
+
+        note?:
+          unknown;
+
+        [key: string]:
+          unknown;
       };
 
     if (
-      body.action === "configure"
+      body.action ===
+      "configure"
     ) {
       configureLoanTerms(
         body as never
@@ -63,10 +77,11 @@ export async function POST(
 
     if (
       body.action ===
-        "preview-payment"
+      "preview-payment"
     ) {
       return NextResponse.json({
         ok: true,
+
         preview:
           previewLoanPayment(
             body as never
@@ -76,23 +91,85 @@ export async function POST(
 
     if (
       body.action ===
-        "apply-payment"
+      "apply-payment"
     ) {
+      const payment =
+        applyLoanPayment(
+          body as never
+        );
+
+      let periodSync:
+        {
+          synced: boolean;
+          error?: string;
+        } | null =
+        null;
+
+      if (
+        typeof body.periodKey ===
+          "string" &&
+        body.periodKey.trim() &&
+        payment.obligationId
+      ) {
+        try {
+          const sync =
+            syncPersonalFinanceDebtPayment(
+              body.periodKey,
+              {
+                obligationId:
+                  payment.obligationId,
+
+                paymentId:
+                  payment.paymentId,
+
+                amount:
+                  payment.totalPayment,
+
+                paidOn:
+                  payment.paidOn,
+
+                note:
+                  typeof body.note ===
+                  "string"
+                    ? body.note
+                    : null
+              }
+            );
+
+          periodSync = {
+            synced:
+              sync.synced
+          };
+        } catch (
+          syncError
+        ) {
+          periodSync = {
+            synced:
+              false,
+
+            error:
+              syncError instanceof
+                Error
+                ? syncError.message
+                : "The debt payment was applied, but the monthly bill could not be synchronized."
+          };
+        }
+      }
+
       return NextResponse.json({
         ok: true,
-        payment:
-          applyLoanPayment(
-            body as never
-          )
+        payment,
+        periodSync
       });
     }
 
     if (
       body.action ===
-        "model-scenario"
+      "model-scenario"
     ) {
       return NextResponse.json({
         ok: true,
+
         scenario:
           modelLoanScenario(
             body as never
@@ -102,7 +179,7 @@ export async function POST(
 
     if (
       body.action ===
-        "reconcile-statement"
+      "reconcile-statement"
     ) {
       reconcileLoanStatement(
         body as never

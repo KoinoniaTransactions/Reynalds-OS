@@ -8,14 +8,18 @@ import {
 
 import {
   closePersonalFinanceAccountBalance,
+  deletePersonalFinanceBillPayment,
   readPersonalFinanceReconciliationWorkspace,
   recordPersonalFinanceBillPayment,
-  updatePersonalFinanceAccountCurrentBalance
+  updatePersonalFinanceAccountCurrentBalance,
+  updatePersonalFinanceBillPayment
 } from "../../../../lib/personal-finance-reconciliation-local";
 
 import type {
+  DeletePersonalFinanceBillPaymentInput,
   RecordPersonalFinanceBillPaymentInput,
-  UpdatePersonalFinanceAccountBalanceInput
+  UpdatePersonalFinanceAccountBalanceInput,
+  UpdatePersonalFinanceBillPaymentInput
 } from "../../../../lib/personal-finance-reconciliation-types";
 
 export const dynamic =
@@ -182,6 +186,36 @@ export async function POST(
             record as
               unknown as
               RecordPersonalFinanceBillPaymentInput
+          )
+      });
+    }
+
+    if (
+      action ===
+      "update-bill-payment"
+    ) {
+      return NextResponse.json({
+        workspace:
+          updatePersonalFinanceBillPayment(
+            periodKey,
+            record as
+              unknown as
+              UpdatePersonalFinanceBillPaymentInput
+          )
+      });
+    }
+
+    if (
+      action ===
+      "delete-bill-payment"
+    ) {
+      return NextResponse.json({
+        workspace:
+          deletePersonalFinanceBillPayment(
+            periodKey,
+            record as
+              unknown as
+              DeletePersonalFinanceBillPaymentInput
           )
       });
     }

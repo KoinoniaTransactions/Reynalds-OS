@@ -25,6 +25,10 @@ import type {
 } from "./personal-finance-local";
 
 import {
+  createPersonalFinanceObligation
+} from "./personal-finance-obligations-local";
+
+import {
   createNextPersonalFinancePeriod,
   preparePersonalFinancePeriodWorkspace,
   readPersonalFinancePeriodBudget
@@ -32,9 +36,12 @@ import {
 
 import {
   closePersonalFinanceAccountBalance,
+  deletePersonalFinanceBillPayment,
   readPersonalFinanceReconciliationWorkspace,
   recordPersonalFinanceBillPayment,
-  updatePersonalFinanceAccountCurrentBalance
+  syncPersonalFinanceDebtPayment,
+  updatePersonalFinanceAccountCurrentBalance,
+  updatePersonalFinanceBillPayment
 } from "./personal-finance-reconciliation-local";
 
 let temporaryDirectory = "";
@@ -370,6 +377,355 @@ describe(
             ?.payments
         ).toHaveLength(
           0
+        );
+      }
+    );
+
+    it(
+      "edits and deletes an ordinary monthly payment without losing the imported starting amount",
+      () => {
+        preparePersonalFinancePeriodWorkspace({
+          legacyBudget:
+            legacyBudget(),
+
+          requestedPeriodKey:
+            "2026-07"
+        });
+
+        const recorded =
+          recordPersonalFinanceBillPayment(
+            "2026-07",
+            {
+              budgetItemKey:
+                "electric",
+
+              amount:
+                30,
+
+              paidOn:
+                "2026-07-05",
+
+              note:
+                "First entry"
+            }
+          );
+
+        const payment =
+          recorded.bills[0]
+            ?.payments[0];
+
+        expect(
+          payment
+        ).toBeDefined();
+
+        if (!payment) {
+          throw new Error(
+            "Test payment was not created."
+          );
+        }
+
+        const updated =
+          updatePersonalFinanceBillPayment(
+            "2026-07",
+            {
+              paymentId:
+                payment.id,
+
+              amount:
+                45,
+
+              paidOn:
+                "2026-07-06",
+
+              note:
+                "Corrected entry"
+            }
+          );
+
+        expect(
+          updated.bills[0]
+            ?.paid
+        ).toBe(
+          65
+        );
+
+        expect(
+          updated.bills[0]
+            ?.remaining
+        ).toBe(
+          35
+        );
+
+        expect(
+          updated.bills[0]
+            ?.payments[0]
+            ?.amount
+        ).toBe(
+          45
+        );
+
+        expect(
+          updated.bills[0]
+            ?.payments[0]
+            ?.paidOn
+        ).toBe(
+          "2026-07-06"
+        );
+
+        const removed =
+          deletePersonalFinanceBillPayment(
+            "2026-07",
+            {
+              paymentId:
+                payment.id
+            }
+          );
+
+        expect(
+          removed.bills[0]
+            ?.paid
+        ).toBe(
+          20
+        );
+
+        expect(
+          removed.bills[0]
+            ?.remaining
+        ).toBe(
+          80
+        );
+
+        expect(
+          removed.bills[0]
+            ?.payments
+        ).toHaveLength(
+          0
+        );
+      }
+    );
+
+    it(
+      "protects linked debt bills and synchronizes a debt-ledger payment exactly once",
+      () => {
+        preparePersonalFinancePeriodWorkspace({
+          legacyBudget:
+            legacyBudget(),
+
+          requestedPeriodKey:
+            "2026-07"
+        });
+
+        const obligation =
+          createPersonalFinanceObligation({
+            name:
+              "Electric",
+
+            obligationType:
+              "mortgage",
+
+            homeName:
+              "Test home",
+
+            homeKind:
+              "home",
+
+            budgetItemKey:
+              "electric",
+
+            provider:
+              "Test Bank",
+
+            expectedAmount:
+              100,
+
+            dueDay:
+              5,
+
+            frequency:
+              "monthly",
+
+            paymentMethod:
+              "manual",
+
+            assetName:
+              "Test home",
+
+            assetValue:
+              300000,
+
+            assetValuedOn:
+              "2026-07-01",
+
+            currentBalance:
+              200000,
+
+            originalBalance:
+              250000
+          });
+
+        const protectedWorkspace =
+          readPersonalFinanceReconciliationWorkspace(
+            "2026-07"
+          );
+
+        expect(
+          protectedWorkspace
+            .bills[0]
+            ?.requiresDebtLedger
+        ).toBe(
+          true
+        );
+
+        expect(
+          protectedWorkspace
+            .bills[0]
+            ?.debtLedgerLabel
+        ).toBe(
+          "mortgage"
+        );
+
+        expect(() =>
+          recordPersonalFinanceBillPayment(
+            "2026-07",
+            {
+              budgetItemKey:
+                "electric",
+
+              amount:
+                30,
+
+              paidOn:
+                "2026-07-05"
+            }
+          )
+        ).toThrow(
+          "This bill is linked to the debt ledger."
+        );
+
+        const synced =
+          syncPersonalFinanceDebtPayment(
+            "2026-07",
+            {
+              obligationId:
+                obligation.id,
+
+              paymentId:
+                "loan-payment-1",
+
+              amount:
+                30,
+
+              paidOn:
+                "2026-07-05",
+
+              note:
+                "Debt ledger entry"
+            }
+          );
+
+        expect(
+          synced.synced
+        ).toBe(
+          true
+        );
+
+        expect(
+          synced.workspace
+            .bills[0]
+            ?.paid
+        ).toBe(
+          50
+        );
+
+        expect(
+          synced.workspace
+            .bills[0]
+            ?.remaining
+        ).toBe(
+          50
+        );
+
+        const debtPayment =
+          synced.workspace
+            .bills[0]
+            ?.payments[0];
+
+        expect(
+          debtPayment
+            ?.sourceKind
+        ).toBe(
+          "debt"
+        );
+
+        expect(
+          debtPayment
+            ?.sourcePaymentId
+        ).toBe(
+          "loan-payment-1"
+        );
+
+        const duplicate =
+          syncPersonalFinanceDebtPayment(
+            "2026-07",
+            {
+              obligationId:
+                obligation.id,
+
+              paymentId:
+                "loan-payment-1",
+
+              amount:
+                30,
+
+              paidOn:
+                "2026-07-05"
+            }
+          );
+
+        expect(
+          duplicate.synced
+        ).toBe(
+          false
+        );
+
+        expect(
+          duplicate.workspace
+            .bills[0]
+            ?.paid
+        ).toBe(
+          50
+        );
+
+        expect(
+          duplicate.workspace
+            .bills[0]
+            ?.payments
+        ).toHaveLength(
+          1
+        );
+
+        if (!debtPayment) {
+          throw new Error(
+            "Debt payment was not synchronized."
+          );
+        }
+
+        expect(() =>
+          updatePersonalFinanceBillPayment(
+            "2026-07",
+            {
+              paymentId:
+                debtPayment.id,
+
+              amount:
+                35,
+
+              paidOn:
+                "2026-07-05"
+            }
+          )
+        ).toThrow(
+          "Debt-ledger payment history must be corrected in the debt ledger."
         );
       }
     );

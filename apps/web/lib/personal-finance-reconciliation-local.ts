@@ -22,8 +22,11 @@ import type {
   PersonalFinanceReconciliationAccount,
   PersonalFinanceReconciliationBill,
   PersonalFinanceReconciliationWorkspace,
+  DeletePersonalFinanceBillPaymentInput,
   RecordPersonalFinanceBillPaymentInput,
-  UpdatePersonalFinanceAccountBalanceInput
+  SyncPersonalFinanceDebtPaymentInput,
+  UpdatePersonalFinanceAccountBalanceInput,
+  UpdatePersonalFinanceBillPaymentInput
 } from "./personal-finance-reconciliation-types";
 
 type PersonalFinanceDatabase =
@@ -84,7 +87,24 @@ type PaymentRow = {
   note:
     string | null;
 
+  source_kind:
+    "ordinary" | "debt";
+
+  source_payment_id:
+    string | null;
+
   created_at: string;
+};
+
+type DebtLedgerLinkRow = {
+  budget_item_key:
+    string | null;
+
+  obligation_name:
+    string;
+
+  liability_type:
+    string;
 };
 
 export function readPersonalFinanceReconciliationWorkspace(
@@ -170,6 +190,8 @@ export function readPersonalFinanceReconciliationWorkspace(
             amount_cents,
             paid_on,
             note,
+            source_kind,
+            source_payment_id,
             created_at
           FROM
             pf_period_bill_payments
@@ -228,7 +250,12 @@ export function readPersonalFinanceReconciliationWorkspace(
             row,
             paymentsByBill.get(
               row.budget_item_key
-            ) ?? []
+            ) ?? [],
+            readDebtLedgerLinkForBill(
+              database,
+              row.budget_item_key,
+              row.name
+            )
           )
       );
 
@@ -408,7 +435,8 @@ export function recordPersonalFinanceBillPayment(
             database
               .prepare(`
                 SELECT
-                  budget_item_key
+                  budget_item_key,
+                  name
                 FROM
                   pf_period_bills
                 WHERE
@@ -418,11 +446,30 @@ export function recordPersonalFinanceBillPayment(
               .get(
                 normalized,
                 budgetItemKey
-              );
+              ) as
+              | {
+                  budget_item_key:
+                    string;
+                  name: string;
+                }
+              | undefined;
 
           if (!bill) {
             throw new Error(
               "The selected monthly bill was not found."
+            );
+          }
+
+          const debtLink =
+            readDebtLedgerLinkForBill(
+              database,
+              bill.budget_item_key,
+              bill.name
+            );
+
+          if (debtLink) {
+            throw new Error(
+              "This bill is linked to the debt ledger. Record the payment there so principal and net worth stay synchronized."
             );
           }
 
@@ -455,7 +502,9 @@ export function recordPersonalFinanceBillPayment(
                   budget_item_key,
                   amount_cents,
                   paid_on,
-                  note
+                  note,
+                  source_kind,
+                  source_payment_id
                 )
               VALUES (
                 ?,
@@ -463,7 +512,9 @@ export function recordPersonalFinanceBillPayment(
                 ?,
                 ?,
                 ?,
-                ?
+                ?,
+                'ordinary',
+                NULL
               )
             `)
             .run(
@@ -504,6 +555,532 @@ export function recordPersonalFinanceBillPayment(
   return readPersonalFinanceReconciliationWorkspace(
     normalized
   );
+}
+
+export function updatePersonalFinanceBillPayment(
+  periodKey: string,
+  input:
+    UpdatePersonalFinanceBillPaymentInput
+): PersonalFinanceReconciliationWorkspace {
+  assertEnabled();
+
+  const normalized =
+    requiredPeriodKey(
+      periodKey
+    );
+
+  ensurePeriodExists(
+    normalized
+  );
+
+  const paymentId =
+    requiredText(
+      input.paymentId,
+      "Payment"
+    );
+
+  const amount =
+    requiredPositiveMoney(
+      input.amount,
+      "Payment amount"
+    );
+
+  const paidOn =
+    requiredDate(
+      input.paidOn,
+      "Payment date"
+    );
+
+  const note =
+    optionalText(
+      input.note
+    );
+
+  const database =
+    openPersonalFinanceDatabase();
+
+  try {
+    ensureReconciliationSchema(
+      database
+    );
+
+    const update =
+      database.transaction(
+        () => {
+          const payment =
+            database
+              .prepare(`
+                SELECT
+                  id,
+                  budget_item_key,
+                  amount_cents,
+                  source_kind
+                FROM
+                  pf_period_bill_payments
+                WHERE
+                  id = ? AND
+                  period_key = ?
+              `)
+              .get(
+                paymentId,
+                normalized
+              ) as
+              | {
+                  id: string;
+                  budget_item_key:
+                    string;
+                  amount_cents:
+                    number;
+                  source_kind:
+                    "ordinary" |
+                    "debt";
+                }
+              | undefined;
+
+          if (!payment) {
+            throw new Error(
+              "The selected payment was not found."
+            );
+          }
+
+          if (
+            payment.source_kind !==
+            "ordinary"
+          ) {
+            throw new Error(
+              "Debt-ledger payment history must be corrected in the debt ledger."
+            );
+          }
+
+          const amountCents =
+            toCents(
+              amount
+            );
+
+          const difference =
+            amountCents -
+            payment.amount_cents;
+
+          database
+            .prepare(`
+              UPDATE
+                pf_period_bill_payments
+              SET
+                amount_cents = ?,
+                paid_on = ?,
+                note = ?
+              WHERE
+                id = ? AND
+                period_key = ?
+            `)
+            .run(
+              amountCents,
+              paidOn,
+              note,
+              paymentId,
+              normalized
+            );
+
+          database
+            .prepare(`
+              UPDATE
+                pf_period_bills
+              SET
+                paid_amount_cents =
+                  paid_amount_cents + ?,
+                updated_at =
+                  CURRENT_TIMESTAMP
+              WHERE
+                period_key = ? AND
+                budget_item_key = ?
+            `)
+            .run(
+              difference,
+              normalized,
+              payment.budget_item_key
+            );
+        }
+      );
+
+    update.immediate();
+  } finally {
+    database.close();
+  }
+
+  return readPersonalFinanceReconciliationWorkspace(
+    normalized
+  );
+}
+
+export function deletePersonalFinanceBillPayment(
+  periodKey: string,
+  input:
+    DeletePersonalFinanceBillPaymentInput
+): PersonalFinanceReconciliationWorkspace {
+  assertEnabled();
+
+  const normalized =
+    requiredPeriodKey(
+      periodKey
+    );
+
+  ensurePeriodExists(
+    normalized
+  );
+
+  const paymentId =
+    requiredText(
+      input.paymentId,
+      "Payment"
+    );
+
+  const database =
+    openPersonalFinanceDatabase();
+
+  try {
+    ensureReconciliationSchema(
+      database
+    );
+
+    const remove =
+      database.transaction(
+        () => {
+          const payment =
+            database
+              .prepare(`
+                SELECT
+                  id,
+                  budget_item_key,
+                  amount_cents,
+                  source_kind
+                FROM
+                  pf_period_bill_payments
+                WHERE
+                  id = ? AND
+                  period_key = ?
+              `)
+              .get(
+                paymentId,
+                normalized
+              ) as
+              | {
+                  id: string;
+                  budget_item_key:
+                    string;
+                  amount_cents:
+                    number;
+                  source_kind:
+                    "ordinary" |
+                    "debt";
+                }
+              | undefined;
+
+          if (!payment) {
+            throw new Error(
+              "The selected payment was not found."
+            );
+          }
+
+          if (
+            payment.source_kind !==
+            "ordinary"
+          ) {
+            throw new Error(
+              "Debt-ledger payment history must be corrected in the debt ledger."
+            );
+          }
+
+          database
+            .prepare(`
+              DELETE FROM
+                pf_period_bill_payments
+              WHERE
+                id = ? AND
+                period_key = ?
+            `)
+            .run(
+              paymentId,
+              normalized
+            );
+
+          database
+            .prepare(`
+              UPDATE
+                pf_period_bills
+              SET
+                paid_amount_cents =
+                  paid_amount_cents - ?,
+                updated_at =
+                  CURRENT_TIMESTAMP
+              WHERE
+                period_key = ? AND
+                budget_item_key = ?
+            `)
+            .run(
+              payment.amount_cents,
+              normalized,
+              payment.budget_item_key
+            );
+        }
+      );
+
+    remove.immediate();
+  } finally {
+    database.close();
+  }
+
+  return readPersonalFinanceReconciliationWorkspace(
+    normalized
+  );
+}
+
+export function syncPersonalFinanceDebtPayment(
+  periodKey: string,
+  input:
+    SyncPersonalFinanceDebtPaymentInput
+): {
+  workspace:
+    PersonalFinanceReconciliationWorkspace;
+
+  synced:
+    boolean;
+} {
+  assertEnabled();
+
+  const normalized =
+    requiredPeriodKey(
+      periodKey
+    );
+
+  ensurePeriodExists(
+    normalized
+  );
+
+  const obligationId =
+    requiredText(
+      input.obligationId,
+      "Obligation"
+    );
+
+  const sourcePaymentId =
+    requiredText(
+      input.paymentId,
+      "Debt payment"
+    );
+
+  const amount =
+    requiredPositiveMoney(
+      input.amount,
+      "Payment amount"
+    );
+
+  const paidOn =
+    requiredDate(
+      input.paidOn,
+      "Payment date"
+    );
+
+  const note =
+    optionalText(
+      input.note
+    );
+
+  const database =
+    openPersonalFinanceDatabase();
+
+  let synced =
+    false;
+
+  try {
+    ensureReconciliationSchema(
+      database
+    );
+
+    const save =
+      database.transaction(
+        () => {
+          const obligation =
+            database
+              .prepare(`
+                SELECT
+                  obligations.id,
+                  obligations.budget_item_key,
+                  obligations.name
+                FROM
+                  obligations
+                INNER JOIN
+                  liabilities
+                ON
+                  liabilities.obligation_id =
+                    obligations.id
+                WHERE
+                  obligations.id = ? AND
+                  obligations.is_active = 1 AND
+                  liabilities.is_active = 1
+                LIMIT 1
+              `)
+              .get(
+                obligationId
+              ) as
+              | {
+                  id: string;
+                  budget_item_key:
+                    string | null;
+                  name: string;
+                }
+              | undefined;
+
+          if (!obligation) {
+            return;
+          }
+
+          const bill =
+            database
+              .prepare(`
+                SELECT
+                  budget_item_key,
+                  name
+                FROM
+                  pf_period_bills
+                WHERE
+                  period_key = ? AND
+                  (
+                    budget_item_key = ? OR
+                    lower(name) =
+                      lower(?)
+                  )
+                ORDER BY
+                  CASE
+                    WHEN
+                      budget_item_key = ?
+                    THEN 0
+                    ELSE 1
+                  END
+                LIMIT 1
+              `)
+              .get(
+                normalized,
+                obligation.budget_item_key ??
+                  "",
+                obligation.name,
+                obligation.budget_item_key ??
+                  ""
+              ) as
+              | {
+                  budget_item_key:
+                    string;
+                  name: string;
+                }
+              | undefined;
+
+          if (!bill) {
+            return;
+          }
+
+          const duplicate =
+            database
+              .prepare(`
+                SELECT
+                  id
+                FROM
+                  pf_period_bill_payments
+                WHERE
+                  source_kind = 'debt' AND
+                  source_payment_id = ?
+                LIMIT 1
+              `)
+              .get(
+                sourcePaymentId
+              );
+
+          if (duplicate) {
+            return;
+          }
+
+          const amountCents =
+            toCents(
+              amount
+            );
+
+          database
+            .prepare(`
+              INSERT INTO
+                pf_period_bill_payments (
+                  id,
+                  period_key,
+                  budget_item_key,
+                  amount_cents,
+                  paid_on,
+                  note,
+                  source_kind,
+                  source_payment_id
+                )
+              VALUES (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                'debt',
+                ?
+              )
+            `)
+            .run(
+              createPersonalFinanceId(
+                "period_bill_payment",
+                [
+                  normalized,
+                  bill.budget_item_key,
+                  "debt",
+                  sourcePaymentId
+                ]
+              ),
+              normalized,
+              bill.budget_item_key,
+              amountCents,
+              paidOn,
+              note,
+              sourcePaymentId
+            );
+
+          database
+            .prepare(`
+              UPDATE
+                pf_period_bills
+              SET
+                paid_amount_cents =
+                  paid_amount_cents + ?,
+                updated_at =
+                  CURRENT_TIMESTAMP
+              WHERE
+                period_key = ? AND
+                budget_item_key = ?
+            `)
+            .run(
+              amountCents,
+              normalized,
+              bill.budget_item_key
+            );
+
+          synced =
+            true;
+        }
+      );
+
+    save.immediate();
+  } finally {
+    database.close();
+  }
+
+  return {
+    workspace:
+      readPersonalFinanceReconciliationWorkspace(
+        normalized
+      ),
+
+    synced
+  };
 }
 
 function updateAccountBalance({
@@ -666,6 +1243,17 @@ function ensureReconciliationSchema(
 
         note TEXT,
 
+        source_kind TEXT NOT NULL
+          DEFAULT 'ordinary'
+          CHECK (
+            source_kind IN (
+              'ordinary',
+              'debt'
+            )
+          ),
+
+        source_payment_id TEXT,
+
         created_at TEXT NOT NULL
           DEFAULT CURRENT_TIMESTAMP,
 
@@ -687,6 +1275,120 @@ function ensureReconciliationSchema(
       paid_on
     );
   `);
+
+  ensurePaymentSourceColumns(
+    database
+  );
+
+  database.exec(`
+    CREATE UNIQUE INDEX IF NOT EXISTS
+      pf_period_bill_payments_source_index
+    ON pf_period_bill_payments (
+      source_kind,
+      source_payment_id
+    )
+    WHERE
+      source_payment_id IS NOT NULL;
+  `);
+}
+
+function ensurePaymentSourceColumns(
+  database:
+    PersonalFinanceDatabase
+): void {
+  const columns =
+    database
+      .prepare(
+        "PRAGMA table_info(pf_period_bill_payments)"
+      )
+      .all() as
+      {
+        name: string;
+      }[];
+
+  const names =
+    new Set(
+      columns.map(
+        (column) =>
+          column.name
+      )
+    );
+
+  if (
+    !names.has(
+      "source_kind"
+    )
+  ) {
+    database.exec(`
+      ALTER TABLE
+        pf_period_bill_payments
+      ADD COLUMN
+        source_kind TEXT NOT NULL
+        DEFAULT 'ordinary';
+    `);
+  }
+
+  if (
+    !names.has(
+      "source_payment_id"
+    )
+  ) {
+    database.exec(`
+      ALTER TABLE
+        pf_period_bill_payments
+      ADD COLUMN
+        source_payment_id TEXT;
+    `);
+  }
+}
+
+function readDebtLedgerLinkForBill(
+  database:
+    PersonalFinanceDatabase,
+  budgetItemKey: string,
+  billName: string
+): DebtLedgerLinkRow | null {
+  const row =
+    database
+      .prepare(`
+        SELECT
+          obligations.budget_item_key,
+          obligations.name AS
+            obligation_name,
+          liabilities.liability_type
+        FROM
+          liabilities
+        INNER JOIN
+          obligations
+        ON
+          obligations.id =
+            liabilities.obligation_id
+        WHERE
+          liabilities.is_active = 1 AND
+          obligations.is_active = 1 AND
+          (
+            obligations.budget_item_key = ? OR
+            lower(obligations.name) =
+              lower(?)
+          )
+        ORDER BY
+          CASE
+            WHEN
+              obligations.budget_item_key = ?
+            THEN 0
+            ELSE 1
+          END
+        LIMIT 1
+      `)
+      .get(
+        budgetItemKey,
+        billName,
+        budgetItemKey
+      ) as
+      | DebtLedgerLinkRow
+      | undefined;
+
+  return row ?? null;
 }
 
 function mapAccount(
@@ -745,7 +1447,9 @@ function mapAccount(
 function mapBill(
   row: BillRow,
   payments:
-    PersonalFinanceBillPayment[]
+    PersonalFinanceBillPayment[],
+  debtLink:
+    DebtLedgerLinkRow | null
 ): PersonalFinanceReconciliationBill {
   const planned =
     fromCents(
@@ -782,6 +1486,18 @@ function mapBill(
     paymentMethod:
       row.payment_method,
 
+    requiresDebtLedger:
+      debtLink !== null,
+
+    debtLedgerLabel:
+      debtLink
+        ? debtLink.liability_type
+            .replaceAll(
+              "_",
+              " "
+            )
+        : null,
+
     payments
   };
 }
@@ -809,6 +1525,12 @@ function mapPayment(
 
     note:
       row.note,
+
+    sourceKind:
+      row.source_kind,
+
+    sourcePaymentId:
+      row.source_payment_id,
 
     createdAt:
       row.created_at
