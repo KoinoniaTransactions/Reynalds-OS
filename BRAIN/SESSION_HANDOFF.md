@@ -1,128 +1,63 @@
 # SESSION HANDOFF — Koinonia Marketing System
 
-<!-- PERSONAL FINANCE SESSION HANDOFF 2026-08-05 -->
-## 2026-08-05 Current Session Handoff — Personal Finance Matching
+<!-- PERSONAL FINANCE SESSION HANDOFF 2026-08-07 -->
+## 2026-08-07 Current Session Handoff - J&M Reynalds Finances
 
-Status: Stable local checkpoint; Brain synchronization pending review
+Status: Synthetic local-first development checkpoint with approved hosted-household architecture direction.
+
 Repository: Reynalds OS
-Local path: `/Users/jeremiahreynalds/Desktop/Reynalds_OS_v11_3_1_Work`
-Branch: `feature/app-shell-foundation`
-Verified code HEAD: `fa878ea`
-Push state: Local only; nothing from this workstream was pushed.
 
-### Governing scope
+Local project path: `/Users/jeremiahreynalds/Desktop/Reynalds_OS_v11_3_1_Work`
 
-The active focused workstream is the local-only Personal Finance workspace at `/personal`.
+Primary development branch: `feature/visual-modernization-foundation`
 
-Do not expand or redesign unrelated Reynalds OS areas. A separate broader dashboard issue exists and is explicitly out of scope.
+Verified code baseline before this documentation update: `0f07a56678676c17727f10c23dd169a487da4a2e`
 
-### Completed committed checkpoints
+### Current product state
 
-- `5fc347d` — transaction reconciliation foundation
-- `fa878ea` — transaction matching intelligence
+J&M Reynalds Finances is a standalone private household finance product sharing the monorepo while preserving its own product boundary.
 
-The reconciliation foundation supports explicit reconciliation, undo, exact single allocations, exact split allocations, classification-compatible targets, and separate Classification, Reviewed, and Reconciliation states.
+Current development uses local SQLite, synthetic Demo data, Clean mode, and the `/personal` route family. The latest verified Personal Finance regression checkpoint passed 12 test files / 63 tests.
 
-The matching checkpoint supports deterministic target suggestions, confidence and reasons, explicit transfer-pair confirmation and rejection, matching filters and metrics, allocation visibility, and confirmed-pair visibility.
+### Current architecture direction
 
-### Verification completed
+Development remains local-first, but local-only is not the permanent destination.
 
-- 17 focused tests passed.
-- TypeScript passed.
-- Patch checks passed.
-- Isolated API verification passed.
-- Isolated Chromium verification passed.
-- Synthetic multi-account transfer pairing passed.
-- Desktop and mobile viewport checks passed.
-- The real database and budget CSV remained unchanged.
-- The existing port `3003` listener remained unchanged.
+The approved future direction is secure remote household access with separate authenticated identities for Jeremiah and his wife, household authorization, managed relational persistence, and provider-neutral financial-institution synchronization.
 
-### Current aggregate ledger evidence
-
-Do not copy raw transaction descriptions, account names, target names, dates, amounts, addresses, routing details, or account identifiers into Brain documents.
-
-The latest privacy-safe diagnostics analyzed 40 transactions:
-
-- 35 saved as Unknown
-- 2 saved as Expense
-- 1 saved as Income
-- 1 saved as Refund
-- 1 saved as Transfer
-- 0 high-confidence suggestions
-- 7 medium-confidence suggestions
-- 17 low-confidence suggestions
-- 16 transactions without a suggestion
-- 18 amount-only matches
-- 5 rows with date evidence
-- 1 row with description evidence
-- 10 target ambiguities
-- 1 classification ambiguity
-- median first-versus-second target gap: 4%
-- average first-versus-second target gap: 4%
-- 0 transfer candidates
-
-Zero real transfer candidates are expected while only one real account is imported.
-
-### Interpretation
-
-The matching system is safe and conservative, but amount similarity dominates the current evidence.
-
-Raising amount weights or lowering the 75% high-confidence threshold would increase false confidence among equal-dollar or near-equal-dollar budget targets.
-
-The immediate implementation priority is not broader UI work and not automatic matching.
+Plaid is the preferred first provider candidate to evaluate later. Do not implement Plaid before the household ownership, provenance, provider boundary, authorization, and security foundations are ready.
 
 ### Next exact implementation slice
 
-Implement an ambiguity-margin and evidence-clarity refinement:
+Verify the synthetic Demo Home Mortgage lifecycle:
 
-1. Add the score gap between the first and second target to matching output.
-2. Mark suggestions ambiguous when the gap is less than 10 percentage points.
-3. Do not preselect a target when the best suggestion is ambiguous.
-4. Preserve manual target selection for no-evidence and ambiguous transactions.
-5. Show transparent evidence labels and the score gap in the editor.
-6. Keep the 75% high-confidence threshold.
-7. Do not increase amount weighting.
-8. Evaluate learned merchant-description history separately after inspecting whether existing confirmed allocations provide enough repeated evidence.
+1. create or link the Mortgage obligation;
+2. complete financed setup with synthetic values;
+3. verify linked asset and liability creation;
+4. verify the bill moves to debt-ledger behavior;
+5. verify the correct loan ledger opens;
+6. route with stable obligation IDs rather than bill names;
+7. do not record a payment merely to prove routing.
 
-### Required validation
+### Required safety
 
-- focused matching unit tests;
-- focused matching route tests if response fields change;
-- focused reconciliation tests;
-- TypeScript;
-- patch check;
-- isolated browser verification of ambiguous and unambiguous preselection;
-- second privacy-safe real-data review;
-- real database, CSV, and port `3003` integrity checks.
+- synthetic development data only;
+- manual financial workflows remain first-class;
+- no real household values during ordinary development;
+- no public exposure of the current local server;
+- no production database migration yet;
+- no provider credentials in browser code;
+- no real-data onboarding before the production security gate and final Clean reset;
+- keep unrelated Koinonia and Reynalds Brothers work untouched.
 
-Do not stage, commit, or push until the implementation and second review are separately approved.
+### Required reading for the next AI
 
-### Architectural rules that must remain intact
+- `BRAIN/PERSONAL_FINANCE_ARCHITECTURE.md`
+- `docs/PERSONAL_FINANCE_PRODUCTION_ARCHITECTURE_V1.md`
+- current Personal Finance continuity blocks in the Brain.
 
-1. Imported transactions are immutable factual records.
-2. Classification does not mean reconciled.
-3. `reviewed_at` means the user examined the transaction.
-4. `review_status` remains reconciliation state.
-5. Budget allocations are explicit reconciliation records.
-6. Transfers are not spending.
-7. Suggestions remain advisory until explicit user confirmation.
-8. Transfer pairing must not silently change Classification, Reviewed, Reconciliation, or allocations.
-9. View filters never write data.
-10. The local SQLite ledger remains separate from the broader Prisma/PostgreSQL OS model.
-11. No raw financial records belong in Brain or handoff documents.
-
-### Workflow for the next AI
-
-- Read the canonical Brain and Finance files before proposing work.
-- Verify path, branch, HEAD, and worktree.
-- Inspect the current matching implementation and tests.
-- Restate the exact proposed slice.
-- Wait for Jeremiah's approval.
-- Use guarded Terminal runners.
-- Run focused tests only.
-- Avoid production builds and unrelated browser testing.
-- Never push without explicit approval.
-<!-- END PERSONAL FINANCE SESSION HANDOFF 2026-08-05 -->
+Before implementation, verify repository path, branch, HEAD, worktree state, and the current Personal Finance tests.
+<!-- END PERSONAL FINANCE SESSION HANDOFF 2026-08-07 -->
 
 ---
 

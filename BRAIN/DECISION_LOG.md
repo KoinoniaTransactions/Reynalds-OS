@@ -154,3 +154,44 @@ Target-specific merchant-description learning may use only user-confirmed alloca
 
 Brain and handoff documents may contain aggregate counts and architecture decisions, but not raw descriptions, account names, target names, dates, amounts, routing details, addresses, or identifiers.
 <!-- END PERSONAL FINANCE DECISIONS 2026-08-05 -->
+
+
+<!-- PERSONAL FINANCE ARCHITECTURE DECISIONS 2026-08-07 -->
+## D-018 - J&M Reynalds Finances Is a Private Household Application
+
+Decision: Treat J&M Reynalds Finances as a distinct private household application rather than a public website, company operating system, central-OS workspace, or generic record collection.
+
+Reason: Household finance has a different audience, ownership model, privacy boundary, and production-access requirement from the existing company and platform products.
+
+Canonical sources: `BRAIN/PERSONAL_FINANCE_ARCHITECTURE.md`, `BRAIN/PRODUCT_BOUNDARIES.md`, and `BRAIN/APPLICATION_CATALOG.md`.
+
+## D-019 - Personal Finance Is Local-First During Development, Not Permanently Local-Only
+
+Decision: Keep current Personal Finance development local-first while targeting secure authenticated hosted household access for production.
+
+Reason: Local development protects current synthetic workflows and simplifies iteration, while the household product goal requires secure access beyond one development machine. The current local host guard must not simply be weakened to achieve that goal.
+
+Production access requires household authorization, managed persistence, HTTPS, secure secrets, monitoring, backup/recovery, environment separation, and the production security gate.
+
+## D-020 - Household Is the Personal Finance Data Ownership Boundary
+
+Decision: Production financial records belong to an explicit J&M Household, with separate authenticated HouseholdMembers and server-side household authorization.
+
+Reason: Authentication identifies a user; it does not prove that the user may access a particular household financial resource.
+
+Client-provided household identifiers must never be treated as sufficient authorization.
+
+## D-021 - Manual Finance Remains First-Class and Providers Remain Adapters
+
+Decision: Preserve manual financial records and workflows as first-class domain behavior. Model financial-data providers behind provider-neutral server-side adapters.
+
+Reason: Provider coverage can be incomplete, disconnected, delayed, or unsupported for particular financial products. The household system must remain usable without any one provider.
+
+Plaid is the preferred first provider candidate to evaluate later, but provider identity must remain separate from canonical provenance and Personal Finance record identity.
+
+## D-022 - Real Household Data Waits for the Production Security Gate and Final Clean Reset
+
+Decision: Ordinary development uses synthetic data. Real household financial values are not introduced until production security is validated, Personal Finance is reset to Clean mode, the blank first-run state is verified, and real-data onboarding is explicitly approved.
+
+Reason: Financial architecture, synchronization, authorization, logging, and migration behavior should be proven without exposing real household data during development.
+<!-- END PERSONAL FINANCE ARCHITECTURE DECISIONS 2026-08-07 -->

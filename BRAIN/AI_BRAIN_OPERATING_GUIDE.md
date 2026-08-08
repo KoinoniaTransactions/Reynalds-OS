@@ -70,7 +70,7 @@ Do not praise the project and then immediately rebuild it.
 
 Begin with the canonical entry point:
 
-BRAIN/START_HERE.md
+START_HERE.md
 
 Follow the reading order defined there.
 
@@ -423,3 +423,30 @@ Advance the current priority.
 The Brain is not an obstacle to creativity.
 
 It is what makes useful creativity possible without repeatedly losing the project.
+
+19. J&M Reynalds Finances Workstream Rule
+
+When the approved task concerns J&M Reynalds Finances, the Personal Finance canonical architecture governs that workstream in addition to the global Brain rules.
+
+Required reading before meaningful Personal Finance implementation:
+
+BRAIN/PERSONAL_FINANCE_ARCHITECTURE.md
+docs/PERSONAL_FINANCE_PRODUCTION_ARCHITECTURE_V1.md
+BRAIN/CURRENT_PRIORITIES.md
+BRAIN/PROJECT_STATE.md
+BRAIN/SESSION_HANDOFF.md
+
+Personal Finance must be treated as a private household financial application that is local-first during development and intended for secure authenticated hosted access later.
+
+Preserve these rules:
+
+Synthetic development data only until the approved real-data onboarding gate.
+Manual financial workflows remain first-class.
+Household ownership and household authorization are distinct from authentication.
+Provider integration must remain provider-neutral at the domain level.
+Plaid is the preferred first provider candidate to evaluate, not a hard-coded domain dependency.
+The current local server must not be exposed publicly merely by weakening development host restrictions.
+Stable IDs must govern financial relationships instead of display-name inference.
+Koinonia-specific business architecture must not be imported into Personal Finance unless genuinely shared infrastructure requires it.
+
+When older Personal Finance notes conflict with the canonical Personal Finance architecture, use the newer canonical architecture, current project state, current priorities, and current session handoff.

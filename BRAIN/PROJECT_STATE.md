@@ -1,23 +1,26 @@
 # Reynalds OS Project State
 
-<!-- PERSONAL FINANCE PROJECT STATE 2026-08-05 -->
-## Personal Finance Project State — 2026-08-05
+<!-- PERSONAL FINANCE PROJECT STATE 2026-08-07 -->
+## Personal Finance Project State - 2026-08-07
 
-The local-only Personal Finance workspace has reached a stable committed reconciliation and matching checkpoint.
+J&M Reynalds Finances is currently a synthetic, local-first development application.
 
-- Branch: `feature/app-shell-foundation`
-- Verified code HEAD: `fa878ea`
-- Reconciliation foundation: committed and live-verified
-- Matching intelligence: committed and live-verified
-- Focused tests: 17 passing
-- Existing local server: port `3003`
-- Real database and budget CSV: unchanged during verification
-- Push status: local only
+Current code baseline: `0f07a56678676c17727f10c23dd169a487da4a2e`.
 
-The privacy-safe 40-transaction review shows that amount evidence dominates and that target separation is weak. Ten rows were ambiguous, with a median and average best-versus-second gap of 4%.
+Demo/Clean data modes are active, the January 2030 Demo workspace is synthetic, and the latest verified Personal Finance checkpoint passed 12 test files / 63 tests.
 
-Current priority: add an ambiguity-margin guard and transparent evidence metadata without changing confidence thresholds or adding automatic writes.
-<!-- END PERSONAL FINANCE PROJECT STATE 2026-08-05 -->
+Approved destination: a securely hosted private household financial application with separate authenticated household members, server-side household authorization, managed relational persistence, and future provider-neutral financial-institution synchronization.
+
+Plaid is a preferred provider candidate, not implemented or locked into the core domain.
+
+Manual records remain first-class. Real household data remains outside ordinary development until the production security gate and final Clean reset.
+
+Current next feature: synthetic mortgage/debt lifecycle verification using stable obligation-ID routing.
+
+Canonical architecture: `BRAIN/PERSONAL_FINANCE_ARCHITECTURE.md`
+
+Production plan: `docs/PERSONAL_FINANCE_PRODUCTION_ARCHITECTURE_V1.md`
+<!-- END PERSONAL FINANCE PROJECT STATE 2026-08-07 -->
 
 ---
 

@@ -112,3 +112,20 @@ Before implementing new features:
 7. Implement.
 8. Document.
 9. Commit.
+
+---
+
+# J&M Reynalds Finances Canonical Reading
+
+When working on J&M Reynalds Finances, read these sources before proposing architecture or meaningful implementation:
+
+1. `BRAIN/PERSONAL_FINANCE_ARCHITECTURE.md`
+2. `docs/PERSONAL_FINANCE_PRODUCTION_ARCHITECTURE_V1.md`
+3. `BRAIN/CURRENT_PRIORITIES.md`
+4. `BRAIN/PROJECT_STATE.md`
+5. `BRAIN/SESSION_HANDOFF.md`
+6. relevant implementation under `apps/web/app/personal/`, `apps/web/components/personal-finance-*`, and `apps/web/lib/personal-finance-*`
+
+The Personal Finance architecture is authoritative for product identity, household ownership, development-data safety, production direction, financial-provider boundaries, and real-data onboarding gates.
+
+J&M Reynalds Finances is a private household application. Do not force it into public-website, company-operating-system, or central-OS assumptions merely because those are existing repository patterns.

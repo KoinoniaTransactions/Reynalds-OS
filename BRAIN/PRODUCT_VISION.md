@@ -53,3 +53,43 @@ From this point forward, work should prioritize:
 4. Building one feature at a time.
 5. Testing each feature before continuing.
 6. Moving toward deployment.
+
+---
+
+## J&M Reynalds Finances Product Vision - 2026-08-07
+
+### Product Identity
+
+J&M Reynalds Finances is a private household financial application for the J&M household.
+
+It is a separate product boundary from Koinonia, Reynalds Brothers OS, public company websites, and the central Reynalds OS Brain, even while sharing selected repository infrastructure.
+
+### Household Mission
+
+Provide one clear household system for understanding and managing bills, income, accounts, transactions, budgets, obligations, assets, liabilities, debt, reconciliation, and net worth.
+
+The intended experience is summarized by the product tagline: **Our money, clearly organized.**
+
+### Product Thesis
+
+Manual control is the foundation.
+
+Financial-institution synchronization should reduce repeated entry and improve visibility without removing household authority or making an external provider the source of domain truth.
+
+### Approved Destination
+
+A private, authenticated J&M household financial system, available securely anywhere, with manual control as the foundation and financial-institution synchronization layered on top.
+
+Development remains local-first and synthetic until production security, household authorization, managed persistence, backup/recovery, and Clean-reset gates are satisfied.
+
+### Architecture Direction
+
+- separate authenticated household members;
+- household-scoped authorization;
+- SQLite development adapter;
+- managed PostgreSQL preferred for hosted production, provider deferred;
+- provider-neutral financial domain and provenance;
+- Plaid as the preferred first provider candidate to evaluate, not a locked dependency;
+- server-side provider secrets and synchronization;
+- manual fallback for unsupported or disconnected financial data;
+- explicit production security gate before real household onboarding.

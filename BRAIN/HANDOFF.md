@@ -1,43 +1,41 @@
 # Developer Handoff
 
-<!-- PERSONAL FINANCE HANDOFF 2026-08-05 -->
-## 2026-08-05 Personal Finance Handoff
+<!-- PERSONAL FINANCE HANDOFF 2026-08-07 -->
+## 2026-08-07 Personal Finance Handoff
 
-The local Personal Finance reconciliation and matching foundations are committed and verified at `fa878ea` on `feature/app-shell-foundation`.
+J&M Reynalds Finances has moved beyond the older transaction-matching checkpoint.
 
-The next AI must continue from the documented scoring evidence, not redesign the system.
+Current code baseline before this documentation update: `0f07a56678676c17727f10c23dd169a487da4a2e` on `feature/visual-modernization-foundation`.
+
+The application now has synthetic Demo/Clean lifecycle support and standalone J&M Reynalds Finances identity. The latest verified focused checkpoint passed 12 Personal Finance test files / 63 tests.
 
 ### Immediate assignment
 
-Implement only the ambiguity-margin and evidence-clarity refinement after Jeremiah approves it:
+Continue the synthetic mortgage/debt lifecycle:
 
-- expose the first-versus-second target score gap;
-- mark a result ambiguous below a 10-point gap;
-- prevent automatic preselection for ambiguous results;
-- show evidence labels and gap in the editor;
-- preserve the 75% high-confidence threshold;
-- do not increase amount weighting;
-- keep all writes explicit.
+- connect Demo Home Mortgage to a Mortgage obligation;
+- complete financed setup with synthetic values;
+- verify asset and liability creation;
+- verify debt-ledger navigation;
+- replace any bill-name routing dependency with stable obligation-ID routing;
+- do not create a synthetic payment merely to test navigation.
 
-### Evidence
+### Architecture direction
 
-The privacy-safe 40-transaction review found:
+Treat Personal Finance as a private household financial application that is local-first during development and intended for secure hosted access later.
 
-- zero high-confidence suggestions;
-- seven medium;
-- 17 low;
-- 16 with no suggestion;
-- 18 amount-only matches;
-- only one description-signal row;
-- 10 target ambiguities;
-- median and average first-versus-second gap of 4%.
+Future production requires separate household member identities, server-side household authorization, managed relational persistence, provider-neutral synchronization, protected secrets, backup/recovery, and a verified production security gate.
 
-This makes ambiguity protection the first safe refinement. Merchant-history learning is a separate later decision because confirmed history remains sparse.
+Plaid is a preferred future provider candidate, not yet implemented and not part of the canonical domain model.
 
 ### Safety
 
-No automatic classification, allocation, reconciliation, Reviewed change, or transfer-pair confirmation. Protect the real database, budget CSV, and existing port `3003`. Do not expose raw financial data. Do not push without explicit approval.
-<!-- END PERSONAL FINANCE HANDOFF 2026-08-05 -->
+Use synthetic data during development. Manual records remain first-class. Do not expose the local development server publicly. Do not request or enter real household financial values before the Clean-reset and production-security onboarding gate.
+
+Canonical architecture: `BRAIN/PERSONAL_FINANCE_ARCHITECTURE.md`
+
+Production plan: `docs/PERSONAL_FINANCE_PRODUCTION_ARCHITECTURE_V1.md`
+<!-- END PERSONAL FINANCE HANDOFF 2026-08-07 -->
 
 ---
 

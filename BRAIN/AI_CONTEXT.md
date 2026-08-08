@@ -69,3 +69,31 @@ Before major implementation:
 Documentation is considered production code.
 
 Architectural changes are incomplete until the Brain has been updated.
+
+---
+
+# Current Personal Finance Context - 2026-08-07
+
+J&M Reynalds Finances is an active focused workstream with its own approved product and architecture boundary.
+
+Current implementation state:
+
+- route family: `/personal`;
+- current development is local-first;
+- persistence is local SQLite for development;
+- Demo and Clean modes are available;
+- development data is synthetic;
+- current code baseline before this documentation work is `0f07a56678676c17727f10c23dd169a487da4a2e`;
+- latest verified focused checkpoint passed 12 Personal Finance test files / 63 tests.
+
+Approved destination:
+
+A private authenticated J&M household financial application available securely anywhere, with manual control as the foundation and financial-institution synchronization layered on top.
+
+Current next product milestone:
+
+Verify the synthetic Demo Home Mortgage lifecycle, including obligation linkage, financed setup, linked asset/liability creation, and stable obligation-ID debt-ledger routing. Do not record a synthetic payment merely to prove navigation.
+
+Architecture work that follows later includes household ownership, provider-neutral provenance, managed production persistence, production authentication and household authorization, provider sandbox evaluation, reliable synchronization, hosting/security, and final Clean-reset onboarding.
+
+For this workstream, `BRAIN/PERSONAL_FINANCE_ARCHITECTURE.md` is the canonical architecture source.

@@ -67,6 +67,24 @@ The Brain application catalog is authoritative for product meaning, ownership, a
 
 ---
 
+<!-- PERSONAL FINANCE CANONICAL REGISTRY 2026-08-07 -->
+# J&M Reynalds Finances
+
+| Subject | Canonical Source | Status |
+|---------|------------------|--------|
+| Product, Data, and Security Architecture | BRAIN/PERSONAL_FINANCE_ARCHITECTURE.md | Active |
+| Production Architecture Plan | docs/PERSONAL_FINANCE_PRODUCTION_ARCHITECTURE_V1.md | Approved Planning Specification |
+| Current Priority | BRAIN/CURRENT_PRIORITIES.md | Active |
+| Current Project State | BRAIN/PROJECT_STATE.md | Active |
+| Roadmap | BRAIN/ROADMAP.md | Active |
+| Current Handoff | BRAIN/HANDOFF.md and BRAIN/SESSION_HANDOFF.md | Active |
+
+J&M Reynalds Finances is a private household financial application. It currently shares the monorepo and develops locally, but it is not a Koinonia product, company operating system, public website, or merely a financial record inside Reynalds OS.
+
+The canonical architecture above governs Personal Finance work before broader shared documentation or historical material.
+
+---
+
 # Recovery
 
 | Subject | Canonical Source | Status |

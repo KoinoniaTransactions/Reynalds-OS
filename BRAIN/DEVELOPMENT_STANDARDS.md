@@ -110,3 +110,61 @@ Classify new ideas as:
 - Future vision
 
 Website launch work takes priority over future-platform expansion unless the platform work directly accelerates launch.
+
+---
+
+## J&M Reynalds Finances Development Standard - 2026-08-07
+
+J&M Reynalds Finances is a private household financial application with its own approved ownership and security boundary.
+
+The general Reynalds OS workspace rules remain valid for business and platform work. Personal Finance must not be forced into a business workspace model merely to reuse that convention.
+
+### Scope and Authorization
+
+Protected Personal Finance operations are household-scoped.
+
+Before a production Personal Finance read or write, server-side code must establish:
+
+1. authenticated identity;
+2. active HouseholdMember membership;
+3. household ownership of the requested resource;
+4. permission for the requested action.
+
+Authentication alone is not authorization.
+
+### Development Data
+
+Ordinary Personal Finance development uses synthetic Demo data only.
+
+Do not request or enter real household account, mortgage, property, income, budget, debt, or transaction values for feature development.
+
+Before real-data onboarding:
+
+- complete the approved production security gate;
+- run Personal Finance Clean reset;
+- verify the blank first-run state;
+- obtain explicit approval to begin real household onboarding.
+
+### Local and Hosted Boundaries
+
+Current localhost and private-network restrictions are development safety controls.
+
+Do not create remote access by simply weakening the current host guard.
+
+Hosted production requires the separately approved authentication, household authorization, managed persistence, HTTPS, secrets, monitoring, backup, recovery, and environment-separation controls.
+
+### Financial Provider Development
+
+Manual financial workflows remain first-class.
+
+Provider integrations must remain behind server-side provider boundaries and must not define the canonical Personal Finance domain.
+
+Plaid is the preferred first provider candidate to evaluate later, using sandbox or test data only until production readiness is separately approved.
+
+Provider synchronization must not silently classify, review, reconcile, allocate, or confirm transactions.
+
+### Implementation Discipline
+
+Use stable IDs for financial relationships and navigation. Do not use display names as durable relationship keys.
+
+Keep Personal Finance work separate from Koinonia-specific architecture unless shared infrastructure is genuinely required.

@@ -127,6 +127,51 @@ It is also not automatically the same user interface, deployment, or product as 
 
 ---
 
+<!-- PERSONAL FINANCE APPLICATION CATALOG 2026-08-07 -->
+# J&M Reynalds Finances - Approved Transition Profile
+
+## Identity
+
+J&M Reynalds Finances is a private household financial application for Jeremiah and his wife.
+
+## Purpose
+
+Provide a shared household system for budgeting, bills, income, accounts, transactions, reconciliation, obligations, assets, liabilities, debt, and net worth, with manual control as the foundation and financial-institution synchronization layered on later.
+
+## Audience
+
+Private household members only.
+
+It is not a public website and is not a company-specific operating system.
+
+## Current Status
+
+Active local-first development using synthetic data.
+
+Future direction is secure hosted household access after authentication, authorization, persistence, security, backup/recovery, and Clean-reset gates are satisfied.
+
+## Record Authority
+
+Canonical Personal Finance domain records belong to the J&M household financial model. External financial-data providers supply observations and synchronization data but do not become the domain authority.
+
+## Executable Registry Status
+
+J&M Reynalds Finances is intentionally not being forced into the current executable registry classifications during this documentation slice.
+
+The current registry contract distinguishes public websites, the central operating system, and company operating systems. A private household application does not accurately fit those existing meanings.
+
+Before adding J&M Finances to `apps/web/lib/productRegistry.ts`, perform a focused approved code slice that:
+
+1. decides whether `private-household-application` becomes a canonical product type or whether private household products remain outside general registry navigation;
+2. updates the discriminated product definition intentionally;
+3. updates registry validation and tests;
+4. preserves private audience and access semantics;
+5. keeps Brain and executable metadata aligned.
+
+Until that decision is implemented, this transition profile is authoritative for product meaning and boundary, while no false executable classification should be created.
+
+---
+
 # Executable Registry Contract
 
 `apps/web/lib/productRegistry.ts` is the typed application manifest for cataloged products.

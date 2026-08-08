@@ -92,6 +92,33 @@ Separate internal company operating system
 
 ---
 
+<!-- PERSONAL FINANCE PRODUCT BOUNDARY 2026-08-07 -->
+# Private Household Applications
+
+A private household application is a distinct product category from a public website, a company-specific operating system, the central Reynalds OS, and a record stored inside Reynalds OS.
+
+## J&M Reynalds Finances
+
+J&M Reynalds Finances is the approved first private household application in this repository.
+
+Its purpose is to support Jeremiah and his wife in managing their shared household finances.
+
+Its boundary rules are:
+
+- it is not a Koinonia Transactions product;
+- it is not a Koinonia Properties product;
+- it is not Reynalds Brothers OS;
+- it is not the Reynalds OS central Brain itself;
+- sharing a monorepo or infrastructure does not erase its independent product identity;
+- local-first development does not mean permanently local-only deployment;
+- future hosted access remains private and authenticated rather than public;
+- household financial records belong to the J&M household ownership boundary;
+- exact hosting and infrastructure vendors remain separate architectural decisions.
+
+Before executable product-registry changes are made, the registry type contract must explicitly support this product category rather than forcing J&M Finances into an inaccurate existing classification.
+
+---
+
 # Architecture and Hosting Rules
 
 Before creating routes, domains, deployments, workspaces, tenants, or registries, determine which concept is being represented:

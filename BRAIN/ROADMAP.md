@@ -39,41 +39,52 @@ Move from generated ZIP versions into a real Git repository and local developmen
 - Mobile app.
 - Multi-workspace administration.
 
-<!-- PERSONAL FINANCE ROADMAP 2026-08-05 -->
-## Personal Finance Roadmap Checkpoint — 2026-08-05
+<!-- PERSONAL FINANCE ROADMAP 2026-08-07 -->
+## J&M Reynalds Finances Roadmap Checkpoint - 2026-08-07
 
-### Completed
+### Current foundation
 
-- local SQLite reconciliation foundation;
-- exact single and split allocations;
-- compatible budget targets;
-- deterministic target matching;
-- explicit transfer-pair intelligence;
-- matching filters and metrics;
-- isolated API and browser verification;
-- privacy-safe review of 40 real transactions.
+- standalone J&M Reynalds Finances identity;
+- synthetic Demo and Clean data modes;
+- bills, income, transactions, accounts, obligations, assets, liabilities, net worth, and reconciliation foundations;
+- synthetic January 2030 development workspace;
+- local SQLite development persistence;
+- 12 focused Personal Finance test files / 63 tests passing at the latest verified checkpoint.
 
-### Current evidence
+### Immediate product milestone
 
-- 0 high-confidence;
-- 7 medium-confidence;
-- 17 low-confidence;
-- 16 no suggestion;
-- 18 amount-only;
-- 1 description-signal row;
-- 10 target ambiguities;
-- 4% median and average first-versus-second gap;
-- 0 transfer candidates with one imported account.
+Verify the synthetic Demo Home Mortgage debt lifecycle:
 
-### Immediate next milestone
+- create and link the Mortgage obligation;
+- complete financed setup with synthetic values;
+- verify linked asset and liability creation;
+- verify the bill transitions to debt-ledger behavior;
+- route using stable obligation IDs rather than bill-name inference;
+- do not record a payment merely to prove navigation.
 
-Add ambiguity metadata, a 10-point confidence-margin guard, and transparent score-gap evidence. Prevent preselection when ambiguous.
+### Approved architecture direction
 
-### Later milestone
+Personal Finance is local-first during development, not permanently local-only.
 
-Evaluate target-specific merchant-description history only after confirmed allocation history is sufficient to avoid overfitting.
+The intended destination is a securely hosted private household financial application with separate authenticated household members, server-side household authorization, managed relational persistence, and provider-neutral financial-institution synchronization.
+
+Plaid is the preferred first provider candidate to evaluate after the household, provenance, authorization, and provider-adapter foundations exist.
+
+### Later architecture milestones
+
+1. household ownership and provider-neutral provenance;
+2. persistence boundary for SQLite development and managed relational production storage;
+3. production authentication, MFA policy, and household authorization;
+4. provider adapter and sandbox evaluation;
+5. idempotent synchronization, webhook handling, retries, and freshness state;
+6. hosting, monitoring, backup/restore, and production security gate;
+7. Clean reset followed by explicitly approved real household onboarding.
 
 ### Guardrails
 
-No threshold reduction, no amount-weight increase, no automatic writes, temporary-copy verification only, and no push without approval.
-<!-- END PERSONAL FINANCE ROADMAP 2026-08-05 -->
+Manual finance workflows remain first-class. Development remains synthetic. Do not expose the current local server publicly. Do not enter real household data before the production security gate.
+
+Canonical architecture: `BRAIN/PERSONAL_FINANCE_ARCHITECTURE.md`
+
+Production plan: `docs/PERSONAL_FINANCE_PRODUCTION_ARCHITECTURE_V1.md`
+<!-- END PERSONAL FINANCE ROADMAP 2026-08-07 -->

@@ -242,3 +242,13 @@ Architectural decisions should favor:
 - Long-term stability
 
 The objective is to build a platform that can continue evolving for many years while preserving clarity, consistency, and trust.
+
+---
+
+# E. Product Boundary Amendment - J&M Reynalds Finances
+
+## 18. Reuse Must Respect Product Boundaries
+
+Shared infrastructure should be reused when it genuinely improves consistency, security, reliability, or maintainability.
+
+Reuse does not justify forcing one product into another product's ownership model, authorization model, audience, navigation, data model, or business semantics.\n\nJ&M Reynalds Finances is a private household financial application. It may share repository infrastructure with Reynalds OS while preserving its own product, household, security, and data boundaries.\n\nThe Object Engine, Workspace model, and company-oriented patterns must be evaluated for fit rather than applied automatically to Personal Finance.\n\n## 19. Sensitive Products Require Explicit Ownership and Authorization Boundaries\n\nFor Personal Finance, authenticated identity and household authorization are separate requirements.\n\nFinancial records belong to the household boundary, and protected reads and writes must verify that boundary server-side.\n\nSecurity-sensitive product data must not rely on interface visibility or client-supplied identifiers as authorization.\n\n## 20. Manual Control Remains Authoritative in Personal Finance\n\nFinancial automation and provider synchronization should assist household decision-making without silently replacing user authority.\n\nExternal financial-data providers are adapters. They do not become the canonical Personal Finance domain, and provider observations must not automatically mark transactions reviewed, reconciled, classified, or allocated.

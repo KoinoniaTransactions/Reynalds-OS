@@ -1,41 +1,27 @@
 # Current Priorities
 
-<!-- PERSONAL FINANCE PRIORITY 2026-08-05 -->
-## Focused Personal Finance Priority — 2026-08-05
+<!-- PERSONAL FINANCE PRIORITY 2026-08-07 -->
+## Focused Personal Finance Priority - 2026-08-07
 
-### Current priority
+J&M Reynalds Finances is local-first during development with an approved future destination as a securely hosted private household financial application.
 
-Improve matching safety and clarity before attempting to increase match coverage.
+Current rules:
 
-### Approved next proposal boundary
+- synthetic Demo data only during ordinary development;
+- manual financial workflows remain first-class;
+- household ownership and authorization are required before production use;
+- provider integration remains provider-neutral;
+- Plaid is the preferred first provider candidate to evaluate, not yet implemented;
+- real household financial data waits for the production security gate and Clean reset.
 
-- expose first-versus-second score gap;
-- mark gaps below 10 percentage points as ambiguous;
-- block suggestion preselection when ambiguous;
-- show evidence labels and gap;
-- keep the 75% high-confidence threshold;
-- do not increase amount weighting;
-- keep no-evidence transactions manual.
+Immediate next feature: verify the synthetic Demo Home Mortgage debt lifecycle, including financed setup, asset/liability linkage, and stable obligation-ID debt-ledger routing. Do not record a synthetic payment merely to prove navigation.
 
-### Evidence
+Canonical architecture: `BRAIN/PERSONAL_FINANCE_ARCHITECTURE.md`
 
-- 18 amount-only matches;
-- one description-signal row;
-- 10 target ambiguities;
-- median and average gap of 4%;
-- 16 transactions without a suggestion.
+Production plan: `docs/PERSONAL_FINANCE_PRODUCTION_ARCHITECTURE_V1.md`
 
-### Deferred
-
-Learned merchant-description history is deferred until the existing confirmed-allocation history is inspected and proves sufficient for safe learning.
-
-### Do not
-
-- do not add automatic classification or reconciliation;
-- do not expand unrelated UI;
-- do not work on the broader dashboard issue;
-- do not push without explicit approval.
-<!-- END PERSONAL FINANCE PRIORITY 2026-08-05 -->
+Code baseline before this documentation update: `0f07a56678676c17727f10c23dd169a487da4a2e`
+<!-- END PERSONAL FINANCE PRIORITY 2026-08-07 -->
 
 ---
 

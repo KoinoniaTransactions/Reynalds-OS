@@ -132,3 +132,73 @@ Workspace navigation and future product-aware application behavior should consum
 - Registry contract tests should protect product lookup, classification helpers, and registry-driven workspace navigation.
 - A new product must not be added to code without first confirming that it is approved and documented in the Brain.
 - Architectural product changes require a Brain update in the same focused slice or immediate follow-up commit.
+
+---
+
+# ADR-0007 - J&M Reynalds Finances Is Local-First With a Secure Hosted Destination
+
+## Status
+
+Accepted
+
+## Decision
+
+J&M Reynalds Finances will remain local-first during current development but is not permanently local-only.
+
+Its approved destination is a private authenticated household financial application that Jeremiah and his wife can securely access remotely.
+
+Current localhost/private-network restrictions remain development safety controls and must not simply be weakened to create public access.
+
+## Consequences
+
+- current development continues with synthetic data and local SQLite;
+- production hosting requires explicit authentication, household authorization, managed persistence, HTTPS, secrets, monitoring, backups, and tested recovery;
+- real household data must not enter hosted production before the production security gate and final Clean reset;
+- exact hosting, database, authentication, and domain vendors remain deferred decisions.
+
+---
+
+# ADR-0008 - Household Is the Personal Finance Ownership and Authorization Boundary
+
+## Status
+
+Accepted
+
+## Decision
+
+Production Personal Finance data belongs to an explicit J&M household boundary rather than an implicit single-user database.
+
+Jeremiah and his wife authenticate as separate users. Protected Personal Finance operations must validate both authenticated identity and active household membership before accessing household resources.
+
+## Consequences
+
+- authentication alone is not authorization;
+- financial entities require explicit or safely inherited household ownership;
+- client-provided household identifiers are never sufficient authorization;
+- both protected reads and writes require household authorization;
+- unnecessary enterprise tenancy or complex RBAC should not be introduced without an actual household requirement.
+
+---
+
+# ADR-0009 - Financial Providers Are Adapters, Not the Personal Finance Domain
+
+## Status
+
+Accepted
+
+## Decision
+
+Manual financial records remain first-class, and external financial-data providers are integrated behind server-side provider boundaries.
+
+Plaid is the preferred first provider candidate to evaluate, but core Personal Finance objects must remain provider-neutral.
+
+Canonical provenance categories are `manual`, `demo`, `statement_import`, `provider`, and `calculated`. Provider-backed records identify the provider separately from provenance category.
+
+## Consequences
+
+- provider IDs do not become canonical Personal Finance primary keys;
+- provider credentials remain server-side;
+- synchronization must be idempotent and retry-safe;
+- provider observations do not automatically classify, review, reconcile, or allocate transactions;
+- manual workflows remain available when provider coverage is incomplete;
+- provider implementation begins only after the household, provenance, authorization, and adapter foundations are ready.
