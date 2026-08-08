@@ -14,6 +14,40 @@ Each development session should add a new entry with:
 
 ---
 
+
+## 2026-08-08 - Billing Persistence and Clerk Development Login Verified
+
+### Summary
+
+Completed the persisted billing-profile/service-activation foundation and verified the real Clerk Development login path without mock authentication.
+
+### Completed
+
+- Persisted CustomerBillingProfile, ServiceActivation, and BillingSetupRequest records transactionally.
+- Preserved client ownership and staff assignment boundaries.
+- Linked localhost to the existing Koinonia Client Portal Clerk application and pulled Development credentials.
+- Verified real Google authentication.
+- Corrected the local Owner fixture so the real admin identity resolves to the Koinonia Owner role.
+- Verified Owner access to both Client and Employee portals.
+- Added `.env.local.*` to Git ignore protection.
+
+### Verification
+
+- Portal billing persistence focused tests passed as part of commit `544cf4b`.
+- Auth package tests: 16 of 16 passed.
+- Database TypeScript build passed.
+- `git diff --check` passed.
+- Local database confirmed as localhost development Postgres before identity changes.
+
+### Commits
+
+- `544cf4b` - Persist portal billing profiles and service activations.
+- `a92f8c5` - Align local Koinonia owner auth fixture.
+
+### Recommended Next Step
+
+Implement Step 6 of the billing specification: processor customer and payment-method reference modeling using safe processor references and payment-method summaries only.
+
 ## 2026-08-03 — Portal Provider Configuration Advanced
 
 ### Summary

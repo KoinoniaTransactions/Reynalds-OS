@@ -306,7 +306,7 @@ Build billing in safe slices:
 2. Billing permissions and tests. — Complete
 3. Client billing center preview with live billing setup and invoice status fallback. — Complete
 4. Employee billing workspace preview with live billing setup, invoice queue, and status updates. — Complete
-5. Billing profile and service activation schema.
+5. Billing profile and service activation schema. - Complete
 6. Processor customer/payment-method reference model.
 7. Processor-hosted payment setup link flow.
 8. Prepaid invoice collection.

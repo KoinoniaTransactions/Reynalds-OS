@@ -7,6 +7,24 @@ Primary Business Priority: Koinonia Transactions website launch and client-acqui
 
 ---
 
+
+## 2026-08-08 Current Session Handoff - Billing Persistence and Real Clerk Login
+
+Status: Verified locally and pushed.
+
+- Commit `544cf4b` persists CustomerBillingProfile, ServiceActivation, and BillingSetupRequest records with client ownership and safe billing-model derivation.
+- Clerk localhost authentication now uses the Koinonia Client Portal Development instance rather than production credentials.
+- Real Google sign-in was verified locally.
+- The local Koinonia Owner identity resolves to the Owner role and was verified against both `/client/dashboard` and `/employee/dashboard`.
+- The permission model remains unchanged: Owner can access both portals while Client users remain restricted to client permissions.
+- Commit `a92f8c5` aligns the local seeded Owner identity with the real admin email and protects `.env.local.*` backup files from Git.
+- Focused auth tests passed 16 of 16, database TypeScript passed, and `git diff --check` passed.
+- Production branch `koinonia-production` was not changed. `chatgpt/portal-access-status` remains the pre-live portal development branch.
+
+### Next Correct Billing Slice
+
+Continue with Step 6 of `docs/specifications/KOINONIA_BILLING_PAYMENT_SPEC.md`: processor customer and payment-method reference modeling. Preserve the processor-hosted security boundary and never store raw card, CVV, bank, or processor-secret data.
+
 # 2026-08-03 Current Session Handoff — Portal Provider Configuration
 
 Status: Continue from root project folder

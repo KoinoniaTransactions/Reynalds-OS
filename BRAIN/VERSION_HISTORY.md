@@ -8,6 +8,15 @@ Unlike RELEASE_NOTES, which describe user-facing changes, this file records arch
 
 ---
 
+
+## 2026-08-08 - Portal Billing Persistence and Real Authentication Milestone
+
+- Completed the billing profile and service activation foundation through persisted portal records.
+- Verified Clerk Development authentication and real Google sign-in locally.
+- Verified the Koinonia Owner role can access both Client and Employee portals under the existing permission model.
+- Hardened the local Owner fixture and environment-backup ignore rules.
+- Next billing milestone is processor customer/payment-method reference modeling.
+
 # v11.3.1 — Foundation Stabilization
 
 **Status:** In Progress
