@@ -1,5 +1,8 @@
-import { PermissionDeniedError, type AuthUser, type Permission } from "@reynalds-os/auth";
-import type { Prisma } from "@reynalds-os/database";
+import {
+  PermissionDeniedError,
+  type AuthUser,
+  type Permission
+} from "@reynalds-os/auth";
 import { NextResponse } from "next/server";
 import { getAuthErrorResponse } from "../../../../lib/api-auth";
 import { assertPermission } from "../../../../lib/auth";
@@ -7,16 +10,13 @@ import {
   applyBillingSetupRequestSourcePolicy,
   billingSetupRequestObjectType,
   BillingSetupValidationError,
-  buildBillingSetupNextAction,
-  buildBillingSetupRequestName,
-  getBillingSetupHealth,
   validateBillingSetupRequestInput
 } from "../../../../lib/billing-setup-requests";
 import { prisma } from "../../../../lib/db";
 import {
-  buildPersistedPortalPlaybookSnapshot,
-  buildPortalPlaybook
-} from "../../../../lib/portal-playbook";
+  BillingTargetNotFoundError,
+  createPortalBillingSetupBundle
+} from "../../../../lib/portal-billing-persistence";
 
 export const dynamic = "force-dynamic";
 
@@ -35,13 +35,31 @@ export async function GET() {
         archivedAt: null,
         ...(canViewWorkspaceQueue
           ? {}
-          : { OR: [{ clientUserId: actor.id }, { ownerId: actor.id }] })
+          : {
+              OR: [
+                {
+                  clientUserId: actor.id
+                },
+                {
+                  ownerId: actor.id
+                }
+              ]
+            })
       },
-      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      orderBy: [
+        {
+          updatedAt: "desc"
+        },
+        {
+          createdAt: "desc"
+        }
+      ],
       take: 50
     });
 
-    return NextResponse.json({ billingSetupRequests });
+    return NextResponse.json({
+      billingSetupRequests
+    });
   } catch (error) {
     return handleBillingSetupRequestError(error);
   }
@@ -53,69 +71,37 @@ export async function POST(request: Request) {
       "client-portal:billing:setup",
       "billing-workspace:payment-methods:request"
     ]);
-    const requestSource = actor.role === "Client" ? "client-portal" : "employee-portal";
+
+    const requestSource =
+      actor.role === "Client"
+        ? "client-portal"
+        : "employee-portal";
+
+    const rawInput = await request.json();
+
     const input = applyBillingSetupRequestSourcePolicy(
-      validateBillingSetupRequestInput(await request.json()),
+      validateBillingSetupRequestInput(rawInput),
       requestSource
     );
 
-    const billingSetupRequest = await prisma.rosObject.create({
-      data: {
-        workspaceId: actor.workspaceId,
-        objectType: billingSetupRequestObjectType,
-        name: buildBillingSetupRequestName(input),
-        status: input.status,
-        health: getBillingSetupHealth(input.status),
-        ownerId: actor.id,
-        clientUserId: actor.role === "Client" ? actor.id : undefined,
-        assignedStaffUserId: actor.role === "Client" ? undefined : actor.id,
-        nextAction: buildBillingSetupNextAction(input),
-        data: buildBillingSetupRequestData(input, actor)
-      }
+    const created = await createPortalBillingSetupBundle({
+      actor,
+      input,
+      rawInput,
+      requestSource
     });
 
-    await prisma.timelineEvent.create({
-      data: {
-        workspaceId: actor.workspaceId,
-        objectId: billingSetupRequest.id,
-        actorId: actor.id,
-        eventType: "billing_setup.requested",
-        summary: `Billing setup requested for ${input.serviceName}`,
-        newValue: {
-          billingSetupRequestId: billingSetupRequest.id,
-          billingModel: input.billingModel,
-          serviceName: input.serviceName,
-          status: input.status
-        }
-      }
+    return NextResponse.json(created, {
+      status: 201
     });
-
-    await prisma.auditEvent.create({
-      data: {
-        workspaceId: actor.workspaceId,
-        actorId: actor.id,
-        actorEmail: actor.email,
-        action: "portal.billing_setup.requested",
-        subjectType: "RosObject",
-        subjectId: billingSetupRequest.id,
-        summary: `Billing setup requested for ${input.serviceName}`,
-        metadata: {
-          billingModel: input.billingModel,
-          consentAcknowledged: input.consentAcknowledged,
-          requestSource: actor.role === "Client" ? "client-portal" : "employee-portal",
-          serviceName: input.serviceName,
-          status: input.status
-        }
-      }
-    });
-
-    return NextResponse.json({ billingSetupRequest }, { status: 201 });
   } catch (error) {
     return handleBillingSetupRequestError(error);
   }
 }
 
-async function assertAnyPermission(permissions: Permission[]): Promise<AuthUser> {
+async function assertAnyPermission(
+  permissions: Permission[]
+): Promise<AuthUser> {
   let permissionDeniedError: PermissionDeniedError | null = null;
 
   for (const permission of permissions) {
@@ -131,55 +117,17 @@ async function assertAnyPermission(permissions: Permission[]): Promise<AuthUser>
     }
   }
 
-  throw permissionDeniedError ?? new PermissionDeniedError(permissions[0]);
+  throw (
+    permissionDeniedError ??
+    new PermissionDeniedError(permissions[0])
+  );
 }
 
 function canViewAllBillingSetupRequests(actor: AuthUser): boolean {
-  return actor.role !== "Client" && actor.permissions.includes("billing-workspace:view");
-}
-
-function buildBillingSetupRequestData(
-  input: ReturnType<typeof validateBillingSetupRequestInput>,
-  actor: AuthUser
-): Prisma.InputJsonObject {
-  const data: Record<string, Prisma.InputJsonValue> = {
-    billingModel: input.billingModel,
-    consentAcknowledged: input.consentAcknowledged,
-    requestedByEmail: actor.email,
-    requestedByUserId: actor.id,
-    requestSource: actor.role === "Client" ? "client-portal" : "employee-portal",
-    serviceName: input.serviceName
-  };
-
-  if (input.amountLabel) {
-    data.amountLabel = input.amountLabel;
-  }
-
-  if (input.clientName) {
-    data.clientName = input.clientName;
-  }
-
-  if (input.notes) {
-    data.notes = input.notes;
-  }
-
-  if (input.triggerDescription) {
-    data.triggerDescription = input.triggerDescription;
-  }
-
-  const playbook = buildPortalPlaybook({
-    data,
-    name: buildBillingSetupRequestName(input),
-    objectType: billingSetupRequestObjectType
-  });
-
-  if (playbook) {
-    data.playbook = buildPersistedPortalPlaybookSnapshot(
-      playbook
-    ) as Prisma.InputJsonObject;
-  }
-
-  return data as Prisma.InputJsonObject;
+  return (
+    actor.role !== "Client" &&
+    actor.permissions.includes("billing-workspace:view")
+  );
 }
 
 function handleBillingSetupRequestError(error: unknown) {
@@ -189,12 +137,37 @@ function handleBillingSetupRequestError(error: unknown) {
     return authResponse;
   }
 
+  if (error instanceof BillingTargetNotFoundError) {
+    return NextResponse.json(
+      {
+        error: error.message
+      },
+      {
+        status: 404
+      }
+    );
+  }
+
   if (error instanceof BillingSetupValidationError) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json(
+      {
+        error: error.message
+      },
+      {
+        status: 400
+      }
+    );
   }
 
   if (isDatabaseUnavailableError(error)) {
-    return NextResponse.json({ error: "Billing setup storage is temporarily unavailable." }, { status: 503 });
+    return NextResponse.json(
+      {
+        error: "Billing setup storage is temporarily unavailable."
+      },
+      {
+        status: 503
+      }
+    );
   }
 
   throw error;
