@@ -60,7 +60,7 @@ async function main() {
   }
 
   await prisma.user.upsert({
-    where: { email: "owner@example.com" },
+    where: { email: "jeremiah@koinoniaadmin.com" },
     update: {
       roleId: ownerRole.id,
       status: "active",
@@ -71,7 +71,7 @@ async function main() {
       id: "usr_owner",
       workspaceId: workspace.id,
       name: "Jeremiah Reynalds",
-      email: "owner@example.com",
+      email: "jeremiah@koinoniaadmin.com",
       roleId: ownerRole.id,
       status: "active",
       mfaRequired: true,
