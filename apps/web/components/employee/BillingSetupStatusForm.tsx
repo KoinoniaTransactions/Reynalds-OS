@@ -24,6 +24,11 @@ type BillingSetupStatusResponse = {
   error?: string;
 };
 
+type ProcessorSessionResponse = {
+  error?: string;
+  url?: string;
+};
+
 export function BillingSetupStatusForm({
   currentStatus,
   disabled = false,
@@ -33,7 +38,8 @@ export function BillingSetupStatusForm({
   const [selectedStatus, setSelectedStatus] = useState(normalizeStatus(currentStatus));
   const [status, setStatus] = useState<"error" | "success" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isDisabled = disabled || isSubmitting;
+  const [isCreatingLink, setIsCreatingLink] = useState(false);
+  const isDisabled = disabled || isSubmitting || isCreatingLink;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -72,6 +78,33 @@ export function BillingSetupStatusForm({
       setMessage(error instanceof Error ? error.message : "Unable to update this billing setup yet.");
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function createSecureSetupLink() {
+    setIsCreatingLink(true);
+    setMessage(null);
+    setStatus(null);
+
+    try {
+      const response = await fetch(
+        `/api/portal/billing-setup-requests/${requestId}/processor-session`,
+        { method: "POST" }
+      );
+      const payload = (await response.json()) as ProcessorSessionResponse;
+
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.error ?? "Unable to create a Stripe secure setup link.");
+      }
+
+      await navigator.clipboard.writeText(payload.url);
+      setStatus("success");
+      setMessage("A fresh Stripe secure setup link was created and copied to your clipboard.");
+    } catch (error) {
+      setStatus("error");
+      setMessage(error instanceof Error ? error.message : "Unable to create a Stripe secure setup link.");
+    } finally {
+      setIsCreatingLink(false);
     }
   }
 
@@ -136,6 +169,20 @@ export function BillingSetupStatusForm({
       <button className="koinonia-button primary" disabled={isDisabled} type="submit">
         {isSubmitting ? "Saving" : "Save Billing Status"}
       </button>
+
+      <button
+        className="koinonia-button secondary"
+        disabled={isDisabled}
+        onClick={createSecureSetupLink}
+        type="button"
+      >
+        {isCreatingLink ? "Creating Secure Link" : "Create & Copy Stripe Setup Link"}
+      </button>
+
+      <p className="koinonia-billing-security-note employee">
+        Secure setup links open Stripe-hosted payment collection. Do not ask clients to send card,
+        CVV, or bank details through Koinonia notes or messages.
+      </p>
 
       {disabled ? (
         <p className="koinonia-billing-security-note employee">

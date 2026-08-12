@@ -8,6 +8,18 @@ type BillingSetupRequestFormProps = {
   storageReady: boolean;
 };
 
+type BillingSetupCreateResponse = {
+  billingSetupRequest?: {
+    id: string;
+  };
+  error?: string;
+};
+
+type ProcessorSessionResponse = {
+  error?: string;
+  url?: string;
+};
+
 const billingSetupOptions = getKoinoniaBillingSetupOptions();
 
 export function BillingSetupRequestForm({ storageReady }: BillingSetupRequestFormProps) {
@@ -36,7 +48,9 @@ export function BillingSetupRequestForm({ storageReady }: BillingSetupRequestFor
     setStatus(null);
 
     try {
-      const formData = new FormData(event.currentTarget);
+      const form = event.currentTarget;
+      const formData = new FormData(form);
+      const consentAcknowledged = formData.get("consentAcknowledged") === "on";
       const response = await fetch("/api/portal/billing-setup-requests", {
         method: "POST",
         headers: {
@@ -46,21 +60,44 @@ export function BillingSetupRequestForm({ storageReady }: BillingSetupRequestFor
           amountLabel: formData.get("amountLabel"),
           billingModel: formData.get("billingModel"),
           clientName: formData.get("clientName"),
-          consentAcknowledged: formData.get("consentAcknowledged") === "on",
+          consentAcknowledged,
           notes: formData.get("notes"),
           serviceName: formData.get("serviceName"),
           triggerDescription: formData.get("triggerDescription")
         })
       });
-      const payload = (await response.json()) as { error?: string };
+      const payload = (await response.json()) as BillingSetupCreateResponse;
 
-      if (!response.ok) {
+      if (!response.ok || !payload.billingSetupRequest?.id) {
         throw new Error(payload.error ?? "Unable to save this billing setup request yet.");
       }
 
-      event.currentTarget.reset();
+      if (consentAcknowledged) {
+        setMessage("Billing setup saved. Opening Stripe secure payment setup...");
+        setStatus("success");
+
+        const processorResponse = await fetch(
+          `/api/portal/billing-setup-requests/${payload.billingSetupRequest.id}/processor-session`,
+          { method: "POST" }
+        );
+        const processorPayload = (await processorResponse.json()) as ProcessorSessionResponse;
+
+        if (!processorResponse.ok || !processorPayload.url) {
+          throw new Error(
+            processorPayload.error ??
+              "Billing setup was saved, but Stripe secure setup could not be opened yet."
+          );
+        }
+
+        window.location.assign(processorPayload.url);
+        return;
+      }
+
+      form.reset();
       setStatus("success");
-      setMessage("Billing setup request saved. Koinonia can send the secure processor link.");
+      setMessage(
+        "Billing setup request saved. Billing consent must be recorded before Stripe secure setup can begin."
+      );
       router.refresh();
     } catch (error) {
       setStatus("error");
@@ -110,10 +147,8 @@ export function BillingSetupRequestForm({ storageReady }: BillingSetupRequestFor
         ) : null}
 
         <p className="koinonia-billing-security-note">
-          Prepaid, per-request, and monthly services move to secure processor
-          setup after consent. Pay-at-close services are tracked until a
-          successful closing. Payment method readiness is confirmed by
-          Koinonia only after secure processor verification.
+          After billing consent is recorded, this form opens Stripe's secure hosted setup page.
+          Card details are entered with Stripe, not in Koinonia.
         </p>
 
         <label>
@@ -151,7 +186,7 @@ export function BillingSetupRequestForm({ storageReady }: BillingSetupRequestFor
         </label>
 
         <button className="koinonia-button primary" disabled={disabled} type="submit">
-          {isSubmitting ? "Saving" : "Save Setup Request"}
+          {isSubmitting ? "Opening Secure Setup" : "Save & Open Secure Payment Setup"}
         </button>
 
         {!storageReady ? (

@@ -47,6 +47,28 @@ describe("stripe webhook helpers", () => {
     });
   });
 
+  it("does not mark setup ready from checkout completion alone", () => {
+    const event = {
+      data: {
+        object: {
+          id: "cs_123",
+          metadata: {
+            koinoniaBillingSetupRequestId: "obj_123",
+            koinoniaWorkspaceId: "wks_koinonia"
+          },
+          setup_intent: "seti_123"
+        }
+      },
+      type: "checkout.session.completed"
+    } as unknown as Stripe.Event;
+
+    expect(summarizeStripePortalEvent(event)).toMatchObject({
+      action: "record_only",
+      billingSetupRequestId: "obj_123",
+      workspaceId: "wks_koinonia"
+    });
+  });
+
   it("maps safe processor references and card display data from setup events", () => {
     const event = {
       data: {

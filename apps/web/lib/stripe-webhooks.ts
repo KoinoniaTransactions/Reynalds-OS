@@ -103,7 +103,7 @@ export function summarizeStripePortalEvent(event: Stripe.Event): StripePortalEve
     case "checkout.session.completed":
       return {
         ...baseSummary,
-        action: invoiceId ? "invoice_paid" : billingSetupRequestId ? "billing_setup_ready" : "record_only"
+        action: invoiceId ? "invoice_paid" : "record_only"
       };
     case "setup_intent.succeeded":
       return {
