@@ -1,6 +1,6 @@
 # Koinonia Portal Phase A Checkpoint — 2026-08-12
 
-Status: Billing Steps 6 and 7 verified locally on `chatgpt/portal-access-status`.
+Status: Billing Steps 6, 7, and 8 verified locally on `chatgpt/portal-access-status`.
 
 ## Billing Step 6 Complete
 
@@ -53,6 +53,37 @@ Sandbox verification completed on 2026-08-12:
 
 Closure validation for this checkpoint reruns the complete focused Step 7 billing/Stripe test set, TypeScript, and Git diff checks before commit.
 
+
+## Billing Step 8 Complete
+
+Processor-hosted prepaid invoice collection is implemented and verified in the Koinonia Stripe sandbox.
+
+Implemented:
+
+- Dedicated `client-portal:billing:pay` permission for the client invoice-payment path.
+- Client-owned invoice access checks before payment-session creation.
+- Prepaid eligibility enforcement for invoices due before work begins.
+- Server-controlled invoice amount conversion to Stripe Checkout line items.
+- Stripe Checkout payment-mode session creation with safe Koinonia workspace and invoice reconciliation metadata.
+- Client `Pay Securely` action only for eligible live prepaid invoices.
+- Existing Stripe webhook reconciliation extended with terminal invoice-transition protection so redundant or stale processor events cannot create duplicate successful payments or regress paid/refunded invoice state.
+- Existing payment, timeline, and audit architecture is reused rather than creating a separate payment subsystem.
+
+Sandbox verification completed on 2026-08-12:
+
+- Controlled local Transaction Coordination Plus invoice: `inv_step8_prepaid_389`.
+- Pre-payment state: $389, `Due Before Work Begins`, no `paidAt`, zero Payment records.
+- Stripe-hosted Checkout opened from the client billing center.
+- Stripe returned successfully to `/client/billing?invoice_payment=success`.
+- Final invoice status: `Paid`.
+- `paidAt` persisted at `2026-08-12T17:00:45.447Z`.
+- Exactly one successful $389 Payment record was created.
+- The Payment record has a matching received timestamp.
+- Stripe audit event `evt_1U3fWCEHvZtJuixI5i96XoaG` was recorded as processed for the invoice.
+- Invoice timeline recorded `invoice.paid`.
+- The live local listener used for this payment forwarded `checkout.session.completed`; duplicate terminal-transition behavior is additionally covered by focused automated tests.
+- No production deployment was performed.
+
 ## Production Boundary
 
 - The production Koinonia website was not changed.
@@ -64,6 +95,6 @@ Closure validation for this checkpoint reruns the complete focused Step 7 billin
 
 ## Next Correct Billing Slice
 
-Continue with Step 8 of `docs/specifications/KOINONIA_BILLING_PAYMENT_SPEC.md`: prepaid invoice collection.
+Continue with Step 9 of `docs/specifications/KOINONIA_BILLING_PAYMENT_SPEC.md`: pay-at-closing trigger workflow.
 
-Step 8 should extend the existing invoice and Stripe webhook architecture rather than create a separate payment system. The first target is the $389 prepaid Transaction Coordination Plus flow: an eligible open invoice should be payable through a processor-hosted Stripe payment session, with Koinonia storing only safe processor references, invoice/payment status, and audit history.
+Step 9 should preserve the existing processor-hosted payment boundary and extend the verified billing architecture only for the approved pay-at-closing workflow. Do not expand into monthly/custom billing or production payment deployment before Step 9 is separately implemented and verified.

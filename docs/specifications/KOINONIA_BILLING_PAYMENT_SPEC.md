@@ -309,13 +309,37 @@ Build billing in safe slices:
 5. Billing profile and service activation schema. - Complete
 6. Processor customer/payment-method reference model. - Complete
 7. Processor-hosted payment setup link flow. - Complete
-8. Prepaid invoice collection.
+8. Prepaid invoice collection. - Complete
 9. Pay-at-closing trigger workflow.
 10. Monthly/custom billing workflow.
 11. Payment audit trail.
 12. Production security and compliance review before collecting real payment methods.
 
 ---
+
+
+### Step 8 Verification — 2026-08-12
+
+Prepaid invoice collection is implemented and verified locally in the Koinonia Stripe sandbox.
+
+Verified behavior:
+
+- Client users have a dedicated `client-portal:billing:pay` permission without receiving staff payment-processing authority.
+- Eligible client-owned invoices in `Due Before Work Begins` status can open a Stripe-hosted Checkout payment session.
+- The invoice amount is loaded server-side from Koinonia and is not accepted from browser input.
+- Stripe reconciliation metadata includes `koinoniaWorkspaceId` and `koinoniaInvoiceId`.
+- Koinonia continues to store no raw card number or CVV/CVC.
+- The first verified prepaid flow used Transaction Coordination Plus at $389.
+- Stripe returned successfully to `/client/billing?invoice_payment=success`.
+- The verified invoice `inv_step8_prepaid_389` persisted as `Paid` with a payment timestamp.
+- Exactly one successful $389 `Payment` record was created.
+- A processed Stripe webhook audit event and invoice-paid timeline event were persisted.
+- Duplicate or stale terminal invoice transitions are guarded so a second success event cannot create a second successful payment record for an already-paid invoice.
+- The live local listener used for this round-trip forwarded `checkout.session.completed`; duplicate terminal-transition behavior is additionally covered by focused automated tests.
+- No production deployment was performed.
+
+Step 9 is the next billing slice: pay-at-closing trigger workflow.
+
 
 ## 10. Launch Classification
 

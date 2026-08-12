@@ -8,6 +8,51 @@ Primary Business Priority: Complete the pre-live Koinonia client portal phases, 
 ---
 
 
+
+## 2026-08-12 Current Session Handoff - Stripe Prepaid Invoice Collection Step 8 Complete
+
+Status: Verified locally in the Koinonia Stripe sandbox on `chatgpt/portal-access-status`.
+
+### Current Portal State
+
+- The public Koinonia website remains unchanged; this branch is still pre-live client portal development.
+- Billing Step 8, prepaid invoice collection, is complete.
+- Eligible client-owned prepaid invoices can open Stripe-hosted payment-mode Checkout from `/client/billing`.
+- The server controls the invoice amount and reconciliation metadata.
+- The client portal still does not collect or store raw card numbers or CVV/CVC.
+- `client-portal:billing:pay` is separate from staff payment-processing authority.
+- Redundant or stale terminal Stripe invoice transitions are guarded so an already-paid invoice does not receive a second successful Payment record.
+
+### Verification Completed
+
+- Controlled local invoice `inv_step8_prepaid_389` represented Transaction Coordination Plus at $389.
+- Pre-payment state was `Due Before Work Begins` with zero Payment records.
+- Stripe-hosted Checkout completed successfully in the Koinonia sandbox.
+- Browser returned to `/client/billing?invoice_payment=success`.
+- Final invoice status is `Paid`.
+- A payment timestamp was persisted.
+- Exactly one successful $389 Payment record was created.
+- Processed Stripe audit event `evt_1U3fWCEHvZtJuixI5i96XoaG` was confirmed.
+- Invoice timeline recorded `invoice.paid`.
+- The live local listener forwarded `checkout.session.completed`; duplicate terminal-transition behavior is additionally covered by focused automated tests.
+- No production deployment was performed.
+
+### Security Boundary
+
+- Never commit or paste Stripe `sk_test_`, `sk_live_`, or webhook signing secrets.
+- Keep sandbox and production secrets in approved secret storage only.
+- Continue storing only safe processor references, payment status, and approved display metadata.
+- Do not trust browser-supplied invoice amounts or client ownership.
+- Production payment collection remains a later deliberate integration step.
+
+### Next Correct Billing Slice
+
+Proceed to Step 9: pay-at-closing trigger workflow.
+
+Extend the verified billing architecture for the approved $599 pay-at-closing model. The trigger must depend on successful closing state and authorization rather than allowing the client or browser to mark the fee due. Do not expand into monthly/custom billing or production deployment until Step 9 is separately implemented and verified.
+
+---
+
 ## 2026-08-12 Current Session Handoff - Stripe Hosted Payment Setup Step 7 Complete
 
 Status: Verified locally in the Koinonia Stripe sandbox on `chatgpt/portal-access-status`.

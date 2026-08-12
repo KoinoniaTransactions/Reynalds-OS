@@ -15,6 +15,59 @@ Each development session should add a new entry with:
 ---
 
 
+
+## 2026-08-12 - Stripe Prepaid Invoice Collection Step 8 Verified
+
+### Objective
+
+Complete and prove Billing Step 8: processor-hosted prepaid invoice collection for the Koinonia client portal while preserving client ownership, server-controlled invoice amounts, and the no-raw-card-data security boundary.
+
+### Completed
+
+- Added `client-portal:billing:pay` as a dedicated client invoice-payment permission.
+- Added server-side prepaid invoice eligibility and ownership checks.
+- Added Stripe Checkout payment-mode session creation for eligible invoices.
+- Kept invoice amount authority on the server rather than browser input.
+- Added safe `koinoniaWorkspaceId` and `koinoniaInvoiceId` Stripe reconciliation metadata.
+- Added a client-facing `Pay Securely` action for eligible live invoices.
+- Reused the existing Invoice, Payment, Stripe webhook, TimelineEvent, and AuditEvent architecture.
+- Added invoice transition protection so redundant success events do not create duplicate successful Payment records and stale failure/success events cannot regress terminal invoice state.
+- Created a controlled local $389 Transaction Coordination Plus invoice fixture for sandbox verification only; the fixture remains database-only and is not committed.
+
+### Verification
+
+- Backend auth tests passed: 17 of 17.
+- Focused Step 8 web tests passed: 18 of 18 during implementation.
+- Client UI TypeScript passed.
+- `git diff --check` passed before the sandbox round-trip.
+- Browser displayed the live $389 prepaid invoice with `Pay Securely`.
+- Pre-payment verification confirmed `Due Before Work Begins`, no `paidAt`, and zero Payment records.
+- Stripe-hosted Checkout completed successfully in the Koinonia sandbox.
+- Browser returned to `/client/billing?invoice_payment=success`.
+- Invoice `inv_step8_prepaid_389` persisted as `Paid`.
+- `paidAt` persisted at `2026-08-12T17:00:45.447Z`.
+- Exactly one successful $389 Payment record was created.
+- Processed Stripe audit event `evt_1U3fWCEHvZtJuixI5i96XoaG` was confirmed.
+- Invoice timeline recorded `invoice.paid`.
+- The live listener forwarded `checkout.session.completed`; duplicate terminal-transition behavior is additionally covered by focused automated tests.
+- Closure validation reruns the complete focused Step 7 and Step 8 billing/Stripe regression set before commit.
+
+### Production Boundary
+
+- Stripe sandbox only.
+- No production deployment.
+- No production branch changes.
+- No raw card number, CVV/CVC, bank credential, API key, webhook signing secret, or processor secret is committed.
+- Local sandbox environment values remain in ignored local environment files.
+
+### Recommended Next Step
+
+Implement Billing Step 9: pay-at-closing trigger workflow.
+
+Preserve the verified Stripe/payment architecture and add only the trigger and authorization behavior required for the $599 pay-at-closing model. Do not expand into monthly/custom billing or production payment deployment until Step 9 is separately verified.
+
+---
+
 ## 2026-08-12 - Stripe Hosted Payment Setup Step 7 Verified
 
 ### Objective
