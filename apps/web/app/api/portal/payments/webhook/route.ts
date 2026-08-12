@@ -2,6 +2,7 @@ import type { Prisma } from "@reynalds-os/database";
 import { NextResponse } from "next/server";
 import { buildBillingSetupStatusNextAction, getBillingSetupHealth } from "../../../../../lib/billing-setup-requests";
 import { prisma } from "../../../../../lib/db";
+import { mergeProcessorPaymentMethodProfileData } from "../../../../../lib/portal-billing-processor-references";
 import { getPaymentRecordStatus } from "../../../../../lib/portal-billing-invoices";
 import {
   StripeWebhookValidationError,
@@ -12,6 +13,7 @@ import {
 export const dynamic = "force-dynamic";
 
 const stripeProvider = "stripe";
+const customerBillingProfileObjectType = "CustomerBillingProfile";
 
 export async function POST(request: Request) {
   const webhookSecret = process.env.KOINONIA_PAYMENT_WEBHOOK_SECRET;
@@ -51,7 +53,13 @@ export async function POST(request: Request) {
 
   if (summary.action === "billing_setup_ready" && summary.billingSetupRequestId) {
     await markBillingSetupReady({
+      customerReference: summary.customerReference,
       eventId: event.id,
+      paymentMethodBrand: summary.paymentMethodBrand,
+      paymentMethodExpirationMonth: summary.paymentMethodExpirationMonth,
+      paymentMethodExpirationYear: summary.paymentMethodExpirationYear,
+      paymentMethodLast4: summary.paymentMethodLast4,
+      paymentMethodReference: summary.paymentMethodReference,
       paymentMethodSummary: summary.paymentMethodSummary,
       processorReference: summary.processorReference,
       requestId: summary.billingSetupRequestId,
@@ -93,7 +101,13 @@ export async function POST(request: Request) {
 }
 
 async function markBillingSetupReady(input: {
+  customerReference?: string;
   eventId: string;
+  paymentMethodBrand?: string;
+  paymentMethodExpirationMonth?: number;
+  paymentMethodExpirationYear?: number;
+  paymentMethodLast4?: string;
+  paymentMethodReference?: string;
   paymentMethodSummary?: string;
   processorReference?: string;
   requestId: string;
@@ -124,11 +138,19 @@ async function markBillingSetupReady(input: {
     billingSetupRequest.data && typeof billingSetupRequest.data === "object" && !Array.isArray(billingSetupRequest.data)
       ? { ...(billingSetupRequest.data as Record<string, unknown>) }
       : {};
+  const customerBillingProfileId = readOptionalString(
+    nextData.customerBillingProfileId
+  );
+  const verifiedAt = new Date().toISOString();
 
   nextData.paymentMethodSummary = input.paymentMethodSummary ?? nextData.paymentMethodSummary;
   nextData.processorReference = input.processorReference ?? nextData.processorReference;
+  nextData.processorCustomerReference =
+    input.customerReference ?? nextData.processorCustomerReference;
+  nextData.processorPaymentMethodReference =
+    input.paymentMethodReference ?? nextData.processorPaymentMethodReference;
   nextData.processor = stripeProvider;
-  nextData.processorVerifiedAt = new Date().toISOString();
+  nextData.processorVerifiedAt = verifiedAt;
   nextData.processorWebhookEventId = input.eventId;
 
   await prisma.$transaction(async (tx) => {
@@ -142,6 +164,60 @@ async function markBillingSetupReady(input: {
       }
     });
 
+    let customerBillingProfileUpdated = false;
+
+    if (customerBillingProfileId && input.paymentMethodReference) {
+      const customerBillingProfile = await tx.rosObject.findFirst({
+        where: {
+          archivedAt: null,
+          id: customerBillingProfileId,
+          objectType: customerBillingProfileObjectType,
+          workspaceId: input.workspaceId
+        }
+      });
+
+      if (customerBillingProfile) {
+        const profileData = mergeProcessorPaymentMethodProfileData(
+          customerBillingProfile.data,
+          {
+            brand: input.paymentMethodBrand,
+            customerReference: input.customerReference,
+            expirationMonth: input.paymentMethodExpirationMonth,
+            expirationYear: input.paymentMethodExpirationYear,
+            last4: input.paymentMethodLast4,
+            paymentMethodReference: input.paymentMethodReference,
+            provider: stripeProvider,
+            status: "Ready",
+            verifiedAt
+          }
+        );
+
+        await tx.rosObject.update({
+          where: { id: customerBillingProfile.id },
+          data: { data: profileData }
+        });
+
+        await tx.timelineEvent.create({
+          data: {
+            workspaceId: input.workspaceId,
+            objectId: customerBillingProfile.id,
+            eventType: "billing_profile.payment_method.verified",
+            summary: `Stripe confirmed a payment method for ${customerBillingProfile.name}.`,
+            newValue: {
+              hasCustomerReference: Boolean(input.customerReference),
+              hasPaymentMethodReference: true,
+              paymentMethodBrand: input.paymentMethodBrand ?? null,
+              paymentMethodLast4: input.paymentMethodLast4 ?? null,
+              provider: stripeProvider,
+              status: "Ready"
+            }
+          }
+        });
+
+        customerBillingProfileUpdated = true;
+      }
+    }
+
     await tx.timelineEvent.create({
       data: {
         workspaceId: input.workspaceId,
@@ -152,6 +228,9 @@ async function markBillingSetupReady(input: {
           status: billingSetupRequest.status
         },
         newValue: {
+          customerBillingProfileUpdated,
+          hasCustomerReference: Boolean(input.customerReference),
+          hasPaymentMethodReference: Boolean(input.paymentMethodReference),
           hasPaymentMethodSummary: Boolean(input.paymentMethodSummary),
           hasProcessorReference: Boolean(input.processorReference),
           processor: stripeProvider,
@@ -170,6 +249,10 @@ async function markBillingSetupReady(input: {
         summary: `Stripe payment setup event processed for ${billingSetupRequest.name}.`,
         metadata: {
           billingSetupRequestId: billingSetupRequest.id,
+          customerBillingProfileId: customerBillingProfileId ?? null,
+          customerBillingProfileUpdated,
+          hasCustomerReference: Boolean(input.customerReference),
+          hasPaymentMethodReference: Boolean(input.paymentMethodReference),
           hasPaymentMethodSummary: Boolean(input.paymentMethodSummary),
           hasProcessorReference: Boolean(input.processorReference),
           provider: stripeProvider,
@@ -299,4 +382,8 @@ async function recordStripeEvent(input: {
       }
     }
   });
+}
+
+function readOptionalString(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }

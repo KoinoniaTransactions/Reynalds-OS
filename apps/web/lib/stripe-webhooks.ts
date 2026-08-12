@@ -13,8 +13,14 @@ export type StripePortalEventAction =
 export type StripePortalEventSummary = {
   action: StripePortalEventAction;
   billingSetupRequestId?: string;
+  customerReference?: string;
   eventType: string;
   invoiceId?: string;
+  paymentMethodBrand?: string;
+  paymentMethodExpirationMonth?: number;
+  paymentMethodExpirationYear?: number;
+  paymentMethodLast4?: string;
+  paymentMethodReference?: string;
   paymentMethodSummary?: string;
   processorReference?: string;
   workspaceId?: string;
@@ -74,11 +80,20 @@ export function summarizeStripePortalEvent(event: Stripe.Event): StripePortalEve
   const billingSetupRequestId = getMetadataValue(metadata, "koinoniaBillingSetupRequestId");
   const workspaceId = getMetadataValue(metadata, "koinoniaWorkspaceId");
   const processorReference = getProcessorReference(object);
-  const paymentMethodSummary = getPaymentMethodSummary(object);
+  const customerReference = getStripeObjectReference(object.customer, "cus_");
+  const paymentMethodReference = getStripeObjectReference(object.payment_method, "pm_");
+  const paymentMethodCard = getPaymentMethodCard(object);
+  const paymentMethodSummary = getPaymentMethodSummary(paymentMethodCard);
   const baseSummary = {
     billingSetupRequestId,
+    customerReference,
     eventType: event.type,
     invoiceId,
+    paymentMethodBrand: paymentMethodCard?.brand,
+    paymentMethodExpirationMonth: paymentMethodCard?.exp_month,
+    paymentMethodExpirationYear: paymentMethodCard?.exp_year,
+    paymentMethodLast4: paymentMethodCard?.last4,
+    paymentMethodReference,
     paymentMethodSummary,
     processorReference,
     workspaceId
@@ -135,6 +150,13 @@ type StripePortalEventObject = Stripe.Event.Data.Object & {
   setup_intent?: string | Stripe.SetupIntent | null;
 };
 
+type SafeCardSummary = {
+  brand?: string;
+  exp_month?: number;
+  exp_year?: number;
+  last4?: string;
+};
+
 function parseStripeSignatureHeader(value: string): { signatures: string[]; timestamp: number | null } {
   const parts = value.split(",");
   const signatures: string[] = [];
@@ -179,9 +201,51 @@ function getProcessorReference(object: StripePortalEventObject): string | undefi
   return references.find((value): value is string => Boolean(value));
 }
 
-function getPaymentMethodSummary(object: StripePortalEventObject): string | undefined {
-  const card = object.payment_method_details?.card;
+function getStripeObjectReference(
+  value: string | { id?: string } | null | undefined,
+  prefix: "cus_" | "pm_"
+): string | undefined {
+  const reference =
+    typeof value === "string"
+      ? value
+      : value && typeof value.id === "string"
+        ? value.id
+        : undefined;
 
+  return reference?.startsWith(prefix) ? reference : undefined;
+}
+
+function getPaymentMethodCard(object: StripePortalEventObject): SafeCardSummary | undefined {
+  const expandedPaymentMethod =
+    object.payment_method && typeof object.payment_method === "object"
+      ? object.payment_method
+      : undefined;
+  const expandedCard = expandedPaymentMethod?.card;
+
+  if (expandedCard?.last4) {
+    return {
+      brand: expandedCard.brand ?? undefined,
+      exp_month: expandedCard.exp_month ?? undefined,
+      exp_year: expandedCard.exp_year ?? undefined,
+      last4: expandedCard.last4
+    };
+  }
+
+  const chargeCard = object.payment_method_details?.card;
+
+  if (!chargeCard?.last4) {
+    return undefined;
+  }
+
+  return {
+    brand: chargeCard.brand ?? undefined,
+    exp_month: chargeCard.exp_month ?? undefined,
+    exp_year: chargeCard.exp_year ?? undefined,
+    last4: chargeCard.last4
+  };
+}
+
+function getPaymentMethodSummary(card: SafeCardSummary | undefined): string | undefined {
   if (!card?.last4) {
     return undefined;
   }

@@ -47,15 +47,26 @@ describe("stripe webhook helpers", () => {
     });
   });
 
-  it("maps setup events from Koinonia metadata", () => {
+  it("maps safe processor references and card display data from setup events", () => {
     const event = {
       data: {
         object: {
+          customer: "cus_123ABC",
           id: "seti_123",
           metadata: {
-            koinoniaBillingSetupRequestId: "obj_123"
+            koinoniaBillingSetupRequestId: "obj_123",
+            koinoniaWorkspaceId: "wks_koinonia"
           },
-          payment_method: "pm_123"
+          payment_method: {
+            id: "pm_123ABC",
+            type: "card",
+            card: {
+              brand: "visa",
+              exp_month: 12,
+              exp_year: 2030,
+              last4: "4242"
+            }
+          }
         }
       },
       type: "setup_intent.succeeded"
@@ -64,7 +75,40 @@ describe("stripe webhook helpers", () => {
     expect(summarizeStripePortalEvent(event)).toMatchObject({
       action: "billing_setup_ready",
       billingSetupRequestId: "obj_123",
-      processorReference: "seti_123"
+      customerReference: "cus_123ABC",
+      paymentMethodBrand: "visa",
+      paymentMethodExpirationMonth: 12,
+      paymentMethodExpirationYear: 2030,
+      paymentMethodLast4: "4242",
+      paymentMethodReference: "pm_123ABC",
+      paymentMethodSummary: "Visa ending 4242, expires 12/2030",
+      processorReference: "seti_123",
+      workspaceId: "wks_koinonia"
     });
+  });
+
+  it("maps string payment-method references without inventing card display data", () => {
+    const event = {
+      data: {
+        object: {
+          customer: "cus_456DEF",
+          id: "seti_456",
+          metadata: {
+            koinoniaBillingSetupRequestId: "obj_456"
+          },
+          payment_method: "pm_456DEF"
+        }
+      },
+      type: "setup_intent.succeeded"
+    } as unknown as Stripe.Event;
+
+    expect(summarizeStripePortalEvent(event)).toMatchObject({
+      action: "billing_setup_ready",
+      billingSetupRequestId: "obj_456",
+      customerReference: "cus_456DEF",
+      paymentMethodReference: "pm_456DEF",
+      processorReference: "seti_456"
+    });
+    expect(summarizeStripePortalEvent(event).paymentMethodSummary).toBeUndefined();
   });
 });
