@@ -1,13 +1,16 @@
 import type { Prisma } from "@reynalds-os/database";
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
 import { buildBillingSetupStatusNextAction, getBillingSetupHealth } from "../../../../../lib/billing-setup-requests";
 import { prisma } from "../../../../../lib/db";
 import { mergeProcessorPaymentMethodProfileData } from "../../../../../lib/portal-billing-processor-references";
 import { getPaymentRecordStatus } from "../../../../../lib/portal-billing-invoices";
+import { summarizeStripePaymentMethod } from "../../../../../lib/stripe-payment-method-safe-summary";
 import {
   StripeWebhookValidationError,
   summarizeStripePortalEvent,
-  verifyStripeWebhookPayload
+  verifyStripeWebhookPayload,
+  type StripePortalEventSummary
 } from "../../../../../lib/stripe-webhooks";
 
 export const dynamic = "force-dynamic";
@@ -34,8 +37,8 @@ export async function POST(request: Request) {
     throw error;
   }
 
-  const event = JSON.parse(payload);
-  const summary = summarizeStripePortalEvent(event);
+  const event = JSON.parse(payload) as Stripe.Event;
+  let summary = summarizeStripePortalEvent(event);
   const workspaceId =
     summary.workspaceId || process.env.ROS_DEFAULT_WORKSPACE_ID || "wks_koinonia";
   const existingEvent = await prisma.auditEvent.findFirst({
@@ -52,6 +55,8 @@ export async function POST(request: Request) {
   }
 
   if (summary.action === "billing_setup_ready" && summary.billingSetupRequestId) {
+    summary = await enrichSetupPaymentMethodSummary(summary);
+
     await markBillingSetupReady({
       customerReference: summary.customerReference,
       eventId: event.id,
@@ -98,6 +103,33 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({ received: true });
+}
+
+async function enrichSetupPaymentMethodSummary(
+  summary: StripePortalEventSummary
+): Promise<StripePortalEventSummary> {
+  if (!summary.paymentMethodReference || summary.paymentMethodSummary) {
+    return summary;
+  }
+
+  const secretKey = process.env.KOINONIA_STRIPE_SECRET_KEY?.trim();
+
+  if (!secretKey) {
+    throw new Error(
+      "Stripe secret key is required to verify safe payment method display metadata."
+    );
+  }
+
+  const stripe = new Stripe(secretKey);
+  const paymentMethod = await stripe.paymentMethods.retrieve(
+    summary.paymentMethodReference
+  );
+  const safeSummary = summarizeStripePaymentMethod(paymentMethod);
+
+  return {
+    ...summary,
+    ...safeSummary
+  };
 }
 
 async function markBillingSetupReady(input: {
