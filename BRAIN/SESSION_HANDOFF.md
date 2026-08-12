@@ -3,11 +3,56 @@
 Status: Active Session Handoff
 Repository: Reynalds OS
 Current Branch: `chatgpt/portal-access-status`
-Primary Business Priority: Koinonia Transactions website launch and client-acquisition system
+Primary Business Priority: Complete the pre-live Koinonia client portal phases, then integrate the verified portal into the production website
 
 ---
 
 
+## 2026-08-12 Current Session Handoff - Stripe Hosted Payment Setup Step 7 Complete
+
+Status: Verified locally in the Koinonia Stripe sandbox on `chatgpt/portal-access-status`.
+
+### Current Portal State
+
+- The public Koinonia website is already launched; this branch remains pre-live client portal development.
+- Billing Step 7, processor-hosted payment setup, is complete.
+- Stripe Checkout setup mode opens from `/client/billing` after recorded billing consent.
+- The card-entry boundary remains entirely processor-hosted.
+- The client portal does not store raw card numbers or CVV/CVC.
+- A dual-access Owner/client-portal classification bug discovered during the live sandbox test was fixed with explicit portal request context plus server-side permission enforcement.
+- Staff-created requests still require a real `clientObjectId`; the existing staff targeting boundary remains intact.
+
+### Verification Completed
+
+- Real Koinonia Stripe sandbox hosted setup completed successfully.
+- Browser returned to `/client/billing?payment_setup=success`.
+- `setup_intent.succeeded` webhook delivery returned HTTP 200.
+- `checkout.session.completed` webhook delivery returned HTTP 200.
+- Persisted `BillingSetupRequest` status: `Payment Method Ready`.
+- Persisted billing setup health: `Healthy`.
+- Linked `CustomerBillingProfile` consent: `Authorized`.
+- Linked processor payment-method status: `Ready`.
+- Safe `cus_...` and `pm_...` processor references were stored.
+- Safe display metadata verified Visa ending 4242, expiration 12/2034.
+- No sensitive payment field names were found in the durable billing records.
+- Webhook audit records were confirmed.
+- Dual-access regression validation passed 17 of 17 focused tests.
+- No production deployment was performed.
+
+### Security Boundary
+
+- Never commit or paste Stripe `sk_test_`, `sk_live_`, or webhook signing secrets.
+- Keep local sandbox keys in ignored local environment files only.
+- Continue storing only safe processor references and payment-method summaries.
+- Production payment collection remains a later deliberate integration step.
+
+### Next Correct Billing Slice
+
+Proceed to Step 8: prepaid invoice collection.
+
+Use the existing `Invoice`, Stripe session, payment webhook, and audit architecture. The first target is the $389 prepaid Transaction Coordination Plus invoice flow. Do not expand into pay-at-closing, monthly/custom billing, or production deployment until the Step 8 slice is separately implemented and verified.
+
+---
 ## 2026-08-08 Current Session Handoff - Billing Persistence and Real Clerk Login
 
 Status: Verified locally and pushed.

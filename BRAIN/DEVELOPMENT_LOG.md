@@ -15,6 +15,55 @@ Each development session should add a new entry with:
 ---
 
 
+## 2026-08-12 - Stripe Hosted Payment Setup Step 7 Verified
+
+### Objective
+
+Complete and prove Billing Step 7: processor-hosted Stripe payment-method setup for the Koinonia client portal while preserving the no-raw-card-data security boundary.
+
+### Completed
+
+- Added the processor-hosted Stripe setup-session flow.
+- Persisted safe Stripe customer and payment-method references.
+- Enriched verified payment-method metadata with brand, last four digits, expiration, and verification timestamp.
+- Preserved the billing setup request ID through Stripe reconciliation.
+- Completed a real Koinonia Stripe sandbox setup-mode round-trip.
+- Fixed a dual-access Owner regression discovered during the sandbox test: `/client/billing` submissions were being classified as staff solely from the actor role.
+- Added explicit billing request portal context with server-side permission enforcement.
+- Preserved the requirement that genuine staff-created billing setup requests provide a real client target.
+- Added focused regression tests for client, employee, and legacy source selection behavior.
+
+### Verification
+
+- Initial dual-access fix tests: 17 of 17 passed.
+- TypeScript passed.
+- `git diff --check` passed.
+- Koinonia Stripe sandbox Checkout setup completed successfully.
+- `setup_intent.succeeded` webhook returned HTTP 200.
+- `checkout.session.completed` webhook returned HTTP 200.
+- Browser returned to the client billing success URL.
+- Billing setup request persisted as `Payment Method Ready`.
+- Customer billing profile retained `Authorized` consent and processor status `Ready`.
+- Safe Stripe `cus_...` and `pm_...` references persisted.
+- Safe processor summary verified Visa ending 4242 with expiration 12/2034.
+- Durable database inspection found no sensitive payment field names.
+- Stripe webhook audit records were confirmed.
+- Closure validation reruns the complete focused Step 7 test set before the closure commit.
+
+### Production Boundary
+
+- This verification used the Stripe sandbox only.
+- No production website deployment was performed.
+- No production branch was changed.
+- No API key, webhook signing secret, raw card number, CVV/CVC, bank credential, or processor secret is committed.
+
+### Recommended Next Step
+
+Implement Billing Step 8: prepaid invoice collection.
+
+Extend the existing invoice and Stripe webhook architecture so an eligible $389 Transaction Coordination Plus prepaid invoice can open a processor-hosted payment flow and reconcile safe payment status back into Koinonia.
+
+---
 ## 2026-08-08 - Billing Persistence and Clerk Development Login Verified
 
 ### Summary

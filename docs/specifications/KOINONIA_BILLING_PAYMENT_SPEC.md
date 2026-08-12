@@ -308,7 +308,7 @@ Build billing in safe slices:
 4. Employee billing workspace preview with live billing setup, invoice queue, and status updates. — Complete
 5. Billing profile and service activation schema. - Complete
 6. Processor customer/payment-method reference model. - Complete
-7. Processor-hosted payment setup link flow.
+7. Processor-hosted payment setup link flow. - Complete
 8. Prepaid invoice collection.
 9. Pay-at-closing trigger workflow.
 10. Monthly/custom billing workflow.

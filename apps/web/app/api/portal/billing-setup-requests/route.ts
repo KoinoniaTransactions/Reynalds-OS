@@ -17,6 +17,11 @@ import {
   BillingTargetNotFoundError,
   createPortalBillingSetupBundle
 } from "../../../../lib/portal-billing-persistence";
+import {
+  getBillingSetupRequestPermission,
+  getBillingSetupRequestSource,
+  koinoniaBillingRequestSourceHeader
+} from "../../../../lib/portal-billing-request-source";
 
 export const dynamic = "force-dynamic";
 
@@ -72,10 +77,16 @@ export async function POST(request: Request) {
       "billing-workspace:payment-methods:request"
     ]);
 
-    const requestSource =
-      actor.role === "Client"
-        ? "client-portal"
-        : "employee-portal";
+    const requestSource = getBillingSetupRequestSource(
+      request.headers.get(koinoniaBillingRequestSourceHeader),
+      actor.role
+    );
+    const requiredPermission =
+      getBillingSetupRequestPermission(requestSource);
+
+    if (!actor.permissions.includes(requiredPermission)) {
+      throw new PermissionDeniedError(requiredPermission);
+    }
 
     const rawInput = await request.json();
 
