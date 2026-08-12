@@ -1,6 +1,6 @@
 # Koinonia Portal Phase A Checkpoint — 2026-08-12
 
-Status: Billing Steps 6, 7, and 8 verified locally on `chatgpt/portal-access-status`.
+Status: Billing Steps 6, 7, 8, and 9 verified locally on `chatgpt/portal-access-status`.
 
 ## Billing Step 6 Complete
 
@@ -84,6 +84,40 @@ Sandbox verification completed on 2026-08-12:
 - The live local listener used for this payment forwarded `checkout.session.completed`; duplicate terminal-transition behavior is additionally covered by focused automated tests.
 - No production deployment was performed.
 
+
+## Billing Step 9 Complete
+
+The pay-at-closing trigger workflow is implemented and verified locally.
+
+Implemented:
+
+- Dedicated successful-closing confirmation workflow protected by `billing-workspace:pay-at-close:update`.
+- Explicit Invoice → ServiceActivation → transaction/work-object linkage for pay-at-close release.
+- Validation that the linked ServiceActivation uses `pay_at_close`, has `Authorized` billing consent, and identifies the related transaction/work object.
+- Durable `PayAtClosingTrigger` RosObject evidence containing safe closing date, outcome, confirmation source, confirmer, confirmation timestamp, and optional safe note.
+- Successful-close confirmation moves the invoice from `Pay at Close Watch` to `Ready to Process`.
+- Successful-close confirmation does not create a Payment record and does not call Stripe.
+- Generic invoice-status updates cannot bypass the successful-close gate from `Pay at Close Watch` directly into processing/payment states.
+- Employee Closing Billing Watch now exposes the dedicated successful-close confirmation form for live pay-at-close invoices.
+
+Local verification completed on 2026-08-12:
+
+- Controlled local Pay-at-Closing Coordination invoice: `inv_step9_pay_at_close_599`.
+- Invoice amount: $599.
+- Linked transaction contained closing date `2026-08-12` before successful-close confirmation.
+- Closing date evidence alone left the invoice at `Pay at Close Watch`.
+- Pre-confirmation state had zero Payment records and zero `PayAtClosingTrigger` objects.
+- Successful closing was confirmed from `/employee/billing`.
+- Browser returned to `/employee/billing?pay_at_close=confirmed`.
+- Final invoice status: `Ready to Process`.
+- Invoice closing/due date persisted as 2026-08-12.
+- `paidAt` remained null.
+- Exactly one `PayAtClosingTrigger` persisted with outcome `successful_close`.
+- Audit event `portal.invoice.pay_at_close.confirmed` was persisted.
+- Timeline event `invoice.pay_at_close.ready` was persisted.
+- Zero Payment records were created.
+- No production deployment was performed.
+
 ## Production Boundary
 
 - The production Koinonia website was not changed.
@@ -95,6 +129,6 @@ Sandbox verification completed on 2026-08-12:
 
 ## Next Correct Billing Slice
 
-Continue with Step 9 of `docs/specifications/KOINONIA_BILLING_PAYMENT_SPEC.md`: pay-at-closing trigger workflow.
+Continue with Step 10 of `docs/specifications/KOINONIA_BILLING_PAYMENT_SPEC.md`: monthly/custom billing workflow.
 
-Step 9 should preserve the existing processor-hosted payment boundary and extend the verified billing architecture only for the approved pay-at-closing workflow. Do not expand into monthly/custom billing or production payment deployment before Step 9 is separately implemented and verified.
+Step 10 should extend the verified billing architecture only for documented monthly, retainer, and custom billing terms with explicit consent and authorization. Do not collapse recurring/custom billing into the prepaid or pay-at-close flows, and do not perform production payment deployment before Step 10 is separately implemented and verified.

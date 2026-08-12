@@ -16,6 +16,62 @@ Each development session should add a new entry with:
 
 
 
+
+## 2026-08-12 - Pay-at-Closing Trigger Workflow Step 9 Verified
+
+### Objective
+
+Complete and prove Billing Step 9: release the approved $599 pay-at-closing fee only after durable successful-closing confirmation, without treating a scheduled closing date as a billing trigger and without creating a payment prematurely.
+
+### Completed
+
+- Added dedicated pay-at-close eligibility and successful-closing validation helpers.
+- Added a protected successful-close endpoint requiring `billing-workspace:pay-at-close:update`.
+- Reused the existing Invoice, ServiceActivation, RosObject, TimelineEvent, and AuditEvent architecture.
+- Required the linked ServiceActivation to use `pay_at_close`, have `Authorized` consent, and identify the related transaction/work object.
+- Added durable `PayAtClosingTrigger` evidence with safe closing confirmation metadata.
+- Added the employee `Confirm Successful Close` workflow to Closing Billing Watch.
+- Hardened the generic invoice-status endpoint so a pay-at-close watch invoice cannot bypass successful-close confirmation into processing/payment states.
+- Kept successful-close confirmation separate from payment processing: no Stripe call and no Payment record are created by the trigger.
+- Created controlled local $599 pay-at-close client, work, ServiceActivation, and invoice fixtures for verification only; those records remain database-only and are not committed.
+
+### Verification
+
+- Initial auth regression tests passed: 17 of 17.
+- Initial focused Step 9 web tests passed: 41 of 41 across 6 files.
+- TypeScript passed.
+- `git diff --check` passed before browser verification.
+- The transaction contained closing date 2026-08-12 while the invoice remained `Pay at Close Watch`, proving closing-date evidence alone does not release the fee.
+- Pre-confirmation state had zero Payment records and zero `PayAtClosingTrigger` objects.
+- Browser displayed the live $599 Closing Billing Watch row and dedicated successful-close confirmation form.
+- Successful close was confirmed once with approved operational evidence.
+- Browser returned to `/employee/billing?pay_at_close=confirmed`.
+- Invoice `inv_step9_pay_at_close_599` persisted as `Ready to Process`.
+- The invoice closing/due date persisted as 2026-08-12.
+- `paidAt` remained null.
+- Exactly one `PayAtClosingTrigger` persisted with outcome `successful_close`.
+- Audit event `portal.invoice.pay_at_close.confirmed` was confirmed.
+- Timeline event `invoice.pay_at_close.ready` was confirmed.
+- Zero Payment records were created.
+- Closure validation reruns the complete focused billing regression set before commit.
+
+### Production Boundary
+
+- Local development database only.
+- No Stripe charge was attempted.
+- No Payment record was created by the closing trigger.
+- No production deployment.
+- No production branch changes.
+- No raw card number, CVV/CVC, bank credential, API key, webhook signing secret, or processor secret is committed.
+
+### Recommended Next Step
+
+Implement Billing Step 10: monthly/custom billing workflow.
+
+Preserve the verified prepaid and pay-at-close boundaries. Monthly, retainer, and custom billing must use documented terms and explicit authorization rather than inheriting prepaid or closing-trigger behavior.
+
+---
+
 ## 2026-08-12 - Stripe Prepaid Invoice Collection Step 8 Verified
 
 ### Objective

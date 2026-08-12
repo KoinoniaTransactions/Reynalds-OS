@@ -9,6 +9,56 @@ Primary Business Priority: Complete the pre-live Koinonia client portal phases, 
 
 
 
+
+## 2026-08-12 Current Session Handoff - Pay-at-Closing Trigger Step 9 Complete
+
+Status: Verified locally on `chatgpt/portal-access-status`.
+
+### Current Portal State
+
+- The public Koinonia website remains unchanged; this branch is still pre-live portal development.
+- Billing Step 9, pay-at-closing trigger workflow, is complete.
+- Pay-at-close invoices remain on `Pay at Close Watch` when a closing date merely exists or is reached.
+- Staff with `billing-workspace:pay-at-close:update` can record a durable successful-close confirmation.
+- The server verifies the invoice is linked to an authorized `pay_at_close` ServiceActivation and related transaction/work object.
+- Successful-close confirmation creates one `PayAtClosingTrigger` and moves the invoice to `Ready to Process`.
+- Successful-close confirmation does not charge the client, call Stripe, mark the invoice Paid, or create a Payment record.
+- The generic invoice-status route blocks bypass from `Pay at Close Watch` directly into processing/payment states.
+
+### Verification Completed
+
+- Controlled local invoice `inv_step9_pay_at_close_599` represented Pay-at-Closing Coordination at $599.
+- The linked transaction already contained closing date 2026-08-12 before successful-close confirmation.
+- Closing-date evidence alone left the invoice on `Pay at Close Watch`.
+- Pre-confirmation state had zero Payment records and zero pay-at-close trigger records.
+- The employee Closing Billing Watch displayed the dedicated `Confirm Successful Close` form.
+- Successful close was confirmed once.
+- Browser returned to `/employee/billing?pay_at_close=confirmed`.
+- Final invoice status is `Ready to Process`.
+- `paidAt` remains null.
+- Exactly one `PayAtClosingTrigger` persisted with outcome `successful_close`.
+- Audit event `portal.invoice.pay_at_close.confirmed` was confirmed.
+- Timeline event `invoice.pay_at_close.ready` was confirmed.
+- Zero Payment records were created.
+- No production deployment was performed.
+
+### Security and Workflow Boundary
+
+- Do not treat a scheduled or reached closing date as proof of a successful closing.
+- Do not let browser-supplied status changes bypass the dedicated closing trigger.
+- Do not create a payment as part of successful-close confirmation.
+- Continue storing only safe operational/payment metadata.
+- Never commit or paste Stripe API keys, webhook secrets, raw card data, CVV/CVC, or bank credentials.
+- Production payment collection remains a later deliberate integration step.
+
+### Next Correct Billing Slice
+
+Proceed to Step 10: monthly/custom billing workflow.
+
+Extend the verified billing architecture for documented monthly, retainer, and custom terms with explicit authorization. Preserve the separate prepaid and pay-at-close gates, and do not perform production payment deployment until Step 10 is separately implemented and verified.
+
+---
+
 ## 2026-08-12 Current Session Handoff - Stripe Prepaid Invoice Collection Step 8 Complete
 
 Status: Verified locally in the Koinonia Stripe sandbox on `chatgpt/portal-access-status`.

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { BillingSetupStatusForm } from "../../../components/employee/BillingSetupStatusForm";
 import { InvoiceStatusForm } from "../../../components/employee/InvoiceStatusForm";
+import { PayAtCloseTriggerForm } from "../../../components/employee/PayAtCloseTriggerForm";
 import { absoluteUrl } from "../../../config/seo.config";
 import { Footer, Header } from "../../../components/site";
 import {
@@ -32,22 +33,26 @@ const billingSummary = [
   {
     label: "Setup Needed",
     value: "3",
-    body: "Customers need secure payment setup links before billing can run smoothly."
+    body:
+      "Customers need secure payment setup links before billing can run smoothly."
   },
   {
     label: "Prepay Due",
     value: "$778",
-    body: "Prepaid coordination invoices due before active work begins."
+    body:
+      "Prepaid coordination invoices due before active work begins."
   },
   {
     label: "Pay-at-Close Watch",
     value: "$1.8k",
-    body: "Files that bill only after confirmed successful closing."
+    body:
+      "Files that bill only after confirmed successful closing."
   },
   {
     label: "Ready to Process",
     value: "5",
-    body: "Invoices or service charges have authorization and payment method readiness."
+    body:
+      "Invoices or service charges have authorization and payment method readiness."
   }
 ] as const;
 
@@ -67,9 +72,11 @@ type PaymentSetupQueueItem = {
 };
 
 type PayAtCloseWatchItem = {
+  canConfirm: boolean;
   closeDate: string;
   fee: string;
   file: string;
+  invoiceId?: string;
   status: string;
 };
 
@@ -80,7 +87,8 @@ const sampleBillingProfiles: BillingProfileItem[] = [
     model: "$389 prepaid",
     payment: "Setup Ready",
     status: "Invoice Open",
-    nextAction: "Collect prepaid invoice before work begins."
+    nextAction:
+      "Collect prepaid invoice before work begins."
   },
   {
     client: "Wilson Realty Group",
@@ -88,7 +96,8 @@ const sampleBillingProfiles: BillingProfileItem[] = [
     model: "Custom monthly",
     payment: "Setup Needed",
     status: "Send Setup Link",
-    nextAction: "Confirm custom scope and recurring billing consent."
+    nextAction:
+      "Confirm custom scope and recurring billing consent."
   },
   {
     client: "Northgate Partners",
@@ -96,7 +105,8 @@ const sampleBillingProfiles: BillingProfileItem[] = [
     model: "$599 after successful close",
     payment: "Processor Ready",
     status: "Closing Watch",
-    nextAction: "Charge only after confirmed close."
+    nextAction:
+      "Charge only after confirmed close."
   },
   {
     client: "Summit Line Realty",
@@ -104,27 +114,32 @@ const sampleBillingProfiles: BillingProfileItem[] = [
     model: "Per showing / custom",
     payment: "Setup Ready",
     status: "Ready to Bill",
-    nextAction: "Process approved showing charge after completion."
+    nextAction:
+      "Process approved showing charge after completion."
   }
 ];
 
-const samplePaymentSetupQueue: PaymentSetupQueueItem[] = [
-  {
-    client: "Wilson Realty Group",
-    reason: "Custom monthly support needs recurring authorization.",
-    status: "Setup Link Needed"
-  },
-  {
-    client: "Canyon View Realty",
-    reason: "New transaction client selected prepaid coordination.",
-    status: "Billing Contact Needed"
-  },
-  {
-    client: "Front Range Homes",
-    reason: "Payment method expired before new showing request.",
-    status: "Update Required"
-  }
-];
+const samplePaymentSetupQueue: PaymentSetupQueueItem[] =
+  [
+    {
+      client: "Wilson Realty Group",
+      reason:
+        "Custom monthly support needs recurring authorization.",
+      status: "Setup Link Needed"
+    },
+    {
+      client: "Canyon View Realty",
+      reason:
+        "New transaction client selected prepaid coordination.",
+      status: "Billing Contact Needed"
+    },
+    {
+      client: "Front Range Homes",
+      reason:
+        "Payment method expired before new showing request.",
+      status: "Update Required"
+    }
+  ];
 
 type BillingSetupItem = {
   detail: string;
@@ -159,28 +174,41 @@ type InvoiceView = {
   notice?: string;
 };
 
-const sampleBillingSetupRequests: BillingSetupItem[] = [
-  {
-    id: "sample-wilson-monthly",
-    requestedBy: "Wilson Realty Group",
-    service: "Monthly Operations Partnership",
-    status: "Processor Link Needed",
-    detail: "Monthly recurring support - Custom monthly",
-    nextAction: "Send the secure setup link after recurring billing consent is confirmed.",
-    labels: ["No card stored", "Monthly recurring support", "Wilson Realty Group"],
-    workflowStatus: "Processor Link Needed"
-  },
-  {
-    id: "sample-northgate-close",
-    requestedBy: "Northgate Partners",
-    service: "Pay-at-Closing Coordination",
-    status: "Pay at Close Watch",
-    detail: "Pay after successful close - $599",
-    nextAction: "Track the closing trigger before billing the approved pay-at-close fee.",
-    labels: ["No card stored", "After successful close", "Northgate Partners"],
-    workflowStatus: "Pay at Close Watch"
-  }
-];
+const sampleBillingSetupRequests: BillingSetupItem[] =
+  [
+    {
+      id: "sample-wilson-monthly",
+      requestedBy: "Wilson Realty Group",
+      service: "Monthly Operations Partnership",
+      status: "Processor Link Needed",
+      detail:
+        "Monthly recurring support - Custom monthly",
+      nextAction:
+        "Send the secure setup link after recurring billing consent is confirmed.",
+      labels: [
+        "No card stored",
+        "Monthly recurring support",
+        "Wilson Realty Group"
+      ],
+      workflowStatus: "Processor Link Needed"
+    },
+    {
+      id: "sample-northgate-close",
+      requestedBy: "Northgate Partners",
+      service: "Pay-at-Closing Coordination",
+      status: "Pay at Close Watch",
+      detail:
+        "Pay after successful close - $599",
+      nextAction:
+        "Track the closing trigger before billing the approved pay-at-close fee.",
+      labels: [
+        "No card stored",
+        "After successful close",
+        "Northgate Partners"
+      ],
+      workflowStatus: "Pay at Close Watch"
+    }
+  ];
 
 const sampleInvoices: InvoiceItem[] = [
   {
@@ -190,7 +218,8 @@ const sampleInvoices: InvoiceItem[] = [
     amount: "$389.00",
     status: "Due Before Work Begins",
     due: "Due Today",
-    nextAction: "Collect payment or record an approved exception before work begins."
+    nextAction:
+      "Collect payment or record an approved exception before work begins."
   },
   {
     id: "sample-invoice-close",
@@ -199,27 +228,31 @@ const sampleInvoices: InvoiceItem[] = [
     amount: "$599.00",
     status: "Pay at Close Watch",
     due: "After close",
-    nextAction: "Wait for a confirmed successful closing before charging this invoice."
+    nextAction:
+      "Wait for a confirmed successful closing before charging this invoice."
   }
 ];
 
 const samplePayAtCloseWatch: PayAtCloseWatchItem[] = [
   {
-    file: "Northgate Closing File",
+    canConfirm: false,
     closeDate: "Aug 12",
     fee: "$599",
+    file: "Northgate Closing File",
     status: "Pending Close"
   },
   {
-    file: "Meadow Creek Buyer File",
+    canConfirm: false,
     closeDate: "Aug 19",
     fee: "$599",
+    file: "Meadow Creek Buyer File",
     status: "Title Confirmation Needed"
   },
   {
-    file: "Lakewood Seller File",
+    canConfirm: false,
     closeDate: "Closed",
     fee: "$599",
+    file: "Lakewood Seller File",
     status: "Ready to Invoice"
   }
 ];
@@ -233,20 +266,29 @@ const billingRules = [
 ] as const;
 
 export default async function EmployeeBillingWorkspacePreviewPage() {
-  const actor = await requirePortalPermission("billing-workspace:view", "/employee/billing");
-  const [billingSetupView, invoiceView] = await Promise.all([
-    getEmployeeBillingSetupView(actor.workspaceId),
-    getEmployeeInvoiceView(actor.workspaceId)
-  ]);
+  const actor = await requirePortalPermission(
+    "billing-workspace:view",
+    "/employee/billing"
+  );
+
+  const [billingSetupView, invoiceView] =
+    await Promise.all([
+      getEmployeeBillingSetupView(actor.workspaceId),
+      getEmployeeInvoiceView(actor.workspaceId)
+    ]);
+
   const billingProfiles = buildBillingProfiles(
     billingSetupView.requests,
     invoiceView.invoices,
-    billingSetupView.isLiveData || invoiceView.isLiveData
+    billingSetupView.isLiveData ||
+      invoiceView.isLiveData
   );
+
   const paymentSetupQueue = buildPaymentSetupQueue(
     billingSetupView.requests,
     billingSetupView.isLiveData
   );
+
   const payAtCloseWatch = buildPayAtCloseWatch(
     invoiceView.invoices,
     invoiceView.isLiveData
@@ -259,24 +301,32 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
       <section className="koinonia-section koinonia-billing-hero">
         <div className="koinonia-container">
           <div className="koinonia-section-header">
-            <p className="koinonia-eyebrow">Employee Billing Workspace Preview</p>
+            <p className="koinonia-eyebrow">
+              Employee Billing Workspace Preview
+            </p>
 
             <h1 className="koinonia-title">
-              Billing readiness tied to every customer file and service.
+              Billing readiness tied to every customer
+              file and service.
             </h1>
 
             <p className="koinonia-lead">
-              Billing setup requests can now flow through protected portal
-              storage when the production database is reachable. Actual card
-              collection and charges should stay inside an approved payment
-              processor with tokenized references, consent records, and audit
-              logs.
+              Billing setup requests can now flow
+              through protected portal storage when
+              the production database is reachable.
+              Actual card collection and charges
+              should stay inside an approved payment
+              processor with tokenized references,
+              consent records, and audit logs.
             </p>
           </div>
 
           <div className="koinonia-billing-summary-grid">
             {billingSummary.map((card) => (
-              <article className="koinonia-billing-summary-card employee" key={card.label}>
+              <article
+                className="koinonia-billing-summary-card employee"
+                key={card.label}
+              >
                 <span>{card.label}</span>
                 <strong>{card.value}</strong>
                 <p>{card.body}</p>
@@ -290,15 +340,25 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
         <div className="koinonia-container">
           <div className="koinonia-billing-layout">
             <div className="koinonia-billing-main-stack">
-              <section className="koinonia-billing-panel employee" aria-labelledby="billing-profiles-title">
+              <section
+                className="koinonia-billing-panel employee"
+                aria-labelledby="billing-profiles-title"
+              >
                 <div className="koinonia-billing-panel-heading">
-                  <p className="koinonia-eyebrow">Customers</p>
-                  <h2 id="billing-profiles-title">Billing Profiles</h2>
+                  <p className="koinonia-eyebrow">
+                    Customers
+                  </p>
+                  <h2 id="billing-profiles-title">
+                    Billing Profiles
+                  </h2>
                 </div>
 
                 <div className="koinonia-billing-card-list">
                   {billingProfiles.map((profile) => (
-                    <article className="koinonia-billing-work-item employee" key={profile.client}>
+                    <article
+                      className="koinonia-billing-work-item employee"
+                      key={profile.client}
+                    >
                       <div>
                         <span>{profile.model}</span>
                         <h3>{profile.client}</h3>
@@ -307,77 +367,155 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
                       </div>
 
                       <div className="koinonia-billing-work-meta employee">
-                        <strong>{profile.status}</strong>
-                        <span>{profile.payment}</span>
+                        <strong>
+                          {profile.status}
+                        </strong>
+                        <span>
+                          {profile.payment}
+                        </span>
                       </div>
                     </article>
                   ))}
                 </div>
               </section>
 
-              <section className="koinonia-billing-panel employee" aria-labelledby="billing-setup-queue-title">
+              <section
+                className="koinonia-billing-panel employee"
+                aria-labelledby="billing-setup-queue-title"
+              >
                 <div className="koinonia-billing-panel-heading">
-                  <p className="koinonia-eyebrow">Setup</p>
-                  <h2 id="billing-setup-queue-title">Billing Setup Request Queue</h2>
+                  <p className="koinonia-eyebrow">
+                    Setup
+                  </p>
+                  <h2 id="billing-setup-queue-title">
+                    Billing Setup Request Queue
+                  </h2>
                 </div>
 
                 <div className="koinonia-billing-card-list">
                   {billingSetupView.notice ? (
-                    <p className="koinonia-billing-security-note employee">{billingSetupView.notice}</p>
+                    <p className="koinonia-billing-security-note employee">
+                      {billingSetupView.notice}
+                    </p>
                   ) : null}
 
-                  {billingSetupView.requests.map((request) => (
-                    <article className="koinonia-billing-work-item employee" key={request.id}>
-                      <div>
-                        <span>{request.requestedBy}</span>
-                        <h3>{request.service}</h3>
-                        <p>{request.detail}</p>
-                        <p>{request.nextAction}</p>
-                        <ul className="koinonia-billing-meta-list employee">
-                          {request.labels.map((label) => (
-                            <li key={label}>{label}</li>
-                          ))}
-                        </ul>
-                      </div>
+                  {billingSetupView.requests.map(
+                    (request) => (
+                      <article
+                        className="koinonia-billing-work-item employee"
+                        key={request.id}
+                      >
+                        <div>
+                          <span>
+                            {request.requestedBy}
+                          </span>
+                          <h3>
+                            {request.service}
+                          </h3>
+                          <p>
+                            {request.detail}
+                          </p>
+                          <p>
+                            {request.nextAction}
+                          </p>
 
-                      <div className="koinonia-billing-work-meta employee">
-                        <strong>{request.status}</strong>
-                        <span>Setup status</span>
-                      </div>
+                          <ul className="koinonia-billing-meta-list employee">
+                            {request.labels.map(
+                              (label) => (
+                                <li key={label}>
+                                  {label}
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
 
-                      <BillingSetupStatusForm
-                        currentStatus={request.workflowStatus}
-                        disabled={!billingSetupView.isLiveData}
-                        requestId={request.id}
-                      />
-                    </article>
-                  ))}
+                        <div className="koinonia-billing-work-meta employee">
+                          <strong>
+                            {request.status}
+                          </strong>
+                          <span>
+                            Setup status
+                          </span>
+                        </div>
+
+                        <BillingSetupStatusForm
+                          currentStatus={
+                            request.workflowStatus
+                          }
+                          disabled={
+                            !billingSetupView.isLiveData
+                          }
+                          requestId={request.id}
+                        />
+                      </article>
+                    )
+                  )}
                 </div>
               </section>
 
-              <section className="koinonia-billing-panel employee" aria-labelledby="pay-at-close-title">
+              <section
+                className="koinonia-billing-panel employee"
+                aria-labelledby="pay-at-close-title"
+              >
                 <div className="koinonia-billing-panel-heading">
-                  <p className="koinonia-eyebrow">Pay at Close</p>
-                  <h2 id="pay-at-close-title">Closing Billing Watch</h2>
+                  <p className="koinonia-eyebrow">
+                    Pay at Close
+                  </p>
+                  <h2 id="pay-at-close-title">
+                    Closing Billing Watch
+                  </h2>
                 </div>
+
+                <p className="koinonia-billing-security-note employee">
+                  A scheduled or reached closing date
+                  does not release the fee. Staff must
+                  record a confirmed successful closing
+                  before the invoice becomes Ready to
+                  Process.
+                </p>
 
                 <div className="koinonia-billing-table-wrap">
                   <table className="koinonia-billing-table">
                     <thead>
                       <tr>
                         <th>File</th>
-                        <th>Close Date</th>
+                        <th>Close State</th>
                         <th>Fee</th>
                         <th>Status</th>
+                        <th>Successful Close</th>
                       </tr>
                     </thead>
                     <tbody>
                       {payAtCloseWatch.map((item) => (
-                        <tr key={item.file}>
+                        <tr
+                          key={
+                            item.invoiceId ??
+                            item.file
+                          }
+                        >
                           <td>{item.file}</td>
-                          <td>{item.closeDate}</td>
+                          <td>
+                            {item.closeDate}
+                          </td>
                           <td>{item.fee}</td>
                           <td>{item.status}</td>
+                          <td>
+                            {item.canConfirm &&
+                            item.invoiceId ? (
+                              <PayAtCloseTriggerForm
+                                invoiceId={
+                                  item.invoiceId
+                                }
+                              />
+                            ) : (
+                              <span>
+                                Confirmation becomes
+                                available with live
+                                pay-at-close data.
+                              </span>
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -385,52 +523,93 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
                 </div>
               </section>
 
-              <section className="koinonia-billing-panel employee" aria-labelledby="invoice-queue-title">
+              <section
+                className="koinonia-billing-panel employee"
+                aria-labelledby="invoice-queue-title"
+              >
                 <div className="koinonia-billing-panel-heading">
-                  <p className="koinonia-eyebrow">Invoices</p>
-                  <h2 id="invoice-queue-title">Invoice and Payment Queue</h2>
+                  <p className="koinonia-eyebrow">
+                    Invoices
+                  </p>
+                  <h2 id="invoice-queue-title">
+                    Invoice and Payment Queue
+                  </h2>
                 </div>
 
                 <div className="koinonia-billing-card-list">
                   {invoiceView.notice ? (
-                    <p className="koinonia-billing-security-note employee">{invoiceView.notice}</p>
+                    <p className="koinonia-billing-security-note employee">
+                      {invoiceView.notice}
+                    </p>
                   ) : null}
 
-                  {invoiceView.invoices.map((invoice) => (
-                    <article className="koinonia-billing-work-item employee" key={invoice.id}>
-                      <div>
-                        <span>{invoice.invoice}</span>
-                        <h3>{invoice.service}</h3>
-                        <p>
-                          {invoice.amount} - {invoice.due}
-                        </p>
-                        <p>{invoice.nextAction}</p>
-                      </div>
+                  {invoiceView.invoices.map(
+                    (invoice) => (
+                      <article
+                        className="koinonia-billing-work-item employee"
+                        key={invoice.id}
+                      >
+                        <div>
+                          <span>
+                            {invoice.invoice}
+                          </span>
+                          <h3>
+                            {invoice.service}
+                          </h3>
+                          <p>
+                            {invoice.amount} -{" "}
+                            {invoice.due}
+                          </p>
+                          <p>
+                            {invoice.nextAction}
+                          </p>
+                        </div>
 
-                      <div className="koinonia-billing-work-meta employee">
-                        <strong>{invoice.status}</strong>
-                        <span>Invoice status</span>
-                      </div>
+                        <div className="koinonia-billing-work-meta employee">
+                          <strong>
+                            {invoice.status}
+                          </strong>
+                          <span>
+                            Invoice status
+                          </span>
+                        </div>
 
-                      <InvoiceStatusForm
-                        currentStatus={invoice.status}
-                        disabled={!invoiceView.isLiveData}
-                        invoiceId={invoice.id}
-                      />
-                    </article>
-                  ))}
+                        <InvoiceStatusForm
+                          currentStatus={
+                            invoice.status
+                          }
+                          disabled={
+                            !invoiceView.isLiveData
+                          }
+                          invoiceId={invoice.id}
+                          payAtCloseLocked={
+                            invoice.status ===
+                            "Pay at Close Watch"
+                          }
+                        />
+                      </article>
+                    )
+                  )}
                 </div>
               </section>
             </div>
 
-            <aside className="koinonia-billing-side-panel" aria-label="Billing operations">
+            <aside
+              className="koinonia-billing-side-panel"
+              aria-label="Billing operations"
+            >
               <section className="koinonia-billing-panel employee">
-                <p className="koinonia-eyebrow">Setup Queue</p>
+                <p className="koinonia-eyebrow">
+                  Setup Queue
+                </p>
+
                 <div className="koinonia-billing-status-list">
                   {paymentSetupQueue.map((item) => (
                     <article key={item.client}>
                       <span>{item.status}</span>
-                      <strong>{item.client}</strong>
+                      <strong>
+                        {item.client}
+                      </strong>
                       <p>{item.reason}</p>
                     </article>
                   ))}
@@ -438,7 +617,10 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
               </section>
 
               <section className="koinonia-billing-panel employee">
-                <p className="koinonia-eyebrow">Billing Rules</p>
+                <p className="koinonia-eyebrow">
+                  Billing Rules
+                </p>
+
                 <ul className="koinonia-billing-list">
                   {billingRules.map((rule) => (
                     <li key={rule}>{rule}</li>
@@ -447,11 +629,16 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
               </section>
 
               <section className="koinonia-billing-panel employee koinonia-billing-boundary-card">
-                <p className="koinonia-eyebrow">Processor Boundary</p>
+                <p className="koinonia-eyebrow">
+                  Processor Boundary
+                </p>
+
                 <p>
-                  Staff should send a secure setup link or open the approved
-                  processor dashboard. Do not ask clients to type card numbers,
-                  CVV, or banking secrets directly into Koinonia portal fields.
+                  Staff should send a secure setup link
+                  or open the approved processor
+                  dashboard. Do not ask clients to type
+                  card numbers, CVV, or banking secrets
+                  directly into Koinonia portal fields.
                 </p>
               </section>
             </aside>
@@ -464,36 +651,66 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
   );
 }
 
-async function getEmployeeInvoiceView(workspaceId: string): Promise<InvoiceView> {
+async function getEmployeeInvoiceView(
+  workspaceId: string
+): Promise<InvoiceView> {
   try {
     const invoices = await prisma.invoice.findMany({
-      where: { workspaceId },
-      orderBy: [{ createdAt: "desc" }],
+      where: {
+        workspaceId
+      },
+      orderBy: [
+        {
+          createdAt: "desc"
+        }
+      ],
       take: 25
     });
+
     const objectIds = [
       ...new Set(
         invoices.flatMap((invoice) =>
-          [invoice.clientObjectId, invoice.relatedObjectId, invoice.packageObjectId].filter(
+          [
+            invoice.clientObjectId,
+            invoice.relatedObjectId,
+            invoice.packageObjectId
+          ].filter(
             (id): id is string => Boolean(id)
           )
         )
       )
     ];
+
     const objects = objectIds.length
       ? await prisma.rosObject.findMany({
           where: {
-            id: { in: objectIds },
+            id: {
+              in: objectIds
+            },
             workspaceId
           },
-          select: { id: true, name: true }
+          select: {
+            id: true,
+            name: true
+          }
         })
       : [];
-    const objectNames = new Map(objects.map((object) => [object.id, object.name]));
+
+    const objectNames = new Map(
+      objects.map((object) => [
+        object.id,
+        object.name
+      ])
+    );
 
     return {
       invoices: withEmptyInvoices(
-        invoices.map((invoice) => buildPortalInvoiceDisplayItem(invoice, objectNames))
+        invoices.map((invoice) =>
+          buildPortalInvoiceDisplayItem(
+            invoice,
+            objectNames
+          )
+        )
       ),
       isLiveData: true
     };
@@ -505,35 +722,60 @@ async function getEmployeeInvoiceView(workspaceId: string): Promise<InvoiceView>
     return {
       invoices: sampleInvoices,
       isLiveData: false,
-      notice: "Invoice storage is not reachable in this preview, so sample invoices are shown."
+      notice:
+        "Invoice storage is not reachable in this preview, so sample invoices are shown."
     };
   }
 }
 
-async function getEmployeeBillingSetupView(workspaceId: string): Promise<BillingSetupView> {
+async function getEmployeeBillingSetupView(
+  workspaceId: string
+): Promise<BillingSetupView> {
   try {
-    const billingSetupRequests = await prisma.rosObject.findMany({
-      where: {
-        workspaceId,
-        objectType: billingSetupRequestObjectType,
-        archivedAt: null
-      },
-      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-      take: 25
-    });
+    const billingSetupRequests =
+      await prisma.rosObject.findMany({
+        where: {
+          workspaceId,
+          objectType:
+            billingSetupRequestObjectType,
+          archivedAt: null
+        },
+        orderBy: [
+          {
+            updatedAt: "desc"
+          },
+          {
+            createdAt: "desc"
+          }
+        ],
+        take: 25
+      });
 
     return {
       isLiveData: true,
       requests: withEmptyBillingSetupRequests(
         billingSetupRequests.map((request) => ({
           id: request.id,
-          requestedBy: getBillingSetupRequester(request.data),
-          service: request.name.replace(/^Billing Setup - /, ""),
-          status: getHumanBillingSetupStatus(request.status),
-          detail: getBillingSetupDetail(request.data),
-          labels: getBillingSetupMetaLabels(request.data),
+          requestedBy:
+            getBillingSetupRequester(
+              request.data
+            ),
+          service: request.name.replace(
+            /^Billing Setup - /,
+            ""
+          ),
+          status: getHumanBillingSetupStatus(
+            request.status
+          ),
+          detail: getBillingSetupDetail(
+            request.data
+          ),
+          labels: getBillingSetupMetaLabels(
+            request.data
+          ),
           nextAction:
-            request.nextAction ?? "Review this billing setup request before sending a secure processor link.",
+            request.nextAction ??
+            "Review this billing setup request before sending a secure processor link.",
           workflowStatus: request.status
         }))
       )
@@ -552,7 +794,9 @@ async function getEmployeeBillingSetupView(workspaceId: string): Promise<Billing
   }
 }
 
-function withEmptyBillingSetupRequests(requests: BillingSetupItem[]): BillingSetupItem[] {
+function withEmptyBillingSetupRequests(
+  requests: BillingSetupItem[]
+): BillingSetupItem[] {
   if (requests.length > 0) {
     return requests;
   }
@@ -563,9 +807,14 @@ function withEmptyBillingSetupRequests(requests: BillingSetupItem[]): BillingSet
       requestedBy: "Billing queue is clear",
       service: "No billing setup requests",
       status: "Ready",
-      detail: "Setup requests will appear after a client or staff member records billing intent.",
-      nextAction: "Send secure processor links only after consent and service billing terms are clear.",
-      labels: ["No card stored", "Processor-hosted setup only"],
+      detail:
+        "Setup requests will appear after a client or staff member records billing intent.",
+      nextAction:
+        "Send secure processor links only after consent and service billing terms are clear.",
+      labels: [
+        "No card stored",
+        "Processor-hosted setup only"
+      ],
       workflowStatus: "Setup Requested"
     }
   ];
@@ -580,23 +829,29 @@ function buildBillingProfiles(
     return sampleBillingProfiles;
   }
 
-  const profiles = new Map<string, BillingProfileItem>();
+  const profiles = new Map<
+    string,
+    BillingProfileItem
+  >();
 
   for (const request of billingSetupRequests) {
     if (request.id.startsWith("empty-")) {
       continue;
     }
 
-    const key = `${request.requestedBy}:${request.service}`;
+    const key =
+      `${request.requestedBy}:${request.service}`;
 
     profiles.set(key, {
       client: request.requestedBy,
       model: request.detail,
       nextAction: request.nextAction,
       payment:
-        request.status === "Payment Method Ready"
+        request.status ===
+        "Payment Method Ready"
           ? "Processor Ready"
-          : request.status === "Pay at Close Watch"
+          : request.status ===
+              "Pay at Close Watch"
             ? "Closing Watch"
             : "Setup Needed",
       service: request.service,
@@ -609,7 +864,8 @@ function buildBillingProfiles(
       continue;
     }
 
-    const key = `${invoice.service}:${invoice.invoice}`;
+    const key =
+      `${invoice.service}:${invoice.invoice}`;
 
     if (profiles.has(key)) {
       continue;
@@ -619,7 +875,10 @@ function buildBillingProfiles(
       client: invoice.service,
       model: invoice.amount,
       nextAction: invoice.nextAction,
-      payment: invoice.status === "Paid" ? "Payment Recorded" : "Invoice Active",
+      payment:
+        invoice.status === "Paid"
+          ? "Payment Recorded"
+          : "Invoice Active",
       service: invoice.invoice,
       status: invoice.status
     });
@@ -639,7 +898,10 @@ function buildBillingProfiles(
     ];
   }
 
-  return Array.from(profiles.values()).slice(0, 8);
+  return Array.from(profiles.values()).slice(
+    0,
+    8
+  );
 }
 
 function buildPaymentSetupQueue(
@@ -653,7 +915,8 @@ function buildPaymentSetupQueue(
   const queue = requests.flatMap((request) => {
     if (
       request.id.startsWith("empty-") ||
-      request.status === "Payment Method Ready" ||
+      request.status ===
+        "Payment Method Ready" ||
       request.status === "Pay at Close Watch"
     ) {
       return [];
@@ -675,7 +938,8 @@ function buildPaymentSetupQueue(
   return [
     {
       client: "Setup queue is clear",
-      reason: "No active billing setup requests need a processor link right now.",
+      reason:
+        "No active billing setup requests need a processor link right now.",
       status: "Ready"
     }
   ];
@@ -689,23 +953,29 @@ function buildPayAtCloseWatch(
     return samplePayAtCloseWatch;
   }
 
-  const watchItems = invoices.flatMap((invoice) => {
-    if (
-      invoice.id.startsWith("empty-") ||
-      invoice.status !== "Pay at Close Watch"
-    ) {
-      return [];
-    }
-
-    return [
-      {
-        closeDate: invoice.due,
-        fee: invoice.amount,
-        file: invoice.service,
-        status: invoice.status
+  const watchItems = invoices.flatMap(
+    (invoice) => {
+      if (
+        invoice.id.startsWith("empty-") ||
+        invoice.status !==
+          "Pay at Close Watch"
+      ) {
+        return [];
       }
-    ];
-  });
+
+      return [
+        {
+          canConfirm: true,
+          closeDate:
+            "Await confirmed successful close",
+          fee: invoice.amount,
+          file: invoice.service,
+          invoiceId: invoice.id,
+          status: invoice.status
+        }
+      ];
+    }
+  );
 
   if (watchItems.length > 0) {
     return watchItems;
@@ -713,6 +983,7 @@ function buildPayAtCloseWatch(
 
   return [
     {
+      canConfirm: false,
       closeDate: "No close trigger",
       fee: "$0.00",
       file: "No pay-at-close invoices",
@@ -721,7 +992,9 @@ function buildPayAtCloseWatch(
   ];
 }
 
-function withEmptyInvoices(invoices: InvoiceItem[]): InvoiceItem[] {
+function withEmptyInvoices(
+  invoices: InvoiceItem[]
+): InvoiceItem[] {
   if (invoices.length > 0) {
     return invoices;
   }
@@ -734,34 +1007,56 @@ function withEmptyInvoices(invoices: InvoiceItem[]): InvoiceItem[] {
       amount: "$0.00",
       status: "Ready",
       due: "No due date",
-      nextAction: "Invoices will appear after staff create billing items for client files."
+      nextAction:
+        "Invoices will appear after staff create billing items for client files."
     }
   ];
 }
 
-function getBillingSetupRequester(data: unknown): string {
-  if (!data || typeof data !== "object" || Array.isArray(data)) {
+function getBillingSetupRequester(
+  data: unknown
+): string {
+  if (
+    !data ||
+    typeof data !== "object" ||
+    Array.isArray(data)
+  ) {
     return "Portal user";
   }
 
-  const value = data as Record<string, unknown>;
+  const value =
+    data as Record<string, unknown>;
 
-  if (typeof value.clientName === "string" && value.clientName.trim()) {
+  if (
+    typeof value.clientName === "string" &&
+    value.clientName.trim()
+  ) {
     return value.clientName.trim();
   }
 
-  if (typeof value.requestedByEmail === "string" && value.requestedByEmail.trim()) {
+  if (
+    typeof value.requestedByEmail ===
+      "string" &&
+    value.requestedByEmail.trim()
+  ) {
     return value.requestedByEmail.trim();
   }
 
   return "Portal user";
 }
 
-function isDatabaseUnavailableError(error: unknown): boolean {
+function isDatabaseUnavailableError(
+  error: unknown
+): boolean {
   return (
     error instanceof Error &&
-    (error.name === "PrismaClientInitializationError" ||
-      error.message.includes("Can't reach database server") ||
-      error.message.includes("ECONNREFUSED"))
+    (error.name ===
+      "PrismaClientInitializationError" ||
+      error.message.includes(
+        "Can't reach database server"
+      ) ||
+      error.message.includes(
+        "ECONNREFUSED"
+      ))
   );
 }

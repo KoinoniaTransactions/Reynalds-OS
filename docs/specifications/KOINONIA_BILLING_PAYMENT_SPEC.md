@@ -310,7 +310,7 @@ Build billing in safe slices:
 6. Processor customer/payment-method reference model. - Complete
 7. Processor-hosted payment setup link flow. - Complete
 8. Prepaid invoice collection. - Complete
-9. Pay-at-closing trigger workflow.
+9. Pay-at-closing trigger workflow. - Complete
 10. Monthly/custom billing workflow.
 11. Payment audit trail.
 12. Production security and compliance review before collecting real payment methods.
@@ -338,7 +338,37 @@ Verified behavior:
 - The live local listener used for this round-trip forwarded `checkout.session.completed`; duplicate terminal-transition behavior is additionally covered by focused automated tests.
 - No production deployment was performed.
 
-Step 9 is the next billing slice: pay-at-closing trigger workflow.
+Step 9 has now been completed and verified. Step 10 is the next billing slice: monthly/custom billing workflow.
+
+
+
+### Step 9 Verification — 2026-08-12
+
+The pay-at-closing trigger workflow is implemented and verified locally.
+
+Verified behavior:
+
+- Pay-at-close release uses the existing Invoice, ServiceActivation, RosObject, TimelineEvent, and AuditEvent architecture.
+- The invoice must be on `Pay at Close Watch`, remain unpaid, and have a positive amount.
+- The invoice must link to a `ServiceActivation` using the `pay_at_close` billing model.
+- The linked service activation must have `Authorized` billing consent and a related transaction or work object.
+- A scheduled or reached closing date alone does not release the invoice.
+- Staff must explicitly confirm a `successful_close` outcome through the dedicated pay-at-close workflow.
+- The successful-close endpoint requires `billing-workspace:pay-at-close:update`.
+- Successful confirmation creates one durable `PayAtClosingTrigger` RosObject with safe operational evidence.
+- Successful confirmation moves the invoice only from `Pay at Close Watch` to `Ready to Process`.
+- Successful confirmation does not create a Payment record and does not call Stripe.
+- The generic invoice-status route blocks bypass from `Pay at Close Watch` directly into `Ready to Process`, `Processing`, `Paid`, `Payment Failed`, or `Refunded`.
+- The employee Closing Billing Watch exposes the dedicated `Confirm Successful Close` action for live pay-at-close invoices.
+- The controlled local verification used a $599 Pay-at-Closing Coordination invoice.
+- Before successful-close confirmation, the transaction already contained a 2026-08-12 closing date while the invoice remained `Pay at Close Watch` with zero Payment records and zero pay-at-close triggers.
+- After successful-close confirmation, invoice `inv_step9_pay_at_close_599` became `Ready to Process` with closing date 2026-08-12 and `paidAt` remaining null.
+- Exactly one `PayAtClosingTrigger` was persisted with outcome `successful_close`.
+- Audit event `portal.invoice.pay_at_close.confirmed` and timeline event `invoice.pay_at_close.ready` were persisted.
+- Zero Payment records were created.
+- No production deployment was performed.
+
+Step 10 is the next billing slice: monthly/custom billing workflow.
 
 
 ## 10. Launch Classification

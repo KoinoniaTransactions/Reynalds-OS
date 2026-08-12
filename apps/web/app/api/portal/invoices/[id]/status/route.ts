@@ -7,6 +7,10 @@ import {
   PortalInvoiceValidationError,
   validatePortalInvoiceStatusUpdateInput
 } from "../../../../../../lib/portal-billing-invoices";
+import {
+  assertManualPayAtCloseInvoiceTransitionAllowed,
+  PayAtCloseTriggerValidationError
+} from "../../../../../../lib/portal-pay-at-close";
 
 export const dynamic = "force-dynamic";
 
@@ -16,9 +20,15 @@ type Params = {
 
 export async function PATCH(request: Request, { params }: Params) {
   try {
-    const actor = await assertPermission("billing-workspace:payments:process");
+    const actor = await assertPermission(
+      "billing-workspace:payments:process"
+    );
     const { id } = await params;
-    const input = validatePortalInvoiceStatusUpdateInput(await request.json());
+    const input =
+      validatePortalInvoiceStatusUpdateInput(
+        await request.json()
+      );
+
     const existing = await prisma.invoice.findFirst({
       where: {
         id,
@@ -27,84 +37,123 @@ export async function PATCH(request: Request, { params }: Params) {
     });
 
     if (!existing) {
-      return NextResponse.json({ error: "Invoice not found." }, { status: 404 });
+      return NextResponse.json(
+        { error: "Invoice not found." },
+        { status: 404 }
+      );
     }
 
-    const paymentRecordStatus = getPaymentRecordStatus(input.status);
+    assertManualPayAtCloseInvoiceTransitionAllowed(
+      existing.status,
+      input.status
+    );
+
+    const paymentRecordStatus =
+      getPaymentRecordStatus(input.status);
+
     const paidAt =
       input.status === "Paid"
         ? input.paidAt ?? existing.paidAt ?? new Date()
-        : input.status === "Payment Failed" || input.status === "Void"
+        : input.status === "Payment Failed" ||
+            input.status === "Void"
           ? null
           : existing.paidAt;
 
-    const updatedInvoice = await prisma.$transaction(async (tx) => {
-      const invoice = await tx.invoice.update({
-        where: { id: existing.id },
-        data: {
-          dueAt: input.dueAt ?? existing.dueAt,
-          paidAt,
-          status: input.status
-        }
-      });
-
-      if (paymentRecordStatus) {
-        await tx.payment.create({
+    const updatedInvoice = await prisma.$transaction(
+      async (tx) => {
+        const invoice = await tx.invoice.update({
+          where: {
+            id: existing.id
+          },
           data: {
-            workspaceId: actor.workspaceId,
-            invoiceId: invoice.id,
-            amount: invoice.amount,
-            status: paymentRecordStatus,
-            receivedAt: input.status === "Paid" ? invoice.paidAt : undefined
+            dueAt: input.dueAt ?? existing.dueAt,
+            paidAt,
+            status: input.status
           }
         });
+
+        if (paymentRecordStatus) {
+          await tx.payment.create({
+            data: {
+              workspaceId: actor.workspaceId,
+              invoiceId: invoice.id,
+              amount: invoice.amount,
+              status: paymentRecordStatus,
+              receivedAt:
+                input.status === "Paid"
+                  ? invoice.paidAt
+                  : undefined
+            }
+          });
+        }
+
+        await tx.timelineEvent.create({
+          data: {
+            workspaceId: actor.workspaceId,
+            objectId:
+              invoice.relatedObjectId ??
+              invoice.clientObjectId,
+            actorId: actor.id,
+            eventType:
+              input.status === "Paid"
+                ? "invoice.paid"
+                : "invoice.status.updated",
+            summary:
+              `Invoice status updated: ${formatInvoiceSummary(
+                invoice.id
+              )} is ${input.status}`,
+            previousValue: {
+              dueAt:
+                existing.dueAt?.toISOString() ?? null,
+              paidAt:
+                existing.paidAt?.toISOString() ?? null,
+              status: existing.status
+            },
+            newValue: {
+              dueAt:
+                invoice.dueAt?.toISOString() ?? null,
+              hasNotes: Boolean(input.notes),
+              paidAt:
+                invoice.paidAt?.toISOString() ?? null,
+              paymentMethodSummary:
+                input.paymentMethodSummary ?? null,
+              processorPaymentReference:
+                input.processorPaymentReference ?? null,
+              status: invoice.status
+            }
+          }
+        });
+
+        await tx.auditEvent.create({
+          data: {
+            workspaceId: actor.workspaceId,
+            actorId: actor.id,
+            actorEmail: actor.email,
+            action: "portal.invoice.status.updated",
+            subjectType: "Invoice",
+            subjectId: invoice.id,
+            summary:
+              `Invoice status updated: ${formatInvoiceSummary(
+                invoice.id
+              )} is ${input.status}`,
+            metadata: {
+              hasNotes: Boolean(input.notes),
+              hasPaymentMethodSummary: Boolean(
+                input.paymentMethodSummary
+              ),
+              hasProcessorPaymentReference: Boolean(
+                input.processorPaymentReference
+              ),
+              paymentRecordStatus,
+              previousStatus: existing.status,
+              status: invoice.status
+            }
+          }
+        });
+
+        return invoice;
       }
-
-      await tx.timelineEvent.create({
-        data: {
-          workspaceId: actor.workspaceId,
-          objectId: invoice.relatedObjectId ?? invoice.clientObjectId,
-          actorId: actor.id,
-          eventType: input.status === "Paid" ? "invoice.paid" : "invoice.status.updated",
-          summary: `Invoice status updated: ${formatInvoiceSummary(invoice.id)} is ${input.status}`,
-          previousValue: {
-            dueAt: existing.dueAt?.toISOString() ?? null,
-            paidAt: existing.paidAt?.toISOString() ?? null,
-            status: existing.status
-          },
-          newValue: {
-            dueAt: invoice.dueAt?.toISOString() ?? null,
-            hasNotes: Boolean(input.notes),
-            paidAt: invoice.paidAt?.toISOString() ?? null,
-            paymentMethodSummary: input.paymentMethodSummary ?? null,
-            processorPaymentReference: input.processorPaymentReference ?? null,
-            status: invoice.status
-          }
-        }
-      });
-
-      await tx.auditEvent.create({
-        data: {
-          workspaceId: actor.workspaceId,
-          actorId: actor.id,
-          actorEmail: actor.email,
-          action: "portal.invoice.status.updated",
-          subjectType: "Invoice",
-          subjectId: invoice.id,
-          summary: `Invoice status updated: ${formatInvoiceSummary(invoice.id)} is ${input.status}`,
-          metadata: {
-            hasNotes: Boolean(input.notes),
-            hasPaymentMethodSummary: Boolean(input.paymentMethodSummary),
-            hasProcessorPaymentReference: Boolean(input.processorPaymentReference),
-            paymentRecordStatus,
-            previousStatus: existing.status,
-            status: invoice.status
-          }
-        }
-      });
-
-      return invoice;
-    });
+    );
 
     return NextResponse.json({
       invoice: {
@@ -124,12 +173,24 @@ function handlePortalInvoiceStatusError(error: unknown) {
     return authResponse;
   }
 
-  if (error instanceof PortalInvoiceValidationError) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  if (
+    error instanceof PortalInvoiceValidationError ||
+    error instanceof PayAtCloseTriggerValidationError
+  ) {
+    return NextResponse.json(
+      { error: error.message },
+      { status: 400 }
+    );
   }
 
   if (isDatabaseUnavailableError(error)) {
-    return NextResponse.json({ error: "Invoice storage is temporarily unavailable." }, { status: 503 });
+    return NextResponse.json(
+      {
+        error:
+          "Invoice storage is temporarily unavailable."
+      },
+      { status: 503 }
+    );
   }
 
   throw error;
