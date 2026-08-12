@@ -1,5 +1,203 @@
 # SESSION HANDOFF — Koinonia Marketing System
 
+## 2026-08-12 Session Closure - Step 10A Exact-Version Billing Authorization
+
+Status: Verified local checkpoint on `chatgpt/portal-access-status`; current Step 10A/auth/Brain work is not yet committed or pushed.
+
+### Repository Checkpoint
+
+- Local project: `/Users/jeremiahreynalds/Projects/Reynalds_OS_v11_3_1_Work`
+- Branch: `chatgpt/portal-access-status`
+- Base HEAD remains `4a2a32092da7164cf3943aca43c02bc3dedd7eb3`.
+- Current source working scope before this documentation closure: 22 files.
+- Public production was not modified by this session.
+- Canonical Koinonia production remains isolated on `koinonia-production`.
+- Do not promote this portal-development branch directly to the public Koinonia domain.
+
+### Completed Billing Foundation
+
+Already completed and pushed before the current local Step 10A work:
+
+- Step 7 - Stripe hosted payment-method setup.
+- Step 8 - Stripe prepaid invoice collection.
+- Step 9 - pay-at-closing successful-close trigger workflow.
+
+Current local Step 10A implements written Monthly/Custom billing terms with exact-version client authorization.
+
+### Entity Isolation Rule
+
+D-021 was added locally during this session.
+
+Every Reynalds OS entity is isolated by default. Shared infrastructure is allowed, but entity-specific workspace, database, authentication, environment, fixture, secret, runtime, deployment, and workflow state must not bleed across entities.
+
+The original Step 10A fixture attempt exposed `ROS_MOCK_WORKSPACE_ID=wks_reynalds_brothers` in the local environment. Koinonia fixture work correctly stopped before writing data.
+
+Framework auth was then hardened so mock identities are deterministic and workspace-scoped.
+
+Koinonia Client mock identity:
+
+`usr_mock_wks_koinonia_client`
+
+Koinonia Owner retains seeded compatibility with:
+
+`usr_owner`
+
+For Koinonia browser testing, use process-only:
+
+- `AUTH_PROVIDER=mock`
+- `ROS_MOCK_WORKSPACE_ID=wks_koinonia`
+- the appropriate `ROS_MOCK_USER_ROLE`
+
+Do not rewrite shared `.env.local` merely to switch entities.
+
+### Auth and UI Verification
+
+Verified during this session:
+
+- shared auth tests: 19/19 passed.
+- focused web auth + billing tests before UI gate: 51/51 passed.
+- processor UI-gate test expansion: 54/54 passed across 8 files.
+- shared auth TypeScript passed.
+- web TypeScript passed.
+- `git diff --check` passed.
+- current verified source scope after UI hardening: 22 files.
+
+Pending `Consent Needed` billing requests now show:
+
+`Stripe Setup Locked - Consent Required`
+
+The processor setup action is disabled until required billing consent or exact written terms are accepted.
+
+### Controlled Step 10A Fixtures
+
+Koinonia-local fixtures were created only after explicit workspace isolation.
+
+Monthly fixture:
+
+- Service: Monthly Operations Partnership
+- Client: `obj_step10a_monthly_client`
+- Profile: `obj_step10a_monthly_profile`
+- ServiceActivation: `obj_step10a_monthly_activation`
+- BillingSetupRequest: `obj_step10a_monthly_request`
+
+Custom fixture:
+
+- Service: Realtor Support Plus
+- Client: `obj_step10a_custom_client`
+- Profile: `obj_step10a_custom_profile`
+- ServiceActivation: `obj_step10a_custom_activation`
+- BillingSetupRequest: `obj_step10a_custom_request`
+
+Initial fixture verification proved:
+
+- 8 fixture RosObjects.
+- 0 BillingRuleAssignments.
+- 0 billing-rule relationships.
+- 0 Step 10A invoices.
+- 0 Step 10A Payments.
+- 0 accepted terms.
+- 0 Stripe calls.
+
+### Monthly `monthly-v1` Verification
+
+Staff recorded exact written Monthly terms as `monthly-v1`.
+
+BillingRuleAssignment:
+
+`cmsqggfe50002mqohm86e094s`
+
+Before client acceptance:
+
+- rule status: `Pending Acceptance`
+- Monthly request: `Consent Needed`
+- `consentAcknowledged: false`
+- ServiceActivation consent: `Pending`
+- CustomerBillingProfile consent: `Pending`
+- Custom rules: 0
+- Step 10A invoices: 0
+- Step 10A Payments: 0
+
+The isolated Koinonia Client then reviewed and accepted exact terms version `monthly-v1`.
+
+After acceptance:
+
+- BillingRuleAssignment status: `Authorized`
+- `acceptedTermsVersion`: `monthly-v1`
+- accepted by `usr_mock_wks_koinonia_client`
+- BillingSetupRequest status: `Setup Requested`
+- `consentAcknowledged: true`
+- ServiceActivation `consentStatus`: `Authorized`
+- CustomerBillingProfile status: `Consent Recorded`
+- CustomerBillingProfile `consentStatus`: `Authorized`
+- per-ServiceActivation billing-term authorization persisted
+- Custom rules remain 0
+- Step 10A invoices remain 0
+- Step 10A Payments remain 0
+- client acceptance itself performed no Stripe charge
+
+### Accepted-Version Integrity
+
+The persisted `monthly-v1` value for `checkInCadence` is:
+
+`MOnthly Review`
+
+Do not silently edit the accepted `monthly-v1` record in place.
+
+If capitalization is corrected, create `monthly-v2`, supersede the old rule through the supported workflow, return the service to pending exact-version acceptance, and require separate client acceptance.
+
+This is also the planned regression proof that changed written terms never inherit authorization from an older accepted version.
+
+### Custom State
+
+Realtor Support Plus remains untouched by authorization testing:
+
+- BillingSetupRequest remains `Consent Needed`.
+- processor setup remains locked.
+- BillingRuleAssignments: 0.
+- no Custom invoice.
+- no Custom Payment.
+- no Stripe activity.
+
+### Production and Stripe Boundary
+
+This session used local development data and the Koinonia Stripe sandbox architecture only.
+
+Do not expose, print, paste, or commit:
+
+- `sk_test_`
+- `sk_live_`
+- `whsec_`
+- raw card numbers
+- CVV/CVC
+- bank credentials
+
+No Koinonia production deployment occurred.
+
+### Exact Next Session Action
+
+First action next session:
+
+1. Start isolated Koinonia Owner view.
+2. Open `/employee/billing`.
+3. Confirm Monthly Operations Partnership is now processor-eligible after exact `monthly-v1` acceptance.
+4. Confirm Realtor Support Plus remains `Consent Needed` and Stripe-locked.
+5. Do not create a Stripe setup link during that first visual check.
+
+Then continue in this order:
+
+1. Create `monthly-v2` to prove new-version reauthorization and processor re-locking.
+2. Complete Custom `custom-v1` staff-record/client-accept workflow.
+3. Complete Monthly/Custom Stripe hosted setup E2E.
+4. Implement Step 10B authorized Monthly/Custom invoice generation.
+5. Complete Monthly/Custom payment E2Es.
+6. Complete Step 11 payment audit trail.
+7. Complete Step 12 production security/configuration review.
+8. Integrate into the then-current `koinonia-production` baseline only through a controlled Koinonia release.
+
+No dev server should be assumed running when the next session begins.
+
+---
+
 Status: Active Session Handoff
 Repository: Reynalds OS
 Current Branch: `chatgpt/portal-access-status`

@@ -148,3 +148,64 @@ Isolation rule: Koinonia production work must not include or modify Personal Fin
 Status as of 2026-08-07: `koinonia-production` was created from `83d3dda31c500e36ac42f7258d5fdb79fef69c0e`. Its isolated card commit is `3a4e8517420243cc21720ab86c6a74e9e844482d`. GitHub comparison verifies the branch is exactly one commit ahead of the live rollback baseline and changes only the four approved business-card files. Vercel deployment `dpl_476JZYzZXGPJoJBCpomCfbQEvpxh` is READY as a Preview, and the user visually approved `/jeremiah`. No live production branch/domain change has been made yet.
 
 Canonical deployment record: `BRAIN/KOINONIA_DEPLOYMENT_READINESS.md`.
+
+## D-021 — Reynalds OS Enforces Entity Isolation
+
+Decision: Every company, project, workspace, operating system, portal, website, and other operational entity inside Reynalds OS must be isolated by default. Shared infrastructure is allowed, but entity-specific data, configuration, authentication context, fixtures, secrets, runtime state, workflows, tests, deployments, and release state must not silently cross entity boundaries.
+
+Reason: Reynalds OS intentionally holds multiple companies and projects inside a shared framework. Without explicit isolation, a local environment variable, mock identity, database fixture, deployment configuration, or other shared runtime value can cause work intended for one entity to affect another. Entity isolation protects data integrity, operational safety, security boundaries, testing reliability, and independent release control.
+
+Implementation rule: Entity-specific operations must explicitly resolve and verify their intended workspace or entity before reading, writing, seeding, migrating, authenticating, testing, processing, or deploying. Temporary local work should prefer entity-scoped or process-scoped configuration over changing shared configuration that may affect another entity.
+
+Cross-entity rule: Cross-entity access or integration is allowed only when deliberately designed, explicitly scoped, permission-controlled where applicable, and auditable. Accidental cross-entity inheritance is a defect.
+
+Canonical sources: `BRAIN/PRODUCT_BOUNDARIES.md` and `BRAIN/DEVELOPMENT_STANDARDS.md`.
+
+## D-022 - Monthly and Custom Billing Require Exact-Version Authorization
+
+### Decision
+
+Monthly and Custom billing authorization is attached to a specific written terms version.
+
+A client acceptance authorizes only the exact accepted version for the linked service activation. A later change to scope, amount, billing cadence, included hours, overage rate, payment timing, renewal/cancellation language, authorization requirements, or other material billing terms requires a new terms version and separate client acceptance.
+
+### Separation of Billing Stages
+
+The following stages are separate and must not be treated as interchangeable:
+
+1. Written terms recorded by authorized staff.
+2. Exact terms version accepted by the client.
+3. Processor-hosted payment-method setup.
+4. Authorized invoice generation.
+5. Payment processing and webhook reconciliation.
+
+Accepting written terms does not itself:
+
+- create an invoice,
+- create a Payment record,
+- collect a payment method,
+- call Stripe,
+- or charge the client.
+
+Processor setup must remain locked while required consent or exact terms are pending.
+
+### Version Integrity
+
+Accepted terms are immutable authorization evidence.
+
+Do not silently edit an accepted BillingRuleAssignment in place. Create a new version, supersede the prior current rule through the supported workflow, return the service to pending authorization, and require fresh acceptance.
+
+### Implementation Direction
+
+- Reuse `BillingRuleAssignment` RosObjects and ObjectRelationship links to ServiceActivation and CustomerBillingProfile.
+- Preserve workspace/client ownership and permission checks.
+- Keep server-side amount and eligibility authority.
+- Keep Stripe-hosted collection as the sensitive-data boundary.
+- Step 10B invoice generation may consume only an Authorized current billing rule.
+- Monthly invoice generation must be billing-period idempotent.
+- Custom invoice generation must require a specific approved billable scope/charge under the Authorized rule.
+- Payment reconciliation remains webhook-driven and auditable.
+
+### Reason
+
+This prevents changed recurring/custom terms from inheriting stale consent, prevents processor readiness from becoming a substitute for billing authorization, and preserves a durable audit trail for what the client actually agreed to.

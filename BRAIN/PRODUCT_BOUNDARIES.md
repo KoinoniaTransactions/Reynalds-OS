@@ -113,6 +113,33 @@ Hosting and repository boundaries should be chosen from actual product needs, wh
 
 ---
 
+# Entity and Workspace Isolation Rule
+
+Every company, project, workspace, company-specific operating system, portal, website, and other operational entity represented inside Reynalds OS is isolated by default.
+
+Isolation applies even when entities share the same monorepo, database schema, application packages, infrastructure provider, developer machine, or deployment tooling.
+
+Entity-specific data and runtime state must remain scoped to the intended entity. One entity must not accidentally inherit another entity's:
+
+- Workspace or tenant identifier.
+- Database records or fixture data.
+- Authentication or mock-auth identity.
+- Environment configuration.
+- Secrets or processor configuration.
+- Storage, files, queues, or workflow state.
+- Test state or temporary development data.
+- Deployment, domain, branch, or release state.
+
+Shared infrastructure is not permission to share entity state.
+
+Any cross-entity integration must be explicit, intentional, scoped, and auditable. If an operation is intended for one entity, the code or execution workflow must resolve and verify that entity before performing reads, writes, migrations, fixtures, tests, authentication setup, or deployment actions.
+
+For local development, entity-specific runtime values should be supplied through isolated or process-scoped configuration when a shared environment value could cause one project to run against another project's workspace.
+
+This is a framework invariant for Reynalds OS.
+
+---
+
 # Documentation Rule
 
 When product boundaries change, update this document first, then update affected architecture, project-state, routing, hosting, and implementation documentation.

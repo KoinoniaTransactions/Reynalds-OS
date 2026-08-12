@@ -1,5 +1,29 @@
 # Developer Handoff
 
+## 2026-08-12 Current Koinonia Portal Continuity Pointer
+
+The authoritative current-session checkpoint is the top section of:
+
+`BRAIN/SESSION_HANDOFF.md`
+
+Read that section before resuming Koinonia portal billing work.
+
+Current restart point:
+
+- branch `chatgpt/portal-access-status`
+- base HEAD `4a2a32092da7164cf3943aca43c02bc3dedd7eb3`
+- Step 10A exact-version Monthly/Custom authorization work is local and not yet committed/pushed at the time of this checkpoint
+- Monthly `monthly-v1` is already Authorized
+- Realtor Support Plus Custom remains `Consent Needed`
+- first next-session action is a read-only Owner check proving Monthly processor eligibility while Custom remains locked
+- do not edit accepted `monthly-v1` in place
+- do not promote the portal-development branch directly to production
+- preserve the isolated `koinonia-production` release line
+
+For detailed fixture IDs, test counts, auth isolation rules, Stripe boundaries, and the remaining Step 10-12 sequence, use `BRAIN/SESSION_HANDOFF.md` rather than reconstructing state from chat history.
+
+---
+
 ## Project Status
 
 Reynalds OS is in repository-first development.

@@ -37,6 +37,7 @@ Recover before reinventing.
 | Service Objects | 02_Companies/Koinonia/01_Services/ | Active |
 | Packages | 02_Companies/Koinonia/02_Packages/ | Active |
 | Pricing | 02_Companies/Koinonia/03_Pricing/ | Active |
+| Billing and Payment Architecture | docs/specifications/KOINONIA_BILLING_PAYMENT_SPEC.md | Active |
 
 ---
 

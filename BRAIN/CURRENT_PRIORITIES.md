@@ -1,5 +1,53 @@
 # Current Priorities
 
+## 2026-08-12 Current Priority - Koinonia Portal Billing Completion
+
+This dated section supersedes older launch-era and immediate-priority text below when those entries conflict with this checkpoint.
+
+### Active Phase
+
+Koinonia client/employee portal production readiness, with billing Steps 10-12 as the current focused work.
+
+The public Koinonia website is already live on the isolated `koinonia-production` release line. The active portal-development branch remains pre-live and must not be promoted directly to the public domain.
+
+### Current Billing Priority
+
+Billing Steps 7, 8, and 9 are complete.
+
+Step 10A is substantially implemented and locally verified:
+
+- Monthly/Custom written billing terms use durable `BillingRuleAssignment` records.
+- exact terms versions require explicit client acceptance.
+- processor setup remains locked while required consent or exact written terms are pending.
+- workspace-scoped mock authentication prevents cross-entity identity collisions.
+- controlled Koinonia Monthly/Custom fixtures exist only in the local development database.
+- Monthly `monthly-v1` is Authorized after exact-version client acceptance.
+- Custom remains `Consent Needed` with zero BillingRuleAssignments.
+- Step 10A acceptance created zero invoices and zero Payments.
+
+### Immediate Sequence
+
+1. Verify Owner view: Monthly processor eligible; Custom still locked.
+2. Create `monthly-v2` to prove changed terms require fresh acceptance and re-lock processor setup.
+3. Complete Custom `custom-v1` staff-record/client-accept flow.
+4. Complete Monthly/Custom Stripe-hosted setup E2E.
+5. Implement Step 10B authorized Monthly/Custom invoice generation.
+6. Complete Monthly/Custom payment E2Es with idempotent webhook reconciliation.
+7. Complete Step 11 payment audit closure.
+8. Complete Step 12 production security/configuration review.
+9. Integrate only the approved Koinonia portal feature set into the then-current `koinonia-production` baseline through a controlled release.
+
+### Current Safety Boundaries
+
+- Never silently edit an accepted billing terms version.
+- `monthly-v1` is immutable acceptance evidence; any correction becomes a new version.
+- Terms acceptance, Stripe payment-method setup, invoice generation, and payment processing are separate authorization stages.
+- Do not expose, paste, print, or commit Stripe secret keys, webhook signing secrets, raw card data, CVV/CVC, or bank credentials.
+- Do not inherit workspace/auth/runtime state from Reynalds Brothers, Personal Finance, or another Reynalds OS entity.
+- Do not modify `koinonia-production` until the portal feature set is separately verified and a controlled release is approved.
+
+---
+
 ## Active Phase
 
 Koinonia Production Website

@@ -1,6 +1,6 @@
 # Koinonia Billing and Payment Setup Specification
 
-Status: Proposed MVP architecture  
+Status: Active MVP architecture
 Date: 2026-07-28  
 Owner: Koinonia Transactions  
 Applies To: Customer billing profiles, service billing rules, payment-method setup, invoices, pay-at-closing tracking, and payment processing readiness
@@ -370,6 +370,56 @@ Verified behavior:
 
 Step 10 is the next billing slice: monthly/custom billing workflow.
 
+
+### Step 10A Verification - 2026-08-12
+
+Step 10A written-terms authorization is substantially implemented and locally verified.
+
+Verified architecture:
+
+- Monthly and Custom billing use durable `BillingRuleAssignment` RosObjects.
+- BillingRuleAssignment records link to the relevant ServiceActivation and CustomerBillingProfile through ObjectRelationship records.
+- Staff record exact written terms and a terms version.
+- Client acceptance applies only to the exact presented terms version.
+- Monthly/Custom BillingSetupRequests remain `Consent Needed` until exact terms are accepted.
+- Processor setup stays locked while exact terms are pending.
+- Exact terms acceptance is separate from Stripe setup, invoice creation, and payment processing.
+- Accepting terms creates no invoice, no Payment record, and no Stripe charge.
+- A new or changed terms version must require separate client acceptance and must not inherit authorization from an older version.
+
+Controlled local proof:
+
+- Koinonia workspace isolation was enforced explicitly.
+- Monthly Operations Partnership `monthly-v1` was recorded as `Pending Acceptance`.
+- BillingRuleAssignment `cmsqggfe50002mqohm86e094s` linked exactly once to the Monthly ServiceActivation and CustomerBillingProfile.
+- The isolated Koinonia Client accepted exact terms version `monthly-v1`.
+- The rule became `Authorized`.
+- The linked BillingSetupRequest advanced to `Setup Requested` with `consentAcknowledged: true`.
+- The linked ServiceActivation and CustomerBillingProfile recorded Authorized consent evidence.
+- Realtor Support Plus Custom remained `Consent Needed` with zero BillingRuleAssignments.
+- Step 10A invoices remained zero.
+- Step 10A Payments remained zero.
+
+Accepted-version integrity note:
+
+The accepted `monthly-v1` value for `checkInCadence` is `MOnthly Review`. Do not edit the accepted version in place. Correct it through `monthly-v2` and use that new version to prove supersession, processor re-locking, and fresh client acceptance.
+
+Step 10 is not yet complete.
+
+Remaining Step 10 work:
+
+1. Owner-side processor eligibility verification after accepted Monthly terms.
+2. `monthly-v2` reauthorization regression.
+3. Custom `custom-v1` exact-version authorization.
+4. Monthly/Custom Stripe-hosted payment-method setup E2E.
+5. Step 10B authorized Monthly/Custom invoice generation.
+6. Monthly/Custom payment E2Es.
+
+Step 11 remains the payment audit trail.
+
+Step 12 remains the production security and compliance/configuration review before live payment collection.
+
+---
 
 ## 10. Launch Classification
 

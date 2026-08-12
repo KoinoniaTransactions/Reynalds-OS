@@ -1,5 +1,48 @@
 # Reynalds OS Project State
 
+## 2026-08-12 Current Canonical State - Koinonia Portal Billing
+
+This dated section supersedes older branch, website-launch, and immediate-priority text below when those entries conflict with this checkpoint.
+
+### Current Repository State
+
+- Active portal-development branch: `chatgpt/portal-access-status`.
+- Current base HEAD: `4a2a32092da7164cf3943aca43c02bc3dedd7eb3`.
+- Current Step 10A/auth/Brain work is local and not yet committed or pushed.
+- Public Koinonia production is separate and remains on the isolated `koinonia-production` release line.
+- Portal development must not be promoted directly to the public Koinonia domain.
+
+### Current Billing Milestone
+
+Billing Steps 7, 8, and 9 are complete and previously pushed.
+
+Step 10A is substantially implemented and locally verified:
+
+- Monthly/Custom written terms use durable `BillingRuleAssignment` records.
+- exact terms versions require explicit client acceptance.
+- processor setup remains locked while terms are pending.
+- workspace-scoped mock authentication prevents cross-entity identity collisions.
+- controlled Koinonia Monthly/Custom fixtures exist only in the local development database.
+- Monthly `monthly-v1` has been accepted and is Authorized.
+- Custom remains pending and untouched.
+- terms acceptance created no Step 10A invoice or Payment.
+
+### Current Next Objective
+
+Finish Step 10 safely before production work:
+
+1. verify Monthly processor eligibility after `monthly-v1` acceptance.
+2. prove changed-version reauthorization with `monthly-v2`.
+3. complete Custom `custom-v1`.
+4. complete Monthly/Custom Stripe setup verification.
+5. implement Step 10B authorized invoice generation.
+6. continue to Step 11 payment audit closure.
+7. continue to Step 12 production security and deployment readiness.
+
+Production remains a later deliberate integration into `koinonia-production`.
+
+---
+
 ## Project
 
 **Product:** Reynalds OS

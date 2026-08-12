@@ -79,6 +79,32 @@ Every API should be:
 - Auditable when it changes data.
 - Documented if public to the app.
 
+## Entity Isolation Rule
+
+Every company, project, workspace, operating system, portal, and other operational entity inside Reynalds OS must be isolated by default.
+
+Shared infrastructure, packages, schemas, and reusable patterns are allowed, but entity-specific state must never silently bleed across boundaries.
+
+This includes:
+
+- Database records and queries.
+- Workspace and tenant identifiers.
+- Authentication and mock-auth identities.
+- Environment variables and runtime configuration.
+- Fixtures, seeds, migrations, and test data.
+- Files, documents, storage locations, and secrets.
+- Queues, workflows, automations, and background processing.
+- Branches, build inputs, deployments, domains, and release state.
+- Logs, audit records, caches, and temporary local development state.
+
+Every entity-specific operation must resolve and verify its intended entity or workspace explicitly before reading or writing data.
+
+Local development must not rely on a shared environment value when that value could silently redirect work into another entity. Prefer explicit entity-scoped or process-scoped overrides for temporary local work.
+
+Cross-entity access or integration is allowed only when it is intentionally designed, explicitly scoped, permission-controlled where applicable, and auditable. Accidental cross-entity inheritance is a defect.
+
+When working in a shared monorepo, do not modify, stage, reset, migrate, deploy, seed, or otherwise mutate another entity's state unless that entity is explicitly part of the approved work.
+
 ## Testing Rule
 
 At minimum:

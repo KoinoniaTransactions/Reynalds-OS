@@ -17,6 +17,104 @@ Each development session should add a new entry with:
 
 
 
+## 2026-08-12 - Step 10A Exact-Version Billing Authorization Verified
+
+### Objective
+
+Implement and prove the written-terms authorization foundation for Monthly and Custom billing while keeping processor setup, invoice generation, and payment processing separate.
+
+### Completed
+
+- Added durable `BillingRuleAssignment` domain behavior for `monthly` and `custom` billing models.
+- Added staff written-terms creation and client exact-version acceptance routes.
+- Added employee Monthly/Custom written-terms forms and client exact-terms review/acceptance UI.
+- Added relationship-backed links from BillingRuleAssignment to ServiceActivation and CustomerBillingProfile.
+- Added server guards so Monthly/Custom setup remains `Consent Needed` until exact terms are accepted.
+- Added a staff processor UI gate so `Consent Needed` requests show `Stripe Setup Locked - Consent Required`.
+- Added D-021 entity isolation rules to Product Boundaries, Development Standards, and Decision Log.
+- Hardened mock authentication so mock identities are deterministic and workspace-scoped.
+- Preserved seeded Koinonia Owner compatibility with `usr_owner`.
+- Created isolated Koinonia local Monthly/Custom fixtures only after deriving the Koinonia workspace explicitly.
+- Verified and accepted Monthly Operations Partnership terms version `monthly-v1`.
+
+### Verification
+
+Framework/auth verification:
+
+- shared auth tests: 19/19 passed.
+- focused web auth and billing tests: 51/51 passed before UI-gate expansion.
+- UI-gate expansion: 54/54 tests passed across 8 files.
+- shared auth TypeScript passed.
+- web TypeScript passed.
+- `git diff --check` passed.
+
+Controlled fixture verification:
+
+- Koinonia workspace: `wks_koinonia`.
+- Koinonia Client mock identity: `usr_mock_wks_koinonia_client`.
+- 8 Step 10A fixture RosObjects.
+- 0 BillingRuleAssignments before written terms.
+- 0 billing-rule relationships before written terms.
+- 0 Step 10A invoices.
+- 0 Step 10A Payments.
+- 0 accepted terms.
+- 0 Stripe calls from fixture creation.
+
+Monthly written terms verification:
+
+- BillingRuleAssignment: `cmsqggfe50002mqohm86e094s`.
+- terms version: `monthly-v1`.
+- initial rule status: `Pending Acceptance`.
+- exactly one ServiceActivation relationship.
+- exactly one CustomerBillingProfile relationship.
+- before acceptance, request remained `Consent Needed` with `consentAcknowledged: false`.
+- before acceptance, ServiceActivation and CustomerBillingProfile consent remained Pending.
+- Custom remained at zero BillingRuleAssignments.
+- Step 10A invoices and Payments remained zero.
+
+Monthly client acceptance verification:
+
+- rule status became `Authorized`.
+- `acceptedTermsVersion` is `monthly-v1`.
+- accepted by `usr_mock_wks_koinonia_client`.
+- BillingSetupRequest became `Setup Requested` with `consentAcknowledged: true`.
+- ServiceActivation `consentStatus` became `Authorized`.
+- CustomerBillingProfile became `Consent Recorded` with `consentStatus: Authorized`.
+- per-ServiceActivation billing-term authorization persisted.
+- Custom rules remained zero.
+- Step 10A invoices remained zero.
+- Step 10A Payments remained zero.
+- client acceptance itself performed no Stripe charge.
+- final source scope before documentation closure: 22 implementation/Brain/auth/UI files with clean diff check.
+
+### Known Issue / Intentional Next-Version Test
+
+The accepted `monthly-v1` record persisted `checkInCadence` as `MOnthly Review`.
+
+Do not edit accepted `monthly-v1` in place.
+
+Correct the capitalization only through `monthly-v2`. That new version must supersede the prior rule through the supported workflow, return the service to pending exact-version acceptance, re-lock processor setup, and require separate client acceptance.
+
+### Production Boundary
+
+- Local development database and Stripe sandbox architecture only.
+- No production deployment.
+- No production branch change.
+- No raw card number, CVV/CVC, bank credential, Stripe key, or webhook signing secret committed or recorded in Brain.
+- Public Koinonia production remains isolated on `koinonia-production`.
+
+### Recommended Next Step
+
+Start the next session with a read-only Owner billing check:
+
+1. confirm Monthly Operations Partnership is processor-eligible after `monthly-v1` acceptance.
+2. confirm Realtor Support Plus remains `Consent Needed` and processor-locked.
+3. do not create a Stripe setup link during that first visual check.
+
+Then create `monthly-v2` for the reauthorization regression, complete Custom `custom-v1`, and continue through Step 10B, Step 11, and Step 12.
+
+---
+
 ## 2026-08-12 - Pay-at-Closing Trigger Workflow Step 9 Verified
 
 ### Objective
