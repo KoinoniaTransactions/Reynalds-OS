@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BillingSetupStatusForm } from "../../../components/employee/BillingSetupStatusForm";
+import { BillingTermsForm } from "../../../components/employee/BillingTermsForm";
 import { InvoiceStatusForm } from "../../../components/employee/InvoiceStatusForm";
 import { PayAtCloseTriggerForm } from "../../../components/employee/PayAtCloseTriggerForm";
 import { absoluteUrl } from "../../../config/seo.config";
@@ -447,6 +448,19 @@ export default async function EmployeeBillingWorkspacePreviewPage() {
                             !billingSetupView.isLiveData
                           }
                           requestId={request.id}
+                        />
+
+                        <BillingTermsForm
+                          canManage={
+                            actor.permissions.includes(
+                              "billing-workspace:profiles:update"
+                            )
+                          }
+                          disabled={
+                            !billingSetupView.isLiveData
+                          }
+                          requestId={request.id}
+                          serviceName={request.service}
                         />
                       </article>
                     )

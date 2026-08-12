@@ -1,7 +1,14 @@
 import { createAuthUser } from "@reynalds-os/auth";
-import { describe, expect, it } from "vitest";
+import {
+  afterEach,
+  describe,
+  expect,
+  it,
+  vi
+} from "vitest";
 import {
   getClerkDatabaseUserWhere,
+  getMockAuthUser,
   getPortalInvitationAcceptanceWhere,
   normalizeClerkEmailAddress
 } from "./auth";
@@ -49,5 +56,93 @@ describe("managed auth matching", () => {
       status: { in: ["pending", "provider_pending"] },
       OR: [{ expiresAt: null }, { expiresAt: { gt: now } }]
     });
+  });
+});
+
+describe("mock auth workspace isolation", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("creates different Client identities for Koinonia and Reynalds Brothers", () => {
+    vi.stubEnv(
+      "ROS_MOCK_USER_ROLE",
+      "Client"
+    );
+
+    vi.stubEnv(
+      "ROS_MOCK_WORKSPACE_ID",
+      "wks_koinonia"
+    );
+
+    const koinoniaClient =
+      getMockAuthUser();
+
+    vi.stubEnv(
+      "ROS_MOCK_WORKSPACE_ID",
+      "wks_reynalds_brothers"
+    );
+
+    const reynaldsBrothersClient =
+      getMockAuthUser();
+
+    expect(
+      koinoniaClient.id
+    ).toBe(
+      "usr_mock_wks_koinonia_client"
+    );
+
+    expect(
+      reynaldsBrothersClient.id
+    ).toBe(
+      "usr_mock_wks_reynalds_brothers_client"
+    );
+
+    expect(
+      koinoniaClient.id
+    ).not.toBe(
+      reynaldsBrothersClient.id
+    );
+  });
+
+  it("keeps Koinonia Owner mapped to its seeded user while isolating another workspace", () => {
+    vi.stubEnv(
+      "ROS_MOCK_USER_ROLE",
+      "Owner"
+    );
+
+    vi.stubEnv(
+      "ROS_MOCK_WORKSPACE_ID",
+      "wks_koinonia"
+    );
+
+    const koinoniaOwner =
+      getMockAuthUser();
+
+    vi.stubEnv(
+      "ROS_MOCK_WORKSPACE_ID",
+      "wks_reynalds_brothers"
+    );
+
+    const reynaldsBrothersOwner =
+      getMockAuthUser();
+
+    expect(
+      koinoniaOwner.id
+    ).toBe(
+      "usr_owner"
+    );
+
+    expect(
+      reynaldsBrothersOwner.id
+    ).toBe(
+      "usr_mock_wks_reynalds_brothers_owner"
+    );
+
+    expect(
+      koinoniaOwner.id
+    ).not.toBe(
+      reynaldsBrothersOwner.id
+    );
   });
 });

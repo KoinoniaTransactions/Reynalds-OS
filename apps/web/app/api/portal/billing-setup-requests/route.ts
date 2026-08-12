@@ -4,19 +4,29 @@ import {
   type Permission
 } from "@reynalds-os/auth";
 import { NextResponse } from "next/server";
-import { getAuthErrorResponse } from "../../../../lib/api-auth";
-import { assertPermission } from "../../../../lib/auth";
+import {
+  getAuthErrorResponse
+} from "../../../../lib/api-auth";
+import {
+  assertPermission
+} from "../../../../lib/auth";
 import {
   applyBillingSetupRequestSourcePolicy,
   billingSetupRequestObjectType,
   BillingSetupValidationError,
   validateBillingSetupRequestInput
 } from "../../../../lib/billing-setup-requests";
-import { prisma } from "../../../../lib/db";
+import {
+  prisma
+} from "../../../../lib/db";
 import {
   BillingTargetNotFoundError,
-  createPortalBillingSetupBundle
+  createPortalBillingSetupBundle,
+  getCanonicalBillingModelForService
 } from "../../../../lib/portal-billing-persistence";
+import {
+  applyTermsManagedBillingSetupPolicy
+} from "../../../../lib/portal-billing-rules";
 import {
   getBillingSetupRequestPermission,
   getBillingSetupRequestSource,
@@ -27,99 +37,151 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const actor = await assertAnyPermission([
-      "client-portal:billing:view",
-      "billing-workspace:view"
-    ]);
-    const canViewWorkspaceQueue = canViewAllBillingSetupRequests(actor);
+    const actor =
+      await assertAnyPermission([
+        "client-portal:billing:view",
+        "billing-workspace:view"
+      ]);
 
-    const billingSetupRequests = await prisma.rosObject.findMany({
-      where: {
-        workspaceId: actor.workspaceId,
-        objectType: billingSetupRequestObjectType,
-        archivedAt: null,
-        ...(canViewWorkspaceQueue
-          ? {}
-          : {
-              OR: [
-                {
-                  clientUserId: actor.id
-                },
-                {
-                  ownerId: actor.id
-                }
-              ]
-            })
-      },
-      orderBy: [
-        {
-          updatedAt: "desc"
+    const canViewWorkspaceQueue =
+      canViewAllBillingSetupRequests(
+        actor
+      );
+
+    const billingSetupRequests =
+      await prisma.rosObject.findMany({
+        where: {
+          workspaceId:
+            actor.workspaceId,
+          objectType:
+            billingSetupRequestObjectType,
+          archivedAt: null,
+          ...(canViewWorkspaceQueue
+            ? {}
+            : {
+                OR: [
+                  {
+                    clientUserId:
+                      actor.id
+                  },
+                  {
+                    ownerId:
+                      actor.id
+                  }
+                ]
+              })
         },
-        {
-          createdAt: "desc"
-        }
-      ],
-      take: 50
-    });
+        orderBy: [
+          {
+            updatedAt: "desc"
+          },
+          {
+            createdAt: "desc"
+          }
+        ],
+        take: 50
+      });
 
     return NextResponse.json({
       billingSetupRequests
     });
   } catch (error) {
-    return handleBillingSetupRequestError(error);
+    return handleBillingSetupRequestError(
+      error
+    );
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request
+) {
   try {
-    const actor = await assertAnyPermission([
-      "client-portal:billing:setup",
-      "billing-workspace:payment-methods:request"
-    ]);
+    const actor =
+      await assertAnyPermission([
+        "client-portal:billing:setup",
+        "billing-workspace:payment-methods:request"
+      ]);
 
-    const requestSource = getBillingSetupRequestSource(
-      request.headers.get(koinoniaBillingRequestSourceHeader),
-      actor.role
-    );
+    const requestSource =
+      getBillingSetupRequestSource(
+        request.headers.get(
+          koinoniaBillingRequestSourceHeader
+        ),
+        actor.role
+      );
+
     const requiredPermission =
-      getBillingSetupRequestPermission(requestSource);
+      getBillingSetupRequestPermission(
+        requestSource
+      );
 
-    if (!actor.permissions.includes(requiredPermission)) {
-      throw new PermissionDeniedError(requiredPermission);
+    if (
+      !actor.permissions.includes(
+        requiredPermission
+      )
+    ) {
+      throw new PermissionDeniedError(
+        requiredPermission
+      );
     }
 
-    const rawInput = await request.json();
+    const rawInput =
+      await request.json();
 
-    const input = applyBillingSetupRequestSourcePolicy(
-      validateBillingSetupRequestInput(rawInput),
-      requestSource
-    );
+    const sourcePolicyInput =
+      applyBillingSetupRequestSourcePolicy(
+        validateBillingSetupRequestInput(
+          rawInput
+        ),
+        requestSource
+      );
 
-    const created = await createPortalBillingSetupBundle({
-      actor,
-      input,
-      rawInput,
-      requestSource
-    });
+    const canonicalBillingModel =
+      getCanonicalBillingModelForService(
+        sourcePolicyInput.serviceName
+      );
+
+    const input =
+      applyTermsManagedBillingSetupPolicy(
+        sourcePolicyInput,
+        canonicalBillingModel
+      );
+
+    const created =
+      await createPortalBillingSetupBundle({
+        actor,
+        input,
+        rawInput,
+        requestSource
+      });
 
     return NextResponse.json(created, {
       status: 201
     });
   } catch (error) {
-    return handleBillingSetupRequestError(error);
+    return handleBillingSetupRequestError(
+      error
+    );
   }
 }
 
 async function assertAnyPermission(
   permissions: Permission[]
 ): Promise<AuthUser> {
-  let permissionDeniedError: PermissionDeniedError | null = null;
+  let permissionDeniedError:
+    | PermissionDeniedError
+    | null = null;
 
   for (const permission of permissions) {
     try {
-      return await assertPermission(permission);
+      return await assertPermission(
+        permission
+      );
     } catch (error) {
-      if (error instanceof PermissionDeniedError) {
+      if (
+        error instanceof
+        PermissionDeniedError
+      ) {
         permissionDeniedError = error;
         continue;
       }
@@ -130,25 +192,37 @@ async function assertAnyPermission(
 
   throw (
     permissionDeniedError ??
-    new PermissionDeniedError(permissions[0])
+    new PermissionDeniedError(
+      permissions[0]
+    )
   );
 }
 
-function canViewAllBillingSetupRequests(actor: AuthUser): boolean {
+function canViewAllBillingSetupRequests(
+  actor: AuthUser
+): boolean {
   return (
     actor.role !== "Client" &&
-    actor.permissions.includes("billing-workspace:view")
+    actor.permissions.includes(
+      "billing-workspace:view"
+    )
   );
 }
 
-function handleBillingSetupRequestError(error: unknown) {
-  const authResponse = getAuthErrorResponse(error);
+function handleBillingSetupRequestError(
+  error: unknown
+) {
+  const authResponse =
+    getAuthErrorResponse(error);
 
   if (authResponse) {
     return authResponse;
   }
 
-  if (error instanceof BillingTargetNotFoundError) {
+  if (
+    error instanceof
+    BillingTargetNotFoundError
+  ) {
     return NextResponse.json(
       {
         error: error.message
@@ -159,7 +233,10 @@ function handleBillingSetupRequestError(error: unknown) {
     );
   }
 
-  if (error instanceof BillingSetupValidationError) {
+  if (
+    error instanceof
+    BillingSetupValidationError
+  ) {
     return NextResponse.json(
       {
         error: error.message
@@ -170,10 +247,13 @@ function handleBillingSetupRequestError(error: unknown) {
     );
   }
 
-  if (isDatabaseUnavailableError(error)) {
+  if (
+    isDatabaseUnavailableError(error)
+  ) {
     return NextResponse.json(
       {
-        error: "Billing setup storage is temporarily unavailable."
+        error:
+          "Billing setup storage is temporarily unavailable."
       },
       {
         status: 503
@@ -184,11 +264,18 @@ function handleBillingSetupRequestError(error: unknown) {
   throw error;
 }
 
-function isDatabaseUnavailableError(error: unknown): boolean {
+function isDatabaseUnavailableError(
+  error: unknown
+): boolean {
   return (
     error instanceof Error &&
-    (error.name === "PrismaClientInitializationError" ||
-      error.message.includes("Can't reach database server") ||
-      error.message.includes("ECONNREFUSED"))
+    (error.name ===
+      "PrismaClientInitializationError" ||
+      error.message.includes(
+        "Can't reach database server"
+      ) ||
+      error.message.includes(
+        "ECONNREFUSED"
+      ))
   );
 }

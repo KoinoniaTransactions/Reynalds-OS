@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
 import { BillingSetupRequestForm } from "../../../components/client/BillingSetupRequestForm";
+import {
+  ClientBillingTermsCard,
+  type ClientBillingTermsCardTerms
+} from "../../../components/client/ClientBillingTermsCard";
 import { ClientInvoicePaymentButton } from "../../../components/client/ClientInvoicePaymentButton";
 import { Footer, Header } from "../../../components/site";
 import {
@@ -12,6 +16,10 @@ import {
 import { prisma } from "../../../lib/db";
 import { buildPortalInvoiceDisplayItem } from "../../../lib/portal-billing-invoices";
 import { requirePortalPermission } from "../../../lib/portal-auth";
+import {
+  billingRuleAssignmentObjectType,
+  getBillingRuleContext
+} from "../../../lib/portal-billing-rules";
 import { canCreatePrepaidInvoicePaymentSession } from "../../../lib/stripe-invoice-payment-sessions";
 
 export const dynamic = "force-dynamic";
@@ -161,6 +169,12 @@ type BillingSetupView = {
   requests: BillingSetupItem[];
 };
 
+type BillingTermsView = {
+  isLiveData: boolean;
+  notice?: string;
+  rules: ClientBillingTermsCardTerms[];
+};
+
 type InvoiceView = {
   invoices: InvoiceItem[];
   isLiveData: boolean;
@@ -202,17 +216,24 @@ export default async function ClientBillingCenterPreviewPage() {
     "/client/billing"
   );
 
-  const [billingSetupView, invoiceView] =
-    await Promise.all([
-      getClientBillingSetupView(
-        actor.workspaceId,
-        actor.id
-      ),
-      getClientInvoiceView(
-        actor.workspaceId,
-        actor.id
-      )
-    ]);
+  const [
+    billingSetupView,
+    billingTermsView,
+    invoiceView
+  ] = await Promise.all([
+    getClientBillingSetupView(
+      actor.workspaceId,
+      actor.id
+    ),
+    getClientBillingTermsView(
+      actor.workspaceId,
+      actor.id
+    ),
+    getClientInvoiceView(
+      actor.workspaceId,
+      actor.id
+    )
+  ]);
 
   const selectedServiceView =
     buildSelectedServiceItems(
@@ -324,6 +345,12 @@ export default async function ClientBillingCenterPreviewPage() {
                     </p>
                   ) : null}
 
+                  {billingTermsView.notice ? (
+                    <p className="koinonia-billing-security-note">
+                      {billingTermsView.notice}
+                    </p>
+                  ) : null}
+
                   {billingSetupView.requests.map(
                     (request) => (
                       <article
@@ -360,6 +387,19 @@ export default async function ClientBillingCenterPreviewPage() {
                             Setup status
                           </span>
                         </div>
+
+                        <ClientBillingTermsCard
+                          disabled={
+                            !billingTermsView.isLiveData
+                          }
+                          terms={
+                            billingTermsView.rules.find(
+                              (rule) =>
+                                rule.billingSetupRequestId ===
+                                request.id
+                            )
+                          }
+                        />
                       </article>
                     )
                   )}
@@ -496,6 +536,285 @@ export default async function ClientBillingCenterPreviewPage() {
       <Footer />
     </main>
   );
+}
+
+async function getClientBillingTermsView(
+  workspaceId: string,
+  ownerId: string
+): Promise<BillingTermsView> {
+  try {
+    const billingRules =
+      await prisma.rosObject.findMany({
+        where: {
+          workspaceId,
+          objectType:
+            billingRuleAssignmentObjectType,
+          archivedAt: null,
+          status: {
+            not: "Superseded"
+          },
+          OR: [
+            {
+              clientUserId:
+                ownerId
+            },
+            {
+              ownerId
+            }
+          ]
+        },
+        orderBy: [
+          {
+            updatedAt: "desc"
+          },
+          {
+            createdAt: "desc"
+          }
+        ]
+      });
+
+    const currentRules =
+      new Map<
+        string,
+        ClientBillingTermsCardTerms
+      >();
+
+    for (const rule of billingRules) {
+      const context =
+        getBillingRuleContext(
+          rule.data
+        );
+
+      if (
+        !context.serviceActivationId ||
+        currentRules.has(
+          context.serviceActivationId
+        )
+      ) {
+        continue;
+      }
+
+      const item =
+        buildClientBillingTermsItem(
+          rule
+        );
+
+      if (!item) {
+        continue;
+      }
+
+      currentRules.set(
+        context.serviceActivationId,
+        item
+      );
+    }
+
+    return {
+      isLiveData: true,
+      rules:
+        Array.from(
+          currentRules.values()
+        )
+    };
+  } catch (error) {
+    if (
+      !isDatabaseUnavailableError(
+        error
+      )
+    ) {
+      throw error;
+    }
+
+    return {
+      isLiveData: false,
+      notice:
+        "Written billing terms are temporarily unavailable.",
+      rules: []
+    };
+  }
+}
+
+function buildClientBillingTermsItem(
+  rule: {
+    data: unknown;
+    id: string;
+    status: string;
+  }
+): ClientBillingTermsCardTerms | null {
+  const context =
+    getBillingRuleContext(
+      rule.data
+    );
+
+  const data =
+    toRecord(
+      rule.data
+    );
+
+  const effectiveDate =
+    optionalString(
+      data.effectiveDate
+    );
+
+  const paymentTiming =
+    optionalString(
+      data.paymentTiming
+    );
+
+  const renewalCancellationSummary =
+    optionalString(
+      data.renewalCancellationSummary
+    );
+
+  const scopeSummary =
+    optionalString(
+      data.scopeSummary
+    );
+
+  if (
+    !context.billingModel ||
+    !context.billingSetupRequestId ||
+    !context.serviceName ||
+    !context.termsVersion ||
+    !effectiveDate ||
+    !paymentTiming ||
+    !renewalCancellationSummary ||
+    !scopeSummary
+  ) {
+    return null;
+  }
+
+  const common = {
+    authorizationStatus:
+      context.authorizationStatus ??
+      rule.status,
+    billingModel:
+      context.billingModel,
+    billingSetupRequestId:
+      context.billingSetupRequestId,
+    effectiveDate,
+    id: rule.id,
+    paymentTiming,
+    renewalCancellationSummary,
+    scopeSummary,
+    serviceName:
+      context.serviceName,
+    termsVersion:
+      context.termsVersion
+  };
+
+  if (
+    context.billingModel ===
+    "monthly"
+  ) {
+    const billingDay =
+      optionalNumber(
+        data.billingDay
+      );
+
+    const checkInCadence =
+      optionalString(
+        data.checkInCadence
+      );
+
+    const includedHours =
+      optionalNumber(
+        data.includedHours
+      );
+
+    const monthlyAmount =
+      optionalString(
+        data.monthlyAmount
+      );
+
+    if (
+      billingDay === undefined ||
+      !checkInCadence ||
+      includedHours === undefined ||
+      !monthlyAmount
+    ) {
+      return null;
+    }
+
+    return {
+      ...common,
+      billingModel:
+        "monthly",
+      billingDay,
+      checkInCadence,
+      includedHours,
+      monthlyAmount,
+      overageRate:
+        optionalString(
+          data.overageRate
+        )
+    };
+  }
+
+  const authorizationRequirements =
+    optionalString(
+      data.authorizationRequirements
+    );
+
+  const pricingBasis =
+    optionalString(
+      data.pricingBasis
+    );
+
+  const reviewCadence =
+    optionalString(
+      data.reviewCadence
+    );
+
+  if (
+    !authorizationRequirements ||
+    !pricingBasis ||
+    !reviewCadence
+  ) {
+    return null;
+  }
+
+  return {
+    ...common,
+    billingModel:
+      "custom",
+    authorizationRequirements,
+    pricingBasis,
+    reviewCadence
+  };
+}
+
+function toRecord(
+  value: unknown
+): Record<string, unknown> {
+  return value &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+    ? (
+        value as Record<
+          string,
+          unknown
+        >
+      )
+    : {};
+}
+
+function optionalString(
+  value: unknown
+): string | undefined {
+  return typeof value === "string" &&
+    value.trim()
+    ? value.trim()
+    : undefined;
+}
+
+function optionalNumber(
+  value: unknown
+): number | undefined {
+  return typeof value === "number" &&
+    Number.isFinite(value)
+    ? value
+    : undefined;
 }
 
 async function getClientInvoiceView(

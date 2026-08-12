@@ -6,6 +6,7 @@ import {
   getMockClientUser,
   getMockEmployeeUser,
   getMockUser,
+  getMockUserId,
   normalizeRoleName,
   PermissionDeniedError,
   requirePermission,
@@ -239,6 +240,58 @@ describe("auth permissions", () => {
     expect(
       can(user, "client-portal:view")
     ).toBe(false);
+  });
+
+  it("creates different mock identities for the same role in different workspaces", () => {
+    const koinoniaClientId =
+      getMockUserId(
+        "wks_koinonia",
+        "Client"
+      );
+
+    const reynaldsBrothersClientId =
+      getMockUserId(
+        "wks_reynalds_brothers",
+        "Client"
+      );
+
+    expect(
+      koinoniaClientId
+    ).toBe(
+      "usr_mock_wks_koinonia_client"
+    );
+
+    expect(
+      reynaldsBrothersClientId
+    ).toBe(
+      "usr_mock_wks_reynalds_brothers_client"
+    );
+
+    expect(
+      koinoniaClientId
+    ).not.toBe(
+      reynaldsBrothersClientId
+    );
+  });
+
+  it("preserves the seeded Koinonia owner id while isolating owners in other workspaces", () => {
+    expect(
+      getMockUserId(
+        "wks_koinonia",
+        "Owner"
+      )
+    ).toBe(
+      "usr_owner"
+    );
+
+    expect(
+      getMockUserId(
+        "wks_reynalds_brothers",
+        "Owner"
+      )
+    ).toBe(
+      "usr_mock_wks_reynalds_brothers_owner"
+    );
   });
 
   it("throws a typed denial when a role lacks a permission", () => {

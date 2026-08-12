@@ -2,6 +2,7 @@ import {
   createAuthUser,
   getPermissionsForRole,
   getMockUser,
+  getMockUserId,
   normalizeRoleName,
   requirePermission,
   type AuthUser,
@@ -105,24 +106,40 @@ export async function assertPermission(permission: Permission): Promise<AuthUser
   return user;
 }
 
-function getMockAuthUser(): AuthUser {
+export function getMockAuthUser(): AuthUser {
   if (process.env.NODE_ENV === "production" && process.env.ROS_ALLOW_MOCK_AUTH !== "true") {
     throw new AuthProviderConfigurationError(
       "Mock auth is disabled for production portal routes. Set AUTH_PROVIDER=clerk before accepting real client or staff login."
     );
   }
 
-  const role = normalizeRoleName(process.env.ROS_MOCK_USER_ROLE, "Owner");
+  const role =
+    normalizeRoleName(
+      process.env.ROS_MOCK_USER_ROLE,
+      "Owner"
+    );
+
+  const workspaceId =
+    process.env.ROS_MOCK_WORKSPACE_ID ??
+    "wks_koinonia";
 
   if (role === "Owner") {
     return getMockUser();
   }
 
   return createAuthUser({
-    id: `usr_mock_${role.toLowerCase().replaceAll(" ", "_")}`,
-    workspaceId: process.env.ROS_MOCK_WORKSPACE_ID ?? "wks_koinonia",
-    name: process.env.ROS_MOCK_USER_NAME ?? `${role} Preview`,
-    email: process.env.ROS_MOCK_USER_EMAIL ?? "preview@example.com",
+    id:
+      getMockUserId(
+        workspaceId,
+        role
+      ),
+    workspaceId,
+    name:
+      process.env.ROS_MOCK_USER_NAME ??
+      `${role} Preview`,
+    email:
+      process.env.ROS_MOCK_USER_EMAIL ??
+      "preview@example.com",
     role
   });
 }

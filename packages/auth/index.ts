@@ -339,11 +339,62 @@ export function requirePermission(
   }
 }
 
+export function getMockUserId(
+  workspaceId: string,
+  role: string
+): string {
+  const normalizedRole =
+    normalizeRoleName(role);
+
+  if (
+    workspaceId === "wks_koinonia" &&
+    normalizedRole === "Owner"
+  ) {
+    return "usr_owner";
+  }
+
+  return [
+    "usr_mock",
+    normalizeMockIdSegment(
+      workspaceId
+    ),
+    normalizeMockIdSegment(
+      normalizedRole
+    )
+  ].join("_");
+}
+
+function normalizeMockIdSegment(
+  value: string
+): string {
+  const normalized =
+    value
+      .trim()
+      .toLowerCase()
+      .replace(
+        /[^a-z0-9]+/g,
+        "_"
+      )
+      .replace(
+        /^_+|_+$/g,
+        ""
+      );
+
+  return normalized || "unknown";
+}
+
 export function getMockUser(): AuthUser {
+  const workspaceId =
+    process.env.ROS_MOCK_WORKSPACE_ID ??
+    "wks_koinonia";
+
   return createAuthUser({
-    id: "usr_owner",
-    workspaceId:
-      process.env.ROS_MOCK_WORKSPACE_ID ?? "wks_koinonia",
+    id:
+      getMockUserId(
+        workspaceId,
+        "Owner"
+      ),
+    workspaceId,
     name: "Jeremiah Reynalds",
     email: "owner@example.com",
     role: "Owner"
@@ -351,10 +402,17 @@ export function getMockUser(): AuthUser {
 }
 
 export function getMockClientUser(): AuthUser {
+  const workspaceId =
+    process.env.ROS_MOCK_WORKSPACE_ID ??
+    "wks_koinonia";
+
   return createAuthUser({
-    id: "usr_client_preview",
-    workspaceId:
-      process.env.ROS_MOCK_WORKSPACE_ID ?? "wks_koinonia",
+    id:
+      getMockUserId(
+        workspaceId,
+        "Client"
+      ),
+    workspaceId,
     name: "Realtor Client Preview",
     email: "client@example.com",
     role: "Client"
@@ -362,10 +420,17 @@ export function getMockClientUser(): AuthUser {
 }
 
 export function getMockEmployeeUser(): AuthUser {
+  const workspaceId =
+    process.env.ROS_MOCK_WORKSPACE_ID ??
+    "wks_koinonia";
+
   return createAuthUser({
-    id: "usr_employee_preview",
-    workspaceId:
-      process.env.ROS_MOCK_WORKSPACE_ID ?? "wks_koinonia",
+    id:
+      getMockUserId(
+        workspaceId,
+        "Operations"
+      ),
+    workspaceId,
     name: "Koinonia Employee Preview",
     email: "employee@example.com",
     role: "Operations"

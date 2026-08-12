@@ -21,25 +21,39 @@ type ProcessorSessionResponse = {
   url?: string;
 };
 
-const billingSetupOptions = getKoinoniaBillingSetupOptions();
+const billingSetupOptions =
+  getKoinoniaBillingSetupOptions();
 
 export function BillingSetupRequestForm({
   storageReady
 }: BillingSetupRequestFormProps) {
   const router = useRouter();
-  const [message, setMessage] = useState<string | null>(null);
-  const [selectedServiceName, setSelectedServiceName] = useState(
+
+  const [message, setMessage] =
+    useState<string | null>(null);
+
+  const [
+    selectedServiceName,
+    setSelectedServiceName
+  ] = useState(
     billingSetupOptions[0]?.serviceName ?? ""
   );
-  const [status, setStatus] = useState<"error" | "success" | null>(
-    null
-  );
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [status, setStatus] =
+    useState<"error" | "success" | null>(null);
+
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
 
   const selectedOption =
     billingSetupOptions.find(
-      (option) => option.serviceName === selectedServiceName
+      (option) =>
+        option.serviceName === selectedServiceName
     ) ?? billingSetupOptions[0];
+
+  const requiresWrittenTerms =
+    selectedOption?.billingModel === "monthly" ||
+    selectedOption?.billingModel === "custom";
 
   async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>
@@ -48,7 +62,9 @@ export function BillingSetupRequestForm({
 
     if (!storageReady) {
       setStatus("error");
-      setMessage("Billing setup storage is not available yet.");
+      setMessage(
+        "Billing setup storage is not available yet."
+      );
       return;
     }
 
@@ -59,8 +75,13 @@ export function BillingSetupRequestForm({
     try {
       const form = event.currentTarget;
       const formData = new FormData(form);
+
       const consentAcknowledged =
-        formData.get("consentAcknowledged") === "on";
+        requiresWrittenTerms
+          ? false
+          : formData.get(
+              "consentAcknowledged"
+            ) === "on";
 
       const response = await fetch(
         "/api/portal/billing-setup-requests",
@@ -68,54 +89,86 @@ export function BillingSetupRequestForm({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            [koinoniaBillingRequestSourceHeader]: "client-portal"
+            [koinoniaBillingRequestSourceHeader]:
+              "client-portal"
           },
           body: JSON.stringify({
-            amountLabel: formData.get("amountLabel"),
-            billingModel: formData.get("billingModel"),
-            clientName: formData.get("clientName"),
+            amountLabel: requiresWrittenTerms
+              ? undefined
+              : formData.get("amountLabel"),
+            billingModel:
+              formData.get("billingModel"),
+            clientName:
+              formData.get("clientName"),
             consentAcknowledged,
             notes: formData.get("notes"),
-            serviceName: formData.get("serviceName"),
-            triggerDescription: formData.get(
-              "triggerDescription"
-            )
+            serviceName:
+              formData.get("serviceName"),
+            triggerDescription:
+              requiresWrittenTerms
+                ? "Written billing terms required before authorization."
+                : formData.get(
+                    "triggerDescription"
+                  )
           })
         }
       );
 
       const payload =
-        (await response.json()) as BillingSetupCreateResponse;
+        (await response.json()) as
+          BillingSetupCreateResponse;
 
-      if (!response.ok || !payload.billingSetupRequest?.id) {
+      if (
+        !response.ok ||
+        !payload.billingSetupRequest?.id
+      ) {
         throw new Error(
           payload.error ??
             "Unable to save this billing setup request yet."
         );
       }
 
+      if (requiresWrittenTerms) {
+        form.reset();
+        setStatus("success");
+        setMessage(
+          "Billing terms request saved. Koinonia must prepare the written terms, and you must accept that exact version before secure payment setup can begin."
+        );
+        router.refresh();
+        return;
+      }
+
       if (consentAcknowledged) {
+        setStatus("success");
         setMessage(
           "Billing setup saved. Opening Stripe secure payment setup..."
         );
-        setStatus("success");
 
-        const processorResponse = await fetch(
-          `/api/portal/billing-setup-requests/${payload.billingSetupRequest.id}/processor-session`,
-          { method: "POST" }
-        );
+        const processorResponse =
+          await fetch(
+            `/api/portal/billing-setup-requests/${payload.billingSetupRequest.id}/processor-session`,
+            {
+              method: "POST"
+            }
+          );
 
         const processorPayload =
-          (await processorResponse.json()) as ProcessorSessionResponse;
+          (await processorResponse.json()) as
+            ProcessorSessionResponse;
 
-        if (!processorResponse.ok || !processorPayload.url) {
+        if (
+          !processorResponse.ok ||
+          !processorPayload.url
+        ) {
           throw new Error(
             processorPayload.error ??
               "Billing setup was saved, but Stripe secure setup could not be opened yet."
           );
         }
 
-        window.location.assign(processorPayload.url);
+        window.location.assign(
+          processorPayload.url
+        );
         return;
       }
 
@@ -137,11 +190,14 @@ export function BillingSetupRequestForm({
     }
   }
 
-  const disabled = !storageReady || isSubmitting;
+  const disabled =
+    !storageReady || isSubmitting;
 
   return (
     <section className="koinonia-billing-panel">
-      <p className="koinonia-eyebrow">Setup Request</p>
+      <p className="koinonia-eyebrow">
+        Setup Request
+      </p>
 
       <form
         className="koinonia-billing-setup-form"
@@ -153,19 +209,23 @@ export function BillingSetupRequestForm({
             disabled={disabled}
             name="serviceName"
             onChange={(event) =>
-              setSelectedServiceName(event.target.value)
+              setSelectedServiceName(
+                event.target.value
+              )
             }
             required
             value={selectedServiceName}
           >
-            {billingSetupOptions.map((option) => (
-              <option
-                key={`${option.templateId}:${option.serviceName}`}
-                value={option.serviceName}
-              >
-                {option.serviceName}
-              </option>
-            ))}
+            {billingSetupOptions.map(
+              (option) => (
+                <option
+                  key={`${option.templateId}:${option.serviceName}`}
+                  value={option.serviceName}
+                >
+                  {option.serviceName}
+                </option>
+              )
+            )}
           </select>
         </label>
 
@@ -184,34 +244,59 @@ export function BillingSetupRequestForm({
         {selectedOption ? (
           <p className="koinonia-billing-security-note">
             Portal setup:{" "}
-            {selectedOption.clientPortalSections.join(", ")}.
-            Staff next step: {selectedOption.staffNextAction}
+            {selectedOption.clientPortalSections.join(
+              ", "
+            )}
+            . Staff next step:{" "}
+            {selectedOption.staffNextAction}
           </p>
         ) : null}
 
-        <p className="koinonia-billing-security-note">
-          After billing consent is recorded, this form opens
-          Stripe&apos;s secure hosted setup page. Card details are
-          entered with Stripe, not in Koinonia.
-        </p>
+        {requiresWrittenTerms ? (
+          <p className="koinonia-billing-security-note">
+            Monthly and custom billing
+            require written terms first.
+            This request does not
+            authorize a recurring or
+            custom charge and will not
+            open Stripe. Secure payment
+            setup becomes available only
+            after you accept the exact
+            current written terms
+            version.
+          </p>
+        ) : (
+          <p className="koinonia-billing-security-note">
+            After billing consent is
+            recorded, this form opens
+            Stripe&apos;s secure hosted
+            setup page. Card details are
+            entered with Stripe, not in
+            Koinonia.
+          </p>
+        )}
 
-        <label>
-          Amount
-          <input
-            disabled={disabled}
-            name="amountLabel"
-            placeholder="$389 prepaid or $599 after close"
-          />
-        </label>
+        {!requiresWrittenTerms ? (
+          <>
+            <label>
+              Amount
+              <input
+                disabled={disabled}
+                name="amountLabel"
+                placeholder="$389 prepaid or $599 after close"
+              />
+            </label>
 
-        <label>
-          Trigger
-          <input
-            disabled={disabled}
-            name="triggerDescription"
-            placeholder="Before work begins, after close, or after showing"
-          />
-        </label>
+            <label>
+              Trigger
+              <input
+                disabled={disabled}
+                name="triggerDescription"
+                placeholder="Before work begins, after close, or after showing"
+              />
+            </label>
+          </>
+        ) : null}
 
         <label>
           Client or Team
@@ -232,14 +317,17 @@ export function BillingSetupRequestForm({
           />
         </label>
 
-        <label className="koinonia-billing-checkbox">
-          <input
-            disabled={disabled}
-            name="consentAcknowledged"
-            type="checkbox"
-          />
-          Client authorizes the selected service billing model
-        </label>
+        {!requiresWrittenTerms ? (
+          <label className="koinonia-billing-checkbox">
+            <input
+              disabled={disabled}
+              name="consentAcknowledged"
+              type="checkbox"
+            />
+            Client authorizes the selected
+            service billing model
+          </label>
+        ) : null}
 
         <button
           className="koinonia-button primary"
@@ -247,22 +335,23 @@ export function BillingSetupRequestForm({
           type="submit"
         >
           {isSubmitting
-            ? "Opening Secure Setup"
-            : "Save & Open Secure Payment Setup"}
+            ? "Saving"
+            : requiresWrittenTerms
+              ? "Request Written Billing Terms"
+              : "Save & Open Secure Payment Setup"}
         </button>
 
         {!storageReady ? (
           <p className="koinonia-billing-security-note">
-            Billing setup requests will save once production storage
+            Billing setup requests will
+            save once production storage
             is reachable.
           </p>
         ) : null}
 
         {message ? (
           <p
-            className={`koinonia-billing-setup-form-status ${
-              status ?? ""
-            }`}
+            className={`koinonia-billing-setup-form-status ${status ?? ""}`}
           >
             {message}
           </p>

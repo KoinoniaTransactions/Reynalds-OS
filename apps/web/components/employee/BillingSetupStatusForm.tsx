@@ -29,19 +29,38 @@ type ProcessorSessionResponse = {
   url?: string;
 };
 
+export function isBillingSetupProcessorActionLocked(
+  currentStatus: string
+): boolean {
+  return normalizeStatus(currentStatus) === "Consent Needed";
+}
+
 export function BillingSetupStatusForm({
   currentStatus,
   disabled = false,
   requestId
 }: BillingSetupStatusFormProps) {
   const [message, setMessage] = useState<string | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState(normalizeStatus(currentStatus));
+  const [selectedStatus, setSelectedStatus] = useState(
+    normalizeStatus(currentStatus)
+  );
   const [status, setStatus] = useState<"error" | "success" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCreatingLink, setIsCreatingLink] = useState(false);
-  const isDisabled = disabled || isSubmitting || isCreatingLink;
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const isDisabled =
+    disabled ||
+    isSubmitting ||
+    isCreatingLink;
+
+  const isProcessorActionLocked =
+    isBillingSetupProcessorActionLocked(
+      currentStatus
+    );
+
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
     setIsSubmitting(true);
     setMessage(null);
@@ -50,38 +69,74 @@ export function BillingSetupStatusForm({
     try {
       const form = event.currentTarget;
       const formData = new FormData(form);
-      const response = await fetch(`/api/portal/billing-setup-requests/${requestId}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          notes: String(formData.get("notes") ?? ""),
-          paymentMethodSummary: String(formData.get("paymentMethodSummary") ?? ""),
-          processorReference: String(formData.get("processorReference") ?? ""),
-          status: String(formData.get("status") ?? ""),
-          triggerDescription: String(formData.get("triggerDescription") ?? "")
-        })
-      });
-      const payload = (await response.json()) as BillingSetupStatusResponse;
+
+      const response = await fetch(
+        `/api/portal/billing-setup-requests/${requestId}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            notes: String(
+              formData.get("notes") ?? ""
+            ),
+            paymentMethodSummary: String(
+              formData.get("paymentMethodSummary") ?? ""
+            ),
+            processorReference: String(
+              formData.get("processorReference") ?? ""
+            ),
+            status: String(
+              formData.get("status") ?? ""
+            ),
+            triggerDescription: String(
+              formData.get("triggerDescription") ?? ""
+            )
+          })
+        }
+      );
+
+      const payload =
+        (await response.json()) as BillingSetupStatusResponse;
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to update this billing setup yet.");
+        throw new Error(
+          payload.error ??
+            "Unable to update this billing setup yet."
+        );
       }
 
       form.reset();
-      setSelectedStatus(payload.billingSetupRequest?.status ?? selectedStatus);
+
+      setSelectedStatus(
+        payload.billingSetupRequest?.status ??
+          selectedStatus
+      );
+
       setStatus("success");
-      setMessage("Billing setup status updated and recorded in the file history.");
+
+      setMessage(
+        "Billing setup status updated and recorded in the file history."
+      );
     } catch (error) {
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Unable to update this billing setup yet.");
+
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to update this billing setup yet."
+      );
     } finally {
       setIsSubmitting(false);
     }
   }
 
   async function createSecureSetupLink() {
+    if (isProcessorActionLocked) {
+      return;
+    }
+
     setIsCreatingLink(true);
     setMessage(null);
     setStatus(null);
@@ -89,40 +144,73 @@ export function BillingSetupStatusForm({
     try {
       const response = await fetch(
         `/api/portal/billing-setup-requests/${requestId}/processor-session`,
-        { method: "POST" }
+        {
+          method: "POST"
+        }
       );
-      const payload = (await response.json()) as ProcessorSessionResponse;
 
-      if (!response.ok || !payload.url) {
-        throw new Error(payload.error ?? "Unable to create a Stripe secure setup link.");
+      const payload =
+        (await response.json()) as ProcessorSessionResponse;
+
+      if (
+        !response.ok ||
+        !payload.url
+      ) {
+        throw new Error(
+          payload.error ??
+            "Unable to create a Stripe secure setup link."
+        );
       }
 
-      await navigator.clipboard.writeText(payload.url);
+      await navigator.clipboard.writeText(
+        payload.url
+      );
+
       setStatus("success");
-      setMessage("A fresh Stripe secure setup link was created and copied to your clipboard.");
+
+      setMessage(
+        "A fresh Stripe secure setup link was created and copied to your clipboard."
+      );
     } catch (error) {
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Unable to create a Stripe secure setup link.");
+
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to create a Stripe secure setup link."
+      );
     } finally {
       setIsCreatingLink(false);
     }
   }
 
   return (
-    <form className="koinonia-billing-status-form" onSubmit={handleSubmit}>
+    <form
+      className="koinonia-billing-status-form"
+      onSubmit={handleSubmit}
+    >
       <label>
         Setup Status
         <select
           disabled={isDisabled}
           name="status"
-          onChange={(event) => setSelectedStatus(event.target.value)}
+          onChange={(event) =>
+            setSelectedStatus(
+              event.target.value
+            )
+          }
           value={selectedStatus}
         >
-          {billingSetupStatusOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
+          {billingSetupStatusOptions.map(
+            (option) => (
+              <option
+                key={option}
+                value={option}
+              >
+                {option}
+              </option>
+            )
+          )}
         </select>
       </label>
 
@@ -166,39 +254,72 @@ export function BillingSetupStatusForm({
         />
       </label>
 
-      <button className="koinonia-button primary" disabled={isDisabled} type="submit">
-        {isSubmitting ? "Saving" : "Save Billing Status"}
+      <button
+        className="koinonia-button primary"
+        disabled={isDisabled}
+        type="submit"
+      >
+        {isSubmitting
+          ? "Saving"
+          : "Save Billing Status"}
       </button>
 
       <button
         className="koinonia-button secondary"
-        disabled={isDisabled}
+        disabled={
+          isDisabled ||
+          isProcessorActionLocked
+        }
         onClick={createSecureSetupLink}
         type="button"
       >
-        {isCreatingLink ? "Creating Secure Link" : "Create & Copy Stripe Setup Link"}
+        {isProcessorActionLocked
+          ? "Stripe Setup Locked - Consent Required"
+          : isCreatingLink
+            ? "Creating Secure Link"
+            : "Create & Copy Stripe Setup Link"}
       </button>
 
-      <p className="koinonia-billing-security-note employee">
-        Secure setup links open Stripe-hosted payment collection. Do not ask clients to send card,
-        CVV, or bank details through Koinonia notes or messages.
-      </p>
+      {isProcessorActionLocked ? (
+        <p className="koinonia-billing-security-note employee">
+          Processor setup stays locked until the required billing
+          consent or exact written terms are accepted.
+        </p>
+      ) : (
+        <p className="koinonia-billing-security-note employee">
+          Secure setup links open Stripe-hosted payment collection.
+          Do not ask clients to send card, CVV, or bank details
+          through Koinonia notes or messages.
+        </p>
+      )}
 
       {disabled ? (
         <p className="koinonia-billing-security-note employee">
-          Live billing setup storage must be available before staff billing updates can be saved.
+          Live billing setup storage must be available before staff
+          billing updates can be saved.
         </p>
       ) : null}
 
       {message ? (
-        <p className={`koinonia-billing-form-status ${status ?? ""}`}>{message}</p>
+        <p
+          className={`koinonia-billing-form-status ${
+            status ?? ""
+          }`}
+        >
+          {message}
+        </p>
       ) : null}
     </form>
   );
 }
 
-function normalizeStatus(status: string): string {
-  return billingSetupStatusOptions.includes(status as (typeof billingSetupStatusOptions)[number])
+function normalizeStatus(
+  status: string
+): string {
+  return billingSetupStatusOptions.includes(
+    status as
+      (typeof billingSetupStatusOptions)[number]
+  )
     ? status
     : "Setup Requested";
 }
