@@ -55,6 +55,7 @@ export async function POST(request: Request) {
   }
 
   if (summary.action === "billing_setup_ready" && summary.billingSetupRequestId) {
+    const billingSetupRequestId = summary.billingSetupRequestId;
     summary = await enrichSetupPaymentMethodSummary(summary);
 
     await markBillingSetupReady({
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
       paymentMethodReference: summary.paymentMethodReference,
       paymentMethodSummary: summary.paymentMethodSummary,
       processorReference: summary.processorReference,
-      requestId: summary.billingSetupRequestId,
+      requestId: billingSetupRequestId,
       workspaceId
     });
   } else if (
