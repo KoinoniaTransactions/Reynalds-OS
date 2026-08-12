@@ -18,7 +18,9 @@ export function WorkspaceRegistry() {
           {workspaces.map((workspace) => (
             <tr key={workspace.id}>
               <td>
-                <strong>{workspace.name}</strong>
+                <a href={workspace.route}>
+                  <strong>{workspace.name}</strong>
+                </a>
                 <br />
                 <small>{workspace.category}</small>
               </td>
