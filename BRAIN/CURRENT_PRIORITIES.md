@@ -2,147 +2,105 @@
 
 ## Active Phase
 
-Koinonia Production Website
+Koinonia Transactions Production Website
 
 ---
 
 # Primary Objective
 
-Complete and launch the Koinonia website as the first production application built on Reynalds OS.
+Return active product attention to the Koinonia Transactions website after completing the Reynalds Brothers recovery/closure and repository CI stabilization.
 
-All development should support this objective unless a platform improvement directly accelerates website production.
-
----
-
-# Repository Status
-
-Current State:
-
-Production website under active development.
-
-Repository architecture is established.
-
-Core Brain documentation is established.
-
-GitHub workflow is established.
-
-Component architecture is established.
-
-Hero Image System is established.
-
-Current emphasis is implementation, refinement, and launch.
+All development should support current Koinonia Transactions production objectives unless a platform or company-domain issue is a verified blocker.
 
 ---
 
-# Current Production Milestones
+# Recently Completed Maintenance Milestone
 
-## ✅ Completed
+The 2026-08 Reynalds Brothers recovery/closure milestone is complete enough to leave the active critical path.
 
-- Repository architecture established
-- Brain documentation established
-- Canonical Registry established
-- Decision Log established
-- Development Standards established
-- Hero Composition Standard established
-- Koinonia Image System established
-- Shared content architecture established
-- Component-first website architecture established
-- Desktop and mobile hero system completed for:
-  - Home
-  - About
-  - Services
-  - Contact
-- Hero imagery implemented in React
-- Production build verified
-- GitHub workflow established and verified
+Completed:
 
----
+- Audited the preserved Reynalds Brothers recovery branch.
+- Rejected unsafe wholesale recovery replay.
+- Reconciled the dedicated RB workspace closure into the current target.
+- Preserved the Work Item and Communication object model.
+- Preserved WalMart Tanks Gmail workflow/history.
+- Restored the dedicated `/reynalds-brothers` workspace and supporting navigation/robots integration.
+- Repaired CI pnpm setup, recursive test behavior, and Prisma generation.
+- Passed GitHub Actions CI run #41 for the CI repair.
+- Passed GitHub Actions CI run #42 for the RB closure against the repaired target.
+- Merged PR #15, then PR #14.
 
-## Active Work
+Current verified RB target checkpoint:
 
-Complete the production pages.
-
-Current page order:
-
-1. Home
-2. Services
-3. About
-4. Contact
-5. Pricing
-6. FAQ
-7. Launch QA
+`e84b4e610e6075f6f54907f277714a94b24dd7e6`
 
 ---
 
-# Current Development Workflow
+# Intentionally Deferred Reynalds Brothers Work
 
-Every production task follows this sequence:
+Seed parity remains unresolved by design.
 
-1. Understand the request.
-2. Review existing implementation.
-3. Recommend improvements if appropriate.
-4. Explain planned work.
-5. Wait for approval.
-6. Implement.
-7. Verify localhost.
-8. Verify production build.
-9. Commit.
-10. Push to GitHub.
-11. Update Brain only if a meaningful architectural discovery occurred.
+Preserve:
+
+`recovery/reynalds-brothers-main-workspace-20260731`
+
+Do not delete or wholesale replay it.
+
+The recovery seed contains richer historical fields that are not all represented in the current seed. Reopen this only as a focused seed-parity task or when it becomes a verified blocker.
+
+Do not continue speculative Reynalds Brothers feature expansion while Koinonia Transactions production work is the active priority.
 
 ---
 
 # Development Philosophy
 
-The repository should grow through refinement rather than reinvention.
-
 Always:
 
-- recover before reinventing
-- reuse before replacing
-- extend before creating
+- recover before reinventing,
+- reuse before replacing,
+- extend before creating,
+- inspect before recommending,
+- keep company domains separate,
+- distinguish current canonical state from recovery evidence.
 
-The existing architecture should be strengthened, not restarted.
+---
+
+# Current Development Workflow
+
+For meaningful work:
+
+1. Understand the request.
+2. Read the governing Brain/canonical source.
+3. Inspect current repository implementation.
+4. Recommend a better approach if one exists.
+5. Explain the proposed scope.
+6. Wait for approval.
+7. Implement in an isolated/safe work context.
+8. Run focused validation appropriate to the change.
+9. Commit and push only intended files.
+10. Update continuity documentation when durable state changes.
+11. Merge only after required validation and fresh approval.
 
 ---
 
 # Platform Development Rule
 
-Operating system work is now secondary.
+Operating-system expansion is secondary to current production work.
 
 Platform improvements should occur only when they:
 
 - remove repeated work,
-- solve an architectural limitation,
-- accelerate Koinonia production, or
-- improve long-term maintainability.
+- resolve a verified architectural limitation,
+- improve safety/continuity,
+- or directly accelerate the active production objective.
 
-Do not interrupt website production for speculative platform development.
-
----
-
-# Immediate Next Tasks
-
-1. Refine Home page sections.
-2. Complete Services page.
-3. Complete About page.
-4. Complete Contact page.
-5. Build Pricing page.
-6. Complete responsive polish.
-7. QA every page.
-8. Launch.
+Do not interrupt Koinonia Transactions website work for speculative platform development.
 
 ---
 
-# Success Criteria
+# Immediate Next Direction
 
-The current milestone is achieved when:
+After the current Brain synchronization is reviewed and integrated, resume Koinonia Transactions website work from the current repository state.
 
-- Every public page is production quality.
-- Desktop and mobile experiences are complete.
-- All pages use the shared component architecture.
-- Hero system is consistent across the site.
-- Production build passes.
-- Changes are committed and pushed to GitHub.
-
-Only then should focus shift back toward broader Reynalds OS expansion.
+Do not reopen Reynalds Brothers recovery, seed parity, or platform expansion unless the next approved task specifically requires it.
