@@ -24,6 +24,8 @@ Global Reynalds OS governance belongs under:
 
 Initialized as a first-class company domain inside Reynalds OS.
 
+2026-07-29 update: first app implementation started as a dedicated company workspace at `/reynalds-brothers`, backed by the Reynalds Brothers Work Item engine and a dedicated company API.
+
 ## Primary Object
 
 The first canonical object is:
@@ -33,3 +35,7 @@ The first canonical object is:
 ## Operating Principle
 
 Reynalds Brothers organizes around Work Items, not spreadsheets, folders, or external systems.
+
+The operating question for every app view should be:
+
+Is this work item ready, moving, completed, documented, and billable?
