@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "@reynalds-os/design-system/styles.css";
-import {
-  seoConfig,
-  siteUrl
-} from "@/config/seo.config";
+import "./properties.css";
+import { seoConfig, siteUrl } from "@/config/seo.config";
 
 export const metadata: Metadata = {
   ...(siteUrl
@@ -34,11 +32,7 @@ export const metadata: Metadata = {
       }
 };
 
-export default function RootLayout({
-  children
-}: {
-  children: ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>{children}</body>
