@@ -62,3 +62,39 @@
 - Indexed the next WalMart Tanks Gmail page through 1400 message IDs, added Sam's Club 8263 plus Stores 5172 and 690, and held page-14 invoice/statement emails in review.
 - Indexed the next WalMart Tanks Gmail page through 1500 message IDs, added Stores 5780, 1185, 5960, 3535, and 4445, enriched Store 471, and held Store 5182 for city/state review.
 - Indexed the next WalMart Tanks Gmail page through 1600 message IDs, added Stores 1090, 501, 4421, and NHM 7251, enriched Store 5172, and held page-16 non-job emails in review.
+
+---
+
+## 2026-08-12/13 — Recovery Closure and CI Stabilization
+
+- Audited the preserved `recovery/reynalds-brothers-main-workspace-20260731` branch instead of assuming it could be replayed wholesale.
+- Confirmed that broad recovery replay was unsafe because recovery contained older/conflicting application state, including a root-page replacement that would regress current routing.
+- Preserved the recovery branch as evidence for unresolved seed parity rather than treating it as canonical runtime truth.
+- Reconciled the dedicated `/reynalds-brothers` workspace closure into the current target through PR #14, `Restore Reynalds Brothers workspace closure`.
+- PR #14 restored/reconciled the RB route, workspace registry/navigation support, robots exclusion, Work Item documentation, active Communication object, company Brain/README/changelog continuity, and shared workspace helper integration.
+- PR #14 intentionally excluded Koinonia changes, root-page replacement, seed-data parity changes, and wholesale recovery replay.
+- Focused pre-merge validation for the RB closure passed: Prisma generation, 34/34 focused RB tests, web TypeScript validation, and diff checks.
+- Repaired repository CI separately through PR #15, `Fix pnpm setup in CI`.
+- Removed the duplicate pnpm version declaration so the root `packageManager` remains the single pnpm version source.
+- Changed the web test script to non-interactive `vitest run` for deterministic CI execution.
+- Allowed the intentionally testless database and design-system workspaces to pass recursive Vitest with `--passWithNoTests`.
+- Added explicit `pnpm db:generate` after dependency installation and before tests/build because the Prisma schema lives in the database workspace and Client generation was not occurring automatically in CI.
+- Local final validation passed `pnpm db:generate`, full repository `pnpm test`, and full repository `pnpm build`.
+- Full local test validation included 83 actual tests across tested packages; the web workspace reported 75 tests.
+- GitHub Actions run #41 passed the final CI repair end-to-end.
+- PR #15 merged first at `c2e512335685040f7479bec5e99d58a72a40ee73`.
+- The RB closure was then validated against the repaired target; GitHub Actions run #42 passed.
+- PR #14 merged at `e84b4e610e6075f6f54907f277714a94b24dd7e6`.
+- The current RB integration checkpoint is therefore `reynalds-brothers-only` at `e84b4e610e6075f6f54907f277714a94b24dd7e6`.
+
+### Seed-History Clarification
+
+The 2026-07-29 entries above record historical trial/recovery work and should remain preserved as history. They do **not** mean every richer recovery seed field is present in the current merged `packages/database/prisma/seed.ts`.
+
+The preserved recovery checkpoint `b8f48e1892ff11d7e4179fa3a5daa755e5571a4b` contains richer seed fields such as `customerUpdateStatus`, `mediaStatus`, and `permitStatus` that are not all canonical current seed state.
+
+Seed parity is intentionally unresolved. Do not delete the recovery branch until that parity review is explicitly completed and documented.
+
+### Current Direction
+
+The RB recovery/closure milestone is complete enough to leave the active critical path. After continuity documentation is synchronized, production attention returns to the Koinonia Transactions website. Reopen RB feature expansion or seed parity only through an explicitly approved focused task or a verified blocker.
