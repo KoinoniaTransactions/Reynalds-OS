@@ -22,7 +22,7 @@ const propertyHeroImages: Record<string, string> = {
   Maintenance: "/assets/images/properties/heroes/tenants-hero.avif",
   "Pricing and Scope": "/assets/images/properties/heroes/pricing-hero.avif",
   Portals: "/assets/images/properties/heroes/contact-hero.avif",
-  Standards: "/assets/images/properties/heroes/standards-hero.avif",
+  "Operating Standards": "/assets/images/properties/heroes/standards-hero.avif",
   Vendors: "/assets/images/properties/heroes/standards-hero.avif",
   Policies: "/assets/images/properties/heroes/policies-hero.avif",
   Contact: "/assets/images/properties/heroes/contact-hero.avif",
@@ -43,12 +43,10 @@ export function Hero({
   variant = "standard",
   visualVariant = "properties"
 }: HeroProps) {
-  const mappedPropertyImage =
-    visualVariant === "properties" ? propertyHeroImages[eyebrow] : undefined;
+  const mappedPropertyImage = visualVariant === "properties" ? propertyHeroImages[eyebrow] : undefined;
   const resolvedDesktopSrc = visualDesktopSrc ?? mappedPropertyImage;
   const resolvedMobileSrc = visualMobileSrc ?? resolvedDesktopSrc;
-  const hasPropertiesBackground =
-    visualVariant === "properties" && Boolean(resolvedDesktopSrc);
+  const hasPropertiesBackground = visualVariant === "properties" && Boolean(resolvedDesktopSrc);
 
   const heroClassName = [
     "koinonia-section",
@@ -65,9 +63,7 @@ export function Hero({
       {hasPropertiesBackground ? (
         <div className="properties-hero-background" aria-hidden="true">
           <picture>
-            {resolvedMobileSrc ? (
-              <source media="(max-width: 980px)" srcSet={resolvedMobileSrc} />
-            ) : null}
+            {resolvedMobileSrc ? <source media="(max-width: 980px)" srcSet={resolvedMobileSrc} /> : null}
             <img src={resolvedDesktopSrc} alt="" />
           </picture>
         </div>
@@ -81,9 +77,7 @@ export function Hero({
           {!hasPropertiesBackground && resolvedDesktopSrc ? (
             <div className="koinonia-hero-mobile-visual">
               <picture>
-                {resolvedMobileSrc ? (
-                  <source media="(max-width: 980px)" srcSet={resolvedMobileSrc} />
-                ) : null}
+                {resolvedMobileSrc ? <source media="(max-width: 980px)" srcSet={resolvedMobileSrc} /> : null}
                 <img src={resolvedMobileSrc ?? resolvedDesktopSrc} alt={visualAlt} />
               </picture>
             </div>
@@ -92,28 +86,18 @@ export function Hero({
           <p className="koinonia-lead">{lead}</p>
 
           <div className="koinonia-actions">
-            <a className="koinonia-button primary" href={primaryHref}>
-              {primaryLabel}
-            </a>
-
+            <a className="koinonia-button primary" href={primaryHref}>{primaryLabel}</a>
             {secondaryLabel && secondaryHref ? (
-              <a className="koinonia-button secondary" href={secondaryHref}>
-                {secondaryLabel}
-              </a>
+              <a className="koinonia-button secondary" href={secondaryHref}>{secondaryLabel}</a>
             ) : null}
           </div>
         </div>
 
         {!hasPropertiesBackground ? (
-          <div
-            className={resolvedDesktopSrc ? "koinonia-visual has-image" : "koinonia-visual"}
-            aria-label={visualAlt}
-          >
+          <div className={resolvedDesktopSrc ? "koinonia-visual has-image" : "koinonia-visual"} aria-label={visualAlt}>
             {resolvedDesktopSrc ? (
               <picture>
-                {resolvedMobileSrc ? (
-                  <source media="(max-width: 980px)" srcSet={resolvedMobileSrc} />
-                ) : null}
+                {resolvedMobileSrc ? <source media="(max-width: 980px)" srcSet={resolvedMobileSrc} /> : null}
                 <img src={resolvedDesktopSrc} alt={visualAlt} />
               </picture>
             ) : null}
