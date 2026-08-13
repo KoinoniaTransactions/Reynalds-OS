@@ -3,8 +3,9 @@ import { buildPublicRouteMetadata } from "../config/seo.config";
 
 export const metadata = buildPublicRouteMetadata("/", [
   "Koinonia Properties",
-  "Colorado property management",
+  "property management",
   "rental property management",
+  "rental analysis",
   "owner services",
   "tenant services"
 ]);
