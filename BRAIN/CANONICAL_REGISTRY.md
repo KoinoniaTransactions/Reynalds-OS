@@ -35,6 +35,7 @@ Recover before reinventing.
 |---------|------------------|--------|
 | Brand Core | 03_Knowledge/Brand/koinonia_brand_core.md | Active |
 | Service Objects | 02_Companies/Koinonia/01_Services/ | Active |
+| Koinonia Properties Property Management Service | 02_Companies/Koinonia/01_Services/OBJ-00000014_Property_Management_Service.md | Active Development |
 | Packages | 02_Companies/Koinonia/02_Packages/ | Active |
 | Pricing | 02_Companies/Koinonia/03_Pricing/ | Active |
 
@@ -47,6 +48,7 @@ Recover before reinventing.
 | Website Framework | 03_Knowledge/Website/WEBSITE_PRODUCTION_FRAMEWORK.md | Active |
 | Production Index | 03_Knowledge/Website/PRODUCTION_INDEX.md | Active |
 | Page Specifications | docs/specifications/ | Active |
+| Koinonia Properties Website Specification | 03_Knowledge/Website/koinonia_properties_production_spec.md | Active Development |
 | Client Portal Specification | docs/specifications/KOINONIA_CLIENT_PORTAL_SPEC.md | Proposed |
 | Component Catalog | 03_Knowledge/Website/component_catalog.md | Active |
 
@@ -57,6 +59,7 @@ Recover before reinventing.
 | Subject | Canonical Source | Status |
 |---------|------------------|--------|
 | React Application | apps/web/ | Active |
+| Koinonia Properties Public Website | apps/properties-web/ | Active Development |
 | Executable Product Registry | apps/web/lib/productRegistry.ts | Active |
 | Product Registry Contract Tests | apps/web/lib/productRegistry.test.ts | Active |
 | Workspace Navigation | apps/web/lib/workspaceNavigation.ts | Active |
@@ -64,6 +67,8 @@ Recover before reinventing.
 | Database Schema | packages/database/prisma/schema.prisma | Active |
 
 The Brain application catalog is authoritative for product meaning, ownership, audience, status, and boundaries. The executable product registry is authoritative for typed product metadata consumed by application code. Both sources must remain aligned.
+
+For Koinonia Properties public website work, use the Koinonia Properties service object and website specification together with the Brain product-boundary sources. Do not substitute Koinonia Transactions service definitions merely because both companies use the Koinonia name or share repository infrastructure.
 
 ---
 
@@ -82,7 +87,7 @@ Before proposing or modifying routing, hosting, repositories, deployments, works
 - Reynalds OS,
 - a company,
 - a public website,
-- a company-specific operating system,
+- a company-specific internal operating system,
 - or a record held inside Reynalds OS.
 
 These concepts must not be treated as interchangeable.
