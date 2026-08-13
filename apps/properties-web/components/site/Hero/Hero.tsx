@@ -13,6 +13,22 @@ export type HeroProps = {
   visualVariant?: "operations" | "properties";
 };
 
+const propertyHeroImages: Record<string, string> = {
+  "Owner Services": "/assets/images/properties/heroes/owners-hero.avif",
+  "Rental Analysis": "/assets/images/properties/heroes/owners-hero.avif",
+  "Available Rentals": "/assets/images/properties/heroes/rentals-hero.avif",
+  Apply: "/assets/images/properties/heroes/rentals-hero.avif",
+  "Tenant Services": "/assets/images/properties/heroes/tenants-hero.avif",
+  Maintenance: "/assets/images/properties/heroes/tenants-hero.avif",
+  "Pricing and Scope": "/assets/images/properties/heroes/pricing-hero.avif",
+  Portals: "/assets/images/properties/heroes/contact-hero.avif",
+  Standards: "/assets/images/properties/heroes/standards-hero.avif",
+  Vendors: "/assets/images/properties/heroes/standards-hero.avif",
+  Policies: "/assets/images/properties/heroes/policies-hero.avif",
+  Contact: "/assets/images/properties/heroes/contact-hero.avif",
+  "Service Areas": "/assets/images/properties/heroes/service-areas-hero.svg"
+};
+
 export function Hero({
   eyebrow,
   title,
@@ -23,33 +39,52 @@ export function Hero({
   secondaryHref,
   visualDesktopSrc,
   visualMobileSrc,
-  visualAlt = "Koinonia Properties management workspace",
+  visualAlt = "Koinonia Properties property management",
   variant = "standard",
   visualVariant = "properties"
 }: HeroProps) {
+  const mappedPropertyImage =
+    visualVariant === "properties" ? propertyHeroImages[eyebrow] : undefined;
+  const resolvedDesktopSrc = visualDesktopSrc ?? mappedPropertyImage;
+  const resolvedMobileSrc = visualMobileSrc ?? resolvedDesktopSrc;
+  const hasPropertiesBackground =
+    visualVariant === "properties" && Boolean(resolvedDesktopSrc);
+
   const heroClassName = [
     "koinonia-section",
     "koinonia-hero",
-    variant === "fullBleed" ? "full-bleed" : "",
-    visualVariant
+    variant === "fullBleed" || hasPropertiesBackground ? "full-bleed" : "",
+    visualVariant,
+    hasPropertiesBackground ? "properties-image" : ""
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
     <section className={heroClassName}>
+      {hasPropertiesBackground ? (
+        <div className="properties-hero-background" aria-hidden="true">
+          <picture>
+            {resolvedMobileSrc ? (
+              <source media="(max-width: 980px)" srcSet={resolvedMobileSrc} />
+            ) : null}
+            <img src={resolvedDesktopSrc} alt="" />
+          </picture>
+        </div>
+      ) : null}
+
       <div className="koinonia-container koinonia-hero-grid">
         <div className="koinonia-hero-copy">
           <div className="koinonia-eyebrow">{eyebrow}</div>
           <h1 className="koinonia-title">{title}</h1>
 
-          {visualDesktopSrc ? (
+          {!hasPropertiesBackground && resolvedDesktopSrc ? (
             <div className="koinonia-hero-mobile-visual">
               <picture>
-                {visualMobileSrc ? (
-                  <source media="(max-width: 980px)" srcSet={visualMobileSrc} />
+                {resolvedMobileSrc ? (
+                  <source media="(max-width: 980px)" srcSet={resolvedMobileSrc} />
                 ) : null}
-                <img src={visualMobileSrc ?? visualDesktopSrc} alt={visualAlt} />
+                <img src={resolvedMobileSrc ?? resolvedDesktopSrc} alt={visualAlt} />
               </picture>
             </div>
           ) : null}
@@ -69,42 +104,21 @@ export function Hero({
           </div>
         </div>
 
-        <div
-          className={visualDesktopSrc ? "koinonia-visual has-image" : "koinonia-visual"}
-          aria-label={
-            visualVariant === "properties"
-              ? "Koinonia Properties management workspace"
-              : visualAlt
-          }
-        >
-          {visualDesktopSrc ? (
-            <picture>
-              {visualMobileSrc ? (
-                <source media="(max-width: 980px)" srcSet={visualMobileSrc} />
-              ) : null}
-              <img src={visualDesktopSrc} alt={visualAlt} />
-            </picture>
-          ) : visualVariant === "properties" ? (
-            <div className="koinonia-visual-panel" aria-hidden="true">
-              <span>Property OS</span>
-              <strong>Owner · Tenant · Maintenance</strong>
-              <ul>
-                <li>
-                  <b>Rent</b>
-                  <em>Ready</em>
-                </li>
-                <li>
-                  <b>Work Orders</b>
-                  <em>Tracked</em>
-                </li>
-                <li>
-                  <b>Owner Updates</b>
-                  <em>Monthly</em>
-                </li>
-              </ul>
-            </div>
-          ) : null}
-        </div>
+        {!hasPropertiesBackground ? (
+          <div
+            className={resolvedDesktopSrc ? "koinonia-visual has-image" : "koinonia-visual"}
+            aria-label={visualAlt}
+          >
+            {resolvedDesktopSrc ? (
+              <picture>
+                {resolvedMobileSrc ? (
+                  <source media="(max-width: 980px)" srcSet={resolvedMobileSrc} />
+                ) : null}
+                <img src={resolvedDesktopSrc} alt={visualAlt} />
+              </picture>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </section>
   );
