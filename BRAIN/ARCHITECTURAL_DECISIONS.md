@@ -36,15 +36,15 @@ Accepted
 
 ## Decision
 
-The BRAIN folder is the authoritative engineering and AI knowledge base for Reynalds OS.
+The `BRAIN/` folder is the authoritative engineering and AI knowledge base for Reynalds OS.
 
 ## Consequences
 
-- Architecture rules live in BRAIN.
-- Development standards live in BRAIN.
-- AI context lives in BRAIN.
-- Session handoff lives in BRAIN.
-- docs is reserved for reports, audits, tickets, specifications, and generated artifacts.
+- Architecture rules live in Brain.
+- Development standards live in Brain.
+- AI context lives in Brain.
+- Session handoff lives in Brain.
+- `docs/` is reserved for reports, audits, tickets, specifications, and generated artifacts.
 
 ---
 
@@ -56,7 +56,7 @@ Accepted
 
 ## Decision
 
-RosObject is the universal object model.
+`RosObject` is the universal object model.
 
 New business concepts should first be evaluated as object types before creating standalone tables or isolated modules.
 
@@ -98,10 +98,124 @@ Accepted
 
 Koinonia is the first production workspace running on Reynalds OS.
 
-The Koinonia website and business workflows should be built on the shared platform rather than treated as a separate one-off project.
+Koinonia website and business workflows should use shared platform capabilities without turning Koinonia into the platform itself.
 
 ## Consequences
 
-- Koinonia website should use the shared design system.
-- Koinonia lead/contact workflows should eventually create objects, tasks, notifications, and CRM records.
-- Future companies should follow the same workspace pattern.
+- Koinonia may use the shared design system and platform services.
+- Koinonia-specific business rules remain in the Koinonia domain.
+- Future company domains may use the same platform pattern without sharing business truth.
+
+---
+
+# ADR-0006 — Company Domains Remain Semantically Separate
+
+## Status
+
+Accepted
+
+## Decision
+
+Koinonia Transactions, Koinonia Properties, Reynalds Brothers, and future companies remain distinct business domains even when hosted in the same Reynalds OS repository.
+
+## Consequences
+
+- Company-specific objects, records, workflows, communications, and operating rules belong with the company domain.
+- Shared infrastructure must not be interpreted as shared business truth.
+- Cross-company reuse should occur at platform/service boundaries rather than by copying business data or assumptions.
+- Reynalds Brothers knowledge is anchored under `02_Companies/Reynalds_Brothers/`.
+
+---
+
+# ADR-0007 — Recovery Sources Are Evidence, Not Automatic Truth
+
+## Status
+
+Accepted
+
+## Context
+
+The 2026-08 Reynalds Brothers recovery audit found valuable historical implementation on `recovery/reynalds-brothers-main-workspace-20260731`, but also found files that would regress current behavior if replayed wholesale.
+
+The recovery root page was one explicit example: replaying it would overwrite the current root behavior.
+
+## Decision
+
+Recovery branches and archived snapshots must be reconciled semantically against the current repository before promotion.
+
+## Consequences
+
+- Never wholesale replay a recovery branch solely because it is more feature-rich.
+- Compare current implementation, tests, canonical docs, and recovery evidence file-by-file.
+- Preserve unresolved recovery evidence until its outstanding parity questions are intentionally closed.
+- The RB recovery branch remains preserved until seed parity is completed.
+
+---
+
+# ADR-0008 — Current Seed and Recovery Seed Are Different Authority Levels
+
+## Status
+
+Accepted
+
+## Decision
+
+`packages/database/prisma/seed.ts` on the active target is the canonical current seed.
+
+The richer seed snapshot on the preserved RB recovery branch is historical/recovery evidence only until individual missing fields or records are intentionally reconciled.
+
+## Consequences
+
+- Historical changelog claims do not override the current seed file.
+- Missing recovery fields such as `customerUpdateStatus`, `mediaStatus`, or `permitStatus` do not become current merely because they exist in recovery.
+- Do not delete the preserved recovery branch before intentional seed-parity closure.
+
+---
+
+# ADR-0009 — Prisma Generation Is an Explicit CI Prerequisite
+
+## Status
+
+Accepted
+
+## Context
+
+CI repair work showed that dependency installation and tests could complete while the production build still failed because Prisma Client types had not been generated from the database workspace schema.
+
+## Decision
+
+The CI pipeline explicitly runs:
+
+1. `pnpm install --frozen-lockfile`
+2. `pnpm db:generate`
+3. `pnpm test`
+4. `pnpm build`
+
+while the current workspace architecture requires this ordering.
+
+## Consequences
+
+- Do not remove Prisma generation from CI without proving generation is reliably handled elsewhere.
+- Web Vitest must run non-interactively in CI.
+- Intentionally testless workspaces may use `--passWithNoTests`.
+- CI run #41 validated the repair; run #42 validated the RB closure against the repaired target.
+
+---
+
+# ADR-0010 — Recovery Closure Does Not Change Production Priority
+
+## Status
+
+Accepted
+
+## Decision
+
+The 2026-08 Reynalds Brothers recovery/closure work is a continuity and stabilization milestone, not a mandate to keep expanding the RB domain.
+
+After continuity documentation is synchronized, primary development attention returns to the Koinonia Transactions website unless a verified blocker or approved focused RB task requires otherwise.
+
+## Consequences
+
+- Avoid speculative RB feature growth.
+- Seed parity remains a separately scoped future task.
+- Platform expansion should not interrupt current Koinonia Transactions production work without a concrete reason.
