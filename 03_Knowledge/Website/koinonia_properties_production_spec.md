@@ -2,81 +2,92 @@
 
 ## Status
 
-Draft
+Active Development — Koinonia Properties DEV
 
 ## Purpose
 
-This document defines the initial website structure for Koinonia Properties, the property management service line under Koinonia Admin.
+This document defines the public website structure for Koinonia Properties, a company and public website separate from Koinonia Transactions.
+
+Koinonia Properties business records are maintained inside Reynalds OS for continuity, but the company, its public website, and Reynalds OS are separate concepts.
 
 Canonical business object:
 
 - `02_Companies/Koinonia/01_Services/OBJ-00000014_Property_Management_Service.md`
 
+Canonical product identity:
+
+- `BRAIN/PRODUCT_BOUNDARIES.md`
+- `BRAIN/APPLICATION_CATALOG.md`
+
 Canonical brand source:
 
 - `03_Knowledge/Brand/koinonia_brand_core.md`
 
-## Recommended Route
+Standalone public application:
 
-Initial route:
+- `apps/properties-web/`
 
-- `/properties`
+## Public Route Model
 
-Recommended public URL:
+Koinonia Properties is a standalone public website. Its Home page is rooted at `/`.
 
-- koinoniaadmin.com/properties
+Do not model Koinonia Properties as `/properties` inside the Koinonia Transactions website, and do not route Properties users through the Transactions public website or Transactions client portal.
 
-Future dedicated domains may redirect to this route or become standalone sites when the service line is ready.
+A final public domain is a separate launch decision. The current temporary Vercel deployment is a development deployment.
 
 ## Site Positioning
 
 Koinonia Properties provides property management built on clear communication, steady systems, and responsible care.
 
-The site should make "property management" obvious in the hero, metadata, service descriptions, and calls to action.
+The site should make property management obvious in the hero, metadata, service descriptions, and calls to action.
+
+Public page copy should speak to customers. Internal build-plan or development instructions belong in project documentation, not customer-facing sections.
 
 ## Primary Audiences
 
 Owners:
 
-- Need confidence, clarity, service scope, process, fees, and communication expectations.
+- Need confidence, clarity, service scope, process, pricing factors, and communication expectations.
 
-Tenants:
+Tenants and rental applicants:
 
-- Need rentals, applications, maintenance requests, rent payment access, and policy clarity.
+- Need rentals, application guidance, maintenance direction, policy clarity, contact paths, and secure account access when available.
 
 Investors:
 
-- Need leasing support, management consistency, and portfolio-aware operations.
+- Need leasing support, management consistency, maintenance coordination, communication, and portfolio-aware operations.
 
 Vendors:
 
-- Need a clear way to communicate, submit invoices, and receive maintenance instructions.
+- Need a clear communication and coordination path.
 
 ## Sitemap
 
-Initial pages:
+Current public pages:
 
-- Home: `/properties`
-- Owner Services: `/properties/owners`
-- Tenant Services: `/properties/tenants`
-- Available Rentals: `/properties/rentals`
-- Portals: `/properties/portals`
-- Rental Analysis: `/properties/rental-analysis`
-- Pricing and Scope: `/properties/pricing`
-- Service Areas: `/properties/service-areas`
-- Policies: `/properties/policies`
-- Apply: `/properties/apply`
-- Maintenance: `/properties/maintenance`
-- Vendors: `/properties/vendors`
-- Operating Standards: `/properties/standards`
-- Contact: `/koinonia/contact`
+- Home: `/`
+- Owner Services: `/owners`
+- Tenant Services: `/tenants`
+- Available Rentals: `/rentals`
+- Portals / Secure Access: `/portals`
+- Rental Analysis: `/rental-analysis`
+- Pricing and Scope: `/pricing`
+- Service Areas / Availability: `/service-areas`
+- Policies: `/policies`
+- Apply: `/apply`
+- Maintenance: `/maintenance`
+- Vendors: `/vendors`
+- Operating Standards: `/standards`
+- Contact: `/contact`
 
-Future pages:
+Future pages may include:
 
-- Individual rental listing pages
-- City-specific service area pages
+- Individual rental listing pages.
+- City-specific service-area pages after coverage is verified.
 
 ## Homepage Structure
+
+The Home page is a decision-and-routing page, not a duplicate of every downstream page.
 
 Hero:
 
@@ -84,8 +95,7 @@ Hero:
 - Supporting line: Property management built on clear communication, steady systems, and responsible care.
 - Primary CTA: Request Rental Analysis
 - Secondary CTA: View Rentals
-- Hero system: reuse the canonical Koinonia public hero from the Transactions site.
-- Visual variant: use the `properties` variant so the right-side visual communicates owner, tenant, rent, maintenance, and portal operations.
+- Visual direction: communicate property management, owners, residents, properties, maintenance coordination, and professional care without presenting the company as an internal operating-system product.
 
 Top navigation:
 
@@ -95,6 +105,7 @@ Top navigation:
 - Pricing
 - Areas
 - Portals
+- Standards
 - Policies
 - Contact
 
@@ -102,150 +113,130 @@ Quick access:
 
 - Owner Inquiry
 - Available Rentals
-- Tenant Portal
-- Owner Portal
+- Tenant / Resident Help
+- Secure Portal Access
 
 Inquiry pattern:
 
-- Use the reusable Properties Inquiry component for owner, tenant, rental-analysis, maintenance, vendor, and application pages.
-- Use email handoff until privacy, portal, screening, maintenance, and management-agreement rules are finalized.
-- Do not collect sensitive applicant, tenant, owner, payment, or maintenance access data directly on the public site before policies and backend handling are approved.
+- Use the reusable Properties Inquiry component where appropriate.
+- Use an approved low-risk handoff until private backend workflows are finalized.
+- Do not collect sensitive applicant, tenant, owner, payment, identity, or private account data through ordinary public-site intake.
 
 Audience paths:
 
 - For Property Owners
-- For Tenants
+- For Tenants / Residents
 - For Investors
 
 Owner lead path:
 
 - Rental Analysis
-- Transparent Scope
-- Local Readiness
+- Clear Scope
+- Appropriate Next Step
 
-Services overview:
+Property-management overview:
 
+- Rental analysis and property review.
 - Rental marketing and leasing support.
 - Tenant screening coordination.
 - Lease administration.
-- Rent collection systems.
+- Rent collection systems and payment-process coordination.
 - Maintenance coordination.
 - Owner updates and reporting.
 - Move-in and move-out coordination.
 - Vendor communication.
+- Ongoing property-management support.
+
+Home should summarize these areas and route visitors deeper instead of repeating the full content of Owner Services, Tenant Services, Pricing, Rentals, Portals, or Standards.
 
 Process:
 
 1. Review the property and owner goals.
-2. Prepare the management plan.
-3. Coordinate leasing or onboarding.
-4. Manage rent, maintenance, communication, and reporting.
-5. Deliver organized owner updates and support.
-
-Umbrella section:
-
-- Koinonia Properties is part of Koinonia Admin, the operating umbrella for Koinonia real estate services.
+2. Prepare the management plan and clarify responsibilities.
+3. Coordinate leasing or onboarding as applicable.
+4. Manage the approved rent, maintenance, communication, and reporting workflows.
+5. Deliver organized owner updates and ongoing support.
 
 ## Owner Services Page
 
 Purpose:
 
-Convert property owners.
+Help property owners understand the service and take the appropriate next step.
 
-Sections:
+Core subjects:
 
-- Full-service property management.
-- Leasing and tenant placement.
-- Rent collection.
+- Property management service scope.
+- Leasing and tenant placement support.
+- Rent collection systems and payment-process coordination.
 - Maintenance coordination.
-- Owner statements and reporting.
-- Property inspections.
+- Owner updates and reporting through approved systems.
+- Property inspections when included in the approved service scope.
 - Communication standards.
 - Getting started.
 
 Primary CTA:
 
-- Schedule Owner Consultation
+- Request Rental Analysis or Schedule Owner Consultation using the approved intake path.
 
 ## Tenant Services Page
 
 Purpose:
 
-Support tenants and reduce manual questions.
+Support residents and applicants while routing private activity to approved secure systems.
 
-Sections:
+Core subjects:
 
 - Available rentals.
-- Application process.
-- Rent payments.
-- Maintenance requests.
+- Application guidance.
+- Rent-payment direction through the approved system.
+- Maintenance guidance and request routing.
 - Move-in expectations.
 - Resident responsibilities.
 - Contact support.
 
-Primary CTAs:
-
-- View Available Rentals.
-- Submit Maintenance Request.
-- Pay Rent.
-
-Resident service paths:
-
-- Pay Rent
-- Request Maintenance
-- Apply for a Rental
+Do not imply that payment, application, maintenance-record, or private-account functionality is hosted directly inside the public website unless that capability is actually implemented and approved.
 
 ## Available Rentals Page
 
 Purpose:
 
-Show current rental availability.
+Show current rental availability and provide the appropriate next action.
 
 Empty-state copy:
 
 No current vacancies. Check back soon or contact us about upcoming availability.
 
-Listing standards:
+Listing standards when active inventory exists:
 
 - Current availability and pricing.
 - Property photos and key features.
-- Bedrooms, bathrooms, parking, utilities, and pet policy.
+- Bedrooms, bathrooms, parking, utilities, and pet policy where applicable.
 - Apply or schedule-tour path on every listing.
-- Fair housing and application criteria links.
-- Empty inventory state should still provide availability updates, application criteria, and tenant-service paths.
+- Verified application-criteria and required policy links.
 
-## Pricing / Management Plans Page
+## Pricing / Management Scope Page
 
 Purpose:
 
-Explain management options clearly.
+Explain pricing factors and service scope clearly without presenting proposed packages as finalized offers.
 
-Possible plan structure:
+Until approved package and pricing objects exist, public copy should explain that pricing depends on factors such as:
 
-- Leasing-only service.
-- Full-service management.
-- Portfolio management.
+- Property type.
+- Requested service scope.
+- Occupancy or leasing status.
+- Property condition and timing.
+- Portfolio size or complexity.
 
-If pricing is not ready:
-
-Use custom pricing based on property type, service level, and portfolio size.
-
-Pricing page must separate:
-
-- Management fee.
-- Leasing fee.
-- Maintenance reserve.
-- Pass-through costs.
-- Owner approval threshold.
-- Any future guarantees or service-level promises.
+Leasing-only service, full-service management, and portfolio management may be evaluated as future service structures, but they are not canonical packages or guaranteed offers until explicitly approved and recorded.
 
 ## Portal Strategy
 
 Public site role:
 
-- Route owners, tenants, applicants, and vendors to the correct path.
+- Route owners, tenants, applicants, and vendors to the correct public or secure next step.
 
-Property management platform role:
+Private property-management systems may handle:
 
 - Payments.
 - Applications.
@@ -254,7 +245,7 @@ Property management platform role:
 - Lease documents.
 - Private account history.
 
-Do not build custom private portal behavior into the public site until the platform, privacy policy, security handling, and accounting rules are selected.
+Do not build or imply custom private portal behavior inside the public website until the corresponding system is selected, approved, and implemented.
 
 ## Contact Page
 
@@ -262,17 +253,15 @@ Inquiry paths:
 
 - I own a rental property.
 - I am looking for a rental.
-- I am a current tenant.
+- I am a current tenant or resident.
 - I am a vendor.
-- Other.
+- Other property-management question.
 
 ## SEO Requirements
 
-Primary phrases:
+Primary phrases may include:
 
 - Koinonia Properties.
-- Koinonia Admin.
-- Colorado property management.
 - Property management.
 - Rental property management.
 - Owner services.
@@ -290,32 +279,39 @@ Metadata should make the service category clear even when the page title uses th
 
 SEO copy rules:
 
-- Add visible, useful public copy around the search intent of each page.
+- Add useful public copy around the search intent of each page.
 - Keep city and market claims generic until service areas are approved.
-- Use structured data on the homepage for the Koinonia Properties service line without inventing address, pricing, reviews, or coverage details.
-- Do not keyword-stuff repeated phrases in a way that weakens the Koinonia voice.
+- Use structured data only for facts established for Koinonia Properties.
+- Do not invent address, pricing, reviews, coverage, guarantees, or statistics.
+- Do not keyword-stuff repeated phrases in a way that weakens the Koinonia Properties voice.
 
 ## Launch Requirements
 
-Before launch:
+Before public launch or before publishing specific operating promises, confirm the applicable approved business rules, policies, service areas, private-system workflows, and customer-facing disclosures.
 
-- Verify property management licensing rules.
-- Verify broker supervision requirements.
-- Verify trust account and security deposit handling.
-- Verify fair housing language.
-- Verify advertising disclosures.
-- Verify E&O and liability insurance coverage.
-- Confirm owner agreement and tenant policy language.
-- Standards, policies, and service-area pages should show launch gates and verification boundaries while the business is still in draft operating status.
-- Service-area pages should not publish market coverage until licensing, vendor reach, showing capacity, and local operating support are real.
+Internal verification notes should remain internal rather than appearing as customer-facing marketing copy.
 
-## Research-Informed Best Practices
+## Public-Site Principles
 
-Property management websites should separate high-intent audiences quickly:
+The Koinonia Properties website should separate high-intent audiences quickly:
 
-- Prospective owners need owner services, pricing/scope, trust signals, service areas, and a rental analysis path.
-- Tenants need available rentals, applications, rent payment access, maintenance requests, and portal access.
-- Existing owner clients need a distinct owner portal path for statements, documents, maintenance visibility, and property performance.
-- Listings should be current, mobile-friendly, photo-forward, and include direct application or schedule-tour paths.
-- Local SEO should be built around service-area pages once target markets are finalized.
-- Legal, fair housing, privacy, accessibility, licensing, and trust-accounting language must be verified before launch.
+- Prospective owners need owner services, pricing/scope, trust signals, service availability, and a rental-analysis path.
+- Tenants need available rentals, application guidance, maintenance direction, and secure account-access guidance.
+- Existing owner clients need a clear secure-access path when the approved private system provides those capabilities.
+- Listings should be current, mobile-friendly, photo-forward, and include direct next actions when inventory is available.
+- Local SEO should be built around verified service areas.
+
+## Canonical Alignment Rule
+
+This specification governs the Koinonia Properties public website experience and page structure.
+
+Property-management service scope is governed by:
+
+- `02_Companies/Koinonia/01_Services/OBJ-00000014_Property_Management_Service.md`
+
+Product identity and company separation are governed by:
+
+- `BRAIN/PRODUCT_BOUNDARIES.md`
+- `BRAIN/APPLICATION_CATALOG.md`
+
+If website copy conflicts with those sources, resolve the conflict against the canonical business and product-boundary sources before expanding the public claim.
