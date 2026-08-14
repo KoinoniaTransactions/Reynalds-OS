@@ -60,3 +60,11 @@ Reason: Improves consistency, reduces duplicate code, and accelerates launch.
 Decision: Website launch work takes priority over future Reynalds OS expansion unless an architectural improvement directly accelerates the website.
 
 Reason: Prevents feature creep and keeps Koinonia moving toward publication.
+
+## D-011 — Koinonia Consultations Use Diagnose-First Interview System
+
+Decision: Koinonia client consultations use a 20–30 minute diagnose-first interview structure. Koinonia does not lead with services, pricing, software, or a generic transaction-coordination pitch. The prospect's operating model, primary pressure, consequence, desired capacity, and trust requirements are understood before Koinonia is presented.
+
+Canonical source: `BRAIN/KOINONIA_CONSULTATION_INTERVIEW_SYSTEM.md`
+
+Reason: Koinonia sells an operating partnership and prescribed support, not a generic menu of tasks. Diagnosing first improves fit, protects the brand from commodity price comparison, and creates a repeatable consultation process that can later be trained and measured.
