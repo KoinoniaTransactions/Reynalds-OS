@@ -381,9 +381,18 @@ Contact remains directly available from the primary navigation because it serves
 
 ## Footer Structure
 
-The footer should provide broad sitemap access without recreating the crowded primary header.
+The footer is an intentional closing section rather than a second crowded header or a flat sitemap.
 
-Recommended columns:
+Primary hierarchy:
+
+1. Koinonia Properties brand and property-management positioning.
+2. Prominent Request Rental Analysis CTA.
+3. Quiet direct contact options for Email, Call, and Text.
+4. Audience-group navigation.
+5. Faith-centered closing signature.
+6. Minimal copyright/legal line.
+
+Desktop audience groups:
 
 Owners:
 
@@ -393,7 +402,7 @@ Owners:
 - Service Areas
 - Management Standards
 
-Renters:
+Find a Home:
 
 - Available Homes
 - How to Apply
@@ -410,9 +419,21 @@ Koinonia:
 
 - Contact
 - Vendor Information
-- Future legal/privacy links as required
+- Future legal/privacy links only when real destinations exist
 
-The footer may repeat the Request Rental Analysis CTA.
+Mobile footer behavior:
+
+- Brand, positioning, Rental Analysis CTA, contact methods, and faith signature remain visible.
+- Owners, Find a Home, Residents, and Koinonia navigation groups collapse into accessible accordion sections to avoid an unnecessarily tall footer.
+
+Approved faith signature:
+
+- `Bear one another’s burdens. Work heartily, as for the Lord.`
+- `Galatians 6:2 · Colossians 3:23`
+
+The faith signature should be visually distinct but restrained, with the scripture references subordinate to the statement.
+
+Do not create placeholder Privacy, Terms, or legal links before those destinations and policies actually exist.
 
 ## SEO Requirements
 
