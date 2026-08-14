@@ -18,9 +18,10 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
 - Latest validated code checkpoint: `ffb10e7`
-- Documentation-sync commits follow that validated code checkpoint; do not treat a documentation-only branch HEAD as a newly validated UI build.
+- Footer redesign code and documentation now follow that checkpoint and remain validation-pending until focused local verification is completed.
 - Hosting state: temporary Vercel preview; final public domain not yet attached
-- Current preview: `https://koinonia-properties-gxc8xwqhu-koinonia3.vercel.app`
+- Current validated preview: `https://koinonia-properties-gxc8xwqhu-koinonia3.vercel.app`
+- The current validated preview predates the footer redesign.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -159,6 +160,45 @@ Desktop audience-group navigation remains unchanged by the mobile-collapse behav
 
 ---
 
+## Approved Footer Direction
+
+Approved and implemented in source on 2026-08-13; focused validation and preview review remain pending.
+
+The footer is an intentional premium closing section rather than a second crowded header or flat sitemap.
+
+Approved hierarchy:
+
+1. Koinonia Properties brand and Property Management identity.
+2. Canonical positioning: property management built on clear communication, steady systems, and responsible care.
+3. Prominent Request Rental Analysis CTA.
+4. Quiet Email, Call, and Text contact options.
+5. Audience navigation using the same language as the approved IA: Owners, Find a Home, Residents, Koinonia.
+6. Faith-centered closing signature.
+7. Minimal copyright/legal line.
+
+Desktop footer navigation remains visible in four audience groups.
+
+Mobile footer navigation collapses the four audience groups into accessible accordion sections so the footer does not become unnecessarily tall. Brand, CTA, contact methods, and faith signature remain visible.
+
+Approved faith signature:
+
+> Bear one another’s burdens. Work heartily, as for the Lord.
+>
+> Galatians 6:2 · Colossians 3:23
+
+Do not create placeholder Privacy, Terms, or other legal links before real approved destinations exist.
+
+Primary implementation:
+
+- `apps/properties-web/components/site/Footer/Footer.tsx`
+- `apps/properties-web/app/properties.css`
+
+Canonical website authority:
+
+- `03_Knowledge/Website/koinonia_properties_production_spec.md`
+
+---
+
 ## Public Website Completion State
 
 ### Home — Production Pass Complete
@@ -202,11 +242,11 @@ Current Home hero requirements remain locked:
 - physical in-scene text may be realistic Properties branding/information;
 - no Service Areas map/theme on Home;
 - bright, light, airy, organized Koinonia Properties art direction;
-- no hero changes are part of the current IA/mobile-nav work.
+- no hero changes are part of the current navigation/footer work.
 
 ---
 
-## Recent Verified Checkpoints
+## Recent Verified and Pending Checkpoints
 
 Canonical service and website authority:
 
@@ -235,13 +275,19 @@ Mobile navigation:
 - `1ae05d6` — add client-side mobile navigation toggle
 - `ffb10e7` — collapse and style mobile navigation
 
-Because the GitHub contents API writes one file at a time, some focused slices span more than one sequential commit. Treat the final validated slice code checkpoint as authoritative for runtime validation rather than assuming every documentation-only branch HEAD represents a newly validated UI build.
+Footer redesign — validation pending:
+
+- `a502ee9` — redesign public footer structure
+- `1840f55` — refine premium footer styling and responsive behavior
+- `d57a6a8` — document canonical footer experience
+
+Because the GitHub contents API writes one file at a time, focused slices may span multiple sequential commits. Treat a code checkpoint as validated only after focused verification passes; documentation-only branch HEADs do not imply runtime validation.
 
 ---
 
 ## Latest Validation
 
-Validated locally at `ffb10e7` on 2026-08-13:
+Latest completed focused runtime validation remains `ffb10e7` from 2026-08-13:
 
 - all 14 standalone route pages exist with matching metadata paths;
 - SEO registry contains only the 14 standalone Properties routes;
@@ -258,27 +304,20 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-A stale verifier assertion was corrected at `c4fbc58`; the navigation itself already pointed Contact directly to `/contact`.
+The footer redesign must now pass the same focused boundary verification and `git diff --check` before it becomes the next validated code checkpoint.
 
 ---
 
 ## Current Preview State
 
-Validated mobile-navigation preview:
+Current validated preview:
 
 - `https://koinonia-properties-gxc8xwqhu-koinonia3.vercel.app`
 - Source commit: `ffb10e7`
 - Deployment mode: Vercel Preview only
+- This preview does not yet contain the footer redesign.
 
-Current visual-QA focus:
-
-- hamburger is visible on mobile;
-- menu is collapsed on initial load;
-- open/close behavior is clean;
-- audience groups expand clearly;
-- Contact remains easy to reach;
-- Rental Analysis CTA is not cramped;
-- opening the navigation does not create undesirable hero/layout movement.
+The next preview should be created only after the footer redesign passes focused local validation.
 
 ---
 
@@ -309,13 +348,31 @@ This documentation sequence is part of the repository completion standard, not o
 
 ## Immediate Next Work
 
-### First: Mobile Navigation Visual QA
+### First: Validate Footer Redesign
 
-Use the current preview to approve or refine the hamburger/mobile navigation behavior.
+Fast-forward the dedicated Properties DEV worktree to the current branch HEAD and run:
 
-Do not begin a broader page-content rewrite until the mobile IA shell is visually accepted.
+- `apps/properties-web/scripts/verify-boundary.mjs`
+- `git diff --check`
+- clean branch/worktree confirmation
 
-### After Mobile IA Acceptance: Owner Services Production Pass
+Do not mark the footer redesign validated until those checks pass.
+
+### Second: Footer Desktop and Mobile Preview QA
+
+After validation, refresh the dedicated preview worktree and deploy Vercel Preview only.
+
+Review:
+
+- premium brand/CTA hierarchy;
+- Email / Call / Text visual subordination;
+- Owners / Find a Home / Residents / Koinonia desktop columns;
+- mobile accordion behavior;
+- faith signature hierarchy and readability;
+- copyright spacing;
+- overall footer height and transition from page content.
+
+### After Footer Acceptance: Owner Services Production Pass
 
 Review and complete the **Owner Services** page at `/owners` as the next page-level production pass.
 
