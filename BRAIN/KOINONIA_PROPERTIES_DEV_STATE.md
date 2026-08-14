@@ -17,13 +17,14 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Latest validated repository checkpoint: `d7a821e`
-- The Home content/SEO production pass is included in the validated tree at `d7a821e`.
+- Latest validated repository checkpoint: `bb38496`
+- The Home content/SEO production pass was established at `d7a821e`; the centered owner-CTA visual refinement is included in the validated tree at `bb38496`.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
-- Latest reviewed pre-Home preview: `https://koinonia-properties-ncz25p511-koinonia3.vercel.app`
-- Source branch head at that deployment: `e82eb71`.
-- That preview was visually accepted for the shared Koinonia header branding/favicon and the previously refined footer, but it predates the validated Home content/SEO pass at `d7a821e`.
+- Current Home-review preview: `https://koinonia-properties-el65vsx8u-koinonia3.vercel.app`
+- Source branch head at that deployment: `33f8e22`.
+- That preview contains the Home content/SEO rewrite and the previously accepted shared branding/footer. During visual review, the owner-focused section was found to feel unbalanced because its single Rental Analysis CTA was left-aligned beneath centered copy.
+- The CTA alignment issue is corrected and validated in code at `bb38496`, but that refinement still requires a refreshed Vercel Preview review.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -244,7 +245,7 @@ The mobile direction previously approved remains intact:
 - Validated visual treatment at `186f717`: social controls are centered beneath the Rental Analysis CTA on desktop and centered across the CTA width on mobile.
 - Validated visual sizing at `186f717`: social button circles are 40px and social glyphs are 18px with slightly increased horizontal spacing.
 - Validated vertical rhythm at `2f6f912`: the Email / Call / Text row has 18px of separation before the CTA, and the CTA has 20px of separation before the social controls.
-- The latest pre-Home Preview sourced from `e82eb71` was visually accepted with these footer refinements intact.
+- The preview sourced from `e82eb71` was visually accepted with these footer refinements intact.
 
 ### Faith signature
 
@@ -327,9 +328,11 @@ Validated rebuild/refinement commits:
 
 ## Public Website Completion State
 
-### Home — Content and SEO Production Pass Validated
+### Home — Content, SEO, and Current Visual Refinement Validated
 
-Validated on 2026-08-14 at repository checkpoint `d7a821e`.
+The core Home content/SEO production pass was validated on 2026-08-14 at repository checkpoint `d7a821e`.
+
+The latest Home visual-refinement checkpoint is `bb38496`.
 
 Primary implementation:
 
@@ -397,7 +400,9 @@ These remain service categories rather than a promise that every property receiv
 
 Home now includes a dedicated owner-focused section emphasizing visibility, organized follow-through, leasing activity, resident communication, maintenance, vendors, and owner updates.
 
-The management process now presents the canonical five stages:
+The Home Preview sourced from `33f8e22` showed that this section's centered eyebrow, heading, and body copy were visually strong, but the single `Request Rental Analysis` button was left-aligned and made the section feel unbalanced. The focused refinement at `bb38496` centers that one CTA beneath the copy. No Home copy, SEO metadata, structured data, routes, navigation, hero, footer, or other section was changed by that refinement.
+
+The management process presents the canonical five stages:
 
 1. Understand the Property
 2. Clarify the Management Plan
@@ -409,7 +414,7 @@ Rental Analysis has its own prominent section and remains the preferred owner en
 
 ### Home FAQ strategy
 
-Home now uses owner-intent property-management questions covering:
+Home uses owner-intent property-management questions covering:
 
 - what a property management company handles;
 - Koinonia Properties service scope;
@@ -430,11 +435,11 @@ Validated Home/default description:
 
 - `Koinonia Properties provides organized rental property management with leasing support, maintenance coordination, owner communication, and responsible care.`
 
-The Home-only `metadata.keywords` array was removed. Search vocabulary is now expressed through useful page content, headings, metadata, links, and structured data rather than an ignored meta-keywords list.
+The Home-only `metadata.keywords` array was removed. Search vocabulary is expressed through useful page content, headings, metadata, links, and structured data rather than an ignored meta-keywords list.
 
 ### Structured data
 
-Home now includes:
+Home includes:
 
 - an `Organization` JSON-LD identity layer using only verified Koinonia Properties name, URL when configured, icon/logo path, email, and phone;
 - an updated `Service` JSON-LD object aligned with rental property management and approved service categories.
@@ -443,9 +448,9 @@ The structured data does not invent or publish unverified address, service area,
 
 ### Home visual acceptance
 
-Code and boundary validation are complete at `d7a821e`.
+Code and boundary validation are complete at `bb38496`.
 
-Visual acceptance of the rewritten Home remains pending a fresh Vercel Preview review on desktop and mobile.
+The broader rewritten Home is still in visual QA. The current known owner-CTA imbalance is corrected in code, and a refreshed Vercel Preview containing `bb38496` is required before that section is visually accepted and Home review continues.
 
 ---
 
@@ -526,11 +531,12 @@ Shared Koinonia branding / favicon:
 - `3952eec` — apply the shared Koinonia brand lockup to the Properties header
 - `6f30c7e` — register icons in Properties metadata and establish the validated branding/favicon repository checkpoint
 
-Home content / SEO production pass:
+Home content / SEO production pass and visual refinement:
 
 - `4b804e7` — rewrite Home around Koinonia rental-property-management positioning
 - `fb3664d` — remove the Home meta-keywords array
 - `d7a821e` — strengthen Home/default metadata and establish the validated Home/SEO repository checkpoint
+- `bb38496` — center the single Rental Analysis CTA in the owner-focused Home section and establish the latest validated Home checkpoint
 
 Because GitHub contents writes are file-scoped, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only or intermediate branch HEADs do not imply runtime validation.
 
@@ -538,7 +544,7 @@ Because GitHub contents writes are file-scoped, focused slices may span multiple
 
 ## Latest Validation
 
-Focused validation completed locally at `d7a821e` on 2026-08-14.
+Focused validation completed locally at `bb38496` on 2026-08-14.
 
 Exact successful checks:
 
@@ -558,37 +564,39 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-This establishes `d7a821e` as the current validated repository checkpoint for the Home content/SEO production pass. Visual acceptance remains separate and requires a fresh desktop/mobile Preview review.
+This establishes `bb38496` as the current validated repository checkpoint. It includes the Home content/SEO work validated at `d7a821e` plus the centered owner-CTA visual refinement. Visual acceptance remains separate and requires a refreshed Preview containing `bb38496`.
 
 ---
 
 ## Current Preview State
 
-Latest reviewed pre-Home preview:
+Current Home-review preview:
 
-- `https://koinonia-properties-ncz25p511-koinonia3.vercel.app`
-- Source branch head at deployment: `e82eb71`
+- `https://koinonia-properties-el65vsx8u-koinonia3.vercel.app`
+- Source branch head at deployment: `33f8e22`
 - Deployment mode: Vercel Preview only
-- Shared Koinonia header branding/favicon and the footer refinements were visually accepted on this preview.
-- This preview predates the Home content/SEO production pass validated at `d7a821e`.
+- This preview contains the rewritten Home, Home SEO changes, shared Koinonia branding/favicon, and the previously approved footer refinements.
+- During review of this preview, the owner-focused `Know what is happening with your property—and what comes next.` section was judged to be good progress but visually unbalanced because its single Rental Analysis CTA sat on the left beneath centered content.
+- The focused fix is validated at `bb38496` but is not present in this preview yet.
 
 The next preview should be refreshed from the current Properties DEV branch after this documentation sync and deployed with Vercel Preview only.
 
 Next Home visual-QA focus:
 
-- `Rental Property Management` eyebrow and `Property Management. Elevated.` H1 remain readable and balanced over the approved hero image on desktop and mobile;
-- the longer hero lead does not crowd the CTAs or overwhelm the text-safe area;
-- the three Home audience paths clearly read as Owners / Find a Home / Residents;
-- the new Koinonia Approach section feels brand-specific rather than generic;
-- four property-management service cards remain readable at desktop/tablet/mobile widths;
-- the owner relationship section has an intentional editorial rhythm rather than appearing as an oversized text block;
-- the five-step management process wraps cleanly and does not create an awkward orphan card;
-- the Rental Analysis feature section is visually prominent without duplicating the closing CTA;
-- the expanded FAQ remains easy to scan;
-- the final `Let's start with the property.` CTA closes the Home page cleanly;
-- the previously approved header branding/favicon, Home hero image, footer, social controls, mobile navigation, and faith signature show no regressions.
+- confirm the owner-focused `Request Rental Analysis` CTA is centered and the section now feels balanced;
+- continue checking the `Rental Property Management` eyebrow and `Property Management. Elevated.` H1 on desktop and mobile;
+- confirm the longer hero lead does not crowd the CTAs or overwhelm the text-safe area;
+- confirm the three Home audience paths clearly read as Owners / Find a Home / Residents;
+- evaluate whether the Koinonia Approach section feels brand-specific rather than generic;
+- confirm four property-management service cards remain readable at desktop/tablet/mobile widths;
+- continue reviewing owner-section editorial rhythm after the CTA correction;
+- confirm the five-step management process wraps cleanly and does not create an awkward orphan card;
+- confirm the Rental Analysis feature section is visually prominent without duplicating the closing CTA;
+- confirm the expanded FAQ remains easy to scan;
+- confirm the final `Let's start with the property.` CTA closes the Home page cleanly;
+- confirm the previously approved header branding/favicon, Home hero image, footer, social controls, mobile navigation, and faith signature show no regressions.
 
-Do not mark the rewritten Home visually accepted until this refreshed Preview is reviewed.
+Do not mark the rewritten Home visually accepted until the refreshed Preview is reviewed.
 
 ---
 
@@ -621,11 +629,11 @@ Temporary visual placeholders belong in this DEV continuity record until they be
 
 ## Immediate Next Work
 
-### First: Deploy Home Content / SEO Preview
+### First: Deploy Centered Owner-CTA Preview
 
 Refresh the dedicated preview worktree from the current Properties DEV branch after this documentation sync and deploy Vercel Preview only.
 
-Review the rewritten Home on desktop and mobile against the Home visual-QA criteria above.
+Confirm that the owner-focused Home section now reads as a balanced centered composition with its single `Request Rental Analysis` CTA centered beneath the copy. Then continue the Home visual review section by section from that refreshed preview.
 
 Do not mark the Home visually accepted until the refreshed preview is reviewed.
 
