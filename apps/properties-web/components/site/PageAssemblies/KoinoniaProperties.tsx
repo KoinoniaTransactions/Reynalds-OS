@@ -343,10 +343,7 @@ export function KoinoniaProperties() {
               Koinonia's process begins with understanding before execution. The property, owner goals, current situation, responsibilities, and next steps should be clear before ongoing management begins.
             </p>
           </div>
-          <div
-            className="koinonia-grid"
-            style={{ gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}
-          >
+          <div className="koinonia-grid properties-process-grid">
             {process.map((step, index) => (
               <UniversalCard
                 key={step.title}
