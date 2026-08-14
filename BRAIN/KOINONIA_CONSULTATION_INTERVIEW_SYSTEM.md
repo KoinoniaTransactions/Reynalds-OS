@@ -1,7 +1,7 @@
 # Koinonia Consultation & Interview System
 
-Status: Canonical — Active Build  
-Version: 0.5  
+Status: Canonical — Active  
+Version: 1.0  
 Date: 2026-08-14  
 Business: Koinonia Transactions  
 Primary Audience: Colorado Realtors, producing agents, growing teams, and brokerage relationships
@@ -138,12 +138,12 @@ Target: approximately 2–3 minutes.
 
 Purpose:
 
-- Ask what would make the biggest immediate difference.
-- Recommend a clear starting point.
-- Ask directly for the first engagement.
-- Establish the next concrete action.
+- Ask directly for the recommended first engagement.
+- Convert interest into a concrete next action rather than a vague intention.
+- Handle yes, no, not now, approval dependencies, or follow-up decisions professionally.
+- Leave every consultation with a clearly recorded outcome and next step.
 
-Detailed scripting: pending approval.
+Detailed decision and closeout scripts are defined below.
 
 ---
 
@@ -1504,7 +1504,7 @@ A pricing change requires appropriate versioning/change control rather than an a
 
 # Current Approved / Customer-Facing Price Reference
 
-This section records the current reference set as of Version 0.5 and must not replace the verification gate above.
+This section records the current reference set as of Version 1.0 and must not replace the verification gate above.
 
 ## Transaction Support
 
@@ -1961,6 +1961,659 @@ Then move to Stage 7.
 
 ---
 
+# Stage 7 — Decision & First Engagement
+
+## Purpose
+
+Stage 7 turns a good conversation into a clear outcome.
+
+The objective is not to pressure the Realtor into saying yes.
+
+The objective is to make the decision explicit and, when the fit is right, convert the recommendation into a concrete first engagement.
+
+Do not end with vague language such as:
+
+- "Let me know if you ever need anything."
+- "Think about it and get back to me."
+- "Hopefully we can work together sometime."
+
+Every consultation should end with one of these outcomes:
+
+1. First engagement accepted.
+2. Defined proposal/custom scope required.
+3. Specific approval dependency and follow-up date.
+4. Specific not-now trigger and follow-up date.
+5. Clear decline.
+6. No-fit decision.
+
+Ambiguity is not a useful outcome.
+
+---
+
+# Governing Close Principle
+
+Ask for a concrete first engagement, not a vague relationship commitment.
+
+The Realtor does not need to decide whether Koinonia will become their long-term operations partner today.
+
+They need to decide whether the specific first engagement you prescribed is worth starting.
+
+Preferred posture:
+
+"Let's solve one real problem well and let the working relationship prove the rest."
+
+---
+
+# The Default Direct Ask
+
+Once scope and investment are understood, say:
+
+"Based on everything we covered, I would start with [service] for [specific need]. Are you comfortable moving forward with that as the first engagement?"
+
+Then stop talking.
+
+Do not soften the question with:
+
+- "Maybe?"
+- "If you want?"
+- "No pressure, but..."
+- a second sales pitch before they answer.
+
+A clear question is not aggressive.
+
+Give the prospect room to answer it.
+
+---
+
+# First Engagement Ask — Transaction Support
+
+When an active transaction exists:
+
+"You mentioned the [property/file] that's already under contract. I think that's the cleanest first test of the relationship. Are you comfortable having Koinonia take the Transaction Support role on that file?"
+
+If yes:
+
+"Great. We'll use that as the first engagement. We'll confirm the billing structure, collect the executed contract and required file information, and get the transaction intake started."
+
+Do not immediately sell the next transaction.
+
+Deliver the first one well.
+
+## When There Is No Active Transaction Yet
+
+Ask:
+
+"Then I wouldn't manufacture a transaction just to get started. When your next file goes under contract, would you like that to be the first Koinonia engagement?"
+
+If yes, define how the prospect should initiate the request and record the trigger.
+
+Do not call the prospect a client before an engagement is actually activated under the approved process.
+
+---
+
+# First Engagement Ask — Contract & Document Support
+
+When there is a current document need:
+
+"You mentioned the [offer/amendment/addendum/document] you need to get handled. Would you like to use that as the first Koinonia document request?"
+
+If yes:
+
+"Perfect. We'll confirm the document type, your terms and instructions, timing, and anything else needed for the draft. You'll review and approve the final work before use."
+
+When there is no current document need:
+
+"Then the next time a real document request hits at the wrong moment, let's use that as the first engagement. Are you comfortable starting there?"
+
+If yes, make sure the prospect knows the request path and expected intake information.
+
+---
+
+# First Engagement Ask — Licensed Showing Coverage
+
+When there is an upcoming conflict:
+
+"You mentioned the showing conflict on [date/property/client situation]. If coverage is available and the scope checks out, would you like Koinonia to handle that as the first engagement?"
+
+If yes:
+
+"Great. We'll confirm the property, time, access, your client instructions, location, and availability before we consider it booked."
+
+When there is no immediate showing:
+
+"Then I wouldn't ask you to buy something you don't need today. The next time you have two clients needing you at the same time, would you like Koinonia to be the first call for coverage?"
+
+Record that trigger for future follow-up.
+
+Do not imply guaranteed future availability.
+
+---
+
+# First Engagement Ask — Monthly Operations Partnership
+
+After recommending the appropriate tier:
+
+"Based on what you described, I would start with [Starter / Growth / Partner]. If you're comfortable moving forward, we'll make the first month about [two or three diagnosed priorities], establish the cadence, and review how the working relationship is performing before we make it broader.
+
+Would you like to start the first month on that basis?"
+
+If yes:
+
+Confirm:
+
+- selected tier;
+- first-month priorities;
+- start date;
+- communication/check-in cadence;
+- required access or inputs;
+- billing start;
+- review point.
+
+Do not add additional services simply because the prospect has agreed to monthly support.
+
+---
+
+# If the Prospect Says Yes
+
+Stop selling.
+
+Do not respond to a yes by reopening the presentation and explaining more features.
+
+Move directly into implementation clarity.
+
+Use:
+
+"Great. Let's make the next step concrete."
+
+Then confirm only what is necessary:
+
+1. What exactly is the first engagement?
+2. What billing structure/tier was agreed to?
+3. What information or documents are needed from the Realtor?
+4. What does Koinonia need to do next?
+5. What timing applies?
+6. Is any brokerage or other approval still required before work can begin?
+
+End with a brief recap:
+
+"I'll send you the written confirmation and next steps so we're both clear on the scope."
+
+A verbal yes is not permission to bypass intake, billing, agreements, brokerage requirements, or other approved onboarding controls.
+
+---
+
+# The One-Question Rule After a Yes
+
+After a prospect says yes, ask only questions necessary to activate the engagement.
+
+Do not keep qualifying them, overcoming objections they no longer have, or searching for an upsell.
+
+The goal changes from persuasion to clean onboarding.
+
+---
+
+# If the Prospect Says, "I Need to Think About It"
+
+Do not challenge the answer.
+
+Clarify what is unresolved.
+
+Recommended response:
+
+"Absolutely. What part do you still need to think through — the fit, the trust piece, the investment, the timing, or something else?"
+
+Listen to the answer.
+
+If there is a real unresolved question you can answer accurately, answer it once.
+
+Then ask:
+
+"Does that resolve the part you were unsure about, or do you still want some time with it?"
+
+If they still want time, respect it.
+
+Then create a specific next step:
+
+"That's fine. When would it make sense for us to reconnect after you've had time to think it through?"
+
+Agree on a specific date or clearly defined window.
+
+Do not respond to "I need to think" by immediately discounting the service.
+
+---
+
+# If the Prospect Says, "Send Me Something"
+
+Do not simply send the full brochure and hope they call.
+
+Ask:
+
+"Absolutely. What would be most useful for the decision — the scope we discussed, the pricing/billing structure, the professional boundaries, or something you need to share with someone else?"
+
+Send the smallest useful decision package.
+
+Then set the follow-up:
+
+"I'll send that to you. When should we reconnect after you've had a chance to review it?"
+
+Record the date.
+
+A sent document without a next step is not a follow-up plan.
+
+---
+
+# If Another Person Must Approve
+
+This may include a broker, team lead, business partner, spouse involved in the business decision, office manager, or other legitimate decision participant.
+
+Do not try to talk the prospect around their decision process.
+
+Ask:
+
+"What will they need to understand or approve before you can move forward?"
+
+Then determine whether the right next step is:
+
+- a concise written scope;
+- professional-boundary information;
+- pricing/billing summary;
+- a short follow-up conversation with the decision participant;
+- a formal proposal when appropriate.
+
+Recommended close:
+
+"Let's make sure you have exactly what you need for that conversation. When will you be speaking with them, and when should we reconnect?"
+
+Set the date before ending the consultation when possible.
+
+---
+
+# Broker Approval Specifically
+
+When broker approval or brokerage-process confirmation is needed, do not treat it as an objection to defeat.
+
+Use:
+
+"That makes sense. I want the brokerage comfortable with the scope and boundaries too. I'll give you the information that clearly explains what Koinonia handles and what remains with you and your brokerage. If it's useful, I'm happy to have that conversation with the broker as well."
+
+Do not imply that Koinonia can override brokerage policy.
+
+If brokerage policy prevents the engagement, respect the boundary.
+
+---
+
+# If the Prospect Says, "Not Right Now"
+
+Do not manufacture urgency.
+
+Find the trigger.
+
+Ask:
+
+"Understood. What would have to change for this to become worth revisiting?"
+
+Helpful trigger examples may include:
+
+- reaching a certain number of active files;
+- another showing conflict;
+- a recurring document bottleneck;
+- follow-up/CRM work slipping again;
+- a planned growth period;
+- loss or change of current support;
+- a future business milestone identified by the prospect.
+
+Then ask:
+
+"Would it be useful for me to check back around that point, or would you rather reach out when it happens?"
+
+Respect the answer.
+
+If they invite follow-up, record a specific date or condition.
+
+---
+
+# If the Prospect Says No
+
+Do not rescue the sale automatically.
+
+A useful clarification is:
+
+"Understood. Just so I don't make the wrong assumption, is that a no to this particular starting point, a no for now, or does outside operational support simply not fit how you want to run your business?"
+
+This question is for accurate learning and follow-up classification, not to trap them into reopening the sale.
+
+If the answer is a clear no:
+
+"I appreciate the clarity. Based on what we discussed, I don't want to push you into something that doesn't fit."
+
+Close professionally.
+
+Do not offer an unsolicited discount after a clear no.
+
+---
+
+# If Koinonia Decides the Prospect Is Not a Fit
+
+Koinonia is also allowed to say no.
+
+Examples include requests for:
+
+- legal advice;
+- negotiation authority outside approved scope;
+- brokerage supervision;
+- unlimited undefined availability;
+- work requiring unsafe, unauthorized, or unlicensed activity;
+- repeated unwillingness to provide required information or approvals;
+- a working relationship that cannot reasonably operate within Koinonia's professional standards.
+
+Recommended language:
+
+"Based on what we've discussed, I don't think the relationship you're looking for matches the scope Koinonia can responsibly provide. I would rather be clear about that now than take on work we can't support the right way."
+
+A no-fit decision protects the brand, the Realtor, and the client relationship.
+
+---
+
+# If the Prospect Wants to Start With Something Other Than the Recommendation
+
+If the alternative is valid and within scope, the prospect may choose it.
+
+Use:
+
+"That's fine. I recommended [service A] because of [reason], but if [service B] is the problem you most want to test first, we can start there as long as we're clear about what it will and won't solve."
+
+Then confirm the new first engagement.
+
+Do not insist on winning the recommendation argument.
+
+---
+
+# Proposal Required vs. Direct Start
+
+Not every consultation needs a formal proposal before a first engagement.
+
+A proposal/custom scope is appropriate when:
+
+- the engagement combines multiple services;
+- the scope is not covered cleanly by an existing standard package/tier;
+- team/brokerage support needs documented terms;
+- custom pricing is being considered;
+- the work requires a defined recurring scope beyond the standard customer-facing structure.
+
+When a standard approved service and price fit the diagnosed need, do not create unnecessary proposal friction merely to make the process look formal.
+
+Follow all required onboarding, billing, scope-confirmation, and agreement controls regardless.
+
+---
+
+# The Consultation Closeout Recap
+
+Before ending, summarize the result in approximately 20–30 seconds.
+
+If moving forward:
+
+"Just to make sure we're aligned: the issue we're starting with is [problem]. We're starting with [service / tier / first engagement] at the structure we discussed. Your responsibility remains [key Realtor responsibility], and Koinonia will handle [defined operational scope]. The next step is [specific action], and I'll follow up with the written confirmation."
+
+If follow-up is required:
+
+"Just to make sure we're aligned: the main issue we identified is [problem], and the starting recommendation is [service]. You're going to [decision action], I'm going to [send/provide action], and we'll reconnect on [date/trigger]."
+
+If no fit / declined:
+
+"I appreciate you walking me through the business. I have a much clearer picture of how you operate, and I appreciate the clarity on where this does and doesn't fit."
+
+Do not restart the sales pitch during the recap.
+
+---
+
+# Same-Day / Next-Business-Day Follow-Up Rule
+
+After every completed consultation, send or complete the appropriate follow-up the same day when practical or by the next business day.
+
+The follow-up should reflect the actual outcome, not a generic sales email.
+
+For an accepted first engagement, confirm:
+
+- first engagement;
+- scope;
+- price/billing structure;
+- required inputs;
+- next action;
+- timing.
+
+For a pending decision, confirm:
+
+- diagnosed problem;
+- recommended starting point;
+- decision information requested;
+- agreed follow-up date.
+
+For not-now, confirm only if useful and appropriate:
+
+- future trigger;
+- invited follow-up timing.
+
+For a clear decline or no-fit outcome, do not create a persistent chase sequence unless the prospect explicitly invites future contact.
+
+---
+
+# Required Consultation Notes
+
+Immediately after the consultation, record enough information that another authorized Koinonia team member could understand what happened without reconstructing the meeting from memory.
+
+Required fields:
+
+1. Prospect name.
+2. Brokerage / team / city-market context.
+3. Role and business model.
+4. Lead source.
+5. Approximate business/transaction context relevant to the diagnosis.
+6. Current support structure.
+7. Work still owned personally by the Realtor.
+8. Primary operational pressure.
+9. Consequence in the Realtor's words or a faithful paraphrase.
+10. Desired outcome / reclaimed capacity.
+11. Trust requirement.
+12. Recommended Koinonia service.
+13. Why that service was recommended.
+14. Price/billing structure quoted and source verified.
+15. Price reaction / commercial concerns.
+16. Objections or questions raised.
+17. Decision authority / approval dependency.
+18. First-engagement candidate.
+19. Consultation outcome.
+20. Next action owner.
+21. Follow-up date or trigger.
+22. Fit classification: strong fit / possible fit / no fit, with brief reason.
+
+Do not record unnecessary personal information unrelated to the business decision.
+
+---
+
+# Consultation Outcome Categories
+
+Use one clear outcome after every consultation:
+
+## First Engagement Accepted
+
+The prospect agreed to a defined starting engagement and onboarding/action is required.
+
+## Proposal / Custom Scope Required
+
+The prospect has a legitimate fit, but Koinonia must define non-standard scope or pricing before a decision.
+
+## Approval Pending
+
+Another decision participant or brokerage requirement must be resolved.
+
+## Follow-Up Scheduled
+
+The prospect is considering the standard recommendation and a specific decision follow-up is scheduled.
+
+## Not Now — Trigger Identified
+
+The fit exists, but timing is not current. A future trigger/date has been identified and follow-up is invited.
+
+## Declined
+
+The prospect made a clear decision not to proceed.
+
+## No Fit
+
+The request or relationship falls outside Koinonia's responsible service model.
+
+Do not classify every undecided prospect as an "Opportunity" indefinitely.
+
+The recorded outcome should reflect reality.
+
+---
+
+# Fit Classification
+
+## Strong Fit
+
+Common signals:
+
+- clear recurring or immediate operational need;
+- productive or growth-oriented business;
+- values process, communication, and client experience;
+- respects scope and professional boundaries;
+- willing to delegate defined responsibility;
+- has a legitimate first engagement or recurring scope;
+- can make or navigate the business decision responsibly.
+
+## Possible Fit
+
+Common signals:
+
+- legitimate need but low urgency;
+- inconsistent volume;
+- unclear timing;
+- budget or trust not yet sufficient;
+- problem is real but first engagement is not yet obvious.
+
+## No Fit
+
+Common signals:
+
+- needs outside Koinonia scope;
+- expects professional judgment or legal/negotiation authority to be transferred improperly;
+- wants unlimited undefined support;
+- refuses reasonable process/boundaries;
+- unsafe or unauthorized work expectation;
+- relationship would predictably conflict with Koinonia service standards.
+
+Fit classification is for internal decision quality, not a label to announce to the prospect.
+
+---
+
+# Decision Follow-Up Discipline
+
+If a follow-up date is agreed, follow up on that date.
+
+Do not follow up early simply because the prospect has not replied to an unrelated message.
+
+Do not send repeated "just checking in" messages without new value or an agreed reason.
+
+A good follow-up references the actual decision:
+
+"When we spoke, you were going to review [specific issue] before deciding whether to start with [service]. I wanted to reconnect as we agreed and see where that landed."
+
+If the prospect does not respond after reasonable follow-up, stop creating pressure and return them to an appropriate long-term relationship/nurture posture consistent with Koinonia's marketing and permission-based communication standards.
+
+---
+
+# Stage 7 Anti-Patterns
+
+Do not:
+
+- end a qualified consultation without asking for the first engagement;
+- pressure the prospect to decide on the entire future relationship;
+- keep selling after they say yes;
+- discount after a clear no;
+- treat broker/team approval as an obstacle to work around;
+- promise service before required scope, availability, billing, or onboarding controls are confirmed;
+- leave "I need to think" without understanding what is unresolved;
+- leave "send me something" without knowing what the prospect needs to decide;
+- leave "not now" without understanding the trigger when the prospect is willing to share it;
+- chase a clear decline;
+- force a poor-fit engagement to hit a sales goal;
+- rely on memory instead of documenting the consultation outcome.
+
+Preferred posture:
+
+Ask clearly. Respect the answer. Make the next step concrete.
+
+---
+
+# Stage 7 Success Condition
+
+Stage 7 is complete when:
+
+1. Koinonia has asked directly for a specific first engagement when the fit supports it.
+2. The prospect has made or clearly deferred the decision.
+3. Any unresolved issue has been identified accurately.
+4. Any required decision participant or approval dependency is documented.
+5. The next action has an owner.
+6. The follow-up has a specific date or trigger when appropriate.
+7. The consultation outcome and fit classification are recorded.
+8. No unauthorized work, pricing, discount, or promise has been made.
+
+The consultation is complete when both parties know what happens next — including when the answer is no.
+
+---
+
+# Complete Consultation Timing Reference
+
+The intended operating rhythm is:
+
+- Stage 1 — Opening & Permission: approximately 2 minutes.
+- Stage 2 — Business Diagnosis: approximately 7–10 minutes.
+- Stage 3 — Problem Reflection: approximately 2–3 minutes.
+- Stage 4 — Koinonia Reveal: approximately 3–4 minutes.
+- Stage 5 — Prescribed Service Reveal: approximately 4–6 minutes.
+- Stage 6 — Investment & Engagement Structure: approximately 2–4 minutes.
+- Stage 7 — Decision & First Engagement: approximately 2–3 minutes.
+
+The times are guides, not quotas.
+
+A useful 22-minute consultation is better than stretching to 30 minutes, and a useful 30-minute consultation is better than rushing a complex diagnosis simply to remain under 20.
+
+Do not sacrifice diagnosis quality or decision clarity to obey the clock mechanically.
+
+---
+
+# Complete Consultation Operating Sequence
+
+The complete Koinonia conversation is:
+
+1. Earn permission to diagnose.
+2. Understand the Realtor's business.
+3. Map what they still personally carry.
+4. Identify the primary pressure.
+5. Expose the consequence.
+6. Understand existing support and the remaining gap.
+7. Define the desired capacity and trust requirement.
+8. Reflect the problem back accurately.
+9. Get agreement on the diagnosis.
+10. Reveal why Koinonia exists.
+11. Explain the operating-partner model and meaning of Koinonia.
+12. Prescribe the smallest sufficient first service.
+13. Explain only enough of that service to establish fit and boundaries.
+14. Verify relevance.
+15. Present verified scope, price, and billing structure.
+16. Diagnose any commercial objection instead of guessing.
+17. Ask directly for the specific first engagement.
+18. Make the next action concrete.
+19. Document the outcome immediately.
+20. Follow up according to the agreed action/date/trigger.
+
+This sequence is the default.
+
+Adapt the language to the human conversation without abandoning the order of diagnosis, prescription, presentation, investment, and decision.
+
+---
+
 # Relationship to Existing Canonical Material
 
 This system extends — and does not replace — the existing Koinonia Sales Operating System and service-specific sales enablement.
@@ -1969,16 +2622,19 @@ The Pricing Rules Catalog remains the authoritative governance source for how Ko
 
 The current approved pricing rules include prepaid transaction pricing, pay-at-closing transaction pricing, and documented custom-support pricing. The production website currently provides the customer-facing starting points for Contract & Document Support, Licensed Showing Coverage, and the Monthly Operations Partnership tiers.
 
-Canonical service claims, scope, packages, and pricing remain governed by their existing business objects, pricing sources, and the then-current production website.
+Canonical service claims, scope, packages, pricing, onboarding, and professional boundaries remain governed by their existing business objects, approved processes, and the then-current production website.
+
+Where this consultation system conflicts with a later approved service, pricing, legal/compliance, brokerage, billing, or onboarding rule, the newer controlling canonical rule governs and this consultation system must be updated.
 
 ---
 
-# Build Status
+# Version 1.0 Completion Status
 
-Approved and documented in Version 0.5:
+The core 20–30 minute Koinonia Consultation & Interview System is now fully defined end to end.
 
-- Consultation purpose.
-- Diagnose-first sales principle.
+Version 1.0 includes:
+
+- Consultation purpose and diagnose-first sales principle.
 - Seven-stage 20–30 minute architecture.
 - Early-reveal restrictions.
 - Stage 1 exact opening and permission sequence.
@@ -1986,20 +2642,21 @@ Approved and documented in Version 0.5:
 - Stage 3 problem-reflection method and branching patterns.
 - Stage 4 exact Koinonia reveal sequence, name meaning, operating-partner positioning, and transition.
 - Stage 5 smallest-sufficient-first-engagement rule, service decision logic, service scripts, and upsell limits.
-- Stage 6 mandatory pricing verification gate.
-- Current approved/customer-facing pricing reference set.
-- Exact price presentation scripts for Transaction Support, Contract & Document Support, Licensed Showing Coverage, and all three Monthly Operations Partnership tiers.
-- Prepaid versus pay-at-closing explanation.
-- Price objection diagnostic and response patterns.
-- Discount, scope-reduction, competitor-comparison, free-trial, custom-combination, trust, and timing rules.
-- Exact transition from investment into the final decision stage.
+- Stage 6 mandatory pricing verification gate, current reference pricing, exact pricing scripts, and objection handling.
+- Stage 7 direct first-engagement asks for every core service.
+- Decision branches for yes, think-about-it, send-information, approval dependency, not-now, decline, and no-fit outcomes.
+- Consultation closeout recap.
+- Same-day / next-business-day follow-up rule.
+- Required consultation notes and outcome categories.
+- Fit classification.
+- Complete timing reference and operating sequence.
 
-Next build stage:
+Future improvements should extend Version 1.0 rather than creating a competing consultation methodology.
 
-- Stage 7 — Decision & First Engagement.
-- Exact closing questions.
-- How to ask directly for the first engagement without pressure.
-- What to do with yes, no, not now, needs spouse/team/broker approval, or follow-up decisions.
-- Consultation closeout, follow-up timing, and required internal notes/outcome tracking.
+Recommended next implementation layer:
 
-Do not treat Stage 7 as fully scripted until its section is approved and added to this canonical file.
+- one-page consultation field guide;
+- consultation scorecard / note template;
+- post-consultation follow-up templates;
+- presentation/leave-behind sequence mapped to this exact conversation;
+- training role-play scenarios and objection drills.
