@@ -242,7 +242,7 @@ export function KoinoniaProperties() {
               Koinonia Properties serves different people at different stages of the rental experience. Start with the path that fits what you need today.
             </p>
           </div>
-          <div className="koinonia-grid three">
+          <div className="koinonia-grid three properties-audience-grid">
             {audiencePaths.map((path) => (
               <UniversalCard
                 key={path.title}
@@ -291,7 +291,7 @@ export function KoinoniaProperties() {
               Every property and owner relationship is different. Koinonia begins by understanding the property and the owner's goals, then clarifies the appropriate management scope, responsibilities, and next steps.
             </p>
           </div>
-          <div className="koinonia-grid four">
+          <div className="koinonia-grid properties-services-grid">
             {services.map((service, index) => (
               <UniversalCard
                 key={service.title}
