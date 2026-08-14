@@ -45,40 +45,104 @@ Public page copy should speak to customers. Internal build-plan or development i
 
 ## Primary Audiences
 
-Owners:
+Property owners and investors:
 
-- Need confidence, clarity, service scope, process, pricing factors, and communication expectations.
+- Need confidence, clarity, service scope, process, pricing factors, service availability, management standards, and communication expectations.
+- Rental Analysis is the preferred public entry point for an owner considering management.
+- Investors are served within the owner journey unless a future approved investor offering becomes meaningfully different.
 
-Tenants and rental applicants:
+Prospective renters and rental applicants:
 
-- Need rentals, application guidance, maintenance direction, policy clarity, contact paths, and secure account access when available.
+- Need available homes, application guidance, rental criteria and policies, and a clear next step.
+- They should not have to navigate resident-maintenance or account-access content to understand how to become a resident.
 
-Investors:
+Current residents:
 
-- Need leasing support, management consistency, maintenance coordination, communication, and portfolio-aware operations.
+- Need maintenance direction, account-access guidance, resident policies, and support contact paths.
+- Public-facing navigation should prefer the word `Residents` where it improves clarity, while existing route URLs may remain stable.
+
+Existing owner clients:
+
+- Need a clear secure-access path when an approved private property-management system provides those capabilities.
 
 Vendors:
 
 - Need a clear communication and coordination path.
+- Vendor information is supporting navigation rather than a primary marketing journey.
+
+## Information Architecture
+
+The website should organize public content by visitor intent rather than presenting every public page as an equal top-level navigation choice.
+
+Primary customer journeys:
+
+1. Owners — I own or invest in rental property.
+2. Find a Home — I am looking for a rental and may become a resident.
+3. Residents — I already live in a Koinonia-managed home.
+
+Primary desktop navigation:
+
+- Owners
+- Find a Home
+- Residents
+- Contact
+- Persistent CTA: Request Rental Analysis
+
+The Owners, Find a Home, and Residents items may use grouped dropdown navigation on desktop and expandable groups on mobile.
+
+Do not expose Pricing, Service Areas, Portals, Standards, Policies, Maintenance, Apply, or Vendors as peer-level primary navigation items when those destinations can be placed in the appropriate audience journey.
+
+### Owners navigation group
+
+- Owner Services: `/owners`
+- Rental Analysis: `/rental-analysis`
+- Pricing & Scope: `/pricing`
+- Service Areas: `/service-areas`
+- Management Standards: `/standards`
+
+### Find a Home navigation group
+
+- Available Homes: `/rentals`
+- How to Apply: `/apply`
+- Rental Policies & Criteria: `/policies`
+
+### Residents navigation group
+
+- Resident Services: `/tenants`
+- Maintenance Help: `/maintenance`
+- Account & Portal Access: `/portals`
+- Resident Policies: `/policies`
+- Contact Support: `/contact`
+
+### Supporting navigation
+
+- Contact: `/contact`
+- Vendor Information: `/vendors`
+
+Vendor Information belongs in the footer and appropriate contact paths rather than the primary header.
+
+When approved owner and resident private systems are live, small utility links such as Owner Login and Resident Login may be added separately from the marketing navigation. Do not imply those destinations are live before they are implemented and approved.
 
 ## Sitemap
 
-Current public pages:
+Current public routes remain available:
 
 - Home: `/`
 - Owner Services: `/owners`
-- Tenant Services: `/tenants`
-- Available Rentals: `/rentals`
-- Portals / Secure Access: `/portals`
+- Resident Services: `/tenants`
+- Available Homes / Rentals: `/rentals`
+- Account & Portal Access: `/portals`
 - Rental Analysis: `/rental-analysis`
-- Pricing and Scope: `/pricing`
+- Pricing & Scope: `/pricing`
 - Service Areas / Availability: `/service-areas`
 - Policies: `/policies`
-- Apply: `/apply`
-- Maintenance: `/maintenance`
+- How to Apply: `/apply`
+- Maintenance Help: `/maintenance`
 - Vendors: `/vendors`
-- Operating Standards: `/standards`
+- Management Standards: `/standards`
 - Contact: `/contact`
+
+The existence of a public route does not require that route to appear in the primary header. Supporting routes should remain indexable and internally linked where appropriate.
 
 Future pages may include:
 
@@ -97,36 +161,34 @@ Hero:
 - Secondary CTA: View Rentals
 - Visual direction: communicate property management, owners, residents, properties, maintenance coordination, and professional care without presenting the company as an internal operating-system product.
 
-Top navigation:
+Primary audience routing immediately below or near the hero should make three paths obvious:
 
-- Owners
-- Rentals
-- Tenants
-- Pricing
-- Areas
-- Portals
-- Standards
-- Policies
-- Contact
+- I own a rental property.
+- I am looking for a home.
+- I am a current resident.
 
-Quick access:
+Recommended destination behavior:
 
-- Owner Inquiry
-- Available Rentals
-- Tenant / Resident Help
-- Secure Portal Access
+Owner path:
+
+- Explore Owner Services.
+- Request Rental Analysis.
+
+Prospective renter path:
+
+- View Available Homes.
+- How to Apply.
+
+Resident path:
+
+- Resident Services.
+- Maintenance Help.
 
 Inquiry pattern:
 
 - Use the reusable Properties Inquiry component where appropriate.
 - Use an approved low-risk handoff until private backend workflows are finalized.
 - Do not collect sensitive applicant, tenant, owner, payment, identity, or private account data through ordinary public-site intake.
-
-Audience paths:
-
-- For Property Owners
-- For Tenants / Residents
-- For Investors
 
 Owner lead path:
 
@@ -147,7 +209,7 @@ Property-management overview:
 - Vendor communication.
 - Ongoing property-management support.
 
-Home should summarize these areas and route visitors deeper instead of repeating the full content of Owner Services, Tenant Services, Pricing, Rentals, Portals, or Standards.
+Home should summarize these areas and route visitors deeper instead of repeating the full content of Owner Services, Resident Services, Pricing, Rentals, Account Access, or Standards.
 
 Process:
 
@@ -173,30 +235,49 @@ Core subjects:
 - Property inspections when included in the approved service scope.
 - Communication standards.
 - Getting started.
+- Portfolio-aware considerations for investment-property owners when applicable.
 
 Primary CTA:
 
 - Request Rental Analysis or Schedule Owner Consultation using the approved intake path.
 
-## Tenant Services Page
+## Resident Services Page
+
+Public-facing label:
+
+- Resident Services
+
+Current stable route:
+
+- `/tenants`
 
 Purpose:
 
-Support residents and applicants while routing private activity to approved secure systems.
+Support current residents while routing private activity to approved secure systems.
 
 Core subjects:
 
-- Available rentals.
-- Application guidance.
 - Rent-payment direction through the approved system.
 - Maintenance guidance and request routing.
 - Move-in expectations.
 - Resident responsibilities.
+- Policy guidance.
 - Contact support.
+- Account-access direction when applicable.
+
+Available rentals and application guidance belong primarily in the Find a Home journey, though Resident Services may link back to them when useful.
 
 Do not imply that payment, application, maintenance-record, or private-account functionality is hosted directly inside the public website unless that capability is actually implemented and approved.
 
 ## Available Rentals Page
+
+Public-facing navigation label:
+
+- Available Homes
+
+Route:
+
+- `/rentals`
 
 Purpose:
 
@@ -214,6 +295,40 @@ Listing standards when active inventory exists:
 - Apply or schedule-tour path on every listing.
 - Verified application-criteria and required policy links.
 
+## Apply Page
+
+Public-facing navigation label:
+
+- How to Apply
+
+Route:
+
+- `/apply`
+
+Purpose:
+
+Explain the rental-application path and route sensitive application activity to the approved system.
+
+Do not collect or imply collection of sensitive identity, screening, or payment information on the ordinary public website unless that workflow is explicitly approved and implemented.
+
+## Policies Page
+
+Route:
+
+- `/policies`
+
+Purpose:
+
+Provide a stable public destination for applicable rental, application, and resident policies.
+
+Navigation behavior:
+
+- Prospective renters may reach this page through the label Rental Policies & Criteria.
+- Current residents may reach this page through the label Resident Policies.
+- The page does not need to appear as a peer-level primary header item.
+
+If policy content later becomes too large or materially different by audience, separate applicant-criteria and resident-resource pages may be evaluated. Do not add those routes solely to mirror the navigation labels.
+
 ## Pricing / Management Scope Page
 
 Purpose:
@@ -230,11 +345,16 @@ Until approved package and pricing objects exist, public copy should explain tha
 
 Leasing-only service, full-service management, and portfolio management may be evaluated as future service structures, but they are not canonical packages or guaranteed offers until explicitly approved and recorded.
 
-## Portal Strategy
+## Portal / Account Access Strategy
+
+Preferred public-facing label:
+
+- Account & Portal Access
 
 Public site role:
 
-- Route owners, tenants, applicants, and vendors to the correct public or secure next step.
+- Route owners and residents to the correct approved public or secure next step.
+- Avoid presenting `Portals` as a major marketing category.
 
 Private property-management systems may handle:
 
@@ -257,6 +377,43 @@ Inquiry paths:
 - I am a vendor.
 - Other property-management question.
 
+Contact remains directly available from the primary navigation because it serves multiple audiences.
+
+## Footer Structure
+
+The footer should provide broad sitemap access without recreating the crowded primary header.
+
+Recommended columns:
+
+Owners:
+
+- Owner Services
+- Rental Analysis
+- Pricing & Scope
+- Service Areas
+- Management Standards
+
+Renters:
+
+- Available Homes
+- How to Apply
+- Rental Policies & Criteria
+
+Residents:
+
+- Resident Services
+- Maintenance Help
+- Account & Portal Access
+- Resident Policies
+
+Koinonia:
+
+- Contact
+- Vendor Information
+- Future legal/privacy links as required
+
+The footer may repeat the Request Rental Analysis CTA.
+
 ## SEO Requirements
 
 Primary phrases may include:
@@ -265,17 +422,20 @@ Primary phrases may include:
 - Property management.
 - Rental property management.
 - Owner services.
+- Resident services.
 - Tenant services.
 - Available rentals.
+- Homes for rent.
 - Rental application.
 - Rental analysis.
 - Property management pricing.
 - Owner portal.
 - Tenant portal.
+- Resident portal.
 - Maintenance requests.
 - Property management service areas.
 
-Metadata should make the service category clear even when the page title uses the shorter brand name.
+Metadata should make the service category clear even when the page title or navigation label uses shorter customer-facing language.
 
 SEO copy rules:
 
@@ -284,6 +444,7 @@ SEO copy rules:
 - Use structured data only for facts established for Koinonia Properties.
 - Do not invent address, pricing, reviews, coverage, guarantees, or statistics.
 - Do not keyword-stuff repeated phrases in a way that weakens the Koinonia Properties voice.
+- A route does not have to appear in the primary header to remain indexable, internally linked, and useful as an SEO landing page.
 
 ## Launch Requirements
 
@@ -295,11 +456,14 @@ Internal verification notes should remain internal rather than appearing as cust
 
 The Koinonia Properties website should separate high-intent audiences quickly:
 
-- Prospective owners need owner services, pricing/scope, trust signals, service availability, and a rental-analysis path.
-- Tenants need available rentals, application guidance, maintenance direction, and secure account-access guidance.
+- Prospective owners need owner services, pricing/scope, trust signals, service availability, management standards, and a rental-analysis path.
+- Prospective renters need available homes, application guidance, and rental-policy clarity.
+- Current residents need maintenance direction, account-access guidance, policies, and support.
 - Existing owner clients need a clear secure-access path when the approved private system provides those capabilities.
+- Visitors should not have to understand the internal page inventory before knowing which path applies to them.
 - Listings should be current, mobile-friendly, photo-forward, and include direct next actions when inventory is available.
 - Local SEO should be built around verified service areas.
+- Keep the primary navigation calm and audience-centered even when the total route count grows.
 
 ## Canonical Alignment Rule
 
