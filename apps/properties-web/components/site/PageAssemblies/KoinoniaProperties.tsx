@@ -323,7 +323,7 @@ export function KoinoniaProperties() {
             <p className="koinonia-copy">
               Koinonia Properties is built to bring structure to that work. Whether the conversation involves one rental home or multiple investment properties, the goal is the same: understand the property, define the management responsibilities clearly, keep the work moving, and help the owner stay informed.
             </p>
-            <div className="koinonia-actions">
+            <div className="koinonia-actions" style={{ justifyContent: "center" }}>
               <a className="koinonia-button primary" href="/rental-analysis">
                 Request Rental Analysis
               </a>
