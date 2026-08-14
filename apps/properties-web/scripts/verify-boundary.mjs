@@ -415,10 +415,11 @@ const navSource =
     "components/site/PropertiesNav/PropertiesNav.tsx"
   );
 
+const directContactLinkPattern =
+  /<a[^>]*href="\/contact"[^>]*>\s*Contact\s*<\/a>/s;
+
 if (
-  !navSource.includes(
-    '{ label: "Contact", href: "/contact" }'
-  )
+  !directContactLinkPattern.test(navSource)
 ) {
   fail(
     "Properties navigation Contact must point to /contact"
