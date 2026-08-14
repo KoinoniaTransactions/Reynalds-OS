@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ownerLinks = [
   { label: "Owner Services", href: "/owners" },
@@ -24,20 +24,37 @@ const residentLinks = [
   { label: "Contact Support", href: "/contact" }
 ] as const;
 
+type NavGroupLabel = "Owners" | "Find a Home" | "Residents";
+
 type NavGroupProps = {
-  label: string;
+  label: NavGroupLabel;
   links: readonly {
     label: string;
     href: string;
     emphasis?: boolean;
   }[];
+  isOpen: boolean;
+  onToggle: () => void;
   onNavigate?: () => void;
 };
 
-function NavGroup({ label, links, onNavigate }: NavGroupProps) {
+function NavGroup({
+  label,
+  links,
+  isOpen,
+  onToggle,
+  onNavigate
+}: NavGroupProps) {
   return (
-    <details className="koinonia-property-nav-group">
-      <summary>{label}</summary>
+    <details className="koinonia-property-nav-group" open={isOpen}>
+      <summary
+        onClick={(event) => {
+          event.preventDefault();
+          onToggle();
+        }}
+      >
+        {label}
+      </summary>
       <div className="koinonia-property-nav-menu">
         {links.map((link) => (
           <a
@@ -56,9 +73,48 @@ function NavGroup({ label, links, onNavigate }: NavGroupProps) {
 
 export function PropertiesNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openGroup, setOpenGroup] = useState<NavGroupLabel | null>(null);
 
-  const closeMobileMenu = () => {
+  useEffect(() => {
+    if (!openGroup) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target;
+
+      if (!(target instanceof Element)) {
+        setOpenGroup(null);
+        return;
+      }
+
+      if (!target.closest(".koinonia-property-nav-group")) {
+        setOpenGroup(null);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpenGroup(null);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [openGroup]);
+
+  const closeNavigation = () => {
     setMobileOpen(false);
+    setOpenGroup(null);
+  };
+
+  const toggleGroup = (label: NavGroupLabel) => {
+    setOpenGroup((current) => (current === label ? null : label));
   };
 
   return (
@@ -70,7 +126,7 @@ export function PropertiesNav() {
         aria-label="Koinonia Properties home"
         className="koinonia-property-brand koinonia-header-brand"
         href="/"
-        onClick={closeMobileMenu}
+        onClick={closeNavigation}
       >
         <span className="koinonia-header-mark" aria-hidden="true">
           K
@@ -87,7 +143,10 @@ export function PropertiesNav() {
         aria-expanded={mobileOpen}
         aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
         className="koinonia-property-nav-toggle"
-        onClick={() => setMobileOpen((open) => !open)}
+        onClick={() => {
+          setOpenGroup(null);
+          setMobileOpen((open) => !open);
+        }}
         type="button"
       >
         <span className="koinonia-property-nav-toggle-icon" aria-hidden="true">
@@ -104,23 +163,29 @@ export function PropertiesNav() {
         <NavGroup
           label="Owners"
           links={ownerLinks}
-          onNavigate={closeMobileMenu}
+          isOpen={openGroup === "Owners"}
+          onToggle={() => toggleGroup("Owners")}
+          onNavigate={closeNavigation}
         />
         <NavGroup
           label="Find a Home"
           links={renterLinks}
-          onNavigate={closeMobileMenu}
+          isOpen={openGroup === "Find a Home"}
+          onToggle={() => toggleGroup("Find a Home")}
+          onNavigate={closeNavigation}
         />
         <NavGroup
           label="Residents"
           links={residentLinks}
-          onNavigate={closeMobileMenu}
+          isOpen={openGroup === "Residents"}
+          onToggle={() => toggleGroup("Residents")}
+          onNavigate={closeNavigation}
         />
 
         <a
           className="koinonia-property-nav-contact"
           href="/contact"
-          onClick={closeMobileMenu}
+          onClick={closeNavigation}
         >
           Contact
         </a>
@@ -128,7 +193,7 @@ export function PropertiesNav() {
         <a
           className="koinonia-property-nav-cta"
           href="/rental-analysis"
-          onClick={closeMobileMenu}
+          onClick={closeNavigation}
         >
           Request Rental Analysis
         </a>
