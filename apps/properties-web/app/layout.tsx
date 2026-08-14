@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   creator: seoConfig.businessName,
   publisher: seoConfig.businessName,
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-icon.svg"
+  },
   robots: siteUrl
     ? {
         index: true,
