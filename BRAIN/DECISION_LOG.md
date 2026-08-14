@@ -117,6 +117,22 @@ Reason: A single canonical workspace entry cannot prove ordering behavior. Param
 
 Canonical sources: `BRAIN/APPLICATION_CATALOG.md` and `apps/web/lib/productRegistry.ts`
 
+## D-018 — Koinonia Properties Uses Audience-First Public Navigation
+
+Decision: The Koinonia Properties public website keeps its full route inventory but organizes primary navigation around three visitor-intent journeys: Owners, Find a Home, and Residents. Contact remains top-level and Request Rental Analysis remains the persistent primary CTA. Supporting routes such as Pricing, Service Areas, Standards, Policies, Portals, Maintenance, Apply, and Vendors are grouped contextually rather than exposed as equal peer-level header choices.
+
+Reason: Property-management visitors arrive with different high-intent needs. Audience-first navigation reduces cognitive load while preserving SEO/supporting routes and aligns Home with its role as a decision-and-routing page.
+
+Canonical sources: `03_Knowledge/Website/koinonia_properties_production_spec.md` and `BRAIN/KOINONIA_PROPERTIES_DEV_STATE.md`
+
+## D-019 — Koinonia Properties Mobile Navigation Collapses Behind a Hamburger
+
+Decision: On mobile, the Koinonia Properties primary navigation is collapsed by default behind an accessible hamburger control. Owners, Find a Home, and Residents remain expandable groups inside the menu; Contact remains direct; Request Rental Analysis remains a prominent full-width CTA. Desktop audience-group navigation is unchanged.
+
+Reason: The expanded audience navigation was too exposed on small screens. A collapsed mobile menu preserves the approved information architecture while improving scanability, usable viewport space, and touch navigation.
+
+Canonical sources: `03_Knowledge/Website/koinonia_properties_production_spec.md` and `BRAIN/KOINONIA_PROPERTIES_DEV_STATE.md`
+
 <!-- PERSONAL FINANCE DECISIONS 2026-08-05 -->
 ## 2026-08-05 — Personal Finance Matching Refinement Decisions
 
