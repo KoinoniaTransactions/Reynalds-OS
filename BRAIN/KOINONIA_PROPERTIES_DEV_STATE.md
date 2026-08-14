@@ -21,14 +21,13 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - The Home content/SEO production pass was established at `d7a821e`.
 - The centered owner-CTA refinement was validated at `bb38496` and visually accepted in the Preview sourced from `8ed6382`.
 - The five-step Home process layout refinement was validated at `bd1a356` and visually accepted in the Preview sourced from `15b35ad`.
-- The coordinated header-dropdown interaction fix is validated at `149d281` and still requires refreshed Preview interaction testing.
+- The coordinated header-dropdown interaction fix was validated at `149d281` and behaviorally accepted in the Preview sourced from `c64ef77`.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
-- Current reviewed Home preview: `https://koinonia-properties-frqfv7tvt-koinonia3.vercel.app`
-- Source branch head at that deployment: `15b35ad`.
-- That preview contains the Home content/SEO rewrite, centered owner CTA, responsive process layout, shared Koinonia branding/favicon, and approved footer refinements.
-- In that preview, the hero eyebrow was confirmed present; the Koinonia Approach, owner section, five-step process, Rental Analysis feature, FAQ, closing CTA, and transition into the footer were visually accepted.
-- During review of that preview, the header audience dropdowns were found to remain open independently and not close on outside click. The focused interaction fix is validated at `149d281` but is not present in the current preview yet.
+- Current reviewed Home preview: `https://koinonia-properties-22grc7nkw-koinonia3.vercel.app`
+- Source branch head at that deployment: `c64ef77`.
+- That preview contains the Home content/SEO rewrite, centered owner CTA, responsive process layout, coordinated header dropdown behavior, shared Koinonia branding/favicon, and approved footer refinements.
+- In current/recent Preview review, the hero eyebrow was confirmed present; the Koinonia Approach, owner section, five-step process, Rental Analysis feature, FAQ, closing CTA, transition into the footer, and header dropdown interaction are accepted.
 - Home audience-path CTA baseline alignment remains a possible final visual refinement, and the full Property Management Services card section still needs a complete visual review before the entire Home page is marked accepted.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
@@ -145,7 +144,7 @@ Supporting navigation:
 - Investors remain inside the Owners journey unless a future approved investor offering becomes meaningfully distinct.
 - `Portals` is not treated as a major marketing category; public wording should prefer Account Access / Account & Portal Access.
 
-Desktop dropdown interaction validated in code at `149d281`:
+Desktop dropdown interaction validated in code at `149d281` and behaviorally accepted in the Preview sourced from `c64ef77`:
 
 - only one audience dropdown may be open at a time;
 - opening another audience group closes the current group;
@@ -154,7 +153,7 @@ Desktop dropdown interaction validated in code at `149d281`:
 - clicking the logo, Contact, Request Rental Analysis, or a dropdown destination clears dropdown state;
 - existing routes, desktop styling, and `<details>/<summary>` structure are preserved.
 
-This interaction fix still requires refreshed Preview testing before it is visually/behaviorally accepted.
+No further header-dropdown interaction change is currently recommended.
 
 ---
 
@@ -173,7 +172,7 @@ Mobile behavior below the Properties mobile breakpoint:
 - Selecting a navigation destination closes the mobile menu.
 - The hamburger control includes accessible expanded-state and open/close labels.
 
-The `149d281` navigation-state fix preserves this mobile structure while coordinating audience-group state and clearing open groups when the hamburger changes state.
+The `149d281` navigation-state fix preserves this mobile structure while coordinating audience-group state and clearing open groups when the hamburger changes state. The refreshed Preview sourced from `c64ef77` was interaction-tested and the dropdown/mobile navigation behavior was accepted.
 
 ---
 
@@ -514,16 +513,17 @@ During visual QA of the Preview sourced from `15b35ad`, the audience dropdowns w
 
 The focused fix at `149d281` coordinates dropdown state inside `PropertiesNav.tsx` so only one audience group can be open, outside clicks close it, Escape closes it, and primary navigation actions clear dropdown state. Existing styling and route structure are preserved.
 
-The navigation interaction fix passed focused Properties boundary validation and `git diff --check` at `149d281`. It still requires refreshed Preview interaction testing before being behaviorally accepted.
+The navigation interaction fix passed focused Properties boundary validation and `git diff --check` at `149d281`. It was then interaction-tested in `https://koinonia-properties-22grc7nkw-koinonia3.vercel.app`, sourced from `c64ef77`, and behaviorally accepted. One-open-at-a-time behavior, outside-click closing, Escape closing, same-group toggling, navigation-state cleanup, and mobile navigation behavior were confirmed working.
 
 ### Home visual acceptance
 
 Code and boundary validation are complete at `149d281`.
 
-Visually accepted in current/recent Preview review:
+Visually/behaviorally accepted in current/recent Preview review:
 
 - hero image and composition;
 - `Rental Property Management` eyebrow presence;
+- header dropdown interaction and mobile navigation behavior;
 - Koinonia Approach;
 - owner-focused section;
 - five-step process desktop composition;
@@ -534,10 +534,9 @@ Visually accepted in current/recent Preview review:
 
 Still pending before the entire Home page is marked visually accepted:
 
-- refreshed Preview interaction test for the `149d281` header dropdown fix;
 - complete visual review of all four Property Management Services cards;
 - final decision on the Home audience-card CTA baseline alignment refinement;
-- responsive/mobile checks for any newly changed behavior before final Home sign-off.
+- final responsive/mobile Home sweep for remaining page sections before sign-off.
 
 Do not mark the entire Home page visually accepted until these remaining checkpoints are resolved.
 
@@ -628,7 +627,7 @@ Home content / SEO production pass and visual refinement:
 - `bb38496` — center the single Rental Analysis CTA in the owner-focused Home section
 - `c885a9c` — replace the Home process inline grid rule with a Properties-local process-grid class
 - `bd1a356` — add responsive 3/2 desktop, 2/2/1 tablet, and single-column mobile process layout
-- `149d281` — coordinate Properties header dropdown state, outside-click closing, Escape closing, and navigation-state cleanup; latest validated runtime checkpoint
+- `149d281` — coordinate Properties header dropdown state, outside-click closing, Escape closing, and navigation-state cleanup; latest validated runtime checkpoint and behaviorally accepted in the Preview sourced from `c64ef77`
 
 Because GitHub contents writes are file-scoped, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only or intermediate branch HEADs do not imply runtime validation.
 
@@ -656,7 +655,7 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-This establishes `149d281` as the current validated repository/runtime checkpoint. It includes the Home content/SEO work, accepted centered owner CTA, accepted responsive process layout, and the coordinated header-dropdown interaction fix. Visual/behavioral acceptance of the dropdown interaction remains separate and requires a refreshed Preview containing `149d281`.
+This establishes `149d281` as the current validated repository/runtime checkpoint. It includes the Home content/SEO work, accepted centered owner CTA, accepted responsive process layout, and the coordinated header-dropdown interaction fix. The dropdown behavior has also been accepted in the refreshed Preview sourced from `c64ef77`.
 
 ---
 
@@ -664,35 +663,26 @@ This establishes `149d281` as the current validated repository/runtime checkpoin
 
 Current reviewed Home preview:
 
-- `https://koinonia-properties-frqfv7tvt-koinonia3.vercel.app`
-- Source branch head at deployment: `15b35ad`
+- `https://koinonia-properties-22grc7nkw-koinonia3.vercel.app`
+- Source branch head at deployment: `c64ef77`
 - Deployment mode: Vercel Preview only
-- This preview contains the rewritten Home, Home SEO changes, centered owner CTA, responsive process layout, shared Koinonia branding/favicon, and approved footer refinements.
+- This preview contains the rewritten Home, Home SEO changes, centered owner CTA, responsive process layout, coordinated header dropdown behavior, shared Koinonia branding/favicon, and approved footer refinements.
 - The hero eyebrow `Rental Property Management` is confirmed present.
+- The header dropdown interaction is behaviorally accepted: only one group remains open, another group swaps cleanly, outside click closes, Escape closes, same-group toggling closes, navigation actions clear state, and mobile navigation behavior remains intact.
 - The Koinonia Approach section is visually accepted.
 - The owner-focused `Know what is happening with your property—and what comes next.` section is visually accepted.
 - The five-step `How Property Management Begins` section is visually accepted with the desktop 3/2 composition.
 - The dark `Start With a Rental Analysis` feature section is visually accepted.
 - The FAQ section is visually accepted.
 - The final `Let's start with the property.` CTA and transition into the footer are visually accepted.
-- The header audience dropdowns in this preview expose the now-known behavior bug: multiple groups can remain open and outside clicks do not close them.
-- The focused navigation fix is validated at `149d281` but is not present in this preview yet.
 - The audience-path cards remain visually strong overall, but their CTA buttons do not align to one baseline because the approved copy lengths differ.
 - The Property Management Services heading/transition looks strong, but the full four-card section still needs complete visual review.
 
-The next preview should be refreshed from the current Properties DEV branch after this documentation sync and deployed with Vercel Preview only.
-
 Next Home visual-QA focus:
 
-- verify the `149d281` header behavior: only one dropdown open at once;
-- verify outside click closes the open dropdown;
-- verify Escape closes the open dropdown;
-- verify clicking another group swaps the open dropdown rather than stacking menus;
-- verify clicking a destination, logo, Contact, or Request Rental Analysis clears navigation state;
-- verify mobile hamburger/group behavior remains intact after the coordinated-state change;
 - capture/review the full four-card Property Management Services section;
 - decide whether to implement the local audience-card CTA bottom-alignment refinement without changing approved copy;
-- perform final responsive/mobile Home sweep before declaring the entire Home page visually accepted.
+- perform the final responsive/mobile Home sweep for remaining page sections before declaring the entire Home page visually accepted.
 
 Do not mark the entire rewritten Home visually accepted until these remaining checks are complete.
 
@@ -727,19 +717,15 @@ Temporary visual placeholders belong in this DEV continuity record until they be
 
 ## Immediate Next Work
 
-### First: Deploy Navigation-Fix Preview
+### First: Finish Home Visual QA
 
-Refresh the dedicated preview worktree from the current Properties DEV branch after this documentation sync and deploy Vercel Preview only.
+The navigation fix is validated and behaviorally accepted. Continue the remaining Home review without another code change unless a specific visual issue is approved for refinement.
 
-Test the header dropdown interactions first. Confirm only one group can remain open, outside click closes it, Escape closes it, and navigation actions clear the open state. Also spot-check mobile navigation so the coordinated state did not regress the approved hamburger behavior.
-
-### Then: Finish Home Visual QA
-
-After the navigation fix is interaction-tested:
+Next:
 
 - review the complete Property Management Services card section;
 - decide whether the audience-path CTA baseline alignment needs the proposed local layout-only refinement;
-- perform the remaining responsive/mobile Home sweep;
+- perform the final responsive/mobile Home sweep;
 - only then decide whether the entire Home page is visually accepted.
 
 ### After Home Visual Acceptance: Choose the Next Page
