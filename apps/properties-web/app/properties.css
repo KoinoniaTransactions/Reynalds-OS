@@ -249,21 +249,21 @@
 .properties-footer-inner {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 44px;
-  padding-block: 56px 42px;
+  gap: 34px;
+  padding-block: 42px 34px;
 }
 
 .properties-footer-lead {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
-  gap: 56px;
-  align-items: end;
-  padding-bottom: 36px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.65fr);
+  gap: 52px;
+  align-items: center;
+  padding-bottom: 28px;
   border-bottom: 1px solid rgba(184, 138, 68, 0.34);
 }
 
 .properties-footer-brand-block {
-  max-width: 720px;
+  max-width: 650px;
 }
 
 .properties-footer-brand {
@@ -277,7 +277,7 @@
 
 .properties-footer-brand strong {
   color: #fffaf2;
-  font-size: clamp(24px, 2.7vw, 34px);
+  font-size: clamp(24px, 2.4vw, 32px);
   line-height: 1;
 }
 
@@ -291,17 +291,17 @@
 }
 
 .properties-footer-positioning {
-  max-width: 680px;
-  margin: 24px 0 0;
-  color: rgba(248, 241, 230, 0.8);
-  font-family: var(--ros-font-display);
-  font-size: clamp(21px, 2.2vw, 30px);
-  line-height: 1.35;
+  max-width: 610px;
+  margin: 16px 0 0;
+  color: rgba(248, 241, 230, 0.74);
+  font-family: var(--ros-font-ui);
+  font-size: 16px;
+  line-height: 1.6;
 }
 
 .properties-footer-actions {
   display: grid;
-  gap: 16px;
+  gap: 12px;
   justify-items: end;
 }
 
@@ -309,8 +309,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 50px;
-  padding: 13px 20px;
+  min-height: 48px;
+  padding: 12px 20px;
   border: 1px solid #c69a55;
   border-radius: 999px;
   background: #b88a44;
@@ -328,12 +328,11 @@
 }
 
 .properties-footer-contact {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
+  display: grid;
+  justify-items: end;
+  gap: 5px;
   color: rgba(248, 241, 230, 0.42);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .properties-footer-contact a {
@@ -345,6 +344,54 @@
 .properties-footer-contact a:focus-visible {
   color: #d6ae6b;
   outline: none;
+}
+
+.properties-footer-phone-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.properties-footer-socials {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.properties-footer-social-button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(214, 174, 107, 0.34);
+  border-radius: 50%;
+  background: rgba(255, 250, 242, 0.035);
+  color: rgba(248, 241, 230, 0.62);
+}
+
+.properties-footer-social-button:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.properties-footer-social-button svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 1.7;
+}
+
+.properties-footer-social-button svg rect,
+.properties-footer-social-button svg circle:not(.fill-dot) {
+  fill: none;
+}
+
+.properties-footer-social-button svg .fill-dot {
+  fill: currentColor;
+  stroke: none;
 }
 
 .properties-footer-navigation {
@@ -397,11 +444,11 @@
 .properties-footer-bottom {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 30px 24px 34px;
+  padding: 28px 24px 32px;
   border-top: 1px solid rgba(184, 138, 68, 0.34);
   display: grid;
   justify-items: center;
-  gap: 22px;
+  gap: 18px;
   text-align: center;
 }
 
@@ -562,10 +609,16 @@
     text-align: center;
   }
 
+  .properties-footer-inner {
+    gap: 32px;
+    padding-block: 44px 30px;
+  }
+
   .properties-footer-lead {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 26px;
     align-items: start;
+    padding-bottom: 30px;
   }
 
   .properties-footer-actions {
@@ -573,6 +626,14 @@
   }
 
   .properties-footer-contact {
+    justify-items: start;
+  }
+
+  .properties-footer-phone-actions {
+    justify-content: flex-start;
+  }
+
+  .properties-footer-socials {
     justify-content: flex-start;
   }
 
@@ -661,21 +722,22 @@
     padding-block: 58px 72px;
   }
 
-  .properties-footer-inner {
-    padding-block: 44px 30px;
-    gap: 32px;
-  }
-
-  .properties-footer-lead {
-    gap: 26px;
-    padding-bottom: 30px;
-  }
-
   .properties-footer-positioning {
-    margin-top: 20px;
+    margin-top: 14px;
+    font-size: 15px;
   }
 
   .properties-footer-contact {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .properties-footer-phone-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .properties-footer-socials {
     justify-content: center;
   }
 
