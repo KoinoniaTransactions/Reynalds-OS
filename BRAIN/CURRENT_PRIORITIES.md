@@ -1,5 +1,67 @@
 # Current Priorities
 
+<!-- KOINONIA PROPERTIES PRIORITY 2026-08-13 -->
+## Focused Koinonia Properties DEV Priority — 2026-08-13
+
+### Current priority
+
+Complete and launch the standalone **Koinonia Properties** public website from `apps/properties-web/` on branch `integration/koinonia-properties-web-20260812`.
+
+This workstream is separate from Koinonia Transactions LIVE, Koinonia Transactions DEV, Reynalds Brothers, and broad Reynalds OS platform work.
+
+### Current validated state
+
+- Audience-first information architecture is implemented.
+- Primary public journeys are Owners, Find a Home, and Residents.
+- Contact remains top-level.
+- Request Rental Analysis remains the persistent primary CTA.
+- Existing 14-route sitemap is retained; supporting routes are grouped contextually instead of exposed as equal header items.
+- Mobile primary navigation is collapsed behind an accessible hamburger menu.
+- Current validated code checkpoint before this documentation sync: `ffb10e7`.
+- Focused Properties boundary validation passed at that checkpoint.
+- Current visual-QA preview: `https://koinonia-properties-gxc8xwqhu-koinonia3.vercel.app`.
+- Preview deployment is non-production; do not use `--prod` without explicit approval.
+
+### Immediate next action
+
+Complete mobile visual QA of the hamburger/navigation shell.
+
+After the mobile IA shell is visually accepted, begin the Owner Services production pass at `/owners`.
+
+### Governing sources
+
+- `BRAIN/PRODUCT_BOUNDARIES.md`
+- `BRAIN/APPLICATION_CATALOG.md`
+- `BRAIN/KOINONIA_PROPERTIES_DEV_STATE.md`
+- `02_Companies/Koinonia/01_Services/OBJ-00000014_Property_Management_Service.md`
+- `03_Knowledge/Website/koinonia_properties_production_spec.md`
+- `apps/properties-web/`
+
+### Required working rules
+
+- Verify exact repo/worktree, branch, and target files before edits.
+- Restate the proposed slice and wait for approval before significant work.
+- Keep slices focused.
+- Run focused Properties validation and `git diff --check`.
+- Update relevant canonical documentation and the Properties continuity record whenever public structure, behavior, claims, or durable decisions change.
+- Record durable architectural/product decisions in `BRAIN/DECISION_LOG.md`.
+- Keep Properties work isolated from Transactions and Reynalds Brothers.
+- Do not alter heroes during unrelated content/navigation slices.
+- Do not imply unfinished private owner/resident systems are live.
+- Do not publish unverified pricing, geographic coverage, guarantees, statistics, or private-system claims.
+
+### Deferred / not current work
+
+- Koinonia Transactions website changes.
+- Koinonia Transactions client/employee portal work.
+- Private Koinonia Properties owner/resident platform development.
+- Reynalds Brothers changes.
+- Broad Reynalds OS redesign.
+- Production deployment or custom-domain launch until explicitly approved.
+<!-- END KOINONIA PROPERTIES PRIORITY 2026-08-13 -->
+
+---
+
 <!-- PERSONAL FINANCE PRIORITY 2026-08-05 -->
 ## Focused Personal Finance Priority — 2026-08-05
 
