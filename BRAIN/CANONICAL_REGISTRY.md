@@ -26,6 +26,7 @@ Recover before reinventing.
 | Repository Architecture | docs/ARCHITECTURE.md | Active |
 | Decision Log | BRAIN/DECISION_LOG.md | Active |
 | Current Priorities | BRAIN/CURRENT_PRIORITIES.md | Active |
+| Koinonia Properties DEV Continuity | BRAIN/KOINONIA_PROPERTIES_DEV_STATE.md | Active Development |
 
 ---
 
@@ -68,7 +69,7 @@ Recover before reinventing.
 
 The Brain application catalog is authoritative for product meaning, ownership, audience, status, and boundaries. The executable product registry is authoritative for typed product metadata consumed by application code. Both sources must remain aligned.
 
-For Koinonia Properties public website work, use the Koinonia Properties service object and website specification together with the Brain product-boundary sources. Do not substitute Koinonia Transactions service definitions merely because both companies use the Koinonia name or share repository infrastructure.
+For Koinonia Properties public website work, use the Koinonia Properties service object and website specification together with the Brain product-boundary sources. Use `BRAIN/KOINONIA_PROPERTIES_DEV_STATE.md` as the product-specific continuity record for current branch, validated checkpoints, preview state, approved IA decisions, and next work. Do not substitute Koinonia Transactions service definitions merely because both companies use the Koinonia name or share repository infrastructure.
 
 ---
 
