@@ -142,7 +142,7 @@ Current public routes remain available:
 - Management Standards: `/standards`
 - Contact: `/contact`
 
-The existence of a public route does not require that route to appear in the primary header. Supporting routes should remain indexable and internally linked where appropriate.
+The existence of a public route does not require that route to appear in the primary header or footer. Supporting routes should remain indexable and internally linked where appropriate.
 
 Future pages may include:
 
@@ -381,50 +381,51 @@ Contact remains directly available from the primary navigation because it serves
 
 ## Footer Structure
 
-The footer is an intentional closing section rather than a second crowded header or a flat sitemap.
+The Properties footer should use the same calm macro hierarchy as the approved Koinonia Transactions public footer while retaining Properties-specific identity, routes, CTA, and mobile audience navigation.
 
-Primary hierarchy:
+Desktop footer structure:
 
-1. Koinonia Properties brand and property-management positioning.
-2. Prominent Request Rental Analysis CTA.
-3. Quiet direct contact options for Email, Call, and Text.
-4. Audience-group navigation.
-5. Faith-centered closing signature.
-6. Minimal copyright/legal line.
+1. **Brand / positioning**
+   - Koinonia Properties mark and name.
+   - Property Management identifier.
+   - Canonical positioning: property management built on clear communication, steady systems, and responsible care.
+2. **Explore**
+   - A concise high-intent footer link set rather than a second full sitemap.
+   - Owner Services.
+   - Rental Analysis.
+   - Available Homes.
+   - Resident Services.
+   - Maintenance Help.
+   - Service Areas.
+   - Contact.
+3. **Start the Conversation**
+   - Email pill.
+   - Call pill.
+   - Text pill.
+   - Request Rental Analysis CTA.
+   - Facebook, Instagram, and TikTok controls when appropriate.
+4. **Faith-centered closing**
+   - Centered scripture/value line and references.
+5. **Minimal copyright/legal line**.
 
-Desktop audience groups:
-
-Owners:
-
-- Owner Services
-- Rental Analysis
-- Pricing & Scope
-- Service Areas
-- Management Standards
-
-Find a Home:
-
-- Available Homes
-- How to Apply
-- Rental Policies & Criteria
-
-Residents:
-
-- Resident Services
-- Maintenance Help
-- Account & Portal Access
-- Resident Policies
-
-Koinonia:
-
-- Contact
-- Vendor Information
-- Future legal/privacy links only when real destinations exist
+The desktop footer should feel visually related to Koinonia Transactions but must not reuse Transactions business copy or routes. The footer is intentionally simpler than the full Properties header IA; the complete route inventory remains available through the header, page content, and internal links.
 
 Mobile footer behavior:
 
-- Brand, positioning, Rental Analysis CTA, contact methods, and faith signature remain visible.
-- Owners, Find a Home, Residents, and Koinonia navigation groups collapse into accessible accordion sections to avoid an unnecessarily tall footer.
+- Preserve the audience-oriented mobile navigation groups: Owners, Find a Home, Residents, and Koinonia.
+- These groups collapse into accessible accordion sections.
+- Brand, positioning, Rental Analysis CTA, contact methods, social controls, and faith signature remain visible.
+
+Confirmed Properties contact details:
+
+- Email: `jeremiah@koinoniaadmin.com`
+- Call/Text: `(719) 745-8497`
+
+Social-profile rule:
+
+- Facebook, Instagram, and TikTok controls may be present for visual/build purposes before profile URLs are finalized.
+- Until a real URL is supplied and approved for a platform, its control must remain disabled/non-navigating.
+- Do not use guessed usernames, generic social homepages, `#`, or other fake destinations.
 
 Approved faith signature:
 
