@@ -1,7 +1,7 @@
 # Koinonia Consultation & Interview System
 
 Status: Canonical — Active Build  
-Version: 0.2  
+Version: 0.3  
 Date: 2026-08-14  
 Business: Koinonia Transactions  
 Primary Audience: Colorado Realtors, producing agents, growing teams, and brokerage relationships
@@ -102,8 +102,9 @@ Purpose:
 - Explain why Koinonia exists.
 - Introduce the operating-partner concept.
 - Introduce the meaning of Koinonia only after the prospect understands the problem being solved.
+- Establish what makes the Koinonia relationship different without turning the conversation into a feature dump.
 
-Detailed scripting: pending approval.
+Detailed script and transition are defined below.
 
 ## Stage 5 — Prescribed Service Reveal
 
@@ -734,6 +735,298 @@ Accurate, calm, specific, and useful.
 
 ---
 
+# Stage 4 — Koinonia Reveal
+
+## Purpose
+
+Stage 4 explains the company only after the Realtor has confirmed the operating problem.
+
+The reveal should answer four questions in the prospect's mind:
+
+1. Why does Koinonia exist?
+2. What does the name mean?
+3. What kind of relationship is Koinonia trying to create?
+4. Why is that relevant to the problem I just described?
+
+This is a short brand and operating-model reveal, not a full service presentation.
+
+The Realtor should leave Stage 4 understanding the idea of Koinonia before being shown the specific service Koinonia recommends.
+
+---
+
+## Stage 4 Core Rule
+
+Connect Koinonia to the diagnosed problem before explaining the company in general terms.
+
+Do not restart the conversation with a memorized company biography.
+
+The reveal should feel like the natural answer to what the Realtor just told you.
+
+---
+
+# The Recommended 3–4 Minute Reveal
+
+## Part 1 — Why Koinonia Exists
+
+Begin from the confirmed diagnosis.
+
+Recommended script:
+
+"That's exactly the kind of problem Koinonia was built around.
+
+I've worked in real estate myself, and one of the things that became very clear to me is that Realtors are expected to do two jobs at the same time. You're responsible for the part clients see — the relationship, advice, negotiations, showings, and helping people make decisions — but you're also carrying a whole operating business behind that relationship.
+
+The problem is that the second job doesn't disappear when the first one gets busy."
+
+Then connect directly to their situation:
+
+"And in your case, that's showing up in [their confirmed pressure/consequence]."
+
+Do not list Koinonia services yet.
+
+---
+
+## Part 2 — The Core Koinonia Idea
+
+Recommended script:
+
+"Koinonia exists to provide dependable real estate operations support behind the client relationship.
+
+The simplest way I describe it is: you focus on your clients; we'll keep the business running behind you.
+
+The goal isn't to remove you from your business or take away the parts that require your judgment. It's to create organized support around the work that shouldn't have to depend on you personally every time."
+
+This is the central operating-partner position.
+
+The canonical brand promise is:
+
+"You focus on your clients. We'll keep the business running."
+
+The canonical positioning is real estate operations partner — not merely a paperwork company.
+
+---
+
+## Part 3 — What the Name Means
+
+Only now explain the name.
+
+Recommended script:
+
+"And that's actually why I chose the name Koinonia — pronounced koy-noh-NEE-uh.
+
+The word carries the idea of fellowship, joint participation, and sharing in common. To me, that describes how good support should feel. Not a disconnected vendor that only touches one task and disappears, but somebody working alongside your business with a shared purpose: helping you serve your clients well while the operational pieces stay organized and moving."
+
+Keep this explanation practical.
+
+The meaning of Koinonia should reinforce partnership and service, not become a theology lesson or an extended origin story during a business consultation.
+
+---
+
+## Part 4 — Define the Relationship
+
+Recommended script:
+
+"So when I say Koinonia is an operations partner, I mean we bring structure, clear communication, dependable follow-through, and real-estate-aware support to the work behind you.
+
+You still own the client relationship, your professional judgment, negotiations, and the decisions that belong to you and your brokerage. Koinonia is there to help carry defined operational responsibility so fewer of the moving parts have to live on your shoulders."
+
+This boundary statement is important because it makes the relationship feel safer rather than smaller.
+
+The prospect should understand that delegation does not mean losing visibility, authority, or professional responsibility.
+
+---
+
+# Condensed Reveal — When Time Is Tight
+
+Use when the consultation is running short or the prospect already understands Koinonia at a high level.
+
+"That's exactly why I built Koinonia. Realtors are responsible for the client relationship, but there is an entire operating business behind that relationship that still has to move when you're busy.
+
+Koinonia means fellowship, joint participation, sharing in common. I chose that name because the model is partnership — dependable real estate operations support working alongside you, not replacing your judgment or your client relationship.
+
+The promise is simple: you focus on your clients; we'll keep the business running behind you. Based on what you told me, I think there's a very specific place we could start."
+
+Do not use the condensed version merely to rush through the conversation.
+
+Use it when the prospect already has enough context.
+
+---
+
+# Reveal Variation A — Transaction Overload
+
+After the core brand explanation, personalize with:
+
+"For you, I wouldn't start by trying to change your whole business. The first question is how much of the contract-to-close operating load still needs to depend on you personally."
+
+Then move to Stage 5.
+
+---
+
+# Reveal Variation B — Contract & Document Pressure
+
+After the core brand explanation, personalize with:
+
+"For you, the most immediate opportunity isn't necessarily a full operational overhaul. It's protecting your client-facing time when contract and document work shows up at the wrong moment."
+
+Then move to Stage 5.
+
+---
+
+# Reveal Variation C — Showing / Availability Pressure
+
+After the core brand explanation, personalize with:
+
+"For you, the issue is really protecting the client experience when your physical availability can't match every client request. That's a very specific capacity problem, and I think there's a clean way to address it."
+
+Then move to Stage 5.
+
+---
+
+# Reveal Variation D — Recurring Business Operations
+
+After the core brand explanation, personalize with:
+
+"For you, I think the opportunity is creating dependable follow-through around the recurring work that keeps losing to urgent client activity. That is where an operations partnership becomes more valuable than just occasional task help."
+
+Then move to Stage 5.
+
+---
+
+# Reveal Variation E — Existing Support
+
+Use when the prospect already has a TC, assistant, brokerage resource, or other provider.
+
+"And I want to be clear: I don't think the answer is automatically replacing support that is already working. Koinonia can fit around an existing operation when there is a defined gap worth solving.
+
+Based on what you told me, I think that gap is [confirmed gap]."
+
+Then move to Stage 5.
+
+---
+
+# Reveal Variation F — Proactive Growth
+
+Use when the prospect is planning ahead rather than solving current pain.
+
+"What I like about your situation is that we don't have to wait for the business to become chaotic before adding support. Koinonia can be used to build capacity intentionally, while you still have room to choose the right operating model instead of reacting later."
+
+Then move to Stage 5.
+
+---
+
+# What Stage 4 Still Does Not Reveal
+
+Even though Koinonia has now been introduced, do not yet:
+
+- give the full four-service tour unless it is necessary to orient the prospect;
+- read through the entire services page;
+- present all package tiers;
+- discuss every price;
+- introduce monthly pricing simply because it exists;
+- explain the client portal or development roadmap;
+- demo internal software, playbooks, health scores, or technology;
+- overwhelm the prospect with process detail;
+- recite Jeremiah's full biography or credentials;
+- turn the meaning of Koinonia into a long values speech;
+- begin defending Koinonia against competitors who have not been raised by the prospect.
+
+Stage 4 establishes identity and trust.
+
+Stage 5 establishes the specific solution.
+
+---
+
+# If the Prospect Asks, "So Are You Basically a Transaction Coordinator?"
+
+Do not become defensive.
+
+Recommended response:
+
+"Transaction support is one part of what Koinonia does, and for some Realtors that's exactly where the relationship starts. The broader model is real estate operations support, because the pressure behind a Realtor's business isn't always limited to the transaction itself.
+
+Based on what you told me, I'd rather show you the part that's most relevant to your business than give you the whole menu first."
+
+Then proceed to Stage 5.
+
+---
+
+# If the Prospect Asks About Technology or the Portal
+
+If the current production capability is not yet live for clients, do not present unfinished functionality as part of the active service promise.
+
+Recommended response:
+
+"We've built our operation around structured systems and we're continuing to expand the client operating experience behind the scenes. I don't want to sell you future functionality as if it's the reason to work with us today. The reason should be whether the service itself solves the problem we just identified."
+
+Then return to the relevant current service.
+
+Technology supports the service.
+
+It is not the primary product being sold in this consultation.
+
+---
+
+# Stage 4 Transition into the Prescribed Service Reveal
+
+The Stage 4 transition should make clear that Koinonia will now prescribe rather than dump the full service catalog.
+
+Default transition:
+
+"Based on what you've told me, I wouldn't start by showing you everything Koinonia can do. I think there's one place that would make the biggest difference first. Let me show you what that would look like."
+
+Alternative:
+
+"We have a few different ways we can support a Realtor, but I think only one of them needs to be the starting point for you."
+
+Alternative for mixed-capacity problems:
+
+"There are a couple of areas where Koinonia could eventually help, but I don't think we need to solve everything on day one. I would start with [primary pressure] and earn our way into anything broader from there."
+
+Alternative for existing support:
+
+"I don't want to disturb what is already working. I would start specifically with the gap we identified: [gap]."
+
+Then begin Stage 5.
+
+---
+
+# Stage 4 Success Condition
+
+Stage 4 is complete when the Realtor understands:
+
+1. Koinonia exists because Realtors carry both client-facing and behind-the-scenes operating work.
+2. Koinonia is positioned as a real estate operations partner.
+3. The name represents partnership, joint participation, and shared support.
+4. Koinonia supports the work behind the Realtor without replacing the Realtor's judgment or client relationship.
+5. The presentation is about to move into a specific recommendation based on the diagnosis.
+
+The Realtor does not need to understand every Koinonia service before Stage 4 ends.
+
+If they understand the relationship model, Stage 4 has done its job.
+
+---
+
+# Stage 4 Anti-Patterns
+
+Do not:
+
+- give a founder monologue longer than the diagnosed problem warrants;
+- use the brand story as a substitute for a business case;
+- make the word Koinonia sound abstract or disconnected from practical service;
+- imply shared responsibility means Koinonia takes over professional decisions that remain with the Realtor;
+- list every feature and process before making a recommendation;
+- make technology the hero of the story;
+- make price the next sentence after explaining the company;
+- overuse faith language in a way that obscures the practical business value;
+- claim Koinonia is fundamentally unlike every TC, assistant, or support provider without evidence;
+- say "we do everything" or imply unlimited support.
+
+Preferred posture:
+
+Human-led service. Structured support. Clear boundaries. Partnership rather than dependency.
+
+---
+
 # Relationship to Existing Canonical Material
 
 This system extends — and does not replace — the existing Koinonia Sales Operating System and service-specific sales enablement.
@@ -750,11 +1043,13 @@ This consultation system broadens those questions so Koinonia can diagnose the f
 
 Canonical service claims, scope, packages, and pricing remain governed by their existing business objects and pricing sources.
 
+Stage 4 is specifically grounded in the canonical brand position that Koinonia is a real estate operations partner, the promise "You focus on your clients. We'll keep the business running," and the live-site explanation of Koinonia as partnership, shared purpose, service, organized support, and dependable follow-through.
+
 ---
 
 # Build Status
 
-Approved and documented in Version 0.2:
+Approved and documented in Version 0.3:
 
 - Consultation purpose.
 - Diagnose-first sales principle.
@@ -766,10 +1061,18 @@ Approved and documented in Version 0.2:
 - Stage 3 branching reflection patterns.
 - Handling for disagreement, multiple problems, existing support, proactive-growth prospects, and poor fit.
 - Exact bridge from confirmed diagnosis into the Koinonia reveal.
+- Stage 4 exact Koinonia reveal sequence.
+- Meaning and pronunciation of Koinonia in the consultation context.
+- Operating-partner positioning and professional-boundary language.
+- Personalized reveal variations by diagnosed pressure.
+- Rules for technology/portal questions and TC comparisons.
+- Exact transition from the Koinonia reveal into a prescribed service recommendation.
 
 Next build stage:
 
-- Stage 4 — Koinonia Reveal.
-- Exact order for explaining why Koinonia exists, what the name means, the operating-partner concept, and what should still remain unrevealed until Stage 5.
+- Stage 5 — Prescribed Service Reveal.
+- Decision logic for choosing the correct first Koinonia service.
+- Exact service-specific explanation order.
+- How and when to show the broader four-service system without turning the consultation into a menu.
 
-Do not treat Stages 4–7 as fully scripted until their sections are approved and added to this canonical file.
+Do not treat Stages 5–7 as fully scripted until their sections are approved and added to this canonical file.
