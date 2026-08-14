@@ -14,19 +14,19 @@ export type HeroProps = {
 };
 
 const propertyHeroImages: Record<string, string> = {
-  "Owner Services": "/assets/images/properties/heroes/owners-hero.avif",
-  "Rental Analysis": "/assets/images/properties/heroes/owners-hero.avif",
-  "Available Rentals": "/assets/images/properties/heroes/rentals-hero.avif",
-  Apply: "/assets/images/properties/heroes/rentals-hero.avif",
-  "Tenant Services": "/assets/images/properties/heroes/tenants-hero.avif",
-  Maintenance: "/assets/images/properties/heroes/tenants-hero.avif",
-  "Pricing and Scope": "/assets/images/properties/heroes/pricing-hero.avif",
-  Portals: "/assets/images/properties/heroes/contact-hero.avif",
-  "Operating Standards": "/assets/images/properties/heroes/standards-hero.avif",
-  Vendors: "/assets/images/properties/heroes/standards-hero.avif",
-  Policies: "/assets/images/properties/heroes/policies-hero.avif",
-  Contact: "/assets/images/properties/heroes/contact-hero.avif",
-  "Service Areas": "/assets/images/properties/heroes/service-areas-hero.svg"
+  "Owner Services": "/assets/images/properties/heroes/owners-hero.webp",
+  "Rental Analysis": "/assets/images/properties/heroes/owners-hero.webp",
+  "Available Rentals": "/assets/images/properties/heroes/rentals-hero.webp",
+  Apply: "/assets/images/properties/heroes/rentals-hero.webp",
+  "Tenant Services": "/assets/images/properties/heroes/tenants-hero.webp",
+  Maintenance: "/assets/images/properties/heroes/tenants-hero.webp",
+  "Pricing and Scope": "/assets/images/properties/heroes/pricing-hero.webp",
+  Portals: "/assets/images/properties/heroes/contact-hero.webp",
+  "Operating Standards": "/assets/images/properties/heroes/standards-hero.webp",
+  Vendors: "/assets/images/properties/heroes/standards-hero.webp",
+  Policies: "/assets/images/properties/heroes/policies-hero.webp",
+  Contact: "/assets/images/properties/heroes/contact-hero.webp",
+  "Service Areas": "/assets/images/properties/heroes/service-areas-hero.webp"
 };
 
 export function Hero({

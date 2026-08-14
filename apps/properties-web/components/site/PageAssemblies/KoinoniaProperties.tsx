@@ -1,4 +1,4 @@
-import { FAQ, Footer, PropertiesNav, UniversalCard } from "../index";
+import { FAQ, Footer, Hero, PropertiesNav, UniversalCard } from "../index";
 import { absoluteUrl } from "../../../config/seo.config";
 
 const quickAccess = [
@@ -182,49 +182,18 @@ export function KoinoniaProperties() {
 
       <PropertiesNav />
 
-      <section className="koinonia-section koinonia-hero properties">
-        <div className="koinonia-container koinonia-hero-grid">
-          <div className="koinonia-hero-copy">
-            <div className="koinonia-eyebrow">Property Management</div>
-            <h1 className="koinonia-title">Koinonia Properties</h1>
-            <p className="koinonia-lead">
-              Property management built on clear communication, steady systems, and responsible care for the property and the people connected to it.
-            </p>
-            <div className="koinonia-actions">
-              <a className="koinonia-button primary" href="/rental-analysis">
-                Request Rental Analysis
-              </a>
-              <a className="koinonia-button secondary" href="/rentals">
-                View Rentals
-              </a>
-            </div>
-          </div>
-
-          <div
-            className="koinonia-visual"
-            aria-label="Koinonia Properties property management services"
-          >
-            <div className="koinonia-visual-panel" aria-hidden="true">
-              <span>Property Management</span>
-              <strong>Owners · Residents · Properties</strong>
-              <ul>
-                <li>
-                  <b>Leasing</b>
-                  <em>Support</em>
-                </li>
-                <li>
-                  <b>Maintenance</b>
-                  <em>Coordination</em>
-                </li>
-                <li>
-                  <b>Owner Communication</b>
-                  <em>Organized</em>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Hero
+        visualVariant="properties"
+        eyebrow="Property Management"
+        title="Koinonia Properties"
+        lead="Property management built on clear communication, steady systems, and responsible care for the property and the people connected to it."
+        primaryLabel="Request Rental Analysis"
+        primaryHref="/rental-analysis"
+        secondaryLabel="View Rentals"
+        secondaryHref="/rentals"
+        visualDesktopSrc="/assets/images/properties/heroes/home-hero.webp"
+        visualAlt="Koinonia Properties property management workspace in a well-cared-for residential home"
+      />
 
       <section className="koinonia-section koinonia-access-section" aria-label="Quick access">
         <div className="koinonia-container">
