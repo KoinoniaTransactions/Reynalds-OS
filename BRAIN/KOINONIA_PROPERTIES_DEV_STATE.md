@@ -17,7 +17,8 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Current validated branch HEAD: `ffb10e7`
+- Latest validated code checkpoint: `ffb10e7`
+- Documentation-sync commits follow that validated code checkpoint; do not treat a documentation-only branch HEAD as a newly validated UI build.
 - Hosting state: temporary Vercel preview; final public domain not yet attached
 - Current preview: `https://koinonia-properties-gxc8xwqhu-koinonia3.vercel.app`
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
@@ -234,7 +235,7 @@ Mobile navigation:
 - `1ae05d6` — add client-side mobile navigation toggle
 - `ffb10e7` — collapse and style mobile navigation
 
-Because the GitHub contents API writes one file at a time, some focused slices span more than one sequential commit. Treat the final validated slice HEAD as the checkpoint rather than assuming every slice is represented by one commit.
+Because the GitHub contents API writes one file at a time, some focused slices span more than one sequential commit. Treat the final validated slice code checkpoint as authoritative for runtime validation rather than assuming every documentation-only branch HEAD represents a newly validated UI build.
 
 ---
 
