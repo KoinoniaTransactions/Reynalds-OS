@@ -17,12 +17,12 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Latest validated repository checkpoint: `beb8df4`
-- A newer Transactions-style footer rebuild follows that validated checkpoint and is validation-pending.
+- Latest validated repository checkpoint: `66d7c28`
+- The Transactions-style Properties footer rebuild is included in the validated tree at `66d7c28`.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
 - Current footer-review preview: `https://koinonia-properties-562ggb2uz-koinonia3.vercel.app`
-- That preview confirmed mobile remained strong but desktop still felt visually uneven because the brand block and utility block were too far apart.
+- That preview predates the validated Transactions-style footer rebuild.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -229,11 +229,11 @@ Canonical website authority:
 
 - `03_Knowledge/Website/koinonia_properties_production_spec.md`
 
-Latest validated checkpoint remains:
+Latest validated checkpoint:
 
-- `beb8df4`
+- `66d7c28`
 
-Transactions-style footer rebuild is validation-pending.
+Visual acceptance of the Transactions-style rebuild remains pending a fresh desktop/mobile Vercel Preview review.
 
 ---
 
@@ -256,13 +256,12 @@ Latest user-approved direction:
 - Keep social controls in the Start the Conversation area.
 - Preserve the approved Properties mobile accordion structure.
 
-Current rebuild commits:
+Validated rebuild commits:
 
 - `405023e` — add isolated Properties footer CSS module
 - `979cf97` — rebuild Properties footer around Transactions-style hierarchy
 - `f265146` — update production spec for the new footer standard
-
-These commits are not yet validated. Run focused Properties boundary verification and `git diff --check` before marking them validated.
+- `66d7c28` — synchronized repository tree validated locally with the Transactions-style footer rebuild
 
 ---
 
@@ -333,6 +332,7 @@ Footer redesign and refinement:
 - `67d84e2` — add real contact details and visual social placeholders
 - `9a075fc` — compact desktop footer and social/contact layout
 - `beb8df4` — validated compact footer/contact/social repository checkpoint
+- `66d7c28` — validated Transactions-style Properties footer rebuild checkpoint
 
 Because GitHub contents writes are file-scoped, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only or intermediate branch HEADs do not imply runtime validation.
 
@@ -340,7 +340,7 @@ Because GitHub contents writes are file-scoped, focused slices may span multiple
 
 ## Latest Validation
 
-Focused validation completed locally at `beb8df4` on 2026-08-13.
+Focused validation completed locally at `66d7c28` on 2026-08-13.
 
 Exact successful checks:
 
@@ -360,7 +360,7 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-The Transactions-style footer rebuild must pass the same focused validation before becoming the next validated repository checkpoint.
+This establishes `66d7c28` as the current validated repository checkpoint for the Transactions-style Properties footer rebuild. Visual acceptance remains separate and requires a fresh desktop/mobile preview review.
 
 ---
 
@@ -371,9 +371,9 @@ Current footer-review preview:
 - `https://koinonia-properties-562ggb2uz-koinonia3.vercel.app`
 - Source branch head at deployment: `58587ff`
 - Deployment mode: Vercel Preview only
-- This preview contains the previous compact footer, not the Transactions-style rebuild.
+- This preview contains the previous compact footer, not the validated Transactions-style rebuild.
 
-Next preview should be created only after the current rebuild passes focused local validation.
+The next preview should be refreshed from the current Properties DEV branch after this documentation sync and deployed with Vercel Preview only.
 
 Next visual-QA focus:
 
@@ -415,21 +415,13 @@ Temporary visual placeholders belong in this DEV continuity record until they be
 
 ## Immediate Next Work
 
-### First: Validate Transactions-Style Footer Rebuild
+### First: Deploy Transactions-Style Footer Preview
 
-Fast-forward the dedicated Properties DEV worktree to current branch HEAD and run:
-
-- `apps/properties-web/scripts/verify-boundary.mjs`
-- `git diff --check`
-- clean branch/worktree confirmation
-
-Do not mark the rebuild validated until those checks pass.
-
-### Second: Deploy New Footer Preview
-
-After validation, refresh the dedicated preview worktree and deploy Vercel Preview only.
+Refresh the dedicated preview worktree from the current Properties DEV branch and deploy Vercel Preview only.
 
 Review desktop and mobile against the current visual-QA criteria above.
+
+Do not mark the footer visually accepted until the refreshed preview is reviewed.
 
 ### After Footer Acceptance: Owner Services Production Pass
 
