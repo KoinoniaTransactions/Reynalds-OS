@@ -237,6 +237,19 @@
   outline: none;
 }
 
+.properties-audience-grid > .koinonia-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.properties-audience-grid > .koinonia-card > .koinonia-actions {
+  margin-top: auto;
+}
+
+.properties-services-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .properties-process-grid {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
@@ -752,6 +765,10 @@
   .koinonia-hero.properties:not(.properties-image) .koinonia-hero-copy {
     max-width: 100%;
     padding-block: 58px 72px;
+  }
+
+  .properties-services-grid {
+    grid-template-columns: 1fr;
   }
 
   .properties-process-grid {
