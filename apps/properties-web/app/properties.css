@@ -237,26 +237,193 @@
   outline: none;
 }
 
+.properties-footer {
+  background: #151515;
+  color: #f8f1e6;
+}
+
+.properties-footer .koinonia-footer-inner {
+  max-width: 1180px;
+}
+
 .properties-footer-inner {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 34px 28px;
+  display: grid;
+  gap: 44px;
+  padding-block: 56px 42px;
 }
 
-.properties-footer-main {
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(280px, 1.2fr) minmax(280px, 1fr) auto auto;
+.properties-footer-lead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.75fr);
+  gap: 48px;
+  align-items: end;
+  padding-bottom: 36px;
+  border-bottom: 1px solid rgba(184, 138, 68, 0.34);
+}
+
+.properties-footer-brand-block {
+  max-width: 690px;
+}
+
+.properties-footer-brand {
   align-items: center;
-  gap: 24px;
-  padding-bottom: 28px;
-  border-bottom: 1px solid rgba(184, 138, 68, 0.24);
 }
 
-.properties-footer-main .koinonia-footer-description {
-  margin: 0;
+.properties-footer-brand .koinonia-footer-mark {
+  background: var(--ros-gold);
+  color: #161616;
+}
+
+.properties-footer-brand strong {
+  color: #fffaf2;
+  font-size: clamp(24px, 2.7vw, 34px);
+  line-height: 1;
+}
+
+.properties-footer-brand p {
+  margin-top: 7px;
+  color: rgba(248, 241, 230, 0.64);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.properties-footer-positioning {
+  max-width: 650px;
+  margin: 24px 0 0;
+  color: rgba(248, 241, 230, 0.8);
+  font-family: var(--ros-font-display);
+  font-size: clamp(21px, 2.2vw, 30px);
+  line-height: 1.35;
+}
+
+.properties-footer-actions {
+  display: grid;
+  gap: 18px;
+  justify-items: start;
+}
+
+.properties-footer .properties-footer-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 13px 20px;
+  border: 1px solid #c69a55;
+  border-radius: 999px;
+  background: #b88a44;
+  color: #161616;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: none;
+}
+
+.properties-footer .properties-footer-cta:hover,
+.properties-footer .properties-footer-cta:focus-visible {
+  background: #c69a55;
+  color: #161616;
+  outline: none;
 }
 
 .properties-footer-contact {
-  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(248, 241, 230, 0.42);
+  font-size: 14px;
+}
+
+.properties-footer-contact a {
+  color: rgba(248, 241, 230, 0.78);
+  text-decoration: none;
+}
+
+.properties-footer-contact a:hover,
+.properties-footer-contact a:focus-visible {
+  color: #d6ae6b;
+  outline: none;
+}
+
+.properties-footer-navigation {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 34px;
+}
+
+.properties-footer-group h2,
+.properties-footer-mobile-group summary {
+  margin: 0 0 15px;
+  color: #d6ae6b;
+  font-family: var(--ros-font-ui);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.properties-footer-group nav {
+  display: grid;
+  gap: 10px;
+}
+
+.properties-footer-group a,
+.properties-footer-mobile-group a {
+  color: rgba(248, 241, 230, 0.76);
+  font-size: 14px;
+  line-height: 1.45;
+  text-decoration: none;
+}
+
+.properties-footer-group a:hover,
+.properties-footer-group a:focus-visible,
+.properties-footer-mobile-group a:hover,
+.properties-footer-mobile-group a:focus-visible {
+  color: #fffaf2;
+  outline: none;
+}
+
+.properties-footer-navigation-mobile {
+  display: none;
+}
+
+.properties-footer-bottom {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 30px 24px 34px;
+  border-top: 1px solid rgba(184, 138, 68, 0.34);
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+  text-align: center;
+}
+
+.properties-footer-faith {
+  max-width: 760px;
+}
+
+.properties-footer-faith p {
+  margin: 0;
+  color: #fffaf2;
+  font-family: var(--ros-font-display);
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.45;
+}
+
+.properties-footer-faith small {
+  display: block;
+  margin-top: 8px;
+  color: #d6ae6b;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.properties-footer-legal {
+  margin: 0;
+  color: rgba(248, 241, 230, 0.48);
+  font-size: 12px;
 }
 
 @media (max-width: 1180px) {
@@ -275,10 +442,6 @@
 
   .koinonia-property-nav .koinonia-property-nav-cta {
     padding-inline: 12px;
-  }
-
-  .properties-footer-main {
-    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -392,12 +555,67 @@
     text-align: center;
   }
 
-  .properties-footer-inner {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .properties-footer-lead {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    align-items: start;
   }
 
-  .properties-footer-main {
+  .properties-footer-actions {
+    justify-items: stretch;
+  }
+
+  .properties-footer .properties-footer-cta {
+    width: 100%;
+  }
+
+  .properties-footer-navigation-desktop {
+    display: none;
+  }
+
+  .properties-footer-navigation-mobile {
+    display: grid;
     grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .properties-footer-mobile-group {
+    border-top: 1px solid rgba(184, 138, 68, 0.22);
+  }
+
+  .properties-footer-mobile-group:last-child {
+    border-bottom: 1px solid rgba(184, 138, 68, 0.22);
+  }
+
+  .properties-footer-mobile-group summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    padding: 17px 0;
+  }
+
+  .properties-footer-mobile-group summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .properties-footer-mobile-group summary::after {
+    content: "+";
+    color: #d6ae6b;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  .properties-footer-mobile-group[open] summary::after {
+    content: "−";
+  }
+
+  .properties-footer-mobile-group nav {
+    display: grid;
+    gap: 12px;
+    padding: 0 0 18px 12px;
   }
 }
 
@@ -433,6 +651,24 @@
   }
 
   .properties-footer-inner {
-    grid-template-columns: 1fr;
+    padding-block: 44px 30px;
+    gap: 32px;
+  }
+
+  .properties-footer-lead {
+    gap: 26px;
+    padding-bottom: 30px;
+  }
+
+  .properties-footer-positioning {
+    margin-top: 20px;
+  }
+
+  .properties-footer-contact {
+    justify-content: center;
+  }
+
+  .properties-footer-bottom {
+    padding-block: 26px 30px;
   }
 }
