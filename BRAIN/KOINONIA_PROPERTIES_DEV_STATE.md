@@ -17,12 +17,12 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Latest validated repository checkpoint: `186f717`
-- The centered/larger social-control refinement is included in the validated tree at `186f717`.
+- Latest validated repository checkpoint: `2f6f912`
+- The footer action breathing-room refinement is included in the validated tree at `2f6f912`.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
-- Current footer-review preview: `https://koinonia-properties-78w01rvuo-koinonia3.vercel.app`
-- That preview contains the validated Transactions-style footer before the final centered/larger social-control refinement.
+- Current footer-review preview: `https://koinonia-properties-vnjbgn9we-koinonia3.vercel.app`
+- That preview contains the centered/larger social controls but predates the validated action-stack breathing-room refinement.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -211,7 +211,8 @@ The mobile direction previously approved remains intact:
 - Until URLs are supplied and approved, social controls must remain disabled/non-navigating placeholders.
 - Do not substitute guessed usernames, generic social homepages, `#`, or other fake destinations.
 - Validated visual treatment at `186f717`: social controls are centered beneath the Rental Analysis CTA on desktop and centered across the CTA width on mobile.
-- Validated visual sizing at `186f717`: social button circles are 40px and social glyphs are 18px with slightly increased spacing.
+- Validated visual sizing at `186f717`: social button circles are 40px and social glyphs are 18px with slightly increased horizontal spacing.
+- Validated vertical rhythm at `2f6f912`: the Email / Call / Text row has 18px of separation before the CTA, and the CTA has 20px of separation before the social controls.
 
 ### Faith signature
 
@@ -233,13 +234,13 @@ Canonical website authority:
 
 Latest validated checkpoint:
 
-- `186f717`
+- `2f6f912`
 
-Visual acceptance of the final social-control refinement remains pending a fresh desktop/mobile Vercel Preview review.
+Visual acceptance of the final action-stack spacing remains pending a fresh desktop/mobile Vercel Preview review.
 
 ---
 
-## Footer Visual Review History — 2026-08-13
+## Footer Visual Review History — 2026-08-13 to 2026-08-14
 
 Earlier iterations established:
 
@@ -260,15 +261,23 @@ Transactions-style direction established:
 
 The preview at `https://koinonia-properties-78w01rvuo-koinonia3.vercel.app` confirmed that the Transactions-style footer composition was working. The remaining visual issue was the social row: the controls read as left-attached beneath the CTA on desktop and mobile.
 
-Validated final social refinement:
+Validated social refinement:
 
 - social controls are centered directly beneath the Rental Analysis CTA on desktop;
 - social controls are centered across the full CTA width on mobile;
 - social button circles increased from 34px to 40px;
 - social glyphs increased from 16px to 18px;
-- spacing increased slightly;
+- horizontal spacing increased slightly;
 - Facebook, Instagram, and TikTok remain disabled/non-navigating until real URLs are approved;
 - no other footer layout, copy, navigation, CTA, faith-signature, or mobile-accordion behavior changed.
+
+The preview at `https://koinonia-properties-vnjbgn9we-koinonia3.vercel.app` confirmed that the social centering and sizing looked better. The remaining visual issue was vertical compression inside the Start the Conversation group: Email / Call / Text, the Rental Analysis CTA, and the social row were too tightly grouped on both desktop and mobile.
+
+Validated breathing-room refinement at `2f6f912`:
+
+- contact-pill row to CTA separation increased from 12px to 18px;
+- CTA to social-row separation increased from 12px to 20px;
+- existing centering, button sizes, copy, navigation, scripture, and responsive behavior remain unchanged.
 
 Validated rebuild/refinement commits:
 
@@ -278,6 +287,7 @@ Validated rebuild/refinement commits:
 - `66d7c28` — synchronized repository tree validated locally with the Transactions-style footer rebuild
 - `e5f4aab` — group CTA and social controls for intentional centering
 - `186f717` — validated centered/larger social-control refinement checkpoint
+- `2f6f912` — validated footer action breathing-room refinement checkpoint
 
 ---
 
@@ -350,6 +360,7 @@ Footer redesign and refinement:
 - `beb8df4` — validated compact footer/contact/social repository checkpoint
 - `66d7c28` — validated Transactions-style Properties footer rebuild checkpoint
 - `186f717` — validated final social alignment/size refinement checkpoint
+- `2f6f912` — validated footer action breathing-room refinement checkpoint
 
 Because GitHub contents writes are file-scoped, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only or intermediate branch HEADs do not imply runtime validation.
 
@@ -357,7 +368,7 @@ Because GitHub contents writes are file-scoped, focused slices may span multiple
 
 ## Latest Validation
 
-Focused validation completed locally at `186f717` on 2026-08-13.
+Focused validation completed locally at `2f6f912` on 2026-08-14.
 
 Exact successful checks:
 
@@ -377,7 +388,7 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-This establishes `186f717` as the current validated repository checkpoint for the centered/larger social-control refinement. Visual acceptance remains separate and requires a fresh desktop/mobile preview review.
+This establishes `2f6f912` as the current validated repository checkpoint for the footer action breathing-room refinement. Visual acceptance remains separate and requires a fresh desktop/mobile preview review.
 
 ---
 
@@ -385,19 +396,20 @@ This establishes `186f717` as the current validated repository checkpoint for th
 
 Current footer-review preview:
 
-- `https://koinonia-properties-78w01rvuo-koinonia3.vercel.app`
-- Source branch head at deployment: `9e92130`
+- `https://koinonia-properties-vnjbgn9we-koinonia3.vercel.app`
+- Source branch head at deployment: `45169a5`
 - Deployment mode: Vercel Preview only
-- This preview contains the validated Transactions-style footer before the final centered/larger social-control refinement.
+- This preview contains the centered/larger social controls but predates the validated action-stack breathing-room refinement.
 
 The next preview should be refreshed from the current Properties DEV branch after this documentation sync and deployed with Vercel Preview only.
 
 Next visual-QA focus:
 
+- Email / Call / Text, the Rental Analysis CTA, and social controls read as three related layers rather than one compressed cluster;
+- the 18px contact-to-CTA and 20px CTA-to-social separation feel natural on desktop and mobile;
 - desktop footer remains a coherent three-zone composition;
-- social controls are visibly centered beneath the Rental Analysis CTA rather than left-attached;
-- mobile social controls are centered across the CTA width;
-- 40px social circles and 18px glyphs feel appropriately prominent without competing with the CTA;
+- social controls remain centered beneath the Rental Analysis CTA on desktop and across the CTA width on mobile;
+- 40px social circles and 18px glyphs remain appropriately prominent without competing with the CTA;
 - Facebook, Instagram, and TikTok remain visibly intentional but non-live;
 - mobile retains the previously approved accordion feel;
 - faith signature remains centered and strong;
@@ -432,7 +444,7 @@ Temporary visual placeholders belong in this DEV continuity record until they be
 
 ## Immediate Next Work
 
-### First: Deploy Final Social-Refined Footer Preview
+### First: Deploy Breathing-Room Footer Preview
 
 Refresh the dedicated preview worktree from the current Properties DEV branch and deploy Vercel Preview only.
 
