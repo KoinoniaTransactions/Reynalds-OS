@@ -95,6 +95,53 @@
   gap: 8px;
 }
 
+.koinonia-property-nav-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgba(184, 138, 68, 0.32);
+  border-radius: 999px;
+  background: rgba(255, 252, 247, 0.72);
+  color: var(--ros-text);
+  cursor: pointer;
+}
+
+.koinonia-property-nav-toggle:hover,
+.koinonia-property-nav-toggle:focus-visible {
+  background: rgba(184, 138, 68, 0.12);
+  outline: none;
+}
+
+.koinonia-property-nav-toggle-icon {
+  width: 18px;
+  height: 14px;
+  margin: 0 auto;
+  display: grid;
+  align-content: space-between;
+}
+
+.koinonia-property-nav-toggle-icon span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.koinonia-property-nav-toggle[aria-expanded="true"] .koinonia-property-nav-toggle-icon span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.koinonia-property-nav-toggle[aria-expanded="true"] .koinonia-property-nav-toggle-icon span:nth-child(2) {
+  opacity: 0;
+}
+
+.koinonia-property-nav-toggle[aria-expanded="true"] .koinonia-property-nav-toggle-icon span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
 .koinonia-property-nav-group {
   position: relative;
 }
@@ -268,23 +315,37 @@
   }
 
   .koinonia-property-nav {
-    position: static;
-    align-items: stretch;
-    flex-direction: column;
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
     gap: 12px;
-    padding-block: 16px;
+    padding-block: 12px;
   }
 
   .koinonia-property-brand {
     width: fit-content;
+    min-width: 0;
+  }
+
+  .koinonia-property-nav-toggle {
+    display: block;
+    justify-self: end;
   }
 
   .koinonia-property-nav-links {
+    grid-column: 1 / -1;
     width: 100%;
     margin-left: 0;
-    display: grid;
+    display: none;
     grid-template-columns: 1fr;
     gap: 6px;
+    padding-top: 6px;
+  }
+
+  .koinonia-property-nav-links.is-open {
+    display: grid;
   }
 
   .koinonia-property-nav-group {
@@ -295,8 +356,12 @@
   .koinonia-property-nav-group summary {
     width: 100%;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 13px 0;
     border-radius: 0;
+  }
+
+  .koinonia-property-nav-group[open] summary::after {
+    transform: translateY(1px) rotate(180deg);
   }
 
   .koinonia-property-nav-menu {
@@ -310,18 +375,21 @@
   }
 
   .koinonia-property-nav-menu a {
+    padding: 10px 12px;
     white-space: normal;
   }
 
   .koinonia-property-nav-contact {
-    padding: 12px 0;
+    padding: 13px 0;
     border-top: 1px solid rgba(184, 138, 68, 0.2);
     border-radius: 0;
   }
 
   .koinonia-property-nav .koinonia-property-nav-cta {
-    width: fit-content;
-    margin-top: 4px;
+    width: 100%;
+    margin-top: 6px;
+    padding: 13px 16px;
+    text-align: center;
   }
 
   .properties-footer-inner {
