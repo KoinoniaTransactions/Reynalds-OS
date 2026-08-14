@@ -17,12 +17,12 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Latest validated repository checkpoint: `18b94eb`
-- A newer footer desktop/contact/social refinement follows that validated checkpoint and is validation-pending.
+- Latest validated repository checkpoint: `beb8df4`
+- The compact desktop/contact/social footer refinement is included in the validated tree at `beb8df4`.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
 - Current footer-review preview: `https://koinonia-properties-2qs99m9mr-koinonia3.vercel.app`
-- That preview showed the corrected full-width footer layout and confirmed mobile looked good, but desktop remained too large/top-heavy.
+- That preview predates the validated compact desktop/contact/social footer refinement.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -204,7 +204,8 @@ Current social status:
 
 - Facebook, Instagram, and TikTok controls are approved for visual/build purposes.
 - Real social profile URLs are not yet established.
-- Until URLs are supplied and approved, social controls must remain non-navigating placeholders and must not imply a live profile destination.
+- Until URLs are supplied and approved, social controls must remain disabled/non-navigating placeholders and must not imply a live profile destination.
+- Do not substitute guessed usernames, generic social homepages, or placeholder `#` destinations.
 
 Canonical website authority remains:
 
@@ -212,9 +213,9 @@ Canonical website authority remains:
 
 Latest validated repository checkpoint:
 
-- `18b94eb`
+- `beb8df4`
 
-The newer compact desktop/contact/social footer refinement is validation-pending.
+Visual acceptance of the compact desktop/contact/social footer remains pending a fresh Vercel Preview review.
 
 ---
 
@@ -252,21 +253,23 @@ Second preview review at `https://koinonia-properties-2qs99m9mr-koinonia3.vercel
 - The positioning sentence is too visually dominant for a footer.
 - CTA/contact area sits too far from the brand block.
 
-Approved desktop-only correction now in source:
+Validated desktop/contact/social correction at `beb8df4`:
 
-- Reduce desktop footer top padding and vertical gaps.
-- Reduce positioning copy from display-size serif treatment to restrained supporting copy.
-- Keep the brand/positioning block left and CTA/contact block right.
-- Display the real email address and phone number rather than generic `Email`, `Call`, and `Text` labels.
-- Group Call and Text around the same confirmed phone number.
-- Add visual Facebook, Instagram, and TikTok icon controls.
-- Keep those social controls disabled/non-navigating until real URLs are supplied.
-- Preserve the mobile accordion direction and scripture close.
+- Desktop footer top padding and vertical gaps are reduced.
+- Positioning copy is reduced from display-size treatment to restrained supporting copy.
+- Brand/positioning remain left and CTA/contact utilities remain right.
+- The real email address and phone number display instead of generic `Email`, `Call`, and `Text` labels.
+- Call and Text use the same confirmed phone number.
+- Facebook, Instagram, and TikTok visual controls are present.
+- Social controls remain disabled/non-navigating until real URLs are supplied.
+- Mobile accordion direction is preserved.
+- Scripture closing is preserved.
 
-Current validation-pending commits:
+Implementation commits for the compact contact/social refinement:
 
 - `67d84e2` — add real footer contact details and social placeholders
 - `9a075fc` — compact desktop footer/contact/social styling while preserving mobile behavior
+- `beb8df4` — validated repository tree containing the compact footer/contact/social refinement and synchronized DEV continuity state
 
 ---
 
@@ -336,6 +339,7 @@ Footer redesign and refinement:
 - `18b94eb` — validated screenshot-driven footer refinement checkpoint
 - `67d84e2` — add real contact details and visual social placeholders
 - `9a075fc` — compact desktop footer and social/contact layout
+- `beb8df4` — validated compact footer/contact/social repository checkpoint
 
 Because GitHub contents writes are file-scoped, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only or intermediate branch HEADs do not imply runtime validation.
 
@@ -343,7 +347,7 @@ Because GitHub contents writes are file-scoped, focused slices may span multiple
 
 ## Latest Validation
 
-Focused validation completed locally at `18b94eb` on 2026-08-13.
+Focused validation completed locally at `beb8df4` on 2026-08-13.
 
 Exact successful checks:
 
@@ -363,7 +367,7 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-The compact desktop/contact/social footer refinement must pass the same focused validation before it becomes the next validated repository checkpoint.
+This establishes `beb8df4` as the current validated repository checkpoint for the compact desktop/contact/social footer refinement. Visual acceptance remains separate and requires a fresh desktop/mobile preview review.
 
 ---
 
@@ -374,9 +378,9 @@ Current footer-review preview:
 - `https://koinonia-properties-2qs99m9mr-koinonia3.vercel.app`
 - Source branch head at deployment: `556fb43`
 - Deployment mode: Vercel Preview only
-- This preview does not contain the compact desktop/contact/social refinement.
+- This preview does not contain the validated compact desktop/contact/social refinement.
 
-The next preview should be created only after the current footer refinement passes focused local validation.
+The next preview should be refreshed from the current Properties DEV branch after this validation documentation sync and deployed with Vercel Preview only.
 
 Next visual-QA focus:
 
@@ -419,21 +423,13 @@ Temporary visual placeholders belong in this DEV continuity record until they be
 
 ## Immediate Next Work
 
-### First: Validate Compact Footer / Contact / Social Refinement
+### First: Deploy Compact Footer / Contact / Social Preview
 
-Fast-forward the dedicated Properties DEV worktree to the current branch HEAD and run:
-
-- `apps/properties-web/scripts/verify-boundary.mjs`
-- `git diff --check`
-- clean branch/worktree confirmation
-
-Do not mark the refinement validated until those checks pass.
-
-### Second: Deploy New Footer Preview
-
-After validation, refresh the dedicated preview worktree and deploy Vercel Preview only.
+Refresh the dedicated preview worktree from the current Properties DEV branch and deploy Vercel Preview only.
 
 Review desktop and mobile against the current visual-QA criteria above.
+
+Do not mark the footer visually accepted until the refreshed preview is reviewed.
 
 ### After Footer Acceptance: Owner Services Production Pass
 
