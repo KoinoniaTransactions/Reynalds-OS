@@ -67,11 +67,19 @@ export function PropertiesNav() {
       aria-label="Koinonia Properties navigation"
     >
       <a
-        className="koinonia-property-brand"
+        aria-label="Koinonia Properties home"
+        className="koinonia-property-brand koinonia-header-brand"
         href="/"
         onClick={closeMobileMenu}
       >
-        Koinonia Properties
+        <span className="koinonia-header-mark" aria-hidden="true">
+          K
+        </span>
+
+        <span className="koinonia-header-brand-text">
+          <strong>Koinonia Properties</strong>
+          <span>Property Management</span>
+        </span>
       </a>
 
       <button
