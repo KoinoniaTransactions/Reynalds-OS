@@ -1,7 +1,7 @@
 # Koinonia Consultation & Interview System
 
 Status: Canonical — Active Build  
-Version: 0.4  
+Version: 0.5  
 Date: 2026-08-14  
 Business: Koinonia Transactions  
 Primary Audience: Colorado Realtors, producing agents, growing teams, and brokerage relationships
@@ -126,10 +126,11 @@ Target: approximately 2–4 minutes.
 Purpose:
 
 - Introduce price only after value, need, and fit are established.
-- Present the appropriate current package, pricing model, or scoped first engagement.
-- Avoid turning the conversation into a menu of prices.
+- Quote only current approved pricing.
+- Present the recommended engagement structure without turning the conversation into a rate-sheet comparison.
+- Handle price questions and resistance without discounting the diagnosed value or forcing a poor fit.
 
-Detailed scripting: pending approval.
+Detailed pricing rules and scripts are defined below.
 
 ## Stage 7 — Decision & First Engagement
 
@@ -1459,19 +1460,514 @@ Prescribe clearly. Start appropriately. Deliver well. Earn expansion.
 
 ---
 
+# Stage 6 — Investment & Engagement Structure
+
+## Purpose
+
+Stage 6 explains what the prescribed starting engagement costs, how billing works, and what the prospect is actually agreeing to buy.
+
+Price is not hidden, apologized for, or used as the opening argument.
+
+By the time Stage 6 begins, the Realtor should already understand:
+
+- the diagnosed problem;
+- why it matters;
+- why Koinonia is relevant;
+- the service Koinonia recommends;
+- what that service will and will not handle.
+
+Stage 6 answers the remaining commercial question:
+
+"What does it cost to start?"
+
+---
+
+# Pricing Verification Gate — Mandatory Before Quoting
+
+Do not quote from memory when preparing for a consultation.
+
+Before a scheduled consultation or written proposal, verify the current approved price against:
+
+1. the Koinonia Pricing Rules Catalog and applicable pricing-rule object;
+2. the applicable package object when one exists;
+3. the current production website when the price is publicly presented there.
+
+If those sources conflict, do not improvise a price.
+
+Resolve the conflict before quoting.
+
+The Pricing Rules Catalog is the governance source for how pricing is defined, presented, billed, discounted, customized, and reported.
+
+A pricing change requires appropriate versioning/change control rather than an ad hoc verbal promise.
+
+---
+
+# Current Approved / Customer-Facing Price Reference
+
+This section records the current reference set as of Version 0.5 and must not replace the verification gate above.
+
+## Transaction Support
+
+Approved prepaid package:
+
+- $389 prepaid.
+- Due before transaction work begins.
+
+Approved pay-at-closing package:
+
+- $599 due after successful closing.
+- No coordination fee if the transaction does not close under the approved pricing rule.
+- The higher fee reflects Koinonia assuming payment/closing risk.
+
+## Contract & Document Support
+
+Current production website starting point:
+
+- $75.
+
+Final scope may depend on timing, urgency, complexity, and the approved service boundary.
+
+## Licensed Showing Coverage
+
+Current production website starting point:
+
+- $50.
+
+Final scope may depend on distance, timing, access details, duration, and availability.
+
+## Monthly Operations Partnership
+
+Current production website tiers:
+
+- Starter — $299/month, up to 3 hours/month, monthly operations check-in.
+- Growth — $599/month, up to 7 hours/month, biweekly operations support.
+- Partner — $999/month, up to 12 hours/month, weekly operations support.
+
+Monthly tiers are defined support levels, not unlimited assistant access.
+
+## Custom / Broader Support
+
+Where an approved custom support plan is appropriate, pricing must document:
+
+- included services;
+- excluded services;
+- billing terms;
+- workload/support level;
+- review cadence.
+
+Do not use "custom" as permission to invent an undocumented discount.
+
+---
+
+# Stage 6 Core Pricing Principle
+
+State the price clearly, connect it to the prescribed scope, then stop talking.
+
+Do not immediately justify, discount, or fill the silence.
+
+Preferred pattern:
+
+"For the [service] we just talked about, the current structure is [price/billing structure]. That covers [brief scope]."
+
+Then pause.
+
+The prospect is allowed to think.
+
+Silence after price is not an objection.
+
+---
+
+# Transaction Support — Exact Pricing Script
+
+When prepaid is the recommended structure:
+
+"For the Transaction Support we just talked about, the prepaid structure is $389 for the contract-to-close coordination. Payment is due before we begin the transaction work.
+
+That covers the defined transaction-support scope we just walked through — the timeline, deadline and document tracking, coordination, communication support, and closing preparation — while you retain the professional decisions and client relationship."
+
+Then pause.
+
+If relevant, explain the approved alternative:
+
+"We also have an approved pay-at-closing structure. That's $599, due only after a successful closing. Under that structure, if the transaction doesn't close, there isn't a coordination fee. The higher fee reflects Koinonia taking the payment risk rather than collecting upfront."
+
+Do not present the $599 option as a premium service if the approved service scope is materially the same.
+
+The difference is billing/risk structure, not an invented feature tier.
+
+---
+
+# When to Present Prepaid vs. Pay-at-Closing
+
+Do not automatically give both options to every prospect if one structure clearly fits the discussion.
+
+Present both when:
+
+- the prospect specifically cares about cash flow or paying from closing proceeds;
+- they ask whether payment can be deferred to closing;
+- the choice itself is relevant to the decision;
+- Koinonia intentionally wants the prospect to choose between the two approved billing structures.
+
+Lead with prepaid when there is no reason to complicate the decision.
+
+If the prospect asks why pay-at-closing costs more:
+
+"The operational service is not priced higher because we're trying to make the work sound more valuable. It's higher because Koinonia is waiting for payment and taking the risk that the transaction may not close."
+
+Keep the explanation simple.
+
+---
+
+# Contract & Document Support — Exact Pricing Script
+
+Recommended script:
+
+"For the Contract & Document Support we discussed, the current public starting point is $75 for a defined document-preparation request.
+
+Before we begin, we confirm the document, timing, instructions, and scope so you know what we're handling. If the request has unusual urgency or complexity that changes the scope, that gets clarified before the work starts — not surprised onto you afterward."
+
+Then pause.
+
+Do not use the $75 entry point to position Koinonia as a bargain drafting service.
+
+The value is licensed, organized, traceable preparation from Realtor instructions with clear review and approval boundaries.
+
+---
+
+# Licensed Showing Coverage — Exact Pricing Script
+
+Recommended script:
+
+"For Licensed Showing Coverage, the current public starting point is $50 for simple local coverage.
+
+We confirm the property, timing, access, client instructions, location, and availability before accepting the showing. If distance, timing, or the requested coverage changes the scope, we confirm that with you first."
+
+Then pause.
+
+Do not promise availability merely because the starting price exists.
+
+A showing is not committed until coverage and scope are confirmed.
+
+---
+
+# Monthly Operations Partnership — Tier Selection Rule
+
+Do not read all three monthly tiers and ask the Realtor to choose without guidance.
+
+Recommend a tier based on the recurring workload and cadence diagnosed in Stages 2–5.
+
+Use:
+
+- Starter when the Realtor needs a light monthly support layer and a small number of recurring priorities.
+- Growth when the Realtor needs a steady biweekly rhythm and more consistent CRM, pipeline, follow-up, or workflow support.
+- Partner when the Realtor or small team needs deeper weekly operational support and the diagnosed scope reasonably requires it.
+
+Recommend the tier before listing alternatives.
+
+---
+
+# Monthly Operations Partnership — Exact Pricing Scripts
+
+## Starter
+
+"Based on what you described, I would start with the Starter level rather than overbuild this. It's currently $299 per month for up to 3 hours of monthly operations support, including a monthly operations check-in and the defined priorities we agree should stay moving.
+
+That gives us enough structure to solve [diagnosed recurring problem] without asking you to commit to more support than we know you need yet."
+
+## Growth
+
+"Based on the amount and frequency of work you described, I think Growth is the better fit. It's currently $599 per month for up to 7 hours, with a biweekly support rhythm.
+
+That gives us room to consistently work on [diagnosed areas] instead of only touching them once a month and watching them pile up again."
+
+## Partner
+
+"Your situation is broader and needs a weekly operating rhythm, so I would recommend Partner. It's currently $999 per month for up to 12 hours, with weekly operations support and the deeper workflow/operations structure we discussed.
+
+I wouldn't recommend that level if the workload didn't support it. In your case, the reason is [specific diagnosed recurring scope]."
+
+After any tier recommendation, pause and let the prospect respond.
+
+---
+
+# If the Prospect Asks, "What Do the Other Monthly Levels Cost?"
+
+Answer directly.
+
+Recommended response:
+
+"Starter is currently $299 for up to 3 hours per month, Growth is $599 for up to 7, and Partner is $999 for up to 12. The bigger difference isn't just the hours — it's the operating cadence and depth of support.
+
+I recommended [tier] because [diagnosed reason]. If you want, we can compare the scopes, but I don't want to move you up or down just to hit a number if it won't solve the problem."
+
+---
+
+# Investment Framing Rule
+
+Do not use fake ROI math.
+
+Do not claim that a service "pays for itself" unless there is actual prospect-specific evidence supporting that conclusion.
+
+Instead, reconnect price to an already acknowledged consequence.
+
+Examples:
+
+"Earlier you said this is taking about [their stated time/impact] away from prospecting. The question is whether moving that operating work off your plate is worth $389 on an active transaction."
+
+"You said the recurring follow-up problem comes back every month. The decision is whether creating a defined operating rhythm around it is worth $599 per month to you."
+
+Use the prospect's facts.
+
+Do not manufacture revenue numbers, hourly-value calculations, missed-client assumptions, or closing projections.
+
+---
+
+# If the Prospect Says, "That's Expensive"
+
+Do not immediately defend the price.
+
+Ask one calm question first:
+
+"Compared with what you were expecting?"
+
+or:
+
+"Is the concern the amount itself, or whether the scope is worth that amount?"
+
+Those are different problems.
+
+If the concern is value/scope:
+
+"That's fair. Let me reconnect it to what you told me. You said [problem] is creating [consequence]. The reason I recommended [service] is to move [defined responsibility] off your plate. If that outcome isn't worth [price] to you, then I don't want to force the fit."
+
+If the concern is cash flow:
+
+Use only approved billing structures. For Transaction Support, the approved pay-at-closing option may be relevant.
+
+If the concern is simply budget:
+
+See whether a smaller legitimate scope solves a smaller real problem.
+
+Do not create a fake discount to rescue the sale.
+
+---
+
+# If the Prospect Says, "I Know Someone Cheaper"
+
+Do not disparage the other provider.
+
+Recommended response:
+
+"You very well may, and price can absolutely be part of the decision. I wouldn't tell you to pay more just because our name is Koinonia.
+
+What I'd compare is whether the scope, communication, boundaries, and level of operational ownership are actually the same. If they are and price is the deciding factor, the less expensive option may make sense for you. If they're not, then we're comparing different support models."
+
+Only discuss competitor differences that are actually known.
+
+Do not invent weaknesses in another provider.
+
+---
+
+# Discount Requests
+
+Do not create ad hoc discounts during the consultation.
+
+If the prospect asks:
+
+"Can you do better on the price?"
+
+Recommended response:
+
+"I don't want to make up a different price in the room just to get a yes. Our pricing and billing structures are defined so expectations stay consistent.
+
+What I can do is make sure we're not asking you to buy more scope than you need. If the budget doesn't fit the recommendation, we can look at whether a smaller approved engagement still solves something meaningful."
+
+If a custom pricing exception is ever considered, it must be documented through the approved custom-pricing process rather than promised verbally.
+
+---
+
+# Scope Reduction Before Discounting
+
+When budget is the obstacle, prefer legitimate scope reduction over price erosion.
+
+Examples:
+
+- Start with one Contract & Document Support request rather than a broader operations commitment.
+- Start with one active transaction rather than assuming ongoing transaction volume.
+- Use showing coverage only when the scheduling conflict occurs.
+- Use the correct smaller monthly tier when the recurring workload truly fits it.
+
+Do not reduce scope so far that the engagement can no longer solve the problem being sold.
+
+A cheap engagement that predictably fails is not a good trial.
+
+---
+
+# If the Prospect Says, "I Need to Think About It"
+
+Do not treat this as the final close; Stage 7 will handle the decision process.
+
+In Stage 6, clarify whether the unresolved issue is price or something else.
+
+Ask:
+
+"Of course. Before we move on, is there anything about the scope or the investment that still feels unclear?"
+
+If yes, clarify it.
+
+If no, do not pressure them with a new discount.
+
+Move into the Stage 7 decision/next-step conversation.
+
+---
+
+# If the Prospect Asks for a Free Trial
+
+Do not promise free operational work unless an approved promotion or policy exists.
+
+Recommended response:
+
+"I want the first engagement to be low-risk and appropriately scoped, but I also want it to be real work with real accountability. I'd rather choose the smallest paid engagement that lets you actually experience how Koinonia works than create a free version that doesn't reflect the service."
+
+Then return to the smallest sufficient first engagement.
+
+---
+
+# If the Prospect Wants a Custom Combination
+
+Do not price a mixed package spontaneously.
+
+Recommended response:
+
+"We can scope that if the combination actually makes sense. I don't want to invent a bundled number on the spot. I'll define what is included, what is excluded, the workload, billing terms, and review cadence so you can evaluate a real proposal rather than a guess."
+
+Use the approved custom-support pricing rule when applicable.
+
+---
+
+# Price Objection Diagnostic
+
+Before answering a pricing objection, identify which objection it actually is:
+
+1. Value — "I don't see why this is worth that."
+2. Budget — "I can't comfortably spend that right now."
+3. Cash flow — "I don't want to pay before closing."
+4. Comparison — "Someone else charges less."
+5. Scope — "I don't think I need all of that."
+6. Trust — "I don't know you well enough yet."
+7. Timing — "I don't need this yet."
+
+Do not answer all seven when only one exists.
+
+The correct response depends on the real objection.
+
+---
+
+# Trust Objection — "I Don't Know You Well Enough Yet"
+
+Do not solve a trust objection with a price cut.
+
+Recommended response:
+
+"That's reasonable. Then I wouldn't ask you to make the relationship bigger than your trust level supports.
+
+Let's choose the smallest real engagement that solves something useful, let you experience the communication and follow-through, and gives both of us a chance to see whether the working relationship fits."
+
+This directly reinforces the smallest-sufficient-first-engagement rule.
+
+---
+
+# Timing Objection — "I Don't Need It Yet"
+
+If the prospect is not currently ready:
+
+"That's okay. Based on what we talked about, what would be the signal that tells you it's time — a certain number of active files, another schedule conflict, recurring follow-up slipping again, or something else?"
+
+The answer can guide a later follow-up without manufacturing urgency.
+
+Do not discount simply to create artificial timing pressure.
+
+---
+
+# Pricing Presentation Anti-Patterns
+
+Do not:
+
+- apologize for the price;
+- say "it's only $___";
+- immediately discount after stating the price;
+- quote an unverified price from memory;
+- hide the $599 pay-at-closing fee until after the prospect agrees;
+- imply pay-at-closing is cheaper because no money is due upfront;
+- present all monthly tiers before making a recommendation;
+- use fake savings or ROI calculations;
+- compare Koinonia with unknown competitors as if their scope is identical;
+- invent a package in the room;
+- offer unlimited support for a fixed fee;
+- promise free trials without an approved policy;
+- let an objection turn into defensive over-explaining.
+
+Preferred posture:
+
+Clear price. Clear scope. Clear billing. Calm conversation.
+
+---
+
+# Stage 6 Transition into the Decision
+
+Once price and scope are understood, stop selling the value again unless the prospect asks.
+
+Default transition:
+
+"So that's the structure I would recommend based on what you told me. The next question is simply whether you want to start with it."
+
+Alternative:
+
+"If you're comfortable with that scope and investment, we can talk about the exact first step to get it moving."
+
+For a transaction already under contract:
+
+"If this is the direction you want to go, the cleanest next step would be to use the active file we discussed as the first engagement."
+
+For document support:
+
+"If you want to start smaller, the next real document request can be the first engagement."
+
+For showing coverage:
+
+"The next time the schedule conflict happens, we can make that the first defined engagement."
+
+For monthly support:
+
+"If you want to build the recurring support rhythm now, we'll define the first month's priorities and confirm the tier before work begins."
+
+Then move to Stage 7.
+
+---
+
+# Stage 6 Success Condition
+
+Stage 6 is complete when:
+
+1. The quoted price has been verified against current approved sources.
+2. The prospect understands what the price covers.
+3. The prospect understands when and how they are billed.
+4. Any relevant alternative billing structure has been explained accurately.
+5. Any price concern has been identified as value, budget, cash flow, comparison, scope, trust, or timing rather than guessed.
+6. No unapproved discount or custom promise has been made.
+7. The prospect has enough commercial clarity to make or discuss a decision.
+
+Then move to Stage 7.
+
+---
+
 # Relationship to Existing Canonical Material
 
 This system extends — and does not replace — the existing Koinonia Sales Operating System and service-specific sales enablement.
 
-The Transaction Management service establishes structured contract-to-close coordination, deadline management, communication coordination, file organization, compliance tracking, closing preparation, and professional boundaries.
+The Pricing Rules Catalog remains the authoritative governance source for how Koinonia pricing is defined, presented, billed, discounted, customized, and reported.
 
-Contract Preparation & Writing establishes licensed document-preparation support from Realtor instructions while preserving Realtor judgment and final approval.
-
-Licensed Showing Coverage establishes professional licensed field support for availability conflicts while preserving the Realtor-client relationship and limiting the role to approved showing responsibilities.
-
-Business Operations Support establishes defined recurring administrative and operational support and explicitly rejects vague unlimited assistant work.
-
-The live Koinonia Transactions Services & Pricing page presents these customer-facing paths as Transaction Support, Contract & Document Support, Licensed Showing Coverage, and Monthly Operations Partnership.
+The current approved pricing rules include prepaid transaction pricing, pay-at-closing transaction pricing, and documented custom-support pricing. The production website currently provides the customer-facing starting points for Contract & Document Support, Licensed Showing Coverage, and the Monthly Operations Partnership tiers.
 
 Canonical service claims, scope, packages, and pricing remain governed by their existing business objects, pricing sources, and the then-current production website.
 
@@ -1479,7 +1975,7 @@ Canonical service claims, scope, packages, and pricing remain governed by their 
 
 # Build Status
 
-Approved and documented in Version 0.4:
+Approved and documented in Version 0.5:
 
 - Consultation purpose.
 - Diagnose-first sales principle.
@@ -1487,29 +1983,23 @@ Approved and documented in Version 0.4:
 - Early-reveal restrictions.
 - Stage 1 exact opening and permission sequence.
 - Stage 2 exact diagnostic sequence and listening framework.
-- Stage 3 three-part problem-reflection method.
-- Stage 3 branching reflection patterns.
-- Handling for disagreement, multiple problems, existing support, proactive-growth prospects, and poor fit.
-- Exact bridge from confirmed diagnosis into the Koinonia reveal.
-- Stage 4 exact Koinonia reveal sequence.
-- Meaning and pronunciation of Koinonia in the consultation context.
-- Operating-partner positioning and professional-boundary language.
-- Personalized reveal variations by diagnosed pressure.
-- Rules for technology/portal questions and TC comparisons.
-- Exact transition from the Koinonia reveal into a prescribed service recommendation.
-- Stage 5 smallest-sufficient-first-engagement rule.
-- Decision logic for choosing Transaction Support, Contract & Document Support, Licensed Showing Coverage, or Monthly Operations Partnership.
-- 60–90 second service-specific prescription scripts.
-- Mixed-capacity and existing-support decision rules.
-- Rules for showing the broader four-service system and when not to upsell.
-- Recommendation confidence test.
-- Exact transition from prescribed service into Stage 6 investment and pricing.
+- Stage 3 problem-reflection method and branching patterns.
+- Stage 4 exact Koinonia reveal sequence, name meaning, operating-partner positioning, and transition.
+- Stage 5 smallest-sufficient-first-engagement rule, service decision logic, service scripts, and upsell limits.
+- Stage 6 mandatory pricing verification gate.
+- Current approved/customer-facing pricing reference set.
+- Exact price presentation scripts for Transaction Support, Contract & Document Support, Licensed Showing Coverage, and all three Monthly Operations Partnership tiers.
+- Prepaid versus pay-at-closing explanation.
+- Price objection diagnostic and response patterns.
+- Discount, scope-reduction, competitor-comparison, free-trial, custom-combination, trust, and timing rules.
+- Exact transition from investment into the final decision stage.
 
 Next build stage:
 
-- Stage 6 — Investment & Engagement Structure.
-- Exact timing and language for price.
-- How to present current pricing without turning the conversation into a commodity comparison.
-- How to handle prepaid versus pay-at-close where applicable, monthly tiers, scope variables, price questions, and budget resistance.
+- Stage 7 — Decision & First Engagement.
+- Exact closing questions.
+- How to ask directly for the first engagement without pressure.
+- What to do with yes, no, not now, needs spouse/team/broker approval, or follow-up decisions.
+- Consultation closeout, follow-up timing, and required internal notes/outcome tracking.
 
-Do not treat Stages 6–7 as fully scripted until their sections are approved and added to this canonical file.
+Do not treat Stage 7 as fully scripted until its section is approved and added to this canonical file.
