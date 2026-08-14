@@ -35,6 +35,7 @@ Recover before reinventing.
 | Service Objects | 02_Companies/Koinonia/01_Services/ | Active |
 | Packages | 02_Companies/Koinonia/02_Packages/ | Active |
 | Pricing | 02_Companies/Koinonia/03_Pricing/ | Active |
+| Consultation & Interview System | BRAIN/KOINONIA_CONSULTATION_INTERVIEW_SYSTEM.md | Active Build |
 
 ---
 
