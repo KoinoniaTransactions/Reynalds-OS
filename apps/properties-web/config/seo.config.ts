@@ -37,16 +37,16 @@ export const seoConfig = {
   businessName: "Koinonia Properties",
   locale: "en_US",
   defaultTitle:
-    "Koinonia Properties | Property Management",
+    "Rental Property Management | Koinonia Properties",
   defaultDescription:
-    "Property management support for rental property owners and residents, including rental analysis, leasing support, maintenance coordination, and clear communication.",
+    "Koinonia Properties provides organized rental property management with leasing support, maintenance coordination, owner communication, and responsible care.",
   publicRoutes: [
     {
       path: "/",
       title:
-        "Koinonia Properties | Property Management",
+        "Rental Property Management | Koinonia Properties",
       description:
-        "Property management support for rental owners and residents, including rental analysis, leasing, maintenance coordination, and clear communication."
+        "Koinonia Properties provides organized rental property management with leasing support, maintenance coordination, owner communication, and responsible care."
     },
     {
       path: "/owners",
