@@ -61,7 +61,7 @@ export function Footer({ serviceLine, supportLine }: FooterProps = {}) {
   return (
     <footer className="koinonia-footer properties-footer">
       <div className="koinonia-footer-inner properties-footer-inner">
-        <div className="properties-footer-lead">
+        <div className="properties-footer-lead" style={{ gridColumn: "1 / -1" }}>
           <div className="properties-footer-brand-block">
             <div className="koinonia-footer-brand properties-footer-brand">
               <span className="koinonia-footer-mark">K</span>
@@ -98,6 +98,7 @@ export function Footer({ serviceLine, supportLine }: FooterProps = {}) {
         <div
           className="properties-footer-navigation properties-footer-navigation-desktop"
           aria-label="Koinonia Properties footer navigation"
+          style={{ gridColumn: "1 / -1" }}
         >
           {footer.groups.map((group) => (
             <section className="properties-footer-group" key={group.title}>
@@ -114,7 +115,10 @@ export function Footer({ serviceLine, supportLine }: FooterProps = {}) {
           ))}
         </div>
 
-        <div className="properties-footer-navigation properties-footer-navigation-mobile">
+        <div
+          className="properties-footer-navigation properties-footer-navigation-mobile"
+          style={{ gridColumn: "1 / -1" }}
+        >
           {footer.groups.map((group) => (
             <details className="properties-footer-mobile-group" key={group.title}>
               <summary>{group.title}</summary>
