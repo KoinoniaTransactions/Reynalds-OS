@@ -17,18 +17,19 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Latest validated repository checkpoint: `149d281`
+- Latest validated repository checkpoint: `b66d806`
 - The Home content/SEO production pass was established at `d7a821e`.
 - The centered owner-CTA refinement was validated at `bb38496` and visually accepted in the Preview sourced from `8ed6382`.
 - The five-step Home process layout refinement was validated at `bd1a356` and visually accepted in the Preview sourced from `15b35ad`.
 - The coordinated header-dropdown interaction fix was validated at `149d281` and behaviorally accepted in the Preview sourced from `c64ef77`.
+- The Home card-layout refinement was validated at `b66d806`: audience-path CTAs are aligned to the bottom of their cards, and Property Management Services now uses a 2×2 desktop/tablet grid with a single-column mobile layout. These two refinements still require refreshed Preview visual acceptance.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
 - Current reviewed Home preview: `https://koinonia-properties-22grc7nkw-koinonia3.vercel.app`
 - Source branch head at that deployment: `c64ef77`.
 - That preview contains the Home content/SEO rewrite, centered owner CTA, responsive process layout, coordinated header dropdown behavior, shared Koinonia branding/favicon, and approved footer refinements.
 - In current/recent Preview review, the hero eyebrow was confirmed present; the Koinonia Approach, owner section, five-step process, Rental Analysis feature, FAQ, closing CTA, transition into the footer, and header dropdown interaction are accepted.
-- Home audience-path CTA baseline alignment remains a possible final visual refinement, and the full Property Management Services card section still needs a complete visual review before the entire Home page is marked accepted.
+- The current reviewed preview predates the `b66d806` Home card-layout refinement, so the audience-path CTA alignment and new Services 2×2 layout are code-validated but not yet visually accepted.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -347,7 +348,7 @@ Validated rebuild/refinement commits:
 
 The core Home content/SEO production pass was validated on 2026-08-14 at repository checkpoint `d7a821e`.
 
-The latest validated Home/runtime repository checkpoint is `149d281`.
+The latest validated Home/runtime repository checkpoint is `b66d806`.
 
 Primary implementation:
 
@@ -394,7 +395,11 @@ Home mirrors the approved customer journeys:
 
 Real estate investors remain inside the owner journey rather than replacing the prospective-renter journey.
 
-Visual QA of the refreshed Preview found the cards themselves strong, but the three CTA buttons do not share a consistent vertical baseline because the owner copy is longer than the renter/resident copy. The preferred future refinement is layout-only: keep the approved copy and align the CTA area to the bottom of each audience card. That refinement is not yet implemented or approved for execution.
+Visual QA of the Preview sourced from `c64ef77` found the cards themselves strong, but the three CTA buttons did not share a consistent vertical baseline because the owner copy is longer than the renter/resident copy.
+
+The focused layout-only refinement validated at `b66d806` keeps all approved copy and gives the Home audience grid a Properties-local hook so each card can fill its grid row and push its `.koinonia-actions` block to the bottom. This should align all three CTA buttons without changing the shared `UniversalCard` component or other Properties card uses.
+
+This audience-card refinement is code-validated but still requires refreshed Preview visual acceptance.
 
 ### Koinonia Approach
 
@@ -408,7 +413,7 @@ This is intended to differentiate Koinonia Properties from generic property-mana
 
 The Koinonia Approach section was visually accepted in the Preview sourced from `15b35ad`; the three cards feel balanced, the copy density is appropriate, and the transition into the dark Property Management Services band is strong.
 
-### Home service vocabulary
+### Home service vocabulary and layout
 
 The Home service summary uses clearer owner-facing and search-relevant language:
 
@@ -419,7 +424,17 @@ The Home service summary uses clearer owner-facing and search-relevant language:
 
 These remain service categories rather than a promise that every property receives every item under every engagement.
 
-The Property Management Services heading/transition is visible and reads well in the current Preview, but the complete four-card services section still needs full visual review before Home is marked accepted.
+Visual QA of the four-across desktop version in the Preview sourced from `c64ef77` found the dark-band direction, heading, intro, numbered cards, and centered `Explore Owner Services` CTA strong, but the four cards were too narrow for the approved service copy. The longer service titles and body copy wrapped excessively, making the section feel denser than the rest of Home.
+
+The approved layout-only refinement validated at `b66d806` preserves all four service categories, wording, bullets, numbering, dark styling, and CTA while changing only the grid presentation:
+
+- desktop: 2×2;
+- tablet: 2×2;
+- mobile: one card per row.
+
+The Services layout is scoped through `properties-services-grid` in `apps/properties-web/app/properties.css`; no shared design-system or `UniversalCard` styling was changed.
+
+This Services refinement is code-validated but still requires refreshed Preview visual acceptance.
 
 ### Owner relationship and visual acceptance
 
@@ -517,7 +532,7 @@ The navigation interaction fix passed focused Properties boundary validation and
 
 ### Home visual acceptance
 
-Code and boundary validation are complete at `149d281`.
+Code and boundary validation are complete at `b66d806`.
 
 Visually/behaviorally accepted in current/recent Preview review:
 
@@ -532,10 +547,14 @@ Visually/behaviorally accepted in current/recent Preview review:
 - closing CTA;
 - transition into the approved footer.
 
+Code-validated but still pending refreshed Preview visual acceptance:
+
+- audience-path CTA bottom alignment introduced at `b66d806`;
+- Property Management Services 2×2 desktop/tablet and single-column mobile layout introduced at `b66d806`.
+
 Still pending before the entire Home page is marked visually accepted:
 
-- complete visual review of all four Property Management Services cards;
-- final decision on the Home audience-card CTA baseline alignment refinement;
+- refreshed Preview review of both `b66d806` card-layout refinements;
 - final responsive/mobile Home sweep for remaining page sections before sign-off.
 
 Do not mark the entire Home page visually accepted until these remaining checkpoints are resolved.
@@ -627,7 +646,9 @@ Home content / SEO production pass and visual refinement:
 - `bb38496` — center the single Rental Analysis CTA in the owner-focused Home section
 - `c885a9c` — replace the Home process inline grid rule with a Properties-local process-grid class
 - `bd1a356` — add responsive 3/2 desktop, 2/2/1 tablet, and single-column mobile process layout
-- `149d281` — coordinate Properties header dropdown state, outside-click closing, Escape closing, and navigation-state cleanup; latest validated runtime checkpoint and behaviorally accepted in the Preview sourced from `c64ef77`
+- `149d281` — coordinate Properties header dropdown state, outside-click closing, Escape closing, and navigation-state cleanup; behaviorally accepted in the Preview sourced from `c64ef77`
+- `254b9eb` — add Properties-local Home audience/services layout hooks without changing approved copy
+- `b66d806` — align audience-path CTAs and change Property Management Services to 2×2 desktop/tablet plus single-column mobile; latest validated runtime checkpoint
 
 Because GitHub contents writes are file-scoped, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only or intermediate branch HEADs do not imply runtime validation.
 
@@ -635,7 +656,7 @@ Because GitHub contents writes are file-scoped, focused slices may span multiple
 
 ## Latest Validation
 
-Focused validation completed locally at `149d281` on 2026-08-14.
+Focused validation completed locally at `b66d806` on 2026-08-14.
 
 Exact successful checks:
 
@@ -655,7 +676,7 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-This establishes `149d281` as the current validated repository/runtime checkpoint. It includes the Home content/SEO work, accepted centered owner CTA, accepted responsive process layout, and the coordinated header-dropdown interaction fix. The dropdown behavior has also been accepted in the refreshed Preview sourced from `c64ef77`.
+This establishes `b66d806` as the current validated repository/runtime checkpoint. It includes the previously accepted Home content/SEO, owner CTA, responsive process layout, coordinated header behavior, and the new Home card-layout refinement. The new audience CTA alignment and Services 2×2 layout remain visually pending until a refreshed Preview containing `b66d806` is reviewed.
 
 ---
 
@@ -675,14 +696,16 @@ Current reviewed Home preview:
 - The dark `Start With a Rental Analysis` feature section is visually accepted.
 - The FAQ section is visually accepted.
 - The final `Let's start with the property.` CTA and transition into the footer are visually accepted.
-- The audience-path cards remain visually strong overall, but their CTA buttons do not align to one baseline because the approved copy lengths differ.
-- The Property Management Services heading/transition looks strong, but the full four-card section still needs complete visual review.
+- This preview does not contain the `b66d806` audience-card CTA alignment or Services 2×2 layout.
+
+The next preview should be refreshed from the current Properties DEV branch after this documentation sync and deployed with Vercel Preview only.
 
 Next Home visual-QA focus:
 
-- capture/review the full four-card Property Management Services section;
-- decide whether to implement the local audience-card CTA bottom-alignment refinement without changing approved copy;
-- perform the final responsive/mobile Home sweep for remaining page sections before declaring the entire Home page visually accepted.
+- verify the audience-path CTA buttons now share a deliberate baseline without making the cards feel artificially tall;
+- review the full Property Management Services section in the new 2×2 desktop layout for heading wrap, body line length, card balance, vertical rhythm, and the centered `Explore Owner Services` CTA;
+- verify the Services layout remains two columns at tablet widths and one column on mobile;
+- perform the final responsive/mobile Home sweep before declaring the entire Home page visually accepted.
 
 Do not mark the entire rewritten Home visually accepted until these remaining checks are complete.
 
@@ -717,16 +740,18 @@ Temporary visual placeholders belong in this DEV continuity record until they be
 
 ## Immediate Next Work
 
-### First: Finish Home Visual QA
+### First: Refresh Preview for the Final Home Card Refinements
 
-The navigation fix is validated and behaviorally accepted. Continue the remaining Home review without another code change unless a specific visual issue is approved for refinement.
+Refresh the dedicated Preview worktree from the current Properties DEV branch after this documentation sync and deploy Vercel Preview only.
 
-Next:
+Review the `b66d806` changes first:
 
-- review the complete Property Management Services card section;
-- decide whether the audience-path CTA baseline alignment needs the proposed local layout-only refinement;
-- perform the final responsive/mobile Home sweep;
-- only then decide whether the entire Home page is visually accepted.
+- audience-path CTA baseline alignment;
+- Property Management Services 2×2 desktop/tablet and single-column mobile layout.
+
+### Then: Final Home Responsive Sweep
+
+If both card-layout refinements are visually accepted, perform the final responsive/mobile Home sweep and decide whether the entire Home page is visually accepted.
 
 ### After Home Visual Acceptance: Choose the Next Page
 
