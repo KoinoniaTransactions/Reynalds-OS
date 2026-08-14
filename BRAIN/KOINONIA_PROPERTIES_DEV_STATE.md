@@ -17,18 +17,19 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Latest validated repository checkpoint: `bd1a356`
+- Latest validated repository checkpoint: `149d281`
 - The Home content/SEO production pass was established at `d7a821e`.
 - The centered owner-CTA refinement was validated at `bb38496` and visually accepted in the Preview sourced from `8ed6382`.
-- The five-step Home process layout refinement is included in the validated tree at `bd1a356`.
+- The five-step Home process layout refinement was validated at `bd1a356` and visually accepted in the Preview sourced from `15b35ad`.
+- The coordinated header-dropdown interaction fix is validated at `149d281` and still requires refreshed Preview interaction testing.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
-- Current reviewed Home preview: `https://koinonia-properties-d5wsdxegv-koinonia3.vercel.app`
-- Source branch head at that deployment: `8ed6382`.
-- That preview contains the Home content/SEO rewrite, the centered owner CTA, shared Koinonia branding/favicon, and the approved footer refinements.
-- In that preview, the owner-focused section was visually accepted after the CTA was centered, and the dark Rental Analysis feature section was also judged balanced and intentional.
-- The five-step process section in that preview still shows the old five-narrow-card desktop layout. That old presentation was not accepted visually.
-- The new process-grid layout is validated in code at `bd1a356` but still requires a refreshed Vercel Preview review.
+- Current reviewed Home preview: `https://koinonia-properties-frqfv7tvt-koinonia3.vercel.app`
+- Source branch head at that deployment: `15b35ad`.
+- That preview contains the Home content/SEO rewrite, centered owner CTA, responsive process layout, shared Koinonia branding/favicon, and approved footer refinements.
+- In that preview, the hero eyebrow was confirmed present; the Koinonia Approach, owner section, five-step process, Rental Analysis feature, FAQ, closing CTA, and transition into the footer were visually accepted.
+- During review of that preview, the header audience dropdowns were found to remain open independently and not close on outside click. The focused interaction fix is validated at `149d281` but is not present in the current preview yet.
+- Home audience-path CTA baseline alignment remains a possible final visual refinement, and the full Property Management Services card section still needs a complete visual review before the entire Home page is marked accepted.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -144,6 +145,17 @@ Supporting navigation:
 - Investors remain inside the Owners journey unless a future approved investor offering becomes meaningfully distinct.
 - `Portals` is not treated as a major marketing category; public wording should prefer Account Access / Account & Portal Access.
 
+Desktop dropdown interaction validated in code at `149d281`:
+
+- only one audience dropdown may be open at a time;
+- opening another audience group closes the current group;
+- clicking outside the audience dropdown groups closes the open group;
+- pressing Escape closes the open group;
+- clicking the logo, Contact, Request Rental Analysis, or a dropdown destination clears dropdown state;
+- existing routes, desktop styling, and `<details>/<summary>` structure are preserved.
+
+This interaction fix still requires refreshed Preview testing before it is visually/behaviorally accepted.
+
 ---
 
 ## Approved Mobile Navigation
@@ -161,7 +173,7 @@ Mobile behavior below the Properties mobile breakpoint:
 - Selecting a navigation destination closes the mobile menu.
 - The hamburger control includes accessible expanded-state and open/close labels.
 
-Desktop audience-group navigation remains unchanged by the mobile-collapse behavior.
+The `149d281` navigation-state fix preserves this mobile structure while coordinating audience-group state and clearing open groups when the hamburger changes state.
 
 ---
 
@@ -336,7 +348,7 @@ Validated rebuild/refinement commits:
 
 The core Home content/SEO production pass was validated on 2026-08-14 at repository checkpoint `d7a821e`.
 
-The latest validated Home repository checkpoint is `bd1a356`.
+The latest validated Home/runtime repository checkpoint is `149d281`.
 
 Primary implementation:
 
@@ -344,6 +356,7 @@ Primary implementation:
 - `apps/properties-web/app/page.tsx`
 - `apps/properties-web/config/seo.config.ts`
 - `apps/properties-web/app/properties.css`
+- `apps/properties-web/components/site/PropertiesNav/PropertiesNav.tsx`
 
 The Home page remains a decision-and-routing page rather than a duplicate of every downstream page, but its customer-facing copy and SEO strategy now more directly reflect the Koinonia brand and professional rental-property-management search intent.
 
@@ -357,6 +370,8 @@ Current Home hero content:
 - H1: `Property Management. Elevated.`
 - primary CTA: `Request Rental Analysis`
 - secondary CTA: `View Available Homes`
+
+The refreshed Preview sourced from `15b35ad` confirmed that the `Rental Property Management` eyebrow is present at the top of the hero. The overall hero composition, approved image, headline, lead, and CTAs remain visually strong.
 
 The phrase `Property Management. Elevated.` intentionally relates Properties to the Koinonia family language used by Transactions while keeping the company and service distinct.
 
@@ -380,6 +395,8 @@ Home mirrors the approved customer journeys:
 
 Real estate investors remain inside the owner journey rather than replacing the prospective-renter journey.
 
+Visual QA of the refreshed Preview found the cards themselves strong, but the three CTA buttons do not share a consistent vertical baseline because the owner copy is longer than the renter/resident copy. The preferred future refinement is layout-only: keep the approved copy and align the CTA area to the bottom of each audience card. That refinement is not yet implemented or approved for execution.
+
 ### Koinonia Approach
 
 Home expresses the Properties-specific version of the broader Koinonia operating philosophy through three principles:
@@ -389,6 +406,8 @@ Home expresses the Properties-specific version of the broader Koinonia operating
 - Responsible Care
 
 This is intended to differentiate Koinonia Properties from generic property-management marketing while remaining grounded in the canonical Property Management service definition.
+
+The Koinonia Approach section was visually accepted in the Preview sourced from `15b35ad`; the three cards feel balanced, the copy density is appropriate, and the transition into the dark Property Management Services band is strong.
 
 ### Home service vocabulary
 
@@ -401,13 +420,15 @@ The Home service summary uses clearer owner-facing and search-relevant language:
 
 These remain service categories rather than a promise that every property receives every item under every engagement.
 
+The Property Management Services heading/transition is visible and reads well in the current Preview, but the complete four-card services section still needs full visual review before Home is marked accepted.
+
 ### Owner relationship and visual acceptance
 
 Home includes a dedicated owner-focused section emphasizing visibility, organized follow-through, leasing activity, resident communication, maintenance, vendors, and owner updates.
 
 The earlier Preview showed that the section's centered eyebrow, heading, and body copy were visually strong, but the single `Request Rental Analysis` button was left-aligned and made the section feel unbalanced. The focused refinement at `bb38496` centered that CTA beneath the copy.
 
-The refreshed Preview at `https://koinonia-properties-d5wsdxegv-koinonia3.vercel.app`, sourced from `8ed6382`, confirmed the correction. The owner section is now visually accepted: the centered CTA restores a balanced vertical composition without adding an unnecessary secondary action.
+The refreshed Preview at `https://koinonia-properties-d5wsdxegv-koinonia3.vercel.app`, sourced from `8ed6382`, confirmed the correction. The owner section is visually accepted: the centered CTA restores a balanced vertical composition without adding an unnecessary secondary action.
 
 ### Management process
 
@@ -432,17 +453,17 @@ Validated process-grid behavior at `bd1a356`:
 - no shared design-system CSS was changed;
 - the layout is scoped through `properties-process-grid` in `apps/properties-web/app/properties.css`.
 
-The process layout is code-validated at `bd1a356` but not yet visually accepted. A refreshed Preview is required.
+The refreshed Preview at `https://koinonia-properties-frqfv7tvt-koinonia3.vercel.app`, sourced from `15b35ad`, confirmed the desktop 3/2 composition. The five-step process section is visually accepted: card widths, title wrapping, body line lengths, and centered second row now read as intentional and calm.
 
 Rental Analysis has its own prominent section and remains the preferred owner entry point.
 
 ### Rental Analysis feature section
 
-The dark `Start With a Rental Analysis` feature section was reviewed in the Preview sourced from `8ed6382` and judged visually balanced and intentional. The centered gold CTA, dark band, headline, body copy, and spacing read as one coherent composition.
+The dark `Start With a Rental Analysis` feature section was reviewed and judged visually balanced and intentional. The centered gold CTA, dark band, headline, body copy, and spacing read as one coherent composition.
 
 No further change is currently recommended for that section.
 
-### Home FAQ strategy
+### Home FAQ strategy and visual acceptance
 
 Home uses owner-intent property-management questions covering:
 
@@ -454,6 +475,14 @@ Home uses owner-intent property-management questions covering:
 - individual and multi-property investor needs.
 
 The FAQs are intended primarily for useful topical coverage and customer clarity, not as a promise of special FAQ search-result presentation.
+
+The two-column desktop FAQ layout was visually accepted in the Preview sourced from `15b35ad`: questions scan clearly, card widths are comfortable, longer answers do not feel cramped, and the transition from the dark Rental Analysis band into the light FAQ section is strong.
+
+### Closing CTA and footer transition
+
+The final `Let's start with the property.` section was visually accepted in the Preview sourced from `15b35ad`. The paired CTAs clearly separate owner and renter intent, the composition reads as a page conclusion, and the transition into the previously approved footer is clean.
+
+No further change is currently recommended for the closing CTA or footer transition.
 
 ### Home SEO
 
@@ -476,13 +505,41 @@ Home includes:
 
 The structured data does not invent or publish unverified address, service area, hours, ratings, reviews, price range, or geographic coverage.
 
+### Header dropdown interaction
+
+During visual QA of the Preview sourced from `15b35ad`, the audience dropdowns were found to have two functionality problems:
+
+- multiple dropdowns could remain open at the same time;
+- clicking outside an open dropdown did not close it.
+
+The focused fix at `149d281` coordinates dropdown state inside `PropertiesNav.tsx` so only one audience group can be open, outside clicks close it, Escape closes it, and primary navigation actions clear dropdown state. Existing styling and route structure are preserved.
+
+The navigation interaction fix passed focused Properties boundary validation and `git diff --check` at `149d281`. It still requires refreshed Preview interaction testing before being behaviorally accepted.
+
 ### Home visual acceptance
 
-Code and boundary validation are complete at `bd1a356`.
+Code and boundary validation are complete at `149d281`.
 
-Visual QA is still in progress. The owner-focused section and Rental Analysis feature section are visually accepted. The five-step process layout remains pending refreshed Preview review from a tree containing `bd1a356`.
+Visually accepted in current/recent Preview review:
 
-Do not mark the entire Home page visually accepted until the remaining Home checkpoints are reviewed.
+- hero image and composition;
+- `Rental Property Management` eyebrow presence;
+- Koinonia Approach;
+- owner-focused section;
+- five-step process desktop composition;
+- Rental Analysis feature section;
+- FAQ section;
+- closing CTA;
+- transition into the approved footer.
+
+Still pending before the entire Home page is marked visually accepted:
+
+- refreshed Preview interaction test for the `149d281` header dropdown fix;
+- complete visual review of all four Property Management Services cards;
+- final decision on the Home audience-card CTA baseline alignment refinement;
+- responsive/mobile checks for any newly changed behavior before final Home sign-off.
+
+Do not mark the entire Home page visually accepted until these remaining checkpoints are resolved.
 
 ---
 
@@ -570,7 +627,8 @@ Home content / SEO production pass and visual refinement:
 - `d7a821e` — strengthen Home/default metadata and establish the validated Home/SEO repository checkpoint
 - `bb38496` — center the single Rental Analysis CTA in the owner-focused Home section
 - `c885a9c` — replace the Home process inline grid rule with a Properties-local process-grid class
-- `bd1a356` — add responsive 3/2 desktop, 2/2/1 tablet, and single-column mobile process layout and establish the latest validated Home checkpoint
+- `bd1a356` — add responsive 3/2 desktop, 2/2/1 tablet, and single-column mobile process layout
+- `149d281` — coordinate Properties header dropdown state, outside-click closing, Escape closing, and navigation-state cleanup; latest validated runtime checkpoint
 
 Because GitHub contents writes are file-scoped, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only or intermediate branch HEADs do not imply runtime validation.
 
@@ -578,7 +636,7 @@ Because GitHub contents writes are file-scoped, focused slices may span multiple
 
 ## Latest Validation
 
-Focused validation completed locally at `bd1a356` on 2026-08-14.
+Focused validation completed locally at `149d281` on 2026-08-14.
 
 Exact successful checks:
 
@@ -598,7 +656,7 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-This establishes `bd1a356` as the current validated repository checkpoint. It includes the Home content/SEO work, the accepted centered owner-CTA refinement, and the new Properties-local responsive five-step process layout. Visual acceptance of the new process layout remains separate and requires a refreshed Preview containing `bd1a356`.
+This establishes `149d281` as the current validated repository/runtime checkpoint. It includes the Home content/SEO work, accepted centered owner CTA, accepted responsive process layout, and the coordinated header-dropdown interaction fix. Visual/behavioral acceptance of the dropdown interaction remains separate and requires a refreshed Preview containing `149d281`.
 
 ---
 
@@ -606,29 +664,37 @@ This establishes `bd1a356` as the current validated repository checkpoint. It in
 
 Current reviewed Home preview:
 
-- `https://koinonia-properties-d5wsdxegv-koinonia3.vercel.app`
-- Source branch head at deployment: `8ed6382`
+- `https://koinonia-properties-frqfv7tvt-koinonia3.vercel.app`
+- Source branch head at deployment: `15b35ad`
 - Deployment mode: Vercel Preview only
-- This preview contains the rewritten Home, Home SEO changes, centered owner CTA, shared Koinonia branding/favicon, and the previously approved footer refinements.
-- The owner-focused `Know what is happening with your property—and what comes next.` section is visually accepted in this preview.
-- The dark `Start With a Rental Analysis` feature section is visually accepted in this preview.
-- The five-step `How Property Management Begins` process section is not visually accepted in this preview because the old five-across desktop layout makes the cards too narrow and text-heavy.
-- The focused process-layout fix is validated at `bd1a356` but is not present in this preview yet.
+- This preview contains the rewritten Home, Home SEO changes, centered owner CTA, responsive process layout, shared Koinonia branding/favicon, and approved footer refinements.
+- The hero eyebrow `Rental Property Management` is confirmed present.
+- The Koinonia Approach section is visually accepted.
+- The owner-focused `Know what is happening with your property—and what comes next.` section is visually accepted.
+- The five-step `How Property Management Begins` section is visually accepted with the desktop 3/2 composition.
+- The dark `Start With a Rental Analysis` feature section is visually accepted.
+- The FAQ section is visually accepted.
+- The final `Let's start with the property.` CTA and transition into the footer are visually accepted.
+- The header audience dropdowns in this preview expose the now-known behavior bug: multiple groups can remain open and outside clicks do not close them.
+- The focused navigation fix is validated at `149d281` but is not present in this preview yet.
+- The audience-path cards remain visually strong overall, but their CTA buttons do not align to one baseline because the approved copy lengths differ.
+- The Property Management Services heading/transition looks strong, but the full four-card section still needs complete visual review.
 
 The next preview should be refreshed from the current Properties DEV branch after this documentation sync and deployed with Vercel Preview only.
 
 Next Home visual-QA focus:
 
-- confirm the five-step process uses three equal-width cards on the first desktop row with steps 04–05 centered beneath them at matching width;
-- confirm process headings wrap naturally and no longer feel cramped;
-- confirm the body copy has comfortable line lengths and the section no longer reads as five narrow columns;
-- confirm tablet behavior becomes two columns with the fifth card centered;
-- confirm mobile behavior is one full-width card per row;
-- confirm the transition from the process section into the dark Rental Analysis band has comfortable breathing room;
-- continue checking the remaining Home sections for repetition, density, spacing, and responsive regressions;
-- confirm the previously accepted owner section, Rental Analysis feature section, header branding/favicon, Home hero image, footer, social controls, mobile navigation, and faith signature show no regressions.
+- verify the `149d281` header behavior: only one dropdown open at once;
+- verify outside click closes the open dropdown;
+- verify Escape closes the open dropdown;
+- verify clicking another group swaps the open dropdown rather than stacking menus;
+- verify clicking a destination, logo, Contact, or Request Rental Analysis clears navigation state;
+- verify mobile hamburger/group behavior remains intact after the coordinated-state change;
+- capture/review the full four-card Property Management Services section;
+- decide whether to implement the local audience-card CTA bottom-alignment refinement without changing approved copy;
+- perform final responsive/mobile Home sweep before declaring the entire Home page visually accepted.
 
-Do not mark the entire rewritten Home visually accepted until the refreshed Preview is reviewed through the remaining checkpoints.
+Do not mark the entire rewritten Home visually accepted until these remaining checks are complete.
 
 ---
 
@@ -661,13 +727,20 @@ Temporary visual placeholders belong in this DEV continuity record until they be
 
 ## Immediate Next Work
 
-### First: Deploy Responsive Process-Grid Preview
+### First: Deploy Navigation-Fix Preview
 
 Refresh the dedicated preview worktree from the current Properties DEV branch after this documentation sync and deploy Vercel Preview only.
 
-Review the `How Property Management Begins` section first. Confirm that the desktop 3/2 composition solves the narrow-card problem while preserving the five approved stages, and then continue the Home visual review from that refreshed preview.
+Test the header dropdown interactions first. Confirm only one group can remain open, outside click closes it, Escape closes it, and navigation actions clear the open state. Also spot-check mobile navigation so the coordinated state did not regress the approved hamburger behavior.
 
-Do not mark the Home visually accepted until the remaining Home checkpoints are reviewed.
+### Then: Finish Home Visual QA
+
+After the navigation fix is interaction-tested:
+
+- review the complete Property Management Services card section;
+- decide whether the audience-path CTA baseline alignment needs the proposed local layout-only refinement;
+- perform the remaining responsive/mobile Home sweep;
+- only then decide whether the entire Home page is visually accepted.
 
 ### After Home Visual Acceptance: Choose the Next Page
 
