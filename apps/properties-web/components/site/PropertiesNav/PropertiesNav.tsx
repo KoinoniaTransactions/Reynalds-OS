@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 const ownerLinks = [
   { label: "Owner Services", href: "/owners" },
   { label: "Rental Analysis", href: "/rental-analysis", emphasis: true },
@@ -27,9 +31,10 @@ type NavGroupProps = {
     href: string;
     emphasis?: boolean;
   }[];
+  onNavigate?: () => void;
 };
 
-function NavGroup({ label, links }: NavGroupProps) {
+function NavGroup({ label, links, onNavigate }: NavGroupProps) {
   return (
     <details className="koinonia-property-nav-group">
       <summary>{label}</summary>
@@ -39,6 +44,7 @@ function NavGroup({ label, links }: NavGroupProps) {
             className={link.emphasis ? "emphasis" : undefined}
             href={link.href}
             key={`${label}-${link.href}-${link.label}`}
+            onClick={() => onNavigate?.()}
           >
             {link.label}
           </a>
@@ -49,25 +55,73 @@ function NavGroup({ label, links }: NavGroupProps) {
 }
 
 export function PropertiesNav() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const closeMobileMenu = () => {
+    setMobileOpen(false);
+  };
+
   return (
     <nav
       className="koinonia-property-nav"
       aria-label="Koinonia Properties navigation"
     >
-      <a className="koinonia-property-brand" href="/">
+      <a
+        className="koinonia-property-brand"
+        href="/"
+        onClick={closeMobileMenu}
+      >
         Koinonia Properties
       </a>
 
-      <div className="koinonia-property-nav-links">
-        <NavGroup label="Owners" links={ownerLinks} />
-        <NavGroup label="Find a Home" links={renterLinks} />
-        <NavGroup label="Residents" links={residentLinks} />
+      <button
+        aria-controls="koinonia-property-navigation-menu"
+        aria-expanded={mobileOpen}
+        aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+        className="koinonia-property-nav-toggle"
+        onClick={() => setMobileOpen((open) => !open)}
+        type="button"
+      >
+        <span className="koinonia-property-nav-toggle-icon" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </span>
+      </button>
 
-        <a className="koinonia-property-nav-contact" href="/contact">
+      <div
+        className={`koinonia-property-nav-links${mobileOpen ? " is-open" : ""}`}
+        id="koinonia-property-navigation-menu"
+      >
+        <NavGroup
+          label="Owners"
+          links={ownerLinks}
+          onNavigate={closeMobileMenu}
+        />
+        <NavGroup
+          label="Find a Home"
+          links={renterLinks}
+          onNavigate={closeMobileMenu}
+        />
+        <NavGroup
+          label="Residents"
+          links={residentLinks}
+          onNavigate={closeMobileMenu}
+        />
+
+        <a
+          className="koinonia-property-nav-contact"
+          href="/contact"
+          onClick={closeMobileMenu}
+        >
           Contact
         </a>
 
-        <a className="koinonia-property-nav-cta" href="/rental-analysis">
+        <a
+          className="koinonia-property-nav-cta"
+          href="/rental-analysis"
+          onClick={closeMobileMenu}
+        >
           Request Rental Analysis
         </a>
       </div>
