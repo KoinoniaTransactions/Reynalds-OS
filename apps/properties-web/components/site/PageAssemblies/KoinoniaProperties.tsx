@@ -305,7 +305,7 @@ export function KoinoniaProperties() {
         </div>
       </section>
 
-      <Footer serviceLine="Koinonia Properties" supportLine="Property management support" />
+      <Footer />
     </main>
   );
 }
