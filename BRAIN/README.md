@@ -68,6 +68,7 @@ These documents establish the difference between companies, public websites, com
 
 - HANDOFF.md
 - SESSION_HANDOFF.md
+- KOINONIA_PROPERTIES_DEV_STATE.md — product-specific continuity for Koinonia Properties DEV, including current branch/preview, approved IA, validated checkpoints, scope guards, and exact next work
 
 ---
 
@@ -96,6 +97,8 @@ Website production belongs under:
 Application implementation belongs under:
 
 `apps/`
+
+For Koinonia Properties DEV, read `BRAIN/KOINONIA_PROPERTIES_DEV_STATE.md` in addition to the normal repository continuity sources before proposing or implementing work.
 
 ---
 
