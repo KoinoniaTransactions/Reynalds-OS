@@ -17,12 +17,12 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Latest validated repository checkpoint: `66d7c28`
-- The Transactions-style Properties footer rebuild is included in the validated tree at `66d7c28`.
+- Latest validated repository checkpoint: `186f717`
+- The centered/larger social-control refinement is included in the validated tree at `186f717`.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
-- Current footer-review preview: `https://koinonia-properties-562ggb2uz-koinonia3.vercel.app`
-- That preview predates the validated Transactions-style footer rebuild.
+- Current footer-review preview: `https://koinonia-properties-78w01rvuo-koinonia3.vercel.app`
+- That preview contains the validated Transactions-style footer before the final centered/larger social-control refinement.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -210,6 +210,8 @@ The mobile direction previously approved remains intact:
 - Real social profile URLs are not yet established.
 - Until URLs are supplied and approved, social controls must remain disabled/non-navigating placeholders.
 - Do not substitute guessed usernames, generic social homepages, `#`, or other fake destinations.
+- Validated visual treatment at `186f717`: social controls are centered beneath the Rental Analysis CTA on desktop and centered across the CTA width on mobile.
+- Validated visual sizing at `186f717`: social button circles are 40px and social glyphs are 18px with slightly increased spacing.
 
 ### Faith signature
 
@@ -231,9 +233,9 @@ Canonical website authority:
 
 Latest validated checkpoint:
 
-- `66d7c28`
+- `186f717`
 
-Visual acceptance of the Transactions-style rebuild remains pending a fresh desktop/mobile Vercel Preview review.
+Visual acceptance of the final social-control refinement remains pending a fresh desktop/mobile Vercel Preview review.
 
 ---
 
@@ -248,7 +250,7 @@ Earlier iterations established:
 - Desktop four-column audience navigation solved earlier collisions but later made the overall footer feel visually unlike Transactions.
 - Compacting the desktop top row reduced height but created a large visual gap between the left brand block and right utility block.
 
-Latest user-approved direction:
+Transactions-style direction established:
 
 - Use the actual Transactions LIVE footer as the desktop macro-layout reference.
 - Preserve Properties identity and Properties routes.
@@ -256,12 +258,26 @@ Latest user-approved direction:
 - Keep social controls in the Start the Conversation area.
 - Preserve the approved Properties mobile accordion structure.
 
-Validated rebuild commits:
+The preview at `https://koinonia-properties-78w01rvuo-koinonia3.vercel.app` confirmed that the Transactions-style footer composition was working. The remaining visual issue was the social row: the controls read as left-attached beneath the CTA on desktop and mobile.
+
+Validated final social refinement:
+
+- social controls are centered directly beneath the Rental Analysis CTA on desktop;
+- social controls are centered across the full CTA width on mobile;
+- social button circles increased from 34px to 40px;
+- social glyphs increased from 16px to 18px;
+- spacing increased slightly;
+- Facebook, Instagram, and TikTok remain disabled/non-navigating until real URLs are approved;
+- no other footer layout, copy, navigation, CTA, faith-signature, or mobile-accordion behavior changed.
+
+Validated rebuild/refinement commits:
 
 - `405023e` — add isolated Properties footer CSS module
 - `979cf97` — rebuild Properties footer around Transactions-style hierarchy
 - `f265146` — update production spec for the new footer standard
 - `66d7c28` — synchronized repository tree validated locally with the Transactions-style footer rebuild
+- `e5f4aab` — group CTA and social controls for intentional centering
+- `186f717` — validated centered/larger social-control refinement checkpoint
 
 ---
 
@@ -333,6 +349,7 @@ Footer redesign and refinement:
 - `9a075fc` — compact desktop footer and social/contact layout
 - `beb8df4` — validated compact footer/contact/social repository checkpoint
 - `66d7c28` — validated Transactions-style Properties footer rebuild checkpoint
+- `186f717` — validated final social alignment/size refinement checkpoint
 
 Because GitHub contents writes are file-scoped, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only or intermediate branch HEADs do not imply runtime validation.
 
@@ -340,7 +357,7 @@ Because GitHub contents writes are file-scoped, focused slices may span multiple
 
 ## Latest Validation
 
-Focused validation completed locally at `66d7c28` on 2026-08-13.
+Focused validation completed locally at `186f717` on 2026-08-13.
 
 Exact successful checks:
 
@@ -360,7 +377,7 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-This establishes `66d7c28` as the current validated repository checkpoint for the Transactions-style Properties footer rebuild. Visual acceptance remains separate and requires a fresh desktop/mobile preview review.
+This establishes `186f717` as the current validated repository checkpoint for the centered/larger social-control refinement. Visual acceptance remains separate and requires a fresh desktop/mobile preview review.
 
 ---
 
@@ -368,23 +385,23 @@ This establishes `66d7c28` as the current validated repository checkpoint for th
 
 Current footer-review preview:
 
-- `https://koinonia-properties-562ggb2uz-koinonia3.vercel.app`
-- Source branch head at deployment: `58587ff`
+- `https://koinonia-properties-78w01rvuo-koinonia3.vercel.app`
+- Source branch head at deployment: `9e92130`
 - Deployment mode: Vercel Preview only
-- This preview contains the previous compact footer, not the validated Transactions-style rebuild.
+- This preview contains the validated Transactions-style footer before the final centered/larger social-control refinement.
 
 The next preview should be refreshed from the current Properties DEV branch after this documentation sync and deployed with Vercel Preview only.
 
 Next visual-QA focus:
 
-- desktop footer reads as one coherent three-zone composition;
-- brand/positioning, Explore, and Start the Conversation feel intentionally aligned;
-- Email / Call / Text read as compact pill actions;
-- Request Rental Analysis remains the strongest action;
-- social icons sit naturally beneath the conversation actions and remain non-live;
+- desktop footer remains a coherent three-zone composition;
+- social controls are visibly centered beneath the Rental Analysis CTA rather than left-attached;
+- mobile social controls are centered across the CTA width;
+- 40px social circles and 18px glyphs feel appropriately prominent without competing with the CTA;
+- Facebook, Instagram, and TikTok remain visibly intentional but non-live;
 - mobile retains the previously approved accordion feel;
 - faith signature remains centered and strong;
-- Properties feels visually related to Transactions without losing its separate business identity.
+- no regression appears in Brand / Explore / Start the Conversation alignment.
 
 ---
 
@@ -415,7 +432,7 @@ Temporary visual placeholders belong in this DEV continuity record until they be
 
 ## Immediate Next Work
 
-### First: Deploy Transactions-Style Footer Preview
+### First: Deploy Final Social-Refined Footer Preview
 
 Refresh the dedicated preview worktree from the current Properties DEV branch and deploy Vercel Preview only.
 
