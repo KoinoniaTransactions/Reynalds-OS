@@ -1,7 +1,7 @@
 # Koinonia Consultation & Interview System
 
 Status: Canonical — Active Build  
-Version: 0.1  
+Version: 0.2  
 Date: 2026-08-14  
 Business: Koinonia Transactions  
 Primary Audience: Colorado Realtors, producing agents, growing teams, and brokerage relationships
@@ -89,8 +89,9 @@ Purpose:
 - Summarize what was heard.
 - Name the operational problem without exaggeration.
 - Confirm the Realtor agrees with the diagnosis before Koinonia is presented.
+- Create the bridge from the Realtor's own experience into the Koinonia reveal.
 
-Detailed scripting: pending approval in the next build stage.
+Detailed script and branching patterns are defined below.
 
 ## Stage 4 — Koinonia Reveal
 
@@ -455,6 +456,284 @@ Do not force a first engagement where the fit is poor.
 
 ---
 
+# Stage 3 — Problem Reflection
+
+## Purpose
+
+Stage 3 converts discovery into a shared diagnosis.
+
+The Realtor should hear an accurate summary of their own operating reality and agree that Koinonia understands the problem before any meaningful Koinonia presentation begins.
+
+This is the hinge between discovery and prescription.
+
+Do not use this stage to impress the prospect.
+
+Use it to prove that Koinonia listened.
+
+## Core Reflection Pattern
+
+Use three parts:
+
+### Part 1 — Reflect the Current Reality
+
+Summarize the important work the Realtor is still personally carrying.
+
+Preferred structure:
+
+"So from what you've told me, you're currently handling [A], [B], and [C] yourself, even while you're also trying to stay focused on [clients / prospecting / growth / negotiations]."
+
+### Part 2 — Name the Consequence
+
+Use the Realtor's own language whenever possible.
+
+Preferred structure:
+
+"And when business gets busy, that seems to turn into [their consequence] — which is pulling you away from [their desired use of time/capacity]."
+
+### Part 3 — Confirm the Diagnosis
+
+Preferred structure:
+
+"So it sounds like the issue isn't that you don't know how to do the work. The issue is that too much of the operation still depends on you personally. Is that fair?"
+
+This sentence is the default capacity diagnosis.
+
+It should not be used mechanically when another diagnosis is clearly more accurate.
+
+---
+
+## Why the Confirmation Question Matters
+
+Do not transition into Koinonia until the Realtor confirms, corrects, or refines the diagnosis.
+
+A simple "yes," "exactly," or useful correction is enough.
+
+If the Realtor disagrees, that is not resistance to overcome. It means the reflection was incomplete or inaccurate.
+
+Ask:
+
+"What part did I get wrong?"
+
+or:
+
+"How would you describe the real issue?"
+
+Then reflect again.
+
+Do not defend the first interpretation.
+
+---
+
+# Reflection Branch A — Transaction Overload
+
+Use when the primary pressure is contract-to-close management, deadlines, file organization, lender/title coordination, client updates, or closing preparation.
+
+Recommended reflection:
+
+"So you're doing the client-facing work, but once something goes under contract, you're also still carrying the timeline, follow-up, documents, coordination, and making sure nothing gets missed. And when several files are active at once, that's where your attention gets split and the back-end work starts following you into the rest of your day.
+
+It doesn't sound like the problem is that you can't manage a transaction. It's that every additional transaction adds another operating load that still depends on you. Is that fair?"
+
+Use their specific consequence instead of "following you into the rest of your day" when available.
+
+---
+
+# Reflection Branch B — Contract & Document Pressure
+
+Use when the primary pressure is writing offers, amendments, addenda, notices, gathering terms, version control, signatures, or document readiness.
+
+Recommended reflection:
+
+"It sounds like the biggest interruption is document work. You're trying to stay with clients and keep momentum moving, but when something needs to be written, revised, organized, or sent for signature, it comes right back to you — often at exactly the wrong time.
+
+So the issue isn't whether you know how to prepare the documents. It's that the drafting and document workflow are competing with the parts of the business that really require you personally. Is that accurate?"
+
+---
+
+# Reflection Branch C — Showing Coverage / Availability Pressure
+
+Use when scheduling conflicts, distance, overlapping client needs, or buyer availability are the primary issue.
+
+Recommended reflection:
+
+"What I'm hearing is that your client demand sometimes exceeds your physical availability. You can have two good clients needing you at the same time, or a showing that doesn't make sense for you to personally cover, but you still want the client experience protected.
+
+So the pressure isn't a lack of willingness to serve them. It's that your calendar can only put you in one place at a time. Is that the problem you're trying to solve?"
+
+Do not imply that showing coverage replaces the Realtor-client relationship.
+
+---
+
+# Reflection Branch D — Recurring Business Operations Overload
+
+Use when the prospect's pain is primarily CRM, follow-up, task management, organization, recurring processes, calendar support, pipeline maintenance, or general operational follow-through.
+
+Recommended reflection:
+
+"It sounds like the transaction itself isn't the only issue. The bigger problem is all the recurring business work around it — follow-up, CRM, tasks, organization, scheduling, and keeping things moving after the urgent client work takes over.
+
+You know what needs to happen, but you're still the person everything eventually comes back to. And because client work always wins, the business-maintenance work becomes inconsistent. Is that fair?"
+
+---
+
+# Reflection Branch E — Mixed Capacity Problem
+
+Use when no single service category fully describes the pressure.
+
+Recommended reflection:
+
+"What stands out to me is that this isn't really one task. You're carrying several different operating roles at the same time — [name the two or three real categories they described].
+
+Each one by itself may be manageable, but when they stack up, you become the point everything depends on. That's what starts taking time away from [their desired outcome].
+
+Would you say the bigger issue is overall capacity more than one isolated task?"
+
+If yes, the later service reveal should still identify the best starting point rather than trying to sell all services at once.
+
+---
+
+# Reflection Branch F — Existing Support but Remaining Gap
+
+Use when the Realtor already has a TC, assistant, brokerage support, team support, or other vendor.
+
+Recommended reflection:
+
+"You already have support in place, and it sounds like [name what is working] is being handled well. The gap seems to be [remaining responsibility], which still comes back to you and creates [consequence].
+
+So I'm not looking at this as replacing what is already working. The question is whether that remaining gap is important enough to solve. Is that how you see it?"
+
+Never create artificial dissatisfaction with an existing provider.
+
+Koinonia should complement existing support when that is the correct fit.
+
+---
+
+# Reflection Branch G — Growth Before Pain
+
+Use when the Realtor is not currently overwhelmed but expects growth and wants to build capacity before the current system breaks.
+
+Recommended reflection:
+
+"It sounds like things are working today. The concern is really what happens if the business grows the way you want it to. Right now the system works because you are personally absorbing a lot of the moving parts.
+
+So the question isn't necessarily how to fix a crisis. It's how to add capacity before growth creates one. Is that a fair way to describe it?"
+
+Do not manufacture urgency when the prospect is planning proactively.
+
+Proactive buyers should be treated as strong-fit prospects, not as people who need to be frightened into action.
+
+---
+
+# When Multiple Problems Surface
+
+Do not reflect every problem equally.
+
+Identify the problem with the clearest combination of:
+
+- frequency;
+- consequence;
+- urgency;
+- fit with approved Koinonia scope;
+- effect on the Realtor's desired outcome.
+
+Then say:
+
+"You mentioned a few different pressure points, but if I had to prioritize what seems to be costing you the most right now, I'd say it's [primary problem]. Would you agree?"
+
+If the Realtor chooses a different priority, follow their priority unless it falls outside Koinonia's approved scope.
+
+The prospect's priority should guide the first engagement.
+
+---
+
+# When the Prospect Says "It's Not That Bad"
+
+Do not argue.
+
+Respond:
+
+"That's helpful. Then I don't want to overstate it. Would you say this is more of an inconvenience right now, or something you want to solve before volume increases?"
+
+This distinguishes current pain from proactive capacity planning.
+
+Either can be a valid reason to work with Koinonia.
+
+---
+
+# When There Is No Clear Koinonia Fit
+
+If the reflection reveals that the real need falls outside Koinonia's approved scope, say so.
+
+Example:
+
+"Based on what you've described, I don't think the main problem is something I should pretend Koinonia solves. What you're really dealing with is [plain-language issue]."
+
+Then give an appropriate next step if one is known and within professional boundaries.
+
+Do not distort Koinonia's services to force a sale.
+
+Long-term trust is more valuable than a poor-fit first engagement.
+
+---
+
+# Stage 3 Transition Rule
+
+Only after the Realtor confirms the diagnosis should Koinonia begin the reveal.
+
+Default bridge:
+
+"That's exactly the kind of problem Koinonia was built around. Let me show you how I think about it."
+
+Alternative, more personal bridge:
+
+"That's actually very close to the reason I built Koinonia in the first place. Let me show you what I mean."
+
+Alternative when the prospect already has support:
+
+"That gap is where I think Koinonia may fit without disrupting what is already working. Let me show you how I would approach it."
+
+Do not jump directly from the bridge into pricing.
+
+The next step is Stage 4 — the Koinonia Reveal.
+
+---
+
+# Stage 3 Success Condition
+
+Stage 3 is complete when:
+
+1. The Realtor has heard an accurate summary of their operating reality.
+2. The consequence has been stated using their language or an accurate paraphrase.
+3. A primary problem or capacity gap has been identified.
+4. The Realtor has confirmed or corrected the diagnosis.
+5. Koinonia has a clear basis for deciding what to reveal and eventually prescribe.
+
+If those conditions are not met, remain in diagnosis/reflection.
+
+Do not present Koinonia merely because the meeting is moving toward the halfway point.
+
+---
+
+# Stage 3 Anti-Patterns
+
+Do not:
+
+- tell the Realtor they are disorganized unless they explicitly describe themselves that way;
+- exaggerate consequences;
+- manufacture fear around deadlines, compliance, or client loss;
+- say "you need Koinonia" before fit is established;
+- use canned empathy such as "I totally understand" and immediately pivot into a pitch;
+- reflect five problems when one primary problem is enough;
+- criticize existing support;
+- present a service before the Realtor agrees with the problem being solved;
+- confuse a symptom with the actual operating problem.
+
+Preferred posture:
+
+Accurate, calm, specific, and useful.
+
+---
+
 # Relationship to Existing Canonical Material
 
 This system extends — and does not replace — the existing Koinonia Sales Operating System and service-specific sales enablement.
@@ -475,7 +754,7 @@ Canonical service claims, scope, packages, and pricing remain governed by their 
 
 # Build Status
 
-Approved and documented in Version 0.1:
+Approved and documented in Version 0.2:
 
 - Consultation purpose.
 - Diagnose-first sales principle.
@@ -483,10 +762,14 @@ Approved and documented in Version 0.1:
 - Early-reveal restrictions.
 - Stage 1 exact opening and permission sequence.
 - Stage 2 exact diagnostic sequence and listening framework.
+- Stage 3 three-part problem-reflection method.
+- Stage 3 branching reflection patterns.
+- Handling for disagreement, multiple problems, existing support, proactive-growth prospects, and poor fit.
+- Exact bridge from confirmed diagnosis into the Koinonia reveal.
 
 Next build stage:
 
-- Stage 3 — Problem Reflection.
-- Exact transition language from diagnosis into the Koinonia reveal.
+- Stage 4 — Koinonia Reveal.
+- Exact order for explaining why Koinonia exists, what the name means, the operating-partner concept, and what should still remain unrevealed until Stage 5.
 
-Do not treat Stages 3–7 as fully scripted until their sections are approved and added to this canonical file.
+Do not treat Stages 4–7 as fully scripted until their sections are approved and added to this canonical file.
