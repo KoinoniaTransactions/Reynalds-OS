@@ -83,6 +83,14 @@ Conversation history is not.
 7. BRAIN/DEVELOPMENT_STANDARDS.md
 8. BRAIN/DECISION_LOG.md
 
+If the active workstream is **Koinonia Properties — DEV**, also read:
+
+9. BRAIN/KOINONIA_PROPERTIES_DEV_STATE.md
+10. 02_Companies/Koinonia/01_Services/OBJ-00000014_Property_Management_Service.md
+11. 03_Knowledge/Website/koinonia_properties_production_spec.md
+
+The Properties DEV state file is the product-specific continuity source for current branch/worktree expectations, validated checkpoints, preview state, approved navigation/IA decisions, scope guards, and exact next work.
+
 ---
 
 ## Phase 3 — Inspect the Repository
@@ -131,6 +139,8 @@ This workflow is mandatory throughout the project.
 Complete the Koinonia production website.
 
 Platform work should only occur when it directly accelerates website completion or resolves a verified architectural issue.
+
+When multiple Koinonia workstreams exist, use Product Boundaries, Application Catalog, Current Priorities, and the applicable product-specific continuity record to identify the exact active product before changing code.
 
 ---
 
