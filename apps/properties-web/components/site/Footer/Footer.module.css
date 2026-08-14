@@ -129,10 +129,10 @@
 
 .actionStack {
   width: fit-content;
-  margin-top: 12px;
+  margin-top: 18px;
   display: grid;
   justify-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
 .cta {
