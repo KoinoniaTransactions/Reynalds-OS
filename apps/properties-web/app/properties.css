@@ -250,6 +250,31 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.properties-owner-detail-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+  gap: clamp(42px, 6vw, 84px);
+  align-items: center;
+}
+
+.properties-owner-detail-list {
+  margin: 0;
+  padding: clamp(24px, 3vw, 34px) clamp(26px, 3.5vw, 40px);
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(184, 138, 68, 0.28);
+  border-radius: 22px;
+  background: rgba(255, 252, 247, 0.72);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.05);
+  list-style-position: inside;
+}
+
+.koinonia-band .properties-owner-detail-list {
+  background: rgba(255, 250, 242, 0.055);
+  color: #fffaf2;
+  box-shadow: none;
+}
+
 .properties-process-grid {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
@@ -527,6 +552,11 @@
     padding-inline: 12px;
   }
 
+  .properties-owner-detail-split {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
+    gap: 36px;
+  }
+
   .properties-process-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -654,6 +684,15 @@
     text-align: center;
   }
 
+  .properties-owner-detail-split {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .properties-owner-detail-list {
+    padding: 22px 24px;
+  }
+
   .properties-footer-inner {
     gap: 32px;
     padding-block: 44px 30px;
@@ -769,6 +808,11 @@
 
   .properties-services-grid {
     grid-template-columns: 1fr;
+  }
+
+  .properties-owner-detail-list {
+    padding: 20px;
+    gap: 12px;
   }
 
   .properties-process-grid {
