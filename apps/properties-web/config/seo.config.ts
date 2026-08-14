@@ -51,9 +51,9 @@ export const seoConfig = {
     {
       path: "/owners",
       title:
-        "Owner Services | Koinonia Properties",
+        "Rental Property Management for Owners | Koinonia Properties",
       description:
-        "Property management information for owners seeking rental analysis, leasing support, ongoing management, maintenance coordination, and organized communication."
+        "Koinonia Properties helps rental property owners organize leasing, resident communication, rent processes, maintenance coordination, owner updates, and responsible property care."
     },
     {
       path: "/tenants",
