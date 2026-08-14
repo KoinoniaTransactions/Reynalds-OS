@@ -1,43 +1,138 @@
-import { FAQ, Footer, Hero, PropertiesInquiry, PropertiesNav, PropertiesSeoContent, UniversalCard } from "../index";
+import { FAQ, Footer, Hero, PropertiesNav, UniversalCard } from "../index";
 
-const ownerServices = [
+const ownerPriorities = [
   {
-    title: "Rental Analysis",
-    body: "Review property type, location, condition, rental readiness, and owner goals before recommending a management path.",
-    items: ["Property review", "Rent-readiness notes", "Management recommendation"]
+    title: "Keep the property moving",
+    body: "Leasing activity, resident communication, maintenance, vendors, records, and owner decisions all need a clear path forward.",
+    items: ["Defined next steps", "Organized follow-through", "Clear ownership of decisions"]
   },
   {
-    title: "Leasing and Placement",
-    body: "Prepare the listing, coordinate applicant communication, and support the path from marketing to signed lease.",
-    items: ["Listing preparation", "Applicant workflow", "Lease setup support"]
+    title: "Keep decisions visible",
+    body: "Owners should know what happened, what needs attention, and what decision is needed without having to chase scattered updates.",
+    items: ["Useful owner updates", "Decision points called out", "Property-specific context"]
   },
   {
-    title: "Ongoing Management",
-    body: "Keep rent collection, maintenance coordination, owner updates, records, and tenant communication organized.",
-    items: ["Owner reporting", "Maintenance coordination", "Tenant communication"]
+    title: "Keep care responsible",
+    body: "Good management balances resident needs, property condition, owner priorities, approved scope, and documented responsibilities.",
+    items: ["Property-focused coordination", "Responsible escalation", "Clear service boundaries"]
   }
 ];
 
-const ownerExpectations = [
-  "Management agreement and fee structure",
-  "Reserve requirements and maintenance approval threshold",
-  "Owner distribution and statement schedule",
-  "Inspection cadence and communication standard",
-  "Broker supervision, licensing, and trust accounting requirements"
+const ownerServices = [
+  {
+    title: "Rental Analysis & Property Review",
+    body: "Start with the property, current rental status, condition, timing, and owner goals before defining the management path.",
+    items: ["Property review", "Rental readiness", "Owner goals and timing"]
+  },
+  {
+    title: "Marketing, Leasing & Applicant Coordination",
+    body: "Coordinate rental preparation, marketing, applicant communication, screening steps, and the path toward an approved lease.",
+    items: ["Listing preparation", "Applicant communication", "Screening coordination"]
+  },
+  {
+    title: "Lease & Resident Onboarding",
+    body: "Keep lease administration, move-in coordination, resident communication, and property-specific expectations organized from the start.",
+    items: ["Lease administration", "Move-in coordination", "Resident communication"]
+  },
+  {
+    title: "Rent Process & Owner Communication",
+    body: "Coordinate approved rent-collection workflows, owner updates, records, and reporting through the appropriate management process.",
+    items: ["Rent-process coordination", "Owner updates", "Reporting and records"]
+  },
+  {
+    title: "Maintenance & Vendor Coordination",
+    body: "Organize maintenance communication, vendor coordination, access details, approval needs, and follow-through around property work.",
+    items: ["Issue coordination", "Vendor communication", "Owner approval when applicable"]
+  },
+  {
+    title: "Move-Out & Ongoing Property Support",
+    body: "Support move-out coordination, turnover planning, ongoing property needs, and the next operating step for the rental.",
+    items: ["Move-out coordination", "Turnover planning", "Ongoing management support"]
+  }
+];
+
+const leasingSteps = [
+  "Review rental readiness, property details, and owner timing",
+  "Prepare and coordinate the approved marketing path",
+  "Keep applicant communication and screening coordination organized",
+  "Support lease administration and property-specific onboarding",
+  "Coordinate move-in details and the handoff into ongoing management"
+];
+
+const maintenanceSteps = [
+  "Understand the issue, property location, access needs, and available details",
+  "Coordinate the appropriate vendor or next action through the approved process",
+  "Identify owner approval or decision points when the scope requires them",
+  "Keep resident and owner communication moving as the work progresses",
+  "Document the outcome and carry forward any relevant property follow-up"
+];
+
+const ownerVisibility = [
+  {
+    title: "What happened",
+    body: "Receive organized context around meaningful leasing, resident, maintenance, and property-management activity."
+  },
+  {
+    title: "What needs attention",
+    body: "Important questions, approval needs, and property decisions should be surfaced clearly instead of buried in scattered communication."
+  },
+  {
+    title: "What comes next",
+    body: "The next operating step should be understandable so the owner knows what Koinonia is coordinating and where owner input is needed."
+  }
+];
+
+const managementProcess = [
+  {
+    title: "Understand the Property",
+    body: "Review the property, current rental status, condition, timing, and owner goals before defining the next step."
+  },
+  {
+    title: "Clarify Responsibilities",
+    body: "Confirm the approved management scope, decision points, communication path, and property-specific responsibilities."
+  },
+  {
+    title: "Coordinate Leasing or Onboarding",
+    body: "Prepare the property for the applicable leasing, resident, or management onboarding work."
+  },
+  {
+    title: "Manage the Ongoing Work",
+    body: "Coordinate the approved rent, maintenance, resident communication, vendor, record, and reporting workflows."
+  },
+  {
+    title: "Keep the Owner Informed",
+    body: "Deliver organized updates, surface decisions, and keep the owner connected to what is happening with the property."
+  }
 ];
 
 const ownerFaqs = [
   {
-    q: "What should an owner send first?",
-    a: "Start with the property address, current rental status, owner goals, known maintenance concerns, and whether the property is occupied or vacant."
+    q: "What does a property management company typically handle?",
+    a: "Property management can include rental analysis, leasing coordination, applicant screening coordination, lease administration, rent-process coordination, maintenance, resident communication, owner updates, vendor coordination, move-in and move-out support, and ongoing property oversight. The exact scope should be confirmed for the specific property and engagement."
   },
   {
-    q: "How is pricing determined?",
-    a: "Pricing depends on the property and service scope. A rental analysis helps identify the management path and the services that fit."
+    q: "How does Koinonia Properties coordinate maintenance?",
+    a: "Koinonia Properties organizes issue details, resident communication, vendor coordination, access information, owner approval needs when applicable, and follow-through through the approved management process. Property-specific responsibilities and approval thresholds are confirmed before management begins."
   },
   {
-    q: "Can Koinonia Properties support multiple rentals?",
-    a: "Portfolio needs can be discussed during the rental analysis so communication, reporting, and property oversight can be organized consistently."
+    q: "How will I know what is happening with my property?",
+    a: "Owner communication is built around organized updates, clear decision points, and understandable next steps. Reporting and private account information are delivered through the appropriate approved systems rather than through ordinary public website pages."
+  },
+  {
+    q: "What happens during leasing?",
+    a: "The leasing path can include rental-readiness review, listing preparation, applicant communication, screening coordination, lease administration, and move-in coordination as applicable to the approved service scope."
+  },
+  {
+    q: "Can Koinonia Properties work with owners who have multiple rentals?",
+    a: "Yes, portfolio needs can be discussed during the rental analysis so communication, reporting, timing, and property oversight can be considered together. The service scope is still confirmed property by property and engagement by engagement."
+  },
+  {
+    q: "How are pricing and management scope determined?",
+    a: "Pricing and scope depend on factors such as property type, condition, occupancy, leasing status, requested services, timing, and portfolio complexity. Koinonia Properties starts with the property before discussing the appropriate management scope and quote."
+  },
+  {
+    q: "What should I prepare for a rental analysis?",
+    a: "Start with the property address, property type, current condition and occupancy, current rental status or upcoming vacancy, known maintenance or turnover concerns, owner goals, and target timing. Sensitive financial or private account information should not be sent through ordinary public-site intake."
   }
 ];
 
@@ -47,27 +142,75 @@ export function KoinoniaPropertiesOwners() {
       <PropertiesNav />
       <Hero
         visualVariant="properties"
-        eyebrow="Owner Services"
-        title="A clearer way to manage your rental property."
-        lead="Koinonia Properties helps owners move from scattered rental tasks to an organized management process with clear communication and responsible follow-through."
+        eyebrow="Rental Property Management for Owners"
+        title="Organized property management. Clear owner visibility. Responsible care."
+        lead="Koinonia Properties helps rental property owners keep leasing, resident communication, rent processes, maintenance, vendors, reporting, and day-to-day property work organized and moving forward."
         primaryLabel="Request Rental Analysis"
         primaryHref="/rental-analysis"
-        secondaryLabel="View Management Plans"
+        secondaryLabel="Pricing & Scope"
         secondaryHref="/pricing"
       />
-
-      <PropertiesSeoContent variant="owners" />
 
       <section className="koinonia-section">
         <div className="koinonia-container">
           <div className="koinonia-section-header">
-            <div className="koinonia-eyebrow">Owner Path</div>
-            <h2 className="koinonia-heading">Start with the property, then build the management plan.</h2>
+            <div className="koinonia-eyebrow">What Owners Need</div>
+            <h2 className="koinonia-heading">Property management should reduce uncertainty, not create another layer of it.</h2>
+            <p className="koinonia-copy">
+              A rental property has moving parts: leasing, residents, maintenance, rent processes, vendors, records, and owner decisions. Koinonia Properties brings those responsibilities into a clearer operating rhythm so owners can understand what is happening and what comes next.
+            </p>
+          </div>
+          <div className="koinonia-grid three">
+            {ownerPriorities.map((priority) => (
+              <UniversalCard
+                key={priority.title}
+                title={priority.title}
+                body={priority.body}
+                items={priority.items}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section koinonia-band">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header">
+            <div className="koinonia-eyebrow">Property Management Services</div>
+            <h2 className="koinonia-heading">The work around a rental property stays connected.</h2>
+            <p className="koinonia-copy">
+              Koinonia Properties may coordinate the following service areas based on the property and approved management scope. Not every engagement includes every service, and property-specific responsibilities are confirmed before work begins.
+            </p>
           </div>
           <div className="koinonia-grid three">
             {ownerServices.map((service, index) => (
-              <UniversalCard key={service.title} eyebrow={`0${index + 1}`} title={service.title} body={service.body} items={service.items} />
+              <UniversalCard
+                key={service.title}
+                eyebrow={`0${index + 1}`}
+                title={service.title}
+                body={service.body}
+                items={service.items}
+              />
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section">
+        <div className="koinonia-container">
+          <div className="koinonia-split">
+            <div>
+              <div className="koinonia-eyebrow">Leasing & Resident Placement</div>
+              <h2 className="koinonia-heading">A stronger leasing process starts before the listing goes live.</h2>
+              <p className="koinonia-copy">
+                Rental readiness, applicant communication, screening coordination, lease administration, and move-in details all affect how smoothly a property transitions into ongoing management.
+              </p>
+            </div>
+            <ul>
+              {leasingSteps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
@@ -76,21 +219,87 @@ export function KoinoniaPropertiesOwners() {
         <div className="koinonia-container">
           <div className="koinonia-split">
             <div>
-              <div className="koinonia-eyebrow">Before We Launch</div>
-              <h2 className="koinonia-heading">Clear expectations support better property management.</h2>
-              <p>Owners receive a clear service scope, communication path, maintenance expectations, and management terms for the property.</p>
+              <div className="koinonia-eyebrow">Maintenance & Property Care</div>
+              <h2 className="koinonia-heading">Maintenance needs a process, not a trail of disconnected messages.</h2>
+              <p className="koinonia-copy">
+                Koinonia Properties coordinates the people, information, approvals, and follow-through around property maintenance so the owner and resident have a clearer path through the issue.
+              </p>
             </div>
             <ul>
-              {ownerExpectations.map((item) => (
-                <li key={item}>{item}</li>
+              {maintenanceSteps.map((step) => (
+                <li key={step}>{step}</li>
               ))}
             </ul>
           </div>
         </div>
       </section>
 
-      <FAQ items={ownerFaqs} eyebrow="Owner Questions" title="Owner clarity before commitment." />
-      <PropertiesInquiry kind="owner" />
+      <section className="koinonia-section">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header">
+            <div className="koinonia-eyebrow">Owner Communication</div>
+            <h2 className="koinonia-heading">Know what is happening with your property—and what comes next.</h2>
+            <p className="koinonia-copy">
+              Clear owner communication is more than sending information. It means putting property activity in context, surfacing decisions, and making the next step understandable.
+            </p>
+          </div>
+          <div className="koinonia-grid three">
+            {ownerVisibility.map((item) => (
+              <UniversalCard
+                key={item.title}
+                title={item.title}
+                body={item.body}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section koinonia-band">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header">
+            <div className="koinonia-eyebrow">How Management Begins</div>
+            <h2 className="koinonia-heading">Start with the property. Clarify the plan. Keep the work organized.</h2>
+          </div>
+          <div className="koinonia-grid properties-process-grid">
+            {managementProcess.map((step, index) => (
+              <UniversalCard
+                key={step.title}
+                eyebrow={`0${index + 1}`}
+                title={step.title}
+                body={step.body}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <FAQ
+        items={ownerFaqs}
+        eyebrow="Owner Questions"
+        title="What owners should understand before choosing a property manager."
+      />
+
+      <section className="koinonia-section koinonia-band">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header">
+            <div className="koinonia-eyebrow">Start With the Property</div>
+            <h2 className="koinonia-heading">A better management conversation starts with understanding the rental.</h2>
+            <p className="koinonia-copy">
+              Share the property, current rental status, timing, known concerns, and your goals. Koinonia Properties will use that context to begin the right management conversation without asking you to send sensitive financial or private account information through the public website.
+            </p>
+            <div className="koinonia-actions">
+              <a className="koinonia-button primary" href="/rental-analysis">
+                Request Rental Analysis
+              </a>
+              <a className="koinonia-button secondary" href="/standards">
+                View Management Standards
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <Footer serviceLine="Koinonia Properties" supportLine="Owner services" />
     </main>
   );
