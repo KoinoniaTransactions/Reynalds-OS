@@ -17,12 +17,13 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Latest validated repository checkpoint: `2f6f912`
-- The footer action breathing-room refinement is included in the validated tree at `2f6f912`.
+- Latest validated repository checkpoint: `6f30c7e`
+- The shared Koinonia branding/favicon refinement is included in the validated tree at `6f30c7e`.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
-- Current footer-review preview: `https://koinonia-properties-vnjbgn9we-koinonia3.vercel.app`
-- That preview contains the centered/larger social controls but predates the validated action-stack breathing-room refinement.
+- Current visual-review preview: `https://koinonia-properties-70f2w79ku-koinonia3.vercel.app`
+- Source branch head at that deployment: `acc47ca`.
+- That preview contains the validated footer breathing-room refinement but predates the validated shared-branding/favicon refinement at `6f30c7e`.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -146,7 +147,7 @@ Approved and implemented on 2026-08-13.
 
 Mobile behavior below the Properties mobile breakpoint:
 
-- Header shows `Koinonia Properties` plus a hamburger button.
+- Header shows the Koinonia mark plus `Koinonia Properties` / `Property Management`, together with a hamburger button.
 - Main navigation is collapsed by default.
 - Hamburger toggles the navigation open and closed.
 - Owners, Find a Home, and Residents remain independently expandable groups inside the mobile menu.
@@ -156,6 +157,38 @@ Mobile behavior below the Properties mobile breakpoint:
 - The hamburger control includes accessible expanded-state and open/close labels.
 
 Desktop audience-group navigation remains unchanged by the mobile-collapse behavior.
+
+---
+
+## Shared Koinonia Branding and Favicons
+
+Validated at `6f30c7e` on 2026-08-14.
+
+Koinonia Properties now uses the same Koinonia family branding treatment as Transactions without importing application code or assets from `apps/web` at runtime.
+
+Header brand lockup:
+
+- shared Koinonia `K` mark styling from the existing design system;
+- brand text `Koinonia Properties`;
+- descriptor `Property Management`;
+- existing Properties audience navigation and mobile menu behavior remain intact.
+
+Favicons:
+
+- `apps/properties-web/app/icon.svg` is a local Properties-owned copy of the approved Transactions browser icon artwork;
+- `apps/properties-web/app/apple-icon.svg` is a local Properties-owned copy of the approved Transactions Apple-touch icon artwork;
+- `apps/properties-web/app/layout.tsx` explicitly registers `/icon.svg` and `/apple-icon.svg` in metadata;
+- the local copies preserve Properties application isolation and avoid a runtime dependency on `apps/web`.
+
+Implementation:
+
+- `apps/properties-web/app/icon.svg`
+- `apps/properties-web/app/apple-icon.svg`
+- `apps/properties-web/app/layout.tsx`
+- `apps/properties-web/components/site/PropertiesNav/PropertiesNav.tsx`
+- shared Koinonia styling remains supplied by `@reynalds-os/design-system/styles.css`.
+
+Visual acceptance of the new header lockup and favicon remains pending a fresh desktop/mobile Vercel Preview review.
 
 ---
 
@@ -232,11 +265,11 @@ Canonical website authority:
 
 - `03_Knowledge/Website/koinonia_properties_production_spec.md`
 
-Latest validated checkpoint:
+Latest footer-specific validated checkpoint:
 
 - `2f6f912`
 
-Visual acceptance of the final action-stack spacing remains pending a fresh desktop/mobile Vercel Preview review.
+Visual acceptance of the final action-stack spacing remains pending a fresh desktop/mobile Vercel Preview review together with the new shared-branding review.
 
 ---
 
@@ -279,6 +312,8 @@ Validated breathing-room refinement at `2f6f912`:
 - CTA to social-row separation increased from 12px to 20px;
 - existing centering, button sizes, copy, navigation, scripture, and responsive behavior remain unchanged.
 
+The preview at `https://koinonia-properties-70f2w79ku-koinonia3.vercel.app` contains the breathing-room footer refinement and is the current visual baseline before the shared-branding/favicon update.
+
 Validated rebuild/refinement commits:
 
 - `405023e` — add isolated Properties footer CSS module
@@ -315,7 +350,7 @@ Current Home hero requirements remain locked:
 - physical in-scene text may be realistic Properties branding/information;
 - no Service Areas map/theme on Home;
 - bright, light, airy, organized Koinonia Properties art direction;
-- no hero changes are part of the current footer work.
+- no hero changes are part of the current branding/footer work.
 
 ---
 
@@ -362,13 +397,20 @@ Footer redesign and refinement:
 - `186f717` — validated final social alignment/size refinement checkpoint
 - `2f6f912` — validated footer action breathing-room refinement checkpoint
 
+Shared Koinonia branding / favicon:
+
+- `affd9a4` — add local Properties copy of the approved Koinonia browser favicon
+- `2b0be5b` — add local Properties copy of the approved Koinonia Apple icon
+- `3952eec` — apply the shared Koinonia brand lockup to the Properties header
+- `6f30c7e` — register icons in Properties metadata and establish the validated branding/favicon repository checkpoint
+
 Because GitHub contents writes are file-scoped, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only or intermediate branch HEADs do not imply runtime validation.
 
 ---
 
 ## Latest Validation
 
-Focused validation completed locally at `2f6f912` on 2026-08-14.
+Focused validation completed locally at `6f30c7e` on 2026-08-14.
 
 Exact successful checks:
 
@@ -388,32 +430,32 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-This establishes `2f6f912` as the current validated repository checkpoint for the footer action breathing-room refinement. Visual acceptance remains separate and requires a fresh desktop/mobile preview review.
+This establishes `6f30c7e` as the current validated repository checkpoint for the shared Koinonia header-branding and favicon refinement. Visual acceptance remains separate and requires a fresh desktop/mobile preview review.
 
 ---
 
 ## Current Preview State
 
-Current footer-review preview:
+Current visual-review preview:
 
-- `https://koinonia-properties-vnjbgn9we-koinonia3.vercel.app`
-- Source branch head at deployment: `45169a5`
+- `https://koinonia-properties-70f2w79ku-koinonia3.vercel.app`
+- Source branch head at deployment: `acc47ca`
 - Deployment mode: Vercel Preview only
-- This preview contains the centered/larger social controls but predates the validated action-stack breathing-room refinement.
+- This preview contains the validated breathing-room footer refinement but predates the validated shared-branding/favicon refinement at `6f30c7e`.
 
 The next preview should be refreshed from the current Properties DEV branch after this documentation sync and deployed with Vercel Preview only.
 
 Next visual-QA focus:
 
-- Email / Call / Text, the Rental Analysis CTA, and social controls read as three related layers rather than one compressed cluster;
-- the 18px contact-to-CTA and 20px CTA-to-social separation feel natural on desktop and mobile;
-- desktop footer remains a coherent three-zone composition;
-- social controls remain centered beneath the Rental Analysis CTA on desktop and across the CTA width on mobile;
-- 40px social circles and 18px glyphs remain appropriately prominent without competing with the CTA;
-- Facebook, Instagram, and TikTok remain visibly intentional but non-live;
-- mobile retains the previously approved accordion feel;
+- the Koinonia K mark, `Koinonia Properties`, and `Property Management` descriptor read as one balanced header lockup on desktop;
+- the same brand lockup fits naturally beside the hamburger control on mobile without crowding or wrapping awkwardly;
+- the browser tab displays the approved Koinonia favicon;
+- Apple-touch icon metadata remains registered;
+- the header still preserves the approved Owners / Find a Home / Residents / Contact / Rental Analysis navigation behavior;
+- Email / Call / Text, the Rental Analysis CTA, and social controls retain the breathing-room refinement already validated in code;
+- social controls remain centered and non-live;
 - faith signature remains centered and strong;
-- no regression appears in Brand / Explore / Start the Conversation alignment.
+- no regression appears in the Home hero or footer composition.
 
 ---
 
@@ -444,15 +486,15 @@ Temporary visual placeholders belong in this DEV continuity record until they be
 
 ## Immediate Next Work
 
-### First: Deploy Breathing-Room Footer Preview
+### First: Deploy Shared-Branding / Favicon Preview
 
 Refresh the dedicated preview worktree from the current Properties DEV branch and deploy Vercel Preview only.
 
-Review desktop and mobile against the current visual-QA criteria above.
+Review desktop and mobile against the current visual-QA criteria above, including the header brand lockup, favicon, and the previously refined footer spacing.
 
-Do not mark the footer visually accepted until the refreshed preview is reviewed.
+Do not mark the branding or footer visually accepted until the refreshed preview is reviewed.
 
-### After Footer Acceptance: Owner Services Production Pass
+### After Visual Acceptance: Owner Services Production Pass
 
 Review and complete the **Owner Services** page at `/owners` as the next page-level production pass.
 
