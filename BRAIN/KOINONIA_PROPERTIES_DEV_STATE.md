@@ -18,11 +18,11 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
 - Latest validated repository checkpoint: `beb8df4`
-- The compact desktop/contact/social footer refinement is included in the validated tree at `beb8df4`.
+- A newer Transactions-style footer rebuild follows that validated checkpoint and is validation-pending.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
-- Current footer-review preview: `https://koinonia-properties-2qs99m9mr-koinonia3.vercel.app`
-- That preview predates the validated compact desktop/contact/social footer refinement.
+- Current footer-review preview: `https://koinonia-properties-562ggb2uz-koinonia3.vercel.app`
+- That preview confirmed mobile remained strong but desktop still felt visually uneven because the brand block and utility block were too far apart.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -83,7 +83,7 @@ The standalone Properties site retains 14 public routes:
 - `/standards`
 - `/contact`
 
-The route inventory is intentionally larger than the primary navigation. A page does not need to be a peer-level header item to remain useful, indexable when launched, or internally linked.
+The route inventory is intentionally larger than the primary navigation and footer. A page does not need to be a peer-level navigation item to remain useful, indexable when launched, or internally linked.
 
 ---
 
@@ -134,7 +134,7 @@ Residents group:
 Supporting navigation:
 
 - Contact remains top-level because it serves multiple audiences.
-- Vendors remain a footer/contact-path destination rather than a primary header item.
+- Vendors remain a supporting contact-path destination rather than a primary header item.
 - Investors remain inside the Owners journey unless a future approved investor offering becomes meaningfully distinct.
 - `Portals` is not treated as a major marketing category; public wording should prefer Account Access / Account & Portal Access.
 
@@ -161,115 +161,108 @@ Desktop audience-group navigation remains unchanged by the mobile-collapse behav
 
 ## Approved Footer Direction
 
-Approved on 2026-08-13.
+The Properties footer now follows the same calm macro hierarchy as the approved Koinonia Transactions LIVE footer while retaining Properties-specific content, routes, CTA, and mobile audience navigation.
 
-The footer is an intentional premium closing section rather than a second crowded header or flat sitemap.
+### Desktop footer
 
-Approved hierarchy:
+Three primary zones:
 
-1. Koinonia Properties brand and Property Management identity.
-2. Canonical positioning: property management built on clear communication, steady systems, and responsible care.
-3. Prominent Request Rental Analysis CTA.
-4. Direct email and phone/text contact options.
-5. Social profile controls for Facebook, Instagram, and TikTok once real profile URLs are approved.
-6. Audience navigation using the same language as the approved IA: Owners, Find a Home, Residents, Koinonia.
-7. Faith-centered closing signature.
-8. Minimal copyright/legal line.
+1. **Brand / positioning**
+   - Koinonia Properties mark and name.
+   - Property Management identifier.
+   - Canonical positioning line.
+2. **Explore**
+   - Owner Services
+   - Rental Analysis
+   - Available Homes
+   - Resident Services
+   - Maintenance Help
+   - Service Areas
+   - Contact
+3. **Start the Conversation**
+   - Email pill
+   - Call pill
+   - Text pill
+   - Request Rental Analysis CTA
+   - Facebook / Instagram / TikTok visual controls
 
-Desktop footer navigation occupies its own full-width row beneath the brand/CTA row so the four audience groups have enough width and do not visually collide.
+This replaces the previous desktop four-audience-column footer presentation. The full Properties IA remains available in the header and page content; the footer is intentionally simpler and higher-intent.
 
-Mobile footer navigation collapses the four audience groups into accessible accordion sections so the footer does not become unnecessarily tall. Brand, CTA, contact methods, social controls, and faith signature remain visible.
+### Mobile footer
 
-Approved faith signature:
+The mobile direction previously approved remains intact:
 
-> Bear one another’s burdens. Work heartily, as for the Lord.
->
-> Galatians 6:2 · Colossians 3:23
+- brand and positioning remain visible;
+- Email / Call / Text and Rental Analysis CTA remain visible;
+- social controls remain visible;
+- Owners / Find a Home / Residents / Koinonia remain accessible accordion groups;
+- faith signature remains visible and centered.
 
-Do not create placeholder Privacy, Terms, or other legal links before real approved destinations exist.
-
-Primary implementation:
-
-- `apps/properties-web/components/site/Footer/Footer.tsx`
-- `apps/properties-web/app/properties.css`
-- `apps/properties-web/config/contact.config.ts`
-
-Current confirmed footer contact details:
+### Contact details
 
 - Email: `jeremiah@koinoniaadmin.com`
 - Call: `(719) 745-8497` / `tel:+17197458497`
 - Text: `(719) 745-8497` / `sms:+17197458497`
 
-Current social status:
+### Social status
 
 - Facebook, Instagram, and TikTok controls are approved for visual/build purposes.
 - Real social profile URLs are not yet established.
-- Until URLs are supplied and approved, social controls must remain disabled/non-navigating placeholders and must not imply a live profile destination.
-- Do not substitute guessed usernames, generic social homepages, or placeholder `#` destinations.
+- Until URLs are supplied and approved, social controls must remain disabled/non-navigating placeholders.
+- Do not substitute guessed usernames, generic social homepages, `#`, or other fake destinations.
 
-Canonical website authority remains:
+### Faith signature
+
+> Bear one another’s burdens. Work heartily, as for the Lord.
+>
+> Galatians 6:2 · Colossians 3:23
+
+### Implementation
+
+- `apps/properties-web/components/site/Footer/Footer.tsx`
+- `apps/properties-web/components/site/Footer/Footer.module.css`
+- `apps/properties-web/config/contact.config.ts`
+
+The rebuilt footer intentionally owns its styling in an isolated CSS module rather than continuing to depend on legacy Properties footer rules in `app/properties.css`.
+
+Canonical website authority:
 
 - `03_Knowledge/Website/koinonia_properties_production_spec.md`
 
-Latest validated repository checkpoint:
+Latest validated checkpoint remains:
 
 - `beb8df4`
 
-Visual acceptance of the compact desktop/contact/social footer remains pending a fresh Vercel Preview review.
+Transactions-style footer rebuild is validation-pending.
 
 ---
 
-## Footer Screenshot Review — 2026-08-13
+## Footer Visual Review History — 2026-08-13
 
-Initial desktop preview review at `https://koinonia-properties-8wqwhg0du-koinonia3.vercel.app` exposed two issues:
+Earlier iterations established:
 
-1. The Home assembly passed `supportLine="Property management support"`, overriding the approved canonical footer positioning and creating an oversized, awkward left-side text block.
-2. The inherited shared footer grid still constrained the Properties footer layout, causing the four navigation groups to compress into narrow columns. `Residents` and `Koinonia` visually collided and several links wrapped excessively.
+- Home-specific support-line override was removed.
+- Canonical Properties positioning was restored.
+- Mobile footer looked good and should be preserved.
+- Scripture close consistently looked strong and should remain essentially unchanged.
+- Desktop four-column audience navigation solved earlier collisions but later made the overall footer feel visually unlike Transactions.
+- Compacting the desktop top row reduced height but created a large visual gap between the left brand block and right utility block.
 
-The scripture closing was visually strong and should remain essentially unchanged.
+Latest user-approved direction:
 
-Validated correction at `18b94eb`:
+- Use the actual Transactions LIVE footer as the desktop macro-layout reference.
+- Preserve Properties identity and Properties routes.
+- Keep the footer visually related to Transactions without copying Transactions business copy.
+- Keep social controls in the Start the Conversation area.
+- Preserve the approved Properties mobile accordion structure.
 
-- Home renders `<Footer />` without the page-specific support-line override.
-- Properties footer positioning returns to the canonical line.
-- The Properties footer wrapper uses one full-width grid column.
-- Owners / Find a Home / Residents / Koinonia occupy a separate full-width four-column row.
-- Mobile accordion behavior remains intact.
-- Scripture and copyright treatment remain intact.
+Current rebuild commits:
 
-Refinement commits through that checkpoint:
+- `405023e` — add isolated Properties footer CSS module
+- `979cf97` — rebuild Properties footer around Transactions-style hierarchy
+- `f265146` — update production spec for the new footer standard
 
-- `4408b9e` — establish full-width footer row boundary
-- `2d0bdf6` — keep footer layout ownership in Properties CSS
-- `ce668f5` — remove Home support-line override and use canonical footer positioning
-- `a0d83cc` — give footer navigation a true full-width desktop layout
-- `18b94eb` — validated screenshot-driven footer refinement checkpoint
-
-Second preview review at `https://koinonia-properties-2qs99m9mr-koinonia3.vercel.app` established:
-
-- Mobile footer looks good and should be preserved.
-- Desktop navigation columns and scripture close are good.
-- Desktop top row still feels too large and top-heavy.
-- The positioning sentence is too visually dominant for a footer.
-- CTA/contact area sits too far from the brand block.
-
-Validated desktop/contact/social correction at `beb8df4`:
-
-- Desktop footer top padding and vertical gaps are reduced.
-- Positioning copy is reduced from display-size treatment to restrained supporting copy.
-- Brand/positioning remain left and CTA/contact utilities remain right.
-- The real email address and phone number display instead of generic `Email`, `Call`, and `Text` labels.
-- Call and Text use the same confirmed phone number.
-- Facebook, Instagram, and TikTok visual controls are present.
-- Social controls remain disabled/non-navigating until real URLs are supplied.
-- Mobile accordion direction is preserved.
-- Scripture closing is preserved.
-
-Implementation commits for the compact contact/social refinement:
-
-- `67d84e2` — add real footer contact details and social placeholders
-- `9a075fc` — compact desktop footer/contact/social styling while preserving mobile behavior
-- `beb8df4` — validated repository tree containing the compact footer/contact/social refinement and synchronized DEV continuity state
+These commits are not yet validated. Run focused Properties boundary verification and `git diff --check` before marking them validated.
 
 ---
 
@@ -367,7 +360,7 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-This establishes `beb8df4` as the current validated repository checkpoint for the compact desktop/contact/social footer refinement. Visual acceptance remains separate and requires a fresh desktop/mobile preview review.
+The Transactions-style footer rebuild must pass the same focused validation before becoming the next validated repository checkpoint.
 
 ---
 
@@ -375,24 +368,23 @@ This establishes `beb8df4` as the current validated repository checkpoint for th
 
 Current footer-review preview:
 
-- `https://koinonia-properties-2qs99m9mr-koinonia3.vercel.app`
-- Source branch head at deployment: `556fb43`
+- `https://koinonia-properties-562ggb2uz-koinonia3.vercel.app`
+- Source branch head at deployment: `58587ff`
 - Deployment mode: Vercel Preview only
-- This preview does not contain the validated compact desktop/contact/social refinement.
+- This preview contains the previous compact footer, not the Transactions-style rebuild.
 
-The next preview should be refreshed from the current Properties DEV branch after this validation documentation sync and deployed with Vercel Preview only.
+Next preview should be created only after the current rebuild passes focused local validation.
 
 Next visual-QA focus:
 
-- desktop footer feels compact rather than like another hero section;
-- positioning copy is supporting text, not the dominant element;
-- CTA, email, phone/text, and social placeholders form a coherent right-side utility group;
-- real email and phone details display correctly;
-- Facebook, Instagram, and TikTok controls read visually as intentional but do not navigate yet;
-- Owners / Find a Home / Residents / Koinonia remain unchanged and well-spaced;
-- mobile accordion behavior remains visually strong;
-- faith signature remains unchanged;
-- overall footer height is reduced on desktop.
+- desktop footer reads as one coherent three-zone composition;
+- brand/positioning, Explore, and Start the Conversation feel intentionally aligned;
+- Email / Call / Text read as compact pill actions;
+- Request Rental Analysis remains the strongest action;
+- social icons sit naturally beneath the conversation actions and remain non-live;
+- mobile retains the previously approved accordion feel;
+- faith signature remains centered and strong;
+- Properties feels visually related to Transactions without losing its separate business identity.
 
 ---
 
@@ -423,13 +415,21 @@ Temporary visual placeholders belong in this DEV continuity record until they be
 
 ## Immediate Next Work
 
-### First: Deploy Compact Footer / Contact / Social Preview
+### First: Validate Transactions-Style Footer Rebuild
 
-Refresh the dedicated preview worktree from the current Properties DEV branch and deploy Vercel Preview only.
+Fast-forward the dedicated Properties DEV worktree to current branch HEAD and run:
+
+- `apps/properties-web/scripts/verify-boundary.mjs`
+- `git diff --check`
+- clean branch/worktree confirmation
+
+Do not mark the rebuild validated until those checks pass.
+
+### Second: Deploy New Footer Preview
+
+After validation, refresh the dedicated preview worktree and deploy Vercel Preview only.
 
 Review desktop and mobile against the current visual-QA criteria above.
-
-Do not mark the footer visually accepted until the refreshed preview is reviewed.
 
 ### After Footer Acceptance: Owner Services Production Pass
 
