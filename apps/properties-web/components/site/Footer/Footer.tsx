@@ -2,9 +2,8 @@ import { contactConfig, mailto } from "../../../config/contact.config";
 
 const footerContent = {
   companyName: "Koinonia Properties",
-  tagline: "Clear property management for owners and residents.",
-  description:
-    "Organized leasing support, maintenance coordination, owner communication, and resident support for rental property operations.",
+  positioning:
+    "Property management built on clear communication, steady systems, and responsible care.",
   groups: [
     {
       title: "Owners",
@@ -17,7 +16,7 @@ const footerContent = {
       ]
     },
     {
-      title: "Renters",
+      title: "Find a Home",
       links: [
         { label: "Available Homes", href: "/rentals" },
         { label: "How to Apply", href: "/apply" },
@@ -43,9 +42,9 @@ const footerContent = {
   ],
   ctaHref: "/rental-analysis",
   ctaLabel: "Request Rental Analysis",
-  verse: {
-    line: "Serving owners and residents with clarity and care.",
-    reference: "Koinonia Properties"
+  faith: {
+    line: "Bear one another’s burdens. Work heartily, as for the Lord.",
+    reference: "Galatians 6:2 · Colossians 3:23"
   },
   legal:
     `Copyright ${new Date().getFullYear()} Koinonia Properties. All rights reserved.`
@@ -60,55 +59,85 @@ export function Footer({ serviceLine, supportLine }: FooterProps = {}) {
   const footer = footerContent;
 
   return (
-    <footer className="koinonia-footer">
+    <footer className="koinonia-footer properties-footer">
       <div className="koinonia-footer-inner properties-footer-inner">
-        <div className="koinonia-footer-main properties-footer-main">
-          <div className="koinonia-footer-brand">
-            <span className="koinonia-footer-mark">K</span>
+        <div className="properties-footer-lead">
+          <div className="properties-footer-brand-block">
+            <div className="koinonia-footer-brand properties-footer-brand">
+              <span className="koinonia-footer-mark">K</span>
 
-            <div>
-              <strong>{serviceLine ?? footer.companyName}</strong>
-              <p>{supportLine ?? footer.tagline}</p>
+              <div>
+                <strong>{serviceLine ?? footer.companyName}</strong>
+                <p>Property Management</p>
+              </div>
             </div>
+
+            <p className="properties-footer-positioning">
+              {supportLine ?? footer.positioning}
+            </p>
           </div>
 
-          <p className="koinonia-footer-description">
-            {footer.description}
-          </p>
+          <div className="properties-footer-actions">
+            <a className="koinonia-footer-cta properties-footer-cta" href={footer.ctaHref}>
+              {footer.ctaLabel}
+            </a>
 
-          <div className="koinonia-footer-contact properties-footer-contact">
-            <a href={mailto(contactConfig.consultationSubject)}>Email</a>
-            <a href={contactConfig.phone.href}>Call</a>
-            <a href={contactConfig.sms.href}>Text</a>
-          </div>
-
-          <a className="koinonia-footer-cta" href={footer.ctaHref}>
-            {footer.ctaLabel}
-          </a>
-        </div>
-
-        {footer.groups.map((group) => (
-          <div className="koinonia-footer-section" key={group.title}>
-            <h2>{group.title}</h2>
-
-            <nav aria-label={`Koinonia ${group.title} footer navigation`}>
-              {group.links.map((item) => (
-                <a key={`${group.title}-${item.href}-${item.label}`} href={item.href}>
-                  {item.label}
-                </a>
-              ))}
+            <nav
+              aria-label="Contact Koinonia Properties"
+              className="properties-footer-contact"
+            >
+              <a href={mailto(contactConfig.consultationSubject)}>Email</a>
+              <span aria-hidden="true">·</span>
+              <a href={contactConfig.phone.href}>Call</a>
+              <span aria-hidden="true">·</span>
+              <a href={contactConfig.sms.href}>Text</a>
             </nav>
           </div>
-        ))}
+        </div>
+
+        <div
+          className="properties-footer-navigation properties-footer-navigation-desktop"
+          aria-label="Koinonia Properties footer navigation"
+        >
+          {footer.groups.map((group) => (
+            <section className="properties-footer-group" key={group.title}>
+              <h2>{group.title}</h2>
+
+              <nav aria-label={`Koinonia ${group.title} footer navigation`}>
+                {group.links.map((item) => (
+                  <a key={`${group.title}-${item.href}-${item.label}`} href={item.href}>
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+            </section>
+          ))}
+        </div>
+
+        <div className="properties-footer-navigation properties-footer-navigation-mobile">
+          {footer.groups.map((group) => (
+            <details className="properties-footer-mobile-group" key={group.title}>
+              <summary>{group.title}</summary>
+
+              <nav aria-label={`Koinonia ${group.title} footer navigation`}>
+                {group.links.map((item) => (
+                  <a key={`${group.title}-${item.href}-${item.label}`} href={item.href}>
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+            </details>
+          ))}
+        </div>
       </div>
 
-      <div className="koinonia-footer-bottom">
-        <p>
-          <span>{footer.verse.line}</span>
-          <small>{footer.verse.reference}</small>
-        </p>
+      <div className="koinonia-footer-bottom properties-footer-bottom">
+        <div className="properties-footer-faith">
+          <p>{footer.faith.line}</p>
+          <small>{footer.faith.reference}</small>
+        </div>
 
-        <p>{footer.legal}</p>
+        <p className="properties-footer-legal">{footer.legal}</p>
       </div>
     </footer>
   );
