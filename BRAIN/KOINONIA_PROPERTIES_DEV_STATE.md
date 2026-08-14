@@ -17,11 +17,12 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Latest validated repository checkpoint: `c182239`
-- Footer visual-refinement code now follows that validated checkpoint and is validation-pending.
+- Latest validated repository checkpoint: `18b94eb`
+- The screenshot-driven footer refinement is included in the validated tree at `18b94eb`.
+- Documentation-only commits may follow this checkpoint; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
 - Current footer-review preview: `https://koinonia-properties-8wqwhg0du-koinonia3.vercel.app`
-- That preview exposed a desktop footer layout issue and predates the current correction.
+- That preview predates the validated screenshot-driven footer correction.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -174,7 +175,7 @@ Approved hierarchy:
 6. Faith-centered closing signature.
 7. Minimal copyright/legal line.
 
-Desktop footer navigation should occupy its own full-width row beneath the brand/CTA row so the four audience groups have enough width and do not visually collide.
+Desktop footer navigation occupies its own full-width row beneath the brand/CTA row so the four audience groups have enough width and do not visually collide.
 
 Mobile footer navigation collapses the four audience groups into accessible accordion sections so the footer does not become unnecessarily tall. Brand, CTA, contact methods, and faith signature remain visible.
 
@@ -195,11 +196,11 @@ Canonical website authority:
 
 - `03_Knowledge/Website/koinonia_properties_production_spec.md`
 
-Validated repository checkpoint containing the first footer redesign:
+Latest validated repository checkpoint containing the screenshot-driven footer refinement:
 
-- `c182239`
+- `18b94eb`
 
-Current screenshot-driven visual refinement is validation-pending.
+Visual acceptance is still pending a new desktop/mobile Vercel Preview review.
 
 ---
 
@@ -212,7 +213,7 @@ Desktop preview review at `https://koinonia-properties-8wqwhg0du-koinonia3.verce
 
 The scripture closing was visually strong and should remain essentially unchanged.
 
-Approved correction:
+Validated correction:
 
 - Home now renders `<Footer />` without the page-specific support-line override.
 - Properties footer positioning returns to the canonical line: `Property management built on clear communication, steady systems, and responsible care.`
@@ -223,14 +224,15 @@ Approved correction:
 - Mobile accordion behavior remains intact.
 - Scripture and copyright treatment remain intact.
 
-Current refinement commits:
+Refinement commits:
 
 - `4408b9e` — establish full-width footer row boundary
 - `2d0bdf6` — keep footer layout ownership in Properties CSS
 - `ce668f5` — remove Home support-line override and use canonical footer positioning
 - `a0d83cc` — give footer navigation a true full-width desktop layout
+- `18b94eb` — documentation state at the validated screenshot-driven footer refinement checkpoint
 
-These commits are not yet a validated checkpoint. Run focused Properties boundary verification and `git diff --check` before marking them validated.
+Focused validation for this refinement passed at `18b94eb`.
 
 ---
 
@@ -291,12 +293,13 @@ Mobile navigation:
 - `1ae05d6` — add client-side mobile navigation toggle
 - `ffb10e7` — collapse and style mobile navigation
 
-Footer redesign:
+Footer redesign and refinement:
 
 - `a502ee9` — redesign public footer structure
 - `1840f55` — refine premium footer styling and responsive behavior
 - `d57a6a8` — document canonical footer experience
 - `c182239` — validated repository tree containing the first footer redesign and synchronized documentation
+- `18b94eb` — validated screenshot-driven footer refinement checkpoint
 
 Because GitHub contents writes are file-scoped, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only or intermediate branch HEADs do not imply runtime validation.
 
@@ -304,9 +307,9 @@ Because GitHub contents writes are file-scoped, focused slices may span multiple
 
 ## Latest Validation
 
-Latest completed focused validation remains `c182239` from 2026-08-13.
+Focused validation completed locally at `18b94eb` on 2026-08-13.
 
-Exact successful checks at that checkpoint:
+Exact successful checks:
 
 - all 14 standalone route pages exist with matching metadata paths;
 - SEO registry contains only the 14 standalone Properties routes;
@@ -318,13 +321,13 @@ Exact successful checks at that checkpoint:
 - unconfigured preview deployments remain non-indexable;
 - Koinonia Properties standalone application boundary verified;
 - `git diff --check` passed with no output;
-- final worktree status was clean and aligned with origin.
+- final worktree status was clean and aligned with `origin/integration/koinonia-properties-web-20260812`.
 
 Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-The screenshot-driven footer refinement must pass the same focused validation before it becomes the next validated repository checkpoint.
+This establishes `18b94eb` as the current validated repository checkpoint for the screenshot-driven footer refinement. Visual acceptance remains separate and requires a fresh desktop/mobile preview review.
 
 ---
 
@@ -335,9 +338,9 @@ Current footer-review preview:
 - `https://koinonia-properties-8wqwhg0du-koinonia3.vercel.app`
 - Source branch head at deployment: `8c4ffce`
 - Deployment mode: Vercel Preview only
-- This preview contains the first footer redesign but not the screenshot-driven full-width correction.
+- This preview contains the first footer redesign but not the validated screenshot-driven full-width correction.
 
-Next preview should be created only after the footer refinement passes focused local validation.
+The next preview should be refreshed from the current Properties DEV branch after this validation documentation sync and deployed with Vercel Preview only.
 
 Next visual-QA focus:
 
@@ -379,21 +382,13 @@ This documentation sequence is part of the repository completion standard, not o
 
 ## Immediate Next Work
 
-### First: Validate Screenshot-Driven Footer Refinement
+### First: Deploy Corrected Footer Preview
 
-Fast-forward the dedicated Properties DEV worktree to current branch HEAD and run:
-
-- `apps/properties-web/scripts/verify-boundary.mjs`
-- `git diff --check`
-- clean branch/worktree confirmation
-
-Do not mark the refinement validated until those checks pass.
-
-### Second: Deploy New Footer Preview
-
-After validation, refresh the dedicated preview worktree and deploy Vercel Preview only.
+Refresh the dedicated preview worktree from the current Properties DEV branch and deploy Vercel Preview only.
 
 Review desktop and mobile against the screenshot-derived criteria above.
+
+Do not mark the footer visually accepted until the corrected preview is reviewed on both desktop and mobile.
 
 ### After Footer Acceptance: Owner Services Production Pass
 
