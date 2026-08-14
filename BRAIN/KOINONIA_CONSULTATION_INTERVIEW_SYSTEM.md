@@ -1,7 +1,7 @@
 # Koinonia Consultation & Interview System
 
 Status: Canonical — Active Build  
-Version: 0.3  
+Version: 0.4  
 Date: 2026-08-14  
 Business: Koinonia Transactions  
 Primary Audience: Colorado Realtors, producing agents, growing teams, and brokerage relationships
@@ -113,10 +113,11 @@ Target: approximately 4–6 minutes.
 Purpose:
 
 - Lead with the service that directly addresses the diagnosed need.
-- Show the other Koinonia services as the broader support system only after the primary recommendation is clear.
+- Recommend the smallest sufficient first engagement that can solve a real problem and earn trust.
+- Show the other Koinonia services as a broader support system only after the primary recommendation is clear.
 - Preserve professional boundaries.
 
-Detailed scripting: pending approval.
+Detailed decision logic and scripts are defined below.
 
 ## Stage 6 — Investment & Engagement Structure
 
@@ -1027,29 +1028,458 @@ Human-led service. Structured support. Clear boundaries. Partnership rather than
 
 ---
 
+# Stage 5 — Prescribed Service Reveal
+
+## Purpose
+
+Stage 5 turns the confirmed diagnosis into one clear starting recommendation.
+
+The goal is not to prove how many things Koinonia can do.
+
+The goal is to answer:
+
+"Based on what you told me, where should we start?"
+
+A strong prescription should feel obvious because it directly follows the prospect's own description of the problem.
+
+---
+
+## Governing Rule — Smallest Sufficient First Engagement
+
+Recommend the smallest current Koinonia engagement that:
+
+- directly addresses the primary diagnosed problem;
+- is inside approved service scope;
+- can create a meaningful operational improvement;
+- gives the Realtor a clear way to experience Koinonia's reliability;
+- does not require unnecessary commitment before trust is established.
+
+Do not default to the highest-priced service, the broadest package, or Monthly Operations Partnership simply because it could create more revenue.
+
+The first engagement should earn the second engagement.
+
+---
+
+# The Prescription Sentence
+
+Before explaining a service, Koinonia should be able to state the recommendation in one sentence:
+
+"Because you told me [problem] is causing [consequence], I would start with [service] so we can [specific desired outcome]."
+
+Examples:
+
+"Because you told me active files are pulling you away from prospecting once they go under contract, I would start with Transaction Support so the contract-to-close operating load stops depending on you for every next step."
+
+"Because contract drafting keeps interrupting client appointments, I would start with Contract & Document Support so you can give us the terms and stay focused on the client while we prepare the draft for your review."
+
+If the recommendation cannot be stated this clearly, the diagnosis is not yet strong enough.
+
+Return briefly to discovery rather than guessing.
+
+---
+
+# Service Selection Logic
+
+## Choose Transaction Support When
+
+The primary problem is the ongoing contract-to-close load of an active transaction or recurring active-file volume.
+
+Common signals:
+
+- deadlines and milestones remain personally dependent on the Realtor;
+- lender, title, client, and document follow-up consume significant attention;
+- multiple active files create mental load or inconsistency;
+- closing preparation and file completion compete with client-facing work;
+- the Realtor wants structured support after contract acceptance.
+
+Prefer a defined active transaction as the first engagement when one exists and the Realtor is not yet ready for a broader recurring relationship.
+
+Do not prescribe Transaction Support merely because the prospect is a Realtor.
+
+---
+
+## Choose Contract & Document Support When
+
+The primary problem is drafting and document workflow rather than full transaction management.
+
+Common signals:
+
+- offers, counterproposals, amendments, addenda, notices, or other forms interrupt client-facing work;
+- the Realtor wants licensed preparation support from their instructions;
+- they need organized drafts, missing-information review, version control, or signature-ready files;
+- they already manage transactions adequately but drafting is a recurring bottleneck.
+
+This can be a strong low-friction first engagement because the scope is concrete and the Realtor retains final review and approval.
+
+Do not imply Koinonia chooses negotiation terms, provides legal advice, or replaces the Realtor's professional judgment.
+
+---
+
+## Choose Licensed Showing Coverage When
+
+The primary problem is physical availability rather than transaction administration.
+
+Common signals:
+
+- client showing requests overlap with other appointments;
+- distance makes a showing difficult to cover personally;
+- the Realtor wants backup capacity without handing off the client relationship;
+- missed or delayed showing opportunities are the real pressure point.
+
+A single well-executed showing can be an appropriate first engagement when that is the immediate need.
+
+Do not inflate a scheduling problem into a broader operations package when showing coverage alone solves it.
+
+---
+
+## Choose Monthly Operations Partnership When
+
+The primary problem is recurring business operations that exist across transactions and between urgent client events.
+
+Common signals:
+
+- CRM, pipeline, follow-up, task management, calendar, checklists, templates, or process work repeatedly falls behind;
+- the Realtor needs a recurring operating rhythm rather than a one-time task;
+- multiple recurring responsibilities are competing with client work;
+- the prospect values defined scope, visibility, accountability, and ongoing follow-through;
+- the problem will predictably return next week or next month if no operating cadence is created.
+
+Monthly Operations Partnership should be prescribed because the problem itself is recurring — not because Koinonia wants a recurring subscription.
+
+Monthly support is structured and scoped. It is not unlimited assistant access.
+
+---
+
+# Mixed-Capacity Decision Rule
+
+When the prospect has several legitimate needs, identify the first domino.
+
+Evaluate:
+
+1. Which problem happens most often?
+2. Which problem creates the clearest consequence?
+3. Which problem is most immediate?
+4. Which problem can Koinonia solve cleanly inside current scope?
+5. Which first engagement gives the prospect a fair way to judge Koinonia's reliability?
+
+Then recommend one starting point.
+
+Preferred language:
+
+"I can see two or three areas where we could eventually help, but I don't think you should start by buying all of them. I would start with [service] because that's the issue creating the most pressure right now. If we solve that well, we can decide later whether anything else is worth adding."
+
+---
+
+# Existing-Support Decision Rule
+
+When the Realtor already has support, prescribe only into the verified gap.
+
+Example:
+
+"Your current TC sounds like they're handling the contract-to-close side well. The gap you described is the document work that hits before and during client appointments. I would leave the TC relationship alone and start Koinonia with Contract & Document Support."
+
+Do not use the consultation to manufacture a replacement opportunity.
+
+Koinonia should complement a functioning operation when that is the best fit.
+
+---
+
+# The 60–90 Second Service Explanation Framework
+
+Every prescribed service explanation should contain five parts:
+
+1. Reconnect to the diagnosed problem.
+2. Explain what Koinonia will take operational responsibility for.
+3. Explain what stays with the Realtor.
+4. Describe the practical outcome.
+5. Check whether the recommendation feels relevant before moving to price.
+
+Do not recite every bullet from the website or service object.
+
+Use only enough detail to make the starting engagement understandable.
+
+---
+
+# Prescribed Service Script A — Transaction Support
+
+Recommended script:
+
+"For you, I would start with Transaction Support.
+
+Once you have an executed contract, Koinonia can take the operational lead on the contract-to-close process — setting up the timeline, tracking deadlines and documents, coordinating follow-up with the parties involved, keeping the file organized, and helping prepare it for closing.
+
+You're still the Realtor. You keep the client relationship, advice, negotiations, brokerage responsibilities, and the decisions that require your judgment. What changes is that you no longer have to personally be the reminder system and operational catch-all for every file.
+
+The outcome I'm looking for is that when you get another client call or need to go prospect, you can do that without wondering whether the transaction stopped moving because you stepped away.
+
+Does that sound like it addresses the part you were describing?"
+
+Do not introduce detailed pricing until Stage 6.
+
+---
+
+# Prescribed Service Script B — Contract & Document Support
+
+Recommended script:
+
+"For you, I would start with Contract & Document Support.
+
+You give us the terms and direction, and Koinonia handles the organized preparation side — the appropriate draft, required information, obvious missing fields or inconsistencies, revisions, and a clean version back to you for review and approval.
+
+You still choose the business terms, make negotiation decisions, give the client advice, and approve the final document. We're not replacing your judgment; we're removing the drafting workflow from the part of your day that keeps interrupting client work.
+
+The goal is that when a document needs to move, you can give clear instructions and stay focused on the work only you can do.
+
+Would that solve the interruption you were describing?"
+
+---
+
+# Prescribed Service Script C — Licensed Showing Coverage
+
+Recommended script:
+
+"For you, I would start with Licensed Showing Coverage.
+
+When your calendar overlaps or distance creates a problem, Koinonia can step in for a defined showing — confirming the appointment and access details, following your client instructions, providing professional licensed coverage at the property, and getting the completion and feedback back to you.
+
+You stay the client's Realtor. We aren't negotiating for you, advising the buyer outside the assigned role, or trying to take over the relationship.
+
+The goal is simply that a schedule conflict doesn't have to become a client-service problem.
+
+Would that give you the backup capacity you're looking for?"
+
+---
+
+# Prescribed Service Script D — Monthly Operations Partnership
+
+Recommended script:
+
+"For you, I would start with Monthly Operations Partnership because the problem you described isn't one isolated task — it keeps coming back.
+
+The idea is to create a defined recurring operating rhythm around the work that repeatedly gets pushed aside: things like CRM and pipeline organization, follow-up tracking, tasks, checklists, workflow support, and the business details we agree should stay moving each month.
+
+This isn't unlimited assistant access. We define the scope, priorities, cadence, and what successful follow-through looks like. You retain the professional decisions and the parts of the business that require your direction.
+
+The outcome is consistency: instead of rebuilding the same follow-up list or cleanup effort every time business gets busy, there is a dependable operating layer keeping it visible and moving.
+
+Does that sound closer to what you're actually trying to build?"
+
+---
+
+# When to Show the Broader Four-Service System
+
+After the primary recommendation is understood, it can be useful to orient the prospect to Koinonia's broader model.
+
+Keep this to approximately 20–30 seconds.
+
+Recommended language:
+
+"Just so you understand the larger picture, Koinonia has four service paths: Transaction Support, Contract & Document Support, Licensed Showing Coverage, and Monthly Operations Partnership.
+
+I'm not suggesting you need all four. I wanted you to see that the model can support different pressure points as your business changes. For today, I would stay focused on [recommended service]."
+
+This is orientation, not an upsell.
+
+---
+
+# When Not to Show All Four Services
+
+Skip the broader overview when:
+
+- the prospect is time-constrained;
+- the need is highly specific and clearly understood;
+- showing the other services would distract from an immediate decision;
+- the Realtor already reviewed the Services page and understands the model;
+- the prospect is skeptical or overloaded and needs simplicity more than breadth.
+
+The four-service system is useful context, not a required slide.
+
+---
+
+# When Not to Upsell
+
+Do not expand the recommendation merely because another service also sounds useful.
+
+Do not upsell when:
+
+- the first problem can be solved cleanly with one service;
+- trust has not yet been established;
+- the prospect is uncertain about delegation;
+- the prospect already has effective support in another area;
+- the additional service has no clear diagnosed consequence;
+- the prospect would be buying future possibility rather than a current or planned need.
+
+Preferred language:
+
+"I think there are other things we could talk about later, but I don't think you need to buy them today. I'd rather solve this one well first."
+
+---
+
+# When a Broader Starting Scope Is Appropriate
+
+A broader recommendation may be appropriate when the diagnosed problem is genuinely integrated and a narrower engagement would leave the main bottleneck intact.
+
+Examples:
+
+- recurring CRM, follow-up, task, and workflow problems that all stem from the same lack of recurring operating cadence;
+- a team or producing Realtor whose primary need is structured recurring business operations rather than one isolated task;
+- a prospect explicitly seeking an ongoing operating relationship and whose diagnosis supports it.
+
+Even then, define the initial scope clearly.
+
+Do not use "operations partnership" as a vague container for unlimited work.
+
+---
+
+# If the Prospect Says, "Can I Just Use You As Needed?"
+
+Recommended response:
+
+"Yes — depending on the kind of support. Transaction Support, Contract & Document Support, and Licensed Showing Coverage can all make sense as defined needs arise. Monthly Operations Partnership is different because it's for recurring work where the value comes from having an agreed rhythm and scope.
+
+I would match the structure to the problem rather than force you into a model you don't need."
+
+Then return to the prescribed starting point.
+
+---
+
+# If the Prospect Asks for a Different Service Than the Diagnosis Suggests
+
+Do not fight the prospect.
+
+Clarify why.
+
+Ask:
+
+"Absolutely. What makes that feel like the better starting point to you?"
+
+Listen for information that may have been missed.
+
+If their preferred service is within scope and addresses a legitimate priority, update the recommendation.
+
+If it does not solve the diagnosed problem, explain the distinction calmly:
+
+"We can absolutely do that. I just want to separate two things: [requested service] solves [problem A], while the pressure you described earlier was [problem B]. If you want to start with [requested service], that's fine — I just don't want to imply it will solve the other issue by itself."
+
+---
+
+# Service Boundary Reminder
+
+Every Stage 5 prescription must preserve the professional boundaries of the underlying service.
+
+Koinonia may support operational execution, organization, communication, licensed document preparation from Realtor instructions, and licensed showing coverage within defined scope.
+
+The Realtor and brokerage retain professional judgment, advice, negotiation decisions, brokerage compliance, legal questions, final approvals, and responsibilities that cannot be delegated to Koinonia.
+
+Boundaries should be stated clearly enough to create confidence, not repeated so heavily that the conversation becomes defensive or legalistic.
+
+---
+
+# Recommendation Confidence Test
+
+Before moving to Stage 6, Koinonia should be able to answer yes to all four:
+
+1. Can I name the exact problem this service solves for this prospect?
+2. Can I connect the service to a consequence the prospect already acknowledged?
+3. Can I explain what Koinonia will handle and what remains with the Realtor?
+4. Can I describe why this is the best first engagement without relying on price?
+
+If not, do not move to investment yet.
+
+Clarify the recommendation first.
+
+---
+
+# Stage 5 Transition into Investment
+
+Do not introduce price immediately after saying the service name.
+
+First get a relevance check.
+
+Preferred sequence:
+
+"Does that sound like it addresses the part you were describing?"
+
+If yes:
+
+"Good. Then let me show you how we structure that engagement and what the investment looks like."
+
+Alternative:
+
+"If that feels like the right starting point, I'll walk you through the scope and pricing so you can decide whether it makes sense."
+
+If no or uncertain:
+
+Do not defend the recommendation.
+
+Ask:
+
+"What's missing for you?"
+
+Then clarify or revise before discussing price.
+
+---
+
+# Stage 5 Success Condition
+
+Stage 5 is complete when:
+
+1. One primary service has been prescribed.
+2. The recommendation is explicitly connected to the diagnosed problem and consequence.
+3. The prospect understands what Koinonia will handle.
+4. The prospect understands what remains with them.
+5. The prospect understands the practical outcome Koinonia is trying to create.
+6. The broader four-service model has been shown only if useful.
+7. The prospect has indicated that the prescribed service is relevant enough to discuss scope and price.
+
+Only then move to Stage 6.
+
+---
+
+# Stage 5 Anti-Patterns
+
+Do not:
+
+- present the Services page as a menu and ask the prospect to choose without guidance;
+- recommend Monthly Operations Partnership automatically because it is recurring revenue;
+- bundle services without a diagnosed reason;
+- use low price as the primary reason to trial a service;
+- promise outcomes outside the approved service scope;
+- describe Koinonia as unlimited assistant support;
+- turn a showing conflict into a full operations sale when showing coverage alone is enough;
+- push Transaction Support when the real bottleneck is document preparation or business operations;
+- attack a current TC, assistant, brokerage resource, or vendor;
+- assume a larger commitment proves the prospect is more serious;
+- introduce every price before the prospect understands the recommended service;
+- treat a first engagement as the final shape of the relationship.
+
+Preferred posture:
+
+Prescribe clearly. Start appropriately. Deliver well. Earn expansion.
+
+---
+
 # Relationship to Existing Canonical Material
 
 This system extends — and does not replace — the existing Koinonia Sales Operating System and service-specific sales enablement.
 
-The Transaction Management service already establishes these discovery themes:
+The Transaction Management service establishes structured contract-to-close coordination, deadline management, communication coordination, file organization, compliance tracking, closing preparation, and professional boundaries.
 
-- What part of transaction management consumes the most time?
-- Where is the greatest operational stress?
-- How many active transactions are normally managed?
-- What happens when workload increases?
-- What does a successful support partnership look like?
+Contract Preparation & Writing establishes licensed document-preparation support from Realtor instructions while preserving Realtor judgment and final approval.
 
-This consultation system broadens those questions so Koinonia can diagnose the full real estate operations relationship before assuming transaction management is the correct entry point.
+Licensed Showing Coverage establishes professional licensed field support for availability conflicts while preserving the Realtor-client relationship and limiting the role to approved showing responsibilities.
 
-Canonical service claims, scope, packages, and pricing remain governed by their existing business objects and pricing sources.
+Business Operations Support establishes defined recurring administrative and operational support and explicitly rejects vague unlimited assistant work.
 
-Stage 4 is specifically grounded in the canonical brand position that Koinonia is a real estate operations partner, the promise "You focus on your clients. We'll keep the business running," and the live-site explanation of Koinonia as partnership, shared purpose, service, organized support, and dependable follow-through.
+The live Koinonia Transactions Services & Pricing page presents these customer-facing paths as Transaction Support, Contract & Document Support, Licensed Showing Coverage, and Monthly Operations Partnership.
+
+Canonical service claims, scope, packages, and pricing remain governed by their existing business objects, pricing sources, and the then-current production website.
 
 ---
 
 # Build Status
 
-Approved and documented in Version 0.3:
+Approved and documented in Version 0.4:
 
 - Consultation purpose.
 - Diagnose-first sales principle.
@@ -1067,12 +1497,19 @@ Approved and documented in Version 0.3:
 - Personalized reveal variations by diagnosed pressure.
 - Rules for technology/portal questions and TC comparisons.
 - Exact transition from the Koinonia reveal into a prescribed service recommendation.
+- Stage 5 smallest-sufficient-first-engagement rule.
+- Decision logic for choosing Transaction Support, Contract & Document Support, Licensed Showing Coverage, or Monthly Operations Partnership.
+- 60–90 second service-specific prescription scripts.
+- Mixed-capacity and existing-support decision rules.
+- Rules for showing the broader four-service system and when not to upsell.
+- Recommendation confidence test.
+- Exact transition from prescribed service into Stage 6 investment and pricing.
 
 Next build stage:
 
-- Stage 5 — Prescribed Service Reveal.
-- Decision logic for choosing the correct first Koinonia service.
-- Exact service-specific explanation order.
-- How and when to show the broader four-service system without turning the consultation into a menu.
+- Stage 6 — Investment & Engagement Structure.
+- Exact timing and language for price.
+- How to present current pricing without turning the conversation into a commodity comparison.
+- How to handle prepaid versus pay-at-close where applicable, monthly tiers, scope variables, price questions, and budget resistance.
 
-Do not treat Stages 5–7 as fully scripted until their sections are approved and added to this canonical file.
+Do not treat Stages 6–7 as fully scripted until their sections are approved and added to this canonical file.
