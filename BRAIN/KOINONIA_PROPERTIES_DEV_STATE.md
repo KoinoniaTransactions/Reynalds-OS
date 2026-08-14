@@ -17,13 +17,13 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Latest validated repository checkpoint: `6f30c7e`
-- The shared Koinonia branding/favicon refinement is included in the validated tree at `6f30c7e`.
+- Latest validated repository checkpoint: `d7a821e`
+- The Home content/SEO production pass is included in the validated tree at `d7a821e`.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached.
-- Current visual-review preview: `https://koinonia-properties-70f2w79ku-koinonia3.vercel.app`
-- Source branch head at that deployment: `acc47ca`.
-- That preview contains the validated footer breathing-room refinement but predates the validated shared-branding/favicon refinement at `6f30c7e`.
+- Latest reviewed pre-Home preview: `https://koinonia-properties-ncz25p511-koinonia3.vercel.app`
+- Source branch head at that deployment: `e82eb71`.
+- That preview was visually accepted for the shared Koinonia header branding/favicon and the previously refined footer, but it predates the validated Home content/SEO pass at `d7a821e`.
 - Preview deployment is non-production and must not be deployed with `--prod` unless explicitly approved.
 
 ---
@@ -162,7 +162,7 @@ Desktop audience-group navigation remains unchanged by the mobile-collapse behav
 
 ## Shared Koinonia Branding and Favicons
 
-Validated at `6f30c7e` on 2026-08-14.
+Validated at `6f30c7e` on 2026-08-14 and visually accepted in the Vercel Preview sourced from `e82eb71`.
 
 Koinonia Properties now uses the same Koinonia family branding treatment as Transactions without importing application code or assets from `apps/web` at runtime.
 
@@ -187,8 +187,6 @@ Implementation:
 - `apps/properties-web/app/layout.tsx`
 - `apps/properties-web/components/site/PropertiesNav/PropertiesNav.tsx`
 - shared Koinonia styling remains supplied by `@reynalds-os/design-system/styles.css`.
-
-Visual acceptance of the new header lockup and favicon remains pending a fresh desktop/mobile Vercel Preview review.
 
 ---
 
@@ -246,6 +244,7 @@ The mobile direction previously approved remains intact:
 - Validated visual treatment at `186f717`: social controls are centered beneath the Rental Analysis CTA on desktop and centered across the CTA width on mobile.
 - Validated visual sizing at `186f717`: social button circles are 40px and social glyphs are 18px with slightly increased horizontal spacing.
 - Validated vertical rhythm at `2f6f912`: the Email / Call / Text row has 18px of separation before the CTA, and the CTA has 20px of separation before the social controls.
+- The latest pre-Home Preview sourced from `e82eb71` was visually accepted with these footer refinements intact.
 
 ### Faith signature
 
@@ -268,8 +267,6 @@ Canonical website authority:
 Latest footer-specific validated checkpoint:
 
 - `2f6f912`
-
-Visual acceptance of the final action-stack spacing remains pending a fresh desktop/mobile Vercel Preview review together with the new shared-branding review.
 
 ---
 
@@ -312,7 +309,9 @@ Validated breathing-room refinement at `2f6f912`:
 - CTA to social-row separation increased from 12px to 20px;
 - existing centering, button sizes, copy, navigation, scripture, and responsive behavior remain unchanged.
 
-The preview at `https://koinonia-properties-70f2w79ku-koinonia3.vercel.app` contains the breathing-room footer refinement and is the current visual baseline before the shared-branding/favicon update.
+The preview at `https://koinonia-properties-70f2w79ku-koinonia3.vercel.app` contains the breathing-room footer refinement and established the visual baseline before the shared-branding/favicon update.
+
+The preview at `https://koinonia-properties-ncz25p511-koinonia3.vercel.app`, sourced from `e82eb71`, was visually accepted for the shared header branding/favicon and retained footer refinements before the Home content/SEO production pass began.
 
 Validated rebuild/refinement commits:
 
@@ -328,29 +327,152 @@ Validated rebuild/refinement commits:
 
 ## Public Website Completion State
 
-### Home — Production Pass Complete
+### Home — Content and SEO Production Pass Validated
 
-Completed on 2026-08-13.
+Validated on 2026-08-14 at repository checkpoint `d7a821e`.
 
 Primary implementation:
 
 - `apps/properties-web/components/site/PageAssemblies/KoinoniaProperties.tsx`
 - `apps/properties-web/app/page.tsx`
+- `apps/properties-web/config/seo.config.ts`
 
-The Home page is intentionally a decision-and-routing page rather than a duplicate of every downstream page.
+The Home page remains a decision-and-routing page rather than a duplicate of every downstream page, but its customer-facing copy and SEO strategy now more directly reflect the Koinonia brand and professional rental-property-management search intent.
 
-### Home Hero — Corrected and Approved
+### Home positioning and hero
 
-The correct Home hero remains approved.
+The approved Home hero image remains unchanged.
 
-Current Home hero requirements remain locked:
+Current Home hero content:
+
+- eyebrow: `Rental Property Management`
+- H1: `Property Management. Elevated.`
+- primary CTA: `Request Rental Analysis`
+- secondary CTA: `View Available Homes`
+
+The phrase `Property Management. Elevated.` intentionally relates Properties to the Koinonia family language used by Transactions while keeping the company and service distinct.
+
+Home hero requirements remain locked:
 
 - website eyebrow, H1, body copy, CTAs, and navigation are HTML/CSS, never baked into the image;
 - left side preserves faded/text-safe negative space while still showing the residential environment;
 - physical in-scene text may be realistic Properties branding/information;
 - no Service Areas map/theme on Home;
-- bright, light, airy, organized Koinonia Properties art direction;
-- no hero changes are part of the current branding/footer work.
+- bright, light, airy, organized Koinonia Properties art direction.
+
+### Home audience routing
+
+The old Quick Access strip was removed.
+
+Home now mirrors the approved customer journeys:
+
+1. **Own a Rental Property** → Owner Services
+2. **Looking for a Home** → Available Homes
+3. **Already a Resident** → Resident Services
+
+Real estate investors remain inside the owner journey rather than replacing the prospective-renter journey.
+
+### Koinonia Approach
+
+Home now expresses the Properties-specific version of the broader Koinonia operating philosophy through three principles:
+
+- Clear Communication
+- Steady Systems
+- Responsible Care
+
+This is intended to differentiate Koinonia Properties from generic property-management marketing while remaining grounded in the canonical Property Management service definition.
+
+### Home service vocabulary
+
+The Home service summary now uses clearer owner-facing and search-relevant language:
+
+- Rental Analysis & Leasing
+- Tenant Screening & Lease Administration
+- Rent Collection & Owner Communication
+- Maintenance & Property Care
+
+These remain service categories rather than a promise that every property receives every item under every engagement.
+
+### Owner relationship and process
+
+Home now includes a dedicated owner-focused section emphasizing visibility, organized follow-through, leasing activity, resident communication, maintenance, vendors, and owner updates.
+
+The management process now presents the canonical five stages:
+
+1. Understand the Property
+2. Clarify the Management Plan
+3. Coordinate Leasing or Onboarding
+4. Manage the Ongoing Work
+5. Keep the Owner Informed
+
+Rental Analysis has its own prominent section and remains the preferred owner entry point.
+
+### Home FAQ strategy
+
+Home now uses owner-intent property-management questions covering:
+
+- what a property management company handles;
+- Koinonia Properties service scope;
+- where rental property owners should start;
+- maintenance coordination;
+- owner communication and reporting;
+- individual and multi-property investor needs.
+
+The FAQs are intended primarily for useful topical coverage and customer clarity, not as a promise of special FAQ search-result presentation.
+
+### Home SEO
+
+Validated Home SEO title:
+
+- `Rental Property Management | Koinonia Properties`
+
+Validated Home/default description:
+
+- `Koinonia Properties provides organized rental property management with leasing support, maintenance coordination, owner communication, and responsible care.`
+
+The Home-only `metadata.keywords` array was removed. Search vocabulary is now expressed through useful page content, headings, metadata, links, and structured data rather than an ignored meta-keywords list.
+
+### Structured data
+
+Home now includes:
+
+- an `Organization` JSON-LD identity layer using only verified Koinonia Properties name, URL when configured, icon/logo path, email, and phone;
+- an updated `Service` JSON-LD object aligned with rental property management and approved service categories.
+
+The structured data does not invent or publish unverified address, service area, hours, ratings, reviews, price range, or geographic coverage.
+
+### Home visual acceptance
+
+Code and boundary validation are complete at `d7a821e`.
+
+Visual acceptance of the rewritten Home remains pending a fresh Vercel Preview review on desktop and mobile.
+
+---
+
+## Page-by-Page Content and SEO Workflow
+
+Approved direction established on 2026-08-14.
+
+The Properties website will be reviewed page by page, beginning with Home, to strengthen both Koinonia brand alignment and search effectiveness.
+
+For each page:
+
+1. Deep-dive relevant Koinonia/Transactions brand and operating language.
+2. Review the current Properties page against canonical service and product boundaries.
+3. Research current property-management website patterns and applicable current SEO guidance.
+4. Define the page's user intent, search intent, content hierarchy, internal links, metadata, and structured-data opportunities.
+5. Present the proposed copy/content blueprint before code changes.
+6. Implement one cohesive page production pass after approval.
+7. Run focused Properties validation.
+8. Update this continuity record.
+9. Review a Vercel Preview visually before moving to the next page when layout/content changes are material.
+
+Competitor research is used to understand search vocabulary, information architecture, owner/resident expectations, and conversion patterns. Koinonia should not copy competitor wording or collapse into generic property-management claims.
+
+The shared brand principle is:
+
+- Transactions = organized operations behind the Realtor.
+- Properties = organized care behind the rental property.
 
 ---
 
@@ -364,7 +486,7 @@ Canonical service and website authority:
 
 Home / continuity:
 
-- `9ed32a8` — complete Home production pass
+- `9ed32a8` — complete original Home production pass
 - `eedae2c` — Home metadata alignment
 - `fd482ab` — create Properties DEV continuity record
 - `301b92e` — restore crisp hero imagery
@@ -404,13 +526,19 @@ Shared Koinonia branding / favicon:
 - `3952eec` — apply the shared Koinonia brand lockup to the Properties header
 - `6f30c7e` — register icons in Properties metadata and establish the validated branding/favicon repository checkpoint
 
+Home content / SEO production pass:
+
+- `4b804e7` — rewrite Home around Koinonia rental-property-management positioning
+- `fb3664d` — remove the Home meta-keywords array
+- `d7a821e` — strengthen Home/default metadata and establish the validated Home/SEO repository checkpoint
+
 Because GitHub contents writes are file-scoped, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only or intermediate branch HEADs do not imply runtime validation.
 
 ---
 
 ## Latest Validation
 
-Focused validation completed locally at `6f30c7e` on 2026-08-14.
+Focused validation completed locally at `d7a821e` on 2026-08-14.
 
 Exact successful checks:
 
@@ -430,55 +558,62 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-This establishes `6f30c7e` as the current validated repository checkpoint for the shared Koinonia header-branding and favicon refinement. Visual acceptance remains separate and requires a fresh desktop/mobile preview review.
+This establishes `d7a821e` as the current validated repository checkpoint for the Home content/SEO production pass. Visual acceptance remains separate and requires a fresh desktop/mobile Preview review.
 
 ---
 
 ## Current Preview State
 
-Current visual-review preview:
+Latest reviewed pre-Home preview:
 
-- `https://koinonia-properties-70f2w79ku-koinonia3.vercel.app`
-- Source branch head at deployment: `acc47ca`
+- `https://koinonia-properties-ncz25p511-koinonia3.vercel.app`
+- Source branch head at deployment: `e82eb71`
 - Deployment mode: Vercel Preview only
-- This preview contains the validated breathing-room footer refinement but predates the validated shared-branding/favicon refinement at `6f30c7e`.
+- Shared Koinonia header branding/favicon and the footer refinements were visually accepted on this preview.
+- This preview predates the Home content/SEO production pass validated at `d7a821e`.
 
 The next preview should be refreshed from the current Properties DEV branch after this documentation sync and deployed with Vercel Preview only.
 
-Next visual-QA focus:
+Next Home visual-QA focus:
 
-- the Koinonia K mark, `Koinonia Properties`, and `Property Management` descriptor read as one balanced header lockup on desktop;
-- the same brand lockup fits naturally beside the hamburger control on mobile without crowding or wrapping awkwardly;
-- the browser tab displays the approved Koinonia favicon;
-- Apple-touch icon metadata remains registered;
-- the header still preserves the approved Owners / Find a Home / Residents / Contact / Rental Analysis navigation behavior;
-- Email / Call / Text, the Rental Analysis CTA, and social controls retain the breathing-room refinement already validated in code;
-- social controls remain centered and non-live;
-- faith signature remains centered and strong;
-- no regression appears in the Home hero or footer composition.
+- `Rental Property Management` eyebrow and `Property Management. Elevated.` H1 remain readable and balanced over the approved hero image on desktop and mobile;
+- the longer hero lead does not crowd the CTAs or overwhelm the text-safe area;
+- the three Home audience paths clearly read as Owners / Find a Home / Residents;
+- the new Koinonia Approach section feels brand-specific rather than generic;
+- four property-management service cards remain readable at desktop/tablet/mobile widths;
+- the owner relationship section has an intentional editorial rhythm rather than appearing as an oversized text block;
+- the five-step management process wraps cleanly and does not create an awkward orphan card;
+- the Rental Analysis feature section is visually prominent without duplicating the closing CTA;
+- the expanded FAQ remains easy to scan;
+- the final `Let's start with the property.` CTA closes the Home page cleanly;
+- the previously approved header branding/favicon, Home hero image, footer, social controls, mobile navigation, and faith signature show no regressions.
+
+Do not mark the rewritten Home visually accepted until this refreshed Preview is reviewed.
 
 ---
 
 ## Current Website Rule
 
-Complete the Koinonia Properties public website page by page.
+Complete the Koinonia Properties public website page by page with a combined brand/content/SEO review before each page is treated as production-ready.
 
 For each meaningful slice:
 
 1. Confirm the product, exact branch, and exact files before editing.
 2. Confirm the page/feature role against the Properties production specification.
 3. Use the Property Management service object for business/service claims.
-4. Keep customer-facing copy separate from internal build instructions.
-5. Do not imply unfinished private systems are live.
-6. Do not publish unverified pricing, guarantees, statistics, geographic coverage, or social destinations.
-7. Keep page-specific detail on the appropriate downstream route rather than duplicating it across Home.
-8. Run focused Properties validation before marking the slice complete.
-9. Update the canonical website specification when durable structure or public behavior changes materially.
-10. Update this continuity package after every meaningful Properties change.
-11. Add or update the Brain Decision Log when a durable architectural/product decision is made.
-12. Keep `BRAIN/CURRENT_PRIORITIES.md` aligned when the active Properties priority materially changes.
-13. Commit/push the focused slice before moving on.
-14. Use Vercel Preview only unless production deployment is explicitly approved.
+4. Ground Koinonia voice and operating philosophy in approved Transactions/brand sources without merging the two companies.
+5. Use current external research when evaluating SEO vocabulary, competitor patterns, and search intent.
+6. Keep customer-facing copy separate from internal build instructions.
+7. Do not imply unfinished private systems are live.
+8. Do not publish unverified pricing, guarantees, statistics, geographic coverage, social destinations, ratings, or reviews.
+9. Keep page-specific detail on the appropriate downstream route rather than duplicating it across Home.
+10. Run focused Properties validation before marking the slice complete.
+11. Update the canonical website specification when durable structure or public behavior changes materially.
+12. Update this continuity package after every meaningful Properties change.
+13. Add or update the Brain Decision Log when a durable architectural/product decision is made.
+14. Keep `BRAIN/CURRENT_PRIORITIES.md` aligned when the active Properties priority materially changes.
+15. Commit/push the focused slice before moving on.
+16. Use Vercel Preview only unless production deployment is explicitly approved.
 
 Temporary visual placeholders belong in this DEV continuity record until they become real public capabilities; do not promote them into canonical public claims prematurely.
 
@@ -486,19 +621,19 @@ Temporary visual placeholders belong in this DEV continuity record until they be
 
 ## Immediate Next Work
 
-### First: Deploy Shared-Branding / Favicon Preview
+### First: Deploy Home Content / SEO Preview
 
-Refresh the dedicated preview worktree from the current Properties DEV branch and deploy Vercel Preview only.
+Refresh the dedicated preview worktree from the current Properties DEV branch after this documentation sync and deploy Vercel Preview only.
 
-Review desktop and mobile against the current visual-QA criteria above, including the header brand lockup, favicon, and the previously refined footer spacing.
+Review the rewritten Home on desktop and mobile against the Home visual-QA criteria above.
 
-Do not mark the branding or footer visually accepted until the refreshed preview is reviewed.
+Do not mark the Home visually accepted until the refreshed preview is reviewed.
 
-### After Visual Acceptance: Owner Services Production Pass
+### After Home Visual Acceptance: Choose the Next Page
 
-Review and complete the **Owner Services** page at `/owners` as the next page-level production pass.
+Continue the approved page-by-page content and SEO workflow.
 
-The Owner Services page should convert property-owner interest into a clear Rental Analysis or consultation path while staying within the approved Property Management service scope.
+Do not automatically jump to Owner Services. The next page should be selected deliberately after the Home review so the site can be worked through in the user's preferred page-by-page order.
 
 ---
 
