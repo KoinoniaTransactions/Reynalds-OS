@@ -17,8 +17,9 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
 - Home route: `/`
-- Latest validated code checkpoint: `ffb10e7`
-- Footer redesign code and documentation now follow that checkpoint and remain validation-pending until focused local verification is completed.
+- Latest validated repository checkpoint: `c182239`
+- The footer redesign is included in the validated tree at `c182239`.
+- Documentation-only commits may follow this checkpoint; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel preview; final public domain not yet attached
 - Current validated preview: `https://koinonia-properties-gxc8xwqhu-koinonia3.vercel.app`
 - The current validated preview predates the footer redesign.
@@ -162,7 +163,7 @@ Desktop audience-group navigation remains unchanged by the mobile-collapse behav
 
 ## Approved Footer Direction
 
-Approved and implemented in source on 2026-08-13; focused validation and preview review remain pending.
+Approved, implemented, documented, and focused-validation complete on 2026-08-13.
 
 The footer is an intentional premium closing section rather than a second crowded header or flat sitemap.
 
@@ -196,6 +197,12 @@ Primary implementation:
 Canonical website authority:
 
 - `03_Knowledge/Website/koinonia_properties_production_spec.md`
+
+Validated repository checkpoint containing the footer redesign:
+
+- `c182239`
+
+Visual acceptance is still pending the new desktop/mobile Vercel Preview review.
 
 ---
 
@@ -246,7 +253,7 @@ Current Home hero requirements remain locked:
 
 ---
 
-## Recent Verified and Pending Checkpoints
+## Recent Verified Checkpoints
 
 Canonical service and website authority:
 
@@ -275,36 +282,40 @@ Mobile navigation:
 - `1ae05d6` — add client-side mobile navigation toggle
 - `ffb10e7` — collapse and style mobile navigation
 
-Footer redesign — validation pending:
+Footer redesign:
 
 - `a502ee9` — redesign public footer structure
 - `1840f55` — refine premium footer styling and responsive behavior
 - `d57a6a8` — document canonical footer experience
+- `c182239` — validated repository tree containing the footer redesign and synchronized documentation
 
-Because the GitHub contents API writes one file at a time, focused slices may span multiple sequential commits. Treat a code checkpoint as validated only after focused verification passes; documentation-only branch HEADs do not imply runtime validation.
+Because the GitHub contents API writes one file at a time, focused slices may span multiple sequential commits. Treat a repository tree as validated only after focused verification passes; documentation-only branch HEADs do not imply runtime validation unless validation is rerun against that tree.
 
 ---
 
 ## Latest Validation
 
-Latest completed focused runtime validation remains `ffb10e7` from 2026-08-13:
+Focused validation completed locally at `c182239` on 2026-08-13.
+
+Exact successful checks:
 
 - all 14 standalone route pages exist with matching metadata paths;
 - SEO registry contains only the 14 standalone Properties routes;
-- all 14 Properties page assemblies remain isolated;
+- all 14 Koinonia Properties page assemblies are isolated;
 - no Transactions, client-login, auth, database, legacy route, or internal-launch boundary crossed into `properties-web`;
-- package dependency boundary remains public-site only;
-- TypeScript alias remains isolated from `apps/web`;
-- Contact remains a Properties-local `/contact` route with Properties-only inquiry paths;
+- package dependency boundary is public-site only;
+- TypeScript alias is isolated from `apps/web`;
+- Contact is a Properties-local `/contact` route with Properties-only inquiry paths;
 - unconfigured preview deployments remain non-indexable;
-- `git diff --check` passed;
-- worktree was clean and aligned with origin.
+- Koinonia Properties standalone application boundary verified;
+- `git diff --check` passed with no output;
+- final worktree status was clean and aligned with `origin/integration/koinonia-properties-web-20260812`.
 
 Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-The footer redesign must now pass the same focused boundary verification and `git diff --check` before it becomes the next validated code checkpoint.
+This validation establishes `c182239` as the current validated repository checkpoint for the footer redesign. Visual acceptance remains separate and requires desktop/mobile preview review.
 
 ---
 
@@ -315,9 +326,19 @@ Current validated preview:
 - `https://koinonia-properties-gxc8xwqhu-koinonia3.vercel.app`
 - Source commit: `ffb10e7`
 - Deployment mode: Vercel Preview only
-- This preview does not yet contain the footer redesign.
+- This preview does not contain the footer redesign.
 
-The next preview should be created only after the footer redesign passes focused local validation.
+The next preview should be refreshed from the current Properties DEV branch after this validation documentation sync and deployed with Vercel Preview only.
+
+Next visual-QA focus:
+
+- premium brand/CTA hierarchy;
+- Email / Call / Text visual subordination;
+- Owners / Find a Home / Residents / Koinonia desktop columns;
+- mobile accordion behavior;
+- faith signature hierarchy and readability;
+- copyright spacing;
+- overall footer height and transition from page content.
 
 ---
 
@@ -348,19 +369,9 @@ This documentation sequence is part of the repository completion standard, not o
 
 ## Immediate Next Work
 
-### First: Validate Footer Redesign
+### First: Footer Desktop and Mobile Preview QA
 
-Fast-forward the dedicated Properties DEV worktree to the current branch HEAD and run:
-
-- `apps/properties-web/scripts/verify-boundary.mjs`
-- `git diff --check`
-- clean branch/worktree confirmation
-
-Do not mark the footer redesign validated until those checks pass.
-
-### Second: Footer Desktop and Mobile Preview QA
-
-After validation, refresh the dedicated preview worktree and deploy Vercel Preview only.
+Refresh the dedicated preview worktree from the current Properties DEV branch and deploy Vercel Preview only.
 
 Review:
 
@@ -371,6 +382,8 @@ Review:
 - faith signature hierarchy and readability;
 - copyright spacing;
 - overall footer height and transition from page content.
+
+Do not mark the footer visually accepted until the preview has been reviewed on both desktop and mobile.
 
 ### After Footer Acceptance: Owner Services Production Pass
 
