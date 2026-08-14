@@ -138,26 +138,28 @@ export function Footer({ serviceLine, supportLine }: FooterProps = {}) {
               <a href={contactConfig.sms.href}>Text</a>
             </nav>
 
-            <a className={styles.cta} href={footer.ctaHref}>
-              {footer.ctaLabel}
-            </a>
+            <div className={styles.actionStack}>
+              <a className={styles.cta} href={footer.ctaHref}>
+                {footer.ctaLabel}
+              </a>
 
-            <div
-              aria-label="Koinonia Properties social profiles coming soon"
-              className={styles.socials}
-            >
-              {socialProfiles.map((profile) => (
-                <button
-                  aria-label={`${profile} profile link coming soon`}
-                  className={styles.socialButton}
-                  disabled
-                  key={profile}
-                  title={`${profile} link coming soon`}
-                  type="button"
-                >
-                  <SocialIcon profile={profile} />
-                </button>
-              ))}
+              <div
+                aria-label="Koinonia Properties social profiles coming soon"
+                className={styles.socials}
+              >
+                {socialProfiles.map((profile) => (
+                  <button
+                    aria-label={`${profile} profile link coming soon`}
+                    className={styles.socialButton}
+                    disabled
+                    key={profile}
+                    title={`${profile} link coming soon`}
+                    type="button"
+                  >
+                    <SocialIcon profile={profile} />
+                  </button>
+                ))}
+              </div>
             </div>
           </section>
         </div>
