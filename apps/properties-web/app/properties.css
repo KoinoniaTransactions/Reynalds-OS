@@ -237,6 +237,22 @@
   outline: none;
 }
 
+.properties-process-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.properties-process-grid > * {
+  grid-column: span 2;
+}
+
+.properties-process-grid > :nth-child(4) {
+  grid-column: 2 / span 2;
+}
+
+.properties-process-grid > :nth-child(5) {
+  grid-column: 4 / span 2;
+}
+
 .properties-footer {
   background: #151515;
   color: #f8f1e6;
@@ -497,6 +513,22 @@
   .koinonia-property-nav .koinonia-property-nav-cta {
     padding-inline: 12px;
   }
+
+  .properties-process-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .properties-process-grid > * {
+    grid-column: span 2;
+  }
+
+  .properties-process-grid > :nth-child(4) {
+    grid-column: span 2;
+  }
+
+  .properties-process-grid > :nth-child(5) {
+    grid-column: 2 / span 2;
+  }
 }
 
 @media (max-width: 980px) {
@@ -720,6 +752,16 @@
   .koinonia-hero.properties:not(.properties-image) .koinonia-hero-copy {
     max-width: 100%;
     padding-block: 58px 72px;
+  }
+
+  .properties-process-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .properties-process-grid > *,
+  .properties-process-grid > :nth-child(4),
+  .properties-process-grid > :nth-child(5) {
+    grid-column: 1;
   }
 
   .properties-footer-positioning {
