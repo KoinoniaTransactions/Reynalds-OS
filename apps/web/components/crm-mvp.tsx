@@ -12,6 +12,7 @@ import {
   relationshipSources,
   type KoinoniaRelationshipData
 } from "../lib/koinonia-relationship";
+import { RelationshipFollowUpQueue } from "./relationship-follow-up-queue";
 import { RelationshipQuickCapture } from "./relationship-quick-capture";
 
 type RosObject = {
@@ -166,6 +167,7 @@ export function CrmMvp() {
   const [showCreate, setShowCreate] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
+  const [queueRefreshKey, setQueueRefreshKey] = useState(0);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -191,6 +193,10 @@ export function CrmMvp() {
         .includes(q);
     });
   }, [relationships, search]);
+
+  function refreshFollowUpQueue() {
+    setQueueRefreshKey((current) => current + 1);
+  }
 
   async function loadRelationships(preferredId?: string) {
     setError("");
@@ -227,6 +233,11 @@ export function CrmMvp() {
     if (!response.ok) return;
     const data = await response.json();
     setTasks(data.tasks ?? []);
+  }
+
+  async function refreshCrm() {
+    await loadRelationships();
+    refreshFollowUpQueue();
   }
 
   async function createRelationship(event: React.FormEvent<HTMLFormElement>) {
@@ -330,8 +341,20 @@ export function CrmMvp() {
 
       setTaskTitle("");
       await loadRelationship(selected.id);
+      refreshFollowUpQueue();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error.");
+    }
+  }
+
+  async function handleQuickCaptureSaved(relationshipId: string) {
+    await loadRelationships(relationshipId);
+    refreshFollowUpQueue();
+  }
+
+  async function handleQueueTaskChanged(relationshipId: string) {
+    if (selected?.id === relationshipId) {
+      await loadRelationship(relationshipId);
     }
   }
 
@@ -368,7 +391,7 @@ export function CrmMvp() {
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search people, brokerage, pressure, service..."
           />
-          <button onClick={() => void loadRelationships()}>Refresh</button>
+          <button onClick={() => void refreshCrm()}>Refresh</button>
           <button onClick={() => setShowCreate((current) => !current)}>
             {showCreate ? "Close" : "+ New Relationship"}
           </button>
@@ -381,6 +404,13 @@ export function CrmMvp() {
         </p>
 
         {error ? <p className="ros-error">{error}</p> : null}
+
+        <RelationshipFollowUpQueue
+          refreshKey={queueRefreshKey}
+          selectedRelationshipId={selected?.id}
+          onOpenRelationship={loadRelationship}
+          onTaskChanged={handleQueueTaskChanged}
+        />
 
         {showCreate ? (
           <article className="ros-card" style={{ marginBottom: 18 }}>
@@ -468,7 +498,7 @@ export function CrmMvp() {
                 <RelationshipQuickCapture
                   relationshipId={selected.id}
                   relationshipName={selected.name}
-                  onSaved={() => loadRelationships(selected.id)}
+                  onSaved={() => handleQuickCaptureSaved(selected.id)}
                 />
 
                 <h3>Create Follow-Up</h3>
