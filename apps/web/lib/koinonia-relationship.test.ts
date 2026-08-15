@@ -11,17 +11,20 @@ describe("Koinonia relationship profile", () => {
   it("maps current service consultation labels into learning intent", () => {
     expect(mapConsultationTypeToRelationshipIntent("Transaction Support")).toEqual({
       pressure: "Transaction/File Capacity",
-      service: "Transaction Support / Contract-to-Close Coordination"
+      service: "Transaction Support / Contract-to-Close Coordination",
+      path: "Keep Client"
     });
 
     expect(mapConsultationTypeToRelationshipIntent("Professional Open House Coverage")).toEqual({
       pressure: "Open House/Listing Capacity",
-      service: "Professional Open House Coverage"
+      service: "Professional Open House Coverage",
+      path: "Keep Client"
     });
 
     expect(mapConsultationTypeToRelationshipIntent("40% Referral Partner Option")).toEqual({
       pressure: "Referral/No-Capacity Client Opportunity",
-      service: "40% Referral Partner Option"
+      service: "40% Referral Partner Option",
+      path: "Refer Client"
     });
   });
 
