@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { Prisma } from "@reynalds-os/database";
 
 import { assertPermission } from "../../../../../lib/auth";
 import { prisma } from "../../../../../lib/db";
@@ -17,6 +18,10 @@ type Params = {
 
 function text(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function toPrismaJson(input: unknown): Prisma.InputJsonValue {
+  return JSON.parse(JSON.stringify(input)) as Prisma.InputJsonValue;
 }
 
 function confirmedSuggestion(value: unknown): RelationshipQuickCaptureSuggestion {
@@ -103,7 +108,7 @@ export async function POST(request: Request, { params }: Params) {
     data: {
       status: nextStatus,
       nextAction: confirmed.nextAction || existing.nextAction,
-      data: profile
+      data: toPrismaJson(profile)
     }
   });
 
@@ -114,11 +119,11 @@ export async function POST(request: Request, { params }: Params) {
       actorId: user.id,
       eventType: "relationship.interaction.captured",
       summary: `Relationship interaction captured: ${object.name}`,
-      newValue: {
+      newValue: toPrismaJson({
         capturedAt,
         note,
         confirmed
-      }
+      })
     }
   });
 
