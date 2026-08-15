@@ -27,7 +27,7 @@ export function KoinoniaServices() {
             <p className="koinonia-copy">{servicesContent.categories.lead}</p>
           </div>
 
-          <div className="koinonia-grid four">
+          <div className="koinonia-grid three">
             {servicesContent.services.map((service, index) => (
               <UniversalCard
                 key={service.title}
@@ -56,7 +56,44 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section id="monthly-support" className="koinonia-section koinonia-band koinonia-services-support">
+      <section className="koinonia-section koinonia-band koinonia-services-open-house">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">{servicesContent.openHouse.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.openHouse.title}</h2>
+            <p className="koinonia-copy">{servicesContent.openHouse.lead}</p>
+          </div>
+
+          <div className="koinonia-grid two">
+            <article className="koinonia-card">
+              <h3>What professional coverage includes</h3>
+              <ul>
+                {servicesContent.openHouse.included.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="koinonia-card koinonia-pricing-card">
+              <div className="koinonia-price-badge">
+                <span className="koinonia-price-badge-label">Standalone</span>
+                <span className="koinonia-price-badge-value">{servicesContent.openHouse.standalonePrice}</span>
+              </div>
+              <h3>Professional Open House</h3>
+              <p>{servicesContent.openHouse.standaloneLabel}</p>
+
+              <div className="koinonia-price-badge">
+                <span className="koinonia-price-badge-label">Additional event</span>
+                <span className="koinonia-price-badge-value">{servicesContent.openHouse.additionalPrice}</span>
+              </div>
+              <p>{servicesContent.openHouse.additionalLabel}</p>
+              <p>{servicesContent.openHouse.packageNote}</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="monthly-support" className="koinonia-section koinonia-services-support">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">{servicesContent.monthlySupport.eyebrow}</div>
@@ -94,7 +131,7 @@ export function KoinoniaServices() {
             <p className="koinonia-copy">{servicesContent.pricingSnapshot.lead}</p>
           </div>
 
-          <div className="koinonia-grid four">
+          <div className="koinonia-grid three">
             {servicesContent.pricingSnapshot.prices.map((price) => (
               <article key={price.title} className="koinonia-card koinonia-pricing-card">
                 <div className="koinonia-price-badge">
@@ -134,7 +171,7 @@ export function KoinoniaServices() {
             <p className="koinonia-copy">{servicesContent.fit.lead}</p>
           </div>
 
-          <div className="koinonia-grid four">
+          <div className="koinonia-grid three">
             {servicesContent.fit.cards.map((card, index) => (
               <UniversalCard
                 key={card.title}
