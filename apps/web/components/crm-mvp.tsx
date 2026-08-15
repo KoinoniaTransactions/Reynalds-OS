@@ -12,6 +12,7 @@ import {
   relationshipSources,
   type KoinoniaRelationshipData
 } from "../lib/koinonia-relationship";
+import { RelationshipQuickCapture } from "./relationship-quick-capture";
 
 type RosObject = {
   id: string;
@@ -463,6 +464,12 @@ export function CrmMvp() {
                   <RelationshipFormFields form={editForm} setForm={setEditForm} />
                   <button disabled={isSaving}>{isSaving ? "Saving..." : "Save Relationship"}</button>
                 </form>
+
+                <RelationshipQuickCapture
+                  relationshipId={selected.id}
+                  relationshipName={selected.name}
+                  onSaved={() => loadRelationships(selected.id)}
+                />
 
                 <h3>Create Follow-Up</h3>
                 <form className="ros-form" onSubmit={createFollowUp}>
