@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { absoluteUrl, seoConfig } from "../config/seo.config";
 import "@reynalds-os/design-system/styles.css";
+import "../styles/koinonia-layout.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(seoConfig.siteUrl),
