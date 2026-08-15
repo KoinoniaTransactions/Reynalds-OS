@@ -4,7 +4,8 @@ import {
   mapConsultationTypeToRelationshipIntent,
   mergeKoinoniaRelationshipData,
   normalizeKoinoniaRelationshipData,
-  preserveAdvancedLifecycle
+  preserveAdvancedLifecycle,
+  suggestRelationshipQuickCapture
 } from "./koinonia-relationship";
 
 describe("Koinonia relationship profile", () => {
@@ -63,5 +64,55 @@ describe("Koinonia relationship profile", () => {
     expect(preserveAdvancedLifecycle("Active Client", "Consultation")).toBe("Active Client");
     expect(preserveAdvancedLifecycle("Proposal", "Consultation")).toBe("Proposal");
     expect(preserveAdvancedLifecycle("Lead", "Consultation")).toBe("Consultation");
+  });
+
+  it("suggests open-house relationship structure from a natural conversation note", () => {
+    const result = suggestRelationshipQuickCapture(
+      "Met Sarah from ABC Realty at the office meeting. She said she already has a TC but hates losing Saturdays to open houses. I gave her the tri-fold and she wants to try one standalone open house next month."
+    );
+
+    expect(result).toMatchObject({
+      brokerage: "ABC Realty",
+      lifecycle: "Interest",
+      source: "Brokerage Meeting",
+      material: "Tri-Fold Brochure",
+      primaryPressure: "Open House/Listing Capacity",
+      path: "Keep Client",
+      requestedService: "Professional Open House Coverage",
+      recommendedService: "Professional Open House Coverage",
+      nextAction: "Follow up about open house coverage next month"
+    });
+  });
+
+  it("keeps referral intent separate from operational support", () => {
+    const result = suggestRelationshipQuickCapture(
+      "Mike said he cannot take the client and asked about the 40% referral fee. We should follow up after his team meeting."
+    );
+
+    expect(result.primaryPressure).toBe("Referral/No-Capacity Client Opportunity");
+    expect(result.path).toBe("Refer Client");
+    expect(result.recommendedService).toBe("40% Referral Partner Option");
+  });
+
+  it("preserves confirmed interaction history while merging later profile data", () => {
+    const result = mergeKoinoniaRelationshipData(
+      {
+        learning: {
+          interactions: [
+            {
+              capturedAt: "2026-08-15T12:00:00.000Z",
+              note: "Met at the office meeting.",
+              confirmed: { source: "Brokerage Meeting" }
+            }
+          ]
+        }
+      },
+      {
+        contact: { brokerage: "ABC Realty" }
+      }
+    );
+
+    expect(result.learning?.interactions).toHaveLength(1);
+    expect(result.learning?.interactions?.[0]?.note).toBe("Met at the office meeting.");
   });
 });
