@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Koinonia Transactions Pricing Insert</title>
+  <link rel="stylesheet" href="koinonia_materials.css">
+  <style>
+    .pricing-insert { padding: 0.46in 0.52in; }
+    .pricing-intro { margin-bottom: 0.18in; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.12in; }
+    .pricing-card { padding: 0.14in 0.16in; border: 1px solid var(--koinonia-line); background: rgba(255,255,255,.74); }
+    .pricing-card h2 { font-size: 0.17in; margin-bottom: 0.06in; }
+    .pricing-card h3 { margin-top: 0.08in; }
+    .pricing-card p, .pricing-card li { font-size: 0.083in; line-height: 1.35; }
+    .pricing-card ul { margin-top: 0.04in; }
+    .pricing-amount { display: block; margin: 0.05in 0 0.06in; color: var(--koinonia-gold); font-family: Arial, Helvetica, sans-serif; font-size: 0.16in; font-weight: 800; }
+    .pricing-full { grid-column: 1 / -1; }
+    .pricing-monthly { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.09in; margin-top: 0.08in; }
+    .pricing-tier { padding: 0.1in; border: 1px solid var(--koinonia-line); text-align: center; }
+    .pricing-tier strong { display: block; font-size: 0.12in; }
+    .pricing-tier span { display: block; margin-top: 0.03in; color: var(--koinonia-gold); font-family: Arial, Helvetica, sans-serif; font-size: 0.105in; font-weight: 800; }
+    .pricing-referral { margin-top: 0.14in; padding: 0.13in 0.16in; border-left: 3px solid var(--koinonia-gold); background: rgba(234,215,168,.16); }
+    .pricing-referral h2 { font-size: 0.16in; }
+    .pricing-referral p { margin-bottom: 0.05in; font-size: 0.082in; line-height: 1.35; }
+    .pricing-notes { margin-top: 0.12in; color: var(--koinonia-muted); font-family: Arial, Helvetica, sans-serif; font-size: 0.067in; line-height: 1.35; }
+    .pricing-contact { display: flex; justify-content: space-between; gap: 0.12in; margin-top: 0.13in; padding-top: 0.1in; border-top: 1px solid var(--koinonia-line); color: var(--koinonia-muted); font-family: Arial, Helvetica, sans-serif; font-size: 0.07in; }
+    @media print { .pricing-insert { height: 11in; overflow: hidden; } }
+  </style>
+</head>
+<body>
+  <main class="material-page pricing-insert">
+    <header class="brand-row">
+      <span class="k-mark">K</span>
+      <div>
+        <h1 class="brand-name">Koinonia Transactions</h1>
+        <p class="brand-tagline">Real Estate Operations Support for Colorado Realtors</p>
+      </div>
+    </header>
+
+    <div class="gold-line"></div>
+
+    <section class="pricing-intro">
+      <p class="eyebrow">Pricing Companion</p>
+      <h1>Clear support. Clear starting points.</h1>
+      <p class="lead">Choose the support that fits the operational need. Pricing supports the decision; dependable execution is the value.</p>
+    </section>
+
+    <section class="pricing-grid">
+      <article class="pricing-card">
+        <p class="eyebrow">Transaction Support</p>
+        <h2>Prepaid</h2>
+        <span class="pricing-amount">$389</span>
+        <ul>
+          <li>Due before transaction work begins.</li>
+          <li>Lower price reflects upfront payment.</li>
+          <li>Open House Coverage not included.</li>
+        </ul>
+      </article>
+
+      <article class="pricing-card">
+        <p class="eyebrow">Transaction Support</p>
+        <h2>Pay at Successful Close</h2>
+        <span class="pricing-amount">$599</span>
+        <ul>
+          <li>Due only after successful closing.</li>
+          <li>No coordination fee if the transaction does not close.</li>
+          <li>One Open House session included for an applicable listing transaction.</li>
+        </ul>
+      </article>
+
+      <article class="pricing-card">
+        <p class="eyebrow">Contract &amp; Documents</p>
+        <h2>Single Document</h2>
+        <span class="pricing-amount">Starting at $75</span>
+        <p>Multi-document, offer-package, urgent, or expanded requests are scope-based.</p>
+      </article>
+
+      <article class="pricing-card">
+        <p class="eyebrow">Licensed Showing Coverage</p>
+        <h2>Local Showing</h2>
+        <span class="pricing-amount">Starting at $50</span>
+        <p>Distance, timing, access complexity, extended coverage, or multiple-property scope may affect pricing.</p>
+      </article>
+
+      <article class="pricing-card pricing-full">
+        <p class="eyebrow">Professional Open House Coverage</p>
+        <h2>Your listing. Professionally prepared, promoted, and hosted.</h2>
+        <div class="pricing-monthly">
+          <div class="pricing-tier"><strong>Standalone</strong><span>$200</span><small>up to 3 hours</small></div>
+          <div class="pricing-tier"><strong>Included</strong><span>1 session</span><small>with qualifying $599 listing engagement</small></div>
+          <div class="pricing-tier"><strong>Additional</strong><span>$100</span><small>each, up to 3 hours</small></div>
+        </div>
+      </article>
+
+      <article class="pricing-card pricing-full">
+        <p class="eyebrow">Monthly Operations Partnership</p>
+        <div class="pricing-monthly">
+          <div class="pricing-tier"><strong>Starter</strong><span>$299/mo</span><small>up to 3 hours</small></div>
+          <div class="pricing-tier"><strong>Growth</strong><span>$599/mo</span><small>up to 7 hours</small></div>
+          <div class="pricing-tier"><strong>Partner</strong><span>$999/mo</span><small>up to 12 hours</small></div>
+        </div>
+        <p style="margin-top:.07in; margin-bottom:0; font-size:.078in;">Monthly support is capacity- and scope-based, not unlimited assistant access. No automatic service discount is included unless specifically documented.</p>
+      </article>
+    </section>
+
+    <section class="pricing-referral">
+      <p class="eyebrow">Separate Brokerage Referral Path</p>
+      <h2>40% Referral Partner Option</h2>
+      <p><strong>Don't want or can't take the client?</strong> A qualifying successfully closed referred opportunity may earn a <strong>40% referral fee</strong>.</p>
+      <p>Complete brokerage, compensation, transaction, and referral terms are provided in the formal referral documents before client handoff. This is not a sixth Koinonia Transactions service.</p>
+    </section>
+
+    <p class="pricing-notes">Starting prices assume standard scope. Nonstandard work may require a documented custom quote. Koinonia does not publish or promise discounts that are not contained in an approved pricing rule or custom support variation.</p>
+
+    <div class="pricing-contact">
+      <span>koinoniatransactions.com</span>
+      <span>Phone/Text: 719-745-8497</span>
+      <span>jeremiah@koinoniaadmin.com</span>
+    </div>
+  </main>
+</body>
+</html>
