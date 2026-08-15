@@ -41,6 +41,21 @@ export function KoinoniaServices() {
         </div>
       </section>
 
+      <section className="koinonia-section koinonia-services-referrals">
+        <div className="koinonia-container">
+          <div className="koinonia-cta">
+            <div className="koinonia-eyebrow">{servicesContent.referralDiscovery.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.referralDiscovery.title}</h2>
+            <p className="koinonia-copy">{servicesContent.referralDiscovery.lead}</p>
+            <div className="koinonia-actions" style={{ justifyContent: "center" }}>
+              <a className="koinonia-button primary" href={servicesContent.referralDiscovery.primaryHref}>
+                {servicesContent.referralDiscovery.primaryLabel}
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="monthly-support" className="koinonia-section koinonia-band koinonia-services-support">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
