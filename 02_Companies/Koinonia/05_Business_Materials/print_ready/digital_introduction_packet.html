@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Koinonia Digital Introduction Packet</title>
+  <link rel="stylesheet" href="koinonia_materials.css">
+  <style>
+    .digital-packet {
+      min-height: 11in;
+      padding: 0.48in 0.54in;
+    }
+    .digital-packet .packet-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.14in;
+      margin-top: 0.22in;
+    }
+    .digital-packet .packet-card {
+      padding: 0.17in;
+      border: 1px solid var(--koinonia-line);
+      background: rgba(255,255,255,0.72);
+    }
+    .digital-packet .packet-card.full {
+      grid-column: 1 / -1;
+    }
+    .digital-packet .packet-card h2 {
+      margin-bottom: 0.06in;
+      font-size: 0.18in;
+    }
+    .digital-packet .packet-card p,
+    .digital-packet .packet-card li {
+      font-size: 0.09in;
+      line-height: 1.38;
+    }
+    .digital-packet .packet-referral {
+      margin-top: 0.2in;
+      padding: 0.18in 0.2in;
+      border-left: 3px solid var(--koinonia-gold);
+      background: rgba(234, 215, 168, 0.16);
+    }
+    .digital-packet .packet-referral h2 {
+      margin-bottom: 0.07in;
+    }
+    .digital-packet .packet-footer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.18in;
+      margin-top: 0.22in;
+      padding-top: 0.16in;
+      border-top: 1px solid var(--koinonia-line);
+    }
+    .digital-packet .packet-contact {
+      padding: 0.16in;
+      background: var(--koinonia-black);
+      color: var(--koinonia-white);
+    }
+    .digital-packet .packet-contact h2,
+    .digital-packet .packet-contact p,
+    .digital-packet .packet-contact strong {
+      color: var(--koinonia-white);
+    }
+    .digital-packet .packet-contact p {
+      margin-bottom: 0.06in;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.082in;
+    }
+    .digital-packet .packet-contact strong {
+      font-size: 0.1in;
+    }
+    .digital-packet .packet-boundary {
+      padding: 0.16in;
+      border: 1px solid var(--koinonia-line);
+    }
+    .digital-packet .packet-boundary p {
+      font-size: 0.08in;
+      line-height: 1.4;
+    }
+    @media print {
+      .digital-packet {
+        width: 8.5in;
+        min-height: 11in;
+        margin: 0;
+        border: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="material-page digital-packet">
+    <header class="brand-row">
+      <span class="k-mark">K</span>
+      <div>
+        <h1 class="brand-name">Koinonia Transactions</h1>
+        <p class="brand-tagline">Real Estate Operations Support for Colorado Realtors</p>
+      </div>
+    </header>
+
+    <div class="gold-line"></div>
+
+    <p class="eyebrow">Digital Introduction Packet</p>
+    <h1>You focus on your clients.<br>We'll keep the business running behind you.</h1>
+    <p class="lead">Koinonia helps Realtors protect client service by organizing the operational work that competes for their time.</p>
+
+    <section class="packet-grid">
+      <article class="packet-card">
+        <h2>Transaction Support</h2>
+        <p>Contract-to-close coordination, deadline visibility, document tracking, communication coordination, closing preparation, and file completion.</p>
+        <p><strong>$389 prepaid</strong> or <strong>$599 due at successful closing</strong>.</p>
+      </article>
+
+      <article class="packet-card">
+        <h2>Contract &amp; Document Support</h2>
+        <p>Licensed preparation support based on the Realtor's instructions for offers, counters, amendments, addenda, notices, and other approved documents.</p>
+        <p><strong>Starting at $75.</strong></p>
+      </article>
+
+      <article class="packet-card">
+        <h2>Licensed Showing Coverage</h2>
+        <p>Professional licensed backup when a client needs property access and the Realtor cannot make the showing.</p>
+        <p><strong>Starting at $50.</strong></p>
+      </article>
+
+      <article class="packet-card">
+        <h2>Professional Open House Coverage</h2>
+        <p>Professional preparation, approved promotion, available signage, custom property flyer, up to three hours of licensed hosting, and a post-event summary.</p>
+        <p><strong>$200 standalone</strong>; one included with an applicable $599 listing engagement; additional qualifying sessions <strong>$100 each</strong>.</p>
+      </article>
+
+      <article class="packet-card full">
+        <h2>Monthly Operations Partnership</h2>
+        <p>Recurring CRM, pipeline, follow-up, task, checklist, calendar, template, workflow, and business-operations support without hiring a full-time assistant.</p>
+        <p><strong>Starter $299 / Growth $599 / Partner $999 per month.</strong></p>
+      </article>
+    </section>
+
+    <section class="packet-referral">
+      <p class="eyebrow">A Separate Path</p>
+      <h2>40% Referral Partner Option</h2>
+      <p><strong>Want to keep the client?</strong> We'll help you carry the operation.</p>
+      <p><strong>Don't want to take the client?</strong> You may be able to refer the opportunity instead and receive a <strong>40% referral fee on qualifying successfully closed referred business.</strong></p>
+      <p class="small">Complete brokerage, compensation, transaction, and referral terms are provided in the formal referral documents before client handoff. A Koinonia Transactions support relationship never becomes a brokerage referral unless the Realtor explicitly chooses the referral path.</p>
+    </section>
+
+    <section class="packet-footer">
+      <div class="packet-boundary">
+        <p class="eyebrow">Professional Boundary</p>
+        <p>Koinonia provides operational support. Realtors remain responsible for client advice, negotiation decisions, brokerage compliance, legal questions, professional judgment, representation strategy, and final approval.</p>
+        <p><strong>The service is the product.</strong> The portal and systems are tools used to communicate, provide visibility, and complete the work.</p>
+      </div>
+
+      <div class="packet-contact">
+        <p class="eyebrow">Next Step</p>
+        <h2>Schedule a Brokerage or Agent Consultation</h2>
+        <p>Jeremiah Reynalds · Support Partner</p>
+        <p>Phone/Text: 719-745-8497</p>
+        <p>jeremiah@koinoniaadmin.com</p>
+        <strong>koinoniatransactions.com/contact</strong>
+      </div>
+    </section>
+
+    <p class="scripture-footer">Bear one another's burdens. Work heartily, as for the Lord.<br><span>Galatians 6:2 · Colossians 3:23</span></p>
+  </main>
+</body>
+</html>
