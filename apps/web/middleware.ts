@@ -1,7 +1,7 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
 
-const protectedPortalPrefixes = ["/client", "/employee"];
+const protectedPortalPrefixes = ["/client", "/employee", "/crm"];
 
 export default function middleware(request: NextRequest, event: NextFetchEvent) {
   if (!hasClerkConfiguration()) {
