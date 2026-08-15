@@ -120,7 +120,7 @@ export const productRegistry = [
     audience: "public",
     purpose:
       "Present Koinonia Properties, its services, brand, and approved public-facing business information.",
-    status: "planned",
+    status: "active-development",
     hasPublicWebsite: true,
     recordAuthority: "reynalds-os"
   },
