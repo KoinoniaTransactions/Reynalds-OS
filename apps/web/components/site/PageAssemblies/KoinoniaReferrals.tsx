@@ -66,7 +66,7 @@ export function KoinoniaReferrals() {
             <p className="koinonia-copy">{referralsContent.program.lead}</p>
           </div>
 
-          <div className="koinonia-grid three">
+          <div className="koinonia-grid balanced-five">
             {referralsContent.program.steps.map((step, index) => (
               <UniversalCard
                 key={step.title}
