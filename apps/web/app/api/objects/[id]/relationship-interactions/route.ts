@@ -47,9 +47,14 @@ export async function POST(request: Request, { params }: Params) {
   const body = await request.json();
   const note = text(body.note);
   const confirmed = confirmedSuggestion(body.confirmed);
+  const createFollowUpTask = body.createFollowUpTask === true && Boolean(confirmed.nextAction);
 
   if (!note) {
     return NextResponse.json({ error: "Interaction note is required." }, { status: 400 });
+  }
+
+  if (createFollowUpTask) {
+    await assertPermission("tasks:update");
   }
 
   const existing = await prisma.rosObject.findFirst({
@@ -103,29 +108,82 @@ export async function POST(request: Request, { params }: Params) {
     ? preserveAdvancedLifecycle(existing.status, confirmed.lifecycle)
     : existing.status;
 
-  const object = await prisma.rosObject.update({
-    where: { id },
-    data: {
-      status: nextStatus,
-      nextAction: confirmed.nextAction || existing.nextAction,
-      data: toPrismaJson(profile)
+  const result = await prisma.$transaction(async (tx) => {
+    const object = await tx.rosObject.update({
+      where: { id },
+      data: {
+        status: nextStatus,
+        nextAction: confirmed.nextAction || existing.nextAction,
+        data: toPrismaJson(profile)
+      }
+    });
+
+    await tx.timelineEvent.create({
+      data: {
+        workspaceId: user.workspaceId,
+        objectId: object.id,
+        actorId: user.id,
+        eventType: "relationship.interaction.captured",
+        summary: `Relationship interaction captured: ${object.name}`,
+        newValue: toPrismaJson({
+          capturedAt,
+          note,
+          confirmed
+        })
+      }
+    });
+
+    let task = null;
+    let taskAlreadyOpen = false;
+
+    if (createFollowUpTask && confirmed.nextAction) {
+      const existingTask = await tx.task.findFirst({
+        where: {
+          workspaceId: user.workspaceId,
+          relatedObjectId: object.id,
+          status: "Open",
+          title: confirmed.nextAction
+        }
+      });
+
+      if (existingTask) {
+        task = existingTask;
+        taskAlreadyOpen = true;
+      } else {
+        task = await tx.task.create({
+          data: {
+            workspaceId: user.workspaceId,
+            relatedObjectId: object.id,
+            ownerId: user.id,
+            title: confirmed.nextAction,
+            status: "Open",
+            priority: "Normal"
+          }
+        });
+
+        await tx.timelineEvent.create({
+          data: {
+            workspaceId: user.workspaceId,
+            objectId: object.id,
+            actorId: user.id,
+            eventType: "task.created",
+            summary: `Task created: ${task.title}`,
+            newValue: toPrismaJson(task)
+          }
+        });
+      }
     }
+
+    return { object, task, taskAlreadyOpen };
   });
 
-  await prisma.timelineEvent.create({
-    data: {
-      workspaceId: user.workspaceId,
-      objectId: object.id,
-      actorId: user.id,
-      eventType: "relationship.interaction.captured",
-      summary: `Relationship interaction captured: ${object.name}`,
-      newValue: toPrismaJson({
-        capturedAt,
-        note,
-        confirmed
-      })
-    }
-  });
-
-  return NextResponse.json({ object, interaction: { capturedAt, note, confirmed } }, { status: 201 });
+  return NextResponse.json(
+    {
+      object: result.object,
+      interaction: { capturedAt, note, confirmed },
+      followUpTask: result.task,
+      followUpTaskAlreadyOpen: result.taskAlreadyOpen
+    },
+    { status: 201 }
+  );
 }
