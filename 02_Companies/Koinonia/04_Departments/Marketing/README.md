@@ -15,6 +15,7 @@ Koinonia marketing should make it immediately clear that the business sells depe
 This plan executes the direction established in:
 
 - `02_Companies/Koinonia/05_Business_Materials/KOINONIA_BRAND_MARKETING_SYSTEM_V2.md`
+- `02_Companies/Koinonia/04_Departments/Marketing/MARKETING_LEARNING_RELATIONSHIP_CAPTURE_SYSTEM.md`
 - `03_Knowledge/Website/PRODUCTION_INDEX.md`
 - `03_Knowledge/Website/WEBSITE_PRODUCTION_FRAMEWORK.md`
 - `02_Companies/Koinonia/01_Services/`
@@ -389,7 +390,19 @@ Track where practical:
 - successful referred closings
 - long-term revenue by relationship/source
 
+In addition, preserve the prospect's own problem language, triggering situation, objections, desired outcome, initial service interest, recommended service, and no-sale/lost reason when meaningful. These fields are governed by `MARKETING_LEARNING_RELATIONSHIP_CAPTURE_SYSTEM.md` and allow Koinonia to learn how the market actually describes and buys support.
+
 Social reach, impressions, clicks, and email engagement are diagnostic metrics, not the final definition of success.
+
+## Learning Loop
+
+Koinonia marketing should operate as:
+
+**Market -> Listen -> Diagnose -> Serve -> Measure -> Learn -> Improve -> Market again**
+
+Use the shared Marketing Learning & Relationship Capture System across Marketing, Sales, Operations, and Customer Success rather than creating separate department-specific versions of the same relationship history.
+
+Do not change canonical strategy based on a single anecdote. Capture individual signals, look for repeated patterns, test learning-layer hypotheses, and only promote validated patterns into the stable business/brand layer through the normal governance process.
 
 ## Operating Rule
 
