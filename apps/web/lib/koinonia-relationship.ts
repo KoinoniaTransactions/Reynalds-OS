@@ -259,54 +259,61 @@ export function mergeKoinoniaRelationshipData(
 
 export function mapConsultationTypeToRelationshipIntent(
   consultationType: string
-): { pressure: string; service: string } {
+): { pressure: string; service: string; path: string } {
   const normalized = consultationType.toLowerCase();
 
   if (normalized.includes("transaction")) {
     return {
       pressure: "Transaction/File Capacity",
-      service: "Transaction Support / Contract-to-Close Coordination"
+      service: "Transaction Support / Contract-to-Close Coordination",
+      path: "Keep Client"
     };
   }
 
   if (normalized.includes("contract") || normalized.includes("document")) {
     return {
       pressure: "Contract/Document Workload",
-      service: "Contract & Document Support"
+      service: "Contract & Document Support",
+      path: "Keep Client"
     };
   }
 
   if (normalized.includes("showing")) {
     return {
       pressure: "Showing/Schedule Conflict",
-      service: "Licensed Showing Coverage"
+      service: "Licensed Showing Coverage",
+      path: "Keep Client"
     };
   }
 
   if (normalized.includes("open house")) {
     return {
       pressure: "Open House/Listing Capacity",
-      service: "Professional Open House Coverage"
+      service: "Professional Open House Coverage",
+      path: "Keep Client"
     };
   }
 
   if (normalized.includes("monthly") || normalized.includes("operations")) {
     return {
       pressure: "CRM/Follow-Up/Business Organization",
-      service: "Monthly Operations Partnership"
+      service: "Monthly Operations Partnership",
+      path: "Keep Client"
     };
   }
 
   if (normalized.includes("referral")) {
     return {
       pressure: "Referral/No-Capacity Client Opportunity",
-      service: "40% Referral Partner Option"
+      service: "40% Referral Partner Option",
+      path: "Refer Client"
     };
   }
 
   return {
     pressure: "Unclear/Other",
-    service: consultationType || "Not Sure Yet"
+    service: consultationType || "Not Sure Yet",
+    path: "Undetermined"
   };
 }
 
