@@ -1,70 +1,113 @@
-# Koinonia Transactions — Brochure Copy
+# Koinonia Transactions — Tri-Fold Brochure Copy
 
-Status: Working Brochure Copy v1  
-Purpose: Copy source for a one-page flyer or trifold brochure.
+Status: Active Brochure Copy  
+Purpose: Copy source for the Koinonia networking, brokerage, and event tri-fold brochure.
 
-## Cover
+## Panel 1 — Front Cover
 
 Koinonia Transactions
 
-Real estate operations support for Colorado Realtors.
+**Real Estate Operations Support for Colorado Realtors**
 
-You focus on your clients.  
-We'll keep the business running.
+**You focus on your clients. We'll keep the business running behind you.**
 
-## Who We Help
+Real Estate Operations. Elevated.
 
-Koinonia supports Realtors who need dependable help behind the client relationship.
+## Panel 2 — The Operational Pressure
 
-We help with transaction coordination, contract and document support, licensed showing coverage, and recurring business operations support so important details stay organized, visible, and moving forward.
+### More transactions should create more opportunity, not more chaos.
 
-## What Koinonia Helps With
+Realtors balance clients, contracts, deadlines, showings, listings, open houses, communication, follow-up, and business development.
+
+Koinonia provides dependable support behind the client relationship so important work remains visible, organized, and moving forward.
+
+The service is the product. Our systems and portal are simply tools used to communicate, provide visibility, and complete the work.
+
+## Panel 3 — Five Ways Koinonia Supports Realtors
 
 ### Transaction Support
 
-Contract-to-close coordination for active files, including timeline setup, deadline tracking, document checklist support, communication follow-up, milestone tracking, and closing preparation.
-
-Starting at $389 prepaid or $599 pay-at-closing.
+Contract-to-close coordination, deadline visibility, document tracking, communication coordination, closing preparation, and file completion.
 
 ### Contract & Document Support
 
-Licensed document preparation support based on Realtor instructions, including offers, amendments, addenda, notices, counterproposal support, and signature-ready document organization.
-
-Starting at $75.
+Licensed document preparation based on the Realtor's instructions for offers, counters, amendments, addenda, notices, revisions, and other approved transaction documents.
 
 ### Licensed Showing Coverage
 
-Licensed support when schedule conflicts, distance, or availability issues make it difficult for a Realtor to personally cover a showing.
+Professional licensed backup when a client needs property access and the Realtor cannot personally cover the showing.
 
-Starting at $50 for local showing coverage.
+### Professional Open House Coverage
+
+**Your listing. Professionally prepared, promoted, and hosted.**
+
+Custom flyer preparation, approved digital promotion, available signage setup, up to three hours of licensed hosting, and post-event follow-up.
 
 ### Monthly Operations Partnership
 
-Recurring operations support for Realtors who need more structure and follow-through without hiring a full-time assistant.
+Recurring CRM, pipeline, follow-up, task, checklist, calendar, template, and business-operations support without hiring a full-time assistant.
 
-Starting at $299/month.
+## Panel 4 — Choose the Right Support Path
 
-## Why Realtors Use Koinonia
+### Want to keep the client?
 
-Realtors often lose time to the details that happen behind the scenes:
+Koinonia can help you carry the operation.
 
-- Files need structure.
-- Deadlines need tracking.
-- Paperwork needs to move.
-- Clients need updates.
-- Showings need coverage.
-- Daily operations need follow-through.
+- Need help with the file? → Transaction Support
+- Need the documents prepared? → Contract & Document Support
+- Cannot make the showing? → Licensed Showing Coverage
+- Cannot give up the open-house block? → Professional Open House Coverage
+- Cannot keep the business organized consistently? → Monthly Operations Partnership
 
-Koinonia helps create a calmer, more organized operating rhythm.
+### Don't want or can't take the client?
 
-## Boundaries
+There is a separate option.
 
-Koinonia provides operational support. Koinonia does not replace the Realtor’s client advice, negotiation decisions, brokerage compliance, legal advice, tax advice, financial advice, or final approval responsibility.
+**40% Referral Partner Option**
 
-## Next Step
+A qualifying successfully closed referred opportunity may earn a **40% referral fee**.
 
-Schedule a consultation to clarify the right support path.
+Complete brokerage, compensation, transaction, and referral terms are provided in formal referral documents before client handoff.
 
-Website: https://www.koinoniatransactions.com  
+A Koinonia Transactions support relationship never becomes a brokerage referral unless the Realtor explicitly chooses to refer the client.
+
+## Panel 5 — Why Koinonia
+
+Realtors use Koinonia for:
+
+- Licensed real estate perspective
+- Organized operational execution
+- Clear communication
+- Defined professional boundaries
+- Dependable follow-through
+- Flexible support during busy seasons
+- Service designed around the Realtor-client relationship
+
+### Professional Boundary
+
+Koinonia provides operational support. Realtors remain responsible for client advice, negotiation decisions, brokerage compliance, legal questions, professional judgment, representation strategy, and final approval.
+
+Koinonia is not unlimited assistant access, brokerage supervision, or a replacement for the Realtor-client relationship.
+
+## Panel 6 — Contact / Consultation
+
+### Start with the smallest useful place for us to help.
+
+**Schedule a Brokerage or Agent Consultation**
+
+Jeremiah Reynalds  
+Support Partner
+
+Website: www.koinoniatransactions.com  
+Consultation: www.koinoniatransactions.com/contact  
 Phone/Text: 719-745-8497  
 Email: jeremiah@koinoniaadmin.com
+
+**The first engagement should earn the second engagement.**
+
+Koinonia  
+/koy-noh-NEE-uh/  
+*fellowship · joint participation · sharing in common*
+
+Bear one another's burdens. Work heartily, as for the Lord.  
+Galatians 6:2 · Colossians 3:23
