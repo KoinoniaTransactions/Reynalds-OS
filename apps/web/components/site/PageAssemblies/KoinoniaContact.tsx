@@ -87,7 +87,6 @@ export function KoinoniaContact() {
             selectorHelper={contactContent.scheduleConsultation.selectorHelper}
             buttonLabel={contactContent.scheduleConsultation.buttonLabel}
           />
-
         </div>
       </section>
 
@@ -115,6 +114,22 @@ export function KoinoniaContact() {
                 body={card.body}
               />
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section koinonia-contact-referrals">
+        <div className="koinonia-container">
+          <div className="koinonia-cta">
+            <div className="koinonia-eyebrow">{contactContent.referralDiscovery.eyebrow}</div>
+            <h2 className="koinonia-heading">{contactContent.referralDiscovery.title}</h2>
+            <p className="koinonia-copy">{contactContent.referralDiscovery.lead}</p>
+            <p className="koinonia-copy">{contactContent.referralDiscovery.body}</p>
+            <div className="koinonia-actions" style={{ justifyContent: "center" }}>
+              <a className="koinonia-button primary" href={contactContent.referralDiscovery.href}>
+                {contactContent.referralDiscovery.label}
+              </a>
+            </div>
           </div>
         </div>
       </section>
