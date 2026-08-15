@@ -122,34 +122,14 @@ export function KoinoniaReferrals() {
             <p className="koinonia-copy">{referralsContent.economics.lead}</p>
           </div>
 
-          <div className="koinonia-grid two">
-            <article className="koinonia-card koinonia-pricing-card">
-              <div className="koinonia-price-badge">
-                <span className="koinonia-price-badge-label">Referral fee</span>
-                <span className="koinonia-price-badge-value">{referralsContent.economics.referralRate}</span>
-              </div>
-              <h3>Partner referral benefit</h3>
-              <p>{referralsContent.economics.referralLabel}</p>
-            </article>
-
-            <article className="koinonia-card koinonia-pricing-card">
-              <div className="koinonia-price-badge">
-                <span className="koinonia-price-badge-label">At successful closing</span>
-                <span className="koinonia-price-badge-value">{referralsContent.economics.coordinationFee}</span>
-              </div>
-              <h3>Required transaction support</h3>
-              <p>{referralsContent.economics.coordinationLabel}</p>
-            </article>
-          </div>
-
-          <article className="koinonia-card">
-            <h3>How the payout works</h3>
-            <p>{referralsContent.economics.formula}</p>
-            <ul>
-              {referralsContent.economics.terms.map((term) => (
-                <li key={term}>{term}</li>
-              ))}
-            </ul>
+          <article className="koinonia-card koinonia-pricing-card">
+            <div className="koinonia-price-badge">
+              <span className="koinonia-price-badge-label">Referral fee</span>
+              <span className="koinonia-price-badge-value">{referralsContent.economics.referralRate}</span>
+            </div>
+            <h3>Partner referral benefit</h3>
+            <p>{referralsContent.economics.referralLabel}</p>
+            <p>{referralsContent.economics.note}</p>
           </article>
         </div>
       </section>
@@ -182,7 +162,7 @@ export function KoinoniaReferrals() {
             <div className="koinonia-eyebrow">Referral Partner Conversation</div>
             <h2 className="koinonia-heading">Have a client or lead you may want to refer?</h2>
             <p className="koinonia-copy">
-              Start with the opportunity. We will confirm fit, brokerage requirements, referral terms, and the appropriate next step before any client handoff occurs.
+              Start with the opportunity. We will confirm fit and provide the formal referral documents and complete terms before any client handoff occurs.
             </p>
             <div className="koinonia-actions" style={{ justifyContent: "center" }}>
               <a className="koinonia-button primary" href="/contact#schedule-consultation">
