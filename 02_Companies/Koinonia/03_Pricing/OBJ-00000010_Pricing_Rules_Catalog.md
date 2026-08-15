@@ -4,7 +4,7 @@ Class: Master Object
 Type: Pricing Rules Catalog
 Module: Koinonia
 Status: Active
-Version: 1.0
+Version: 1.1
 Owner: Koinonia
 Memory Level: Foundational
 
@@ -15,6 +15,9 @@ Approved pricing rules:
 - OBJ-00000011 Prepaid Pricing Rule
 - OBJ-00000012 Pay-at-Closing Pricing Rule
 - OBJ-00000013 Custom Support Pricing Rule
+- OBJ-00000015 Professional Open House Pricing Rule
 
 Governance:
-No service or package may be quoted without a pricing rule. Pricing changes require versioning and change log entry.
+No service or package may be quoted without a pricing rule. Pricing changes require versioning and a documented change to the applicable canonical pricing object.
+
+Public-facing marketing may summarize approved pricing, but it must not create discounts, package inclusions, or alternate prices that are absent from this catalog or an approved custom support variation.
