@@ -3,7 +3,7 @@ export const contactContent = {
     eyebrow: "Contact Koinonia",
     title: "Start with a clear next step.",
     lead:
-      "Reach out when you need dependable real estate operations support as a Colorado Realtor for a transaction, contract, showing conflict, professional open house, or recurring business operations support. Koinonia will help clarify the need and identify the right path forward.",
+      "Reach out when you need dependable real estate operations support as a Colorado Realtor for a transaction, contract, showing conflict, professional open house, monthly business support, or referral opportunity. Koinonia will help clarify the need and identify the right path forward.",
     primaryLabel: "Schedule a Consultation",
     primaryHref: "/contact#schedule-consultation",
     secondaryLabel: "View Services",
@@ -14,12 +14,12 @@ export const contactContent = {
     eyebrow: "How to Reach Out",
     title: "Choose the easiest way to start.",
     lead:
-      "Email, call, or text with a short summary of the support you need. If there is an active deadline, contract date, showing need, open-house date, or monthly support question, include that context so the first response can be useful.",
+      "Email, call, or text with a short summary of the support or referral need. If there is an active deadline, contract date, showing need, open house date, monthly support question, or buyer/seller opportunity, include that context so the first response can be useful.",
     noteTitle: "Helpful details to include",
     noteItems: [
-      "The type of support you need",
-      "Whether this is for an active transaction, document, showing, open house, or monthly support",
-      "Any active deadline or timing concern",
+      "The type of support or referral need",
+      "Whether this is for an active transaction, document, showing, open house, monthly support, or buyer/seller referral",
+      "Any active deadline, event date, or timing concern",
       "The best way to respond",
       "Any documents or context that would help clarify the request"
     ]
@@ -29,13 +29,13 @@ export const contactContent = {
     eyebrow: "Schedule a Consultation",
     title: "Need help choosing the right support?",
     lead:
-      "Open the scheduler, choose the support path that fits your need, and request a weekday consultation time.",
+      "Open the scheduler, choose the support or referral path that fits your need, and request a weekday consultation time.",
     availabilityLabel: "Availability",
     availability: "Monday–Friday · 9:00 AM–5:00 PM",
     buttonLabel: "Open Scheduler",
     selectorLabel: "What do you need help with?",
     selectorHelper:
-      "Choose the support path that fits your need before sending your consultation request.",
+      "Choose the path that best fits your need before sending your consultation request.",
     cards: [
       {
         title: "Transaction Support",
@@ -55,35 +55,35 @@ export const contactContent = {
         title: "Licensed Showing Coverage",
         body: "For scheduling conflicts, distance issues, or buyer showing needs.",
         bestWhen:
-          "Best when you need licensed backup to help with property access or showing coverage while you retain the client relationship.",
+          "Best when you need a licensed agent to help with access, showing coverage, or buyer follow-up.",
         subject: "Koinonia Licensed Showing Coverage Consultation Request"
       },
       {
         title: "Professional Open House Coverage",
-        body: "For listing agents who want the open house prepared, promoted, and professionally hosted.",
+        body: "For a listing that needs a prepared, promoted, professionally hosted open house.",
         bestWhen:
-          "Best when the listing deserves a professional open house but you cannot give up the preparation and hosting block yourself.",
-        subject: "Koinonia Professional Open House Coverage Consultation Request"
+          "Best when your seller expects an open house but you want the flyer, promotion, signage, hosting, and event follow-up handled for you.",
+        subject: "Koinonia Professional Open House Coverage Request"
       },
       {
         title: "Monthly Operations Partnership",
-        body: "For recurring CRM, follow-up, task cleanup, and backend business support.",
+        body: "For recurring admin, CRM, follow-up, task cleanup, and backend business support.",
         bestWhen:
-          "Best when you need ongoing operational help, not just one transaction, showing, document, or open house.",
+          "Best when you need ongoing operational help, not just one transaction or one document.",
         subject: "Koinonia Monthly Operations Partnership Consultation Request"
       },
       {
         title: "40% Referral Partner Option",
-        body: "For a client opportunity you do not want or cannot personally carry.",
+        body: "For a buyer or seller opportunity you would rather refer than personally service.",
         bestWhen:
-          "Best when you intentionally want to discuss the separate brokerage referral path rather than Koinonia operational support for a client you plan to keep.",
-        subject: "Koinonia Referral Partner Consultation Request"
+          "Best when workload, timing, financing readiness, geography, nurture requirements, or fit make a formal referral more useful than keeping the client relationship yourself.",
+        subject: "Koinonia 40% Referral Partner Inquiry"
       },
       {
         title: "Not Sure Yet",
         body: "For Realtors who know they need help but are not sure where to start.",
         bestWhen:
-          "Best when you want a quick conversation to choose the right support path.",
+          "Best when you want a quick conversation to choose the right support or referral path.",
         subject: "Koinonia General Consultation Request"
       }
     ]
@@ -93,7 +93,7 @@ export const contactContent = {
     eyebrow: "Support Intake",
     title: "What kind of support are you asking about?",
     lead:
-      "You do not need to know the perfect category before reaching out. These paths simply help start the conversation with the right context.",
+      "You do not need to know the perfect category before reaching out. These five paths cover Koinonia Transactions operational support.",
     cards: [
       {
         title: "Transaction Support",
@@ -113,7 +113,7 @@ export const contactContent = {
       {
         title: "Professional Open House Coverage",
         body:
-          "For listing agents who want the property flyer, approved promotion, signage coordination, licensed hosting, and post-event follow-through handled professionally."
+          "For listing agents who want an open house prepared, promoted, professionally hosted, and summarized without giving up the event block themselves."
       },
       {
         title: "Monthly Operations Partnership",
@@ -121,6 +121,17 @@ export const contactContent = {
           "For ongoing real estate operations support, CRM organization, task tracking, client follow-up, workflow structure, and recurring business follow-through."
       }
     ]
+  },
+
+  referralDiscovery: {
+    eyebrow: "Referral Partner Path",
+    title: "Don't want to keep the client relationship?",
+    lead:
+      "If the real issue is that you do not want to personally carry the buyer or seller opportunity, Koinonia also offers a separate 40% Referral Partner Option for qualifying successfully closed referred business.",
+    body:
+      "Complete referral and brokerage terms are provided through the formal referral documents before any client handoff.",
+    label: "Learn About the 40% Referral Option",
+    href: "/referrals"
   },
 
   nextSteps: {
@@ -132,17 +143,17 @@ export const contactContent = {
       {
         title: "You choose the consultation need",
         body:
-          "Start with the support or referral path that best matches the transaction, document, showing, open house, recurring operations need, or general question."
+          "Start with the type of support or referral path that best matches the transaction, document, showing, open house, recurring operation, or client opportunity."
       },
       {
         title: "Koinonia clarifies the fit",
         body:
-          "The request is reviewed, the right path is identified, and any missing details are confirmed before work or a formal referral handoff begins."
+          "The request is reviewed, the right support or referral path is identified, and any missing details are confirmed before work or a client handoff begins."
       },
       {
         title: "You get a clear next step",
         body:
-          "The conversation turns into an organized plan for support, communication, timing, consultation scheduling, or—when deliberately chosen—the separate referral process."
+          "The conversation turns into an organized plan for support, event preparation, referral documentation when applicable, communication, timing, and follow-through."
       }
     ]
   },
@@ -154,7 +165,7 @@ export const contactContent = {
       {
         question: "What should I include when I reach out?",
         answer:
-          "Share the type of support you need, whether there is an active deadline, the best way to contact you, and any important context that would help Koinonia understand the request."
+          "Share the type of support or referral need, whether there is an active deadline or event date, the best way to contact you, and any important context that would help Koinonia understand the request."
       },
       {
         question: "Can I ask about more than one service?",
@@ -162,14 +173,19 @@ export const contactContent = {
           "Yes. Many Realtors need a mix of transaction support, contract and document support, licensed showing coverage, professional open house coverage, or monthly operations support. The first conversation can clarify what fits."
       },
       {
-        question: "Is reaching out a commitment?",
+        question: "Can I book an open house without another Koinonia service?",
         answer:
-          "No. The first step is simply a conversation to understand your needs and determine whether Koinonia is the right support partner."
+          "Yes. Professional Open House Coverage is available as a standalone service starting at $200 for an event of up to three hours, subject to scheduling and confirmed scope."
       },
       {
-        question: "Can I ask about the Referral Partner Option here?",
+        question: "Can I ask about the referral option instead of a Koinonia service?",
         answer:
-          "Yes. Choose the 40% Referral Partner Option when you intentionally want to discuss the separate brokerage referral path. A Koinonia Transactions support relationship does not become a referral unless you deliberately choose that path and complete the required referral documents."
+          "Yes. If you have a buyer or seller opportunity you would rather refer than personally service, choose the 40% Referral Partner Option in the consultation selector."
+      },
+      {
+        question: "Is reaching out a commitment?",
+        answer:
+          "No. The first step is simply a conversation to understand your needs and determine the appropriate support or referral path."
       },
       {
         question: "Can I ask about monthly support even if I am not ready to choose a tier?",
