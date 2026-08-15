@@ -82,12 +82,24 @@ const blankForm: RelationshipForm = {
   rationale: ""
 };
 
+function canonicalLifecycleStatus(status: string) {
+  const legacyMap: Record<string, string> = {
+    Open: "Lead",
+    Active: "Client",
+    "Active Client": "Client",
+    Complete: "Successful Delivery",
+    Closed: "Successful Delivery"
+  };
+
+  return legacyMap[status] ?? status;
+}
+
 function relationshipToForm(relationship: RosObject): RelationshipForm {
   const profile = normalizeKoinoniaRelationshipData(relationship.data);
 
   return {
     name: relationship.name,
-    status: relationship.status,
+    status: canonicalLifecycleStatus(relationship.status),
     health: relationship.health,
     nextAction: relationship.nextAction ?? "",
     email: profile.contact?.email ?? "",
@@ -125,8 +137,7 @@ function formToProfile(form: RelationshipForm): KoinoniaRelationshipData {
       sourceDetail: form.sourceDetail.trim(),
       material: form.material,
       campaign: form.campaign.trim(),
-      firstTouchChannel: form.source === "Website" ? "Website" : "",
-      firstTouchDate: new Date().toISOString().slice(0, 10)
+      firstTouchChannel: form.source === "Website" ? "Website" : ""
     },
     problem: {
       primaryPressure: form.primaryPressure,
@@ -225,6 +236,12 @@ export function CrmMvp() {
     setError("");
 
     try {
+      const profile = formToProfile(createForm);
+      profile.acquisition = {
+        ...profile.acquisition,
+        firstTouchDate: new Date().toISOString().slice(0, 10)
+      };
+
       const response = await fetch("/api/objects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -234,7 +251,7 @@ export function CrmMvp() {
           status: createForm.status,
           health: createForm.health,
           nextAction: createForm.nextAction.trim() || undefined,
-          data: formToProfile(createForm)
+          data: profile
         })
       });
 
@@ -368,8 +385,8 @@ export function CrmMvp() {
           <article className="ros-card" style={{ marginBottom: 18 }}>
             <h2>New Relationship</h2>
             <p>Capture the useful context from the first meaningful conversation. You can add detail later.</p>
-            <RelationshipFormFields form={createForm} setForm={setCreateForm} />
             <form className="ros-form" onSubmit={createRelationship}>
+              <RelationshipFormFields form={createForm} setForm={setCreateForm} />
               <button disabled={isSaving || !createForm.name.trim()}>
                 {isSaving ? "Saving..." : "Create Relationship"}
               </button>
@@ -419,6 +436,10 @@ export function CrmMvp() {
                 <p><strong>{selected.id}</strong></p>
                 <h3>{selected.name}</h3>
                 <p>{selected.status} · {selected.health}</p>
+
+                {selectedProfile?.acquisition?.firstTouchDate ? (
+                  <p><strong>First touch:</strong> {selectedProfile.acquisition.firstTouchDate}</p>
+                ) : null}
 
                 {selectedProfile?.consultationRequest?.submittedAt ? (
                   <div className="ros-panel" style={{ marginBottom: 14 }}>
@@ -524,11 +545,9 @@ function RelationshipFormFields({
         {relationshipLifecycleStages.map((stage) => <option key={stage} value={stage}>{stage}</option>)}
       </select>
       <select value={form.health} onChange={(event) => patch({ health: event.target.value })}>
-        {[
-          "Healthy",
-          "Attention",
-          "Critical"
-        ].map((health) => <option key={health} value={health}>{health}</option>)}
+        {["Healthy", "Attention", "Critical"].map((health) => (
+          <option key={health} value={health}>{health}</option>
+        ))}
       </select>
       <input value={form.nextAction} onChange={(event) => patch({ nextAction: event.target.value })} placeholder="Next action" />
 
