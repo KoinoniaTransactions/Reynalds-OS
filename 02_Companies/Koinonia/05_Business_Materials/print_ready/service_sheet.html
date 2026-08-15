@@ -2,8 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Koinonia Transactions Service Sheet</title>
+  <title>Koinonia Transactions Service Guide</title>
   <link rel="stylesheet" href="koinonia_materials.css">
+  <style>
+    .service-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .service-guide-grid .card:nth-child(5) {
+      grid-column: 1 / -1;
+      width: calc(50% - 7px);
+      justify-self: center;
+    }
+
+    .service-guide-grid .card {
+      padding: 15px;
+    }
+
+    .service-guide-grid .card h2 {
+      font-size: 0.18in;
+    }
+
+    .service-guide-grid .card p,
+    .service-guide-grid .card li {
+      font-size: 0.086in;
+      line-height: 1.35;
+    }
+
+    .service-guide-grid .card ul {
+      margin-top: 6px;
+    }
+
+    .service-guide-grid .price {
+      margin-top: 7px;
+      font-size: 0.075in;
+    }
+
+    .service-guide-referral {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 0.22in;
+      margin-top: 18px;
+      padding: 0.15in 0.17in;
+      border-left: 3px solid var(--koinonia-gold);
+      background: rgba(234, 215, 168, 0.14);
+    }
+
+    .service-guide-referral h2 {
+      margin: 0;
+      font-size: 0.18in;
+    }
+
+    .service-guide-referral p {
+      margin: 0 0 6px;
+      font-size: 0.084in;
+      line-height: 1.35;
+    }
+
+    .service-guide-referral .referral-note {
+      color: var(--koinonia-muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.066in;
+      line-height: 1.3;
+    }
+
+    .service-guide-note {
+      margin-top: 12px;
+      color: var(--koinonia-muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.068in;
+      line-height: 1.35;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
   <main class="material-page">
@@ -17,66 +91,85 @@
 
     <div class="gold-line"></div>
 
-    <p class="eyebrow">Services</p>
-    <h1>Support behind the client relationship.</h1>
+    <p class="eyebrow">Service Guide</p>
+    <h1>You focus on your clients.<br>We'll keep the business running behind you.</h1>
     <p class="lead">Koinonia helps Realtors protect client service by organizing the operational work that competes for their time.</p>
 
-    <section class="koinonia-definition">
-      <div class="definition-word">Koinonia</div>
-      <div class="definition-pronunciation">/koy-noh-NEE-uh/</div>
-      <div class="definition-meaning">fellowship · joint participation · sharing in common</div>
-      <p>Steady support. Shared responsibility. Service behind the client relationship.</p>
-    </section>
-
-    <section class="grid-2" style="margin-top: 28px;">
+    <section class="service-guide-grid">
       <article class="card">
         <h2>Transaction Support</h2>
-        <p>Contract-to-close coordination for active real estate files.</p>
+        <p>Contract-to-close operational coordination once a transaction is under contract.</p>
         <ul>
-          <li>Timeline setup and deadline tracking.</li>
-          <li>Document checklist support.</li>
-          <li>Lender, title, client, and partner communication support.</li>
-          <li>Closing preparation and file wrap-up.</li>
+          <li>Timeline and deadline visibility.</li>
+          <li>Document and outstanding-item tracking.</li>
+          <li>Lender, title, and party coordination.</li>
+          <li>Closing preparation and file completion.</li>
         </ul>
-        <span class="price">Starting at $389</span>
+        <span class="price">$389 prepaid · $599 pay at successful close</span>
       </article>
 
       <article class="card">
         <h2>Contract &amp; Document Support</h2>
-        <p>Licensed document preparation support based on the Realtor’s instructions.</p>
+        <p>Licensed preparation support based on the Realtor's instructions.</p>
         <ul>
-          <li>Offer preparation support.</li>
-          <li>Amendments, addenda, and notices.</li>
-          <li>Missing-information review.</li>
-          <li>Signature-ready document organization.</li>
+          <li>Offers, counters, amendments, addenda, and notices.</li>
+          <li>Missing-information follow-up.</li>
+          <li>Revisions and review-ready organization.</li>
+          <li>Realtor retains terms, decisions, and final approval.</li>
         </ul>
         <span class="price">Starting at $75</span>
       </article>
 
       <article class="card">
         <h2>Licensed Showing Coverage</h2>
-        <p>Licensed support when schedules, distance, or conflicts make it difficult to personally cover a showing.</p>
+        <p>Professional licensed backup when the Realtor cannot personally cover a showing.</p>
         <ul>
+          <li>Property and appointment confirmation.</li>
           <li>Licensed property access.</li>
-          <li>Showing appointment coordination.</li>
-          <li>Buyer showing support when unavailable.</li>
-          <li>Feedback after showing.</li>
+          <li>Agreed showing coverage.</li>
+          <li>Completion confirmation and feedback.</li>
         </ul>
-        <span class="price">Starting at $50</span>
+        <span class="price">Local coverage starting at $50</span>
+      </article>
+
+      <article class="card">
+        <h2>Professional Open House Coverage</h2>
+        <p>Your listing. Professionally prepared, promoted, and hosted.</p>
+        <ul>
+          <li>Custom flyer and approved digital promotion.</li>
+          <li>Available approved signage setup/takedown.</li>
+          <li>Up to 3 hours licensed hosting.</li>
+          <li>Visitor notes and post-event summary.</li>
+        </ul>
+        <span class="price">$200 standalone · qualifying package options available</span>
       </article>
 
       <article class="card">
         <h2>Monthly Operations Partnership</h2>
-        <p>Recurring real estate operations support without hiring a full-time assistant.</p>
+        <p>Recurring operational support without hiring a full-time assistant.</p>
         <ul>
-          <li>CRM organization and task tracking.</li>
-          <li>Client follow-up support.</li>
-          <li>Workflow and checklist support.</li>
-          <li>Recurring business follow-through.</li>
+          <li>CRM, pipeline, task, and follow-up organization.</li>
+          <li>Recurring checklists and workflows.</li>
+          <li>Calendar and communication support.</li>
+          <li>Capacity-based, not unlimited access.</li>
         </ul>
-        <span class="price">Starting at $299/month</span>
+        <span class="price">$299 · $599 · $999 monthly tiers</span>
       </article>
     </section>
+
+    <section class="service-guide-referral">
+      <div>
+        <p class="eyebrow">A Separate Path</p>
+        <h2>40% Referral Partner Option</h2>
+      </div>
+      <div>
+        <p><strong>Want to keep the client?</strong> We'll help you carry the operation.</p>
+        <p><strong>Don't want to take the client?</strong> You may be able to refer the opportunity instead and receive a <strong>40% referral fee on qualifying successfully closed referred business.</strong></p>
+        <p class="referral-note">Complete brokerage, compensation, transaction, and referral terms are provided in the formal referral documents before client handoff. A Koinonia Transactions support relationship never becomes a brokerage referral unless the Realtor explicitly chooses to refer the client.</p>
+      </div>
+    </section>
+
+    <p class="service-guide-note">Open House package note: one Professional Open House is included with an applicable $599 pay-at-successful-close Transaction Support engagement; additional qualifying sessions are $100 each, up to 3 hours. The $389 prepaid option does not include an open house.</p>
 
     <div class="contact-strip">
       <span>koinoniatransactions.com</span>
@@ -84,8 +177,8 @@
       <span>jeremiah@koinoniaadmin.com</span>
     </div>
 
-    <p class="scripture-footer">Bear one another’s burdens. Work heartily, as for the Lord.<br><span>Galatians 6:2 · Colossians 3:23</span></p>
-    <p class="footer-note">Koinonia provides operational support. Realtors remain responsible for client advice, negotiation decisions, brokerage compliance, legal questions, and final approval.</p>
+    <p class="scripture-footer">Bear one another's burdens. Work heartily, as for the Lord.<br><span>Galatians 6:2 · Colossians 3:23</span></p>
+    <p class="footer-note">Koinonia provides operational support. Realtors remain responsible for client advice, negotiation decisions, brokerage compliance, legal questions, professional judgment, and final approval.</p>
   </main>
 </body>
 </html>
