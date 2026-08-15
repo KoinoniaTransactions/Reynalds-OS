@@ -5,6 +5,7 @@ export const referralsContent = {
     lead:
       "For licensed real estate professionals who have a buyer or seller opportunity they would rather refer than personally service. Qualifying referred business can earn a 40% referral fee when the referred transaction successfully closes.",
     primaryLabel: "Ask About the Referral Option",
+    primaryHref: "/contact#schedule-consultation",
     secondaryLabel: "Keep the Client? View Support",
     secondaryHref: "/services"
   },
@@ -174,17 +175,19 @@ export const referralsContent = {
     eyebrow: "Referral Economics",
     title: "40% referral fee with clear written settlement terms.",
     lead:
-      "The 40% referral fee is the core partner benefit. The exact calculation, required transaction-management charge, brokerage approvals, and payment path are confirmed in writing before the referral is activated.",
+      "The 40% referral fee is the core partner benefit. The exact referral base, required transaction-management charge, brokerage approvals, and payment path are confirmed in writing before the referral is activated.",
     referralRate: "40%",
     referralLabel: "Referral fee on qualifying successfully closed referred business",
     coordinationFee: "$599",
     coordinationLabel: "Required Koinonia pay-at-closing Transaction Support charge",
+    formula:
+      "The referring brokerage's payout is the agreed 40% referral calculation less the required $599 Koinonia pay-at-closing Transaction Support charge on a successfully closed referred transaction.",
     terms: [
       "The referral fee is payable to the referring brokerage under the signed referral agreement after a qualifying referred transaction successfully closes and applicable brokerage compensation is received.",
-      "Each successfully closed referred transaction uses Koinonia's required $599 pay-at-closing Transaction Support structure. That charge is deducted as part of the referral settlement before the final referral payout is released.",
+      "Each successfully closed referred transaction uses Koinonia's required $599 pay-at-closing Transaction Support structure. The $599 charge is deducted from the otherwise-calculated referral payout before the final referral settlement is released.",
       "Under the current pay-at-closing structure, if the referred transaction does not successfully close, no Koinonia transaction-coordination fee is due and no referral fee is earned.",
       "Referral payments are processed through the participating brokerages rather than paid informally to an individual licensee.",
-      "The signed referral agreement controls the specific client, transaction opportunity, referral calculation, time period, and any additional terms. Future unrelated business is not automatically included unless the agreement expressly says otherwise."
+      "The signed referral agreement controls the referral base, specific client, covered transaction opportunity, time period, payment calculation, and any additional terms. Future unrelated business is not automatically included unless the agreement expressly says otherwise."
     ]
   },
 
