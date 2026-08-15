@@ -78,7 +78,7 @@ export function KoinoniaContact() {
             <p className="koinonia-copy">{contactContent.supportOptions.lead}</p>
           </div>
 
-          <div className="koinonia-grid three">
+          <div className="koinonia-grid balanced-five">
             {contactContent.supportOptions.cards.map((card) => (
               <UniversalCard key={card.title} title={card.title} body={card.body} />
             ))}
