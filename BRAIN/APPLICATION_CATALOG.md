@@ -35,7 +35,7 @@ The executable counterpart to this catalog is `apps/web/lib/productRegistry.ts`.
 |---|---|---|---|---|---|---|---|
 | Reynalds OS | Central operating system and Brain | Jeremiah Reynalds | Preserve knowledge, decisions, work, workflows, company records, and operational history across projects and companies | Internal | No | Reynalds OS is the central system of record | Active |
 | Koinonia Transactions Website | Public company website | Koinonia Transactions | Present the company, services, brand, and public-facing business information | Public | Yes | Koinonia Transactions records are maintained in Reynalds OS | Active production work |
-| Koinonia Properties Website | Public company website | Koinonia Properties | Present Koinonia Properties, its services, brand, and public-facing business information | Public | Yes | Koinonia Properties records are maintained in Reynalds OS | Planned / emerging product |
+| Koinonia Properties Website | Public company website | Koinonia Properties | Present Koinonia Properties, its services, brand, and public-facing business information | Public | Yes | Koinonia Properties records are maintained in Reynalds OS | Active development; currently paused / resume-ready |
 | Reynalds Brothers OS | Company-specific internal operating system | Reynalds Brothers | Support internal company operations, field activity, Walmart Tanks work, and related workflows | Internal company users | No public website currently planned | Reynalds Brothers operational records may integrate with or be preserved by Reynalds OS; exact synchronization boundaries must be verified before implementation | Active development |
 
 ---
@@ -90,6 +90,8 @@ Its business decisions, knowledge, customer records, and operational history bel
 ### Identity
 
 A public-facing website belonging to Koinonia Properties, a company separate from Koinonia Transactions.
+
+The standalone website is implemented in `apps/properties-web/`. Development is currently paused at a validated, resume-ready checkpoint; pausing the work does not change the product's active-development lifecycle status or company/product boundary.
 
 ### Responsibilities
 
