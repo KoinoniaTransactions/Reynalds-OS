@@ -68,6 +68,19 @@ export const homeContent = {
     }
   ],
 
+  referralDiscovery: {
+    eyebrow: "A Different Capacity Problem",
+    title: "Don't want to take the client at all?",
+    lead:
+      "Sometimes the right answer is not more operational support. If a buyer or seller opportunity does not fit your current workload, timing, service area, or business priorities, a formal referral can preserve value without adding another client relationship to your calendar.",
+    body:
+      "Koinonia offers a separate 40% Referral Partner Option for qualifying referred business that successfully closes. It is a brokerage referral path—not a fifth Koinonia Transactions service.",
+    primaryLabel: "Explore the 40% Referral Option",
+    primaryHref: "/referrals",
+    secondaryLabel: "Keep the Client? View Services",
+    secondaryHref: "/services"
+  },
+
   fit: {
     eyebrow: "Who It Helps",
     title: "For Realtors who need dependable support without adding complexity.",
