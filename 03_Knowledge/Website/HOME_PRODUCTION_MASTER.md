@@ -2,139 +2,122 @@
 
 ## Status
 
-Production refinement in progress.
+Live production baseline; continue only through deliberate refinement.
+
+Last reconciled: 2026-08-15.
 
 ## Purpose
 
-The Home page answers: Can Koinonia help me?
+The Home page answers: **Can Koinonia help me?**
 
-It should quickly communicate that Koinonia is a trusted real estate operations partner for Realtors who need dependable support with transactions, contract preparation, licensed showing coverage, and daily business operations.
+It should quickly communicate that Koinonia is a dependable real estate operations partner for Realtors who need support with transactions, contract/document work, licensed showing coverage, professional open houses, and recurring business operations.
+
+The Home page introduces the business. It should not try to explain every detail or make the portal feel like the product.
 
 ## Canonical Sources
 
-- `BRAIN/CANONICAL_REGISTRY.md`
-- `03_Knowledge/Brand/koinonia_brand_core.md`
+- `03_Knowledge/Website/PRODUCTION_INDEX.md`
 - `03_Knowledge/Website/WEBSITE_PRODUCTION_FRAMEWORK.md`
-- `docs/specifications/HOME_SPEC.md`
+- `03_Knowledge/Brand/koinonia_brand_core.md`
+- approved Koinonia Brand & Marketing System
 - `02_Companies/Koinonia/01_Services/`
-- `RECOVERY_AUDIT/source_snapshots/v11_3_0_services_pricing/components_site/KOINONIA-HOME/index.tsx`
+- `02_Companies/Koinonia/02_Packages/`
+- `apps/web/content/home.ts`
+- `apps/web/components/site/PageAssemblies/KoinoniaHome.tsx`
 
-## Approved Page Flow
+Historical recovery snapshots are reference-only when current sources are insufficient.
 
-1. Hero
-2. TrustPillars
-3. Services Overview
-4. Koinonia Experience
-5. Final CTA
-6. Footer
+## Core Messaging Principle
 
-## Hero
+**Koinonia sells dependable real estate operations support. The portal is a delivery and communication tool, not the product.**
 
-Eyebrow:
-Real Estate Operations Support
+The Home page should lead with what the Realtor gains:
 
-Headline:
-Real Estate Operations. Elevated.
+- more room for client-facing work,
+- dependable operational follow-through,
+- organized support behind the scenes,
+- a clear way to get help without giving up the client relationship.
 
-Supporting copy:
-Koinonia gives Realtors a trusted operations partner for the work behind the client relationship—keeping transactions, contracts, licensed showing coverage, and daily business details organized, responsive, and moving forward.
+## Current Public Service Preview
 
-Primary CTA:
-Explore Services
+The Home page should introduce five core service lanes:
 
-Secondary CTA:
-Contact Koinonia
+1. Transaction Support / Contract-to-Close Coordination
+2. Contract & Document Support
+3. Licensed Showing Coverage
+4. Professional Open House Coverage
+5. Monthly Operations Partnership
 
-## TrustPillars
+The 40% Referral Partner Option should remain a discoverable secondary path rather than appearing as a sixth service.
 
-Section eyebrow:
-Why Realtors Choose Koinonia
+## Approved Page Role
 
-Heading:
-A trusted operations partner behind the moving parts.
+The Home page should remain:
 
-Supporting copy:
-Koinonia helps Realtors stay focused on clients while reliable systems, clear communication, and organized support keep transactions, contracts, showings, and daily business details moving behind the scenes.
+- light,
+- clear,
+- navigational,
+- outcome-focused,
+- easy to scan.
 
-Pillars:
-- Organized Processes
-- Proactive Communication
-- Dependable Partnership
-- Detail-Driven Execution
+Deeper scope, pricing, referral details, and process explanation belong on the Services and Referral Partner pages.
 
-## Services Overview
+## Hero Direction
 
-Section eyebrow:
-Real Estate Operations
+The Home hero should follow the canonical full-bleed Koinonia hero system:
 
-Heading:
-Support built around the way Realtors actually work.
+- live HTML copy on the left,
+- bright professional workspace visual on the right,
+- page-specific desktop/mobile images where appropriate,
+- cream-to-image blending,
+- no embedded marketing copy inside the image.
 
-Purpose:
-Introduce the four core service lines without overexplaining them.
+Home imagery should generally emphasize the professional workspace and support environment rather than screens or dashboards.
 
-Supporting copy:
-From active files to contract preparation, showing conflicts, and daily business organization, Koinonia provides calm, dependable support for the operational work that competes for a Realtor’s time.
+Screen-forward imagery is reserved for pages where visible workflow materially strengthens the story.
 
-Services:
-- Transaction Management
-- Contract Preparation & Writing
-- Licensed Showing Coverage
-- Business Operations Support
+## Service Overview Rule
 
-## Koinonia Experience
+Home service cards are previews, not full service specifications.
 
-Section eyebrow:
-The Koinonia Experience
+They should communicate the problem each lane solves and lead naturally into `/services`.
 
-Heading:
-Simple support. Clear process.
+Use the approved balanced-five layout for five equivalent service cards:
 
-Cards:
-- Clarify
-- Coordinate
-- Keep Moving
+- desktop: 3 + centered 2,
+- medium: 2 + 2 + centered 1,
+- mobile: 1 column.
 
-## Final CTA
+## Referral Discovery Rule
 
-Eyebrow:
-Start the Conversation
+The Home page may make the Referral Partner option visible enough that a Realtor immersed in Koinonia's work can discover it.
 
-Heading:
-Ready for dependable real estate support?
+It should not compete visually or conceptually with the five core support services.
 
-Supporting copy:
-When you are ready for organized, responsive support behind the scenes, Koinonia is ready to help.
+Preferred decision framing:
 
-Primary CTA:
-Schedule a Consultation
+**Want to keep the client? We’ll help you carry the operation.**
 
-Secondary CTA:
-Email Koinonia
+**Don’t want to take the client? You may be able to refer the opportunity instead.**
 
 ## SEO
 
-Meta title:
-Koinonia | Real Estate Operations Support for Realtors
+Home SEO should position Koinonia as real estate operations support for Realtors and may reference the five core service lanes.
 
-Meta description:
-Koinonia provides transaction management, contract preparation, licensed showing coverage, and business operations support for Realtors who need dependable help behind the scenes.
+Do not position Koinonia as a software platform or portal product.
 
-Primary keywords:
-- real estate operations support
-- transaction management for Realtors
-- contract preparation support
-- licensed showing coverage
-- real estate business support
+## Implementation
 
-## Implementation Components
+Canonical current implementation:
 
-- `Hero`
-- `TrustPillars`
-- `UniversalCard`
-- `CTA`
-- `Footer`
+- route: `/`
+- content: `apps/web/content/home.ts`
+- assembly: `apps/web/components/site/PageAssemblies/KoinoniaHome.tsx`
+- shared Hero: `apps/web/components/site/Hero/Hero.tsx`
+- shared layout utilities: `apps/web/styles/koinonia-layout.css`
+
+Legacy `/koinonia` may remain as an alias but is not the primary Home route.
 
 ## Production Rule
 
-The Home page should remain light, confident, and navigational. Deeper service explanation belongs on Services & Pricing.
+The Home page should remain stable once approved. New sections or structural changes require a clear business reason and must follow the source hierarchy in `PRODUCTION_INDEX.md` before implementation.
