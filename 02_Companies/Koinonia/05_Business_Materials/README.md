@@ -103,12 +103,32 @@ The packet summarizes the established Koinonia story in one shareable asset:
 
 It should remain concise enough to function as a follow-up asset rather than becoming a duplicate of the full Service Guide and Pricing Insert.
 
+### Tri-Fold Brochure
+
+- `brochure_copy.md`
+- `brochure_design_spec.md`
+- `print_ready/trifold_brochure.html`
+
+Purpose: compact networking, event, and brokerage-conversation piece derived from the approved Introduction Sheet, Service Guide, Pricing Insert, and Digital Introduction Packet messaging.
+
+The current brochure uses a six-panel structure:
+
+1. Front cover / primary promise
+2. Operational pressure
+3. Five core services
+4. Keep-the-client vs separate Referral Partner path
+5. Why Koinonia / professional boundaries
+6. Contact / consultation CTA
+
+The 40% Referral Partner Option remains visually and conceptually separate from the five core Koinonia Transactions service lanes.
+
+Before physical print ordering, confirm printer bleed, fold type, panel widths, and front/back orientation with the selected printer and a physical paper mockup.
+
 ## Other Working Assets
 
 - `google_business_verification_packet.md` — Google Business Profile verification prep and proof checklist.
 - `invoice_estimate_template.md` — Invoice and estimate content structure.
-- `brochure_copy.md` — Trifold or one-page brochure copy; later-phase material derived from approved current messaging.
-- `brochure_design_spec.md` — Brochure layout guidance.
+- `print_ready/one_page_flyer.html` — earlier general one-page flyer source retained as a separate supporting asset; it is not the current tri-fold brochure.
 - `branded_materials_design_standard.md` — Shared branded-material design rules.
 - `invoice_visual_standard.md` — Invoice/estimate visual guidance.
 - `google_video_materials_setup.md` — Google verification material setup.
@@ -195,7 +215,7 @@ Galatians 6:2 · Colossians 3:23
 3. Service Guide — current
 4. Pricing Insert — current
 5. Digital Introduction Packet — current
-6. Tri-fold Brochure — later phase
-7. Presentation Folder — later phase
+6. Tri-Fold Brochure — current
+7. Presentation Folder — next/later physical collateral phase
 
-The Brokerage Introduction Sheet remains the primary leave-behind. The Service Guide and Pricing Insert support deeper follow-up, and the Digital Introduction Packet packages the core story into one shareable digital asset without replacing those deeper companions.
+The Brokerage Introduction Sheet remains the primary leave-behind. The Service Guide and Pricing Insert support deeper follow-up, the Digital Introduction Packet packages the core story into one shareable digital asset, and the Tri-Fold Brochure provides a compact networking/event version without replacing those deeper companions.
