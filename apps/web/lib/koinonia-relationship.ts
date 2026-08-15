@@ -66,6 +66,24 @@ export const relationshipMaterialOptions = [
   "Other"
 ] as const;
 
+export type RelationshipQuickCaptureSuggestion = {
+  brokerage?: string;
+  lifecycle?: string;
+  source?: string;
+  material?: string;
+  primaryPressure?: string;
+  path?: string;
+  requestedService?: string;
+  recommendedService?: string;
+  nextAction?: string;
+};
+
+export type RelationshipLearningInteraction = {
+  capturedAt: string;
+  note: string;
+  confirmed?: RelationshipQuickCaptureSuggestion;
+};
+
 export type KoinoniaRelationshipData = {
   relationshipProfileVersion?: number;
   contact?: {
@@ -127,6 +145,9 @@ export type KoinoniaRelationshipData = {
     lastMeaningfulInteraction?: string;
     nextNurtureDate?: string;
   };
+  learning?: {
+    interactions?: RelationshipLearningInteraction[];
+  };
   [key: string]: unknown;
 };
 
@@ -150,6 +171,42 @@ function booleanValue(value: unknown): boolean | undefined {
   return typeof value === "boolean" ? value : undefined;
 }
 
+function normalizeQuickCaptureSuggestion(value: unknown): RelationshipQuickCaptureSuggestion {
+  const source = record(value);
+
+  return {
+    brokerage: text(source.brokerage),
+    lifecycle: text(source.lifecycle),
+    source: text(source.source),
+    material: text(source.material),
+    primaryPressure: text(source.primaryPressure),
+    path: text(source.path),
+    requestedService: text(source.requestedService),
+    recommendedService: text(source.recommendedService),
+    nextAction: text(source.nextAction)
+  };
+}
+
+function normalizeLearningInteractions(value: unknown): RelationshipLearningInteraction[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((item) => {
+      const source = record(item);
+      const capturedAt = text(source.capturedAt);
+      const note = text(source.note);
+
+      if (!capturedAt || !note) return null;
+
+      return {
+        capturedAt,
+        note,
+        confirmed: normalizeQuickCaptureSuggestion(source.confirmed)
+      };
+    })
+    .filter((item): item is RelationshipLearningInteraction => Boolean(item));
+}
+
 export function normalizeKoinoniaRelationshipData(
   input: unknown
 ): KoinoniaRelationshipData {
@@ -161,6 +218,7 @@ export function normalizeKoinoniaRelationshipData(
   const consultationRequest = record(source.consultationRequest);
   const engagement = record(source.engagement);
   const growth = record(source.growth);
+  const learning = record(source.learning);
 
   return {
     ...source,
@@ -231,6 +289,10 @@ export function normalizeKoinoniaRelationshipData(
       advocateStatus: text(growth.advocateStatus),
       lastMeaningfulInteraction: text(growth.lastMeaningfulInteraction),
       nextNurtureDate: text(growth.nextNurtureDate)
+    },
+    learning: {
+      ...learning,
+      interactions: normalizeLearningInteractions(learning.interactions)
     }
   };
 }
@@ -253,7 +315,8 @@ export function mergeKoinoniaRelationshipData(
       ...patch.consultationRequest
     },
     engagement: { ...current.engagement, ...patch.engagement },
-    growth: { ...current.growth, ...patch.growth }
+    growth: { ...current.growth, ...patch.growth },
+    learning: { ...current.learning, ...patch.learning }
   });
 }
 
@@ -346,4 +409,145 @@ export function preserveAdvancedLifecycle(
   if (proposedRank === -1) return currentStatus;
 
   return currentRank >= proposedRank ? currentStatus : proposedStatus;
+}
+
+function containsAny(value: string, terms: string[]): boolean {
+  return terms.some((term) => value.includes(term));
+}
+
+function serviceForPressure(pressure: string): string {
+  const serviceMap: Record<string, string> = {
+    "Transaction/File Capacity": "Transaction Support / Contract-to-Close Coordination",
+    "Contract/Document Workload": "Contract & Document Support",
+    "Showing/Schedule Conflict": "Licensed Showing Coverage",
+    "Open House/Listing Capacity": "Professional Open House Coverage",
+    "CRM/Follow-Up/Business Organization": "Monthly Operations Partnership",
+    "Referral/No-Capacity Client Opportunity": "40% Referral Partner Option"
+  };
+
+  return serviceMap[pressure] ?? "";
+}
+
+function extractBrokerage(note: string): string {
+  const match = note.match(
+    /\b(?:from|with|at)\s+([A-Z][A-Za-z0-9&.' -]{1,50}?(?:Realty|Properties|Group|Team|Brokerage|Real Estate))\b/
+  );
+
+  return match?.[1]?.trim() ?? "";
+}
+
+export function suggestRelationshipQuickCapture(
+  note: string
+): RelationshipQuickCaptureSuggestion {
+  const raw = note.trim();
+  const normalized = raw.toLowerCase();
+  const suggestion: RelationshipQuickCaptureSuggestion = {};
+
+  if (!raw) return suggestion;
+
+  const brokerage = extractBrokerage(raw);
+  if (brokerage) suggestion.brokerage = brokerage;
+
+  if (containsAny(normalized, ["brokerage meeting", "office meeting", "sales meeting", "team meeting"])) {
+    suggestion.source = "Brokerage Meeting";
+  } else if (containsAny(normalized, ["networking", "realtor event", "association event", "conference"])) {
+    suggestion.source = "Realtor Networking/Event";
+  } else if (containsAny(normalized, ["introduced me", "introduced by", "direct introduction"])) {
+    suggestion.source = "Direct Introduction";
+  } else if (containsAny(normalized, ["lender", "title company", "title rep"])) {
+    suggestion.source = "Lender/Title Partner";
+  } else if (containsAny(normalized, ["website", "site form", "web form"])) {
+    suggestion.source = "Website";
+  } else if (containsAny(normalized, ["instagram", "facebook", "linkedin", "social media"])) {
+    suggestion.source = "Social Media";
+  } else if (containsAny(normalized, ["emailed", "email thread", "email reply"])) {
+    suggestion.source = "Email";
+  } else if (containsAny(normalized, ["met at an open house", "open house visitor", "open house interaction"])) {
+    suggestion.source = "Open House Interaction";
+  }
+
+  if (containsAny(normalized, ["tri-fold", "trifold", "brochure"])) {
+    suggestion.material = "Tri-Fold Brochure";
+  } else if (normalized.includes("service guide")) {
+    suggestion.material = "Service Guide";
+  } else if (normalized.includes("pricing insert")) {
+    suggestion.material = "Pricing Insert";
+  } else if (normalized.includes("introduction sheet")) {
+    suggestion.material = "Brokerage Introduction Sheet";
+  } else if (containsAny(normalized, ["digital packet", "introduction packet"])) {
+    suggestion.material = "Digital Introduction Packet";
+  } else if (normalized.includes("business card")) {
+    suggestion.material = "Business Card";
+  } else if (normalized.includes("website")) {
+    suggestion.material = "Website";
+  }
+
+  if (
+    containsAny(normalized, [
+      "refer the client",
+      "refer this client",
+      "referral fee",
+      "40% referral",
+      "can't take the client",
+      "cannot take the client",
+      "don't want to take",
+      "doesn't want to take",
+      "no room to take"
+    ])
+  ) {
+    suggestion.primaryPressure = "Referral/No-Capacity Client Opportunity";
+  } else if (containsAny(normalized, ["open house", "weekend hosting", "saturdays", "saturday", "sundays", "sunday"])) {
+    suggestion.primaryPressure = "Open House/Listing Capacity";
+  } else if (containsAny(normalized, ["showing", "showings", "property access", "schedule conflict"])) {
+    suggestion.primaryPressure = "Showing/Schedule Conflict";
+  } else if (containsAny(normalized, ["offer", "amendment", "addendum", "contract writing", "document prep", "paperwork"])) {
+    suggestion.primaryPressure = "Contract/Document Workload";
+  } else if (containsAny(normalized, ["under contract", "transaction", "closing", "deadline", "contract-to-close", "file coordination"])) {
+    suggestion.primaryPressure = "Transaction/File Capacity";
+  } else if (containsAny(normalized, ["crm", "follow-up", "follow up", "pipeline", "business organization", "task cleanup", "backend" ])) {
+    suggestion.primaryPressure = "CRM/Follow-Up/Business Organization";
+  } else if (containsAny(normalized, ["team operations", "brokerage operations", "office operations"])) {
+    suggestion.primaryPressure = "Brokerage/Team Operations";
+  }
+
+  if (suggestion.primaryPressure) {
+    const service = serviceForPressure(suggestion.primaryPressure);
+    if (service) suggestion.recommendedService = service;
+    suggestion.path = suggestion.primaryPressure === "Referral/No-Capacity Client Opportunity"
+      ? "Refer Client"
+      : "Keep Client";
+
+    if (
+      service &&
+      containsAny(normalized, ["wants", "want to", "asked for", "needs", "need to", "try one", "try a", "interested in"])
+    ) {
+      suggestion.requestedService = service;
+    }
+  }
+
+  if (containsAny(normalized, ["testimonial", "referred another", "sent me another", "advocate"])) {
+    suggestion.lifecycle = "Advocate";
+  } else if (containsAny(normalized, ["closed", "successful closing", "completed delivery", "completed service"])) {
+    suggestion.lifecycle = "Successful Delivery";
+  } else if (containsAny(normalized, ["started service", "active engagement", "work has started", "engagement began"])) {
+    suggestion.lifecycle = "Active Engagement";
+  } else if (containsAny(normalized, ["proposal", "quote sent", "pricing sent"])) {
+    suggestion.lifecycle = "Proposal";
+  } else if (containsAny(normalized, ["consultation", "consult", "meeting scheduled", "call scheduled"])) {
+    suggestion.lifecycle = "Consultation";
+  } else if (containsAny(normalized, ["wants to try", "interested", "wants more information", "send more information"])) {
+    suggestion.lifecycle = "Interest";
+  }
+
+  if (suggestion.primaryPressure === "Open House/Listing Capacity" && normalized.includes("next month")) {
+    suggestion.nextAction = "Follow up about open house coverage next month";
+  } else if (containsAny(normalized, ["schedule a consultation", "schedule consultation", "book a consultation"])) {
+    suggestion.nextAction = "Schedule consultation";
+  } else if (containsAny(normalized, ["send the service guide", "send service guide"])) {
+    suggestion.nextAction = "Send Service Guide";
+  } else if (containsAny(normalized, ["follow up", "follow-up", "circle back", "check back"])) {
+    suggestion.nextAction = "Follow up on this relationship";
+  }
+
+  return suggestion;
 }
