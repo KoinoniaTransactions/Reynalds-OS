@@ -16,16 +16,17 @@ Koinonia Properties is a standalone company/public website and must not be merge
 - Repository: `KoinoniaTransactions/Reynalds-OS`
 - Branch: `integration/koinonia-properties-web-20260812`
 - Standalone public app: `apps/properties-web/`
-- Latest validated repository/runtime checkpoint: `4997c7a`
+- Latest validated repository/runtime checkpoint: `ce97310`
 - Home runtime checkpoint: `b66d806`
 - Home status: fully visually accepted on 2026-08-14.
 - Owner Services route: `/owners`
-- Owner Services status: content/SEO rewrite implemented and boundary-validated at `4997c7a`; refreshed Preview visual acceptance is still pending.
+- Owner Services status: content/SEO rewrite plus desktop presentation refinement implemented and boundary-validated through `ce97310`; refreshed Preview re-acceptance is still pending.
 - Documentation-only commits may follow validated checkpoints; do not treat a later docs-only branch HEAD as a newly revalidated UI build unless focused runtime validation is rerun.
 - Hosting state: temporary Vercel Preview; final public domain not yet attached.
 - Current visually accepted Home Preview: `https://koinonia-properties-4hjjff4a5-koinonia3.vercel.app`
 - Home Preview source branch head: `ff1f615`.
-- That Home Preview contains validated runtime code through `b66d806` and predates the Owner Services rewrite at `4997c7a`.
+- Latest Owner Services Preview reviewed: `https://koinonia-properties-q3vvgk7wc-koinonia3.vercel.app`
+- That Owner Services Preview was sourced from docs head `183b405`, contained validated runtime through `4997c7a`, and predates the refinement at `ce97310`.
 - Preview deployment is non-production and must not use `--prod` unless explicitly approved.
 
 Parallel-work guard:
@@ -286,7 +287,7 @@ Validated Home SEO:
 
 No further Home visual work is pending. Do not reopen Home styling or copy unless a new issue, requirement, or approved change is identified.
 
-### Owner Services — Code Validated, Preview Pending
+### Owner Services — Code Validated, Refreshed Preview Pending
 
 Route:
 
@@ -311,19 +312,22 @@ The page was researched as a prospective-client decision page, not merely an art
 
 The approved content direction is to make the page useful enough that a prospective owner can understand how Koinonia approaches management without relying on generic promises such as “hassle-free,” “maximize returns,” or “we handle everything.”
 
-Implementation commits:
+Core implementation commits:
 
 - `f5272ca` — `feat(properties): rebuild Owner Services content`
 - `2813107` — `seo(properties): simplify Owner Services metadata input`
 - `4997c7a` — `seo(properties): strengthen Owner Services metadata`
+
+Desktop/refinement checkpoint:
+
+- `ce97310` — `refactor(properties): refine Owner Services presentation`
 
 Primary implementation files:
 
 - `apps/properties-web/components/site/PageAssemblies/KoinoniaPropertiesOwners.tsx`
 - `apps/properties-web/app/owners/page.tsx`
 - `apps/properties-web/config/seo.config.ts`
-
-No shared design-system, Home, Pricing, Rental Analysis, header, footer, or shared `PropertiesInquiry` code was changed in this slice.
+- `apps/properties-web/app/properties.css` for Properties-scoped presentation refinements only.
 
 Owner Services now includes:
 
@@ -352,13 +356,43 @@ Validated Owner Services SEO:
 - description: `Koinonia Properties helps rental property owners organize leasing, resident communication, rent processes, maintenance coordination, owner updates, and responsible property care.`
 - Owners-page `metadata.keywords` array removed.
 
-Owner Services visual acceptance is still pending a refreshed Preview containing `4997c7a`.
+### Owner Services Visual Review and Refinement
+
+The Preview sourced from `183b405` and containing runtime through `4997c7a` was reviewed on desktop.
+
+Accepted from that review:
+
+- hero composition and owner-specific positioning;
+- `What Owners Need` three-card section;
+- six-card Property Management Services section;
+- Owner Communication cards;
+- five-step `How Management Begins` process;
+- closing Rental Analysis CTA direction;
+- overall content depth and relevance for a prospective owner.
+
+Issues identified before desktop acceptance:
+
+- Leasing & Resident Placement and Maintenance & Property Care were visually left-heavy because the generic `koinonia-split` structure was not producing a balanced two-column presentation in this context;
+- the seven-question FAQ left an orphan final card in the shared two-column FAQ grid;
+- repeated internal-sounding wording such as `approved scope`, `approved marketing path`, and `approved process` read more like internal operations language than prospect-facing copy.
+
+The focused refinement at `ce97310` addressed those issues without changing the shared design system or shared FAQ component:
+
+- added Properties-scoped `properties-owner-detail-split` presentation for Leasing and Maintenance;
+- desktop uses a true two-column arrangement with explanatory copy on the left and the operational step list in a restrained right-side panel;
+- the layout stacks to one column at the responsive breakpoint;
+- reduced Owner FAQ from seven questions to six to create an even 3×2 desktop layout;
+- preserved multi-property/portfolio context inside the pricing/scope FAQ;
+- softened selected internal-sounding phrases to customer-facing wording such as `agreed scope`, `agreed marketing approach`, and `management process`;
+- retained the approved hero, service cards, Owner Communication, management process, SEO, and closing CTA structure.
+
+`ce97310` is code/boundary validated. A refreshed Preview containing `ce97310` is required before Owner Services can be marked visually accepted.
 
 ---
 
 ## Known Follow-Up Issues Outside the Owner Services Slice
 
-These items were intentionally not bundled into the Owner Services implementation:
+These items were intentionally not bundled into the Owner Services implementation/refinement:
 
 - `PropertiesInquiry.tsx` still contains the owner prompt `Leasing-only, full-service, or unsure` for pages that continue to render `kind="owner"`.
 - The current Pricing page still presents `Leasing-Only`, `Full-Service Management`, and `Portfolio Management` as three starting points even though those are not canonical packages yet.
@@ -441,7 +475,9 @@ Owner Services:
 
 - `f5272ca` — rebuild Owner Services content
 - `2813107` — remove Owners-page meta-keywords input
-- `4997c7a` — strengthen Owner Services metadata; latest validated Properties runtime checkpoint
+- `4997c7a` — strengthen Owner Services metadata; first validated Owner Services runtime checkpoint
+- `183b405` — docs sync recording the validated first Owner Services pass; source of the reviewed pre-refinement Preview
+- `ce97310` — Owner Services desktop/content-presentation refinement; latest validated Properties runtime checkpoint
 
 Because GitHub contents writes are file-scoped, focused slices may span several sequential commits. Treat a repository tree as validated only after the focused verifier and diff checks pass; documentation-only or intermediate branch heads do not imply runtime validation.
 
@@ -449,13 +485,13 @@ Because GitHub contents writes are file-scoped, focused slices may span several 
 
 ## Latest Validation
 
-Focused Properties validation completed locally at `4997c7a` on 2026-08-14.
+Focused Properties validation completed locally at `ce97310` on 2026-08-14.
 
 Validation worktree:
 
 - `/private/tmp/koinonia-properties-preview`
 - detached from `origin/integration/koinonia-properties-web-20260812`
-- verified HEAD: `4997c7a`
+- verified HEAD: `ce97310`
 - `git status -sb` showed clean detached HEAD state.
 
 Exact successful checks:
@@ -475,9 +511,9 @@ Focused verifier:
 
 - `apps/properties-web/scripts/verify-boundary.mjs`
 
-This establishes `4997c7a` as the current validated repository/runtime checkpoint. It contains the previously accepted Home state plus the new Owner Services content and SEO rewrite.
+This establishes `ce97310` as the current validated repository/runtime checkpoint. It contains the accepted Home state, Owner Services content/SEO rewrite, and the focused Owner Services desktop/content-presentation refinement.
 
-Owner Services is code/boundary validated but must not be marked visually accepted until a refreshed Preview containing `4997c7a` is reviewed.
+Owner Services remains pending refreshed Preview re-acceptance and must not be marked visually accepted until that Preview is reviewed.
 
 ---
 
@@ -491,9 +527,16 @@ Current visually accepted Home Preview:
 - deployment mode: Vercel Preview only
 - Home is fully visually accepted in this Preview.
 
-This Preview **does not contain** the Owner Services rewrite at `4997c7a`.
+Latest Owner Services Preview reviewed:
 
-No Owner Services visual judgment should be made from the old Preview.
+- `https://koinonia-properties-q3vvgk7wc-koinonia3.vercel.app`
+- Inspect: `https://vercel.com/koinonia3/koinonia-properties/CBhwFk5zUZuvhNyEhsGqS138dwDC`
+- source branch head at deployment: `183b405`
+- runtime code contained: validated Properties runtime through `4997c7a`
+- deployment mode: Vercel Preview only
+- desktop review identified the Leasing/Maintenance balance, seven-card FAQ orphan, and internal-language issues that were corrected at `ce97310`.
+
+The Owner Services Preview at `183b405` is now stale for final acceptance because it does not contain `ce97310`.
 
 The next Preview must be refreshed from the current Properties DEV branch after this documentation sync and deployed with Vercel Preview only.
 
@@ -538,19 +581,19 @@ Owner Services visual QA should review:
 - hero title/lead length and desktop balance;
 - `What Owners Need` three-card row;
 - six-card Property Management Services section and heading wraps;
-- Leasing & Resident Placement split section;
-- Maintenance & Property Care split section;
+- Leasing & Resident Placement two-column split and right-side step panel;
+- Maintenance & Property Care two-column split and right-side step panel;
 - Owner Communication cards;
 - five-step management-process layout;
-- Owner FAQ density/readability;
+- six-card Owner FAQ density/readability and even 3×2 composition;
 - final Rental Analysis / Management Standards CTA block;
 - overall page length and visual rhythm;
 - tablet behavior;
-- mobile stacking, CTA sizing, text density, header/menu, and footer.
+- mobile stacking, CTA sizing, text density, header/menu, split-panel stacking, FAQ, and footer.
 
 ### Then: Record Owner Services Visual Acceptance or Make a Focused Refinement
 
-If the Preview is accepted, record that acceptance in this Brain file as a separate docs-only step.
+If the refreshed Preview is accepted, record that acceptance in this Brain file as a separate docs-only step.
 
 If a visual issue is found, diagnose it first and implement only a scoped Owner Services refinement after approval.
 
