@@ -26,6 +26,12 @@ export const seoConfig = {
         "Explore Koinonia services for transaction coordination, contract and document support, licensed showing coverage, and monthly real estate operations partnership."
     },
     {
+      path: "/referrals",
+      title: "40% Referral Partner Option",
+      description:
+        "Learn about the Koinonia 40% Referral Partner Option for licensed real estate professionals who would rather refer a buyer or seller opportunity than personally carry the client relationship."
+    },
+    {
       path: "/about",
       title: "About Koinonia",
       description:
@@ -35,7 +41,7 @@ export const seoConfig = {
       path: "/contact",
       title: "Contact Koinonia",
       description:
-        "Contact Koinonia for Colorado real estate operations support, transaction coordination, contract support, showing coverage, or monthly business support."
+        "Contact Koinonia for Colorado real estate operations support, transaction coordination, contract support, showing coverage, monthly business support, or the Referral Partner Option."
     }
   ]
 } as const;
