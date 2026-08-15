@@ -3,7 +3,7 @@ export const homeContent = {
     eyebrow: "Real Estate Operations Support",
     title: "Real Estate Operations. Elevated.",
     lead:
-      "Koinonia gives Colorado Realtors a trusted operations partner for the work behind the client relationship—keeping transactions, contracts, licensed showing coverage, and daily business details organized, responsive, and moving forward.",
+      "Koinonia gives Colorado Realtors a trusted operations partner for the work behind the client relationship—keeping transactions, contracts, licensed showings, professional open houses, and daily business details organized, responsive, and moving forward.",
     primaryLabel: "Explore Services",
     primaryHref: "/services",
     secondaryLabel: "Contact Koinonia",
@@ -14,7 +14,7 @@ export const homeContent = {
     eyebrow: "Behind-the-Scenes Support",
     title: "Built for the work that keeps real estate moving.",
     lead:
-      "Realtors carry the client relationship, negotiations, deadlines, documents, appointments, and follow-through. Koinonia helps organize the operational work behind the scenes so the business keeps moving with clarity and care.",
+      "Realtors carry the client relationship, negotiations, deadlines, documents, appointments, marketing commitments, and follow-through. Koinonia helps organize the operational work behind the scenes so the business keeps moving with clarity and care.",
     highlights: [
       {
         title: "Clearer files",
@@ -38,7 +38,7 @@ export const homeContent = {
     eyebrow: "Services Built Around Realtor Operations",
     title: "Support built around the way Realtors actually work.",
     lead:
-      "From active files to contract preparation, showing conflicts, and daily business organization, Koinonia provides calm, dependable support for the operational work that competes for a Realtor’s time."
+      "From active files to contract preparation, showing conflicts, professional open houses, and daily business organization, Koinonia provides calm, dependable support for the operational work that competes for a Realtor’s time."
   },
 
   services: [
@@ -61,6 +61,12 @@ export const homeContent = {
       items: ["Licensed support", "Access coordination", "Showing feedback"]
     },
     {
+      title: "Professional Open House Coverage",
+      body:
+        "For listing agents who want a prepared, promoted, professionally hosted open house without giving up a full block of their own weekend.",
+      items: ["Open house flyer", "Sign setup", "Digital promotion", "3-hour licensed hosting"]
+    },
+    {
       title: "Monthly Operations Partnership",
       body:
         "For growing Realtors who need recurring structure, workflow support, and practical help keeping business details organized between transactions.",
@@ -72,9 +78,9 @@ export const homeContent = {
     eyebrow: "A Different Capacity Problem",
     title: "Don't want to take the client at all?",
     lead:
-      "Sometimes the right answer is not more operational support. If a buyer or seller opportunity does not fit your current workload, timing, service area, or business priorities, a formal referral can preserve value without adding another client relationship to your calendar.",
+      "Sometimes the right answer is not more operational support. If a buyer or seller opportunity does not fit your current workload, timing, service area, readiness, or business priorities, a formal referral can preserve value without adding another client relationship to your calendar.",
     body:
-      "Koinonia offers a separate 40% Referral Partner Option for qualifying referred business that successfully closes. It is a brokerage referral path—not a fifth Koinonia Transactions service.",
+      "Koinonia offers a separate 40% Referral Partner Option for qualifying referred business that successfully closes. It is a separate brokerage referral path, not a Koinonia Transactions operations service.",
     primaryLabel: "Explore the 40% Referral Option",
     primaryHref: "/referrals",
     secondaryLabel: "Keep the Client? View Services",
@@ -95,12 +101,12 @@ export const homeContent = {
       {
         title: "Growing Realtor teams",
         body:
-          "When multiple people, files, and tasks need coordination, Koinonia helps make the operational work more visible and repeatable."
+          "When multiple people, files, appointments, and tasks need coordination, Koinonia helps make the operational work more visible and repeatable."
       },
       {
         title: "Client-focused Realtors",
         body:
-          "When you want to stay present with clients instead of buried in details, Koinonia helps keep the behind-the-scenes work moving."
+          "When you want to stay present with clients instead of buried in details or giving up valuable time blocks, Koinonia helps keep the behind-the-scenes work moving."
       }
     ]
   },
@@ -119,7 +125,7 @@ export const homeContent = {
       {
         title: "Coordinate",
         body:
-          "Koinonia organizes the details, deadlines, documents, communication, and next steps."
+          "Koinonia organizes the details, deadlines, documents, communication, scheduling, and next steps."
       },
       {
         title: "Keep Moving",
