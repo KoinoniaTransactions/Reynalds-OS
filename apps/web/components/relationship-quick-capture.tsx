@@ -38,6 +38,7 @@ export function RelationshipQuickCapture({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [savedMessage, setSavedMessage] = useState("");
+  const [createFollowUpTask, setCreateFollowUpTask] = useState(false);
 
   useEffect(() => {
     setNote("");
@@ -45,6 +46,7 @@ export function RelationshipQuickCapture({
     setReviewing(false);
     setError("");
     setSavedMessage("");
+    setCreateFollowUpTask(false);
   }, [relationshipId]);
 
   const suggestionCount = useMemo(
@@ -56,7 +58,9 @@ export function RelationshipQuickCapture({
     const trimmed = note.trim();
     if (!trimmed) return;
 
-    setSuggestion(suggestRelationshipQuickCapture(trimmed));
+    const nextSuggestion = suggestRelationshipQuickCapture(trimmed);
+    setSuggestion(nextSuggestion);
+    setCreateFollowUpTask(Boolean(nextSuggestion.nextAction));
     setReviewing(true);
     setSavedMessage("");
     setError("");
@@ -78,7 +82,8 @@ export function RelationshipQuickCapture({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             note: trimmed,
-            confirmed: suggestion
+            confirmed: suggestion,
+            createFollowUpTask
           })
         }
       );
@@ -91,7 +96,14 @@ export function RelationshipQuickCapture({
       setNote("");
       setSuggestion(blankSuggestion);
       setReviewing(false);
-      setSavedMessage("Interaction saved to the relationship history.");
+      setCreateFollowUpTask(false);
+      setSavedMessage(
+        data.followUpTask
+          ? data.followUpTaskAlreadyOpen
+            ? "Interaction saved. An identical open staff follow-up already exists."
+            : "Interaction saved and a staff follow-up task was created."
+          : "Interaction saved to the relationship history."
+      );
       await onSaved();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error.");
@@ -128,6 +140,7 @@ export function RelationshipQuickCapture({
             onClick={() => {
               setSuggestion(blankSuggestion);
               setReviewing(false);
+              setCreateFollowUpTask(false);
             }}
             disabled={saving}
           >
@@ -229,9 +242,29 @@ export function RelationshipQuickCapture({
 
           <input
             value={suggestion.nextAction ?? ""}
-            onChange={(event) => patch({ nextAction: event.target.value })}
+            onChange={(event) => {
+              const nextAction = event.target.value;
+              patch({ nextAction });
+              if (!nextAction.trim()) {
+                setCreateFollowUpTask(false);
+              }
+            }}
             placeholder="Next action"
           />
+
+          <label style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+            <input
+              type="checkbox"
+              checked={createFollowUpTask}
+              onChange={(event) => setCreateFollowUpTask(event.target.checked)}
+              disabled={!suggestion.nextAction?.trim()}
+            />
+            <span>
+              <strong>Create staff follow-up task</strong>
+              <br />
+              Keep this next action inside the Koinonia staff workflow. It will not appear as a client portal request.
+            </span>
+          </label>
 
           <button type="button" onClick={() => void confirmSave()} disabled={saving}>
             {saving ? "Saving..." : "Confirm & Save Interaction"}
