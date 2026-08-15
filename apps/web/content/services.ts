@@ -100,9 +100,9 @@ export const servicesContent = {
     standalonePrice: "$200",
     standaloneLabel: "Standalone professional open house · up to 3 hours",
     additionalPrice: "$100",
-    additionalLabel: "Additional open house for clients on the qualifying included-open-house package",
+    additionalLabel: "Additional professional open house with the $599 pay-at-successful-close Transaction Support package",
     packageNote:
-      "One professional open house will be included with the qualifying basic package. The specific package placement will be confirmed before production pricing is finalized."
+      "The $599 pay-at-successful-close Transaction Support package includes one Professional Open House Coverage session for an applicable listing transaction. Additional open houses for that qualifying engagement are $100 each. The $389 prepaid Transaction Support option does not include the open house benefit."
   },
 
   monthlySupport: {
@@ -159,12 +159,18 @@ export const servicesContent = {
     eyebrow: "Pricing Snapshot",
     title: "Simple starting points. Clearer scope after consultation.",
     lead:
-      "Pricing is shown as a starting point so Realtors can understand where support begins. Final scope depends on timing, urgency, distance, and the level of operational support needed.",
+      "Pricing is shown so Realtors can understand the available engagement paths. Final scope can depend on timing, urgency, distance, and the level of operational support needed.",
     prices: [
       {
-        title: "Transaction Support",
+        title: "Transaction Support — Prepaid",
         price: "$389",
-        body: "Contract-to-close coordination for active transaction files."
+        body: "Contract-to-close coordination for active transaction files when payment is completed before work begins."
+      },
+      {
+        title: "Transaction Support — Pay at Closing",
+        price: "$599",
+        body:
+          "Due only after a successful closing under the approved structure. For an applicable listing transaction, this option includes one Professional Open House Coverage session."
       },
       {
         title: "Contract & Document Support",
