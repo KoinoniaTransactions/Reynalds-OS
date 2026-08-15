@@ -29,7 +29,7 @@ export function KoinoniaReferrals() {
             <p>{referralsContent.whyRefer.principle}</p>
           </article>
 
-          <div className="koinonia-grid three">
+          <div className="koinonia-grid three after-feature-card">
             {referralsContent.whyRefer.cards.map((card) => (
               <UniversalCard key={card.title} title={card.title} body={card.body} />
             ))}
