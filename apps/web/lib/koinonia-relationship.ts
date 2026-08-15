@@ -310,19 +310,33 @@ export function mapConsultationTypeToRelationshipIntent(
   };
 }
 
+function lifecycleRank(status: string): number {
+  const exactIndex = relationshipLifecycleStages.indexOf(
+    status as (typeof relationshipLifecycleStages)[number]
+  );
+
+  if (exactIndex !== -1) return exactIndex;
+
+  const legacyStatusRanks: Record<string, number> = {
+    Open: 2,
+    Active: 6,
+    "Active Client": 6,
+    Complete: 8,
+    Closed: 8
+  };
+
+  return legacyStatusRanks[status] ?? -1;
+}
+
 export function preserveAdvancedLifecycle(
   currentStatus: string,
   proposedStatus: string
 ): string {
-  const currentIndex = relationshipLifecycleStages.indexOf(
-    currentStatus as (typeof relationshipLifecycleStages)[number]
-  );
-  const proposedIndex = relationshipLifecycleStages.indexOf(
-    proposedStatus as (typeof relationshipLifecycleStages)[number]
-  );
+  const currentRank = lifecycleRank(currentStatus);
+  const proposedRank = lifecycleRank(proposedStatus);
 
-  if (currentIndex === -1) return proposedStatus;
-  if (proposedIndex === -1) return currentStatus;
+  if (currentRank === -1) return proposedStatus;
+  if (proposedRank === -1) return currentStatus;
 
-  return currentIndex >= proposedIndex ? currentStatus : proposedStatus;
+  return currentRank >= proposedRank ? currentStatus : proposedStatus;
 }
