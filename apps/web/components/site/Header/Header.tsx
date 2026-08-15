@@ -57,6 +57,11 @@ const employeeNavigationItems = [
     description: "Staff operating workspace"
   },
   {
+    label: "Relationships",
+    href: "/crm",
+    description: "Internal relationship CRM"
+  },
+  {
     label: "Documents",
     href: "/employee/documents",
     description: "Document workflows"
@@ -84,7 +89,7 @@ export function Header({
     pathname === "/client" || pathname.startsWith("/client/");
 
   const isEmployeePortalPage =
-    pathname === "/employee" || pathname.startsWith("/employee/");
+    pathname === "/employee" || pathname.startsWith("/employee/") || pathname === "/crm";
 
   const isPortalPage = isClientPortalPage || isEmployeePortalPage;
 
