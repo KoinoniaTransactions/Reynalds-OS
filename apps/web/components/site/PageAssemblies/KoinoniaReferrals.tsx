@@ -14,6 +14,10 @@ export function KoinoniaReferrals() {
         primaryHref={referralsContent.hero.primaryHref}
         secondaryLabel={referralsContent.hero.secondaryLabel}
         secondaryHref={referralsContent.hero.secondaryHref}
+        visualDesktopSrc="/assets/images/koinonia/referrals/referrals-hero-desktop.png"
+        visualMobileSrc="/assets/images/koinonia/referrals/referrals-hero-mobile.png"
+        visualAlt="Koinonia professional referral handoff workspace"
+        variant="fullBleed"
       />
 
       <section className="koinonia-section koinonia-referrals-why">
