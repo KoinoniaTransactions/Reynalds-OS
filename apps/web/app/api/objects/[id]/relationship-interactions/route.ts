@@ -41,6 +41,14 @@ function confirmedSuggestion(value: unknown): RelationshipQuickCaptureSuggestion
   };
 }
 
+function confirmedDueDate(value: unknown): Date | undefined {
+  const dueDate = text(value);
+  if (!dueDate || !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) return undefined;
+
+  const parsed = new Date(`${dueDate}T12:00:00`);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+}
+
 export async function POST(request: Request, { params }: Params) {
   const user = await assertPermission("objects:update");
   const { id } = await params;
@@ -48,6 +56,7 @@ export async function POST(request: Request, { params }: Params) {
   const note = text(body.note);
   const confirmed = confirmedSuggestion(body.confirmed);
   const createFollowUpTask = body.createFollowUpTask === true && Boolean(confirmed.nextAction);
+  const followUpDueAt = createFollowUpTask ? confirmedDueDate(body.followUpDueDate) : undefined;
 
   if (!note) {
     return NextResponse.json({ error: "Interaction note is required." }, { status: 400 });
@@ -135,6 +144,7 @@ export async function POST(request: Request, { params }: Params) {
 
     let task = null;
     let taskAlreadyOpen = false;
+    let taskDueDateUpdated = false;
 
     if (createFollowUpTask && confirmed.nextAction) {
       const existingTask = await tx.task.findFirst({
@@ -149,6 +159,26 @@ export async function POST(request: Request, { params }: Params) {
       if (existingTask) {
         task = existingTask;
         taskAlreadyOpen = true;
+
+        if (followUpDueAt && existingTask.dueAt?.getTime() !== followUpDueAt.getTime()) {
+          task = await tx.task.update({
+            where: { id: existingTask.id },
+            data: { dueAt: followUpDueAt }
+          });
+          taskDueDateUpdated = true;
+
+          await tx.timelineEvent.create({
+            data: {
+              workspaceId: user.workspaceId,
+              objectId: object.id,
+              actorId: user.id,
+              eventType: "task.updated",
+              summary: `Task updated: ${task.title}`,
+              previousValue: toPrismaJson(existingTask),
+              newValue: toPrismaJson(task)
+            }
+          });
+        }
       } else {
         task = await tx.task.create({
           data: {
@@ -157,7 +187,8 @@ export async function POST(request: Request, { params }: Params) {
             ownerId: user.id,
             title: confirmed.nextAction,
             status: "Open",
-            priority: "Normal"
+            priority: "Normal",
+            dueAt: followUpDueAt
           }
         });
 
@@ -174,7 +205,7 @@ export async function POST(request: Request, { params }: Params) {
       }
     }
 
-    return { object, task, taskAlreadyOpen };
+    return { object, task, taskAlreadyOpen, taskDueDateUpdated };
   });
 
   return NextResponse.json(
@@ -182,7 +213,8 @@ export async function POST(request: Request, { params }: Params) {
       object: result.object,
       interaction: { capturedAt, note, confirmed },
       followUpTask: result.task,
-      followUpTaskAlreadyOpen: result.taskAlreadyOpen
+      followUpTaskAlreadyOpen: result.taskAlreadyOpen,
+      followUpTaskDueDateUpdated: result.taskDueDateUpdated
     },
     { status: 201 }
   );
