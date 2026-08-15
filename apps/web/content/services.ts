@@ -64,6 +64,15 @@ export const servicesContent = {
     }
   ],
 
+  referralDiscovery: {
+    eyebrow: "Need a Different Kind of Capacity Relief?",
+    title: "If you don't want to keep the client, there is another path.",
+    lead:
+      "The four services above are for Realtors who want to keep the client relationship. If the opportunity is not one you want to personally carry—because of workload, timing, financing readiness, geography, nurture requirements, or fit—you can explore the separate 40% Referral Partner Option.",
+    primaryLabel: "Explore the 40% Referral Option",
+    primaryHref: "/referrals"
+  },
+
   monthlySupport: {
     eyebrow: "Monthly Operations Partnership",
     title: "Ongoing support for the business behind the business.",
