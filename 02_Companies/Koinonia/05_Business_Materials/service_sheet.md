@@ -1,127 +1,180 @@
-# Koinonia Transactions — Service Sheet
+# Koinonia Transactions — Service Guide
 
-Status: Working Client-Facing Copy v1  
-Purpose: One-page service sheet for verification, sales conversations, and future PDF/design production.
+Status: Active Client-Facing Service Guide  
+Purpose: Concise service explanation for consultations, brokerage follow-up, email sharing, print/PDF use, and marketing support.
 
-## Header
+## Positioning
 
-Koinonia Transactions  
-Real estate operations support for Colorado Realtors.
+Koinonia Transactions provides **Real Estate Operations Support for Colorado Realtors**.
 
-## Positioning Statement
+**You focus on your clients. We'll keep the business running behind you.**
 
-Koinonia helps Realtors protect client service by organizing the operational work that competes for their time.
+Koinonia helps Realtors protect client service by organizing the operational work that competes for their time. The service is the product; technology, checklists, and the portal are tools used to communicate and complete the work.
 
-Koinonia is a real estate operations partner for transaction coordination, contract and document support, licensed showing coverage, and monthly business follow-through.
+## Five Core Services
 
-## Primary Services
+### 1. Transaction Support / Contract-to-Close Coordination
 
-### Transaction Support
-
-Contract-to-close coordination for active real estate files.
+Once a transaction is under contract, Koinonia organizes the operational side of the file so the Realtor does not have to personally carry every next step.
 
 Support may include:
 
-- Contract-to-close timeline setup.
-- Deadline tracking.
-- Document checklist support.
-- Lender, title, client, and partner communication support.
-- Inspection, appraisal, and closing milestone tracking.
-- Brokerage file organization support.
-- Closing preparation and file wrap-up.
+- File intake and contract-to-close timeline setup.
+- Deadline and milestone visibility.
+- Document and outstanding-item tracking.
+- Lender, title, client, and party communication coordination.
+- Inspection, appraisal, and milestone follow-up.
+- Closing preparation.
+- File completion and wrap-up.
 
 Starting points:
 
-- Prepaid Transaction Coordination: $389 per transaction.
-- Pay-at-Close Transaction Coordination: $599 due at successful closing.
+- **$389 prepaid per transaction.**
+- **$599 due at successful closing.**
 
-### Contract & Document Support
+The $599 pay-at-successful-close option reflects Koinonia assuming closing/payment risk. Under the approved structure, no coordination fee is due if the transaction does not successfully close.
 
-Licensed document preparation support based on the Realtor’s instructions.
+Realtor responsibility:
+
+Client relationship, advice, negotiation, brokerage compliance, professional judgment, and final decisions remain with the Realtor.
+
+### 2. Contract & Document Support
+
+**You make the decision. We turn that decision into an organized, review-ready document workflow.**
+
+Licensed preparation support based on the Realtor's instructions.
 
 Support may include:
 
-- Offer preparation from Realtor instructions.
+- Offers.
+- Counters.
 - Amendments.
 - Addenda.
 - Notices.
-- Counterproposal document support.
-- Missing-information review.
-- Signature-ready document organization.
-
-Starting points:
-
-- Single document support: starting at $75.
-- Offer package support: scope-based.
-
-Boundary:
-
-Koinonia prepares documents based on Realtor instructions. Realtors remain responsible for client advice, negotiation decisions, brokerage compliance, legal questions, and final approval.
-
-### Licensed Showing Coverage
-
-Licensed support when schedules, distance, or conflicts make it difficult for a Realtor to personally cover a showing.
-
-Support may include:
-
-- Licensed property access.
-- Showing appointment coordination.
-- Buyer showing support when Realtor is unavailable.
-- Feedback after showing.
-- Distance or schedule conflict coverage.
+- Approved transaction documents.
+- Missing-information follow-up.
+- Revisions and organized draft delivery.
 
 Starting point:
 
-- Local showing coverage starts at $50.
-- Distance, access complexity, urgent timing, or extended showing time may change pricing.
+- **Single-document support starts at $75.**
+- Larger packages are scope-based.
 
-### Monthly Operations Partnership
+Realtor responsibility:
 
-Ongoing real estate operations support for Realtors who need more structure, consistency, and follow-through without hiring a full-time assistant.
+The Realtor provides the terms, business decisions, instructions, and final approval.
+
+### 3. Licensed Showing Coverage
+
+Professional licensed backup when a client needs property access and the Realtor cannot be in two places at once.
+
+Support may include:
+
+- Property and appointment confirmation.
+- Licensed property access.
+- Showing coverage under the agreed role.
+- Access/instruction coordination.
+- Completion confirmation and feedback.
+
+Starting point:
+
+- **Local showing coverage starts at $50.**
+
+Distance, urgent timing, extended coverage, or access complexity may affect pricing.
+
+Realtor responsibility:
+
+Representation, client advice, negotiation, strategy, and the ongoing client relationship remain with the Realtor.
+
+### 4. Professional Open House Coverage
+
+**Your listing. Professionally prepared, promoted, and hosted.**
+
+A prepared, promoted, professionally hosted open house for listing agents who want the event handled without giving up a full block of their own weekend.
+
+Support may include:
+
+- Custom property flyer using listing information supplied by the Realtor.
+- Sign setup and takedown using available approved signage.
+- Digital promotion through approved channels.
+- Up to three hours of professional licensed hosting.
+- Visitor notes and post-event summary.
+
+Starting points:
+
+- **$200 standalone, up to 3 hours.**
+- **One Professional Open House included with an applicable $599 pay-at-successful-close Transaction Support engagement.**
+- **Additional qualifying sessions under that engagement: $100 each, up to 3 hours.**
+
+The $389 prepaid Transaction Support option does not include an open house.
+
+Open-house details, property information, scheduling, signage, and marketing content are confirmed with the listing Realtor before promotion begins.
+
+### 5. Monthly Operations Partnership
+
+Recurring operations support for Realtors who need more structure, consistency, and follow-through without hiring a full-time assistant.
 
 Support may include:
 
 - CRM organization.
-- Pipeline and task tracking.
-- Client follow-up support.
-- Workflow and checklist support.
-- Light transaction preparation.
-- Template and process cleanup.
-- Recurring business follow-through.
+- Pipeline visibility.
+- Follow-up tracking.
+- Recurring tasks and checklists.
+- Client communication support.
+- Calendar and task coordination.
+- Templates and workflow documents.
+- Operational cleanup.
 
-Starting points:
+Current tiers:
 
-- Starter Operations Support: $299/month.
-- Growth Operations Support: $599/month.
-- Partner Operations Support: $999/month.
+- **Starter — $299/month, up to 3 hours.**
+- **Growth — $599/month, up to 7 hours.**
+- **Partner — $999/month, up to 12 hours.**
 
 Monthly support is capacity-based and scope-based. It is not unlimited assistant access.
 
+## A Separate Path: 40% Referral Partner Option
+
+The Referral Partner Option is **not a sixth Koinonia Transactions service**.
+
+**Want to keep the client? We'll help you carry the operation.**  
+**Don't want to take the client? You may be able to refer the opportunity instead.**
+
+A Realtor may choose the referral path when workload, timing, readiness, geography, fit, or business preference makes personally taking the client undesirable.
+
+Public benefit:
+
+- **40% referral fee on qualifying successfully closed referred business.**
+
+Complete brokerage, compensation, transaction, and referral terms are provided in the formal referral documents before client handoff.
+
+A Koinonia Transactions relationship never becomes a brokerage referral unless the Realtor explicitly chooses to refer the client.
+
 ## Best Fit
 
-Koinonia is a good fit for Realtors who want:
+Koinonia is designed for Realtors who want:
 
-- More organized files.
-- Better deadline visibility.
+- More time for clients and business development.
+- Better file and deadline visibility.
 - Cleaner follow-through.
-- Support during busy seasons.
-- Help keeping client service strong.
-- A steady operations partner behind the scenes.
+- Professional backup during schedule conflicts.
+- Help carrying listing/open-house workload.
+- More consistent business operations.
+- A dependable operations partner behind the client relationship.
 
-## Not a Fit For
+## Professional Boundary
 
-Koinonia is not positioned for:
+Koinonia provides operational support. Realtors remain responsible for client advice, negotiation decisions, brokerage compliance, legal questions, professional judgment, and final approval.
 
-- Legal advice.
-- Tax advice.
-- Financial advice.
-- Brokerage supervision.
-- Personal errands.
-- Unlimited assistant work.
-- Client decision-making replacement.
+Koinonia is not positioned as unlimited assistant access, brokerage supervision, legal/tax/financial advice, or a replacement for the Realtor-client relationship.
 
 ## Contact
+
+Jeremiah Reynalds  
+Support Partner
 
 Website: https://www.koinoniatransactions.com  
 Phone/Text: 719-745-8497  
 Email: jeremiah@koinoniaadmin.com
+
+**The first engagement should earn the second engagement.**
