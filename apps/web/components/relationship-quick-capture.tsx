@@ -11,6 +11,7 @@ import {
   suggestRelationshipQuickCapture,
   type RelationshipQuickCaptureSuggestion
 } from "../lib/koinonia-relationship";
+import { suggestFollowUpDueDate } from "../lib/relationship-follow-up-date";
 
 type Props = {
   relationshipId: string;
@@ -39,6 +40,7 @@ export function RelationshipQuickCapture({
   const [error, setError] = useState("");
   const [savedMessage, setSavedMessage] = useState("");
   const [createFollowUpTask, setCreateFollowUpTask] = useState(false);
+  const [followUpDueDate, setFollowUpDueDate] = useState("");
 
   useEffect(() => {
     setNote("");
@@ -47,6 +49,7 @@ export function RelationshipQuickCapture({
     setError("");
     setSavedMessage("");
     setCreateFollowUpTask(false);
+    setFollowUpDueDate("");
   }, [relationshipId]);
 
   const suggestionCount = useMemo(
@@ -61,6 +64,9 @@ export function RelationshipQuickCapture({
     const nextSuggestion = suggestRelationshipQuickCapture(trimmed);
     setSuggestion(nextSuggestion);
     setCreateFollowUpTask(Boolean(nextSuggestion.nextAction));
+    setFollowUpDueDate(
+      nextSuggestion.nextAction ? suggestFollowUpDueDate(trimmed) : ""
+    );
     setReviewing(true);
     setSavedMessage("");
     setError("");
@@ -83,7 +89,8 @@ export function RelationshipQuickCapture({
           body: JSON.stringify({
             note: trimmed,
             confirmed: suggestion,
-            createFollowUpTask
+            createFollowUpTask,
+            followUpDueDate: createFollowUpTask ? followUpDueDate : ""
           })
         }
       );
@@ -97,10 +104,13 @@ export function RelationshipQuickCapture({
       setSuggestion(blankSuggestion);
       setReviewing(false);
       setCreateFollowUpTask(false);
+      setFollowUpDueDate("");
       setSavedMessage(
         data.followUpTask
           ? data.followUpTaskAlreadyOpen
-            ? "Interaction saved. An identical open staff follow-up already exists."
+            ? data.followUpTaskDueDateUpdated
+              ? "Interaction saved. The existing staff follow-up was updated with the confirmed due date."
+              : "Interaction saved. An identical open staff follow-up already exists."
             : "Interaction saved and a staff follow-up task was created."
           : "Interaction saved to the relationship history."
       );
@@ -141,6 +151,7 @@ export function RelationshipQuickCapture({
               setSuggestion(blankSuggestion);
               setReviewing(false);
               setCreateFollowUpTask(false);
+              setFollowUpDueDate("");
             }}
             disabled={saving}
           >
@@ -247,6 +258,7 @@ export function RelationshipQuickCapture({
               patch({ nextAction });
               if (!nextAction.trim()) {
                 setCreateFollowUpTask(false);
+                setFollowUpDueDate("");
               }
             }}
             placeholder="Next action"
@@ -265,6 +277,20 @@ export function RelationshipQuickCapture({
               Keep this next action inside the Koinonia staff workflow. It will not appear as a client portal request.
             </span>
           </label>
+
+          {createFollowUpTask ? (
+            <label>
+              Staff follow-up due date
+              <input
+                type="date"
+                value={followUpDueDate}
+                onChange={(event) => setFollowUpDueDate(event.target.value)}
+              />
+              <small>
+                Suggested only from clear calendar language in the note. Change or clear it before saving if needed.
+              </small>
+            </label>
+          ) : null}
 
           <button type="button" onClick={() => void confirmSave()} disabled={saving}>
             {saving ? "Saving..." : "Confirm & Save Interaction"}
