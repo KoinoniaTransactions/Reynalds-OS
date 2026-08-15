@@ -8,6 +8,7 @@ export { KoinoniaHome } from "./PageAssemblies/KoinoniaHome";
 export { KoinoniaServices } from "./PageAssemblies/KoinoniaServices";
 export { KoinoniaContact } from "./PageAssemblies/KoinoniaContact";
 export { KoinoniaAbout } from "./PageAssemblies/KoinoniaAbout";
+export { KoinoniaReferrals } from "./PageAssemblies/KoinoniaReferrals";
 export { ContactActions } from "./ContactActions/ContactActions";
 export { Hero } from "./Hero/Hero";
 export { Section } from "./Section/Section";
