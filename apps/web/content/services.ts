@@ -3,7 +3,7 @@ export const servicesContent = {
     eyebrow: "Services & Pricing",
     title: "Real estate operations support built around how Realtors actually work.",
     lead:
-      "Koinonia helps Realtors protect client service with transaction coordination, contract paperwork support, showing conflict coverage, and recurring business follow-through.",
+      "Koinonia helps Realtors protect client service with transaction coordination, contract paperwork support, licensed showing coverage, professional open houses, and recurring business follow-through.",
     primaryLabel: "Schedule a Consultation",
     primaryHref: "/contact#schedule-consultation",
     secondaryLabel: "View Monthly Support",
@@ -14,7 +14,7 @@ export const servicesContent = {
     eyebrow: "Core Service Paths",
     title: "Choose support for the work that is slowing you down.",
     lead:
-      "Koinonia is built around clear service paths: transaction support, contract and document support, licensed showing coverage, and monthly operations partnership."
+      "Koinonia is built around five clear support paths: transaction support, contract and document support, licensed showing coverage, professional open house coverage, and monthly operations partnership."
   },
 
   services: [
@@ -52,6 +52,18 @@ export const servicesContent = {
       ]
     },
     {
+      title: "Professional Open House Coverage",
+      body:
+        "A prepared, promoted, professionally hosted open house for listing agents who want the event handled without giving up a full block of their own weekend.",
+      items: [
+        "Custom open house flyer",
+        "Open house sign setup and takedown",
+        "Digital open house promotion",
+        "Up to 3 hours of licensed hosting",
+        "Visitor and event follow-up summary"
+      ]
+    },
+    {
       title: "Monthly Operations Partnership",
       body:
         "Ongoing real estate operations support for Realtors who need more structure, consistency, and follow-through without hiring a full-time assistant.",
@@ -68,9 +80,29 @@ export const servicesContent = {
     eyebrow: "Need a Different Kind of Capacity Relief?",
     title: "If you don't want to keep the client, there is another path.",
     lead:
-      "The four services above are for Realtors who want to keep the client relationship. If the opportunity is not one you want to personally carry—because of workload, timing, financing readiness, geography, nurture requirements, or fit—you can explore the separate 40% Referral Partner Option.",
+      "The services above are for Realtors who want to keep the client relationship. If the opportunity is not one you want to personally carry—because of workload, timing, financing readiness, geography, nurture requirements, or fit—you can explore the separate 40% Referral Partner Option.",
     primaryLabel: "Explore the 40% Referral Option",
     primaryHref: "/referrals"
+  },
+
+  openHouse: {
+    eyebrow: "Professional Open House Coverage",
+    title: "Your listing. Professionally prepared, promoted, and hosted.",
+    lead:
+      "Open house coverage is designed to remove more than the three-hour hosting block. Koinonia prepares the event, promotes it, handles setup and licensed hosting, and gives the listing agent a clear summary afterward.",
+    included: [
+      "One custom property flyer using listing information provided by the Realtor",
+      "Open house sign setup and takedown using available approved signage",
+      "Digital promotion of the scheduled open house through approved channels",
+      "Up to 3 hours of professional licensed open house hosting",
+      "Visitor notes and post-event summary to the listing Realtor"
+    ],
+    standalonePrice: "$200",
+    standaloneLabel: "Standalone professional open house · up to 3 hours",
+    additionalPrice: "$100",
+    additionalLabel: "Additional open house for clients on the qualifying included-open-house package",
+    packageNote:
+      "One professional open house will be included with the qualifying basic package. The specific package placement will be confirmed before production pricing is finalized."
   },
 
   monthlySupport: {
@@ -145,6 +177,11 @@ export const servicesContent = {
         body: "Licensed showing help when schedules or distance create conflicts."
       },
       {
+        title: "Professional Open House Coverage",
+        price: "$200",
+        body: "Prepared, promoted, and professionally hosted standalone open house for up to 3 hours."
+      },
+      {
         title: "Monthly Operations Partnership",
         price: "$299/month",
         body: "Recurring real estate operations support without hiring full-time staff."
@@ -172,6 +209,11 @@ export const servicesContent = {
         title: "Showing coverage is confirmed first",
         body:
           "Licensed Showing Coverage starts with simple local support, while distance, timing, access details, or extended showing needs may affect final scope."
+      },
+      {
+        title: "Open houses require listing and marketing approval",
+        body:
+          "Open house details, property information, scheduling, signage, and marketing content are confirmed with the listing Realtor before promotion begins."
       },
       {
         title: "Document support follows Realtor direction",
@@ -203,6 +245,11 @@ export const servicesContent = {
           "When your calendar is full or distance creates a conflict, licensed showing coverage helps protect client service and responsiveness."
       },
       {
+        title: "A listing needs an open house",
+        body:
+          "When the seller expects an open house but your weekend is already committed, Koinonia can prepare, promote, and professionally host the event."
+      },
+      {
         title: "Daily operations need follow-through",
         body:
           "When CRM cleanup, task tracking, communication, or workflow details keep slipping, Koinonia helps create visible structure."
@@ -219,7 +266,7 @@ export const servicesContent = {
       {
         title: "You share the support need.",
         body:
-          "Start with the file, document, showing, or business task that needs dependable operational help."
+          "Start with the file, document, showing, open house, or business task that needs dependable operational help."
       },
       {
         title: "Koinonia confirms the scope.",
@@ -229,7 +276,7 @@ export const servicesContent = {
       {
         title: "The work is tracked.",
         body:
-          "Deadlines, documents, updates, and follow-through are kept visible so the work does not depend on memory."
+          "Deadlines, documents, events, updates, and follow-through are kept visible so the work does not depend on memory."
       },
       {
         title: "You stay focused on clients.",
@@ -243,17 +290,17 @@ export const servicesContent = {
     eyebrow: "Professional Scope",
     title: "Clear scope. Professional boundaries.",
     lead:
-      "Koinonia supports Realtors with operational execution, organization, communication support, and document preparation based on Realtor instructions while keeping professional responsibilities clear.",
+      "Koinonia supports Realtors with operational execution, licensed field support, organization, communication support, marketing preparation for approved open houses, and document preparation based on Realtor instructions while keeping professional responsibilities clear.",
     cards: [
       {
         title: "What Koinonia supports",
         body:
-          "Operational organization, transaction support, document preparation from Realtor instructions, task visibility, client follow-up support, and workflow structure."
+          "Operational organization, transaction support, document preparation from Realtor instructions, licensed showings and open houses, task visibility, client follow-up support, and workflow structure."
       },
       {
         title: "What remains with the Realtor",
         body:
-          "Client advice, negotiation decisions, brokerage compliance, legal questions, final approval, and professional judgment remain with the Realtor and their brokerage."
+          "Client advice, negotiation decisions, brokerage compliance, legal questions, listing strategy, final approval, and professional judgment remain with the Realtor and their brokerage."
       },
       {
         title: "Why boundaries matter",
