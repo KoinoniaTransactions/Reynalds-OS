@@ -27,7 +27,7 @@ export function KoinoniaServices() {
             <p className="koinonia-copy">{servicesContent.categories.lead}</p>
           </div>
 
-          <div className="koinonia-grid three">
+          <div className="koinonia-grid balanced-five">
             {servicesContent.services.map((service, index) => (
               <UniversalCard
                 key={service.title}
@@ -131,7 +131,7 @@ export function KoinoniaServices() {
             <p className="koinonia-copy">{servicesContent.pricingSnapshot.lead}</p>
           </div>
 
-          <div className="koinonia-grid three">
+          <div className="koinonia-grid balanced-five">
             {servicesContent.pricingSnapshot.prices.map((price) => (
               <article key={price.title} className="koinonia-card koinonia-pricing-card">
                 <div className="koinonia-price-badge">
@@ -155,7 +155,7 @@ export function KoinoniaServices() {
             <p className="koinonia-copy">{servicesContent.scopeNotes.lead}</p>
           </div>
 
-          <div className="koinonia-grid two">
+          <div className="koinonia-grid balanced-five">
             {servicesContent.scopeNotes.notes.map((note) => (
               <UniversalCard key={note.title} title={note.title} body={note.body} />
             ))}
@@ -171,7 +171,7 @@ export function KoinoniaServices() {
             <p className="koinonia-copy">{servicesContent.fit.lead}</p>
           </div>
 
-          <div className="koinonia-grid three">
+          <div className="koinonia-grid balanced-five">
             {servicesContent.fit.cards.map((card, index) => (
               <UniversalCard
                 key={card.title}
