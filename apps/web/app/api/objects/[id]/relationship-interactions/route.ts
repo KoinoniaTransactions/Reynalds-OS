@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 
-import { assertPermission } from "../../../../../../lib/auth";
-import { prisma } from "../../../../../../lib/db";
+import { assertPermission } from "../../../../../lib/auth";
+import { prisma } from "../../../../../lib/db";
 import {
   mergeKoinoniaRelationshipData,
   normalizeKoinoniaRelationshipData,
   preserveAdvancedLifecycle,
   type RelationshipQuickCaptureSuggestion
-} from "../../../../../../lib/koinonia-relationship";
+} from "../../../../../lib/koinonia-relationship";
 
 export const dynamic = "force-dynamic";
 
