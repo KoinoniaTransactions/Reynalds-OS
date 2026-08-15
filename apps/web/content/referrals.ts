@@ -34,7 +34,7 @@ export const referralsContent = {
           "A buyer may need time before qualifying for financing. When appropriate, the client can be connected with lending resources that may help them understand and work toward future readiness while the relationship continues to be professionally nurtured."
       },
       {
-        title: "You don't see enough immediate return for the time required",
+        title: "The immediate return is not worth the time required",
         body:
           "A lead may require months of calls, education, showings, follow-up, or preparation before producing a transaction. Referring the opportunity can preserve economic value without requiring you to personally carry that entire nurture cycle."
       },
@@ -55,12 +55,12 @@ export const referralsContent = {
     eyebrow: "Two Different Capacity Problems",
     title: "Keep the client—or intentionally refer the client.",
     lead:
-      "Koinonia Transactions is built for Realtors who want to keep the client relationship and need operational support behind them. The Referral Partner Option is for the different situation where you do not have the capacity, fit, timing, location, or desire to personally carry the client relationship.",
+      "Koinonia Transactions is built for Realtors who want to keep the client relationship and need operational support behind them. The Referral Partner Option is for the different situation where you do not have the capacity, fit, timing, location, readiness, or desire to personally carry the client relationship.",
     cards: [
       {
         title: "I want to keep the client",
         body:
-          "Use Koinonia Transaction Support, Contract & Document Support, Licensed Showing Coverage, or Monthly Operations Partnership to keep serving the client while defined operational work is carried behind you.",
+          "Use Koinonia's operational services to keep serving the client while defined work is carried behind you.",
         items: [
           "You retain the client relationship",
           "Koinonia supports defined operational work",
@@ -70,11 +70,11 @@ export const referralsContent = {
       {
         title: "I want to refer the client",
         body:
-          "Use the Referral Partner Option when you would rather make a clean brokerage referral and have the referred client served directly through the receiving brokerage relationship.",
+          "Use the Referral Partner Option when you would rather make a clean referral and have the referred client served directly through the receiving brokerage relationship.",
         items: [
           "You intentionally make the referral",
-          "The client relationship transfers through the brokerage process",
-          "A qualifying successful closing earns the agreed referral fee"
+          "The client relationship transfers through the documented referral process",
+          "A qualifying successful closing earns the agreed 40% referral fee"
         ]
       }
     ]
@@ -84,32 +84,32 @@ export const referralsContent = {
     eyebrow: "How the Referral Program Works",
     title: "A simple handoff with a meaningful referral fee.",
     lead:
-      "The referral relationship is documented before the client is transferred. Once accepted, Jeremiah takes responsibility for serving and nurturing the referred consumer through the brokerage relationship, whether the opportunity is ready now or requires a longer path toward a transaction.",
+      "The referral relationship is documented before the client is transferred. Once accepted, Jeremiah takes responsibility for serving and nurturing the referred consumer, whether the opportunity is ready now or requires a longer path toward a transaction.",
     steps: [
       {
         title: "You introduce the opportunity",
         body:
-          "Share the buyer or seller opportunity and enough context to determine whether the referral is a fit. Client information is transferred only through the approved referral process."
+          "Share the buyer or seller opportunity and enough context to determine whether the referral is a fit."
       },
       {
-        title: "We confirm and document the referral",
+        title: "We confirm the referral",
         body:
-          "The referral percentage, client, brokerage parties, covered opportunity, and any additional terms are confirmed in writing before the referral relationship is activated."
+          "If the opportunity is accepted, the formal referral documents and complete terms are provided before the client handoff occurs."
       },
       {
         title: "I work the client from where they are",
         body:
-          "If the client is ready, the brokerage relationship can move into active buyer or seller representation. If the client needs time, the relationship can focus on appropriate follow-up, education, preparation, and connection to relevant professional resources until they are ready to move forward."
+          "If the client is ready, the relationship can move into active buyer or seller representation. If the client needs time, the focus can remain on appropriate follow-up, education, preparation, and connection to relevant professional resources until they are ready."
       },
       {
-        title: "The transaction receives organized support",
+        title: "You receive milestone visibility",
         body:
-          "When the referred client reaches a signed transaction, Koinonia's Transaction Support process is used behind the file so the client-facing brokerage work is supported by an organized contract-to-close operation."
+          "You can receive appropriate status updates so you know the referred opportunity is being actively cared for without receiving confidential client information that should remain protected."
       },
       {
-        title: "You receive the agreed referral payout",
+        title: "A successful closing earns the referral fee",
         body:
-          "When the qualifying referred transaction successfully closes and brokerage compensation is received, the referral settlement is processed through the brokerages according to the signed agreement."
+          "When qualifying referred business successfully closes, the agreed 40% referral fee is processed according to the signed referral documents."
       }
     ]
   },
@@ -133,7 +133,7 @@ export const referralsContent = {
       {
         title: "Financing preparation",
         body:
-          "The buyer is not yet approved or needs additional time and professional guidance from appropriate lending resources before they can realistically purchase."
+          "The buyer is not yet approved or needs additional time and guidance from appropriate lending resources before they can realistically purchase."
       },
       {
         title: "Location or service-area mismatch",
@@ -172,57 +172,48 @@ export const referralsContent = {
   },
 
   economics: {
-    eyebrow: "Referral Economics",
-    title: "40% referral fee with clear written settlement terms.",
+    eyebrow: "Referral Partner Benefit",
+    title: "A 40% referral fee on qualifying successfully closed referred business.",
     lead:
-      "The 40% referral fee is the core partner benefit. The exact referral base, required transaction-management charge, brokerage approvals, and payment path are confirmed in writing before the referral is activated.",
+      "The 40% referral fee is intentionally designed to make a real future opportunity worth referring even when you do not want to personally carry the entire client relationship.",
     referralRate: "40%",
     referralLabel: "Referral fee on qualifying successfully closed referred business",
-    coordinationFee: "$599",
-    coordinationLabel: "Required Koinonia pay-at-closing Transaction Support charge",
-    formula:
-      "The referring brokerage's payout is the agreed 40% referral calculation less the required $599 Koinonia pay-at-closing Transaction Support charge on a successfully closed referred transaction.",
-    terms: [
-      "The referral fee is payable to the referring brokerage under the signed referral agreement after a qualifying referred transaction successfully closes and applicable brokerage compensation is received.",
-      "Each successfully closed referred transaction uses Koinonia's required $599 pay-at-closing Transaction Support structure. The $599 charge is deducted from the otherwise-calculated referral payout before the final referral settlement is released.",
-      "Under the current pay-at-closing structure, if the referred transaction does not successfully close, no Koinonia transaction-coordination fee is due and no referral fee is earned.",
-      "Referral payments are processed through the participating brokerages rather than paid informally to an individual licensee.",
-      "The signed referral agreement controls the referral base, specific client, covered transaction opportunity, time period, payment calculation, and any additional terms. Future unrelated business is not automatically included unless the agreement expressly says otherwise."
-    ]
+    note:
+      "Complete brokerage, compensation, transaction, and referral terms are provided in the formal referral documents before the client handoff."
   },
 
   trust: {
     eyebrow: "Client Relationship Protection",
-    title: "Koinonia support never turns into a brokerage takeover by default.",
+    title: "Koinonia support never turns into a client handoff by default.",
     lead:
-      "A Koinonia Transactions relationship remains an operations-support relationship. A brokerage referral happens only when the Realtor intentionally chooses to refer the client and the referral is documented through the brokerage process.",
+      "A Koinonia Transactions relationship remains an operations-support relationship. A referral happens only when the Realtor intentionally chooses the referral path and completes the appropriate referral documents.",
     cards: [
       {
         title: "Support means support",
         body:
-          "Using Koinonia for a transaction, document, showing, or recurring operations work does not authorize solicitation or conversion of that Realtor's client relationship."
+          "Using Koinonia for transaction, document, showing, open house, or recurring operations work does not authorize solicitation or conversion of that Realtor's client relationship."
       },
       {
         title: "Referral requires a deliberate handoff",
         body:
-          "The referral option begins only after the Realtor chooses to refer the opportunity and the brokerage referral terms are confirmed."
+          "The referral option begins only after the Realtor chooses to refer the opportunity and the formal referral terms are accepted."
       },
       {
-        title: "Brokerage work is separate",
+        title: "The details come before the handoff",
         body:
-          "Brokerage representation for referred consumers is provided by Jeremiah Reynalds through his employing brokerage relationship with eXp Realty and is separate from Koinonia Transactions services."
+          "The complete referral documents identify the receiving brokerage relationship, compensation terms, covered opportunity, and other required details before the client is transferred."
       }
     ]
   },
 
   faq: {
     eyebrow: "Referral Questions",
-    title: "Know how the program works before making the introduction.",
+    title: "Know whether the referral path fits before making the introduction.",
     items: [
       {
         question: "Why would I refer a client instead of keeping 100%?",
         answer:
-          "If you have the time, desire, and business fit to serve the client well, you may prefer to keep the relationship. The referral option is for opportunities you are unlikely to work consistently yourself—because of workload, timing, financing readiness, geography, fit, or the amount of nurture required. It preserves meaningful economics from an opportunity that might otherwise sit or be lost."
+          "If you have the time, desire, and business fit to serve the client well, you may prefer to keep the relationship. The referral option is for opportunities you are unlikely to work consistently yourself because of workload, timing, financing readiness, geography, fit, or the amount of nurture required."
       },
       {
         question: "Can I refer someone who is not ready to buy or sell yet?",
@@ -235,29 +226,19 @@ export const referralsContent = {
           "That does not automatically disqualify the opportunity. When appropriate, the buyer can be connected with lending professionals who can explain qualification requirements and possible steps toward future readiness. No financing outcome or approval timeline is guaranteed."
       },
       {
-        question: "Is this a fifth Koinonia Transactions service?",
-        answer:
-          "No. Koinonia Transactions has four core operations-support paths. The Referral Partner Option is a separate brokerage referral path for a professional who does not want to personally carry the referred client relationship."
-      },
-      {
         question: "Do I receive 40% if the client never closes?",
         answer:
-          "No. The referral fee is earned only when a qualifying referred transaction successfully closes and applicable brokerage compensation is received, subject to the signed referral agreement."
-      },
-      {
-        question: "Why is Transaction Support required on a referred closing?",
-        answer:
-          "The referred client should receive the same organized operational care Koinonia expects on supported files. Requiring the pay-at-closing Transaction Support structure gives the file a defined contract-to-close process behind the client-facing brokerage work."
+          "No. The referral fee is earned on qualifying referred business that successfully closes, subject to the signed referral documents."
       },
       {
         question: "Will I know what is happening with the referral?",
         answer:
-          "Yes. Appropriate milestone updates can be provided to the referring professional. Confidential client information, negotiation details, and other protected information remain subject to the receiving brokerage relationship and applicable authorization."
+          "Yes. Appropriate milestone updates can be provided while confidential client information and negotiation details remain protected."
       },
       {
         question: "What if I want to keep the client but just need help?",
         answer:
-          "Then the referral option is probably not the right starting point. Koinonia Transaction Support, Contract & Document Support, Licensed Showing Coverage, or Monthly Operations Partnership is designed to help you keep the client relationship while operational work is supported behind you."
+          "Then the referral option is probably not the right starting point. Koinonia's operational services are designed to help you keep the client relationship while defined work is supported behind you."
       }
     ]
   }
