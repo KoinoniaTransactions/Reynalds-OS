@@ -190,21 +190,23 @@ function normalizeQuickCaptureSuggestion(value: unknown): RelationshipQuickCaptu
 function normalizeLearningInteractions(value: unknown): RelationshipLearningInteraction[] {
   if (!Array.isArray(value)) return [];
 
-  return value
-    .map((item) => {
-      const source = record(item);
-      const capturedAt = text(source.capturedAt);
-      const note = text(source.note);
+  const interactions: RelationshipLearningInteraction[] = [];
 
-      if (!capturedAt || !note) return null;
+  for (const item of value) {
+    const source = record(item);
+    const capturedAt = text(source.capturedAt);
+    const note = text(source.note);
 
-      return {
-        capturedAt,
-        note,
-        confirmed: normalizeQuickCaptureSuggestion(source.confirmed)
-      };
-    })
-    .filter((item): item is RelationshipLearningInteraction => Boolean(item));
+    if (!capturedAt || !note) continue;
+
+    interactions.push({
+      capturedAt,
+      note,
+      confirmed: normalizeQuickCaptureSuggestion(source.confirmed)
+    });
+  }
+
+  return interactions;
 }
 
 export function normalizeKoinoniaRelationshipData(
@@ -504,7 +506,7 @@ export function suggestRelationshipQuickCapture(
     suggestion.primaryPressure = "Contract/Document Workload";
   } else if (containsAny(normalized, ["under contract", "transaction", "closing", "deadline", "contract-to-close", "file coordination"])) {
     suggestion.primaryPressure = "Transaction/File Capacity";
-  } else if (containsAny(normalized, ["crm", "follow-up", "follow up", "pipeline", "business organization", "task cleanup", "backend" ])) {
+  } else if (containsAny(normalized, ["crm", "follow-up", "follow up", "pipeline", "business organization", "task cleanup", "backend"])) {
     suggestion.primaryPressure = "CRM/Follow-Up/Business Organization";
   } else if (containsAny(normalized, ["team operations", "brokerage operations", "office operations"])) {
     suggestion.primaryPressure = "Brokerage/Team Operations";
