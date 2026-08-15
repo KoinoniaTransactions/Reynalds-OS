@@ -1,5 +1,9 @@
 /* Koinonia public-site layout refinements. */
 
+.koinonia-grid.after-feature-card {
+  margin-top: clamp(36px, 4vw, 48px);
+}
+
 .koinonia-grid.balanced-five {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
@@ -35,6 +39,10 @@
 }
 
 @media (max-width: 680px) {
+  .koinonia-grid.after-feature-card {
+    margin-top: 28px;
+  }
+
   .koinonia-grid.balanced-five {
     grid-template-columns: 1fr;
   }
