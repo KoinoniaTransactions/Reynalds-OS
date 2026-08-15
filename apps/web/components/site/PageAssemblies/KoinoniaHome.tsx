@@ -45,7 +45,7 @@ export function KoinoniaHome() {
         title={homeContent.servicesIntro.title}
         lead={homeContent.servicesIntro.lead}
       >
-        <div className="koinonia-grid three">
+        <div className="koinonia-grid balanced-five">
           {homeContent.services.map((service, index) => (
             <UniversalCard
               key={service.title}
