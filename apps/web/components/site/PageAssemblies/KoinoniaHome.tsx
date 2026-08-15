@@ -38,7 +38,6 @@ export function KoinoniaHome() {
         </div>
       </Section>
 
-
       <Section
         variant="band"
         align="center"
@@ -46,7 +45,7 @@ export function KoinoniaHome() {
         title={homeContent.servicesIntro.title}
         lead={homeContent.servicesIntro.lead}
       >
-        <div className="koinonia-grid four">
+        <div className="koinonia-grid balanced-five">
           {homeContent.services.map((service, index) => (
             <UniversalCard
               key={service.title}
@@ -58,6 +57,25 @@ export function KoinoniaHome() {
           ))}
         </div>
       </Section>
+
+      <section className="koinonia-section koinonia-home-referrals">
+        <div className="koinonia-container">
+          <div className="koinonia-cta">
+            <div className="koinonia-eyebrow">{homeContent.referralDiscovery.eyebrow}</div>
+            <h2 className="koinonia-heading">{homeContent.referralDiscovery.title}</h2>
+            <p className="koinonia-copy">{homeContent.referralDiscovery.lead}</p>
+            <p className="koinonia-copy">{homeContent.referralDiscovery.body}</p>
+            <div className="koinonia-actions" style={{ justifyContent: "center" }}>
+              <a className="koinonia-button primary" href={homeContent.referralDiscovery.primaryHref}>
+                {homeContent.referralDiscovery.primaryLabel}
+              </a>
+              <a className="koinonia-button secondary" href={homeContent.referralDiscovery.secondaryHref}>
+                {homeContent.referralDiscovery.secondaryLabel}
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <Section
         className="koinonia-home-fit"
