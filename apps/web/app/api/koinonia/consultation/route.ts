@@ -77,6 +77,10 @@ function escapeHtml(input: string) {
     .replaceAll("'", "&#039;");
 }
 
+function toPrismaJson(input: unknown): Prisma.InputJsonValue {
+  return JSON.parse(JSON.stringify(input)) as Prisma.InputJsonValue;
+}
+
 function buildTextEmail({
   consultationType,
   name,
@@ -206,6 +210,7 @@ async function persistConsultationRelationship({
 
   const existingProfile = normalizeKoinoniaRelationshipData(existing?.data);
   const submittedAt = new Date().toISOString();
+  const existingPath = existingProfile.diagnosis?.path || "Undetermined";
   const profile = mergeKoinoniaRelationshipData(existing?.data, {
     relationshipProfileVersion: 1,
     contact: {
@@ -225,10 +230,10 @@ async function persistConsultationRelationship({
     problem: {
       primaryPressure:
         existingProfile.problem?.primaryPressure || intent.pressure,
-      exactLanguage: notes
+      exactLanguage: existingProfile.problem?.exactLanguage || notes
     },
     diagnosis: {
-      path: existingProfile.diagnosis?.path || "Undetermined",
+      path: existingPath === "Undetermined" ? intent.path : existingPath,
       requestedService: intent.service
     },
     consultationRequest: {
@@ -255,7 +260,7 @@ async function persistConsultationRelationship({
             status: preserveAdvancedLifecycle(existing.status, "Consultation"),
             health: existing.health || "Healthy",
             nextAction,
-            data: profile as Prisma.InputJsonValue
+            data: toPrismaJson(profile)
           }
         })
       : await tx.rosObject.create({
@@ -266,7 +271,7 @@ async function persistConsultationRelationship({
             status: "Consultation",
             health: "Healthy",
             nextAction,
-            data: profile as Prisma.InputJsonValue
+            data: toPrismaJson(profile)
           }
         });
 
@@ -276,12 +281,12 @@ async function persistConsultationRelationship({
         objectId: relationship.id,
         eventType: "consultation.requested",
         summary: `Website consultation requested: ${consultationType} · ${preferredDate} · ${preferredTime}`,
-        newValue: {
+        newValue: toPrismaJson({
           consultationType,
           preferredDate,
           preferredTime,
           notes
-        }
+        })
       }
     });
 
@@ -313,7 +318,7 @@ async function persistConsultationRelationship({
           actorId: owner?.workspaceId === koinoniaWorkspaceId ? owner.id : undefined,
           eventType: "task.created",
           summary: `Task created: ${task.title}`,
-          newValue: task
+          newValue: toPrismaJson(task)
         }
       });
     }
