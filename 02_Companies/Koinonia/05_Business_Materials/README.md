@@ -84,6 +84,25 @@ It currently covers:
 - Monthly Operations Partnership: $299 / $599 / $999 tiers
 - separate public 40% Referral Partner benefit, without private brokerage settlement mechanics
 
+### Digital Introduction Packet
+
+- `digital_introduction_packet.md`
+- `print_ready/digital_introduction_packet.html`
+
+Purpose: cohesive digital follow-up for email sharing, brokerage presentations, and consultation preparation.
+
+The packet summarizes the established Koinonia story in one shareable asset:
+
+- core positioning and operational problem
+- five service lanes
+- concise current pricing snapshot
+- Professional Open House Coverage
+- separate 40% Referral Partner discovery path
+- professional boundaries
+- direct consultation/contact next step
+
+It should remain concise enough to function as a follow-up asset rather than becoming a duplicate of the full Service Guide and Pricing Insert.
+
 ## Other Working Assets
 
 - `google_business_verification_packet.md` — Google Business Profile verification prep and proof checklist.
@@ -175,8 +194,8 @@ Galatians 6:2 · Colossians 3:23
 2. Brokerage Introduction Sheet — current
 3. Service Guide — current
 4. Pricing Insert — current
-5. Digital Introduction Packet — next build phase
+5. Digital Introduction Packet — current
 6. Tri-fold Brochure — later phase
 7. Presentation Folder — later phase
 
-The Brokerage Introduction Sheet remains the primary leave-behind. The Service Guide and Pricing Insert support deeper follow-up without making the first piece overly dense or price-driven.
+The Brokerage Introduction Sheet remains the primary leave-behind. The Service Guide and Pricing Insert support deeper follow-up, and the Digital Introduction Packet packages the core story into one shareable digital asset without replacing those deeper companions.
