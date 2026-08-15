@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the canonical distinction between Reynalds OS, company operating systems, public websites, and the companies they represent.
+This document defines the canonical distinction between Reynalds OS, company operating systems, public websites, portals, and the companies they represent.
 
 Future AI sessions and developers must use these boundaries before making architecture, routing, hosting, repository, or product decisions.
 
@@ -10,7 +10,7 @@ Future AI sessions and developers must use these boundaries before making archit
 
 # Core Rule
 
-A company, its public website, and its internal operating system are separate concepts.
+A company, its public website, its service-delivery portal, and its internal operating system are separate concepts.
 
 They may share data, packages, design standards, or infrastructure when appropriate, but they must not be treated as interchangeable products.
 
@@ -30,7 +30,7 @@ Its purpose is to:
 
 Reynalds OS is not a public company website.
 
-It may contain records about a company without being that company's public website or internal company-specific operating system.
+It may contain records about a company without being that company's public website, client portal, or internal company-specific operating system.
 
 ---
 
@@ -38,11 +38,40 @@ It may contain records about a company without being that company's public websi
 
 Koinonia Transactions is a separate company.
 
-Current work includes its public-facing company website.
+Its commercial product is dependable real estate operations support for Realtors.
+
+The Koinonia public website explains, markets, and provides entry points into those services.
+
+The Koinonia client/employee portal is a service-delivery, communication, visibility, document, billing, and work-completion tool. It is not the product being sold and should not be positioned as if Koinonia were primarily a software company.
+
+Canonical principle:
+
+**Koinonia sells the service. The portal is a tool used to communicate, coordinate, and complete the work.**
 
 Business knowledge, decisions, and operational records for Koinonia Transactions are also recorded within Reynalds OS.
 
-The public website and the records held in Reynalds OS are related, but they are not the same product.
+The company, public website, portal, and records held in Reynalds OS are related, but they are not the same product.
+
+---
+
+# Koinonia Production and Portal Release Boundary
+
+The public Koinonia website currently uses `koinonia-production` as the canonical cumulative release line.
+
+Portal-development branches are not alternate production branches and must not replace the production line wholesale.
+
+Already-live public features are production requirements that must be preserved when portal functionality is eventually integrated. This includes, unless intentionally changed through a documented decision:
+
+- the current public site,
+- `/jeremiah`,
+- `/referrals`,
+- the current service architecture,
+- approved public visual/hero treatments,
+- and other changes already accepted into `koinonia-production`.
+
+Portal promotion must occur through a controlled reconciliation/integration branch that combines approved portal work with the then-current production public-site state. Shared files and unrelated monorepo changes require deliberate review before release.
+
+Production is the source of truth for what is live.
 
 ---
 
@@ -85,6 +114,11 @@ Public websites
 ├── Koinonia Transactions website
 └── Koinonia Properties website
 
+Koinonia service-delivery tooling
+└── Koinonia client/employee portal
+    └── Supports service communication, visibility, documents, billing, and work completion
+    └── Not the commercial product itself
+
 Separate internal company operating system
 └── Reynalds Brothers OS
     └── No public website currently planned
@@ -98,14 +132,17 @@ Before creating routes, domains, deployments, workspaces, tenants, or registries
 
 1. the legal or operating company,
 2. the company's public website,
-3. a company-specific internal operating system,
-4. or a record held inside Reynalds OS.
+3. a client/service-delivery portal,
+4. a company-specific internal operating system,
+5. or a record held inside Reynalds OS.
 
-Do not use the terms company, workspace, tenant, website, application, and operating system as synonyms.
+Do not use the terms company, workspace, tenant, website, portal, application, and operating system as synonyms.
 
 Do not infer that every company requires a public website.
 
 Do not infer that every public website is a workspace inside the Reynalds OS user interface.
+
+Do not infer that every portal is the product being sold.
 
 Do not infer that every internal company operating system must be deployed as part of the Reynalds OS application.
 
