@@ -62,7 +62,14 @@ Use a concise support-ladder treatment before the detailed service blocks:
 - Cannot personally cover a showing? Licensed Showing Coverage.
 - Need a listing professionally prepared, promoted, and hosted for an open house? Professional Open House Coverage.
 - Need recurring structure behind the business? Monthly Operations Partnership.
-- Do not want or cannot take the client? Separate 40% Referral Partner Option.
+
+The five core services should remain one visual family. If a two-column support ladder is used, center the fifth service rather than creating a sixth equal cell.
+
+Immediately below the five-service ladder, use a visually separate referral teaser:
+
+**Do not want or cannot take the client? The separate 40% Referral Partner Option may provide another path.**
+
+Do not render the referral path as a sixth equal service item.
 
 ### Page 1 Service Blocks
 
@@ -166,13 +173,16 @@ Do not publish unsupported discounts, rush rules, mileage formulas, or internal 
 - services should feel like one family
 - referral section should be discoverable but visually secondary
 - avoid compressed multi-card flyer styling when it requires tiny type
+- use the approved **circled K** brand mark on the Service Guide
 
 ### Typography / Readability
 
-- Use standard body scale from `koinonia_materials.css` whenever possible.
-- Avoid body copy below approximately 9–10 pt equivalent for printed guide text.
-- Use slightly larger service headings than supporting copy.
+- Use the standard body scale from `koinonia_materials.css` whenever practical.
+- Primary service body copy should target approximately 9 pt equivalent or larger in print.
+- Supporting lists should remain comfortably readable without magnification.
+- Boundary/fine-print notes may be smaller than primary copy, but should remain visually legible; avoid 5–6 pt fine print.
 - Price/support labels may be compact, but should remain readable without magnification.
+- Referral terms and trust language must not be reduced to unreadable legal-style microcopy.
 
 ## Portal / Technology Rule
 
@@ -201,7 +211,8 @@ Website: koinoniatransactions.com
 - [ ] Copy matches `service_sheet.md`.
 - [ ] Two-page structure is preserved unless a future approved design clearly improves readability.
 - [ ] Support-ladder / "Where Koinonia Fits" section is present.
-- [ ] Five core services are present.
+- [ ] Five core services are present as one visual family.
+- [ ] Referral teaser is visually separate from the five-service ladder.
 - [ ] Professional Open House Coverage uses current pricing/package rules.
 - [ ] Referral Partner Option remains separate from the five services.
 - [ ] Referral public-detail boundary is preserved.
@@ -209,4 +220,5 @@ Website: koinoniatransactions.com
 - [ ] No unsupported discount or guarantee language.
 - [ ] Professional boundaries are visible.
 - [ ] Print/PDF presentation remains comfortably readable and uncluttered.
+- [ ] Approved circled K mark is used.
 - [ ] Koinonia is presented as service-first, not software-first.
