@@ -10,13 +10,22 @@ export async function GET(request: Request) {
   const relatedObjectId = url.searchParams.get("relatedObjectId");
   const status = url.searchParams.get("status");
   const priority = url.searchParams.get("priority");
+  const owner = url.searchParams.get("owner");
+
+  if (owner && owner !== "me") {
+    return NextResponse.json(
+      { error: 'owner must be "me" when provided.' },
+      { status: 400 }
+    );
+  }
 
   const tasks = await prisma.task.findMany({
     where: {
       workspaceId: user.workspaceId,
       ...(relatedObjectId ? { relatedObjectId } : {}),
       ...(status ? { status } : {}),
-      ...(priority ? { priority } : {})
+      ...(priority ? { priority } : {}),
+      ...(owner === "me" ? { ownerId: user.id } : {})
     },
     orderBy: [{ dueAt: "asc" }, { createdAt: "desc" }]
   });
