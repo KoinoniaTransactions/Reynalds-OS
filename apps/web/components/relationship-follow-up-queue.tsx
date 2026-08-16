@@ -18,6 +18,12 @@ type RelatedObject = {
   name: string;
 };
 
+type TaskOwner = {
+  id: string;
+  name: string;
+  role: string;
+};
+
 type QueueItem = {
   task: Task;
   relationship: RelatedObject;
@@ -73,6 +79,7 @@ export function RelationshipFollowUpQueue({
   onTaskChanged
 }: Props) {
   const [items, setItems] = useState<QueueItem[]>([]);
+  const [taskOwners, setTaskOwners] = useState<TaskOwner[]>([]);
   const [ownershipView, setOwnershipView] = useState<OwnershipView>("mine");
   const [loading, setLoading] = useState(true);
   const [accessDenied, setAccessDenied] = useState(false);
@@ -90,6 +97,7 @@ export function RelationshipFollowUpQueue({
       if (response.status === 403) {
         setAccessDenied(true);
         setItems([]);
+        setTaskOwners([]);
         return;
       }
       if (!response.ok) {
@@ -105,6 +113,7 @@ export function RelationshipFollowUpQueue({
           .map((object) => [object.id, object])
       );
 
+      setTaskOwners((data.taskOwners ?? []) as TaskOwner[]);
       setItems(
         tasks.flatMap((task) => {
           if (!task.relatedObjectId) return [];
@@ -122,6 +131,11 @@ export function RelationshipFollowUpQueue({
   useEffect(() => {
     void loadQueue();
   }, [loadQueue, refreshKey]);
+
+  const ownerById = useMemo(
+    () => new Map(taskOwners.map((owner) => [owner.id, owner])),
+    [taskOwners]
+  );
 
   const grouped = useMemo(() => {
     const today = localDateKey();
@@ -249,62 +263,68 @@ export function RelationshipFollowUpQueue({
                   <h3 style={{ marginTop: 0 }}>{groupName} · {groupItems.length}</h3>
                   {!loading && groupItems.length === 0 ? <p>Nothing here.</p> : null}
                   <div style={{ display: "grid", gap: 10 }}>
-                    {groupItems.map((item) => (
-                      <div
-                        key={item.task.id}
-                        style={{
-                          borderTop: "1px solid rgba(127, 127, 127, 0.25)",
-                          paddingTop: 10,
-                          opacity: workingTaskId === item.task.id ? 0.6 : 1
-                        }}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => void onOpenRelationship(item.relationship.id)}
-                          style={{ textAlign: "left", width: "100%" }}
+                    {groupItems.map((item) => {
+                      const owner = item.task.ownerId ? ownerById.get(item.task.ownerId) : undefined;
+                      return (
+                        <div
+                          key={item.task.id}
+                          style={{
+                            borderTop: "1px solid rgba(127, 127, 127, 0.25)",
+                            paddingTop: 10,
+                            opacity: workingTaskId === item.task.id ? 0.6 : 1
+                          }}
                         >
-                          <strong>
-                            {item.relationship.name}
-                            {selectedRelationshipId === item.relationship.id ? " · Open" : ""}
-                          </strong>
-                        </button>
-                        <p style={{ margin: "8px 0 4px" }}>{item.task.title}</p>
-                        <small>
-                          {formatDueDate(item.task.dueAt)} · {item.task.priority}
-                        </small>
-                        <label style={{ display: "grid", gap: 4, marginTop: 8 }}>
-                          <span>Follow-up due</span>
-                          <input
-                            type="date"
-                            value={dueDateKey(item.task.dueAt)}
-                            disabled={Boolean(workingTaskId)}
-                            onChange={(event) => void rescheduleTask(item, event.target.value)}
-                          />
-                        </label>
-                        <div className="ros-actions" style={{ marginTop: 8 }}>
                           <button
                             type="button"
                             onClick={() => void onOpenRelationship(item.relationship.id)}
+                            style={{ textAlign: "left", width: "100%" }}
                           >
-                            Open Relationship
+                            <strong>
+                              {item.relationship.name}
+                              {selectedRelationshipId === item.relationship.id ? " · Open" : ""}
+                            </strong>
                           </button>
-                          <button
-                            type="button"
-                            onClick={() => void rescheduleTask(item, "")}
-                            disabled={Boolean(workingTaskId) || !item.task.dueAt}
-                          >
-                            Clear Date
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => void completeTask(item)}
-                            disabled={Boolean(workingTaskId)}
-                          >
-                            {workingTaskId === item.task.id ? "Saving..." : "Complete"}
-                          </button>
+                          <p style={{ margin: "8px 0 4px" }}>{item.task.title}</p>
+                          <small>
+                            {formatDueDate(item.task.dueAt)} · {item.task.priority}
+                            {ownershipView === "all"
+                              ? ` · ${owner ? `${owner.name} · ${owner.role}` : "Owner unavailable"}`
+                              : ""}
+                          </small>
+                          <label style={{ display: "grid", gap: 4, marginTop: 8 }}>
+                            <span>Follow-up due</span>
+                            <input
+                              type="date"
+                              value={dueDateKey(item.task.dueAt)}
+                              disabled={Boolean(workingTaskId)}
+                              onChange={(event) => void rescheduleTask(item, event.target.value)}
+                            />
+                          </label>
+                          <div className="ros-actions" style={{ marginTop: 8 }}>
+                            <button
+                              type="button"
+                              onClick={() => void onOpenRelationship(item.relationship.id)}
+                            >
+                              Open Relationship
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => void rescheduleTask(item, "")}
+                              disabled={Boolean(workingTaskId) || !item.task.dueAt}
+                            >
+                              Clear Date
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => void completeTask(item)}
+                              disabled={Boolean(workingTaskId)}
+                            >
+                              {workingTaskId === item.task.id ? "Saving..." : "Complete"}
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </section>
               );
