@@ -31,14 +31,33 @@ export async function GET(request: Request) {
   });
 
   const relatedObjectIds = [...new Set(tasks.map((task: { relatedObjectId: string | null }) => task.relatedObjectId).filter(Boolean))] as string[];
-  const relatedObjects = await prisma.rosObject.findMany({
-    where: {
-      workspaceId: user.workspaceId,
-      id: { in: relatedObjectIds }
-    }
-  });
+  const ownerIds = [...new Set(tasks.map((task: { ownerId: string | null }) => task.ownerId).filter(Boolean))] as string[];
 
-  return NextResponse.json({ tasks, relatedObjects });
+  const [relatedObjects, ownerUsers] = await Promise.all([
+    prisma.rosObject.findMany({
+      where: {
+        workspaceId: user.workspaceId,
+        id: { in: relatedObjectIds }
+      }
+    }),
+    prisma.user.findMany({
+      where: {
+        workspaceId: user.workspaceId,
+        id: { in: ownerIds }
+      },
+      include: {
+        role: true
+      }
+    })
+  ]);
+
+  const taskOwners = ownerUsers.map((ownerUser) => ({
+    id: ownerUser.id,
+    name: ownerUser.name,
+    role: ownerUser.role?.name ?? "Staff"
+  }));
+
+  return NextResponse.json({ tasks, relatedObjects, taskOwners });
 }
 
 export async function POST(request: Request) {
