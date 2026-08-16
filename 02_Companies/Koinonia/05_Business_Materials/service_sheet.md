@@ -1,7 +1,7 @@
 # Koinonia Transactions — Service Guide
 
 Status: Active Client-Facing Service Guide  
-Purpose: Concise service explanation for consultations, brokerage follow-up, email sharing, print/PDF use, and marketing support.
+Purpose: Detailed service companion for brokerage meetings, consultations, email follow-up, print/PDF use, and marketing support.
 
 ## Positioning
 
@@ -9,11 +9,27 @@ Koinonia Transactions provides **Real Estate Operations Support for Colorado Rea
 
 **You focus on your clients. We'll keep the business running behind you.**
 
+**More transactions should create more opportunity, not more chaos.**
+
 Koinonia helps Realtors protect client service by organizing the operational work that competes for their time. The service is the product; technology, checklists, and the portal are tools used to communicate and complete the work.
 
-## Five Core Services
+## Where Koinonia Fits
 
-### 1. Transaction Support / Contract-to-Close Coordination
+When you want to keep the client relationship, Koinonia can help carry the operational work behind it:
+
+- Need help carrying the file from contract to close? **Transaction Support.**
+- Need documents prepared from your instructions? **Contract & Document Support.**
+- Cannot personally cover a showing? **Licensed Showing Coverage.**
+- Need a listing professionally prepared, promoted, and hosted for an open house? **Professional Open House Coverage.**
+- Need recurring structure behind the business? **Monthly Operations Partnership.**
+
+If you do not want or cannot take the client, the separate **40% Referral Partner Option** may provide another path.
+
+---
+
+# Page 1 — Immediate Operational Support
+
+## 1. Transaction Support / Contract-to-Close Coordination
 
 Once a transaction is under contract, Koinonia organizes the operational side of the file so the Realtor does not have to personally carry every next step.
 
@@ -38,7 +54,7 @@ Realtor responsibility:
 
 Client relationship, advice, negotiation, brokerage compliance, professional judgment, and final decisions remain with the Realtor.
 
-### 2. Contract & Document Support
+## 2. Contract & Document Support
 
 **You make the decision. We turn that decision into an organized, review-ready document workflow.**
 
@@ -64,7 +80,7 @@ Realtor responsibility:
 
 The Realtor provides the terms, business decisions, instructions, and final approval.
 
-### 3. Licensed Showing Coverage
+## 3. Licensed Showing Coverage
 
 Professional licensed backup when a client needs property access and the Realtor cannot be in two places at once.
 
@@ -86,7 +102,11 @@ Realtor responsibility:
 
 Representation, client advice, negotiation, strategy, and the ongoing client relationship remain with the Realtor.
 
-### 4. Professional Open House Coverage
+---
+
+# Page 2 — Listing, Recurring & Referral Paths
+
+## 4. Professional Open House Coverage
 
 **Your listing. Professionally prepared, promoted, and hosted.**
 
@@ -110,7 +130,7 @@ The $389 prepaid Transaction Support option does not include an open house.
 
 Open-house details, property information, scheduling, signage, and marketing content are confirmed with the listing Realtor before promotion begins.
 
-### 5. Monthly Operations Partnership
+## 5. Monthly Operations Partnership
 
 Recurring operations support for Realtors who need more structure, consistency, and follow-through without hiring a full-time assistant.
 
@@ -148,9 +168,9 @@ Public benefit:
 
 Complete brokerage, compensation, transaction, and referral terms are provided in the formal referral documents before client handoff.
 
-A Koinonia Transactions relationship never becomes a brokerage referral unless the Realtor explicitly chooses to refer the client.
+A Koinonia Transactions support relationship never becomes a brokerage referral unless the Realtor explicitly chooses to refer the client.
 
-## Best Fit
+## Why Koinonia
 
 Koinonia is designed for Realtors who want:
 
@@ -168,7 +188,11 @@ Koinonia provides operational support. Realtors remain responsible for client ad
 
 Koinonia is not positioned as unlimited assistant access, brokerage supervision, legal/tax/financial advice, or a replacement for the Realtor-client relationship.
 
-## Contact
+## Next Step
+
+**Begin with the smallest useful engagement.**
+
+A showing, document assignment, open house, or first transaction can become the proof point for a broader working relationship.
 
 Jeremiah Reynalds  
 Support Partner
