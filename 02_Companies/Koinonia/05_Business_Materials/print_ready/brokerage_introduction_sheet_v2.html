@@ -5,58 +5,201 @@
   <title>Koinonia Brokerage Introduction Sheet</title>
   <link rel="stylesheet" href="koinonia_materials.css">
   <style>
+    .brokerage-introduction-v2 {
+      padding: 0.42in 0.5in 0.36in;
+    }
+
+    .brokerage-intro-hero h1 {
+      max-width: 7.25in;
+      font-size: 0.4in;
+    }
+
+    .brokerage-intro-hero .campaign-line {
+      margin: 0.09in 0 0;
+      color: var(--koinonia-gold);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.12in;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .brokerage-intro-hero .lead {
+      margin-top: 0.08in;
+      font-size: 0.135in;
+      line-height: 1.42;
+    }
+
+    .brokerage-intro-hero .small {
+      margin-top: 0.06in;
+      font-size: 0.087in;
+    }
+
+    .brokerage-intro-services {
+      margin-top: 0.2in;
+    }
+
+    .brokerage-intro-service-grid {
+      gap: 0.11in;
+    }
+
+    .brokerage-intro-service-grid article {
+      min-height: 1.14in;
+      padding: 0.145in;
+    }
+
+    .brokerage-intro-service-grid h3 {
+      margin-bottom: 0.04in;
+      font-size: 0.11in;
+    }
+
+    .brokerage-intro-service-grid .pressure {
+      margin: 0 0 0.045in;
+      color: var(--koinonia-black);
+      font-size: 0.1in;
+      font-style: italic;
+      line-height: 1.32;
+    }
+
+    .brokerage-intro-service-grid p:last-child {
+      margin: 0;
+      font-size: 0.093in;
+      line-height: 1.38;
+    }
+
     .balanced-five-print > article:last-child {
       grid-column: 1 / -1;
-      width: calc(50% - 0.065in);
+      width: calc(50% - 0.055in);
       justify-self: center;
     }
 
     .brokerage-intro-referral-band {
       display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 0.24in;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 0.22in;
       align-items: start;
-      margin-top: 0.16in;
-      padding: 0.15in 0.18in;
-      border: 1px solid var(--koinonia-gold-soft);
-      background: rgba(234, 215, 168, 0.12);
+      margin-top: 0.13in;
+      padding: 0.14in 0.17in;
+      border-left: 3px solid var(--koinonia-gold);
+      background: rgba(234, 215, 168, 0.13);
     }
 
     .brokerage-intro-referral-band h2 {
-      margin: 0;
+      margin: 0 0 0.03in;
       font-size: 0.17in;
     }
 
+    .brokerage-intro-referral-band .referral-headline {
+      margin: 0;
+      color: var(--koinonia-gold);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.097in;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
     .brokerage-intro-referral-band p {
-      margin: 0 0 0.055in;
-      font-size: 0.083in;
-      line-height: 1.35;
+      margin: 0 0 0.045in;
+      font-size: 0.09in;
+      line-height: 1.36;
     }
 
     .brokerage-intro-referral-band .brokerage-intro-referral-note {
       margin-bottom: 0;
       color: var(--koinonia-muted);
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 0.06in;
+      font-size: 0.073in;
+      line-height: 1.34;
+    }
+
+    .brokerage-intro-lower {
+      margin-top: 0.13in;
+      gap: 0.12in;
+    }
+
+    .brokerage-intro-why,
+    .brokerage-intro-definition {
+      padding: 0.14in 0.16in;
+    }
+
+    .brokerage-intro-why li {
+      font-size: 0.082in;
       line-height: 1.3;
     }
 
-    .brokerage-introduction-v2 .brokerage-intro-service-grid article {
-      min-height: 1.08in;
-      padding: 0.14in;
+    .brokerage-intro-definition .definition-word {
+      font-size: 0.19in;
     }
 
-    .brokerage-introduction-v2 .brokerage-intro-services,
-    .brokerage-introduction-v2 .brokerage-intro-problem {
-      margin-top: 0.22in;
+    .brokerage-intro-definition .definition-pronunciation {
+      font-size: 0.078in;
     }
 
-    .brokerage-introduction-v2 .brokerage-intro-lower {
-      margin-top: 0.16in;
+    .brokerage-intro-definition .definition-meaning {
+      font-size: 0.071in;
     }
 
-    .brokerage-introduction-v2 .brokerage-intro-contact {
-      margin-top: 0.16in;
+    .brokerage-intro-definition > p:last-child {
+      font-size: 0.086in;
+      line-height: 1.34;
+    }
+
+    .brokerage-intro-contact {
+      grid-template-columns: 1fr 1.4fr 0.84in;
+      margin-top: 0.13in;
+      padding: 0.13in 0.16in;
+    }
+
+    .brokerage-intro-contact span,
+    .brokerage-intro-contact p {
+      font-size: 0.079in;
+    }
+
+    .brokerage-intro-contact strong {
+      font-size: 0.115in;
+    }
+
+    .brokerage-intro-cta h2 {
+      font-size: 0.14in;
+    }
+
+    .brokerage-intro-cta strong {
+      font-size: 0.078in;
+    }
+
+    .brokerage-intro-qr img {
+      width: 0.74in;
+      height: 0.74in;
+    }
+
+    .brokerage-intro-qr figcaption {
+      font-size: 0.056in;
+    }
+
+    .brokerage-intro-boundary {
+      margin-top: 0.09in;
+      font-size: 0.075in;
+      line-height: 1.34;
+    }
+
+    .brokerage-intro-scripture {
+      margin-top: 0.08in;
+      padding-top: 0.08in;
+    }
+
+    .brokerage-intro-scripture span {
+      font-size: 0.074in;
+    }
+
+    .brokerage-intro-scripture small {
+      font-size: 0.062in;
+    }
+
+    @media print {
+      @page {
+        size: letter;
+        margin: 0;
+      }
     }
   </style>
 </head>
@@ -75,85 +218,62 @@
     <section class="brokerage-intro-hero">
       <p class="eyebrow">Support Behind the Client Relationship</p>
       <h1>You focus on your clients.<br>We'll keep the business running behind you.</h1>
-      <p class="lead">
-        Koinonia helps Realtors protect client service by organizing the operational work
-        that competes for their time.
-      </p>
-    </section>
-
-    <section class="brokerage-intro-problem">
-      <div>
-        <p class="eyebrow">The Operational Pressure</p>
-        <h2>Serving clients requires more than client-facing work.</h2>
-      </div>
-      <p>
-        Realtors balance clients, contracts, deadlines, showings, listings, open houses,
-        communication, follow-up, and business development. Koinonia provides dependable
-        support behind the client relationship so important work remains visible,
-        organized, and moving forward.
-      </p>
+      <p class="campaign-line">More transactions should create more opportunity, not more chaos.</p>
+      <p class="lead">Koinonia helps Realtors protect client service by organizing the operational work that competes for their time.</p>
+      <p class="small">The service is the product. Systems, checklists, and the portal are tools used to communicate and complete the work.</p>
     </section>
 
     <section class="brokerage-intro-services">
-      <p class="eyebrow">How Koinonia Supports Realtors</p>
+      <p class="eyebrow">Where Koinonia Fits</p>
 
       <div class="brokerage-intro-service-grid balanced-five-print">
         <article>
           <span>01</span>
           <h3>Transaction Support</h3>
-          <p>
-            Contract-to-close coordination, deadline visibility, document checklists,
-            communication coordination, closing preparation, and file completion.
-          </p>
+          <p class="pressure">“I can handle the client. I need help carrying the file.”</p>
+          <p>Contract-to-close coordination, deadline visibility, outstanding-item tracking, party coordination, closing preparation, and file completion.</p>
         </article>
 
         <article>
           <span>02</span>
           <h3>Contract &amp; Document Support</h3>
-          <p>
-            Licensed document preparation based on the Realtor's instructions,
-            including offers, amendments, addenda, notices, revisions, and review-ready organization.
-          </p>
+          <p class="pressure">“I know the decision. I need the document workflow handled.”</p>
+          <p>Licensed preparation based on Realtor instructions, including offers, counters, amendments, addenda, notices, revisions, and review-ready organization.</p>
         </article>
 
         <article>
           <span>03</span>
           <h3>Licensed Showing Coverage</h3>
-          <p>
-            Licensed property access and showing support when schedules, distance,
-            timing, or conflicts make personal coverage difficult.
-          </p>
+          <p class="pressure">“My client needs access, but I cannot be in two places at once.”</p>
+          <p>Professional licensed showing coverage when schedules, timing, distance, or conflicts make personal coverage difficult.</p>
         </article>
 
         <article>
           <span>04</span>
           <h3>Professional Open House Coverage</h3>
-          <p>
-            Professional preparation, approved digital promotion, available signage,
-            custom property flyer, up to three hours of licensed hosting, and a post-event summary.
-          </p>
+          <p class="pressure">“My listing deserves a professional open house, but my weekend is already spoken for.”</p>
+          <p>Preparation, approved promotion, available signage, custom property flyer, licensed hosting, visitor notes, and post-event summary.</p>
         </article>
 
         <article>
           <span>05</span>
           <h3>Monthly Operations Partnership</h3>
-          <p>
-            Recurring CRM, pipeline, task, follow-up, workflow, checklist, calendar,
-            and business operations support without hiring a full-time assistant.
-          </p>
+          <p class="pressure">“I can handle my clients. I need the business behind them to stay organized.”</p>
+          <p>Recurring CRM, pipeline, follow-up, task, checklist, calendar, workflow, and business-operations support without hiring a full-time assistant.</p>
         </article>
       </div>
     </section>
 
     <section class="brokerage-intro-referral-band">
       <div>
-        <p class="eyebrow">A Separate Option When You Don't Want to Take the Client</p>
+        <p class="eyebrow">A Separate Path</p>
         <h2>40% Referral Partner Option</h2>
+        <p class="referral-headline">Can't take the client? Keep the opportunity.</p>
       </div>
       <div>
         <p><strong>Want to keep the client?</strong> Koinonia can help you carry the operation.</p>
-        <p><strong>Don't want or can't take the client?</strong> You may be able to refer the opportunity instead and receive a <strong>40% referral fee on qualifying successfully closed referred business.</strong></p>
-        <p class="brokerage-intro-referral-note">Complete brokerage, compensation, transaction, and referral terms are provided in the formal referral documents before client handoff. A Koinonia Transactions support relationship never becomes a brokerage referral unless the Realtor explicitly chooses to refer the client.</p>
+        <p><strong>Don't want or cannot take the client?</strong> You may be able to refer the opportunity instead and receive a <strong>40% referral fee on qualifying successfully closed referred business.</strong></p>
+        <p class="brokerage-intro-referral-note">Complete brokerage, compensation, transaction, and referral terms are provided in formal referral documents before client handoff. A Koinonia Transactions support relationship never becomes a brokerage referral unless the Realtor explicitly chooses to refer the client.</p>
       </div>
     </section>
 
@@ -162,10 +282,10 @@
         <p class="eyebrow">Why Koinonia</p>
         <ul>
           <li>Licensed real estate perspective</li>
-          <li>Organized operational execution</li>
+          <li>Dependable operational follow-through</li>
           <li>Clear communication</li>
-          <li>Defined professional boundaries</li>
-          <li>Dependable follow-through</li>
+          <li>Defined scope and boundaries</li>
+          <li>Support designed around the Realtor-client relationship</li>
         </ul>
       </div>
 
@@ -187,7 +307,7 @@
 
       <div class="brokerage-intro-cta">
         <p class="brokerage-intro-cta-label">Next Step</p>
-        <h2>Schedule a Brokerage or Agent Consultation</h2>
+        <h2>Start with the support you need now.</h2>
         <p>For individual Realtors, teams, and brokerages.</p>
         <strong>koinoniatransactions.com/contact</strong>
       </div>
@@ -198,10 +318,7 @@
       </figure>
     </section>
 
-    <p class="brokerage-intro-boundary">
-      Koinonia provides operational support. Realtors remain responsible for client advice,
-      negotiation decisions, brokerage compliance, legal questions, and final approval.
-    </p>
+    <p class="brokerage-intro-boundary">Koinonia provides operational support. Realtors remain responsible for client advice, negotiation decisions, brokerage compliance, legal questions, professional judgment, and final approval.</p>
 
     <footer class="brokerage-intro-scripture">
       <span>Bear one another's burdens. Work heartily, as for the Lord.</span>
