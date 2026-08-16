@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 type Task = {
   id: string;
   relatedObjectId?: string | null;
+  ownerId?: string | null;
   title: string;
   status: string;
   priority: string;
@@ -23,6 +24,7 @@ type QueueItem = {
 };
 
 type QueueGroup = "Overdue" | "Today" | "Upcoming" | "Unscheduled";
+type OwnershipView = "mine" | "all";
 
 type Props = {
   refreshKey?: number;
@@ -71,6 +73,7 @@ export function RelationshipFollowUpQueue({
   onTaskChanged
 }: Props) {
   const [items, setItems] = useState<QueueItem[]>([]);
+  const [ownershipView, setOwnershipView] = useState<OwnershipView>("mine");
   const [loading, setLoading] = useState(true);
   const [accessDenied, setAccessDenied] = useState(false);
   const [error, setError] = useState("");
@@ -82,7 +85,8 @@ export function RelationshipFollowUpQueue({
     setAccessDenied(false);
 
     try {
-      const response = await fetch("/api/tasks?status=Open");
+      const ownerFilter = ownershipView === "mine" ? "&owner=me" : "";
+      const response = await fetch(`/api/tasks?status=Open${ownerFilter}`);
       if (response.status === 403) {
         setAccessDenied(true);
         setItems([]);
@@ -113,7 +117,7 @@ export function RelationshipFollowUpQueue({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [ownershipView]);
 
   useEffect(() => {
     void loadQueue();
@@ -146,7 +150,7 @@ export function RelationshipFollowUpQueue({
     return groups;
   }, [items]);
 
-  async function completeTask(item: QueueItem) {
+  async function patchTask(item: QueueItem, body: Record<string, unknown>, fallbackError: string) {
     setWorkingTaskId(item.task.id);
     setError("");
 
@@ -154,21 +158,41 @@ export function RelationshipFollowUpQueue({
       const response = await fetch(`/api/tasks/${item.task.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "Complete" })
+        body: JSON.stringify(body)
       });
 
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.error ?? "Failed to complete follow-up.");
+        throw new Error(data.error ?? fallbackError);
       }
 
-      setItems((current) => current.filter((entry) => entry.task.id !== item.task.id));
-      await onTaskChanged?.(item.relationship.id);
+      return data.task as Task;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error.");
+      return null;
     } finally {
       setWorkingTaskId("");
     }
+  }
+
+  async function completeTask(item: QueueItem) {
+    const task = await patchTask(item, { status: "Complete" }, "Failed to complete follow-up.");
+    if (!task) return;
+
+    setItems((current) => current.filter((entry) => entry.task.id !== item.task.id));
+    await onTaskChanged?.(item.relationship.id);
+  }
+
+  async function rescheduleTask(item: QueueItem, dueAt: string) {
+    const task = await patchTask(item, { dueAt }, "Failed to reschedule follow-up.");
+    if (!task) return;
+
+    setItems((current) =>
+      current.map((entry) =>
+        entry.task.id === item.task.id ? { ...entry, task } : entry
+      )
+    );
+    await onTaskChanged?.(item.relationship.id);
   }
 
   const groupOrder: QueueGroup[] = ["Overdue", "Today", "Upcoming", "Unscheduled"];
@@ -183,9 +207,25 @@ export function RelationshipFollowUpQueue({
             Open staff follow-ups tied to CRM relationships. Client portal requests are not shown here.
           </p>
         </div>
-        <button type="button" onClick={() => void loadQueue()} disabled={loading}>
-          {loading ? "Refreshing..." : "Refresh Queue"}
-        </button>
+        <div className="ros-actions" style={{ marginTop: 0 }}>
+          <button
+            type="button"
+            onClick={() => setOwnershipView("mine")}
+            disabled={ownershipView === "mine"}
+          >
+            My Follow-Ups
+          </button>
+          <button
+            type="button"
+            onClick={() => setOwnershipView("all")}
+            disabled={ownershipView === "all"}
+          >
+            All Staff
+          </button>
+          <button type="button" onClick={() => void loadQueue()} disabled={loading}>
+            {loading ? "Refreshing..." : "Refresh Queue"}
+          </button>
+        </div>
       </div>
 
       {accessDenied ? (
@@ -194,59 +234,83 @@ export function RelationshipFollowUpQueue({
       {error ? <p className="ros-error">{error}</p> : null}
 
       {!accessDenied ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
-          {groupOrder.map((groupName) => {
-            const groupItems = grouped[groupName];
-            return (
-              <section key={groupName} className="ros-panel" style={{ minWidth: 0 }}>
-                <h3 style={{ marginTop: 0 }}>{groupName} · {groupItems.length}</h3>
-                {!loading && groupItems.length === 0 ? <p>Nothing here.</p> : null}
-                <div style={{ display: "grid", gap: 10 }}>
-                  {groupItems.map((item) => (
-                    <div
-                      key={item.task.id}
-                      style={{
-                        borderTop: "1px solid rgba(127, 127, 127, 0.25)",
-                        paddingTop: 10,
-                        opacity: workingTaskId === item.task.id ? 0.6 : 1
-                      }}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => void onOpenRelationship(item.relationship.id)}
-                        style={{ textAlign: "left", width: "100%" }}
+        <>
+          <p>
+            <strong>{ownershipView === "mine" ? "My Follow-Ups" : "All Staff Follow-Ups"}</strong>
+            {ownershipView === "mine"
+              ? " · Tasks currently assigned to you."
+              : " · All open relationship follow-ups in this workspace."}
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
+            {groupOrder.map((groupName) => {
+              const groupItems = grouped[groupName];
+              return (
+                <section key={groupName} className="ros-panel" style={{ minWidth: 0 }}>
+                  <h3 style={{ marginTop: 0 }}>{groupName} · {groupItems.length}</h3>
+                  {!loading && groupItems.length === 0 ? <p>Nothing here.</p> : null}
+                  <div style={{ display: "grid", gap: 10 }}>
+                    {groupItems.map((item) => (
+                      <div
+                        key={item.task.id}
+                        style={{
+                          borderTop: "1px solid rgba(127, 127, 127, 0.25)",
+                          paddingTop: 10,
+                          opacity: workingTaskId === item.task.id ? 0.6 : 1
+                        }}
                       >
-                        <strong>
-                          {item.relationship.name}
-                          {selectedRelationshipId === item.relationship.id ? " · Open" : ""}
-                        </strong>
-                      </button>
-                      <p style={{ margin: "8px 0 4px" }}>{item.task.title}</p>
-                      <small>
-                        {formatDueDate(item.task.dueAt)} · {item.task.priority}
-                      </small>
-                      <div className="ros-actions" style={{ marginTop: 8 }}>
                         <button
                           type="button"
                           onClick={() => void onOpenRelationship(item.relationship.id)}
+                          style={{ textAlign: "left", width: "100%" }}
                         >
-                          Open Relationship
+                          <strong>
+                            {item.relationship.name}
+                            {selectedRelationshipId === item.relationship.id ? " · Open" : ""}
+                          </strong>
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => void completeTask(item)}
-                          disabled={Boolean(workingTaskId)}
-                        >
-                          {workingTaskId === item.task.id ? "Completing..." : "Complete"}
-                        </button>
+                        <p style={{ margin: "8px 0 4px" }}>{item.task.title}</p>
+                        <small>
+                          {formatDueDate(item.task.dueAt)} · {item.task.priority}
+                        </small>
+                        <label style={{ display: "grid", gap: 4, marginTop: 8 }}>
+                          <span>Follow-up due</span>
+                          <input
+                            type="date"
+                            value={dueDateKey(item.task.dueAt)}
+                            disabled={Boolean(workingTaskId)}
+                            onChange={(event) => void rescheduleTask(item, event.target.value)}
+                          />
+                        </label>
+                        <div className="ros-actions" style={{ marginTop: 8 }}>
+                          <button
+                            type="button"
+                            onClick={() => void onOpenRelationship(item.relationship.id)}
+                          >
+                            Open Relationship
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void rescheduleTask(item, "")}
+                            disabled={Boolean(workingTaskId) || !item.task.dueAt}
+                          >
+                            Clear Date
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void completeTask(item)}
+                            disabled={Boolean(workingTaskId)}
+                          >
+                            {workingTaskId === item.task.id ? "Saving..." : "Complete"}
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            );
-          })}
-        </div>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        </>
       ) : null}
     </article>
   );
