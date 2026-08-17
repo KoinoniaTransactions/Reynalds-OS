@@ -91,17 +91,12 @@ It currently covers:
 
 Purpose: cohesive digital follow-up for email sharing, brokerage presentations, and consultation preparation.
 
-The packet summarizes the established Koinonia story in one shareable asset:
+The current packet is a two-page follow-up asset:
 
-- core positioning and operational problem
-- five service lanes
-- concise current pricing snapshot
-- Professional Open House Coverage
-- separate 40% Referral Partner discovery path
-- professional boundaries
-- direct consultation/contact next step
+- Page 1: core positioning, five practical service starting points, and trust cues
+- Page 2: concise current pricing snapshot, keep-the-client vs separate Referral Partner path, professional boundaries, and direct consultation next step
 
-It should remain concise enough to function as a follow-up asset rather than becoming a duplicate of the full Service Guide and Pricing Insert.
+It should remain more concise and action-oriented than sending the full Service Guide and Pricing Insert together.
 
 ### Tri-Fold Brochure
 
@@ -123,6 +118,37 @@ The current brochure uses a six-panel structure:
 The 40% Referral Partner Option remains visually and conceptually separate from the five core Koinonia Transactions service lanes.
 
 Before physical print ordering, confirm printer bleed, fold type, panel widths, and front/back orientation with the selected printer and a physical paper mockup.
+
+### Presentation Folder
+
+- `presentation_folder_copy.md`
+- `presentation_folder_design_spec.md`
+- `print_ready/presentation_folder_mockup.html`
+
+Purpose: premium physical shell for brokerage meetings, consultations, presentations, and higher-touch follow-up.
+
+Current status: **marketing concept complete; print production pending selected printer dieline and proof.**
+
+The permanent folder shell is intentionally evergreen. It does not carry pricing, temporary offers, software screenshots, or detailed referral terms. Those details remain in replaceable inserts.
+
+Recommended default folder contents:
+
+1. Brokerage Introduction Sheet
+2. Service Guide
+3. Pricing Insert
+4. Business Card in the folder's card slot when available
+
+Optional meeting-specific proposals, estimates, engagement materials, or referral documents may be added only when relevant.
+
+The browser-openable presentation-folder mockup communicates approved hierarchy and art direction only. It is **not** a printer dieline or press-ready production file.
+
+Before ordering folders:
+
+- select a printer/vendor
+- obtain the vendor's exact dieline
+- apply the approved Presentation Folder design system to that dieline
+- physically proof the assembled folder with actual inserts
+- verify QR scan reliability, pocket coverage, business-card slot placement, fold/trim safety, and exterior orientation
 
 ## Other Working Assets
 
@@ -190,6 +216,8 @@ Browser-openable branded source files live in:
 
 Use `print_ready/index.html` as the local preview index.
 
+Files in `print_ready/` are browser-renderable design sources. A file should be treated as vendor press-ready only when its own spec explicitly says the relevant production geometry, bleed, folds, or dieline have been verified.
+
 ## Koinonia Definition / Pronunciation
 
 Preferred branded treatment:
@@ -216,6 +244,6 @@ Galatians 6:2 · Colossians 3:23
 4. Pricing Insert — current
 5. Digital Introduction Packet — current
 6. Tri-Fold Brochure — current
-7. Presentation Folder — next/later physical collateral phase
+7. Presentation Folder — marketing concept complete; production pending printer dieline/proof
 
-The Brokerage Introduction Sheet remains the primary leave-behind. The Service Guide and Pricing Insert support deeper follow-up, the Digital Introduction Packet packages the core story into one shareable digital asset, and the Tri-Fold Brochure provides a compact networking/event version without replacing those deeper companions.
+The Brokerage Introduction Sheet remains the primary leave-behind. The Service Guide and Pricing Insert support deeper follow-up, the Digital Introduction Packet packages the core story into one shareable digital asset, the Tri-Fold Brochure provides a compact networking/event version, and the Presentation Folder organizes the premium physical meeting kit without duplicating the contents printed inside it.
