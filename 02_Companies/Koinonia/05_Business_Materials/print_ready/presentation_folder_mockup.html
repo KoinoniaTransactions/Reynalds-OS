@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Koinonia Presentation Folder Mockup</title>
+  <link rel="stylesheet" href="koinonia_materials.css">
+  <style>
+    body { padding: 28px; background: #eee9df; }
+    .folder-note {
+      max-width: 12in;
+      margin: 0 auto 20px;
+      padding: 14px 18px;
+      border-left: 3px solid var(--koinonia-gold);
+      background: var(--koinonia-white);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .folder-spread {
+      width: 12in;
+      min-height: 7.75in;
+      margin: 0 auto 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--koinonia-paper);
+      border: 1px solid var(--koinonia-line);
+      box-shadow: 0 18px 55px rgba(0,0,0,.14);
+      overflow: hidden;
+    }
+    .folder-panel {
+      position: relative;
+      min-height: 7.75in;
+      padding: .55in .58in;
+    }
+    .folder-panel + .folder-panel { border-left: 1px solid rgba(183,137,47,.22); }
+    .folder-cover {
+      background:
+        radial-gradient(circle at 82% 12%, rgba(183,137,47,.15), transparent 27%),
+        linear-gradient(145deg, rgba(183,137,47,.055), transparent 45%),
+        var(--koinonia-paper);
+    }
+    .folder-k {
+      width: .78in;
+      height: .78in;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--koinonia-gold);
+      border-radius: 50%;
+      color: var(--koinonia-gold);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: .36in;
+      font-weight: 800;
+      margin-bottom: .28in;
+    }
+    .folder-company { font-size: .34in; line-height: 1.05; margin: 0 0 .08in; }
+    .folder-category {
+      margin: 0;
+      color: var(--koinonia-muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: .105in;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .folder-tagline {
+      position: absolute;
+      left: .58in;
+      bottom: .58in;
+      color: var(--koinonia-gold);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: .105in;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .folder-back h2 { max-width: 4.6in; font-size: .34in; line-height: 1.08; }
+    .folder-back .campaign { color: var(--koinonia-gold); font-weight: 700; }
+    .folder-contact-block {
+      position: absolute;
+      left: .58in;
+      right: .58in;
+      bottom: .62in;
+      padding-top: .17in;
+      border-top: 1px solid var(--koinonia-line);
+      color: var(--koinonia-muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: .105in;
+      line-height: 1.55;
+    }
+    .interior-panel h2 { font-size: .28in; }
+    .interior-panel > p { font-size: .125in; line-height: 1.5; }
+    .folder-service-list {
+      margin-top: .2in;
+      display: grid;
+      gap: .08in;
+    }
+    .folder-service-list div {
+      padding: .1in .12in;
+      border-top: 1px solid var(--koinonia-line);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: .105in;
+      font-weight: 700;
+    }
+    .folder-cta {
+      padding: .2in;
+      color: var(--koinonia-white);
+      background: var(--koinonia-black);
+    }
+    .folder-cta h3 { margin: 0 0 .08in; color: var(--koinonia-white); font-size: .2in; }
+    .folder-cta p { margin-bottom: .06in; color: rgba(255,255,255,.84); font-size: .105in; }
+    .folder-pocket {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2.05in;
+      padding: .28in .58in .32in;
+      border-top: 1px solid rgba(183,137,47,.28);
+      background: rgba(234,215,168,.18);
+    }
+    .folder-pocket strong { display: block; font-size: .15in; }
+    .folder-pocket p { margin-top: .06in; font-size: .095in; line-height: 1.4; }
+    .folder-inserts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .08in;
+      margin-top: .16in;
+    }
+    .folder-insert {
+      padding: .12in;
+      min-height: .75in;
+      border: 1px solid var(--koinonia-line);
+      background: white;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: .078in;
+      line-height: 1.3;
+    }
+    .folder-insert b { display: block; margin-bottom: .03in; font-size: .09in; }
+    .mockup-label {
+      position: absolute;
+      top: .18in;
+      right: .2in;
+      color: rgba(111,106,96,.62);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: .06in;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    @media print {
+      body { padding: 0; background: white; }
+      .folder-note { display: none; }
+      .folder-spread { box-shadow: none; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="folder-note">
+    <strong>Vendor-neutral concept mockup.</strong> This file shows approved marketing hierarchy and visual direction only. It is not a printer dieline and must not be submitted for production until a selected printer's exact template is applied and physically proofed.
+  </div>
+
+  <section class="folder-spread" aria-label="Presentation folder exterior concept">
+    <article class="folder-panel folder-back">
+      <span class="mockup-label">Exterior · Back</span>
+      <p class="eyebrow">Support Behind the Client Relationship</p>
+      <h2>You focus on your clients. We'll keep the business running behind you.</h2>
+      <p class="campaign">More transactions should create more opportunity, not more chaos.</p>
+      <div class="folder-contact-block">
+        koinoniatransactions.com<br>
+        Phone/Text: 719-745-8497<br>
+        jeremiah@koinoniaadmin.com
+      </div>
+    </article>
+
+    <article class="folder-panel folder-cover">
+      <span class="mockup-label">Exterior · Front</span>
+      <div class="folder-k" aria-hidden="true">K</div>
+      <h1 class="folder-company">Koinonia Transactions</h1>
+      <p class="folder-category">Real Estate Operations Support for Colorado Realtors</p>
+      <p class="folder-tagline">Real Estate Operations. Elevated.</p>
+    </article>
+  </section>
+
+  <section class="folder-spread" aria-label="Presentation folder interior concept">
+    <article class="folder-panel interior-panel">
+      <span class="mockup-label">Interior · Left</span>
+      <p class="eyebrow">Where Koinonia Fits</p>
+      <h2>Support Behind the Client Relationship</h2>
+      <p>Koinonia helps Realtors protect client service by organizing the operational work that competes for their time.</p>
+      <div class="folder-service-list">
+        <div>01 · Transaction Support</div>
+        <div>02 · Contract &amp; Document Support</div>
+        <div>03 · Licensed Showing Coverage</div>
+        <div>04 · Professional Open House Coverage</div>
+        <div>05 · Monthly Operations Partnership</div>
+      </div>
+      <div class="folder-pocket">
+        <strong>Koinonia</strong>
+        <p>/koy-noh-NEE-uh/<br>fellowship · joint participation · sharing in common</p>
+      </div>
+    </article>
+
+    <article class="folder-panel interior-panel">
+      <span class="mockup-label">Interior · Right</span>
+      <p class="eyebrow">Next Step</p>
+      <h2>Start with the support you need now.</h2>
+      <p>A showing, document assignment, open house, first transaction, or operations conversation can become the first proof point.</p>
+      <div class="folder-cta">
+        <h3>Schedule a Brokerage or Agent Consultation</h3>
+        <p>Jeremiah Reynalds · Support Partner</p>
+        <p>koinoniatransactions.com/contact</p>
+        <p>Phone/Text: 719-745-8497</p>
+        <p>jeremiah@koinoniaadmin.com</p>
+        <strong>The first engagement should earn the second engagement.</strong>
+      </div>
+      <div class="folder-pocket">
+        <strong>Recommended Insert Stack</strong>
+        <div class="folder-inserts">
+          <div class="folder-insert"><b>1 · Introduction Sheet</b>First visible recap</div>
+          <div class="folder-insert"><b>2 · Service Guide</b>Detailed service fit</div>
+          <div class="folder-insert"><b>3 · Pricing Insert</b>Replaceable pricing</div>
+        </div>
+      </div>
+    </article>
+  </section>
+</body>
+</html>
