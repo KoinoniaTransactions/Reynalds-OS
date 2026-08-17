@@ -19,7 +19,7 @@
       overflow: hidden;
     }
     .trifold-panel {
-      padding: .42in .34in;
+      padding: .38in .32in;
       border-right: 1px dashed rgba(183,137,47,.32);
       position: relative;
     }
@@ -28,7 +28,7 @@
     .trifold-panel h2 { font-size: .19in; }
     .trifold-panel h3 { font-size: .09in; margin-top: .12in; }
     .trifold-panel p { font-size: .096in; line-height: 1.42; }
-    .trifold-panel li { font-size: .086in; }
+    .trifold-panel li { font-size: .088in; line-height: 1.35; }
     .trifold-cover {
       background:
         radial-gradient(circle at 85% 10%, rgba(183,137,47,.16), transparent 27%),
@@ -58,8 +58,8 @@
       text-transform: uppercase;
     }
     .trifold-service {
-      margin-bottom: .09in;
-      padding-bottom: .08in;
+      margin-bottom: .075in;
+      padding-bottom: .07in;
       border-bottom: 1px solid var(--koinonia-line);
     }
     .trifold-service:last-child { border-bottom: 0; }
@@ -71,30 +71,71 @@
       letter-spacing: .04em;
       text-transform: uppercase;
     }
+    .trifold-service .pressure {
+      margin: 0 0 .035in;
+      color: var(--koinonia-black);
+      font-size: .088in;
+      font-style: italic;
+      line-height: 1.32;
+    }
+    .trifold-service p:last-child {
+      margin-bottom: 0;
+      font-size: .087in;
+      line-height: 1.34;
+    }
     .trifold-referral {
-      margin-top: .16in;
-      padding: .14in;
+      margin-top: .14in;
+      padding: .13in;
       background: rgba(234,215,168,.18);
       border-left: 3px solid var(--koinonia-gold);
     }
+    .trifold-referral p {
+      font-size: .087in;
+      line-height: 1.36;
+    }
     .trifold-contact {
-      margin-top: .22in;
-      padding: .18in;
+      margin-top: .16in;
+      padding: .16in;
       color: var(--koinonia-white);
       background: var(--koinonia-black);
     }
     .trifold-contact p,
     .trifold-contact strong { color: var(--koinonia-white); }
+    .trifold-contact p { margin-bottom: .045in; font-size: .087in; }
+    .trifold-contact-grid {
+      display: grid;
+      grid-template-columns: 1fr .76in;
+      gap: .12in;
+      align-items: center;
+    }
+    .trifold-contact-qr {
+      margin: 0;
+      text-align: center;
+    }
+    .trifold-contact-qr img {
+      width: .72in;
+      height: .72in;
+      padding: .035in;
+      background: #fff;
+    }
+    .trifold-contact-qr figcaption {
+      margin-top: .025in;
+      color: rgba(255,255,255,.75);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: .05in;
+      line-height: 1.2;
+    }
     .trifold-meaning {
-      margin-top: .22in;
-      padding-top: .14in;
+      margin-top: .18in;
+      padding-top: .12in;
       border-top: 1px solid var(--koinonia-line);
     }
+    .trifold-meaning p { margin-bottom: .05in; }
     .trifold-scripture {
       position: absolute;
-      left: .34in;
-      right: .34in;
-      bottom: .28in;
+      left: .32in;
+      right: .32in;
+      bottom: .25in;
       color: var(--koinonia-muted);
       font-family: Arial, Helvetica, sans-serif;
       font-size: .056in;
@@ -103,8 +144,8 @@
     }
     .trifold-side-label {
       position: absolute;
-      top: .12in;
-      right: .14in;
+      top: .11in;
+      right: .13in;
       color: rgba(111,106,96,.65);
       font-family: Arial, Helvetica, sans-serif;
       font-size: .048in;
@@ -129,13 +170,22 @@
     <article class="trifold-panel">
       <span class="trifold-side-label">Outside · Back</span>
       <p class="eyebrow">Next Step</p>
-      <h2>Start with the smallest useful place for us to help.</h2>
+      <h2>Start with the support you need now.</h2>
+      <p>A showing, document assignment, open house, first transaction, or operations conversation can be the first proof point.</p>
       <div class="trifold-contact">
-        <strong>Schedule a Brokerage or Agent Consultation</strong>
-        <p>Jeremiah Reynalds · Support Partner</p>
-        <p>koinoniatransactions.com/contact</p>
-        <p>Phone/Text: 719-745-8497</p>
-        <p>jeremiah@koinoniaadmin.com</p>
+        <div class="trifold-contact-grid">
+          <div>
+            <strong>Schedule a Brokerage or Agent Consultation</strong>
+            <p>Jeremiah Reynalds · Support Partner</p>
+            <p>koinoniatransactions.com/contact</p>
+            <p>Phone/Text: 719-745-8497</p>
+            <p>jeremiah@koinoniaadmin.com</p>
+          </div>
+          <figure class="trifold-contact-qr">
+            <img src="assets/koinonia-consultation-qr.svg" alt="QR code for the Koinonia consultation page">
+            <figcaption>Scan to request a consultation</figcaption>
+          </figure>
+        </div>
       </div>
       <div class="trifold-meaning">
         <strong>Koinonia</strong>
@@ -151,17 +201,17 @@
       <p class="eyebrow">Why Koinonia</p>
       <h2>Dependable support behind the client relationship.</h2>
       <ul>
-        <li>Licensed real estate perspective</li>
-        <li>Organized operational execution</li>
-        <li>Clear communication</li>
-        <li>Defined professional boundaries</li>
-        <li>Dependable follow-through</li>
-        <li>Flexible support during busy seasons</li>
+        <li>Licensed real estate perspective where applicable.</li>
+        <li>Dependable operational follow-through.</li>
+        <li>Clear communication and visible process.</li>
+        <li>Defined scope and professional boundaries.</li>
+        <li>Flexible support when workload and schedules collide.</li>
+        <li>Service designed to protect—not replace—the Realtor-client relationship.</li>
       </ul>
       <div class="trifold-referral">
         <p class="eyebrow">Professional Boundary</p>
         <p>Koinonia provides operational support. Realtors remain responsible for client advice, negotiation decisions, brokerage compliance, legal questions, professional judgment, representation strategy, and final approval.</p>
-        <p>Koinonia is not unlimited assistant access, brokerage supervision, or a replacement for the Realtor-client relationship.</p>
+        <p>Koinonia is not unlimited assistant access, brokerage supervision, legal/tax/financial advice, or a replacement for the Realtor-client relationship.</p>
       </div>
     </article>
 
@@ -181,55 +231,55 @@
       <span class="trifold-side-label">Inside · 1</span>
       <p class="eyebrow">The Operational Pressure</p>
       <h2>More transactions should create more opportunity, not more chaos.</h2>
-      <p>Realtors balance clients, contracts, deadlines, showings, listings, open houses, communication, follow-up, and business development.</p>
-      <p>Koinonia provides dependable support behind the client relationship so important work remains visible, organized, and moving forward.</p>
-      <p>The service is the product. Our systems and portal are simply tools used to communicate, provide visibility, and complete the work.</p>
+      <p>Clients need your attention. The business behind those clients still needs deadlines watched, documents organized, showings covered, listings supported, follow-up maintained, and operational details moved forward.</p>
+      <p>Koinonia provides dependable real estate operations support behind the client relationship so growth does not require the Realtor to personally carry every operational next step.</p>
+      <p>The service is the product. Systems, checklists, and the portal are simply tools used to communicate, provide visibility, and complete the work.</p>
     </article>
 
     <article class="trifold-panel">
       <span class="trifold-side-label">Inside · 2</span>
-      <p class="eyebrow">Five Core Services</p>
+      <p class="eyebrow">Where Koinonia Fits</p>
       <div class="trifold-service">
         <strong>Transaction Support</strong>
-        <p>Contract-to-close coordination, deadlines, documents, communication coordination, closing preparation, and file completion.</p>
+        <p class="pressure">“I can handle the client. I need help carrying the file.”</p>
+        <p>Contract-to-close coordination, deadline visibility, outstanding-item tracking, party coordination, closing preparation, and file completion.</p>
       </div>
       <div class="trifold-service">
         <strong>Contract &amp; Document Support</strong>
-        <p>Licensed preparation based on Realtor instructions for offers, counters, amendments, addenda, notices, and approved documents.</p>
+        <p class="pressure">“I know the decision. I need the document workflow handled.”</p>
+        <p>Licensed preparation based on Realtor instructions for offers, counters, amendments, addenda, notices, revisions, and approved transaction documents.</p>
       </div>
       <div class="trifold-service">
         <strong>Licensed Showing Coverage</strong>
-        <p>Professional licensed backup when a client needs access and the Realtor cannot personally cover the showing.</p>
+        <p class="pressure">“My client needs access, but I cannot be in two places at once.”</p>
+        <p>Professional licensed backup when the Realtor cannot personally cover a showing.</p>
       </div>
       <div class="trifold-service">
         <strong>Professional Open House Coverage</strong>
+        <p class="pressure">“My listing deserves a professional open house, but my weekend is already spoken for.”</p>
         <p>Your listing. Professionally prepared, promoted, and hosted.</p>
       </div>
       <div class="trifold-service">
         <strong>Monthly Operations Partnership</strong>
-        <p>Recurring CRM, pipeline, follow-up, task, checklist, calendar, template, and business-operations support.</p>
+        <p class="pressure">“I can handle my clients. I need the business behind them to stay organized.”</p>
+        <p>Recurring CRM, pipeline, follow-up, task, checklist, calendar, workflow, and business-operations support.</p>
       </div>
     </article>
 
     <article class="trifold-panel">
       <span class="trifold-side-label">Inside · 3</span>
-      <p class="eyebrow">Choose the Right Path</p>
+      <p class="eyebrow">Keep or Refer</p>
       <h2>Want to keep the client?</h2>
-      <p>We'll help you carry the operation.</p>
-      <ul>
-        <li>Need help with the file? → Transaction Support</li>
-        <li>Need documents prepared? → Contract &amp; Document Support</li>
-        <li>Cannot make the showing? → Showing Coverage</li>
-        <li>Cannot give up the open-house block? → Open House Coverage</li>
-        <li>Cannot keep the business organized consistently? → Monthly Operations Partnership</li>
-      </ul>
+      <p><strong>We'll help you carry the operation.</strong></p>
+      <p>Koinonia's five service lanes are designed to support the work behind the Realtor-client relationship without replacing it.</p>
+
       <div class="trifold-referral">
-        <p class="eyebrow">A Separate Option</p>
+        <p class="eyebrow">A Separate Brokerage Referral Path</p>
         <h2>40% Referral Partner Option</h2>
-        <p><strong>Don't want or can't take the client?</strong> You may be able to refer the opportunity instead.</p>
+        <p><strong>Can't take the client? Keep the opportunity.</strong></p>
         <p>A qualifying successfully closed referred opportunity may earn a <strong>40% referral fee</strong>.</p>
         <p>Complete brokerage, compensation, transaction, and referral terms are provided in formal referral documents before client handoff.</p>
-        <p>A Koinonia Transactions support relationship never becomes a brokerage referral unless the Realtor explicitly chooses to refer the client.</p>
+        <p><strong>A Koinonia Transactions support relationship never becomes a brokerage referral unless the Realtor explicitly chooses to refer the client.</strong></p>
       </div>
     </article>
   </section>
