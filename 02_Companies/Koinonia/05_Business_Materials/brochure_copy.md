@@ -1,7 +1,7 @@
 # Koinonia Transactions — Tri-Fold Brochure Copy
 
 Status: Active Brochure Copy  
-Purpose: Copy source for the Koinonia networking, brokerage, and event tri-fold brochure.
+Purpose: Compact networking, brokerage, event, and leave-behind brochure derived from the approved Koinonia marketing system.
 
 ## Panel 1 — Front Cover
 
@@ -11,57 +11,63 @@ Koinonia Transactions
 
 **You focus on your clients. We'll keep the business running behind you.**
 
-Real Estate Operations. Elevated.
+**Real Estate Operations. Elevated.**
 
 ## Panel 2 — The Operational Pressure
 
 ### More transactions should create more opportunity, not more chaos.
 
-Realtors balance clients, contracts, deadlines, showings, listings, open houses, communication, follow-up, and business development.
+Clients need your attention. The business behind those clients still needs deadlines watched, documents organized, showings covered, listings supported, follow-up maintained, and operational details moved forward.
 
-Koinonia provides dependable support behind the client relationship so important work remains visible, organized, and moving forward.
+Koinonia provides dependable real estate operations support behind the client relationship so growth does not require the Realtor to personally carry every operational next step.
 
-The service is the product. Our systems and portal are simply tools used to communicate, provide visibility, and complete the work.
+The service is the product. Systems, checklists, and the portal are simply tools used to communicate, provide visibility, and complete the work.
 
-## Panel 3 — Five Ways Koinonia Supports Realtors
+## Panel 3 — Where Koinonia Fits
 
 ### Transaction Support
 
-Contract-to-close coordination, deadline visibility, document tracking, communication coordination, closing preparation, and file completion.
+**“I can handle the client. I need help carrying the file.”**
+
+Contract-to-close operational coordination, deadline visibility, outstanding-item tracking, party coordination, closing preparation, and file completion.
 
 ### Contract & Document Support
 
-Licensed document preparation based on the Realtor's instructions for offers, counters, amendments, addenda, notices, revisions, and other approved transaction documents.
+**“I know the decision. I need the document workflow handled.”**
+
+Licensed preparation based on Realtor instructions for offers, counters, amendments, addenda, notices, revisions, and approved transaction documents.
 
 ### Licensed Showing Coverage
 
-Professional licensed backup when a client needs property access and the Realtor cannot personally cover the showing.
+**“My client needs access, but I cannot be in two places at once.”**
+
+Professional licensed backup when the Realtor cannot personally cover a showing.
 
 ### Professional Open House Coverage
 
-**Your listing. Professionally prepared, promoted, and hosted.**
+**“My listing deserves a professional open house, but my weekend is already spoken for.”**
 
-Custom flyer preparation, approved digital promotion, available signage setup, up to three hours of licensed hosting, and post-event follow-up.
+**Your listing. Professionally prepared, promoted, and hosted.**
 
 ### Monthly Operations Partnership
 
-Recurring CRM, pipeline, follow-up, task, checklist, calendar, template, and business-operations support without hiring a full-time assistant.
+**“I can handle my clients. I need the business behind them to stay organized.”**
 
-## Panel 4 — Choose the Right Support Path
+Recurring CRM, pipeline, follow-up, task, checklist, calendar, workflow, and business-operations support without hiring a full-time assistant.
+
+## Panel 4 — Keep the Client or Refer the Opportunity
 
 ### Want to keep the client?
 
-Koinonia can help you carry the operation.
+**We'll help you carry the operation.**
 
-- Need help with the file? → Transaction Support
-- Need the documents prepared? → Contract & Document Support
-- Cannot make the showing? → Licensed Showing Coverage
-- Cannot give up the open-house block? → Professional Open House Coverage
-- Cannot keep the business organized consistently? → Monthly Operations Partnership
+Koinonia's five service lanes are designed to support the work behind the Realtor-client relationship without replacing it.
 
-### Don't want or can't take the client?
+### Don't want or cannot take the client?
 
-There is a separate option.
+**Can't take the client? Keep the opportunity.**
+
+There is a separate brokerage referral path:
 
 **40% Referral Partner Option**
 
@@ -69,29 +75,30 @@ A qualifying successfully closed referred opportunity may earn a **40% referral 
 
 Complete brokerage, compensation, transaction, and referral terms are provided in formal referral documents before client handoff.
 
-A Koinonia Transactions support relationship never becomes a brokerage referral unless the Realtor explicitly chooses to refer the client.
+**A Koinonia Transactions support relationship never becomes a brokerage referral unless the Realtor explicitly chooses to refer the client.**
 
 ## Panel 5 — Why Koinonia
 
 Realtors use Koinonia for:
 
-- Licensed real estate perspective
-- Organized operational execution
-- Clear communication
-- Defined professional boundaries
-- Dependable follow-through
-- Flexible support during busy seasons
-- Service designed around the Realtor-client relationship
+- Licensed real estate perspective where applicable.
+- Dependable operational follow-through.
+- Clear communication and visible process.
+- Defined scope and professional boundaries.
+- Flexible support when workload and schedules collide.
+- Service designed to protect—not replace—the Realtor-client relationship.
 
 ### Professional Boundary
 
 Koinonia provides operational support. Realtors remain responsible for client advice, negotiation decisions, brokerage compliance, legal questions, professional judgment, representation strategy, and final approval.
 
-Koinonia is not unlimited assistant access, brokerage supervision, or a replacement for the Realtor-client relationship.
+Koinonia is not unlimited assistant access, brokerage supervision, legal/tax/financial advice, or a replacement for the Realtor-client relationship.
 
 ## Panel 6 — Contact / Consultation
 
-### Start with the smallest useful place for us to help.
+### Start with the support you need now.
+
+A showing, document assignment, open house, first transaction, or operations conversation can be the first proof point.
 
 **Schedule a Brokerage or Agent Consultation**
 
@@ -102,6 +109,8 @@ Website: www.koinoniatransactions.com
 Consultation: www.koinoniatransactions.com/contact  
 Phone/Text: 719-745-8497  
 Email: jeremiah@koinoniaadmin.com
+
+Use the approved consultation QR code linking to the Koinonia consultation page.
 
 **The first engagement should earn the second engagement.**
 
