@@ -5,83 +5,245 @@
   <title>Koinonia Digital Introduction Packet</title>
   <link rel="stylesheet" href="koinonia_materials.css">
   <style>
+    @page { size: letter; margin: 0; }
+
     .digital-packet {
+      width: 8.5in;
       min-height: 11in;
       padding: 0.48in 0.54in;
+      display: flex;
+      flex-direction: column;
+      gap: 0.18in;
     }
-    .digital-packet .packet-grid {
+
+    .digital-packet .k-mark { border-radius: 50%; }
+
+    .packet-hero .campaign-line {
+      margin: 0.08in 0 0;
+      color: var(--koinonia-gold);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.12in;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .packet-hero .lead {
+      margin-top: 0.08in;
+      font-size: 0.145in;
+      line-height: 1.42;
+    }
+
+    .packet-hero .small {
+      margin-top: 0.05in;
+      font-size: 0.09in;
+    }
+
+    .packet-service-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.14in;
-      margin-top: 0.22in;
+      gap: 0.13in;
     }
-    .digital-packet .packet-card {
-      padding: 0.17in;
+
+    .packet-service-card {
+      padding: 0.16in;
       border: 1px solid var(--koinonia-line);
       background: rgba(255,255,255,0.72);
     }
-    .digital-packet .packet-card.full {
+
+    .packet-service-card.full {
       grid-column: 1 / -1;
+      width: calc(50% - 0.065in);
+      justify-self: center;
     }
-    .digital-packet .packet-card h2 {
-      margin-bottom: 0.06in;
-      font-size: 0.18in;
+
+    .packet-service-card h2 {
+      margin-bottom: 0.045in;
+      font-size: 0.17in;
     }
-    .digital-packet .packet-card p,
-    .digital-packet .packet-card li {
-      font-size: 0.09in;
-      line-height: 1.38;
+
+    .packet-service-card .pressure {
+      margin: 0 0 0.05in;
+      color: var(--koinonia-black);
+      font-size: 0.105in;
+      font-style: italic;
+      line-height: 1.34;
     }
-    .digital-packet .packet-referral {
-      margin-top: 0.2in;
-      padding: 0.18in 0.2in;
-      border-left: 3px solid var(--koinonia-gold);
-      background: rgba(234, 215, 168, 0.16);
-    }
-    .digital-packet .packet-referral h2 {
-      margin-bottom: 0.07in;
-    }
-    .digital-packet .packet-footer {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.18in;
-      margin-top: 0.22in;
-      padding-top: 0.16in;
-      border-top: 1px solid var(--koinonia-line);
-    }
-    .digital-packet .packet-contact {
-      padding: 0.16in;
-      background: var(--koinonia-black);
-      color: var(--koinonia-white);
-    }
-    .digital-packet .packet-contact h2,
-    .digital-packet .packet-contact p,
-    .digital-packet .packet-contact strong {
-      color: var(--koinonia-white);
-    }
-    .digital-packet .packet-contact p {
-      margin-bottom: 0.06in;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 0.082in;
-    }
-    .digital-packet .packet-contact strong {
-      font-size: 0.1in;
-    }
-    .digital-packet .packet-boundary {
-      padding: 0.16in;
-      border: 1px solid var(--koinonia-line);
-    }
-    .digital-packet .packet-boundary p {
-      font-size: 0.08in;
+
+    .packet-service-card p:last-child {
+      margin: 0;
+      font-size: 0.105in;
       line-height: 1.4;
     }
+
+    .packet-trust {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.13in;
+      margin-top: 0.02in;
+    }
+
+    .packet-trust article {
+      padding: 0.16in 0.18in;
+      border-top: 2px solid var(--koinonia-gold-soft);
+      background: rgba(247,243,234,.5);
+    }
+
+    .packet-trust li,
+    .packet-trust p {
+      font-size: 0.102in;
+      line-height: 1.4;
+    }
+
+    .packet-pricing-block {
+      padding: 0.16in 0.18in;
+      border: 1px solid var(--koinonia-line);
+      background: rgba(255,255,255,0.72);
+    }
+
+    .packet-pricing-block h2 {
+      font-size: 0.2in;
+    }
+
+    .packet-pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.11in;
+      margin-top: 0.09in;
+    }
+
+    .packet-price-card {
+      padding: 0.13in 0.14in;
+      border-top: 2px solid var(--koinonia-gold-soft);
+      background: rgba(247,243,234,.55);
+    }
+
+    .packet-price-card.full { grid-column: 1 / -1; }
+
+    .packet-price-card h3 {
+      margin-bottom: 0.04in;
+      color: var(--koinonia-black);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 0.15in;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .packet-price-card p,
+    .packet-price-card li {
+      font-size: 0.098in;
+      line-height: 1.38;
+    }
+
+    .packet-referral {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 0.2in;
+      padding: 0.16in 0.18in;
+      border-left: 3px solid var(--koinonia-gold);
+      background: rgba(234,215,168,.16);
+    }
+
+    .packet-referral h2 {
+      margin-bottom: 0.04in;
+      font-size: 0.19in;
+    }
+
+    .packet-referral p {
+      font-size: 0.1in;
+      line-height: 1.4;
+    }
+
+    .packet-bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.14in;
+    }
+
+    .packet-boundary,
+    .packet-contact {
+      padding: 0.16in 0.18in;
+    }
+
+    .packet-boundary {
+      border: 1px solid var(--koinonia-line);
+    }
+
+    .packet-boundary p {
+      font-size: 0.098in;
+      line-height: 1.4;
+    }
+
+    .packet-contact {
+      display: grid;
+      grid-template-columns: 1fr 0.9in;
+      gap: 0.13in;
+      align-items: center;
+      color: var(--koinonia-white);
+      background: var(--koinonia-black);
+    }
+
+    .packet-contact h2,
+    .packet-contact p,
+    .packet-contact strong { color: var(--koinonia-white); }
+
+    .packet-contact p {
+      margin-bottom: 0.045in;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.09in;
+      line-height: 1.35;
+    }
+
+    .packet-contact strong {
+      font-size: 0.1in;
+    }
+
+    .packet-contact img {
+      width: 0.82in;
+      height: 0.82in;
+      padding: 0.04in;
+      background: white;
+    }
+
+    .packet-contact figcaption {
+      margin-top: 0.035in;
+      color: rgba(255,255,255,.78);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.055in;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .packet-meaning {
+      padding: 0.13in 0.16in;
+      background: rgba(234,215,168,.12);
+      text-align: center;
+    }
+
+    .packet-meaning p {
+      margin: 0;
+      font-size: 0.09in;
+      line-height: 1.4;
+    }
+
+    .packet-footer-note {
+      margin-top: auto;
+      padding-top: 0.09in;
+      border-top: 1px solid var(--koinonia-line);
+      color: var(--koinonia-muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.073in;
+      line-height: 1.35;
+      text-align: center;
+    }
+
     @media print {
+      body { padding: 0; background: white; }
       .digital-packet {
-        width: 8.5in;
-        min-height: 11in;
         margin: 0;
         border: 0;
         box-shadow: none;
+        page-break-after: always;
+        overflow: hidden;
       }
     }
   </style>
@@ -98,65 +260,154 @@
 
     <div class="gold-line"></div>
 
-    <p class="eyebrow">Digital Introduction Packet</p>
-    <h1>You focus on your clients.<br>We'll keep the business running behind you.</h1>
-    <p class="lead">Koinonia helps Realtors protect client service by organizing the operational work that competes for their time.</p>
+    <section class="packet-hero">
+      <p class="eyebrow">Digital Introduction Packet · Page 1</p>
+      <h1>You focus on your clients.<br>We'll keep the business running behind you.</h1>
+      <p class="campaign-line">More transactions should create more opportunity, not more chaos.</p>
+      <p class="lead">Koinonia helps Realtors protect client service by organizing the operational work that competes for their time.</p>
+      <p class="small">The service is the product. Systems, checklists, and the portal are tools used to communicate, provide visibility, and complete the work.</p>
+    </section>
 
-    <section class="packet-grid">
-      <article class="packet-card">
-        <h2>Transaction Support</h2>
-        <p>Contract-to-close coordination, deadline visibility, document tracking, communication coordination, closing preparation, and file completion.</p>
-        <p><strong>$389 prepaid</strong> or <strong>$599 due at successful closing</strong>.</p>
-      </article>
+    <section>
+      <p class="eyebrow">Five Practical Starting Points</p>
+      <div class="packet-service-grid">
+        <article class="packet-service-card">
+          <h2>1 · Transaction Support</h2>
+          <p class="pressure">“I can handle the client. I need help carrying the file.”</p>
+          <p>Contract-to-close operational coordination including timelines, deadlines, outstanding items, party coordination, closing preparation, and file completion.</p>
+        </article>
 
-      <article class="packet-card">
-        <h2>Contract &amp; Document Support</h2>
-        <p>Licensed preparation support based on the Realtor's instructions for offers, counters, amendments, addenda, notices, and other approved documents.</p>
-        <p><strong>Starting at $75.</strong></p>
-      </article>
+        <article class="packet-service-card">
+          <h2>2 · Contract &amp; Document Support</h2>
+          <p class="pressure">“I know the decision. I need the document workflow handled.”</p>
+          <p>Licensed preparation based on Realtor instructions for offers, counters, amendments, addenda, notices, revisions, and approved documents.</p>
+        </article>
 
-      <article class="packet-card">
-        <h2>Licensed Showing Coverage</h2>
-        <p>Professional licensed backup when a client needs property access and the Realtor cannot make the showing.</p>
-        <p><strong>Starting at $50.</strong></p>
-      </article>
+        <article class="packet-service-card">
+          <h2>3 · Licensed Showing Coverage</h2>
+          <p class="pressure">“My client needs access, but I cannot be in two places at once.”</p>
+          <p>Professional licensed backup when a client needs property access and the Realtor cannot personally cover the showing.</p>
+        </article>
 
-      <article class="packet-card">
-        <h2>Professional Open House Coverage</h2>
-        <p>Professional preparation, approved promotion, available signage, custom property flyer, up to three hours of licensed hosting, and a post-event summary.</p>
-        <p><strong>$200 standalone</strong>; one included with an applicable $599 listing engagement; additional qualifying sessions <strong>$100 each</strong>.</p>
-      </article>
+        <article class="packet-service-card">
+          <h2>4 · Professional Open House Coverage</h2>
+          <p class="pressure">“My listing deserves a professional open house, but my weekend is already spoken for.”</p>
+          <p>Your listing. Professionally prepared, promoted, and hosted—with visitor notes and post-event follow-up.</p>
+        </article>
 
-      <article class="packet-card full">
-        <h2>Monthly Operations Partnership</h2>
-        <p>Recurring CRM, pipeline, follow-up, task, checklist, calendar, template, workflow, and business-operations support without hiring a full-time assistant.</p>
-        <p><strong>Starter $299 / Growth $599 / Partner $999 per month.</strong></p>
+        <article class="packet-service-card full">
+          <h2>5 · Monthly Operations Partnership</h2>
+          <p class="pressure">“I can handle my clients. I need the business behind them to stay organized.”</p>
+          <p>Recurring CRM, pipeline, follow-up, tasks, checklists, calendar, workflow, templates, and business-operations support without hiring a full-time assistant.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="packet-trust">
+      <article>
+        <p class="eyebrow">Why Koinonia</p>
+        <ul>
+          <li>Licensed real estate perspective where applicable.</li>
+          <li>Dependable operational follow-through.</li>
+          <li>Clear communication and visible process.</li>
+          <li>Defined scope and professional boundaries.</li>
+        </ul>
       </article>
+      <article>
+        <p class="eyebrow">Designed Around the Realtor Relationship</p>
+        <p>Koinonia supports the work behind the client relationship. It is not positioned to replace the Realtor, supervise brokerage activity, or turn every support engagement into a referral.</p>
+      </article>
+    </section>
+
+    <p class="packet-footer-note">Koinonia Transactions · Real Estate Operations. Elevated.</p>
+  </main>
+
+  <main class="material-page digital-packet">
+    <header class="brand-row">
+      <span class="k-mark">K</span>
+      <div>
+        <h1 class="brand-name">Koinonia Transactions</h1>
+        <p class="brand-tagline">Real Estate Operations. Elevated.</p>
+      </div>
+    </header>
+
+    <div class="gold-line"></div>
+
+    <section class="packet-pricing-block">
+      <p class="eyebrow">Digital Introduction Packet · Page 2</p>
+      <h2>Current Pricing Snapshot</h2>
+      <div class="packet-pricing-grid">
+        <article class="packet-price-card">
+          <h3>Transaction Support</h3>
+          <p><strong>Same operational coordination. Two payment structures.</strong></p>
+          <ul>
+            <li><strong>$389 prepaid</strong> per transaction.</li>
+            <li><strong>$599 pay at successful close.</strong></li>
+            <li>No coordination fee if the $599 transaction does not successfully close under the approved structure.</li>
+            <li>One Open House session included with an applicable $599 listing engagement.</li>
+          </ul>
+        </article>
+
+        <article class="packet-price-card">
+          <h3>Contract, Showing &amp; Open House</h3>
+          <ul>
+            <li><strong>Contract &amp; Document:</strong> single-document support starts at $75.</li>
+            <li><strong>Licensed Showing:</strong> local coverage starts at $50.</li>
+            <li><strong>Open House:</strong> $200 standalone, up to 3 hours.</li>
+            <li><strong>Additional qualifying Open House sessions:</strong> $100 each under the applicable $599 engagement.</li>
+          </ul>
+        </article>
+
+        <article class="packet-price-card full">
+          <h3>Monthly Operations Partnership</h3>
+          <p><strong>Starter $299/month · up to 3 hours</strong> &nbsp; | &nbsp; <strong>Growth $599/month · up to 7 hours</strong> &nbsp; | &nbsp; <strong>Partner $999/month · up to 12 hours</strong></p>
+          <p>Monthly support is capacity- and scope-based, not unlimited assistant access. No automatic service discount is included unless specifically documented.</p>
+        </article>
+      </div>
     </section>
 
     <section class="packet-referral">
-      <p class="eyebrow">A Separate Path</p>
-      <h2>40% Referral Partner Option</h2>
-      <p><strong>Want to keep the client?</strong> We'll help you carry the operation.</p>
-      <p><strong>Don't want to take the client?</strong> You may be able to refer the opportunity instead and receive a <strong>40% referral fee on qualifying successfully closed referred business.</strong></p>
-      <p class="small">Complete brokerage, compensation, transaction, and referral terms are provided in the formal referral documents before client handoff. A Koinonia Transactions support relationship never becomes a brokerage referral unless the Realtor explicitly chooses the referral path.</p>
+      <div>
+        <p class="eyebrow">Keep the Client</p>
+        <h2>We'll help you carry the operation.</h2>
+        <p>Koinonia's five core services are designed for Realtors who want to preserve the client relationship while receiving dependable operational support.</p>
+      </div>
+      <div>
+        <p class="eyebrow">Separate Brokerage Referral Path</p>
+        <h2>Can't take the client? Keep the opportunity.</h2>
+        <p><strong>40% Referral Partner Option</strong> — a qualifying successfully closed referred opportunity may earn a <strong>40% referral fee</strong>.</p>
+        <p class="small">This is not a sixth Koinonia Transactions service. Complete brokerage, compensation, transaction, and referral terms are provided before client handoff. A Koinonia support relationship never becomes a brokerage referral unless the Realtor explicitly chooses that path.</p>
+      </div>
     </section>
 
-    <section class="packet-footer">
-      <div class="packet-boundary">
+    <section class="packet-bottom-grid">
+      <article class="packet-boundary">
         <p class="eyebrow">Professional Boundary</p>
         <p>Koinonia provides operational support. Realtors remain responsible for client advice, negotiation decisions, brokerage compliance, legal questions, professional judgment, representation strategy, and final approval.</p>
-        <p><strong>The service is the product.</strong> The portal and systems are tools used to communicate, provide visibility, and complete the work.</p>
-      </div>
+        <p>Koinonia is not unlimited assistant access, brokerage supervision, legal/tax/financial advice, or a replacement for the Realtor-client relationship.</p>
+      </article>
 
-      <div class="packet-contact">
-        <p class="eyebrow">Next Step</p>
-        <h2>Schedule a Brokerage or Agent Consultation</h2>
-        <p>Jeremiah Reynalds · Support Partner</p>
-        <p>Phone/Text: 719-745-8497</p>
-        <p>jeremiah@koinoniaadmin.com</p>
-        <strong>koinoniatransactions.com/contact</strong>
-      </div>
+      <section class="packet-contact">
+        <div>
+          <p class="eyebrow">Next Step</p>
+          <h2>Start with the support you need now.</h2>
+          <p>A showing, document assignment, open house, first transaction, or operations conversation can be the first proof point.</p>
+          <p><strong>Schedule a Brokerage or Agent Consultation</strong></p>
+          <p>Jeremiah Reynalds · Support Partner</p>
+          <p>Phone/Text: 719-745-8497</p>
+          <p>jeremiah@koinoniaadmin.com</p>
+          <strong>koinoniatransactions.com/contact</strong>
+        </div>
+        <figure style="margin:0;text-align:center;">
+          <img src="assets/koinonia-consultation-qr.svg" alt="QR code for the Koinonia consultation page">
+          <figcaption>Scan to request a consultation</figcaption>
+        </figure>
+      </section>
+    </section>
+
+    <section class="packet-meaning">
+      <p><strong>Koinonia</strong> /koy-noh-NEE-uh/ · fellowship · joint participation · sharing in common</p>
+      <p><strong>The first engagement should earn the second engagement.</strong></p>
     </section>
 
     <p class="scripture-footer">Bear one another's burdens. Work heartily, as for the Lord.<br><span>Galatians 6:2 · Colossians 3:23</span></p>
