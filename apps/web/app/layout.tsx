@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { absoluteUrl, seoConfig } from "../config/seo.config";
+import { MarketingAttribution } from "../components/site/MarketingAttribution/MarketingAttribution";
 import "@reynalds-os/design-system/styles.css";
 import "../styles/koinonia-layout.css";
 
@@ -56,7 +57,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <MarketingAttribution />
+        {children}
+      </body>
     </html>
   );
 }
