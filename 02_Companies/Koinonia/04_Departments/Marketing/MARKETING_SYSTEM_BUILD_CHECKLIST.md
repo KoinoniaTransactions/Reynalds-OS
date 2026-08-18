@@ -1,18 +1,18 @@
 # Koinonia Transactions — Marketing System Build Checklist
 
-Status: Build-Mode Control Document  
+Status: Build Complete / Awaiting Activation Decision  
 Business: Koinonia Transactions  
 Owner: Marketing + Sales
 
 ## Purpose
 
-Keep Koinonia in **build mode** until the complete marketing operating system is ready for deliberate activation.
+Confirm that the Koinonia marketing operating system is fully built and keep all live implementation behind an explicit activation decision.
 
 The user-approved sequence is:
 
 **Build first -> review the whole machine -> activate later.**
 
-Until the activation decision is made:
+Until activation is approved:
 
 - no marketing emails are sent
 - no cold DMs are sent
@@ -26,17 +26,18 @@ Until the activation decision is made:
 
 1. Marketing & Growth Engine — strategy
 2. Marketing Learning & Relationship Capture System — learning/governance
-3. Digital Marketing Execution Playbook — operating logic
-4. Prospecting & Lead-Sourcing Playbook — prospect research/qualification logic
-5. Content Production & Publishing Playbook — social-content operating logic
-6. Email Marketing Operations Playbook — email operating logic
-7. Meta Ads Build & Launch Playbook — Meta paid operating logic
-8. Brokerage Relationship Playbook — brokerage/account-based relationship logic
-9. Lead Response & Consultation Playbook — inbound diagnosis / sales handoff logic
-10. Marketing Dashboard & Weekly Review Playbook — measurement / change-control logic
-11. TikTok Paid Phase Playbook — TikTok paid-readiness / paid operating logic
-12. 30-Day Marketing Launch Calendar — prepared activation schedule
-13. Channel-specific build playbooks — exact execution mechanics
+3. Digital Marketing Execution Playbook — operating logic after activation
+4. Prospecting & Lead-Sourcing Playbook
+5. Content Production & Publishing Playbook
+6. Email Marketing Operations Playbook
+7. Meta Ads Build & Launch Playbook
+8. Brokerage Relationship Playbook
+9. Lead Response & Consultation Playbook
+10. Marketing Dashboard & Weekly Review Playbook
+11. TikTok Paid Phase Playbook
+12. **Marketing Activation Readiness Plan — controls whether/when implementation begins**
+13. **30-Day Marketing Activation Template — relative implementation schedule after activation**
+14. Historical `30_DAY_MARKETING_LAUNCH_CALENDAR_2026-08-18.md` — prepared content/copy library; fixed dates and automatic sends are superseded
 
 ## Build Status
 
@@ -45,177 +46,189 @@ Until the activation decision is made:
 - [x] Marketing & Growth Engine
 - [x] Marketing Learning & Relationship Capture System
 - [x] Digital Marketing Execution Playbook
-- [x] 30-Day Marketing Launch Calendar
+- [x] Whole-system reconciliation
+- [x] Marketing Activation Readiness Plan
+- [x] Relative 30-Day Marketing Activation Template
 
-### Website / Conversion Infrastructure
+### Website / Conversion Infrastructure — Build Complete, Implementation Pending
 
 - [x] consultation conversion path defined
 - [x] first-touch UTM attribution implemented on integration branch
 - [x] CRM attribution mapping implemented on integration branch
 - [x] website privacy notice implemented on integration branch
 - [x] Day 1 readiness record
-- [ ] approved production release of launch-critical website changes
-- [ ] live conversion-path test after release
+- [ ] approved surgical production release of launch-critical website changes
+- [ ] live conversion-path and UTM verification after release
 
-The unchecked production items are **implementation/release tasks**, not reasons to leave build mode early.
-
-### Social Profile System
+### Social Profile System — Build Complete, Implementation Pending
 
 - [x] Facebook profile setup defined
 - [x] Instagram profile setup defined
 - [x] TikTok profile setup defined
 - [x] organic UTM links defined
 - [x] conversion destinations defined
-- [ ] live platform profile configuration
+- [ ] live profile configuration
 
-Live profile configuration belongs to implementation.
+### Prospecting / Lead Sourcing — Build Complete
 
-### Prospecting / Lead Sourcing
+- [x] prospect types
+- [x] source channels
+- [x] qualification framework
+- [x] prospect scoring
+- [x] research fields
+- [x] pre-outreach statuses
+- [x] personalization standard
+- [x] activation gate
+- [x] first-50 learning rule
+- [ ] fresh prospect research near activation
+- [ ] outreach only after separate lane approval
 
-- [x] prospect types defined
-- [x] lead-source channels defined
-- [x] qualification framework defined
-- [x] simple prospect score defined
-- [x] research fields defined
-- [x] pre-outreach statuses defined
-- [x] activation gate defined
-- [x] future contact-channel logic defined
-- [x] first-50 learning rule defined
-- [ ] actual prospect research/list building
-- [ ] actual outreach
+### Content System — Build Complete
 
-Actual prospect research/list building should happen near activation so public information does not become stale unnecessarily.
-
-### Content System
-
-- [x] initial 30-day topics/copy/scripts prepared
+- [x] initial content library
 - [x] Content Production & Publishing Playbook
-- [x] asset naming/storage standard
-- [x] content review/approval workflow
-- [x] platform publishing checklist
-- [x] comment/DM response workflow
-- [x] content performance review workflow
+- [x] naming/storage standard
+- [x] review/approval workflow
+- [x] Facebook publishing checklist
+- [x] Instagram/Reels/Stories checklist
+- [x] TikTok publishing checklist
+- [x] engagement response workflow
+- [x] performance-learning workflow
+- [ ] live organic publishing after Stage 2 approval
 
-No content is scheduled or published during build mode.
+### Email Marketing — Build Complete
 
-### Paid Media
+- [x] one-to-one outbound logic
+- [x] warm follow-up logic
+- [x] brokerage email logic
+- [x] permission-based nurture logic
+- [x] source/permission rules
+- [x] suppression/unsubscribe workflow
+- [x] sending-platform criteria
+- [x] campaign QA/reporting
+- [ ] sender/domain/platform live configuration
+- [ ] outbound/nurture only after separate lane approval
 
-- [x] Meta first-test campaign strategy drafted
-- [x] working test budget defined
-- [x] initial ad copy/form concept drafted
-- [x] Meta Ads Build & Launch Playbook
-- [x] ad account readiness checklist defined
-- [x] creative QA checklist defined
-- [x] campaign naming convention finalized
-- [x] lead retrieval/response SOP defined for native forms
-- [x] paid-media stop/scale rules finalized
-- [x] Meta Pixel / Conversions API implementation plan defined
-- [x] TikTok Paid Phase Playbook
-- [x] TikTok pixel/events implementation plan defined
-- [ ] live Meta account configuration
-- [ ] live Meta Pixel / Conversions API implementation
-- [ ] live TikTok paid account configuration
-- [ ] live TikTok Pixel / Events API implementation
+### Brokerage Relationship Marketing — Build Complete
 
-No paid campaign is activated and no ad spend occurs during build mode.
-
-### Email Marketing
-
-- [x] personal Realtor outreach sequence drafted
-- [x] warm-contact follow-up drafted
-- [x] brokerage outreach sequence drafted
-- [x] first nurture concept drafted
-- [x] Email Marketing Operations Playbook
-- [x] personal vs nurture/broadcast decision rules finalized
-- [x] list-source/permission rules finalized operationally
-- [x] suppression/unsubscribe workflow defined
-- [x] sending platform selection criteria defined
-- [x] campaign QA checklist defined
-- [x] reporting rules defined
-
-No marketing email is sent during build mode.
-
-### Brokerage Relationship Marketing
-
-- [x] brokerage education concept defined
-- [x] initial leader outreach copy drafted
-- [x] Brokerage Relationship Playbook
-- [x] presentation-session format
+- [x] account selection
+- [x] leadership strategy
+- [x] 15–20 minute presentation format
 - [x] pre-meeting checklist
 - [x] meeting capture template
-- [x] post-meeting individual follow-up logic
-- [x] brokerage account reporting
+- [x] individual-agent follow-up boundary
+- [x] account reporting
+- [ ] fresh brokerage research near activation
+- [ ] live outreach after separate lane approval
 
-No brokerage is contacted during build mode.
+### Lead Response / Sales Handoff — Build Complete
 
-### Lead Response / Sales Handoff
+- [x] response priority
+- [x] response-time standards
+- [x] channel intake rules
+- [x] pressure categories
+- [x] diagnostic question bank
+- [x] consultation preparation
+- [x] smallest-sufficient-engagement map
+- [x] recommendation/quote handoff
+- [x] no-response/lost handling
+- [x] one-next-action rule
+- [ ] live execution once inbound demand is activated
 
-- [x] core contact-to-client logic defined
-- [x] diagnosis formula defined
-- [x] pressure categories defined
-- [x] next-action rule defined
-- [x] Lead Response & Consultation Playbook
-- [x] channel-specific response-time standards
-- [x] qualification questions by pressure
-- [x] consultation preparation checklist
-- [x] service recommendation/quote handoff rules
-- [x] lost/no-response handling finalized
+### Meta Paid — Build Complete, Operationally Inactive
 
-No new lead is contacted during build mode.
+- [x] first-test strategy
+- [x] campaign/ad-set naming
+- [x] three creative angles
+- [x] Instant Form and qualifying questions
+- [x] privacy/lead-access gate
+- [x] lead retrieval/CRM mapping
+- [x] $20/day x 14-day working test budget
+- [x] 72-hour review
+- [x] Day-14 review
+- [x] green/yellow/red stop/scale rules
+- [x] Pixel/CAPI roadmap
+- [ ] live Meta account/billing/permissions verification
+- [ ] live form/campaign build and QA
+- [ ] explicit Meta activation
 
-### Reporting / Optimization
+### TikTok Paid — Build Complete, Intentionally Later
 
-- [x] core success hierarchy defined
-- [x] Month 1 reporting template drafted
-- [x] Marketing Dashboard & Weekly Review Playbook
-- [x] source-to-conversation reporting defined
-- [x] source-to-paid-engagement reporting defined
-- [x] content learning report defined
-- [x] paid-media quality report defined
-- [x] first-50 relationship review process defined
-- [x] Month 2 change-control rule defined
+- [x] organic-learning threshold
+- [x] paid creative scoring
+- [x] Spark-first strategy
+- [x] Lead Generation/Instant Form logic
+- [x] Higher Intent vs More Volume rule
+- [x] UTM/tracking standards
+- [x] lead retrieval/CRM mapping
+- [x] Pixel/Events API roadmap
+- [x] retargeting gate
+- [x] stop/scale rules
+- [ ] sufficient live organic learning
+- [ ] live Ads Manager/billing/permissions
+- [ ] separate TikTok paid approval
 
-No live campaign is changed during build mode.
+### Reporting / Optimization — Build Complete
 
-### Compliance / Governance
+- [x] funnel definitions
+- [x] executive scorecard
+- [x] source-to-conversation reporting
+- [x] source-to-paid-engagement reporting
+- [x] content learning report
+- [x] paid-media quality report
+- [x] brokerage relationship reporting
+- [x] lead-response operating-health view
+- [x] first 10/25/50 relationship reviews
+- [x] weekly review cadence
+- [x] Month 2 three-change rule
 
-- [x] commercial email compliance principles documented
-- [x] social-to-email rule documented
-- [x] no automated promotional SMS at launch
-- [x] data-minimization prospecting rule
-- [x] website privacy notice source prepared
-- [x] Email compliance operational checklist defined
-- [x] ad-platform privacy/lead-form checklist defined
-- [ ] production privacy notice review before paid launch
+### Compliance / Governance — Build Complete, Live Verification Pending
 
-## Activation Gate — Whole Marketing System
+- [x] commercial email operating principles
+- [x] social-to-email rule
+- [x] no automated promotional SMS at initial launch
+- [x] data-minimization rule
+- [x] website privacy notice source
+- [x] email compliance checklist
+- [x] ad lead-form privacy checklist
+- [ ] production privacy notice verification before paid launch
+- [ ] live unsubscribe/suppression verification before nurture
 
-Koinonia does not switch from build mode into implementation simply because one channel is ready.
+## Whole-System Review Findings
 
-Before activation, review the entire system and confirm:
+### Resolved
 
-1. the channel stack is still approved
-2. all public-facing profile copy is final
-3. content workflow is built
-4. prospecting workflow is built
-5. email workflow is built
-6. brokerage workflow is built
-7. paid-media workflow is built
-8. lead response/sales handoff is built
-9. reporting/review workflow is built
-10. compliance and privacy prerequisites are understood
-11. website conversion infrastructure is release-ready
-12. implementation responsibilities are clear
-13. launch sequence and budget are approved
-14. the user explicitly says to activate/implement
+- LinkedIn excluded; TikTok included.
+- Referral Partner remains separate from the five core service lanes.
+- Organic TikTok precedes TikTok paid.
+- Meta is the first planned paid test.
+- First engagement should earn the second engagement.
+- Diagnosis precedes service recommendation.
+- Public prospect research does not authorize contact.
+- Attending a brokerage presentation does not automatically authorize agent nurture.
+- Vanity metrics do not outrank qualified conversations/paid relationships.
 
-Until then, the system remains in build mode.
+### Superseded
 
-## Recommended Build Order From Here
+The fixed Aug 18–Sep 16 launch calendar and its automatic outreach dates were created before the build-first decision.
 
-1. **Final whole-system review**
-2. resolve any contradictions/gaps
-3. produce one Activation Readiness Plan
-4. activation decision
+They are no longer controlling.
 
-All planned channel-specific build systems are now complete. The next phase is reconciliation and readiness review, not live implementation.
+Use `MARKETING_ACTIVATION_READINESS_PLAN.md` and `30_DAY_MARKETING_ACTIVATION_TEMPLATE.md` for live implementation sequencing.
+
+## Next Decision
+
+The marketing machine is built.
+
+The next decision is:
+
+**Activate Stage 1 — Foundation Activation?**
+
+Stage 1 means only:
+
+1. surgical release of launch-critical website privacy/attribution work
+2. live conversion/UTM testing
+3. Facebook/Instagram/TikTok profile configuration
+4. lead-owner/dashboard readiness
+
+It does **not** automatically authorize outreach, social publishing, nurture, Meta spend, brokerage contact, or TikTok paid.
