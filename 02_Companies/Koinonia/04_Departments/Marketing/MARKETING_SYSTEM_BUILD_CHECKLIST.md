@@ -33,8 +33,9 @@ Until the activation decision is made:
 7. Meta Ads Build & Launch Playbook — Meta paid operating logic
 8. Brokerage Relationship Playbook — brokerage/account-based relationship logic
 9. Lead Response & Consultation Playbook — inbound diagnosis / sales handoff logic
-10. 30-Day Marketing Launch Calendar — prepared activation schedule
-11. Channel-specific build playbooks — exact execution mechanics
+10. Marketing Dashboard & Weekly Review Playbook — measurement / change-control logic
+11. 30-Day Marketing Launch Calendar — prepared activation schedule
+12. Channel-specific build playbooks — exact execution mechanics
 
 ## Build Status
 
@@ -163,13 +164,15 @@ No new lead is contacted during build mode.
 
 - [x] core success hierarchy defined
 - [x] Month 1 reporting template drafted
-- [ ] Marketing Dashboard & Weekly Review Playbook
-- [ ] source-to-conversation reporting
-- [ ] source-to-paid-engagement reporting
-- [ ] content learning report
-- [ ] paid-media quality report
-- [ ] first-50 relationship review process
-- [ ] Month 2 change-control rule
+- [x] Marketing Dashboard & Weekly Review Playbook
+- [x] source-to-conversation reporting defined
+- [x] source-to-paid-engagement reporting defined
+- [x] content learning report defined
+- [x] paid-media quality report defined
+- [x] first-50 relationship review process defined
+- [x] Month 2 change-control rule defined
+
+No live campaign is changed during build mode.
 
 ### Compliance / Governance
 
@@ -207,9 +210,8 @@ Until then, the system remains in build mode.
 
 ## Recommended Build Order From Here
 
-1. **Marketing Dashboard & Weekly Review Playbook**
-2. **TikTok Paid Phase Playbook**
-3. final whole-system review
-4. activation decision
+1. **TikTok Paid Phase Playbook**
+2. final whole-system review
+3. activation decision
 
-This order now finishes reporting/optimization and TikTok paid before the whole-system activation review.
+The reporting/optimization layer is now built. TikTok paid is the final channel-specific system before the whole-system activation review.
