@@ -57,6 +57,8 @@ const consultationTimes = [
   "4:00 PM – 5:00 PM"
 ];
 
+const attributionStorageKey = "koinonia_marketing_attribution";
+
 const initialFormState: IntakeFormState = {
   name: "",
   email: "",
@@ -88,6 +90,27 @@ function isWeekendDate(value: string) {
   const day = date.getDay();
 
   return day === 0 || day === 6;
+}
+
+function readStoredAttribution(): AttributionState {
+  try {
+    const stored = window.sessionStorage.getItem(attributionStorageKey);
+    if (!stored) return initialAttributionState;
+
+    const parsed = JSON.parse(stored) as Partial<AttributionState>;
+
+    return {
+      utmSource: parsed.utmSource ?? "",
+      utmMedium: parsed.utmMedium ?? "",
+      utmCampaign: parsed.utmCampaign ?? "",
+      utmContent: parsed.utmContent ?? "",
+      fbclid: parsed.fbclid ?? "",
+      ttclid: parsed.ttclid ?? "",
+      referrer: parsed.referrer ?? ""
+    };
+  } catch {
+    return initialAttributionState;
+  }
 }
 
 export function ConsultationSchedulerButton({
@@ -122,15 +145,16 @@ export function ConsultationSchedulerButton({
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const stored = readStoredAttribution();
 
     setAttribution({
-      utmSource: params.get("utm_source") ?? "",
-      utmMedium: params.get("utm_medium") ?? "",
-      utmCampaign: params.get("utm_campaign") ?? "",
-      utmContent: params.get("utm_content") ?? "",
-      fbclid: params.get("fbclid") ?? "",
-      ttclid: params.get("ttclid") ?? "",
-      referrer: document.referrer ?? ""
+      utmSource: params.get("utm_source") ?? stored.utmSource,
+      utmMedium: params.get("utm_medium") ?? stored.utmMedium,
+      utmCampaign: params.get("utm_campaign") ?? stored.utmCampaign,
+      utmContent: params.get("utm_content") ?? stored.utmContent,
+      fbclid: params.get("fbclid") ?? stored.fbclid,
+      ttclid: params.get("ttclid") ?? stored.ttclid,
+      referrer: stored.referrer || document.referrer || ""
     });
   }, []);
 
