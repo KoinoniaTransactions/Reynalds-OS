@@ -34,8 +34,9 @@ Until the activation decision is made:
 8. Brokerage Relationship Playbook — brokerage/account-based relationship logic
 9. Lead Response & Consultation Playbook — inbound diagnosis / sales handoff logic
 10. Marketing Dashboard & Weekly Review Playbook — measurement / change-control logic
-11. 30-Day Marketing Launch Calendar — prepared activation schedule
-12. Channel-specific build playbooks — exact execution mechanics
+11. TikTok Paid Phase Playbook — TikTok paid-readiness / paid operating logic
+12. 30-Day Marketing Launch Calendar — prepared activation schedule
+13. Channel-specific build playbooks — exact execution mechanics
 
 ## Build Status
 
@@ -109,10 +110,12 @@ No content is scheduled or published during build mode.
 - [x] lead retrieval/response SOP defined for native forms
 - [x] paid-media stop/scale rules finalized
 - [x] Meta Pixel / Conversions API implementation plan defined
+- [x] TikTok Paid Phase Playbook
+- [x] TikTok pixel/events implementation plan defined
 - [ ] live Meta account configuration
 - [ ] live Meta Pixel / Conversions API implementation
-- [ ] TikTok Paid Phase Playbook
-- [ ] TikTok pixel/events implementation plan
+- [ ] live TikTok paid account configuration
+- [ ] live TikTok Pixel / Events API implementation
 
 No paid campaign is activated and no ad spend occurs during build mode.
 
@@ -210,8 +213,9 @@ Until then, the system remains in build mode.
 
 ## Recommended Build Order From Here
 
-1. **TikTok Paid Phase Playbook**
-2. final whole-system review
-3. activation decision
+1. **Final whole-system review**
+2. resolve any contradictions/gaps
+3. produce one Activation Readiness Plan
+4. activation decision
 
-The reporting/optimization layer is now built. TikTok paid is the final channel-specific system before the whole-system activation review.
+All planned channel-specific build systems are now complete. The next phase is reconciliation and readiness review, not live implementation.
