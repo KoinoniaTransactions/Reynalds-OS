@@ -29,8 +29,9 @@ Until the activation decision is made:
 3. Digital Marketing Execution Playbook — operating logic
 4. Prospecting & Lead-Sourcing Playbook — prospect research/qualification logic
 5. Content Production & Publishing Playbook — social-content operating logic
-6. 30-Day Marketing Launch Calendar — prepared activation schedule
-7. Channel-specific build playbooks — exact execution mechanics
+6. Email Marketing Operations Playbook — email operating logic
+7. 30-Day Marketing Launch Calendar — prepared activation schedule
+8. Channel-specific build playbooks — exact execution mechanics
 
 ## Build Status
 
@@ -113,13 +114,13 @@ No content is scheduled or published during build mode.
 - [x] warm-contact follow-up drafted
 - [x] brokerage outreach sequence drafted
 - [x] first nurture concept drafted
-- [ ] Email Marketing Operations Playbook
-- [ ] personal vs nurture/broadcast decision rules finalized
-- [ ] list-source/permission rules finalized operationally
-- [ ] suppression/unsubscribe workflow
-- [ ] sending platform selection criteria
-- [ ] campaign QA checklist
-- [ ] reporting rules
+- [x] Email Marketing Operations Playbook
+- [x] personal vs nurture/broadcast decision rules finalized
+- [x] list-source/permission rules finalized operationally
+- [x] suppression/unsubscribe workflow defined
+- [x] sending platform selection criteria defined
+- [x] campaign QA checklist defined
+- [x] reporting rules defined
 
 No marketing email is sent during build mode.
 
@@ -166,7 +167,7 @@ No marketing email is sent during build mode.
 - [x] no automated promotional SMS at launch
 - [x] data-minimization prospecting rule
 - [x] website privacy notice source prepared
-- [ ] Email compliance operational checklist
+- [x] Email compliance operational checklist defined
 - [ ] ad-platform privacy/lead-form checklist
 - [ ] production privacy notice review before paid launch
 
@@ -195,13 +196,12 @@ Until then, the system remains in build mode.
 
 ## Recommended Build Order From Here
 
-1. **Email Marketing Operations Playbook**
-2. **Meta Ads Build & Launch Playbook**
-3. **Brokerage Relationship Playbook**
-4. **Lead Response & Consultation Playbook**
-5. **Marketing Dashboard & Weekly Review Playbook**
-6. **TikTok Paid Phase Playbook**
-7. final whole-system review
-8. activation decision
+1. **Meta Ads Build & Launch Playbook**
+2. **Brokerage Relationship Playbook**
+3. **Lead Response & Consultation Playbook**
+4. **Marketing Dashboard & Weekly Review Playbook**
+5. **TikTok Paid Phase Playbook**
+6. final whole-system review
+7. activation decision
 
-This order builds the organic and relationship engine before adding more paid complexity.
+This order now builds the paid and relationship-control layers after the content and email foundations are complete.
