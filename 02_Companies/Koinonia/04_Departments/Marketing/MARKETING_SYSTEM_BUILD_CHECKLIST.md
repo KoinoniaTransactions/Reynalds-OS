@@ -32,8 +32,9 @@ Until the activation decision is made:
 6. Email Marketing Operations Playbook — email operating logic
 7. Meta Ads Build & Launch Playbook — Meta paid operating logic
 8. Brokerage Relationship Playbook — brokerage/account-based relationship logic
-9. 30-Day Marketing Launch Calendar — prepared activation schedule
-10. Channel-specific build playbooks — exact execution mechanics
+9. Lead Response & Consultation Playbook — inbound diagnosis / sales handoff logic
+10. 30-Day Marketing Launch Calendar — prepared activation schedule
+11. Channel-specific build playbooks — exact execution mechanics
 
 ## Build Status
 
@@ -149,12 +150,14 @@ No brokerage is contacted during build mode.
 - [x] diagnosis formula defined
 - [x] pressure categories defined
 - [x] next-action rule defined
-- [ ] Lead Response & Consultation Playbook
-- [ ] channel-specific response-time standards
-- [ ] qualification questions by pressure
-- [ ] consultation preparation checklist
-- [ ] service recommendation/quote handoff rules
-- [ ] lost/no-response handling finalized
+- [x] Lead Response & Consultation Playbook
+- [x] channel-specific response-time standards
+- [x] qualification questions by pressure
+- [x] consultation preparation checklist
+- [x] service recommendation/quote handoff rules
+- [x] lost/no-response handling finalized
+
+No new lead is contacted during build mode.
 
 ### Reporting / Optimization
 
@@ -204,10 +207,9 @@ Until then, the system remains in build mode.
 
 ## Recommended Build Order From Here
 
-1. **Lead Response & Consultation Playbook**
-2. **Marketing Dashboard & Weekly Review Playbook**
-3. **TikTok Paid Phase Playbook**
-4. final whole-system review
-5. activation decision
+1. **Marketing Dashboard & Weekly Review Playbook**
+2. **TikTok Paid Phase Playbook**
+3. final whole-system review
+4. activation decision
 
-This order now finishes the response/handoff, reporting, and TikTok paid layers before the whole-system activation review.
+This order now finishes reporting/optimization and TikTok paid before the whole-system activation review.
