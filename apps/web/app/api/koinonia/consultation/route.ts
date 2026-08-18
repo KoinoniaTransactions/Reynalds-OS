@@ -13,6 +13,16 @@ export const runtime = "nodejs";
 const koinoniaWorkspaceId = "wks_koinonia";
 const ownerEmail = "jeremiah@koinoniaadmin.com";
 
+type AttributionPayload = {
+  utmSource?: unknown;
+  utmMedium?: unknown;
+  utmCampaign?: unknown;
+  utmContent?: unknown;
+  fbclid?: unknown;
+  ttclid?: unknown;
+  referrer?: unknown;
+};
+
 type ConsultationPayload = {
   consultationType?: unknown;
   consultationSubject?: unknown;
@@ -23,6 +33,7 @@ type ConsultationPayload = {
   preferredTime?: unknown;
   notes?: unknown;
   website?: unknown;
+  attribution?: unknown;
 };
 
 const recipientEmail =
@@ -79,6 +90,74 @@ function escapeHtml(input: string) {
 
 function toPrismaJson(input: unknown): Prisma.InputJsonValue {
   return JSON.parse(JSON.stringify(input)) as Prisma.InputJsonValue;
+}
+
+function normalizeAttribution(input: unknown) {
+  const source =
+    input && typeof input === "object" && !Array.isArray(input)
+      ? (input as AttributionPayload)
+      : {};
+
+  return {
+    utmSource: value(source.utmSource),
+    utmMedium: value(source.utmMedium),
+    utmCampaign: value(source.utmCampaign),
+    utmContent: value(source.utmContent),
+    fbclid: value(source.fbclid),
+    ttclid: value(source.ttclid),
+    referrer: value(source.referrer)
+  };
+}
+
+function deriveAcquisition(attribution: ReturnType<typeof normalizeAttribution>) {
+  const sourceName = attribution.utmSource.toLowerCase();
+  const medium = attribution.utmMedium.toLowerCase();
+  const isInstagram = sourceName.includes("instagram");
+  const isFacebook = sourceName.includes("facebook") || sourceName.includes("meta");
+  const isTikTok = sourceName.includes("tiktok") || Boolean(attribution.ttclid);
+  const isEmail = sourceName.includes("email") || medium.includes("email");
+  const isPaid =
+    medium.includes("paid") ||
+    medium.includes("cpc") ||
+    medium.includes("social") ||
+    Boolean(attribution.fbclid) ||
+    Boolean(attribution.ttclid);
+
+  let source = "Website";
+  let firstTouchChannel = "Website";
+  let sourceDetail = "Public consultation scheduler";
+
+  if (isInstagram || isFacebook || isTikTok) {
+    source = "Social Media";
+    firstTouchChannel = isInstagram
+      ? "Instagram"
+      : isTikTok
+        ? "TikTok"
+        : "Facebook";
+    sourceDetail = `${firstTouchChannel}${isPaid ? " paid" : " organic"}`;
+  } else if (isEmail) {
+    source = "Email";
+    firstTouchChannel = "Email";
+    sourceDetail = attribution.utmSource || "Email campaign";
+  } else if (attribution.utmSource) {
+    sourceDetail = attribution.utmSource;
+  } else if (attribution.referrer) {
+    sourceDetail = `Referral from ${attribution.referrer}`;
+  }
+
+  const detailParts = [
+    sourceDetail,
+    attribution.utmMedium ? `medium=${attribution.utmMedium}` : "",
+    attribution.utmContent ? `content=${attribution.utmContent}` : ""
+  ].filter(Boolean);
+
+  return {
+    source,
+    sourceDetail: detailParts.join(" · "),
+    firstTouchChannel,
+    campaign: attribution.utmCampaign,
+    referrer: attribution.referrer
+  };
 }
 
 function buildTextEmail({
@@ -174,7 +253,8 @@ async function persistConsultationRelationship({
   phone,
   preferredDate,
   preferredTime,
-  notes
+  notes,
+  attribution
 }: {
   consultationType: string;
   name: string;
@@ -183,8 +263,10 @@ async function persistConsultationRelationship({
   preferredDate: string;
   preferredTime: string;
   notes: string;
+  attribution: ReturnType<typeof normalizeAttribution>;
 }) {
   const intent = mapConsultationTypeToRelationshipIntent(consultationType);
+  const acquisition = deriveAcquisition(attribution);
   const relationships = await prisma.rosObject.findMany({
     where: {
       workspaceId: koinoniaWorkspaceId,
@@ -218,14 +300,16 @@ async function persistConsultationRelationship({
       phone
     },
     acquisition: {
-      source: existingProfile.acquisition?.source || "Website",
+      source: existingProfile.acquisition?.source || acquisition.source,
       sourceDetail:
-        existingProfile.acquisition?.sourceDetail || "Public consultation scheduler",
+        existingProfile.acquisition?.sourceDetail || acquisition.sourceDetail,
       firstTouchChannel:
-        existingProfile.acquisition?.firstTouchChannel || "Website",
+        existingProfile.acquisition?.firstTouchChannel || acquisition.firstTouchChannel,
+      campaign: existingProfile.acquisition?.campaign || acquisition.campaign,
       material: existingProfile.acquisition?.material || "Website",
       firstTouchDate:
-        existingProfile.acquisition?.firstTouchDate || submittedAt.slice(0, 10)
+        existingProfile.acquisition?.firstTouchDate || submittedAt.slice(0, 10),
+      referrer: existingProfile.acquisition?.referrer || acquisition.referrer
     },
     problem: {
       primaryPressure:
@@ -285,7 +369,8 @@ async function persistConsultationRelationship({
           consultationType,
           preferredDate,
           preferredTime,
-          notes
+          notes,
+          attribution
         })
       }
     });
@@ -355,6 +440,7 @@ export async function POST(request: Request) {
   const preferredDate = value(payload.preferredDate);
   const preferredTime = value(payload.preferredTime);
   const notes = value(payload.notes);
+  const attribution = normalizeAttribution(payload.attribution);
 
   if (
     !consultationType ||
@@ -400,7 +486,8 @@ export async function POST(request: Request) {
       phone,
       preferredDate,
       preferredTime,
-      notes
+      notes,
+      attribution
     });
   } catch (error) {
     console.error("Koinonia consultation CRM write failed:", error);
