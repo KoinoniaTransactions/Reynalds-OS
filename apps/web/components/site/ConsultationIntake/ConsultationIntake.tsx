@@ -30,6 +30,16 @@ type IntakeFormState = {
   website: string;
 };
 
+type AttributionState = {
+  utmSource: string;
+  utmMedium: string;
+  utmCampaign: string;
+  utmContent: string;
+  fbclid: string;
+  ttclid: string;
+  referrer: string;
+};
+
 type SubmissionState =
   | { kind: "idle"; message: string }
   | { kind: "submitting"; message: string }
@@ -55,6 +65,16 @@ const initialFormState: IntakeFormState = {
   requestedTime: "",
   notes: "",
   website: ""
+};
+
+const initialAttributionState: AttributionState = {
+  utmSource: "",
+  utmMedium: "",
+  utmCampaign: "",
+  utmContent: "",
+  fbclid: "",
+  ttclid: "",
+  referrer: ""
 };
 
 function formatDateForInput(date: Date) {
@@ -84,6 +104,9 @@ export function ConsultationSchedulerButton({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState(options[0]?.title ?? "");
   const [form, setForm] = useState<IntakeFormState>(initialFormState);
+  const [attribution, setAttribution] = useState<AttributionState>(
+    initialAttributionState
+  );
   const [status, setStatus] = useState<SubmissionState>({
     kind: "idle",
     message: ""
@@ -96,6 +119,20 @@ export function ConsultationSchedulerButton({
 
   const minimumDate = formatDateForInput(new Date());
   const isSubmitting = status.kind === "submitting";
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    setAttribution({
+      utmSource: params.get("utm_source") ?? "",
+      utmMedium: params.get("utm_medium") ?? "",
+      utmCampaign: params.get("utm_campaign") ?? "",
+      utmContent: params.get("utm_content") ?? "",
+      fbclid: params.get("fbclid") ?? "",
+      ttclid: params.get("ttclid") ?? "",
+      referrer: document.referrer ?? ""
+    });
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -164,6 +201,7 @@ export function ConsultationSchedulerButton({
           consultationSubject: selectedOption.subject,
           preferredDate: form.requestedDate,
           preferredTime: form.requestedTime,
+          attribution,
           ...form
         })
       });
@@ -367,7 +405,12 @@ export function ConsultationSchedulerButton({
               </div>
 
               <div className="koinonia-consultation-modal-note">
-                Consultations are currently available Monday–Friday, 9:00 AM–5:00 PM.
+                <p>
+                  Consultations are currently available Monday–Friday, 9:00 AM–5:00 PM.
+                </p>
+                <p>
+                  By submitting this request, you are providing the information needed for Koinonia to respond and maintain the professional relationship. See our <a href="/privacy">Privacy Policy</a>.
+                </p>
               </div>
 
               {status.message ? (
