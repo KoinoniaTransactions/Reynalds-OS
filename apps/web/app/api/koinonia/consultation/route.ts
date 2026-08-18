@@ -119,7 +119,6 @@ function deriveAcquisition(attribution: ReturnType<typeof normalizeAttribution>)
   const isPaid =
     medium.includes("paid") ||
     medium.includes("cpc") ||
-    medium.includes("social") ||
     Boolean(attribution.fbclid) ||
     Boolean(attribution.ttclid);
 
@@ -370,7 +369,7 @@ async function persistConsultationRelationship({
           preferredDate,
           preferredTime,
           notes,
-          attribution
+          acquisition
         })
       }
     });
