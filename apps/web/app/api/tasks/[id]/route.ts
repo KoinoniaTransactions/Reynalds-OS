@@ -8,8 +8,30 @@ type Params = {
   params: Promise<{ id: string }>;
 };
 
+function parseDueAt(value: unknown): Date | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null || value === "") return null;
+  if (typeof value !== "string") return undefined;
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [year, month, day] = value.split("-").map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
+    if (
+      date.getUTCFullYear() !== year ||
+      date.getUTCMonth() !== month - 1 ||
+      date.getUTCDate() !== day
+    ) {
+      return undefined;
+    }
+    return date;
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
 export async function PATCH(request: Request, { params }: Params) {
-  const user = assertPermission("tasks:update");
+  const user = await assertPermission("tasks:update");
   const { id } = await params;
   const body = await request.json();
 
@@ -24,6 +46,14 @@ export async function PATCH(request: Request, { params }: Params) {
     return NextResponse.json({ error: "Task not found." }, { status: 404 });
   }
 
+  const parsedDueAt = parseDueAt(body.dueAt);
+  if (body.dueAt !== undefined && parsedDueAt === undefined) {
+    return NextResponse.json(
+      { error: "dueAt must be a valid date, YYYY-MM-DD, null, or an empty string." },
+      { status: 400 }
+    );
+  }
+
   const task = await prisma.task.update({
     where: { id },
     data: {
@@ -31,7 +61,7 @@ export async function PATCH(request: Request, { params }: Params) {
       status: body.status ?? existing.status,
       priority: body.priority ?? existing.priority,
       ownerId: body.ownerId ?? existing.ownerId,
-      dueAt: body.dueAt ? new Date(body.dueAt) : existing.dueAt,
+      dueAt: parsedDueAt === undefined ? existing.dueAt : parsedDueAt,
       completedAt: body.status === "Complete" ? new Date() : existing.completedAt
     }
   });

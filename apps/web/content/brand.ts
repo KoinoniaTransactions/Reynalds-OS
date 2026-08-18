@@ -25,7 +25,8 @@ export const brandContent = {
     home: "/",
     services: "/services",
     about: "/about",
-    contact: "/contact"
+    contact: "/contact",
+    client: "/client"
   },
 
   cta: {

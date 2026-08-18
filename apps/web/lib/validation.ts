@@ -1,4 +1,8 @@
 export type ObjectCreateInput = {
+  assignedStaffUserId?: string;
+  backupStaffUserId?: string;
+  clientObjectId?: string;
+  clientUserId?: string;
   objectType: string;
   name: string;
   status?: string;
@@ -29,6 +33,12 @@ export function validateObjectCreate(input: unknown): ObjectCreateInput {
     status: typeof value.status === "string" ? value.status : "Open",
     health: typeof value.health === "string" ? value.health : "Healthy",
     ownerId: typeof value.ownerId === "string" ? value.ownerId : undefined,
+    clientUserId: typeof value.clientUserId === "string" ? value.clientUserId : undefined,
+    clientObjectId: typeof value.clientObjectId === "string" ? value.clientObjectId : undefined,
+    assignedStaffUserId:
+      typeof value.assignedStaffUserId === "string" ? value.assignedStaffUserId : undefined,
+    backupStaffUserId:
+      typeof value.backupStaffUserId === "string" ? value.backupStaffUserId : undefined,
     nextAction: typeof value.nextAction === "string" ? value.nextAction : undefined,
     data: typeof value.data === "object" && value.data !== null ? (value.data as Record<string, unknown>) : undefined
   };
@@ -42,7 +52,19 @@ export function validateObjectUpdate(input: unknown) {
   const value = input as Record<string, unknown>;
   const allowed: Record<string, unknown> = {};
 
-  for (const key of ["objectType", "name", "status", "health", "ownerId", "nextAction", "data"]) {
+  for (const key of [
+    "objectType",
+    "name",
+    "status",
+    "health",
+    "ownerId",
+    "clientUserId",
+    "clientObjectId",
+    "assignedStaffUserId",
+    "backupStaffUserId",
+    "nextAction",
+    "data"
+  ]) {
     if (value[key] !== undefined) allowed[key] = value[key];
   }
 

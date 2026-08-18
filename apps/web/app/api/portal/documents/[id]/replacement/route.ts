@@ -1,0 +1,263 @@
+import { NextResponse } from "next/server";
+import { getAuthErrorResponse } from "../../../../../../lib/api-auth";
+import { assertPermission } from "../../../../../../lib/auth";
+import { prisma } from "../../../../../../lib/db";
+import {
+  getConfiguredPortalDocumentScannerCommand,
+  getConfiguredPortalDocumentUploadRoot,
+  getPortalDocumentFormFile,
+  PortalDocumentScanFailedError,
+  PortalDocumentScanUnavailableError,
+  scanPortalDocumentUpload
+} from "../../../../../../lib/portal-document-storage";
+import {
+  isPortalDocumentR2UploadEnabled,
+  persistPortalDocumentToR2,
+  removePortalDocumentFromR2Quietly,
+  type StoredR2Document
+} from "../../../../../../lib/portal-document-r2";
+import {
+  getNextPortalDocumentVersionNumber,
+  PortalDocumentValidationError,
+  validatePortalDocumentReplacementSubmission
+} from "../../../../../../lib/portal-documents";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+type Params = {
+  params: Promise<{ id: string }>;
+};
+
+export async function POST(request: Request, { params }: Params) {
+  let documentPersisted = false;
+  let storedDocument: StoredR2Document | null = null;
+
+  try {
+    const actor = await assertPermission("document-workspace:drafts:update");
+    const { id } = await params;
+    if (!isPortalDocumentR2UploadEnabled()) {
+      return NextResponse.json(
+        { error: "Cloudflare R2 replacement uploads are not enabled for this environment." },
+        { status: 503 }
+      );
+    }
+
+    const formData = await request.formData();
+    const file = getPortalDocumentFormFile(formData, "file");
+    const input = validatePortalDocumentReplacementSubmission({
+      file: {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      },
+      notes: formData.get("notes"),
+      replacementReason: formData.get("replacementReason"),
+      requestedAction: formData.get("requestedAction"),
+      versionLabel: formData.get("versionLabel")
+    });
+
+    const document = await prisma.document.findFirst({
+      where: {
+        id,
+        workspaceId: actor.workspaceId,
+        archivedAt: null,
+        removedAt: null,
+        lifecycleState: "active"
+      }
+    });
+
+    if (!document) {
+      return NextResponse.json({ error: "Document not found." }, { status: 404 });
+    }
+
+    if (document.supersededByDocumentId || document.status === "Superseded") {
+      return NextResponse.json(
+        { error: "A superseded document version cannot be replaced." },
+        { status: 400 }
+      );
+    }
+
+    if (document.status === "Archived") {
+      return NextResponse.json(
+        { error: "Archived documents cannot be replaced from the portal workspace." },
+        { status: 400 }
+      );
+    }
+
+    await scanRequestedDocumentUpload({
+      actor,
+      cleanName: input.file.cleanName,
+      file
+    });
+
+    storedDocument = await persistPortalDocumentToR2({
+      actor,
+      cleanName: input.file.cleanName,
+      file
+    });
+
+    const storedReplacement = storedDocument;
+    const nextVersionNumber = getNextPortalDocumentVersionNumber(document.versionNumber);
+    const replacementDocument = await prisma.$transaction(async (tx) => {
+      const replacement = await tx.document.create({
+        data: {
+          workspaceId: document.workspaceId,
+          relatedObjectId: document.relatedObjectId,
+          ownerId: document.ownerId,
+          uploadedByUserId: actor.id,
+          fileName: input.file.cleanName,
+          fileUrl: storedReplacement.fileUrl,
+          storageKey: storedReplacement.storageKey,
+          fileSizeBytes: input.file.size,
+          mimeType: input.file.mimeType,
+          documentType: document.documentType,
+          status: "In Review",
+          requestedAction: input.requestedAction,
+          notes: input.notes,
+          accessLevel: document.accessLevel,
+          lifecycleState: "active",
+          versionNumber: nextVersionNumber,
+          versionLabel: input.versionLabel,
+          previousDocumentId: document.id,
+          replacementReason: input.replacementReason
+        }
+      });
+
+      await tx.document.update({
+        where: { id: document.id },
+        data: {
+          lifecycleState: "superseded",
+          requestedAction: `Superseded by document version ${nextVersionNumber}.`,
+          status: "Superseded",
+          supersededAt: new Date(),
+          supersededByDocumentId: replacement.id
+        }
+      });
+
+      if (document.relatedObjectId) {
+        await tx.timelineEvent.create({
+          data: {
+            workspaceId: actor.workspaceId,
+            objectId: document.relatedObjectId,
+            actorId: actor.id,
+            eventType: "portal_document.version.replaced",
+            summary: `Document version replaced: ${document.documentType} v${nextVersionNumber}`,
+            previousValue: {
+              documentId: document.id,
+              fileName: document.fileName,
+              status: document.status,
+              versionNumber: document.versionNumber
+            },
+            newValue: {
+              documentId: replacement.id,
+              fileName: replacement.fileName,
+              replacementReason: input.replacementReason,
+              status: replacement.status,
+              versionLabel: replacement.versionLabel,
+              versionNumber: replacement.versionNumber
+            }
+          }
+        });
+      }
+
+      await tx.auditEvent.create({
+        data: {
+          workspaceId: actor.workspaceId,
+          actorId: actor.id,
+          actorEmail: actor.email,
+          action: "portal.document.version.replaced",
+          subjectType: "Document",
+          subjectId: replacement.id,
+          summary: `Document version replaced: ${document.documentType} v${nextVersionNumber}`,
+          metadata: {
+            documentType: document.documentType,
+            fileName: replacement.fileName,
+            hasReplacementNote: Boolean(input.notes),
+            previousDocumentId: document.id,
+            previousFileName: document.fileName,
+            replacementReason: input.replacementReason,
+            versionLabel: replacement.versionLabel,
+            versionNumber: replacement.versionNumber
+          }
+        }
+      });
+
+      return replacement;
+    });
+    documentPersisted = true;
+
+    return NextResponse.json({ document: replacementDocument }, { status: 201 });
+  } catch (error) {
+    if (storedDocument && !documentPersisted) {
+      await removePortalDocumentFromR2Quietly(storedDocument.storageKey);
+    }
+
+    return handlePortalDocumentReplacementError(error);
+  }
+}
+
+async function scanRequestedDocumentUpload({
+  actor,
+  cleanName,
+  file
+}: {
+  actor: Awaited<ReturnType<typeof assertPermission>>;
+  cleanName: string;
+  file: File;
+}) {
+  const uploadRoot = getConfiguredPortalDocumentUploadRoot();
+  const scannerCommand = getConfiguredPortalDocumentScannerCommand();
+
+  if (!uploadRoot || !scannerCommand) {
+    throw new PortalDocumentScanUnavailableError(
+      "Document malware scanning is temporarily unavailable."
+    );
+  }
+
+  await scanPortalDocumentUpload({
+    cleanName,
+    file,
+    scannerCommand,
+    uploadRoot,
+    workspaceId: actor.workspaceId
+  });
+}
+
+function handlePortalDocumentReplacementError(error: unknown) {
+  const authResponse = getAuthErrorResponse(error);
+
+  if (authResponse) {
+    return authResponse;
+  }
+
+  if (error instanceof PortalDocumentValidationError) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  if (error instanceof PortalDocumentScanUnavailableError) {
+    return NextResponse.json({ error: error.message }, { status: 503 });
+  }
+
+  if (error instanceof PortalDocumentScanFailedError) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  if (isDatabaseUnavailableError(error)) {
+    return NextResponse.json(
+      { error: "Document replacement storage is temporarily unavailable." },
+      { status: 503 }
+    );
+  }
+
+  throw error;
+}
+
+function isDatabaseUnavailableError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "PrismaClientInitializationError" ||
+      error.message.includes("Can't reach database server") ||
+      error.message.includes("ECONNREFUSED"))
+  );
+}

@@ -10,7 +10,7 @@ type Params = {
 };
 
 export async function GET(_request: Request, { params }: Params) {
-  const user = assertPermission("objects:view");
+  const user = await assertPermission("objects:view");
   const { id } = await params;
 
   const object = await prisma.rosObject.findFirst({
@@ -41,7 +41,7 @@ export async function GET(_request: Request, { params }: Params) {
 }
 
 export async function PATCH(request: Request, { params }: Params) {
-  const user = assertPermission("objects:update");
+  const user = await assertPermission("objects:update");
   const { id } = await params;
   const input = validateObjectUpdate(await request.json());
 
@@ -78,7 +78,7 @@ export async function PATCH(request: Request, { params }: Params) {
 }
 
 export async function DELETE(_request: Request, { params }: Params) {
-  const user = assertPermission("objects:archive");
+  const user = await assertPermission("objects:archive");
   const { id } = await params;
 
   const existing = await prisma.rosObject.findFirst({

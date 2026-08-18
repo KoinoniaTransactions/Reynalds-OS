@@ -16,24 +16,39 @@ model Workspace {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users     User[]
-  roles     Role[]
-  objects   RosObject[]
-  events    TimelineEvent[]
+  users             User[]
+  roles             Role[]
+  objects           RosObject[]
+  events            TimelineEvent[]
+  portalInvitations PortalInvitation[]
+  auditEvents       AuditEvent[]
 }
 
 model User {
-  id          String   @id @default(cuid())
-  workspaceId String
-  name        String
-  email       String   @unique
-  roleId      String?
-  status      String   @default("active")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                 String    @id @default(cuid())
+  workspaceId        String
+  name               String
+  email              String    @unique
+  roleId             String?
+  status             String    @default("active")
+  authProvider       String?
+  authProviderUserId String?
+  mfaRequired        Boolean   @default(false)
+  portalAccessStatus String    @default("active")
+  lastLoginAt        DateTime?
+  invitedAt          DateTime?
+  deactivatedAt      DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  role        Role?     @relation(fields: [roleId], references: [id])
+  workspace             Workspace          @relation(fields: [workspaceId], references: [id])
+  role                  Role?              @relation(fields: [roleId], references: [id])
+  sentPortalInvitations PortalInvitation[] @relation("PortalInvitationInviter")
+  auditEvents           AuditEvent[]       @relation("AuditActor")
+
+  @@unique([authProvider, authProviderUserId])
+  @@index([workspaceId, status])
+  @@index([workspaceId, portalAccessStatus])
 }
 
 model Role {
@@ -49,23 +64,32 @@ model Role {
 }
 
 model RosObject {
-  id          String   @id @default(cuid())
-  workspaceId String
-  objectType  String
-  name        String
-  status      String
-  health      String
-  ownerId     String?
-  nextAction  String?
-  data        Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  archivedAt  DateTime?
+  id                  String    @id @default(cuid())
+  workspaceId         String
+  objectType          String
+  name                String
+  status              String
+  health              String
+  ownerId             String?
+  clientUserId        String?
+  clientObjectId      String?
+  assignedStaffUserId String?
+  backupStaffUserId   String?
+  nextAction          String?
+  data                Json?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  archivedAt          DateTime?
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   events      TimelineEvent[]
   sourceLinks ObjectRelationship[] @relation("source")
   targetLinks ObjectRelationship[] @relation("target")
+
+  @@index([workspaceId, clientUserId])
+  @@index([workspaceId, clientObjectId])
+  @@index([workspaceId, assignedStaffUserId])
+  @@index([workspaceId, backupStaffUserId])
 }
 
 model ObjectRelationship {
@@ -156,14 +180,43 @@ model Notification {
 }
 
 model Document {
-  id              String   @id @default(cuid())
-  workspaceId      String
-  relatedObjectId  String?
-  fileName         String
-  fileUrl          String
-  documentType     String
-  status           String
-  createdAt        DateTime @default(now())
+  id                     String    @id @default(cuid())
+  workspaceId            String
+  relatedObjectId        String?
+  ownerId                String?
+  uploadedByUserId       String?
+  fileName               String
+  fileUrl                String
+  storageKey             String?
+  fileSizeBytes          Int?
+  mimeType               String?
+  documentType           String
+  status                 String
+  requestedAction        String?
+  notes                  String?
+  accessLevel            String    @default("client_and_staff")
+  versionNumber          Int       @default(1)
+  versionLabel           String?
+  previousDocumentId     String?
+  supersededByDocumentId String?
+  replacementReason      String?
+  supersededAt           DateTime?
+  removedAt              DateTime?
+  removedByUserId        String?
+  removalReason          String?
+  lifecycleState         String    @default("active")
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  archivedAt             DateTime?
+
+  @@index([workspaceId, status])
+  @@index([workspaceId, ownerId])
+  @@index([workspaceId, documentType])
+  @@index([workspaceId, previousDocumentId])
+  @@index([workspaceId, supersededByDocumentId])
+  @@index([workspaceId, removedAt])
+  @@index([workspaceId, lifecycleState])
+  @@index([relatedObjectId])
 }
 
 model Invoice {
@@ -187,4 +240,52 @@ model Payment {
   status     String
   receivedAt DateTime?
   createdAt  DateTime @default(now())
+}
+
+model PortalInvitation {
+  id                   String    @id @default(cuid())
+  workspaceId          String
+  email                String
+  name                 String?
+  roleName             String
+  status               String    @default("pending")
+  provider             String    @default("clerk")
+  providerInvitationId String?
+  invitedByUserId      String?
+  clientObjectId       String?
+  serviceContext       Json?
+  expiresAt            DateTime?
+  acceptedAt           DateTime?
+  revokedAt            DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  invitedBy User?     @relation("PortalInvitationInviter", fields: [invitedByUserId], references: [id])
+
+  @@index([workspaceId, email])
+  @@index([workspaceId, status])
+  @@index([provider, providerInvitationId])
+}
+
+model AuditEvent {
+  id          String   @id @default(cuid())
+  workspaceId String
+  actorId     String?
+  actorEmail  String?
+  action      String
+  subjectType String
+  subjectId   String?
+  summary     String
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  actor     User?     @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@index([workspaceId, createdAt])
+  @@index([actorId, createdAt])
+  @@index([subjectType, subjectId])
 }

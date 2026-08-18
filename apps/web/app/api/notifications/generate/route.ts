@@ -37,7 +37,7 @@ async function createNotificationIfMissing(input: {
 }
 
 export async function POST() {
-  const user = assertPermission("objects:update");
+  const user = await assertPermission("objects:update");
 
   const [criticalObjects, highPriorityTasks, pendingInvoices] = await Promise.all([
     prisma.rosObject.findMany({

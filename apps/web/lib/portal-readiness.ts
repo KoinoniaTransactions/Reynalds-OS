@@ -1,0 +1,987 @@
+import { existsSync } from "node:fs";
+import { isAbsolute } from "node:path";
+
+export type PortalReadinessStatus = "attention" | "blocked" | "ready";
+
+export type PortalDatabaseReadiness = {
+  acceptedClientInvitationCount?: number;
+  acceptedStaffInvitationCount?: number;
+  activeClientClerkUserCount?: number;
+  activeStaffClerkUserCount?: number;
+  activeOwnerCount?: number;
+  connected: boolean;
+  detail?: string;
+  missingRoles?: string[];
+  rolesMissingPermissions?: string[];
+  staffWithoutMfaCount?: number;
+  workspaceExists?: boolean;
+};
+
+export type PortalReadinessInput = {
+  aiProviderConfigured?: boolean;
+  aiReviewAuditLoggingEnabled?: boolean;
+  aiReviewCitationsRequired?: boolean;
+  aiReviewEnabled?: boolean;
+  aiReviewHumanApprovalRequired?: boolean;
+  aiReviewPrivacyRulesApproved?: boolean;
+  aiReviewPromptsApproved?: boolean;
+  authRedirectOrigins?: string[];
+  authProvider?: string;
+  clerkPublishableKey?: string;
+  clerkSecretKey?: string;
+  documentMalwareScanCommand?: string;
+  documentR2AccessKeyId?: string;
+  documentR2AccountId?: string;
+  documentR2BucketName?: string;
+  documentR2SecretAccessKey?: string;
+  documentR2UploadsEnabled?: boolean;
+  documentUploadDir?: string;
+  hostedSignInUrl?: string;
+  nodeEnv?: string;
+  paymentProcessorProvider?: string;
+  paymentProcessorSetupUrl?: string;
+  paymentProcessorWebhookUrl?: string;
+  paymentProcessorWebhookSecret?: string;
+  rosAllowMockAuth?: string;
+  socialLoginConfigured?: boolean;
+  socialLoginInviteMatchingVerified?: boolean;
+  socialLoginProviders?: string[];
+  siteUrl?: string;
+  workspaceId: string;
+  database: PortalDatabaseReadiness;
+};
+
+export type PortalReadinessItem = {
+  detail: string;
+  id: string;
+  nextAction?: string;
+  proof: string;
+  status: PortalReadinessStatus;
+  title: string;
+};
+
+export type PortalReadinessGroup = {
+  id: string;
+  items: PortalReadinessItem[];
+  title: string;
+};
+
+export type PortalReadinessReport = {
+  generatedAt: string;
+  groups: PortalReadinessGroup[];
+  overallStatus: PortalReadinessStatus;
+  summary: Array<{
+    label: string;
+    value: string;
+  }>;
+  workspaceId: string;
+};
+
+export const portalReadinessRequiredRoles = [
+  "Owner",
+  "Operations",
+  "Transaction Coordinator",
+  "Contract Support",
+  "Showing Provider",
+  "Customer Success",
+  "Finance",
+  "Viewer",
+  "Client"
+] as const;
+
+const approvedSocialLoginProviders = ["google", "microsoft"] as const;
+
+export function buildPortalReadinessReport(input: PortalReadinessInput): PortalReadinessReport {
+  const groups: PortalReadinessGroup[] = [
+    {
+      id: "login",
+      title: "Login",
+      items: [
+        getAuthProviderReadiness(input),
+        getClerkKeyReadiness(input),
+        getHostedLoginReadiness(input),
+        getAuthRedirectReadiness(input),
+        getMockAuthReadiness(input),
+        getSocialLoginReadiness(input)
+      ]
+    },
+    {
+      id: "data",
+      title: "Data",
+      items: [
+        getDatabaseConnectionReadiness(input.database),
+        getWorkspaceReadiness(input.database, input.workspaceId),
+        getRoleSeedReadiness(input.database),
+        getOwnerReadiness(input.database),
+        getStaffMfaReadiness(input.database),
+        getInvitationAcceptanceReadiness(input.database),
+        getProviderUserVerificationReadiness(input.database)
+      ]
+    },
+    {
+      id: "portal",
+      title: "Portal Workflows",
+      items: [
+        readyItem(
+          "portal-routes",
+          "Protected client and employee routes",
+          "Client dashboard, documents, billing, employee access, employee dashboard, and employee billing routes are permission-gated.",
+          "Route guards use portal permissions and redirect signed-out users to the login path."
+        ),
+        readyItem(
+          "portal-requests",
+          "Client requests",
+          "Showing requests, external access requests, and billing setup requests now create portal records without accepting passwords or card numbers.",
+          "The request APIs validate sensitive notes and write audit history."
+        ),
+        readyItem(
+          "portal-assignment",
+          "Client and staff assignment fields",
+          "Work objects now separate client visibility from internal staff assignment.",
+          "RosObject has clientUserId, clientObjectId, assignedStaffUserId, and backupStaffUserId."
+        )
+      ]
+    },
+    {
+      id: "documents",
+      title: "Documents",
+      items: [
+        getDocumentStorageReadiness(input),
+        getDocumentScannerReadiness(input),
+        readyItem(
+          "document-downloads",
+          "Authorized downloads",
+          "Portal documents have a protected download route that checks user permissions and rejects unsafe storage paths.",
+          "Downloads use stored private file keys instead of public file links."
+        )
+      ]
+    },
+    {
+      id: "billing",
+      title: "Billing",
+      items: [
+        readyItem(
+          "billing-metadata",
+          "Billing setup metadata",
+          "Billing setup requests collect service, consent, billing model, and safe notes without storing card data.",
+          "The portal stores BillingSetupRequest records and rejects raw payment secrets."
+        ),
+        getPaymentProcessorReadiness(input),
+        getPaymentSetupUrlReadiness(input),
+        getPaymentWebhookUrlReadiness(input),
+        getPaymentWebhookReadiness(input)
+      ]
+    },
+    {
+      id: "oversight",
+      title: "Oversight",
+      items: [
+        readyItem(
+          "readiness-view",
+          "Live readiness view",
+          "Staff can review the current login, data, document, portal, and AI gates from one protected page.",
+          "This page is generated from current configuration and database checks."
+        ),
+        readyItem(
+          "staff-review-center",
+          "Staff review center",
+          "Koinonia has a protected rules-based review queue for missing assignments, documents, billing setup, access, and showing issues.",
+          "/employee/review uses current portal records and does not rely on generative output."
+        ),
+        getAiReadiness(input)
+      ]
+    }
+  ];
+  const items = groups.flatMap((group) => group.items);
+  const readyCount = items.filter((item) => item.status === "ready").length;
+  const attentionCount = items.filter((item) => item.status === "attention").length;
+  const blockedCount = items.filter((item) => item.status === "blocked").length;
+
+  return {
+    generatedAt: new Date().toISOString(),
+    groups,
+    overallStatus: blockedCount > 0 ? "blocked" : attentionCount > 0 ? "attention" : "ready",
+    summary: [
+      { label: "Ready", value: String(readyCount) },
+      { label: "Needs Attention", value: String(attentionCount) },
+      { label: "Blocked", value: String(blockedCount) },
+      { label: "Total Checks", value: String(items.length) }
+    ],
+    workspaceId: input.workspaceId
+  };
+}
+
+function getAuthProviderReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const provider = input.authProvider ?? "unset";
+
+  if (provider === "clerk") {
+    return readyItem(
+      "auth-provider",
+      "Managed auth provider",
+      "Production login is set to Clerk.",
+      "AUTH_PROVIDER is clerk."
+    );
+  }
+
+  if (provider === "managed") {
+    return attentionItem(
+      "auth-provider",
+      "Managed auth provider",
+      "Managed mode can fall back to mock auth when keys are missing.",
+      "AUTH_PROVIDER is managed.",
+      "Use AUTH_PROVIDER=clerk before accepting real client or staff data."
+    );
+  }
+
+  return blockedItem(
+    "auth-provider",
+    "Managed auth provider",
+    `The current provider is ${provider}.`,
+    "Production portal login requires Clerk-backed managed authentication.",
+    "Set AUTH_PROVIDER=clerk for production."
+  );
+}
+
+function getClerkKeyReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const secretReadiness = getCredentialReadiness(input.clerkSecretKey, "sk_live_");
+  const publishableReadiness = getCredentialReadiness(input.clerkPublishableKey, "pk_live_");
+
+  if (secretReadiness.ok && publishableReadiness.ok) {
+    return readyItem(
+      "clerk-keys",
+      "Clerk keys",
+      "Clerk server and browser keys look production-ready.",
+      "Both Clerk environment variables are present and use production key prefixes."
+    );
+  }
+
+  return blockedItem(
+    "clerk-keys",
+    "Clerk keys",
+    "Clerk cannot run production login until both production keys are configured.",
+    getCredentialProof(secretReadiness.detail, publishableReadiness.detail),
+    "Add production Clerk keys in the deployment environment."
+  );
+}
+
+function getHostedLoginReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const hostedSignInUrl = input.hostedSignInUrl?.trim();
+
+  if (hostedSignInUrl && isAllowedHostedLoginUrl(hostedSignInUrl, input.nodeEnv)) {
+    return readyItem(
+      "hosted-login",
+      "Hosted login route",
+      "The sign-in path is configured for redirects back into the portal.",
+      `Hosted sign-in target: ${hostedSignInUrl}.`
+    );
+  }
+
+  if (hostedSignInUrl) {
+    return blockedItem(
+      "hosted-login",
+      "Hosted login route",
+      "The sign-in URL must be a same-site portal path or a public HTTPS login destination.",
+      `Invalid hosted sign-in target: ${hostedSignInUrl}.`,
+      "Use /sign-in or a public HTTPS managed-auth login URL."
+    );
+  }
+
+  return attentionItem(
+    "hosted-login",
+    "Hosted login route",
+    "The app can use the internal sign-in route, but production should explicitly configure the hosted sign-in URL.",
+    "No hosted sign-in URL is set.",
+    "Set NEXT_PUBLIC_CLERK_SIGN_IN_URL or NEXT_PUBLIC_AUTH_SIGN_IN_URL."
+  );
+}
+
+function getAuthRedirectReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const configuredOrigins = [input.siteUrl, ...(input.authRedirectOrigins ?? [])]
+    .map((origin) => origin?.trim())
+    .filter((origin): origin is string => Boolean(origin));
+  const invalidOrigins = configuredOrigins.filter((origin) => !isPublicHttpsUrl(origin));
+
+  if (configuredOrigins.length === 0) {
+    return attentionItem(
+      "auth-redirect-origins",
+      "Invite redirect origins",
+      "Invitation redirects are limited to same-site paths until production origins are configured.",
+      "No NEXT_PUBLIC_SITE_URL or auth redirect allowlist is set.",
+      "Set NEXT_PUBLIC_SITE_URL to the production Koinonia domain before sending provider invitations."
+    );
+  }
+
+  if (invalidOrigins.length > 0) {
+    return blockedItem(
+      "auth-redirect-origins",
+      "Invite redirect origins",
+      "Production invitation redirects must use public HTTPS Koinonia-owned origins.",
+      `Invalid origin(s): ${invalidOrigins.join(", ")}.`,
+      "Use NEXT_PUBLIC_SITE_URL and KOINONIA_ALLOWED_AUTH_REDIRECT_ORIGINS with public HTTPS domains only."
+    );
+  }
+
+  return readyItem(
+    "auth-redirect-origins",
+    "Invite redirect origins",
+    "Provider invitation redirects are restricted to configured production origins or same-site portal paths.",
+    `Configured origin(s): ${configuredOrigins.join(", ")}.`
+  );
+}
+
+function getMockAuthReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const mockEnabled = input.rosAllowMockAuth === "true";
+  const production = input.nodeEnv === "production";
+
+  if (!mockEnabled) {
+    return readyItem(
+      "mock-auth",
+      "Mock auth safety",
+      "Mock auth is not explicitly enabled.",
+      "ROS_ALLOW_MOCK_AUTH is not true."
+    );
+  }
+
+  return production
+    ? blockedItem(
+        "mock-auth",
+        "Mock auth safety",
+        "Mock auth is enabled in production.",
+        "Real portal data must not run with mock users.",
+        "Set ROS_ALLOW_MOCK_AUTH=false in production."
+      )
+    : attentionItem(
+        "mock-auth",
+        "Mock auth safety",
+        "Mock auth is enabled for local preview.",
+        "This is acceptable for local testing only.",
+        "Keep this disabled in production."
+      );
+}
+
+function getSocialLoginReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const configuredProviders = getApprovedSocialLoginProviders(input.socialLoginProviders ?? []);
+  const unsupportedProviders = getUnsupportedSocialLoginProviders(input.socialLoginProviders ?? []);
+  const providerProof = getSocialLoginProviderProof(configuredProviders, unsupportedProviders);
+
+  if (!input.socialLoginConfigured) {
+    return attentionItem(
+      "social-login",
+      "Social login",
+      "Google and Microsoft login are appropriate for Realtor clients and staff, but must stay invitation-gated.",
+      "KOINONIA_SOCIAL_LOGIN_CONFIGURED is not true.",
+      "Enable selected OAuth providers in Clerk, then verify invite matching, role assignment, and staff MFA."
+    );
+  }
+
+  if (configuredProviders.length === 0 || unsupportedProviders.length > 0) {
+    return blockedItem(
+      "social-login",
+      "Social login",
+      "Social login is marked enabled, but the approved provider list is missing or unsupported.",
+      providerProof,
+      "Set KOINONIA_SOCIAL_LOGIN_PROVIDERS to google, microsoft, or both after enabling those providers in Clerk."
+    );
+  }
+
+  if (!input.socialLoginInviteMatchingVerified) {
+    return blockedItem(
+      "social-login",
+      "Social login",
+      "Social login is enabled, but OAuth invite matching has not been verified.",
+      `${providerProof} Invite matching test is not marked verified.`,
+      "Accept one invited client login and one invited staff login through the enabled social provider before launch."
+    );
+  }
+
+  return readyItem(
+    "social-login",
+    "Social login",
+    "Approved Clerk social login providers are configured and invite matching has been verified.",
+    `${providerProof} Invite matching test is verified.`
+  );
+}
+
+function getDatabaseConnectionReadiness(database: PortalDatabaseReadiness): PortalReadinessItem {
+  if (database.connected) {
+    return readyItem(
+      "database",
+      "Database connection",
+      "The portal can reach the production data store.",
+      database.detail ?? "Database check passed."
+    );
+  }
+
+  return blockedItem(
+    "database",
+    "Database connection",
+    "The portal cannot prove database readiness right now.",
+    database.detail ?? "Database check did not run.",
+    "Run the full readiness verifier with a production DATABASE_URL."
+  );
+}
+
+function getWorkspaceReadiness(database: PortalDatabaseReadiness, workspaceId: string): PortalReadinessItem {
+  if (!database.connected) {
+    return blockedItem(
+      "workspace",
+      "Koinonia workspace",
+      "The configured portal workspace could not be checked.",
+      workspaceId,
+      "Run the full readiness verifier with a production DATABASE_URL."
+    );
+  }
+
+  if (database.workspaceExists) {
+    return readyItem(
+      "workspace",
+      "Koinonia workspace",
+      "The configured portal workspace exists.",
+      workspaceId
+    );
+  }
+
+  return blockedItem(
+    "workspace",
+    "Koinonia workspace",
+    "The configured portal workspace was not found.",
+    workspaceId,
+    "Seed or configure the Koinonia workspace before production login."
+  );
+}
+
+function getRoleSeedReadiness(database: PortalDatabaseReadiness): PortalReadinessItem {
+  const missingRoles = database.missingRoles ?? [];
+  const rolesMissingPermissions = database.rolesMissingPermissions ?? [];
+
+  if (missingRoles.length === 0 && rolesMissingPermissions.length === 0 && database.connected) {
+    return readyItem(
+      "roles",
+      "Portal roles",
+      "All approved Koinonia portal roles and permission lists are seeded.",
+      `${portalReadinessRequiredRoles.length} required roles are present with permissions.`
+    );
+  }
+
+  return blockedItem(
+    "roles",
+    "Portal roles",
+    "One or more required portal roles are missing.",
+    getRoleReadinessProof(missingRoles, rolesMissingPermissions),
+    "Run the database seed and full readiness verifier."
+  );
+}
+
+function getRoleReadinessProof(missingRoles: string[], rolesMissingPermissions: string[]): string {
+  if (missingRoles.length > 0) {
+    return `Missing: ${missingRoles.join(", ")}`;
+  }
+
+  if (rolesMissingPermissions.length > 0) {
+    return `Missing permissions: ${rolesMissingPermissions.join(", ")}`;
+  }
+
+  return "Role check did not complete.";
+}
+
+function getOwnerReadiness(database: PortalDatabaseReadiness): PortalReadinessItem {
+  if (!database.connected) {
+    return blockedItem(
+      "owner",
+      "Active owner access",
+      "The owner access check could not run.",
+      "Owner check did not complete.",
+      "Run the full readiness verifier with a production DATABASE_URL."
+    );
+  }
+
+  const ownerCount = database.activeOwnerCount ?? 0;
+
+  if (ownerCount > 0) {
+    return readyItem(
+      "owner",
+      "Active owner access",
+      "At least one active Owner portal user exists.",
+      `${ownerCount} owner user(s) found.`
+    );
+  }
+
+  return blockedItem(
+    "owner",
+    "Active owner access",
+    "The portal has no active Owner user to administer access.",
+    "No active owner found.",
+    "Create or activate an Owner user before inviting real clients."
+  );
+}
+
+function getStaffMfaReadiness(database: PortalDatabaseReadiness): PortalReadinessItem {
+  if (!database.connected) {
+    return blockedItem(
+      "staff-mfa",
+      "Staff MFA",
+      "The staff MFA check could not run.",
+      "MFA check did not complete.",
+      "Run the full readiness verifier with a production DATABASE_URL."
+    );
+  }
+
+  const staffWithoutMfaCount = database.staffWithoutMfaCount ?? 0;
+
+  if (database.connected && staffWithoutMfaCount === 0) {
+    return readyItem(
+      "staff-mfa",
+      "Staff MFA",
+      "Active staff users are marked as MFA-required.",
+      "No active staff users are missing the MFA flag."
+    );
+  }
+
+  return blockedItem(
+    "staff-mfa",
+    "Staff MFA",
+    "Staff MFA is required before production client files or billing work are accepted.",
+    `${staffWithoutMfaCount} active staff user(s) missing MFA requirement.`,
+    "Require MFA for every active non-client portal user."
+  );
+}
+
+function getInvitationAcceptanceReadiness(database: PortalDatabaseReadiness): PortalReadinessItem {
+  if (!database.connected) {
+    return blockedItem(
+      "invite-acceptance",
+      "Invite acceptance test",
+      "The invitation acceptance check could not run.",
+      "Invite acceptance check did not complete.",
+      "Run the full readiness verifier with a production DATABASE_URL."
+    );
+  }
+
+  const clientCount = database.acceptedClientInvitationCount ?? 0;
+  const staffCount = database.acceptedStaffInvitationCount ?? 0;
+
+  if (clientCount > 0 && staffCount > 0) {
+    return readyItem(
+      "invite-acceptance",
+      "Invite acceptance test",
+      "At least one client invitation and one staff invitation have been accepted.",
+      `${clientCount} client invite(s) and ${staffCount} staff invite(s) accepted.`
+    );
+  }
+
+  return blockedItem(
+    "invite-acceptance",
+    "Invite acceptance test",
+    "Production login needs a real accepted invite test for both client and staff access.",
+    `${clientCount} client invite(s) and ${staffCount} staff invite(s) accepted.`,
+    "Send and accept one real client invite and one real staff invite before production launch."
+  );
+}
+
+
+function getProviderUserVerificationReadiness(database: PortalDatabaseReadiness): PortalReadinessItem {
+  if (!database.connected) {
+    return blockedItem(
+      "provider-user-verification",
+      "Real provider user verification",
+      "The real provider user verification check could not run.",
+      "Provider-backed portal user verification did not complete.",
+      "Run the full readiness verifier with a production DATABASE_URL."
+    );
+  }
+
+  const clientCount = database.activeClientClerkUserCount ?? 0;
+  const staffCount = database.activeStaffClerkUserCount ?? 0;
+
+  if (clientCount > 0 && staffCount > 0) {
+    return readyItem(
+      "provider-user-verification",
+      "Real provider user verification",
+      "At least one active client and one active staff user are linked to Clerk identities.",
+      `${clientCount} active client user(s) and ${staffCount} active staff user(s) linked to Clerk.`
+    );
+  }
+
+  return blockedItem(
+    "provider-user-verification",
+    "Real provider user verification",
+    "Production login requires real Clerk-linked client and staff users.",
+    `${clientCount} active client user(s) and ${staffCount} active staff user(s) linked to Clerk.`,
+    "Complete real Clerk login for at least one client and one staff user before production launch."
+  );
+}
+
+function getDocumentStorageReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const missingR2Settings = [
+    [input.documentR2AccountId, "R2_ACCOUNT_ID"],
+    [input.documentR2AccessKeyId, "R2_ACCESS_KEY_ID"],
+    [input.documentR2SecretAccessKey, "R2_SECRET_ACCESS_KEY"],
+    [input.documentR2BucketName, "R2_BUCKET_NAME"]
+  ]
+    .filter(([value]) => !isConfiguredValue(String(value ?? "")))
+    .map(([, label]) => label);
+
+  if (missingR2Settings.length === 0 && input.documentR2UploadsEnabled) {
+    return readyItem(
+      "document-storage",
+      "Private document storage",
+      "Cloudflare R2 private document storage is configured for uploads and downloads.",
+      "R2 credentials, bucket, and PORTAL_DOCUMENT_R2_UPLOADS_ENABLED=true are configured."
+    );
+  }
+
+  return blockedItem(
+    "document-storage",
+    "Private document storage",
+    "Clients cannot upload real files until private object storage is configured.",
+    missingR2Settings.length
+      ? `Missing ${missingR2Settings.join(", ")}.`
+      : "R2 credentials are present, but uploads are not explicitly enabled.",
+    "Configure Cloudflare R2 credentials, R2_BUCKET_NAME, and PORTAL_DOCUMENT_R2_UPLOADS_ENABLED=true."
+  );
+}
+
+function getDocumentScannerReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const command = input.documentMalwareScanCommand?.trim();
+  const uploadDir = input.documentUploadDir?.trim();
+
+  if (command && isAbsolute(command) && existsSync(command) && uploadDir && isAbsolute(uploadDir)) {
+    return readyItem(
+      "document-scanner",
+      "Document malware scanning",
+      "Document upload scanning is configured before R2 persistence.",
+      "Scanner command and private scan-temp directory are configured."
+    );
+  }
+
+  return blockedItem(
+    "document-scanner",
+    "Document malware scanning",
+    "Clients cannot upload real files until malware scanning is configured.",
+    !uploadDir || !isAbsolute(uploadDir)
+      ? "Scan-temp upload directory is missing or not absolute."
+      : command
+        ? "Scanner command is missing, relative, or unavailable."
+        : "Scanner command is missing.",
+    "Set PORTAL_DOCUMENT_UPLOAD_DIR to an absolute private scan-temp path and PORTAL_DOCUMENT_MALWARE_SCAN_COMMAND to an absolute scanner executable."
+  );
+}
+
+function getPaymentProcessorReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const provider = input.paymentProcessorProvider?.trim();
+
+  if (provider && !isPlaceholderCredential(provider)) {
+    return readyItem(
+      "payment-processor",
+      "Payment processor",
+      "A payment processor provider is named for processor-hosted setup.",
+      `KOINONIA_PAYMENT_PROCESSOR_PROVIDER is set to ${provider}.`
+    );
+  }
+
+  return blockedItem(
+    "payment-processor",
+    "Payment processor",
+    "Billing can track setup requests, but live payment methods require an approved processor.",
+    provider ? "Payment processor provider looks like a placeholder." : "Payment processor provider is missing.",
+    "Set KOINONIA_PAYMENT_PROCESSOR_PROVIDER before accepting live payment setup."
+  );
+}
+
+function getPaymentSetupUrlReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const setupUrl = input.paymentProcessorSetupUrl?.trim();
+
+  if (setupUrl && isPublicHttpsUrl(setupUrl) && !isPlaceholderCredential(setupUrl)) {
+    return readyItem(
+      "payment-setup-url",
+      "Processor-hosted setup URL",
+      "Clients can be sent to a secure processor-hosted payment setup destination.",
+      "KOINONIA_PAYMENT_SETUP_URL is a public HTTPS URL."
+    );
+  }
+
+  return blockedItem(
+    "payment-setup-url",
+    "Processor-hosted setup URL",
+    "The portal must not collect card numbers directly.",
+    getPaymentUrlProof(setupUrl),
+    "Set KOINONIA_PAYMENT_SETUP_URL to a public HTTPS processor-hosted setup destination."
+  );
+}
+
+function getPaymentWebhookReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const webhookSecret = input.paymentProcessorWebhookSecret?.trim();
+
+  if (webhookSecret && !isPlaceholderCredential(webhookSecret)) {
+    return readyItem(
+      "payment-webhook-secret",
+      "Payment webhook secret",
+      "A payment webhook secret is configured so processor events can be verified before payment state changes are trusted.",
+      "KOINONIA_PAYMENT_WEBHOOK_SECRET is present."
+    );
+  }
+
+  return blockedItem(
+    "payment-webhook-secret",
+    "Payment webhook secret",
+    "Koinonia needs verified processor events before treating payment setup, failed payments, refunds, or charge status as final.",
+    webhookSecret ? "Payment webhook secret looks like a placeholder." : "Payment webhook secret is missing.",
+    "Configure KOINONIA_PAYMENT_WEBHOOK_SECRET before payment status is treated as production-ready."
+  );
+}
+
+function getPaymentWebhookUrlReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  const webhookUrl = input.paymentProcessorWebhookUrl?.trim();
+
+  if (webhookUrl && isPublicHttpsUrl(webhookUrl) && !isPlaceholderCredential(webhookUrl)) {
+    return readyItem(
+      "payment-webhook-url",
+      "Payment webhook endpoint",
+      "A public HTTPS endpoint is configured for verified processor payment events.",
+      "KOINONIA_PAYMENT_WEBHOOK_URL is a public HTTPS URL."
+    );
+  }
+
+  return blockedItem(
+    "payment-webhook-url",
+    "Payment webhook endpoint",
+    "The payment processor needs a public HTTPS webhook destination before payment status can be trusted.",
+    getPaymentUrlProof(webhookUrl),
+    "Set KOINONIA_PAYMENT_WEBHOOK_URL to the public HTTPS webhook endpoint configured in the payment processor."
+  );
+}
+
+function getAiReadiness(input: PortalReadinessInput): PortalReadinessItem {
+  if (!input.aiReviewEnabled) {
+    return attentionItem(
+      "ai-review",
+      "AI staff review",
+      "AI can help staff prioritize missed deadlines, missing documents, billing gaps, showing access issues, and unsigned approvals after the rules-based review center is proven.",
+      "KOINONIA_AI_REVIEW_ENABLED is not true.",
+      "Keep AI read-only until model configuration, privacy rules, citations, audit events, and human approval gates are verified."
+    );
+  }
+
+  if (!input.aiProviderConfigured) {
+    return blockedItem(
+      "ai-review",
+      "AI staff review",
+      "AI review is marked enabled, but no AI provider configuration is present.",
+      "OPENAI_API_KEY or AI_PROVIDER is missing.",
+      "Configure the approved AI provider before enabling staff AI review."
+    );
+  }
+
+  const missingControls = getMissingAiReviewControls(input);
+
+  if (missingControls.length > 0) {
+    return blockedItem(
+      "ai-review",
+      "AI staff review",
+      "AI review is marked enabled, but launch controls are incomplete.",
+      `Missing: ${missingControls.join(", ")}.`,
+      "Approve checklist prompts, privacy rules, citations, audit logging, and human approval before enabling AI review."
+    );
+  }
+
+  return readyItem(
+    "ai-review",
+    "AI staff review",
+    "AI review has provider configuration and required launch controls.",
+    "Provider, prompts, privacy rules, citations, audit logging, and human approval are marked ready."
+  );
+}
+
+function readyItem(id: string, title: string, detail: string, proof: string): PortalReadinessItem {
+  return { detail, id, proof, status: "ready", title };
+}
+
+function attentionItem(
+  id: string,
+  title: string,
+  detail: string,
+  proof: string,
+  nextAction?: string
+): PortalReadinessItem {
+  return { detail, id, nextAction, proof, status: "attention", title };
+}
+
+function blockedItem(
+  id: string,
+  title: string,
+  detail: string,
+  proof: string,
+  nextAction?: string
+): PortalReadinessItem {
+  return { detail, id, nextAction, proof, status: "blocked", title };
+}
+
+function isPresent(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function getCredentialReadiness(
+  value: unknown,
+  productionPrefix: "pk_live_" | "sk_live_"
+): { detail: string; ok: boolean } {
+  if (!isPresent(value)) {
+    return { detail: productionPrefix === "sk_live_" ? "Secret key is missing." : "Publishable key is missing.", ok: false };
+  }
+
+  const credential = value.trim();
+
+  if (isPlaceholderCredential(credential)) {
+    return {
+      detail:
+        productionPrefix === "sk_live_"
+          ? "Secret key still looks like a placeholder."
+          : "Publishable key still looks like a placeholder.",
+      ok: false
+    };
+  }
+
+  if (!credential.startsWith(productionPrefix)) {
+    return {
+      detail:
+        productionPrefix === "sk_live_"
+          ? "Secret key does not use the sk_live_ production prefix."
+          : "Publishable key does not use the pk_live_ production prefix.",
+      ok: false
+    };
+  }
+
+  return { detail: "Production key shape found.", ok: true };
+}
+
+function getCredentialProof(secretDetail: string, publishableDetail: string): string {
+  if (secretDetail === "Production key shape found.") {
+    return publishableDetail;
+  }
+
+  if (publishableDetail === "Production key shape found.") {
+    return secretDetail;
+  }
+
+  return `${secretDetail} ${publishableDetail}`;
+}
+
+function isPlaceholderCredential(value: string): boolean {
+  return /\b(placeholder|changeme|change-me|dummy|example|fake|todo|your-key|your_key)\b/i.test(value);
+}
+
+function isConfiguredValue(value: string): boolean {
+  return isPresent(value) && !isPlaceholderCredential(value.trim());
+}
+
+function getPaymentUrlProof(setupUrl: string | undefined): string {
+  if (!setupUrl) {
+    return "Payment setup URL is missing.";
+  }
+
+  if (isPlaceholderCredential(setupUrl)) {
+    return "Payment setup URL looks like a placeholder.";
+  }
+
+  return "Payment setup URL must be public HTTPS and cannot point to localhost.";
+}
+
+function isPublicHttpsUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+
+    return (
+      url.protocol === "https:" &&
+      !isPlaceholderCredential(value) &&
+      url.hostname !== "localhost" &&
+      url.hostname !== "127.0.0.1" &&
+      url.hostname !== "::1" &&
+      url.hostname !== "[::1]"
+    );
+  } catch {
+    return false;
+  }
+}
+
+function isAllowedHostedLoginUrl(value: string, nodeEnv?: string): boolean {
+  const trimmed = value.trim();
+
+  if (isSameSitePath(trimmed)) {
+    return true;
+  }
+
+  if (nodeEnv !== "production" && isLocalPreviewUrl(trimmed)) {
+    return true;
+  }
+
+  return isPublicHttpsUrl(trimmed);
+}
+
+function isSameSitePath(value: string): boolean {
+  return value.startsWith("/") && !value.startsWith("//") && !hasControlCharacter(value);
+}
+
+function isLocalPreviewUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+
+    return (
+      (url.protocol === "http:" || url.protocol === "https:") &&
+      (url.hostname === "localhost" ||
+        url.hostname === "127.0.0.1" ||
+        url.hostname === "::1" ||
+        url.hostname === "[::1]")
+    );
+  } catch {
+    return false;
+  }
+}
+
+function hasControlCharacter(value: string): boolean {
+  return /[\u0000-\u001f\u007f]/.test(value);
+}
+
+function getApprovedSocialLoginProviders(providers: string[]): string[] {
+  return providers
+    .map(normalizeSocialLoginProvider)
+    .filter((provider) => approvedSocialLoginProviders.includes(provider as typeof approvedSocialLoginProviders[number]));
+}
+
+function getUnsupportedSocialLoginProviders(providers: string[]): string[] {
+  return providers
+    .map(normalizeSocialLoginProvider)
+    .filter((provider) => !approvedSocialLoginProviders.includes(provider as typeof approvedSocialLoginProviders[number]));
+}
+
+function normalizeSocialLoginProvider(provider: string): string {
+  return provider.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+function getSocialLoginProviderProof(approvedProviders: string[], unsupportedProviders: string[]): string {
+  if (unsupportedProviders.length > 0) {
+    return `Unsupported provider(s): ${unsupportedProviders.join(", ")}.`;
+  }
+
+  if (approvedProviders.length === 0) {
+    return "No approved social login providers are listed.";
+  }
+
+  return `Approved provider(s): ${approvedProviders.map(getSocialLoginProviderLabel).join(", ")}.`;
+}
+
+function getSocialLoginProviderLabel(provider: string): string {
+  if (provider === "google") return "Google";
+  if (provider === "microsoft") return "Microsoft";
+  return provider;
+}
+
+function getMissingAiReviewControls(input: PortalReadinessInput): string[] {
+  return [
+    [input.aiReviewPromptsApproved, "approved checklist prompts"],
+    [input.aiReviewPrivacyRulesApproved, "privacy rules"],
+    [input.aiReviewCitationsRequired, "source citations"],
+    [input.aiReviewAuditLoggingEnabled, "audit logging"],
+    [input.aiReviewHumanApprovalRequired, "human approval"]
+  ]
+    .filter(([ready]) => !ready)
+    .map(([, label]) => label as string);
+}

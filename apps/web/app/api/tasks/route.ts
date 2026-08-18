@@ -5,35 +5,63 @@ import { assertPermission } from "../../../lib/auth";
 import { prisma } from "../../../lib/db";
 
 export async function GET(request: Request) {
-  const user = assertPermission("tasks:view");
+  const user = await assertPermission("tasks:view");
   const url = new URL(request.url);
   const relatedObjectId = url.searchParams.get("relatedObjectId");
   const status = url.searchParams.get("status");
   const priority = url.searchParams.get("priority");
+  const owner = url.searchParams.get("owner");
+
+  if (owner && owner !== "me") {
+    return NextResponse.json(
+      { error: 'owner must be "me" when provided.' },
+      { status: 400 }
+    );
+  }
 
   const tasks = await prisma.task.findMany({
     where: {
       workspaceId: user.workspaceId,
       ...(relatedObjectId ? { relatedObjectId } : {}),
       ...(status ? { status } : {}),
-      ...(priority ? { priority } : {})
+      ...(priority ? { priority } : {}),
+      ...(owner === "me" ? { ownerId: user.id } : {})
     },
     orderBy: [{ dueAt: "asc" }, { createdAt: "desc" }]
   });
 
   const relatedObjectIds = [...new Set(tasks.map((task: { relatedObjectId: string | null }) => task.relatedObjectId).filter(Boolean))] as string[];
-  const relatedObjects = await prisma.rosObject.findMany({
-    where: {
-      workspaceId: user.workspaceId,
-      id: { in: relatedObjectIds }
-    }
-  });
+  const ownerIds = [...new Set(tasks.map((task: { ownerId: string | null }) => task.ownerId).filter(Boolean))] as string[];
 
-  return NextResponse.json({ tasks, relatedObjects });
+  const [relatedObjects, ownerUsers] = await Promise.all([
+    prisma.rosObject.findMany({
+      where: {
+        workspaceId: user.workspaceId,
+        id: { in: relatedObjectIds }
+      }
+    }),
+    prisma.user.findMany({
+      where: {
+        workspaceId: user.workspaceId,
+        id: { in: ownerIds }
+      },
+      include: {
+        role: true
+      }
+    })
+  ]);
+
+  const taskOwners = ownerUsers.map((ownerUser) => ({
+    id: ownerUser.id,
+    name: ownerUser.name,
+    role: ownerUser.role?.name ?? "Staff"
+  }));
+
+  return NextResponse.json({ tasks, relatedObjects, taskOwners });
 }
 
 export async function POST(request: Request) {
-  const user = assertPermission("tasks:update");
+  const user = await assertPermission("tasks:update");
   const body = await request.json();
 
   if (!body.title) {

@@ -4,10 +4,14 @@ export const dynamic = "force-dynamic";
 import { assertPermission } from "../../../lib/auth";
 import { prisma } from "../../../lib/db";
 import type { Prisma } from "@reynalds-os/database";
+import {
+  buildPersistedPortalPlaybookSnapshot,
+  buildPortalPlaybook
+} from "../../../lib/portal-playbook";
 import { validateObjectCreate } from "../../../lib/validation";
 
 export async function GET(request: Request) {
-  const user = assertPermission("objects:view");
+  const user = await assertPermission("objects:view");
   const url = new URL(request.url);
   const objectType = url.searchParams.get("objectType");
   const health = url.searchParams.get("health");
@@ -27,9 +31,39 @@ export async function GET(request: Request) {
   return NextResponse.json({ objects });
 }
 
+function buildObjectDataWithPlaybook({
+  data,
+  name,
+  objectType
+}: {
+  data?: Record<string, unknown>;
+  name: string;
+  objectType: string;
+}): Record<string, unknown> | undefined {
+  const nextData = data ? { ...data } : {};
+  const playbook = buildPortalPlaybook({
+    data: nextData,
+    name,
+    objectType
+  });
+
+  if (playbook) {
+    nextData.playbook = buildPersistedPortalPlaybookSnapshot(
+      playbook
+    );
+  }
+
+  return Object.keys(nextData).length ? nextData : undefined;
+}
+
 export async function POST(request: Request) {
-  const user = assertPermission("objects:create");
+  const user = await assertPermission("objects:create");
   const input = validateObjectCreate(await request.json());
+  const objectData = buildObjectDataWithPlaybook({
+    data: input.data,
+    name: input.name,
+    objectType: input.objectType
+  });
 
   const object = await prisma.rosObject.create({
     data: {
@@ -39,8 +73,12 @@ export async function POST(request: Request) {
       status: input.status ?? "Open",
       health: input.health ?? "Healthy",
       ownerId: input.ownerId,
+      clientUserId: input.clientUserId,
+      clientObjectId: input.clientObjectId,
+      assignedStaffUserId: input.assignedStaffUserId,
+      backupStaffUserId: input.backupStaffUserId,
       nextAction: input.nextAction,
-      data: input.data as Prisma.InputJsonValue | undefined
+      data: objectData as Prisma.InputJsonValue | undefined
     }
   });
 

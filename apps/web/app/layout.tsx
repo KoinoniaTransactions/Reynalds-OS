@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { absoluteUrl, seoConfig } from "../config/seo.config";
+import { AuthProvider } from "../components/auth/AuthProvider";
 import { MarketingAttribution } from "../components/site/MarketingAttribution/MarketingAttribution";
 import "@reynalds-os/design-system/styles.css";
 import "../styles/koinonia-layout.css";
@@ -59,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <MarketingAttribution />
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

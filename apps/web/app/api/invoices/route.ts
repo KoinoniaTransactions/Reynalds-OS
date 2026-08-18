@@ -9,7 +9,7 @@ function toMoneyString(value: unknown) {
 }
 
 export async function GET() {
-  const user = assertPermission("finance:view");
+  const user = await assertPermission("finance:view");
 
   const invoices = await prisma.invoice.findMany({
     where: { workspaceId: user.workspaceId },
@@ -25,7 +25,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const user = assertPermission("finance:update");
+  const user = await assertPermission("finance:update");
   const body = await request.json();
 
   if (!body.clientObjectId || !body.amount) {
