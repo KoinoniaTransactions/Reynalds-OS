@@ -31,8 +31,9 @@ Until the activation decision is made:
 5. Content Production & Publishing Playbook — social-content operating logic
 6. Email Marketing Operations Playbook — email operating logic
 7. Meta Ads Build & Launch Playbook — Meta paid operating logic
-8. 30-Day Marketing Launch Calendar — prepared activation schedule
-9. Channel-specific build playbooks — exact execution mechanics
+8. Brokerage Relationship Playbook — brokerage/account-based relationship logic
+9. 30-Day Marketing Launch Calendar — prepared activation schedule
+10. Channel-specific build playbooks — exact execution mechanics
 
 ## Build Status
 
@@ -133,12 +134,14 @@ No marketing email is sent during build mode.
 
 - [x] brokerage education concept defined
 - [x] initial leader outreach copy drafted
-- [ ] Brokerage Relationship Playbook
-- [ ] presentation-session format
-- [ ] pre-meeting checklist
-- [ ] meeting capture template
-- [ ] post-meeting individual follow-up logic
-- [ ] brokerage account reporting
+- [x] Brokerage Relationship Playbook
+- [x] presentation-session format
+- [x] pre-meeting checklist
+- [x] meeting capture template
+- [x] post-meeting individual follow-up logic
+- [x] brokerage account reporting
+
+No brokerage is contacted during build mode.
 
 ### Lead Response / Sales Handoff
 
@@ -201,11 +204,10 @@ Until then, the system remains in build mode.
 
 ## Recommended Build Order From Here
 
-1. **Brokerage Relationship Playbook**
-2. **Lead Response & Consultation Playbook**
-3. **Marketing Dashboard & Weekly Review Playbook**
-4. **TikTok Paid Phase Playbook**
-5. final whole-system review
-6. activation decision
+1. **Lead Response & Consultation Playbook**
+2. **Marketing Dashboard & Weekly Review Playbook**
+3. **TikTok Paid Phase Playbook**
+4. final whole-system review
+5. activation decision
 
-This order now finishes the relationship, handoff, reporting, and TikTok paid layers before the whole-system activation review.
+This order now finishes the response/handoff, reporting, and TikTok paid layers before the whole-system activation review.
