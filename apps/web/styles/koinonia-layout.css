@@ -1221,3 +1221,98 @@
     margin-bottom: 20px;
   }
 }
+
+/* Authenticated client documents density and status layout. */
+
+.koinonia-client-documents .koinonia-document-hero {
+  padding-top: clamp(40px, 4vw, 60px);
+  padding-bottom: clamp(34px, 4vw, 54px);
+}
+
+.koinonia-client-documents .koinonia-document-hero .koinonia-section-header {
+  max-width: 900px;
+  margin-bottom: 24px;
+}
+
+.koinonia-client-documents .koinonia-document-hero .koinonia-title {
+  max-width: 860px;
+  font-size: clamp(36px, 5vw, 58px);
+  line-height: 0.98;
+}
+
+.koinonia-client-documents .koinonia-document-hero .koinonia-lead {
+  max-width: 780px;
+  margin-top: 14px;
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1.55;
+}
+
+.koinonia-client-documents .koinonia-document-summary-grid {
+  margin-top: 22px;
+  gap: 14px;
+}
+
+.koinonia-client-documents .koinonia-document-summary-card {
+  padding: 18px;
+}
+
+.koinonia-client-documents > .koinonia-section:not(.koinonia-document-hero) {
+  padding-top: clamp(34px, 4vw, 54px);
+  padding-bottom: clamp(46px, 5vw, 68px);
+}
+
+.koinonia-client-documents .koinonia-document-status-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.koinonia-client-documents .koinonia-document-status-list article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  padding: 14px;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-sm);
+}
+
+.koinonia-client-documents .koinonia-document-status-list article > span {
+  display: block;
+  color: var(--portal-gold-dark);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-client-documents .koinonia-document-status-list article > strong {
+  display: block;
+  min-width: 0;
+  font-size: 17px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.koinonia-client-documents .koinonia-document-status-list article > p {
+  margin: 0;
+  color: var(--portal-muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 680px) {
+  .koinonia-client-documents .koinonia-document-hero {
+    padding-top: 32px;
+    padding-bottom: 34px;
+  }
+
+  .koinonia-client-documents .koinonia-document-hero .koinonia-title {
+    font-size: clamp(34px, 11vw, 46px);
+  }
+
+  .koinonia-client-documents .koinonia-document-hero .koinonia-section-header {
+    margin-bottom: 20px;
+  }
+}
