@@ -30,8 +30,9 @@ Until the activation decision is made:
 4. Prospecting & Lead-Sourcing Playbook — prospect research/qualification logic
 5. Content Production & Publishing Playbook — social-content operating logic
 6. Email Marketing Operations Playbook — email operating logic
-7. 30-Day Marketing Launch Calendar — prepared activation schedule
-8. Channel-specific build playbooks — exact execution mechanics
+7. Meta Ads Build & Launch Playbook — Meta paid operating logic
+8. 30-Day Marketing Launch Calendar — prepared activation schedule
+9. Channel-specific build playbooks — exact execution mechanics
 
 ## Build Status
 
@@ -98,15 +99,19 @@ No content is scheduled or published during build mode.
 - [x] Meta first-test campaign strategy drafted
 - [x] working test budget defined
 - [x] initial ad copy/form concept drafted
-- [ ] Meta Ads Build & Launch Playbook
-- [ ] ad account readiness checklist
-- [ ] creative QA checklist
-- [ ] campaign naming convention finalized
-- [ ] lead retrieval/response SOP finalized for native forms
-- [ ] paid-media stop/scale rules finalized
-- [ ] Meta Pixel / Conversions API implementation plan
+- [x] Meta Ads Build & Launch Playbook
+- [x] ad account readiness checklist defined
+- [x] creative QA checklist defined
+- [x] campaign naming convention finalized
+- [x] lead retrieval/response SOP defined for native forms
+- [x] paid-media stop/scale rules finalized
+- [x] Meta Pixel / Conversions API implementation plan defined
+- [ ] live Meta account configuration
+- [ ] live Meta Pixel / Conversions API implementation
 - [ ] TikTok Paid Phase Playbook
 - [ ] TikTok pixel/events implementation plan
+
+No paid campaign is activated and no ad spend occurs during build mode.
 
 ### Email Marketing
 
@@ -168,7 +173,7 @@ No marketing email is sent during build mode.
 - [x] data-minimization prospecting rule
 - [x] website privacy notice source prepared
 - [x] Email compliance operational checklist defined
-- [ ] ad-platform privacy/lead-form checklist
+- [x] ad-platform privacy/lead-form checklist defined
 - [ ] production privacy notice review before paid launch
 
 ## Activation Gate — Whole Marketing System
@@ -196,12 +201,11 @@ Until then, the system remains in build mode.
 
 ## Recommended Build Order From Here
 
-1. **Meta Ads Build & Launch Playbook**
-2. **Brokerage Relationship Playbook**
-3. **Lead Response & Consultation Playbook**
-4. **Marketing Dashboard & Weekly Review Playbook**
-5. **TikTok Paid Phase Playbook**
-6. final whole-system review
-7. activation decision
+1. **Brokerage Relationship Playbook**
+2. **Lead Response & Consultation Playbook**
+3. **Marketing Dashboard & Weekly Review Playbook**
+4. **TikTok Paid Phase Playbook**
+5. final whole-system review
+6. activation decision
 
-This order now builds the paid and relationship-control layers after the content and email foundations are complete.
+This order now finishes the relationship, handoff, reporting, and TikTok paid layers before the whole-system activation review.
