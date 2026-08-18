@@ -1,6 +1,6 @@
 # Koinonia Transactions — Stage 1 Foundation Activation
 
-Status: Partially Complete — External Account / End-to-End Verification Pending  
+Status: Partially Complete — Social Account / Browser Test Pending  
 Date: 2026-08-17  
 Owner: Marketing + Sales
 
@@ -22,6 +22,7 @@ Not authorized by this stage:
 - Meta ad activation or spend
 - brokerage outreach
 - TikTok paid
+- promotional SMS
 
 ## Production Release — Complete
 
@@ -51,20 +52,7 @@ Current Stage 1 production commit:
 
 The integration branch was not merged wholesale.
 
-The initial release candidate was built directly from `koinonia-production` and contained only eight launch-critical files:
-
-- `apps/web/app/api/koinonia/consultation/route.ts`
-- `apps/web/app/layout.tsx`
-- `apps/web/app/privacy/page.tsx`
-- `apps/web/components/site/ConsultationIntake/ConsultationIntake.tsx`
-- `apps/web/components/site/MarketingAttribution/MarketingAttribution.tsx`
-- `apps/web/content/privacy.ts`
-- `apps/web/content/shared.ts`
-- `apps/web/lib/koinonia-consultation-relationship.ts`
-
-The later Contact metadata cleanup changed only:
-
-- `apps/web/app/contact/page.tsx`
+The initial release candidate was built directly from `koinonia-production` and contained only the launch-critical privacy, attribution, consultation-intake, Relationship-persistence, and footer changes required for Stage 1. The later Contact metadata cleanup changed only `apps/web/app/contact/page.tsx`.
 
 No portal, Koinonia Properties, Reynalds Brothers, outreach, paid-media, or campaign-publishing changes were included.
 
@@ -93,20 +81,18 @@ Production aliases include:
 
 ## Live Public-Domain Verification — Green
 
-Verified directly against `https://www.koinoniatransactions.com` through the connected Vercel environment:
+Verified through the connected Vercel environment:
 
 - `/privacy` returns HTTP 200
-- Privacy Policy renders with August 17, 2026 last-updated date
+- Privacy Policy renders
 - footer includes the Privacy link
 - `/contact` returns HTTP 200
 - consultation scheduler is present
 - production HTML loads the global `MarketingAttribution` component
 - the live site is served by the current Vercel production deployment
 - `/contact` canonical URL is correct
-- `/contact` metadata now uses **Contact Koinonia**, not the earlier incorrect About metadata
-- Open Graph and Twitter metadata for `/contact` now use the Contact title/description
-
-The earlier DNS-blocked status was based on an intermediate verification state and is superseded by this live custom-domain verification.
+- `/contact` metadata uses **Contact Koinonia**
+- Open Graph and Twitter metadata for `/contact` use the Contact title/description
 
 ## Production Code Includes
 
@@ -130,26 +116,40 @@ Vercel runtime error review for the production project found no runtime errors i
 
 The current production deployment completed successfully.
 
-## CI Note
+## Inbound Lead Ownership — Confirmed in Production Code
 
-An earlier GitHub Actions run did not reach application install/test/build because pnpm was declared in two locations:
+Production Relationship persistence is configured with:
 
-- workflow: `version: 9`
-- `package.json`: `packageManager: pnpm@9.0.0`
+`ownerEmail = jeremiah@koinoniaadmin.com`
 
-That is a CI workflow configuration issue rather than an application failure from this marketing foundation release.
+The consultation route also defaults the intake notification recipient to:
 
-Vercel preview and production deployments built successfully.
+`jeremiah@koinoniaadmin.com`
 
-Repairing the broader CI workflow remains separate from this marketing activation slice unless it becomes necessary for a later release.
+unless `CONTACT_INTAKE_TO_EMAIL` is explicitly overridden in the production environment.
 
-## End-to-End Consultation / CRM Verification — Pending
+Therefore the current system-level owner for website consultation intake and follow-up tasks is Jeremiah / the Koinonia operating mailbox.
 
-A real production form POST has not been submitted during this Stage 1 verification.
+Operating rule remains:
 
-This is intentionally still pending because the production route may send an internal Resend notification when configured, and the current activation boundary has avoided triggering email activity without an explicit test decision.
+**Every meaningful Relationship gets one owner, one current next action, and one next-action date.**
 
-One clearly labeled internal test consultation should later verify:
+## End-to-End Consultation / CRM Verification — Pending Browser-Originated Test
+
+A controlled internal production test was authorized on August 17, 2026.
+
+The attempted automated POST did **not** reach Koinonia because the execution container could not resolve `www.koinoniatransactions.com`.
+
+Result:
+
+- no consultation request was submitted
+- no Relationship was created from this attempted test
+- no internal notification email was triggered
+- Vercel runtime logs showed no matching consultation request in the verification window
+
+This is an execution-environment DNS limitation, not evidence of a Koinonia application failure.
+
+One clearly labeled browser-originated internal test still needs to verify:
 
 - submission succeeds
 - one Koinonia Relationship is created/updated
@@ -160,7 +160,14 @@ One clearly labeled internal test consultation should later verify:
 - follow-up task / next action is created
 - optional notification email behavior matches configuration
 
-After verification, archive/close the test Relationship/task as appropriate.
+Recommended internal test attribution:
+
+- `utm_source=facebook`
+- `utm_medium=organic_social`
+- `utm_campaign=stage1_internal_verification`
+- `utm_content=internal_test`
+
+Use a clearly labeled test name/notes and archive or close the test Relationship/task afterward.
 
 ## Social Profile Configuration — Pending Authenticated Account Access
 
@@ -198,20 +205,6 @@ Required configuration:
 
 Do not publish campaign content during profile configuration.
 
-## Lead Ownership / Dashboard — Pending Final Human Confirmation
-
-The website intake code assigns the Koinonia relationship/follow-up workflow around the Koinonia operating mailbox and Relationship system, but Stage 1 still requires an explicit human owner for daily inbound monitoring.
-
-Operating rule:
-
-**Every meaningful Relationship gets one owner, one current next action, and one next-action date.**
-
-Before Stage 2 organic publishing, confirm who will monitor:
-
-- website consultation submissions
-- Facebook/Instagram/TikTok buying-intent DMs/comments
-- direct professional introductions
-
 ## Stage 1 Decision
 
 ### Complete / Green
@@ -227,14 +220,14 @@ Before Stage 2 organic publishing, confirm who will monitor:
 - consultation attribution payload deployed
 - consultation-to-Relationship persistence implementation deployed
 - production runtime health check
+- system-level website lead owner confirmed
 
 ### Pending
 
-- one controlled end-to-end consultation/CRM test
+- one controlled browser-originated consultation/CRM test
 - Facebook profile configuration
 - Instagram profile configuration
 - TikTok profile configuration
-- final human inbound lead-owner confirmation
 
 ## Activation Boundary
 
@@ -250,6 +243,6 @@ Until the remaining Stage 1 items are confirmed:
 
 ## Next Action
 
-Complete the authenticated Facebook / Instagram / TikTok profile configuration and explicitly confirm the human inbound lead owner. Then run one controlled internal consultation/CRM test when internal notification-email behavior is acceptable to test.
+Complete the authenticated Facebook / Instagram / TikTok profile configuration and run one controlled browser-originated internal consultation/CRM test.
 
-Do not approve Stage 2 organic publishing until those Stage 1 items are reviewed.
+Do not approve Stage 2 organic publishing until those items are reviewed.
