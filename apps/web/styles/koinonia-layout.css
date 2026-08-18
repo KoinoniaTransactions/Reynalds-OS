@@ -1154,3 +1154,70 @@
   font-weight: 800;
   line-height: 1.2;
 }
+
+/* Authenticated client dashboard density. */
+
+.koinonia-client-dashboard .koinonia-client-dashboard-hero {
+  padding-top: clamp(40px, 4vw, 60px);
+  padding-bottom: clamp(34px, 4vw, 54px);
+}
+
+.koinonia-client-dashboard .koinonia-client-dashboard-hero .koinonia-section-header {
+  max-width: 900px;
+  margin-bottom: 24px;
+}
+
+.koinonia-client-dashboard .koinonia-client-dashboard-hero .koinonia-title {
+  max-width: 840px;
+  font-size: clamp(36px, 5vw, 58px);
+  line-height: 0.98;
+}
+
+.koinonia-client-dashboard .koinonia-client-dashboard-hero .koinonia-lead {
+  max-width: 780px;
+  margin-top: 14px;
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1.55;
+}
+
+.koinonia-client-dashboard .koinonia-client-summary-grid {
+  margin-top: 22px;
+  gap: 14px;
+}
+
+.koinonia-client-dashboard .koinonia-client-summary-card {
+  padding: 18px;
+}
+
+.koinonia-client-dashboard > .koinonia-section:not(.koinonia-client-dashboard-hero) {
+  padding-top: clamp(34px, 4vw, 54px);
+  padding-bottom: clamp(46px, 5vw, 68px);
+}
+
+.koinonia-client-dashboard .koinonia-client-dashboard-layout {
+  gap: 20px;
+}
+
+.koinonia-client-dashboard .koinonia-client-main-stack,
+.koinonia-client-dashboard .koinonia-client-side-panel {
+  gap: 16px;
+}
+
+.koinonia-client-dashboard .koinonia-client-work-panel {
+  padding: clamp(18px, 2vw, 24px);
+}
+
+@media (max-width: 680px) {
+  .koinonia-client-dashboard .koinonia-client-dashboard-hero {
+    padding-top: 32px;
+    padding-bottom: 34px;
+  }
+
+  .koinonia-client-dashboard .koinonia-client-dashboard-hero .koinonia-title {
+    font-size: clamp(34px, 11vw, 46px);
+  }
+
+  .koinonia-client-dashboard .koinonia-client-dashboard-hero .koinonia-section-header {
+    margin-bottom: 20px;
+  }
+}
