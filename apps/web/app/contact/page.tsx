@@ -3,27 +3,27 @@ import { KoinoniaContact } from "../../components/site/PageAssemblies/KoinoniaCo
 import { absoluteUrl, seoConfig } from "../../config/seo.config";
 
 export const metadata: Metadata = {
-  title: seoConfig.publicRoutes[3].title,
-  description: seoConfig.publicRoutes[3].description,
+  title: seoConfig.publicRoutes[4].title,
+  description: seoConfig.publicRoutes[4].description,
   alternates: {
     canonical: absoluteUrl("/contact")
   },
   openGraph: {
-    title: seoConfig.publicRoutes[3].title,
-    description: seoConfig.publicRoutes[3].description,
+    title: seoConfig.publicRoutes[4].title,
+    description: seoConfig.publicRoutes[4].description,
     images: [
       {
         url: absoluteUrl(seoConfig.socialPreviewPath),
         width: seoConfig.socialPreviewWidth,
         height: seoConfig.socialPreviewHeight,
-        alt: seoConfig.publicRoutes[3].title
+        alt: seoConfig.publicRoutes[4].title
       }
     ],
     url: absoluteUrl("/contact")
   },
   twitter: {
-    title: seoConfig.publicRoutes[3].title,
-    description: seoConfig.publicRoutes[3].description,
+    title: seoConfig.publicRoutes[4].title,
+    description: seoConfig.publicRoutes[4].description,
     images: [absoluteUrl(seoConfig.socialPreviewPath)]
   }
 };
