@@ -28,8 +28,9 @@ Until the activation decision is made:
 2. Marketing Learning & Relationship Capture System — learning/governance
 3. Digital Marketing Execution Playbook — operating logic
 4. Prospecting & Lead-Sourcing Playbook — prospect research/qualification logic
-5. 30-Day Marketing Launch Calendar — prepared activation schedule
-6. Channel-specific build playbooks — exact execution mechanics
+5. Content Production & Publishing Playbook — social-content operating logic
+6. 30-Day Marketing Launch Calendar — prepared activation schedule
+7. Channel-specific build playbooks — exact execution mechanics
 
 ## Build Status
 
@@ -82,12 +83,14 @@ Actual prospect research/list building should happen near activation so public i
 ### Content System
 
 - [x] initial 30-day topics/copy/scripts prepared
-- [ ] Content Production & Publishing Playbook
-- [ ] asset naming/storage standard
-- [ ] content review/approval workflow
-- [ ] platform publishing checklist
-- [ ] comment/DM response workflow
-- [ ] content performance review workflow
+- [x] Content Production & Publishing Playbook
+- [x] asset naming/storage standard
+- [x] content review/approval workflow
+- [x] platform publishing checklist
+- [x] comment/DM response workflow
+- [x] content performance review workflow
+
+No content is scheduled or published during build mode.
 
 ### Paid Media
 
@@ -192,14 +195,13 @@ Until then, the system remains in build mode.
 
 ## Recommended Build Order From Here
 
-1. **Content Production & Publishing Playbook**
-2. **Email Marketing Operations Playbook**
-3. **Meta Ads Build & Launch Playbook**
-4. **Brokerage Relationship Playbook**
-5. **Lead Response & Consultation Playbook**
-6. **Marketing Dashboard & Weekly Review Playbook**
-7. **TikTok Paid Phase Playbook**
-8. final whole-system review
-9. activation decision
+1. **Email Marketing Operations Playbook**
+2. **Meta Ads Build & Launch Playbook**
+3. **Brokerage Relationship Playbook**
+4. **Lead Response & Consultation Playbook**
+5. **Marketing Dashboard & Weekly Review Playbook**
+6. **TikTok Paid Phase Playbook**
+7. final whole-system review
+8. activation decision
 
 This order builds the organic and relationship engine before adding more paid complexity.
