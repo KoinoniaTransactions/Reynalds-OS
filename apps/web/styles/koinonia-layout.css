@@ -1316,3 +1316,66 @@
     margin-bottom: 20px;
   }
 }
+
+/* Authenticated client billing density. */
+
+.koinonia-client-billing .koinonia-billing-hero {
+  padding-top: clamp(40px, 4vw, 60px);
+  padding-bottom: clamp(34px, 4vw, 54px);
+}
+
+.koinonia-client-billing .koinonia-billing-hero .koinonia-section-header {
+  max-width: 900px;
+  margin-bottom: 24px;
+}
+
+.koinonia-client-billing .koinonia-billing-hero .koinonia-title {
+  max-width: 860px;
+  font-size: clamp(36px, 5vw, 58px);
+  line-height: 0.98;
+}
+
+.koinonia-client-billing .koinonia-billing-hero .koinonia-lead {
+  max-width: 780px;
+  margin-top: 14px;
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1.55;
+}
+
+.koinonia-client-billing .koinonia-billing-summary-grid {
+  margin-top: 22px;
+  gap: 14px;
+}
+
+.koinonia-client-billing .koinonia-billing-summary-card {
+  padding: 18px;
+}
+
+.koinonia-client-billing > .koinonia-section:not(.koinonia-billing-hero) {
+  padding-top: clamp(34px, 4vw, 54px);
+  padding-bottom: clamp(46px, 5vw, 68px);
+}
+
+.koinonia-client-billing .koinonia-billing-layout {
+  gap: 20px;
+}
+
+.koinonia-client-billing .koinonia-billing-main-stack,
+.koinonia-client-billing .koinonia-billing-side-panel {
+  gap: 16px;
+}
+
+@media (max-width: 680px) {
+  .koinonia-client-billing .koinonia-billing-hero {
+    padding-top: 32px;
+    padding-bottom: 34px;
+  }
+
+  .koinonia-client-billing .koinonia-billing-hero .koinonia-title {
+    font-size: clamp(34px, 11vw, 46px);
+  }
+
+  .koinonia-client-billing .koinonia-billing-hero .koinonia-section-header {
+    margin-bottom: 20px;
+  }
+}

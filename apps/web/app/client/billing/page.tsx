@@ -16,6 +16,7 @@ import {
 import { prisma } from "../../../lib/db";
 import { buildPortalInvoiceDisplayItem } from "../../../lib/portal-billing-invoices";
 import { requirePortalPermission } from "../../../lib/portal-auth";
+import { isKoinoniaStripeEnabled } from "../../../lib/stripe-runtime";
 import {
   billingRuleAssignmentObjectType,
   getBillingRuleContext
@@ -215,6 +216,8 @@ export default async function ClientBillingCenterPreviewPage() {
     "client-portal:billing:view",
     "/client/billing"
   );
+
+  const stripeEnabled = isKoinoniaStripeEnabled();
 
   const [
     billingSetupView,
@@ -488,6 +491,7 @@ export default async function ClientBillingCenterPreviewPage() {
                 storageReady={
                   billingSetupView.isLiveData
                 }
+                stripeEnabled={stripeEnabled}
               />
 
               <section className="koinonia-billing-panel">

@@ -7,6 +7,7 @@ import { koinoniaBillingRequestSourceHeader } from "../../lib/portal-billing-req
 
 type BillingSetupRequestFormProps = {
   storageReady: boolean;
+  stripeEnabled: boolean;
 };
 
 type BillingSetupCreateResponse = {
@@ -25,7 +26,8 @@ const billingSetupOptions =
   getKoinoniaBillingSetupOptions();
 
 export function BillingSetupRequestForm({
-  storageReady
+  storageReady,
+  stripeEnabled
 }: BillingSetupRequestFormProps) {
   const router = useRouter();
 
@@ -138,7 +140,10 @@ export function BillingSetupRequestForm({
         return;
       }
 
-      if (consentAcknowledged) {
+      if (
+        consentAcknowledged &&
+        stripeEnabled
+      ) {
         setStatus("success");
         setMessage(
           "Billing setup saved. Opening Stripe secure payment setup..."
@@ -174,9 +179,20 @@ export function BillingSetupRequestForm({
 
       form.reset();
       setStatus("success");
-      setMessage(
-        "Billing setup request saved. Billing consent must be recorded before Stripe secure setup can begin."
-      );
+
+      if (
+        consentAcknowledged &&
+        !stripeEnabled
+      ) {
+        setMessage(
+          "Billing setup request saved. Secure payment setup is not enabled yet; Koinonia will open processor setup after Stripe activation."
+        );
+      } else {
+        setMessage(
+          "Billing setup request saved. Billing consent must be recorded before secure payment setup can begin."
+        );
+      }
+
       router.refresh();
     } catch (error) {
       setStatus("error");
@@ -267,12 +283,25 @@ export function BillingSetupRequestForm({
           </p>
         ) : (
           <p className="koinonia-billing-security-note">
-            After billing consent is
-            recorded, this form opens
-            Stripe&apos;s secure hosted
-            setup page. Card details are
-            entered with Stripe, not in
-            Koinonia.
+            {stripeEnabled ? (
+              <>
+                After billing consent is
+                recorded, this form opens
+                Stripe&apos;s secure hosted
+                setup page. Card details are
+                entered with Stripe, not in
+                Koinonia.
+              </>
+            ) : (
+              <>
+                Secure payment setup is not
+                enabled yet. You can save the
+                billing setup request now;
+                processor setup will become
+                available after Stripe is
+                activated.
+              </>
+            )}
           </p>
         )}
 
@@ -338,7 +367,9 @@ export function BillingSetupRequestForm({
             ? "Saving"
             : requiresWrittenTerms
               ? "Request Written Billing Terms"
-              : "Save & Open Secure Payment Setup"}
+              : stripeEnabled
+                ? "Save & Open Secure Payment Setup"
+                : "Save Billing Setup Request"}
         </button>
 
         {!storageReady ? (
