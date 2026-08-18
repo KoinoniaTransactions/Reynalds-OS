@@ -53,3 +53,1104 @@
     grid-column: 1 / -1;
   }
 }
+
+/* Koinonia portal visual system. */
+
+.koinonia-client-portal,
+.koinonia-client-dashboard,
+.koinonia-client-documents,
+.koinonia-client-billing,
+.koinonia-employee-portal,
+.koinonia-employee-dashboard,
+.koinonia-employee-access,
+.koinonia-employee-documents,
+.koinonia-employee-billing,
+.koinonia-workspace-detail,
+.koinonia-staff-review,
+.koinonia-readiness,
+.koinonia-launch {
+  --portal-surface: #ffffff;
+  --portal-surface-soft: #fbf8f2;
+  --portal-surface-gold: #f8f1e5;
+  --portal-text: #171717;
+  --portal-muted: #66625d;
+  --portal-gold: #b17c30;
+  --portal-gold-dark: #8f6223;
+  --portal-border: rgba(177, 124, 48, 0.22);
+  --portal-border-strong: rgba(177, 124, 48, 0.38);
+  --portal-shadow: 0 18px 45px rgba(39, 31, 21, 0.07);
+  --portal-radius-lg: 24px;
+  --portal-radius-md: 18px;
+  --portal-radius-sm: 12px;
+  color: var(--portal-text);
+}
+
+.koinonia-client-portal-entry,
+.koinonia-employee-portal-entry,
+.koinonia-client-dashboard-hero,
+.koinonia-employee-dashboard-hero,
+.koinonia-document-hero,
+.koinonia-billing-hero,
+.koinonia-workspace-hero,
+.koinonia-staff-review-hero,
+.koinonia-readiness-hero {
+  padding-top: clamp(72px, 9vw, 128px);
+  padding-bottom: clamp(52px, 7vw, 92px);
+}
+
+.koinonia-client-portal-grid,
+.koinonia-employee-portal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: start;
+}
+
+.koinonia-client-portal-copy,
+.koinonia-employee-portal-copy {
+  min-width: 0;
+}
+
+.koinonia-client-portal-panel,
+.koinonia-employee-portal-panel,
+.koinonia-client-work-panel,
+.koinonia-employee-work-panel,
+.koinonia-document-panel,
+.koinonia-billing-panel,
+.koinonia-workspace-panel,
+.koinonia-readiness-panel,
+.koinonia-staff-review-panel,
+.koinonia-launch-proof,
+.koinonia-launch-blockers {
+  background: var(--portal-surface);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-lg);
+  box-shadow: var(--portal-shadow);
+}
+
+.koinonia-client-portal-panel,
+.koinonia-employee-portal-panel {
+  overflow: hidden;
+}
+
+.koinonia-client-portal-panel-header,
+.koinonia-employee-portal-panel-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 18px;
+  padding: 20px 22px;
+  background: #171717;
+  color: #ffffff;
+}
+
+.koinonia-client-portal-panel-header span,
+.koinonia-employee-portal-panel-header span {
+  color: #d7b36f;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.koinonia-client-status-list,
+.koinonia-employee-status-list {
+  display: grid;
+}
+
+.koinonia-client-status-list article,
+.koinonia-employee-status-list article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 5px 16px;
+  padding: 18px 22px;
+  border-top: 1px solid var(--portal-border);
+}
+
+.koinonia-client-status-list article:first-child,
+.koinonia-employee-status-list article:first-child {
+  border-top: 0;
+}
+
+.koinonia-client-status-list article > span,
+.koinonia-employee-status-list article > span {
+  color: var(--portal-gold-dark);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-client-status-list article > strong,
+.koinonia-employee-status-list article > strong {
+  justify-self: end;
+}
+
+.koinonia-client-status-list article > p,
+.koinonia-employee-status-list article > p {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  color: var(--portal-muted);
+  line-height: 1.55;
+}
+
+/* Dashboard and workspace grids. */
+
+.koinonia-client-summary-grid,
+.koinonia-employee-summary-grid,
+.koinonia-document-summary-grid,
+.koinonia-billing-summary-grid,
+.koinonia-workspace-summary-grid,
+.koinonia-readiness-summary-grid,
+.koinonia-staff-review-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.koinonia-client-summary-card,
+.koinonia-employee-summary-card,
+.koinonia-document-summary-card,
+.koinonia-billing-summary-card,
+.koinonia-readiness-summary-card,
+.koinonia-staff-review-summary-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  padding: 20px;
+  background: var(--portal-surface);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+  box-shadow: 0 12px 32px rgba(39, 31, 21, 0.05);
+}
+
+.koinonia-client-summary-card > span,
+.koinonia-employee-summary-card > span,
+.koinonia-document-summary-card > span,
+.koinonia-billing-summary-card > span,
+.koinonia-readiness-summary-card > span,
+.koinonia-staff-review-summary-card > span {
+  color: var(--portal-gold-dark);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-client-summary-card > strong,
+.koinonia-employee-summary-card > strong,
+.koinonia-document-summary-card > strong,
+.koinonia-billing-summary-card > strong,
+.koinonia-readiness-summary-card > strong,
+.koinonia-staff-review-summary-card > strong,
+.koinonia-launch-count {
+  display: block;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1;
+}
+
+.koinonia-client-summary-card > p,
+.koinonia-employee-summary-card > p,
+.koinonia-document-summary-card > p,
+.koinonia-billing-summary-card > p,
+.koinonia-readiness-summary-card > p,
+.koinonia-staff-review-summary-card > p {
+  margin: 0;
+  color: var(--portal-muted);
+  line-height: 1.5;
+}
+
+.koinonia-client-dashboard-layout,
+.koinonia-employee-dashboard-layout,
+.koinonia-document-layout,
+.koinonia-billing-layout,
+.koinonia-workspace-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 390px);
+  gap: 24px;
+  align-items: start;
+}
+
+.koinonia-client-main-stack,
+.koinonia-employee-main-stack,
+.koinonia-document-main-stack,
+.koinonia-billing-main-stack,
+.koinonia-workspace-main-stack,
+.koinonia-client-side-panel,
+.koinonia-employee-side-panel,
+.koinonia-document-side-panel,
+.koinonia-billing-side-panel,
+.koinonia-workspace-side-panel {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.koinonia-client-side-panel,
+.koinonia-employee-side-panel,
+.koinonia-document-side-panel,
+.koinonia-billing-side-panel,
+.koinonia-workspace-side-panel {
+  position: sticky;
+  top: 110px;
+}
+
+.koinonia-client-work-panel,
+.koinonia-employee-work-panel,
+.koinonia-document-panel,
+.koinonia-billing-panel,
+.koinonia-workspace-panel {
+  padding: clamp(18px, 2.2vw, 26px);
+}
+
+.koinonia-client-panel-heading,
+.koinonia-employee-panel-heading,
+.koinonia-document-panel-heading,
+.koinonia-billing-panel-heading,
+.koinonia-workspace-panel-heading,
+.koinonia-readiness-panel-heading,
+.koinonia-staff-review-panel-heading,
+.koinonia-launch-blockers-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+
+.koinonia-client-panel-heading h2,
+.koinonia-employee-panel-heading h2,
+.koinonia-document-panel-heading h2,
+.koinonia-billing-panel-heading h2,
+.koinonia-workspace-panel-heading h2,
+.koinonia-readiness-panel-heading h2,
+.koinonia-staff-review-panel-heading h2,
+.koinonia-launch-blockers-heading h2 {
+  margin: 0;
+}
+
+/* Work, assignment and portal cards. */
+
+.koinonia-client-work-list,
+.koinonia-employee-assignment-list,
+.koinonia-document-card-list,
+.koinonia-billing-card-list,
+.koinonia-workspace-list,
+.koinonia-readiness-list,
+.koinonia-staff-review-list,
+.koinonia-launch-blocker-list {
+  display: grid;
+  gap: 12px;
+}
+
+.koinonia-client-work-item,
+.koinonia-employee-assignment-item,
+.koinonia-document-work-item,
+.koinonia-billing-work-item,
+.koinonia-workspace-list-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: start;
+  padding: 18px;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+}
+
+.koinonia-client-work-item h3,
+.koinonia-employee-assignment-item h3,
+.koinonia-document-work-item h3,
+.koinonia-billing-work-item h3,
+.koinonia-workspace-list-item h3 {
+  margin: 4px 0 8px;
+  font-size: 19px;
+}
+
+.koinonia-client-work-item p,
+.koinonia-employee-assignment-item p,
+.koinonia-document-work-item p,
+.koinonia-billing-work-item p,
+.koinonia-workspace-list-item p {
+  margin: 0;
+  color: var(--portal-muted);
+  line-height: 1.55;
+}
+
+.koinonia-client-work-item > div:first-child > span,
+.koinonia-employee-assignment-item > div:first-child > span,
+.koinonia-document-work-item > div:first-child > span,
+.koinonia-billing-work-item > div:first-child > span {
+  color: var(--portal-gold-dark);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-client-work-meta,
+.koinonia-employee-assignment-meta,
+.koinonia-employee-work-meta,
+.koinonia-document-work-meta,
+.koinonia-billing-work-meta {
+  display: grid;
+  justify-items: end;
+  gap: 5px;
+  white-space: nowrap;
+  color: var(--portal-muted);
+  font-size: 13px;
+}
+
+.koinonia-client-work-meta strong,
+.koinonia-employee-assignment-meta strong,
+.koinonia-employee-work-meta strong,
+.koinonia-document-work-meta strong,
+.koinonia-billing-work-meta strong {
+  color: var(--portal-text);
+}
+
+.koinonia-client-request-card,
+.koinonia-employee-request-card,
+.koinonia-document-boundary-card,
+.koinonia-billing-boundary-card,
+.koinonia-workspace-boundary-card,
+.koinonia-employee-boundary-card,
+.koinonia-client-boundary-card {
+  padding: 20px;
+  background: var(--portal-surface);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+  box-shadow: 0 10px 28px rgba(39, 31, 21, 0.045);
+}
+
+.koinonia-client-boundary-card,
+.koinonia-employee-boundary-card,
+.koinonia-document-boundary-card,
+.koinonia-billing-boundary-card,
+.koinonia-workspace-boundary-card {
+  background: var(--portal-surface-gold);
+}
+
+.koinonia-client-request-card > :first-child,
+.koinonia-employee-request-card > :first-child,
+.koinonia-document-boundary-card > :first-child,
+.koinonia-billing-boundary-card > :first-child,
+.koinonia-workspace-boundary-card > :first-child {
+  margin-top: 0;
+}
+
+.koinonia-client-request-card > :last-child,
+.koinonia-employee-request-card > :last-child,
+.koinonia-document-boundary-card > :last-child,
+.koinonia-billing-boundary-card > :last-child,
+.koinonia-workspace-boundary-card > :last-child {
+  margin-bottom: 0;
+}
+
+/* Notes, links and status messaging. */
+
+.koinonia-client-security-note,
+.koinonia-employee-security-note,
+.koinonia-document-security-note,
+.koinonia-billing-security-note,
+.koinonia-launch-storage-note,
+.koinonia-launch-note,
+.koinonia-staff-review-notice,
+.koinonia-access-action-status,
+.koinonia-access-form-status,
+.koinonia-showing-form-status,
+.koinonia-work-assignment-status,
+.koinonia-launch-proof-form-status,
+.koinonia-billing-setup-form-status {
+  margin: 0;
+  padding: 12px 14px;
+  color: #624819;
+  background: #fbf3e5;
+  border: 1px solid var(--portal-border-strong);
+  border-radius: var(--portal-radius-sm);
+  line-height: 1.5;
+}
+
+.koinonia-client-showing-notes,
+.koinonia-document-status-list,
+.koinonia-document-step-list,
+.koinonia-document-tool-list,
+.koinonia-billing-list,
+.koinonia-billing-meta-list,
+.koinonia-billing-status-list,
+.koinonia-workspace-cue-list,
+.koinonia-workspace-timeline {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  color: var(--portal-muted);
+  line-height: 1.55;
+}
+
+.koinonia-document-link,
+.koinonia-billing-link {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 12px;
+  color: var(--portal-gold-dark);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.koinonia-document-link:hover,
+.koinonia-billing-link:hover {
+  text-decoration: underline;
+}
+
+/* Forms and controls. */
+
+.koinonia-showing-form,
+.koinonia-access-request-form,
+.koinonia-access-form,
+.koinonia-document-upload-form,
+.koinonia-document-status-form,
+.koinonia-document-replacement,
+.koinonia-send-package-form,
+.koinonia-billing-setup-form,
+.koinonia-billing-status-form,
+.koinonia-work-assignment-form,
+.koinonia-launch-proof-form,
+.koinonia-access-action {
+  display: grid;
+  gap: 14px;
+}
+
+.koinonia-showing-form label,
+.koinonia-access-request-form label,
+.koinonia-access-form label,
+.koinonia-document-upload-form label,
+.koinonia-document-status-form label,
+.koinonia-document-replacement label,
+.koinonia-send-package-form label,
+.koinonia-billing-setup-form label,
+.koinonia-billing-status-form label,
+.koinonia-work-assignment-form label,
+.koinonia-launch-proof-form label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: var(--portal-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.koinonia-showing-form input,
+.koinonia-showing-form select,
+.koinonia-showing-form textarea,
+.koinonia-access-request-form input,
+.koinonia-access-request-form select,
+.koinonia-access-request-form textarea,
+.koinonia-access-form input,
+.koinonia-access-form select,
+.koinonia-access-form textarea,
+.koinonia-document-upload-form input,
+.koinonia-document-upload-form select,
+.koinonia-document-upload-form textarea,
+.koinonia-document-status-form input,
+.koinonia-document-status-form select,
+.koinonia-document-status-form textarea,
+.koinonia-document-replacement input,
+.koinonia-document-replacement select,
+.koinonia-document-replacement textarea,
+.koinonia-send-package-form input,
+.koinonia-send-package-form select,
+.koinonia-send-package-form textarea,
+.koinonia-billing-setup-form input,
+.koinonia-billing-setup-form select,
+.koinonia-billing-setup-form textarea,
+.koinonia-billing-status-form input,
+.koinonia-billing-status-form select,
+.koinonia-billing-status-form textarea,
+.koinonia-work-assignment-form input,
+.koinonia-work-assignment-form select,
+.koinonia-work-assignment-form textarea,
+.koinonia-launch-proof-form input,
+.koinonia-launch-proof-form select,
+.koinonia-launch-proof-form textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--portal-text);
+  background: #ffffff;
+  border: 1px solid rgba(23, 23, 23, 0.16);
+  border-radius: 10px;
+}
+
+.koinonia-showing-form textarea,
+.koinonia-access-request-form textarea,
+.koinonia-access-form textarea,
+.koinonia-document-upload-form textarea,
+.koinonia-document-status-form textarea,
+.koinonia-document-replacement textarea,
+.koinonia-send-package-form textarea,
+.koinonia-billing-setup-form textarea,
+.koinonia-billing-status-form textarea,
+.koinonia-work-assignment-form textarea,
+.koinonia-launch-proof-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.koinonia-showing-form input:focus,
+.koinonia-showing-form select:focus,
+.koinonia-showing-form textarea:focus,
+.koinonia-access-request-form input:focus,
+.koinonia-access-request-form select:focus,
+.koinonia-access-request-form textarea:focus,
+.koinonia-access-form input:focus,
+.koinonia-access-form select:focus,
+.koinonia-access-form textarea:focus,
+.koinonia-document-upload-form input:focus,
+.koinonia-document-upload-form select:focus,
+.koinonia-document-upload-form textarea:focus,
+.koinonia-document-status-form input:focus,
+.koinonia-document-status-form select:focus,
+.koinonia-document-status-form textarea:focus,
+.koinonia-document-replacement input:focus,
+.koinonia-document-replacement select:focus,
+.koinonia-document-replacement textarea:focus,
+.koinonia-send-package-form input:focus,
+.koinonia-send-package-form select:focus,
+.koinonia-send-package-form textarea:focus,
+.koinonia-billing-setup-form input:focus,
+.koinonia-billing-setup-form select:focus,
+.koinonia-billing-setup-form textarea:focus,
+.koinonia-billing-status-form input:focus,
+.koinonia-billing-status-form select:focus,
+.koinonia-billing-status-form textarea:focus,
+.koinonia-work-assignment-form input:focus,
+.koinonia-work-assignment-form select:focus,
+.koinonia-work-assignment-form textarea:focus,
+.koinonia-launch-proof-form input:focus,
+.koinonia-launch-proof-form select:focus,
+.koinonia-launch-proof-form textarea:focus {
+  outline: 3px solid rgba(177, 124, 48, 0.16);
+  border-color: var(--portal-gold);
+}
+
+.koinonia-showing-checkbox,
+.koinonia-access-request-checkbox,
+.koinonia-access-checkbox,
+.koinonia-document-inline-check,
+.koinonia-billing-checkbox {
+  display: grid !important;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 9px !important;
+  align-items: start;
+  font-weight: 500 !important;
+  line-height: 1.45;
+}
+
+.koinonia-showing-checkbox input,
+.koinonia-access-request-checkbox input,
+.koinonia-access-checkbox input,
+.koinonia-document-inline-check input,
+.koinonia-billing-checkbox input {
+  width: 16px;
+  min-height: 16px;
+  margin: 2px 0 0;
+}
+
+.koinonia-document-checkbox-list {
+  display: grid;
+  gap: 9px;
+}
+
+.koinonia-document-file-input {
+  padding: 8px !important;
+}
+
+.koinonia-showing-form button,
+.koinonia-access-request-form button,
+.koinonia-access-form button,
+.koinonia-document-upload-form button,
+.koinonia-document-status-form button,
+.koinonia-document-replacement button,
+.koinonia-send-package-form button,
+.koinonia-billing-setup-form button,
+.koinonia-billing-status-form button,
+.koinonia-work-assignment-form button,
+.koinonia-launch-proof-form button,
+.koinonia-access-action-button {
+  width: fit-content;
+  min-height: 44px;
+  padding: 11px 17px;
+  border: 0;
+  border-radius: 999px;
+  background: #171717;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.koinonia-showing-form button:disabled,
+.koinonia-access-request-form button:disabled,
+.koinonia-access-form button:disabled,
+.koinonia-document-upload-form button:disabled,
+.koinonia-document-status-form button:disabled,
+.koinonia-document-replacement button:disabled,
+.koinonia-send-package-form button:disabled,
+.koinonia-billing-setup-form button:disabled,
+.koinonia-billing-status-form button:disabled,
+.koinonia-work-assignment-form button:disabled,
+.koinonia-launch-proof-form button:disabled,
+.koinonia-access-action-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Documents and billing. */
+
+.koinonia-document-center,
+.koinonia-billing-center {
+  min-width: 0;
+}
+
+.koinonia-document-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.koinonia-document-preview {
+  min-height: 240px;
+  padding: 18px;
+  overflow: auto;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+}
+
+.koinonia-document-approval-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.koinonia-billing-table-wrap,
+.koinonia-employee-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+}
+
+.koinonia-billing-table,
+.koinonia-employee-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.koinonia-billing-table th,
+.koinonia-billing-table td,
+.koinonia-employee-table th,
+.koinonia-employee-table td {
+  padding: 13px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(177, 124, 48, 0.14);
+}
+
+.koinonia-billing-table th,
+.koinonia-employee-table th {
+  background: #1a1917;
+  color: #ffffff;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.koinonia-billing-table tr:last-child td,
+.koinonia-employee-table tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Employee dashboard, readiness, launch and review. */
+
+.koinonia-employee-capacity,
+.koinonia-employee-staff-list,
+.koinonia-employee-handoff-list {
+  display: grid;
+  gap: 12px;
+}
+
+.koinonia-readiness-grid,
+.koinonia-staff-review-grid,
+.koinonia-launch-grid,
+.koinonia-readiness-next-grid,
+.koinonia-staff-review-next-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.koinonia-readiness-panel,
+.koinonia-staff-review-panel,
+.koinonia-launch-proof,
+.koinonia-launch-blockers {
+  padding: 20px;
+}
+
+.koinonia-readiness-status-row,
+.koinonia-staff-review-status-row,
+.koinonia-launch-item-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.koinonia-readiness-item-heading,
+.koinonia-staff-review-item-heading {
+  display: grid;
+  gap: 4px;
+}
+
+.koinonia-readiness-next,
+.koinonia-staff-review-next,
+.koinonia-staff-review-empty {
+  padding: 18px;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+}
+
+.koinonia-staff-review-empty-line {
+  height: 1px;
+  margin: 12px 0;
+  background: var(--portal-border);
+}
+
+.koinonia-launch-badge-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.koinonia-launch-badge-stack > * {
+  display: inline-flex;
+  padding: 5px 9px;
+  border: 1px solid var(--portal-border);
+  border-radius: 999px;
+  background: var(--portal-surface-gold);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.koinonia-launch-meta {
+  display: grid;
+  gap: 5px;
+  color: var(--portal-muted);
+}
+
+.koinonia-launch-proof-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.koinonia-launch-recorded-proof {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+}
+
+/* Workspace detail. */
+
+.koinonia-workspace-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.koinonia-workspace-meta-grid > * {
+  padding: 14px;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-sm);
+}
+
+.koinonia-workspace-service-title {
+  color: var(--portal-gold-dark);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Authentication. */
+
+.koinonia-auth-panel {
+  width: min(100%, 460px);
+  margin-top: 28px;
+  overflow: hidden;
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-lg);
+  box-shadow: var(--portal-shadow);
+}
+
+/* Explicit class coverage for portal structural classes that inherit shared rules. */
+
+.koinonia-client-access-list,
+.koinonia-service-templates {
+  display: grid;
+  gap: 12px;
+}
+
+.koinonia-client-access-list article {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-sm);
+}
+
+.koinonia-client-access-list article > span {
+  color: var(--portal-gold-dark);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.koinonia-client-access-list article > strong {
+  font-size: 17px;
+}
+
+.koinonia-client-access-list article > p {
+  margin: 0;
+  color: var(--portal-muted);
+  line-height: 1.5;
+}
+
+.koinonia-client-workspace-detail,
+.koinonia-employee-workspace-detail {
+  min-width: 0;
+}
+
+/* Responsive portal behavior. */
+
+@media (max-width: 1100px) {
+  .koinonia-client-dashboard-layout,
+  .koinonia-employee-dashboard-layout,
+  .koinonia-document-layout,
+  .koinonia-billing-layout,
+  .koinonia-workspace-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .koinonia-client-side-panel,
+  .koinonia-employee-side-panel,
+  .koinonia-document-side-panel,
+  .koinonia-billing-side-panel,
+  .koinonia-workspace-side-panel {
+    position: static;
+  }
+
+  .koinonia-client-summary-grid,
+  .koinonia-employee-summary-grid,
+  .koinonia-document-summary-grid,
+  .koinonia-billing-summary-grid,
+  .koinonia-workspace-summary-grid,
+  .koinonia-readiness-summary-grid,
+  .koinonia-staff-review-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .koinonia-client-portal-grid,
+  .koinonia-employee-portal-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .koinonia-client-portal-panel,
+  .koinonia-employee-portal-panel {
+    max-width: none;
+  }
+
+  .koinonia-readiness-grid,
+  .koinonia-staff-review-grid,
+  .koinonia-launch-grid,
+  .koinonia-readiness-next-grid,
+  .koinonia-staff-review-next-grid,
+  .koinonia-launch-proof-form-grid,
+  .koinonia-document-tool-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .koinonia-workspace-meta-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .koinonia-client-portal-entry,
+  .koinonia-employee-portal-entry,
+  .koinonia-client-dashboard-hero,
+  .koinonia-employee-dashboard-hero,
+  .koinonia-document-hero,
+  .koinonia-billing-hero,
+  .koinonia-workspace-hero,
+  .koinonia-staff-review-hero,
+  .koinonia-readiness-hero {
+    padding-top: 52px;
+    padding-bottom: 40px;
+  }
+
+  .koinonia-client-summary-grid,
+  .koinonia-employee-summary-grid,
+  .koinonia-document-summary-grid,
+  .koinonia-billing-summary-grid,
+  .koinonia-workspace-summary-grid,
+  .koinonia-readiness-summary-grid,
+  .koinonia-staff-review-summary-grid,
+  .koinonia-workspace-meta-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .koinonia-client-work-item,
+  .koinonia-employee-assignment-item,
+  .koinonia-document-work-item,
+  .koinonia-billing-work-item,
+  .koinonia-workspace-list-item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .koinonia-client-work-meta,
+  .koinonia-employee-assignment-meta,
+  .koinonia-employee-work-meta,
+  .koinonia-document-work-meta,
+  .koinonia-billing-work-meta {
+    justify-items: start;
+    white-space: normal;
+  }
+
+  .koinonia-client-status-list article,
+  .koinonia-employee-status-list article {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .koinonia-client-status-list article > strong,
+  .koinonia-employee-status-list article > strong {
+    justify-self: start;
+  }
+
+  .koinonia-client-panel-heading,
+  .koinonia-employee-panel-heading,
+  .koinonia-document-panel-heading,
+  .koinonia-billing-panel-heading,
+  .koinonia-workspace-panel-heading,
+  .koinonia-readiness-panel-heading,
+  .koinonia-staff-review-panel-heading,
+  .koinonia-launch-blockers-heading,
+  .koinonia-readiness-status-row,
+  .koinonia-staff-review-status-row,
+  .koinonia-launch-item-heading {
+    display: grid;
+    align-items: start;
+  }
+}
+
+/* Portal visual-system completion selectors. */
+
+.koinonia-access-request-form-status,
+.koinonia-billing-form-status,
+.koinonia-document-form-status {
+  margin: 0;
+  padding: 12px 14px;
+  color: #624819;
+  background: #fbf3e5;
+  border: 1px solid var(--portal-border-strong);
+  border-radius: var(--portal-radius-sm);
+  line-height: 1.5;
+}
+
+.koinonia-showing-status-form {
+  display: grid;
+  gap: 14px;
+}
+
+.koinonia-showing-status-form label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: var(--portal-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.koinonia-showing-status-form input,
+.koinonia-showing-status-form select,
+.koinonia-showing-status-form textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--portal-text);
+  background: #ffffff;
+  border: 1px solid rgba(23, 23, 23, 0.16);
+  border-radius: 10px;
+}
+
+.koinonia-showing-status-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.koinonia-showing-status-form button {
+  width: fit-content;
+  min-height: 44px;
+  padding: 11px 17px;
+  border: 0;
+  border-radius: 999px;
+  background: #171717;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.koinonia-launch-item,
+.koinonia-readiness-item,
+.koinonia-staff-review-item,
+.koinonia-launch-blocker {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+}
+
+.koinonia-launch-badge,
+.koinonia-readiness-badge,
+.koinonia-staff-review-badge {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 5px 9px;
+  color: var(--portal-gold-dark);
+  background: var(--portal-surface-gold);
+  border: 1px solid var(--portal-border);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+}
