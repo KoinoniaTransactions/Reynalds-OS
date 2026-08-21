@@ -8,7 +8,7 @@ export const clientTransactionObjectType = "Transaction";
 export const clientRelationshipObjectType = reusableClientRule.objectType;
 
 export type ClientTransactionIntakeInput = {
-  clientName: string;
+  clientName?: string;
   propertyAddress?: string;
   side: TransactionSide;
   sourceDocumentName: string;
@@ -30,7 +30,6 @@ export function validateClientTransactionIntakeInput(
   }
 
   const value = input as Record<string, unknown>;
-  const clientName = requiredString(value.clientName, "Client or household name is required.");
   const sourceDocumentName = requiredString(
     value.sourceDocumentName,
     "A source document is required to start the file."
@@ -48,17 +47,9 @@ export function validateClientTransactionIntakeInput(
     );
   }
 
-  const propertyAddress = optionalString(value.propertyAddress);
-
-  if (requiresPropertyAddress(side, stage) && !propertyAddress) {
-    throw new ClientTransactionValidationError(
-      "Property address is required for seller files and under-contract buyer files."
-    );
-  }
-
   return {
-    clientName,
-    propertyAddress,
+    clientName: optionalString(value.clientName),
+    propertyAddress: optionalString(value.propertyAddress),
     side,
     sourceDocumentName,
     stage
@@ -66,17 +57,28 @@ export function validateClientTransactionIntakeInput(
 }
 
 export function buildClientTransactionName(input: ClientTransactionIntakeInput): string {
-  const anchor = input.propertyAddress ?? input.clientName;
+  const anchor = input.propertyAddress ?? input.clientName ?? stripFileExtension(input.sourceDocumentName);
   return `${anchor} — ${input.side === "buyer" ? "Buyer" : "Seller"}`;
 }
 
-export function getClientTransactionStatus(stage: TransactionStage): string {
+export function getClientTransactionStatus(
+  stage: TransactionStage,
+  hasConfirmedIdentity = false
+): string {
+  if (!hasConfirmedIdentity) {
+    return "Intake - Processing";
+  }
+
   return stage === "under_contract" ? "Under Contract" : "Intake";
 }
 
 export function getClientTransactionNextAction(
   input: ClientTransactionIntakeInput
 ): string {
+  if (!input.clientName || (input.side === "seller" && !input.propertyAddress)) {
+    return "Extract client, property, and transaction details from the uploaded document.";
+  }
+
   return input.stage === "under_contract"
     ? "Review the executed contract and confirm extracted transaction deadlines."
     : input.side === "buyer"
@@ -92,8 +94,8 @@ export function normalizeClientIdentityName(value: string): string {
   return value.trim().replace(/\s+/g, " ").toLocaleLowerCase("en-US");
 }
 
-function requiresPropertyAddress(side: TransactionSide, stage: TransactionStage): boolean {
-  return side === "seller" || stage === "under_contract";
+function stripFileExtension(value: string): string {
+  return value.replace(/\.[^.]+$/, "").trim() || "New Transaction";
 }
 
 function requiredString(value: unknown, message: string): string {
