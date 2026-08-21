@@ -93,12 +93,15 @@ async function uploadShortLivedFile(
   apiKey: string
 ): Promise<string> {
   const form = new FormData();
+  const uploadBytes = new Uint8Array(input.bytes.byteLength);
+  uploadBytes.set(input.bytes);
+
   form.set("purpose", "user_data");
   form.set("expires_after[anchor]", "created_at");
   form.set("expires_after[seconds]", "3600");
   form.set(
     "file",
-    new Blob([input.bytes], { type: input.mimeType || "application/octet-stream" }),
+    new Blob([uploadBytes.buffer], { type: input.mimeType || "application/octet-stream" }),
     input.fileName
   );
 
