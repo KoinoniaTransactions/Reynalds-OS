@@ -15,12 +15,41 @@ type IntakeResult = {
   error?: string;
 };
 
+type DocumentUploadResult = {
+  document?: {
+    id: string;
+  };
+  error?: string;
+};
+
+type ExtractionProposal = {
+  clientNames: string[];
+  propertyAddress?: string;
+  purchasePrice?: number;
+  earnestMoney?: number;
+  closingDate?: string;
+  possession?: string;
+  financingType?: string;
+  deadlines: Record<string, string>;
+  confidence: "high" | "medium" | "low";
+  notes?: string[];
+};
+
+type ExtractionResult = {
+  proposal?: ExtractionProposal;
+  error?: string;
+};
+
+type IntakeStatus = "idle" | "saving" | "review" | "confirming" | "done" | "error";
+
 export function TransactionIntakeStart() {
   const [side, setSide] = useState<TransactionSide>("buyer");
   const [stage, setStage] = useState<TransactionStage>("pre_contract");
   const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
+  const [status, setStatus] = useState<IntakeStatus>("idle");
   const [message, setMessage] = useState<string | null>(null);
+  const [transactionId, setTransactionId] = useState<string | null>(null);
+  const [proposal, setProposal] = useState<ExtractionProposal | null>(null);
 
   const definition = useMemo(
     () => getTransactionIntakeDefinition(side, stage),
@@ -28,12 +57,13 @@ export function TransactionIntakeStart() {
   );
 
   async function startFile() {
-    if (!file || status === "saving") {
+    if (!file || status === "saving" || status === "confirming") {
       return;
     }
 
     setStatus("saving");
-    setMessage(null);
+    setMessage("Starting the file and reading your document…");
+    setProposal(null);
 
     try {
       const transactionResponse = await fetch("/api/portal/transactions", {
@@ -51,10 +81,13 @@ export function TransactionIntakeStart() {
         throw new Error(transactionResult.error ?? "Koinonia could not start this transaction.");
       }
 
+      const newTransactionId = transactionResult.transaction.id;
+      setTransactionId(newTransactionId);
+
       const documentForm = new FormData();
       documentForm.set("file", file);
       documentForm.set("documentType", definition.preferredDocument);
-      documentForm.set("relatedObjectId", transactionResult.transaction.id);
+      documentForm.set("relatedObjectId", newTransactionId);
       documentForm.set("transactionName", transactionResult.transaction.name);
       documentForm.set("requestedAction", "Extract transaction details and identify the client/property");
 
@@ -62,23 +95,82 @@ export function TransactionIntakeStart() {
         method: "POST",
         body: documentForm
       });
-      const documentResult = (await documentResponse.json()) as { error?: string };
+      const documentResult = (await documentResponse.json()) as DocumentUploadResult;
 
-      if (!documentResponse.ok) {
+      if (!documentResponse.ok || !documentResult.document) {
         throw new Error(
           documentResult.error ??
             "The transaction was started, but the document could not be uploaded."
         );
       }
 
-      setStatus("done");
-      setMessage(
-        `File started. Koinonia received ${file.name} and will use it to build the ${side} transaction.`
+      const extractionResponse = await fetch(
+        `/api/portal/transactions/${encodeURIComponent(newTransactionId)}/extraction/generate`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ documentId: documentResult.document.id })
+        }
       );
+      const extractionResult = (await extractionResponse.json()) as ExtractionResult;
+
+      if (!extractionResponse.ok || !extractionResult.proposal) {
+        setStatus("done");
+        setMessage(
+          extractionResult.error
+            ? `File started and document saved. Automatic extraction needs follow-up: ${extractionResult.error}`
+            : "File started and document saved. Koinonia will review the document and finish building the file."
+        );
+        return;
+      }
+
+      setProposal(extractionResult.proposal);
+      setStatus("review");
+      setMessage("We found the information below. Review it before Koinonia applies it to the file.");
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Koinonia could not start the file.");
     }
+  }
+
+  async function confirmExtraction() {
+    if (!transactionId || !proposal || status === "confirming") return;
+
+    setStatus("confirming");
+    setMessage("Applying the confirmed information…");
+
+    try {
+      const response = await fetch(
+        `/api/portal/transactions/${encodeURIComponent(transactionId)}/extraction`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "confirm" })
+        }
+      );
+      const result = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Koinonia could not confirm the extracted information.");
+      }
+
+      setStatus("done");
+      setMessage("File created. The confirmed document information is now attached to the transaction.");
+    } catch (error) {
+      setStatus("review");
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Koinonia could not confirm the extracted information."
+      );
+    }
+  }
+
+  function resetSelection() {
+    setStatus("idle");
+    setMessage(null);
+    setProposal(null);
+    setTransactionId(null);
   }
 
   return (
@@ -95,7 +187,11 @@ export function TransactionIntakeStart() {
             className="koinonia-client-summary-card"
             type="button"
             aria-pressed={side === "buyer"}
-            onClick={() => setSide("buyer")}
+            disabled={status === "saving" || status === "confirming" || status === "review"}
+            onClick={() => {
+              setSide("buyer");
+              resetSelection();
+            }}
           >
             <span>Buyer</span>
             <strong>{side === "buyer" ? "Selected" : "Choose"}</strong>
@@ -106,7 +202,11 @@ export function TransactionIntakeStart() {
             className="koinonia-client-summary-card"
             type="button"
             aria-pressed={side === "seller"}
-            onClick={() => setSide("seller")}
+            disabled={status === "saving" || status === "confirming" || status === "review"}
+            onClick={() => {
+              setSide("seller");
+              resetSelection();
+            }}
           >
             <span>Seller</span>
             <strong>{side === "seller" ? "Selected" : "Choose"}</strong>
@@ -126,7 +226,11 @@ export function TransactionIntakeStart() {
             className="koinonia-client-work-item"
             type="button"
             aria-pressed={stage === "pre_contract"}
-            onClick={() => setStage("pre_contract")}
+            disabled={status === "saving" || status === "confirming" || status === "review"}
+            onClick={() => {
+              setStage("pre_contract");
+              resetSelection();
+            }}
           >
             <div>
               <span>{side === "buyer" ? "Buyer" : "Seller"}</span>
@@ -146,7 +250,11 @@ export function TransactionIntakeStart() {
             className="koinonia-client-work-item"
             type="button"
             aria-pressed={stage === "under_contract"}
-            onClick={() => setStage("under_contract")}
+            disabled={status === "saving" || status === "confirming" || status === "review"}
+            onClick={() => {
+              setStage("under_contract");
+              resetSelection();
+            }}
           >
             <div>
               <span>{side === "buyer" ? "Buyer" : "Seller"}</span>
@@ -179,10 +287,10 @@ export function TransactionIntakeStart() {
             <input
               type="file"
               accept="application/pdf,image/jpeg,image/png"
+              disabled={status === "saving" || status === "confirming" || status === "review"}
               onChange={(event) => {
                 setFile(event.target.files?.[0] ?? null);
-                setStatus("idle");
-                setMessage(null);
+                resetSelection();
               }}
             />
           </label>
@@ -193,14 +301,16 @@ export function TransactionIntakeStart() {
             </p>
           ) : null}
 
-          <button
-            className="koinonia-button koinonia-button-primary"
-            type="button"
-            disabled={!file || status === "saving"}
-            onClick={startFile}
-          >
-            {status === "saving" ? "Starting file…" : "Start File"}
-          </button>
+          {status !== "review" && status !== "done" ? (
+            <button
+              className="koinonia-button koinonia-button-primary"
+              type="button"
+              disabled={!file || status === "saving" || status === "confirming"}
+              onClick={startFile}
+            >
+              {status === "saving" ? "Reading document…" : "Start File"}
+            </button>
+          ) : null}
 
           {message ? (
             <p className="koinonia-client-security-note" role={status === "error" ? "alert" : "status"}>
@@ -209,41 +319,117 @@ export function TransactionIntakeStart() {
           ) : null}
         </div>
 
-        <div className="koinonia-client-work-list">
-          <article className="koinonia-client-work-item">
-            <div>
-              <span>We will extract</span>
-              <h3>{definition.title}</h3>
-              <ul className="koinonia-client-showing-notes">
-                {definition.extractedFields.map((field) => (
-                  <li key={field}>{field}</li>
-                ))}
-              </ul>
+        {proposal ? (
+          <section className="koinonia-client-work-panel" aria-labelledby="extraction-review-title">
+            <div className="koinonia-client-panel-heading">
+              <p className="koinonia-eyebrow">Review</p>
+              <h2 id="extraction-review-title">Here&apos;s what we found</h2>
+              <p>
+                Confidence: <strong>{proposal.confidence}</strong>. Nothing below is applied until you confirm it.
+              </p>
             </div>
-          </article>
 
-          <article className="koinonia-client-work-item">
-            <div>
-              <span>Only if still missing</span>
-              <h3>Small follow-up questions</h3>
-              <ul className="koinonia-client-showing-notes">
-                {definition.followUpFields.map((field) => (
-                  <li key={field}>{field}</li>
-                ))}
-              </ul>
+            <div className="koinonia-client-work-list">
+              <ExtractionItem label="Clients" value={proposal.clientNames.join(" & ") || "Not found"} />
+              <ExtractionItem label="Property" value={proposal.propertyAddress ?? "Not found"} />
+              <ExtractionItem
+                label="Purchase price"
+                value={proposal.purchasePrice !== undefined ? formatMoney(proposal.purchasePrice) : "Not found"}
+              />
+              <ExtractionItem
+                label="Earnest money"
+                value={proposal.earnestMoney !== undefined ? formatMoney(proposal.earnestMoney) : "Not found"}
+              />
+              <ExtractionItem label="Closing" value={proposal.closingDate ?? "Not found"} />
+              <ExtractionItem label="Financing" value={proposal.financingType ?? "Not found"} />
+              <ExtractionItem label="Possession" value={proposal.possession ?? "Not found"} />
             </div>
-          </article>
-        </div>
+
+            {Object.keys(proposal.deadlines).length ? (
+              <div className="koinonia-client-request-card">
+                <strong>Contract deadlines</strong>
+                <ul className="koinonia-client-showing-notes">
+                  {Object.entries(proposal.deadlines).map(([name, date]) => (
+                    <li key={`${name}-${date}`}>{name}: {date}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {proposal.notes?.length ? (
+              <div className="koinonia-client-request-card">
+                <strong>Extraction notes</strong>
+                <ul className="koinonia-client-showing-notes">
+                  {proposal.notes.map((note) => <li key={note}>{note}</li>)}
+                </ul>
+              </div>
+            ) : null}
+
+            <button
+              className="koinonia-button koinonia-button-primary"
+              type="button"
+              disabled={status === "confirming"}
+              onClick={confirmExtraction}
+            >
+              {status === "confirming" ? "Confirming…" : "Confirm & Build File"}
+            </button>
+          </section>
+        ) : (
+          <div className="koinonia-client-work-list">
+            <article className="koinonia-client-work-item">
+              <div>
+                <span>We will extract</span>
+                <h3>{definition.title}</h3>
+                <ul className="koinonia-client-showing-notes">
+                  {definition.extractedFields.map((field) => (
+                    <li key={field}>{field}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+
+            <article className="koinonia-client-work-item">
+              <div>
+                <span>Only if still missing</span>
+                <h3>Small follow-up questions</h3>
+                <ul className="koinonia-client-showing-notes">
+                  {definition.followUpFields.map((field) => (
+                    <li key={field}>{field}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          </div>
+        )}
       </section>
 
       <section className="koinonia-client-request-card">
         <p className="koinonia-eyebrow">Reusable clients</p>
         <p>
-          When document extraction identifies people already in the Realtor's Koinonia account, the
+          When document extraction identifies people already in the Realtor&apos;s Koinonia account, the
           transaction can link to those existing client records instead of duplicating them. A client can
           be a seller on one transaction and a buyer on another while each file remains independent.
         </p>
       </section>
     </div>
   );
+}
+
+function ExtractionItem({ label, value }: { label: string; value: string }) {
+  return (
+    <article className="koinonia-client-work-item">
+      <div>
+        <span>{label}</span>
+        <h3>{value}</h3>
+      </div>
+    </article>
+  );
+}
+
+function formatMoney(value: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0
+  }).format(value);
 }
