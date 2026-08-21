@@ -7,15 +7,79 @@ import {
   type TransactionStage
 } from "../../lib/transaction-intake";
 
+type IntakeResult = {
+  transaction?: {
+    id: string;
+    name: string;
+  };
+  error?: string;
+};
+
 export function TransactionIntakeStart() {
   const [side, setSide] = useState<TransactionSide>("buyer");
   const [stage, setStage] = useState<TransactionStage>("pre_contract");
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
+  const [message, setMessage] = useState<string | null>(null);
 
   const definition = useMemo(
     () => getTransactionIntakeDefinition(side, stage),
     [side, stage]
   );
+
+  async function startFile() {
+    if (!file || status === "saving") {
+      return;
+    }
+
+    setStatus("saving");
+    setMessage(null);
+
+    try {
+      const transactionResponse = await fetch("/api/portal/transactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          side,
+          sourceDocumentName: file.name,
+          stage
+        })
+      });
+      const transactionResult = (await transactionResponse.json()) as IntakeResult;
+
+      if (!transactionResponse.ok || !transactionResult.transaction) {
+        throw new Error(transactionResult.error ?? "Koinonia could not start this transaction.");
+      }
+
+      const documentForm = new FormData();
+      documentForm.set("file", file);
+      documentForm.set("documentType", definition.preferredDocument);
+      documentForm.set("relatedObjectId", transactionResult.transaction.id);
+      documentForm.set("transactionName", transactionResult.transaction.name);
+      documentForm.set("requestedAction", "Extract transaction details and identify the client/property");
+
+      const documentResponse = await fetch("/api/portal/documents", {
+        method: "POST",
+        body: documentForm
+      });
+      const documentResult = (await documentResponse.json()) as { error?: string };
+
+      if (!documentResponse.ok) {
+        throw new Error(
+          documentResult.error ??
+            "The transaction was started, but the document could not be uploaded."
+        );
+      }
+
+      setStatus("done");
+      setMessage(
+        `File started. Koinonia received ${file.name} and will use it to build the ${side} transaction.`
+      );
+    } catch (error) {
+      setStatus("error");
+      setMessage(error instanceof Error ? error.message : "Koinonia could not start the file.");
+    }
+  }
 
   return (
     <div className="koinonia-client-main-stack">
@@ -106,23 +170,41 @@ export function TransactionIntakeStart() {
         <div className="koinonia-client-request-card">
           <strong>{definition.preferredDocument}</strong>
           <p>
-            Koinonia will use the document to identify the client, property, transaction details,
-            and the next information needed. The Realtor should only be asked to fill gaps the
-            document cannot answer.
+            Give Koinonia the document you already have. We will start the file from it rather than
+            making you retype client, property, or contract information first.
           </p>
 
           <label>
             <span>Choose a document</span>
             <input
               type="file"
-              accept="application/pdf,image/*"
-              onChange={(event) => setFileName(event.target.files?.[0]?.name ?? null)}
+              accept="application/pdf,image/jpeg,image/png"
+              onChange={(event) => {
+                setFile(event.target.files?.[0] ?? null);
+                setStatus("idle");
+                setMessage(null);
+              }}
             />
           </label>
 
-          {fileName ? (
+          {file ? (
             <p className="koinonia-client-security-note">
-              Ready for intake: <strong>{fileName}</strong>
+              Ready for intake: <strong>{file.name}</strong>
+            </p>
+          ) : null}
+
+          <button
+            className="koinonia-button koinonia-button-primary"
+            type="button"
+            disabled={!file || status === "saving"}
+            onClick={startFile}
+          >
+            {status === "saving" ? "Starting file…" : "Start File"}
+          </button>
+
+          {message ? (
+            <p className="koinonia-client-security-note" role={status === "error" ? "alert" : "status"}>
+              {message}
             </p>
           ) : null}
         </div>
@@ -157,9 +239,9 @@ export function TransactionIntakeStart() {
       <section className="koinonia-client-request-card">
         <p className="koinonia-eyebrow">Reusable clients</p>
         <p>
-          If the people on this file already exist in the Realtor's Koinonia account, the transaction
-          should link to those existing client records instead of creating duplicates. The same client
-          can be a seller on one transaction and a buyer on another while each file remains independent.
+          When document extraction identifies people already in the Realtor's Koinonia account, the
+          transaction can link to those existing client records instead of duplicating them. A client can
+          be a seller on one transaction and a buyer on another while each file remains independent.
         </p>
       </section>
     </div>
