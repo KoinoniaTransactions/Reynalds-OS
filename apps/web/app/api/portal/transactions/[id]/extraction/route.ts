@@ -40,20 +40,29 @@ export async function POST(request: Request, context: RouteContext) {
       return NextResponse.json({ error: "Transaction was not found." }, { status: 404 });
     }
 
+    const reviewStatus = getExtractionReviewStatus(proposal.confidence, proposal.documentMatch);
     const data = asRecord(transaction.data) ?? {};
     const nextData = {
       ...data,
       extraction: {
-        status: getExtractionReviewStatus(proposal.confidence),
+        status: reviewStatus,
         proposal
       }
     } as Prisma.InputJsonObject;
 
+    const nextAction =
+      proposal.documentMatch === "mismatch"
+        ? "Realtor must decide whether to replace the document or continue despite the mismatch warning."
+        : "Review extracted transaction information before applying it to the file.";
+
     const updated = await prisma.rosObject.update({
       where: { id: transaction.id },
       data: {
-        health: proposal.confidence === "low" ? "Attention" : transaction.health,
-        nextAction: "Review extracted transaction information before applying it to the file.",
+        health:
+          proposal.confidence === "low" || proposal.documentMatch !== "match"
+            ? "Attention"
+            : transaction.health,
+        nextAction,
         data: nextData
       }
     });
@@ -67,6 +76,8 @@ export async function POST(request: Request, context: RouteContext) {
         summary: `Document extraction proposed for ${transaction.name}`,
         newValue: {
           confidence: proposal.confidence,
+          documentMatch: proposal.documentMatch,
+          documentMatchReason: proposal.documentMatchReason ?? null,
           sourceDocumentId: proposal.sourceDocumentId
         }
       }
@@ -88,6 +99,8 @@ export async function PATCH(request: Request, context: RouteContext) {
       return NextResponse.json({ error: "action must be confirm." }, { status: 400 });
     }
 
+    const mismatchOverride = (body as Record<string, unknown>).mismatchOverride === true;
+
     const transaction = await prisma.rosObject.findFirst({
       where: {
         id,
@@ -104,6 +117,17 @@ export async function PATCH(request: Request, context: RouteContext) {
     const data = asRecord(transaction.data) ?? {};
     const extraction = asRecord(data.extraction);
     const proposal = validateTransactionExtractionProposal(extraction?.proposal);
+
+    if (proposal.documentMatch === "mismatch" && !mismatchOverride) {
+      return NextResponse.json(
+        {
+          error:
+            "The uploaded document appears not to match the selected file type. Confirm the mismatch override to continue anyway."
+        },
+        { status: 409 }
+      );
+    }
+
     const side = data.side === "seller" ? "seller" : "buyer";
     const householdName = buildHouseholdName(proposal.clientNames);
     const confirmedAt = new Date().toISOString();
@@ -169,7 +193,16 @@ export async function PATCH(request: Request, context: RouteContext) {
           }),
           health: "Healthy",
           nextAction: "Koinonia is managing the next transaction milestone.",
-          data: mergeExtractionIntoTransactionData(transaction.data, proposal, confirmedAt) as Prisma.InputJsonObject
+          data: {
+            ...mergeExtractionIntoTransactionData(transaction.data, proposal, confirmedAt),
+            extractionOverride: proposal.documentMatch === "mismatch"
+              ? {
+                  confirmedByUserId: actor.id,
+                  confirmedAt,
+                  reason: proposal.documentMatchReason ?? null
+                }
+              : null
+          } as Prisma.InputJsonObject
         }
       });
 
@@ -197,13 +230,21 @@ export async function PATCH(request: Request, context: RouteContext) {
           workspaceId: actor.workspaceId,
           objectId: transaction.id,
           actorId: actor.id,
-          eventType: "transaction.extraction.confirmed",
-          summary: `Extracted transaction information confirmed for ${updatedTransaction.name}`,
+          eventType:
+            proposal.documentMatch === "mismatch"
+              ? "transaction.extraction.mismatch_overridden"
+              : "transaction.extraction.confirmed",
+          summary:
+            proposal.documentMatch === "mismatch"
+              ? `Document mismatch warning overridden for ${updatedTransaction.name}`
+              : `Extracted transaction information confirmed for ${updatedTransaction.name}`,
           newValue: {
             clientObjectId,
             propertyAddress: proposal.propertyAddress ?? null,
             closingDate: proposal.closingDate ?? null,
-            sourceDocumentId: proposal.sourceDocumentId
+            sourceDocumentId: proposal.sourceDocumentId,
+            documentMatch: proposal.documentMatch,
+            mismatchOverride
           }
         }
       });
@@ -213,19 +254,28 @@ export async function PATCH(request: Request, context: RouteContext) {
           workspaceId: actor.workspaceId,
           actorId: actor.id,
           actorEmail: actor.email,
-          action: "portal.transaction.extraction.confirmed",
+          action:
+            proposal.documentMatch === "mismatch"
+              ? "portal.transaction.extraction.mismatch_overridden"
+              : "portal.transaction.extraction.confirmed",
           subjectType: "RosObject",
           subjectId: transaction.id,
-          summary: `Confirmed extracted data for ${updatedTransaction.name}`,
+          summary:
+            proposal.documentMatch === "mismatch"
+              ? `Overrode document mismatch warning for ${updatedTransaction.name}`
+              : `Confirmed extracted data for ${updatedTransaction.name}`,
           metadata: {
             confidence: proposal.confidence,
+            documentMatch: proposal.documentMatch,
+            documentMatchReason: proposal.documentMatchReason ?? null,
+            mismatchOverride,
             reusedClient,
             sourceDocumentId: proposal.sourceDocumentId
           }
         }
       });
 
-      return { transaction: updatedTransaction, reusedClient };
+      return { transaction: updatedTransaction, reusedClient, mismatchOverride };
     });
 
     return NextResponse.json(result);
