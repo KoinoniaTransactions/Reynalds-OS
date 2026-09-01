@@ -1,6 +1,6 @@
 # Koinonia Transactions — Marketing System Build Checklist
 
-Status: Stage 1 Active / Reconciliation In Progress
+Status: Stage 2A Content Production Foundation Active
 Business: Koinonia Transactions  
 Owner: Marketing + Sales
 
@@ -61,17 +61,18 @@ Until activation is approved:
 - [x] GA4 production property, stream, tag, and public-site deployment
 - [x] privacy and consultation routes verified in the original public-site launch
 - [x] first/latest/conversion-touch correction implemented and unit-tested on reconciliation branch
-- [ ] live conversion-path and UTM verification after release
-- [ ] GA4 Realtime/DebugView verification of a controlled `generate_lead`
+- [x] live conversion-path and UTM verification after release
+- [x] GA4 Realtime verification of a controlled `generate_lead`
+- [ ] GA4 Admin processing and `generate_lead` key-event designation verification
 
-### Social Profile System — Build Complete, Implementation Pending
+### Social Profile System — User-Confirmed Live
 
 - [x] Facebook profile setup defined
 - [x] Instagram profile setup defined
 - [x] TikTok profile setup defined
 - [x] organic UTM links defined
 - [x] conversion destinations defined
-- [ ] live profile configuration
+- [x] live profile configuration confirmed by the account owner
 
 ### Prospecting / Lead Sourcing — Build Complete
 
@@ -98,6 +99,13 @@ Until activation is approved:
 - [x] TikTok publishing checklist
 - [x] engagement response workflow
 - [x] performance-learning workflow
+- [x] Stage 2A three-asset pilot scope defined
+- [x] reusable social-static master created
+- [x] S1 production record and review-ready static draft created
+- [x] T1/T2 production records created
+- [ ] T1/T2 master videos recorded and reviewed
+- [ ] named inbound owner and first dashboard baseline confirmed
+- [ ] explicit pilot publishing approval
 - [ ] live organic publishing after Stage 2 approval
 
 ### Email Marketing — Build Complete
@@ -233,5 +241,8 @@ Stage 1 means only:
 
 It does **not** automatically authorize outreach, social publishing, nurture, Meta spend, brokerage contact, or TikTok paid.
 
-Before Stage 2, finish the controlled production attribution test, configure the three live social
-profiles, confirm the named inbound owner, and establish the first dashboard review baseline.
+The controlled production attribution test and live social profiles are confirmed. Stage 2A now
+builds and reviews the three-asset pilot package. Before live Stage 2 publishing, confirm the named
+inbound owner, establish the first dashboard review baseline, finish T1/T2 production QA, and obtain
+explicit publishing approval. GA4 key-event designation remains a reporting follow-up while Google
+processes the new event; the verified event itself is already collecting.

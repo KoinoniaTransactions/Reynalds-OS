@@ -53,6 +53,31 @@ The historical `30_DAY_MARKETING_LAUNCH_CALENDAR_2026-08-18.md` remains a prepar
 
 ---
 
+# Stage 2A — Organic Content Production Foundation
+
+This is a build-and-review stage. It is not a live publishing stage.
+
+Prepare only the first three-asset pilot package:
+
+- S1 More Opportunity, Not More Chaos — Facebook/Instagram static master
+- T1 More Closings Should Not Create More Chaos — TikTok/Reel recording package
+- T2 Two Clients Need Showings at the Same Time — TikTok/Reel recording package
+
+Complete:
+
+- reusable Koinonia social-static master
+- content records and canonical-source references
+- platform-ready copy/script packages
+- visual/video production QA
+- inbound owner and monitoring confirmation
+- first dashboard baseline
+- final publish/no-publish decision
+
+**Stage 2A hold point:** no asset may move from `Approved — Not Scheduled` to `Scheduled` or
+`Published` without explicit user approval.
+
+---
+
 # Stage 2 — Organic Social Activation
 
 ## Day 4

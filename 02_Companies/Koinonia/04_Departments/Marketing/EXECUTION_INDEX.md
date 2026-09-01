@@ -74,6 +74,12 @@ LinkedIn is not used for Koinonia Transactions marketing.
 Define the current activation gates and relative execution schedule. These documents control live
 implementation sequencing.
 
+`STAGE_2A_ORGANIC_CONTENT_PRODUCTION_FOUNDATION.md`
+
+Defines the build-and-review layer between Stage 1 infrastructure readiness and live Stage 2
+publishing. Stage 2A authorizes production of the three-asset organic pilot package, but it does
+not authorize publishing, scheduling, outreach, email, or paid media.
+
 ### 5. Historical Launch Content Library
 
 `30_DAY_MARKETING_LAUNCH_CALENDAR_2026-08-18.md`

@@ -1,14 +1,15 @@
 # Koinonia Transactions — Stage 1 Foundation Activation Status
 
-Status: Partially Complete / Manual Social Configuration Pending  
+Status: Operational Foundation Verified / Reporting Follow-Up Pending
 Date: 2026-08-17  
 Stage: Foundation Activation
 
 ## 2026-09-01 Reconciliation
 
-Stage 1 remains partially complete. The production website foundation has advanced, but social
-profile configuration, named inbound ownership, and a controlled live attribution test still need
-human confirmation.
+The production website foundation, controlled live attribution test, and live social-profile setup
+have now been confirmed. Named inbound ownership and the first dashboard baseline remain approval
+gates before publishing. GA4 recorded the controlled `generate_lead`; its Admin key-event designation
+remains pending while the new event finishes processing into the administrative event list.
 
 Verified since the original checkpoint:
 
@@ -17,7 +18,11 @@ Verified since the original checkpoint:
 - GA4 tag deployed and verified on the public Koinonia website
 - internal OS and secure portal routes remain excluded from GA4
 - successful consultation requests emit `generate_lead` without personal information
-- production deployment `dpl_DHHeV1EgXd2vfezxQx2jeTtDQ1Gd` reached `READY`
+- controlled consultation submission returned success and created the expected Relationship flow
+- Resend accepted the internal consultation notification
+- GA4 Realtime recorded `generate_lead`
+- Facebook, Instagram, and TikTok profiles are user-confirmed configured and ready for content
+- production deployment `dpl_2TfSPReybmuqyUwTw8MKL83fvWvH` reached `READY`
 
 Reconciliation work on isolated branch
 `feature/koinonia-stage1-marketing-reconciliation` corrects attribution so the CRM can preserve:
@@ -26,8 +31,9 @@ Reconciliation work on isolated branch
 - latest attributable touch
 - conversion touch
 
-That correction is not represented as live until it is reviewed, released, and verified against a
-controlled production consultation.
+The reconciliation was merged to `koinonia-production` in merge commit
+`74038b67fa5289ae60f968331628bafbf17980ff` and verified through the controlled production
+consultation.
 
 ## Purpose
 
@@ -45,7 +51,7 @@ This stage does not authorize outreach, campaign publishing, paid ads, nurture e
 
 ---
 
-# Website Production Release — COMPLETE
+# Original Website Foundation Release — COMPLETE (Historical Record)
 
 The integration branch was not promoted wholesale.
 
@@ -55,7 +61,7 @@ A surgical release branch was used:
 
 The release branch was based on `koinonia-production` and isolated only the launch-critical website foundation.
 
-The production branch and release branch are now identical at:
+The original production foundation release and release branch were identical at:
 
 `3ed887c39a05f53eb9ddeb3e4d207b9e45c4f856`
 
@@ -74,7 +80,7 @@ No unrelated integration-branch portal, Properties, Reynalds Brothers, marketing
 
 ---
 
-# Vercel Production Deployment — COMPLETE
+# Original Vercel Foundation Deployment — COMPLETE (Historical Record)
 
 Project:
 
@@ -84,7 +90,7 @@ Vercel project ID:
 
 `prj_7WLWYfFPKfmzLNPzaA0247ENMGjd`
 
-Production deployment:
+Original production deployment:
 
 `dpl_7AdpShYxdHdxxsGByfPPkUa3r9UQ`
 
@@ -106,6 +112,11 @@ Production aliases reported by Vercel:
 
 Vercel reported no alias error for the production deployment.
 
+The later Stage 1 reconciliation was merged in commit
+`74038b67fa5289ae60f968331628bafbf17980ff` and deployed as
+`dpl_2TfSPReybmuqyUwTw8MKL83fvWvH`. That later deployment supersedes the original foundation
+deployment as the current production checkpoint.
+
 ---
 
 # Public Search / Cache Note
@@ -120,9 +131,9 @@ A direct human browser check should still confirm the public-domain rendering af
 
 ---
 
-# Website Verification Remaining
+# Website Verification — COMPLETE
 
-Before Stage 1 is marked fully complete, manually verify from a normal public browser:
+Verified from the production website and controlled consultation flow:
 
 - `/privacy` renders on `www.koinoniatransactions.com`
 - footer Privacy link opens `/privacy`
@@ -131,35 +142,32 @@ Before Stage 1 is marked fully complete, manually verify from a normal public br
 - a controlled UTM test preserves source/medium/campaign/content
 - an existing Relationship's original first-touch values are not overwritten by later consultation activity
 - expected consultation notification behavior works if configured
-- GA4 `generate_lead` appears in Realtime/DebugView after a controlled consultation
+- GA4 `generate_lead` appears in Realtime after a controlled consultation
 
 A real form submission should use clearly labeled internal/test data and be cleaned up or retained as test evidence according to normal CRM practice.
 
 ---
 
-# Social Profile Configuration — MANUAL PENDING
+# Social Profile Configuration — USER-CONFIRMED COMPLETE
 
-No authenticated Facebook, Instagram, or TikTok management connector is available in the current environment.
+The account owner confirmed that Facebook, Instagram, and TikTok were already configured and ready
+for posting. The live Facebook Page was also observed under the correct **Koinonia Transactions**
+identity. Earlier copy in this document describing manual profile configuration as pending is
+superseded. Do not restart or overwrite established live profile setup merely to reproduce the Day 2
+specification.
 
-No installable social-management plugin was available when checked.
-
-Therefore profile changes were **not** represented as completed.
-
-Use the approved Day 2 profile specification.
+The established live profiles are the source of truth unless the user intentionally reopens profile
+copy or configuration.
 
 ## Facebook
 
-Display name:
+Confirmed display name:
 
 **Koinonia Transactions**
 
-Intro:
+Confirmed live bio retained by user decision on 2026-09-01:
 
-**Real estate operations support for Colorado Realtors. You focus on clients. We carry the operation.**
-
-About:
-
-**Koinonia Transactions helps Colorado Realtors with transaction support, contract and document support, licensed showing coverage, professional open house coverage, and monthly operations support.**
+**Real estate operations support for Colorado Realtors. Transactions • Contracts • Showings • Business Support. Real Estate Operations. Elevated.**
 
 Primary tracked CTA:
 
@@ -171,11 +179,8 @@ Website field:
 
 ## Instagram
 
-Bio:
-
-**Real estate operations support for Colorado Realtors.**  
-**Transactions • Docs • Showings • Open Houses • Operations**  
-**Need help? ↓**
+The account owner confirmed the profile is completely configured and ready for posting. Do not
+replace its live bio with older prepared copy unless the user intentionally reopens it.
 
 Tracked bio link:
 
@@ -183,9 +188,8 @@ Tracked bio link:
 
 ## TikTok
 
-Bio:
-
-**Operations support for Colorado Realtors. Need help carrying the operation? ↓**
+The account owner confirmed the profile is completely configured and ready for posting. Do not
+replace its live bio with older prepared copy unless the user intentionally reopens it.
 
 Tracked bio link:
 
@@ -222,15 +226,21 @@ No acquisition channel should be activated if inbound leads cannot be reviewed a
 - Koinonia domain aliases attached to production deployment
 - profile copy and tracked links fully specified
 - lead-response operating process built
+- controlled consultation and UTM verification
+- GA4 Realtime `generate_lead` verification
+- Facebook / Instagram / TikTok profile configuration confirmed
 
-## Pending Manual Verification / Configuration
+## Pending Before Live Organic Publishing
 
-- public-browser privacy/contact verification
-- controlled consultation + UTM test
-- Facebook profile edits
-- Instagram profile edits
-- TikTok profile edits
 - named inbound lead owner confirmation
+- first dashboard/control baseline
+- T1/T2 media production and pilot-package QA
+- explicit publishing approval
+
+## Reporting Follow-Up
+
+- verify `generate_lead` appears in GA4 Admin after processing
+- mark `generate_lead` as a key event and verify the designation
 
 ## Not Authorized Yet
 

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img" aria-labelledby="title description">
+  <title id="title">Koinonia social static master</title>
+  <desc id="description">Reusable warm cream, black, and gold square layout for Koinonia Transactions social posts.</desc>
+  <rect width="1080" height="1080" fill="#F7F3EC"/>
+  <path d="M0 0H1080V24H0Z" fill="#B88A44"/>
+  <circle cx="930" cy="154" r="76" fill="#161616"/>
+  <circle cx="930" cy="154" r="54" fill="none" stroke="#B88A44" stroke-width="6"/>
+  <text x="930" y="183" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="76" font-weight="700" fill="#B88A44">K</text>
+  <text x="92" y="142" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" letter-spacing="5" fill="#9A6D2A">REAL ESTATE OPERATIONS SUPPORT</text>
+  <line x1="92" y1="190" x2="742" y2="190" stroke="#D9C39D" stroke-width="3"/>
+  <text x="92" y="402" font-family="Georgia, 'Times New Roman', serif" font-size="82" font-weight="700" fill="#171717">YOUR CLEAR</text>
+  <text x="92" y="504" font-family="Georgia, 'Times New Roman', serif" font-size="82" font-weight="700" fill="#171717">HEADLINE</text>
+  <text x="92" y="606" font-family="Georgia, 'Times New Roman', serif" font-size="82" font-weight="700" fill="#171717">GOES HERE.</text>
+  <rect x="92" y="706" width="112" height="8" rx="4" fill="#B88A44"/>
+  <text x="92" y="902" font-family="Georgia, 'Times New Roman', serif" font-size="42" font-weight="700" fill="#171717">Koinonia Transactions</text>
+  <text x="92" y="950" font-family="Arial, Helvetica, sans-serif" font-size="24" letter-spacing="1" fill="#5F5A52">Real Estate Operations. Elevated.</text>
+  <text x="92" y="1003" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#5F5A52">koinoniatransactions.com</text>
+</svg>
