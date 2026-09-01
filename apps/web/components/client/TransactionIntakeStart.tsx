@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { getTransactionDocumentRequirements } from "../../lib/transaction-document-requirements";
 import {
   getTransactionIntakeDefinition,
   type TransactionSide,
@@ -8,6 +9,7 @@ import {
 } from "../../lib/transaction-intake";
 
 const MAX_PORTAL_UPLOAD_BYTES = 4 * 1024 * 1024;
+const PENDING_DOCUMENT_TYPE = "Pending Classification";
 
 type IntakeResult = {
   transaction?: {
@@ -28,6 +30,7 @@ type ExtractionProposal = {
   clientNames: string[];
   propertyAddress?: string;
   identifiedDocumentType: string;
+  documentRequirementId?: string;
   listPrice?: number;
   listingEffectiveDate?: string;
   listingExpirationDate?: string;
@@ -65,6 +68,10 @@ export function TransactionIntakeStart() {
 
   const definition = useMemo(
     () => getTransactionIntakeDefinition(side, stage),
+    [side, stage]
+  );
+  const documentRequirements = useMemo(
+    () => getTransactionDocumentRequirements(side, stage),
     [side, stage]
   );
 
@@ -108,10 +115,10 @@ export function TransactionIntakeStart() {
 
       const documentForm = new FormData();
       documentForm.set("file", file);
-      documentForm.set("documentType", definition.preferredDocument);
+      documentForm.set("documentType", PENDING_DOCUMENT_TYPE);
       documentForm.set("relatedObjectId", newTransactionId);
       documentForm.set("transactionName", transactionResult.transaction.name);
-      documentForm.set("requestedAction", "Extract transaction details and identify the client/property");
+      documentForm.set("requestedAction", "Identify this document, file it into the transaction checklist, and extract relevant transaction details");
 
       const documentResponse = await fetch("/api/portal/documents", {
         method: "POST",
@@ -140,8 +147,8 @@ export function TransactionIntakeStart() {
         setStatus("done");
         setMessage(
           extractionResult.error
-            ? `File started and document saved. Automatic extraction needs follow-up: ${extractionResult.error}`
-            : "File started and document saved. Koinonia will review the document and finish building the file."
+            ? `File started and document saved for review. Automatic classification needs follow-up: ${extractionResult.error}`
+            : "File started and document saved. Koinonia will classify the document and finish building the file."
         );
         return;
       }
@@ -151,7 +158,7 @@ export function TransactionIntakeStart() {
       setMessage(
         extractionResult.proposal.documentMatch === "mismatch"
           ? "AI flagged this as a possible document mismatch. Review the warning and decide whether to replace it or continue anyway."
-          : "We found the information below. Review it before Koinonia applies it to the file."
+          : "We identified the document and found the information below. Review it before Koinonia files and applies it."
       );
     } catch (error) {
       setStatus("error");
@@ -168,7 +175,7 @@ export function TransactionIntakeStart() {
     }
 
     setStatus("confirming");
-    setMessage("Applying the confirmed information…");
+    setMessage("Filing the document and applying the confirmed information…");
 
     try {
       const response = await fetch(
@@ -182,17 +189,18 @@ export function TransactionIntakeStart() {
           })
         }
       );
-      const result = await readApiResult<{ error?: string }>(response);
+      const result = await readApiResult<{ error?: string; documentType?: string }>(response);
 
       if (!response.ok) {
         throw new Error(result.error ?? "Koinonia could not confirm the extracted information.");
       }
 
+      const filedAs = result.documentType ?? proposal.identifiedDocumentType;
       setStatus("done");
       setMessage(
         proposal.documentMatch === "mismatch"
-          ? `File created. Your decision to continue despite the AI mismatch warning was recorded, and the document was filed as ${proposal.identifiedDocumentType}.`
-          : `File created. The confirmed document was filed as ${proposal.identifiedDocumentType} and its information is attached to the transaction.`
+          ? `File created. Your decision to continue despite the AI mismatch warning was recorded, and the document was filed as ${filedAs}.`
+          : `File created. The confirmed document was filed as ${filedAs}, and the transaction checklist will now show it as received.`
       );
     } catch (error) {
       setStatus("review");
@@ -210,7 +218,7 @@ export function TransactionIntakeStart() {
     setTransactionId(null);
     setMismatchOverride(false);
     setStatus("idle");
-    setMessage("Choose the correct document and start the file again.");
+    setMessage("Choose another document and start the file again.");
     setIntakeRequestId(createTransactionIntakeRequestId());
   }
 
@@ -224,6 +232,9 @@ export function TransactionIntakeStart() {
   }
 
   const isSellerListingStage = side === "seller" && stage === "pre_contract";
+  const matchedRequirement = proposal?.documentRequirementId
+    ? documentRequirements.find((requirement) => requirement.id === proposal.documentRequirementId)
+    : undefined;
 
   return (
     <div className="koinonia-client-main-stack">
@@ -328,10 +339,23 @@ export function TransactionIntakeStart() {
         </div>
 
         <div className="koinonia-client-request-card">
-          <strong>{definition.preferredDocument}</strong>
+          <strong>Documents this file will track</strong>
           <p>
-            Give Koinonia the document you already have. We will start the file from it rather than
-            making you retype client, property, or contract information first.
+            Upload whichever relevant document you have now. Koinonia will identify it, place it into the matching checklist item, and keep showing what is still needed.
+          </p>
+          <ul className="koinonia-client-showing-notes">
+            {documentRequirements.map((requirement) => (
+              <li key={requirement.id}>
+                {requirement.label} — {requirement.level === "required" ? "Required" : requirement.level === "conditional" ? "If applicable" : "Optional"}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="koinonia-client-request-card">
+          <strong>Choose any document you already have</strong>
+          <p>
+            We will start the file from the document instead of making you retype client, property, listing, or contract information first.
           </p>
 
           <label>
@@ -389,7 +413,9 @@ export function TransactionIntakeStart() {
               <p className="koinonia-eyebrow">Review</p>
               <h2 id="extraction-review-title">Here&apos;s what we found</h2>
               <p>
-                Identified document: <strong>{proposal.identifiedDocumentType}</strong> · Confidence: <strong>{proposal.confidence}</strong>. Nothing below is applied until you confirm it.
+                Identified document: <strong>{proposal.identifiedDocumentType}</strong>
+                {matchedRequirement ? <> · Checklist item: <strong>{matchedRequirement.label}</strong></> : null}
+                {" "}· Confidence: <strong>{proposal.confidence}</strong>. Nothing is filed as received until you confirm it.
               </p>
             </div>
 
@@ -397,8 +423,8 @@ export function TransactionIntakeStart() {
               <div className="koinonia-client-request-card" role="alert">
                 <strong>
                   {proposal.documentMatch === "mismatch"
-                    ? "AI thinks this document may not fit the selected file stage"
-                    : "AI is not sure this document matches the selected file stage"}
+                    ? "AI thinks this document may not belong in this transaction path"
+                    : "AI is not sure where this document belongs"}
                 </strong>
                 <p>
                   {proposal.documentMatchReason ??
@@ -421,7 +447,7 @@ export function TransactionIntakeStart() {
                         setMessage("You chose to continue despite the AI mismatch warning. Review the extracted fields, then confirm the file.");
                       }}
                     >
-                      {mismatchOverride ? "Continue Anyway Selected" : "This Is the Correct File — Continue"}
+                      {mismatchOverride ? "Continue Anyway Selected" : "This Belongs in This File — Continue"}
                     </button>
                   </div>
                 ) : null}
