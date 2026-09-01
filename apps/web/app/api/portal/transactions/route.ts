@@ -21,6 +21,34 @@ export async function POST(request: Request) {
   try {
     const actor = await assertPermission("client-portal:transactions:create");
     const input = validateClientTransactionIntakeInput(await request.json());
+
+    if (input.intakeRequestId) {
+      const recentTransactions = await prisma.rosObject.findMany({
+        where: {
+          workspaceId: actor.workspaceId,
+          objectType: clientTransactionObjectType,
+          archivedAt: null,
+          OR: [{ clientUserId: actor.id }, { ownerId: actor.id }]
+        },
+        orderBy: { createdAt: "desc" },
+        take: 50
+      });
+      const existingTransaction = recentTransactions.find((transaction) => {
+        const data = asRecord(transaction.data);
+        return data?.intakeRequestId === input.intakeRequestId;
+      });
+
+      if (existingTransaction) {
+        return NextResponse.json({
+          clientObject: null,
+          relationship: null,
+          reusedClient: false,
+          reusedIntake: true,
+          transaction: existingTransaction
+        });
+      }
+    }
+
     const normalizedClientName = input.clientName
       ? normalizeClientIdentityName(input.clientName)
       : null;
@@ -90,6 +118,7 @@ export async function POST(request: Request) {
           nextAction: getClientTransactionNextAction(input),
           data: {
             clientName: input.clientName ?? null,
+            intakeRequestId: input.intakeRequestId ?? null,
             intakeSource: "client_portal",
             propertyAddress: input.propertyAddress ?? null,
             side: input.side,
@@ -119,6 +148,7 @@ export async function POST(request: Request) {
           summary: `${input.side === "buyer" ? "Buyer" : "Seller"} transaction intake started from ${input.sourceDocumentName}`,
           newValue: {
             clientObjectId: clientObject?.id ?? null,
+            intakeRequestId: input.intakeRequestId ?? null,
             propertyAddress: input.propertyAddress ?? null,
             side: input.side,
             stage: input.stage,
@@ -154,6 +184,7 @@ export async function POST(request: Request) {
           metadata: {
             clientObjectId: clientObject?.id ?? null,
             identityPending: !clientObject,
+            intakeRequestId: input.intakeRequestId ?? null,
             reusedClient: Boolean(matchedClient),
             side: input.side,
             stage: input.stage
@@ -165,6 +196,7 @@ export async function POST(request: Request) {
         clientObject,
         relationship,
         reusedClient: Boolean(matchedClient),
+        reusedIntake: false,
         transaction
       };
     });
