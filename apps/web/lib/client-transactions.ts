@@ -9,6 +9,7 @@ export const clientRelationshipObjectType = reusableClientRule.objectType;
 
 export type ClientTransactionIntakeInput = {
   clientName?: string;
+  intakeRequestId?: string;
   propertyAddress?: string;
   side: TransactionSide;
   sourceDocumentName: string;
@@ -36,6 +37,7 @@ export function validateClientTransactionIntakeInput(
   );
   const side = value.side;
   const stage = value.stage;
+  const intakeRequestId = optionalString(value.intakeRequestId);
 
   if (side !== "buyer" && side !== "seller") {
     throw new ClientTransactionValidationError("Transaction side must be buyer or seller.");
@@ -47,8 +49,13 @@ export function validateClientTransactionIntakeInput(
     );
   }
 
+  if (intakeRequestId && intakeRequestId.length > 100) {
+    throw new ClientTransactionValidationError("Transaction intake request id is too long.");
+  }
+
   return {
     clientName: optionalString(value.clientName),
+    intakeRequestId,
     propertyAddress: optionalString(value.propertyAddress),
     side,
     sourceDocumentName,
@@ -92,6 +99,12 @@ export function getClientTransactionPartyRelationshipType(side: TransactionSide)
 
 export function normalizeClientIdentityName(value: string): string {
   return value.trim().replace(/\s+/g, " ").toLocaleLowerCase("en-US");
+}
+
+export function getTransactionIntakeRequestId(value: unknown): string | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const requestId = (value as Record<string, unknown>).intakeRequestId;
+  return typeof requestId === "string" && requestId.trim() ? requestId.trim() : null;
 }
 
 function stripFileExtension(value: string): string {
