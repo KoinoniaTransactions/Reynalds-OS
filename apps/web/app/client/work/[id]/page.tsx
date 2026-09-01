@@ -5,7 +5,10 @@ import { ClientDocumentReviewCard } from "../../../../components/client/ClientDo
 import { Footer, Header } from "../../../../components/site";
 import { prisma } from "../../../../lib/db";
 import { isPortalDocumentR2Configured } from "../../../../lib/portal-document-r2";
-import { groupPortalDocumentVersions } from "../../../../lib/portal-documents";
+import {
+  getPortalDocumentLifecycleState,
+  groupPortalDocumentVersions
+} from "../../../../lib/portal-documents";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
 import {
   buildEmptyPortalWorkspaceDocuments,
@@ -291,7 +294,12 @@ async function getClientWorkWorkspace(
       })
     ]);
 
-    const versionGroups = groupPortalDocumentVersions(documents);
+    const versionGroups = groupPortalDocumentVersions(
+      documents.map((document) => ({
+        ...document,
+        lifecycleState: getPortalDocumentLifecycleState(document)
+      }))
+    );
     const currentDocuments = versionGroups
       .map((group) => group.current)
       .filter((document) => document.lifecycleState === "active" && !document.supersededByDocumentId);
