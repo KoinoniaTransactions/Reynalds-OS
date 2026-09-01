@@ -17,13 +17,16 @@ export async function GET(_request: Request, context: RouteContext) {
   try {
     const actor = await assertPermission("employee-portal:assigned-work:view");
     const { id } = await context.params;
+    const canViewWorkspaceWork =
+      actor.permissions.includes("employee-portal:assignments:update") ||
+      actor.permissions.includes("employee-portal:clients:view");
 
     const transaction = await prisma.rosObject.findFirst({
       where: {
         id,
         workspaceId: actor.workspaceId,
         archivedAt: null,
-        ...(actor.permissions.includes("employee-portal:workspace-work:view")
+        ...(canViewWorkspaceWork
           ? {}
           : { OR: [{ assignedStaffUserId: actor.id }, { backupStaffUserId: actor.id }] })
       }
