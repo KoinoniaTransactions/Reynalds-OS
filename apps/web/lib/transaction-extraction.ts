@@ -1,6 +1,7 @@
 import type { TransactionSide } from "./transaction-intake";
 
 export type ExtractionConfidence = "high" | "medium" | "low";
+export type DocumentMatch = "match" | "mismatch" | "uncertain";
 
 export type TransactionExtractionProposal = {
   clientNames: string[];
@@ -12,6 +13,8 @@ export type TransactionExtractionProposal = {
   financingType?: string;
   deadlines: Record<string, string>;
   confidence: ExtractionConfidence;
+  documentMatch: DocumentMatch;
+  documentMatchReason?: string;
   sourceDocumentId: string;
   sourceDocumentType: string;
   notes?: string[];
@@ -36,6 +39,7 @@ export function validateTransactionExtractionProposal(
   const sourceDocumentId = requiredString(value.sourceDocumentId, "sourceDocumentId");
   const sourceDocumentType = requiredString(value.sourceDocumentType, "sourceDocumentType");
   const confidence = requiredConfidence(value.confidence);
+  const documentMatch = optionalDocumentMatch(value.documentMatch);
 
   return {
     clientNames,
@@ -47,13 +51,20 @@ export function validateTransactionExtractionProposal(
     financingType: optionalString(value.financingType),
     deadlines: stringRecord(value.deadlines, "deadlines"),
     confidence,
+    documentMatch,
+    documentMatchReason: optionalString(value.documentMatchReason),
     sourceDocumentId,
     sourceDocumentType,
     notes: optionalStringArray(value.notes, "notes")
   };
 }
 
-export function getExtractionReviewStatus(confidence: ExtractionConfidence): string {
+export function getExtractionReviewStatus(
+  confidence: ExtractionConfidence,
+  documentMatch: DocumentMatch = "match"
+): string {
+  if (documentMatch === "mismatch") return "Wrong Document";
+  if (documentMatch === "uncertain") return "Needs Review";
   return confidence === "high" ? "Ready for Review" : "Needs Review";
 }
 
@@ -91,6 +102,8 @@ export function mergeExtractionIntoTransactionData(
     extraction: {
       status: "confirmed",
       confidence: proposal.confidence,
+      documentMatch: proposal.documentMatch,
+      documentMatchReason: proposal.documentMatchReason ?? null,
       sourceDocumentId: proposal.sourceDocumentId,
       sourceDocumentType: proposal.sourceDocumentType,
       confirmedAt,
@@ -105,6 +118,15 @@ function requiredConfidence(value: unknown): ExtractionConfidence {
   }
 
   throw new TransactionExtractionValidationError("confidence must be high, medium, or low.");
+}
+
+function optionalDocumentMatch(value: unknown): DocumentMatch {
+  if (value === undefined || value === null) return "match";
+  if (value === "match" || value === "mismatch" || value === "uncertain") return value;
+
+  throw new TransactionExtractionValidationError(
+    "documentMatch must be match, mismatch, or uncertain."
+  );
 }
 
 function requiredString(value: unknown, field: string): string {
