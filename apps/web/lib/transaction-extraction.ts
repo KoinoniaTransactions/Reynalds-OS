@@ -6,6 +6,12 @@ export type DocumentMatch = "match" | "mismatch" | "uncertain";
 export type TransactionExtractionProposal = {
   clientNames: string[];
   propertyAddress?: string;
+  identifiedDocumentType: string;
+  listPrice?: number;
+  listingEffectiveDate?: string;
+  listingExpirationDate?: string;
+  brokerageName?: string;
+  agentName?: string;
   purchasePrice?: number;
   earnestMoney?: number;
   closingDate?: string;
@@ -44,6 +50,12 @@ export function validateTransactionExtractionProposal(
   return {
     clientNames,
     propertyAddress: optionalString(value.propertyAddress),
+    identifiedDocumentType: optionalString(value.identifiedDocumentType) ?? sourceDocumentType,
+    listPrice: optionalPositiveNumber(value.listPrice, "listPrice"),
+    listingEffectiveDate: optionalDateString(value.listingEffectiveDate, "listingEffectiveDate"),
+    listingExpirationDate: optionalDateString(value.listingExpirationDate, "listingExpirationDate"),
+    brokerageName: optionalString(value.brokerageName),
+    agentName: optionalString(value.agentName),
     purchasePrice: optionalPositiveNumber(value.purchasePrice, "purchasePrice"),
     earnestMoney: optionalPositiveNumber(value.earnestMoney, "earnestMoney"),
     closingDate: optionalDateString(value.closingDate, "closingDate"),
@@ -92,6 +104,11 @@ export function mergeExtractionIntoTransactionData(
   return {
     ...base,
     propertyAddress: proposal.propertyAddress ?? base.propertyAddress ?? null,
+    listPrice: proposal.listPrice ?? base.listPrice ?? null,
+    listingEffectiveDate: proposal.listingEffectiveDate ?? base.listingEffectiveDate ?? null,
+    listingExpirationDate: proposal.listingExpirationDate ?? base.listingExpirationDate ?? null,
+    brokerageName: proposal.brokerageName ?? base.brokerageName ?? null,
+    agentName: proposal.agentName ?? base.agentName ?? null,
     purchasePrice: proposal.purchasePrice ?? base.purchasePrice ?? null,
     earnestMoney: proposal.earnestMoney ?? base.earnestMoney ?? null,
     closingDate: proposal.closingDate ?? base.closingDate ?? null,
@@ -104,6 +121,7 @@ export function mergeExtractionIntoTransactionData(
       confidence: proposal.confidence,
       documentMatch: proposal.documentMatch,
       documentMatchReason: proposal.documentMatchReason ?? null,
+      identifiedDocumentType: proposal.identifiedDocumentType,
       sourceDocumentId: proposal.sourceDocumentId,
       sourceDocumentType: proposal.sourceDocumentType,
       confirmedAt,
