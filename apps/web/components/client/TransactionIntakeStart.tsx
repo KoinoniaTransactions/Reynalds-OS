@@ -7,6 +7,8 @@ import {
   type TransactionStage
 } from "../../lib/transaction-intake";
 
+const MAX_PORTAL_UPLOAD_BYTES = 4 * 1024 * 1024;
+
 type IntakeResult = {
   transaction?: {
     id: string;
@@ -62,6 +64,14 @@ export function TransactionIntakeStart() {
       return;
     }
 
+    if (file.size > MAX_PORTAL_UPLOAD_BYTES) {
+      setStatus("error");
+      setMessage(
+        `This document is ${formatFileSize(file.size)}. For this Preview, uploads must be 4 MB or smaller. Please choose a smaller PDF, JPEG, or PNG.`
+      );
+      return;
+    }
+
     setStatus("saving");
     setMessage("Starting the file and reading your document…");
     setProposal(null);
@@ -77,7 +87,7 @@ export function TransactionIntakeStart() {
           stage
         })
       });
-      const transactionResult = (await transactionResponse.json()) as IntakeResult;
+      const transactionResult = await readApiResult<IntakeResult>(transactionResponse);
 
       if (!transactionResponse.ok || !transactionResult.transaction) {
         throw new Error(transactionResult.error ?? "Koinonia could not start this transaction.");
@@ -97,7 +107,7 @@ export function TransactionIntakeStart() {
         method: "POST",
         body: documentForm
       });
-      const documentResult = (await documentResponse.json()) as DocumentUploadResult;
+      const documentResult = await readApiResult<DocumentUploadResult>(documentResponse);
 
       if (!documentResponse.ok || !documentResult.document) {
         throw new Error(
@@ -114,7 +124,7 @@ export function TransactionIntakeStart() {
           body: JSON.stringify({ documentId: documentResult.document.id })
         }
       );
-      const extractionResult = (await extractionResponse.json()) as ExtractionResult;
+      const extractionResult = await readApiResult<ExtractionResult>(extractionResponse);
 
       if (!extractionResponse.ok || !extractionResult.proposal) {
         setStatus("done");
@@ -150,7 +160,7 @@ export function TransactionIntakeStart() {
           body: JSON.stringify({ action: "confirm" })
         }
       );
-      const result = (await response.json()) as { error?: string };
+      const result = await readApiResult<{ error?: string }>(response);
 
       if (!response.ok) {
         throw new Error(result.error ?? "Koinonia could not confirm the extracted information.");
@@ -292,15 +302,27 @@ export function TransactionIntakeStart() {
               accept="application/pdf,image/jpeg,image/png"
               disabled={status === "saving" || status === "confirming" || status === "review"}
               onChange={(event) => {
-                setFile(event.target.files?.[0] ?? null);
+                const selectedFile = event.target.files?.[0] ?? null;
                 resetSelection();
+
+                if (selectedFile && selectedFile.size > MAX_PORTAL_UPLOAD_BYTES) {
+                  setFile(null);
+                  setStatus("error");
+                  setMessage(
+                    `This document is ${formatFileSize(selectedFile.size)}. For this Preview, uploads must be 4 MB or smaller. Please choose a smaller PDF, JPEG, or PNG.`
+                  );
+                  event.currentTarget.value = "";
+                  return;
+                }
+
+                setFile(selectedFile);
               }}
             />
           </label>
 
           {file ? (
             <p className="koinonia-client-security-note">
-              Ready for intake: <strong>{file.name}</strong>
+              Ready for intake: <strong>{file.name}</strong> ({formatFileSize(file.size)})
             </p>
           ) : null}
 
@@ -427,6 +449,44 @@ function ExtractionItem({ label, value }: { label: string; value: string }) {
       </div>
     </article>
   );
+}
+
+async function readApiResult<T extends { error?: string }>(response: Response): Promise<T> {
+  const text = await response.text();
+
+  if (!text) {
+    return {} as T;
+  }
+
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return {
+      error: normalizePlatformError(text, response.status)
+    } as T;
+  }
+}
+
+function normalizePlatformError(value: string, status: number): string {
+  const normalized = value.trim();
+
+  if (status === 413 || /request entity too large|payload too large/i.test(normalized)) {
+    return "This document is too large for the current upload path. Please choose a file 4 MB or smaller.";
+  }
+
+  if (/request en/i.test(normalized)) {
+    return "The hosting platform rejected this document before Koinonia could process it. Please try a smaller file.";
+  }
+
+  return normalized || `Request failed with status ${status}.`;
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024 * 1024) {
+    return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  }
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function formatMoney(value: number): string {
