@@ -37,6 +37,8 @@ type ModelExtraction = {
   financingType: string | null;
   deadlines: Array<{ name: string; date: string }>;
   confidence: "high" | "medium" | "low";
+  documentMatch: "match" | "mismatch" | "uncertain";
+  documentMatchReason: string | null;
   notes: string[];
 };
 
@@ -79,6 +81,8 @@ export async function extractTransactionDocumentWithOpenAI(
           .map((deadline) => [deadline.name.trim(), deadline.date.trim()])
       ),
       confidence: modelExtraction.confidence,
+      documentMatch: modelExtraction.documentMatch,
+      documentMatchReason: modelExtraction.documentMatchReason ?? undefined,
       sourceDocumentId: input.sourceDocumentId,
       sourceDocumentType: input.sourceDocumentType,
       notes: modelExtraction.notes
@@ -143,7 +147,7 @@ async function createStructuredExtraction(
             {
               type: "input_text",
               text:
-                "You extract factual real-estate transaction information from documents for human review. Never invent a value. Use null when the document does not state a value clearly. Client names must be the represented clients for the requested side, not every party in the document. Deadlines must contain only dates explicitly stated or unambiguously calculable from the document itself. Confidence is high only when the key identity/property fields are explicit and legible; otherwise use medium or low."
+                "You extract factual real-estate transaction information from documents for human review. Never invent a value. Use null when the document does not state a value clearly. Client names must be the represented clients for the requested side, not every party in the document. Deadlines must contain only dates explicitly stated or unambiguously calculable from the document itself. Confidence is high only when the key identity/property fields are explicit and legible; otherwise use medium or low. Also assess whether the uploaded document actually matches the requested transaction document type and stage. Set documentMatch to match when it clearly does, mismatch when it clearly does not, and uncertain when you cannot tell. Explain that assessment briefly in documentMatchReason. A mismatch is advisory for the Realtor and must not be treated as a final decision."
             }
           ]
         },
@@ -152,7 +156,7 @@ async function createStructuredExtraction(
           content: [
             {
               type: "input_text",
-              text: `Extract the ${input.side} transaction fields for a ${input.stage} file from this ${input.sourceDocumentType}. Return only the structured extraction.`
+              text: `Extract the ${input.side} transaction fields for a ${input.stage} file from this ${input.sourceDocumentType}. Return only the structured extraction and assess whether this document matches that requested file type.`
             },
             {
               type: "input_file",
@@ -276,6 +280,11 @@ const extractionJsonSchema = {
       type: "string",
       enum: ["high", "medium", "low"]
     },
+    documentMatch: {
+      type: "string",
+      enum: ["match", "mismatch", "uncertain"]
+    },
+    documentMatchReason: { type: ["string", "null"] },
     notes: {
       type: "array",
       items: { type: "string" }
@@ -291,6 +300,8 @@ const extractionJsonSchema = {
     "financingType",
     "deadlines",
     "confidence",
+    "documentMatch",
+    "documentMatchReason",
     "notes"
   ]
 } as const;
