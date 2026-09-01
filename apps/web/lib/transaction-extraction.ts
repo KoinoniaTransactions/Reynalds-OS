@@ -111,11 +111,16 @@ export function mergeExtractionIntoTransactionData(
 ): Record<string, unknown> {
   const base = isRecord(existingData) ? { ...existingData } : {};
   const existingRequirementFacts = isRecord(base.requirementFacts) ? base.requirementFacts : {};
+  const existingDeadlines = isRecord(base.deadlines) ? base.deadlines : {};
   const derivedFinancingType = normalizeFinancingFact(proposal.financingType);
   const nextRequirementFacts = {
     ...existingRequirementFacts,
     ...(proposal.requirementFacts ?? {}),
     ...(derivedFinancingType ? { financingType: derivedFinancingType } : {})
+  };
+  const nextDeadlines = {
+    ...existingDeadlines,
+    ...proposal.deadlines
   };
 
   return {
@@ -131,7 +136,7 @@ export function mergeExtractionIntoTransactionData(
     closingDate: proposal.closingDate ?? base.closingDate ?? null,
     possession: proposal.possession ?? base.possession ?? null,
     financingType: proposal.financingType ?? base.financingType ?? null,
-    deadlines: proposal.deadlines,
+    deadlines: nextDeadlines,
     clientNames: proposal.clientNames,
     requirementFacts: nextRequirementFacts,
     extraction: {
