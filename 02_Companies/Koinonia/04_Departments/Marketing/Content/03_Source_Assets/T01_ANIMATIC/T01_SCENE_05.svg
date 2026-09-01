@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920" role="img" aria-label="Koinonia carries operational work while the Realtor focuses on clients.">
+  <title>Carry the operation</title>
+  <rect width="1080" height="1920" fill="#F7F3EC"/>
+
+  <text x="92" y="138" font-family="Arial, 'Nimbus Sans', sans-serif" font-size="24" font-weight="700" letter-spacing="5" fill="#986C2C">REAL ESTATE OPERATIONS SUPPORT</text>
+
+    <circle cx="884" cy="126" r="70" fill="#171717"/>
+    <circle cx="884" cy="126" r="49" fill="none" stroke="#B88A44" stroke-width="6"/>
+    <text x="884" y="153" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="72" font-weight="700" fill="#B88A44">K</text>
+
+      <rect x="68" y="390" width="418" height="900" rx="42" fill="#FFFDFC" stroke="#E4D8C5" stroke-width="3"/>
+      <rect x="594" y="390" width="418" height="900" rx="42" fill="#171717"/>
+      <text x="277" y="490" text-anchor="middle" font-family="Arial, 'Nimbus Sans', sans-serif" font-size="28" font-weight="700" letter-spacing="3" fill="#625D55">YOUR LANE</text>
+      <text x="803" y="490" text-anchor="middle" font-family="Arial, 'Nimbus Sans', sans-serif" font-size="28" font-weight="700" letter-spacing="3" fill="#B88A44">KOINONIA LANE</text>
+      <text x="277" y="670" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="48" font-weight="700" fill="#171717">CLIENTS</text>
+<text x="277" y="790" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="48" font-weight="700" fill="#171717">ADVICE</text>
+<text x="277" y="910" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="48" font-weight="700" fill="#171717">DECISIONS</text>
+      <text x="803" y="630" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="42" font-weight="700" fill="#FFFFFF">DEADLINES</text>
+<text x="803" y="748" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="42" font-weight="700" fill="#FFFFFF">DOCUMENTS</text>
+<text x="803" y="866" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="42" font-weight="700" fill="#FFFFFF">FOLLOW-UP</text>
+<text x="803" y="984" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="42" font-weight="700" fill="#FFFFFF">COORDINATION</text>
+      <circle cx="540" cy="842" r="60" fill="#B88A44"/>
+      <text x="540" y="863" text-anchor="middle" font-family="Arial, 'Nimbus Sans', sans-serif" font-size="58" font-weight="700" fill="#FFFFFF">›</text>
+
+    <rect x="64" y="1575" width="952" height="246" rx="38" fill="#171717"/>
+    <text x="540" y="1664" text-anchor="middle" font-family="Arial, 'Nimbus Sans', sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">Carry the operation competing</text>
+<text x="540" y="1722" text-anchor="middle" font-family="Arial, 'Nimbus Sans', sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">with your client time.</text>
+  </svg>

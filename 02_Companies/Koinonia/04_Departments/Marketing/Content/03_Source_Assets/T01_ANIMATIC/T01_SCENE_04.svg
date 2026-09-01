@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920" role="img" aria-label="The answer is not always hiring another full-time employee.">
+  <title>Not always another hire</title>
+  <rect width="1080" height="1920" fill="#F7F3EC"/>
+
+  <text x="92" y="138" font-family="Arial, 'Nimbus Sans', sans-serif" font-size="24" font-weight="700" letter-spacing="5" fill="#986C2C">REAL ESTATE OPERATIONS SUPPORT</text>
+
+    <circle cx="884" cy="126" r="70" fill="#171717"/>
+    <circle cx="884" cy="126" r="49" fill="none" stroke="#B88A44" stroke-width="6"/>
+    <text x="884" y="153" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="72" font-weight="700" fill="#B88A44">K</text>
+
+      <circle cx="540" cy="520" r="88" fill="#171717"/>
+      <path d="M360 840C360 700 440 630 540 630C640 630 720 700 720 840V900H360Z" fill="#171717"/>
+      <rect x="300" y="1020" width="480" height="112" rx="56" fill="#B88A44"/>
+      <text x="540" y="1092" text-anchor="middle" font-family="Arial, 'Nimbus Sans', sans-serif" font-size="34" font-weight="700" fill="#FFFFFF">FULL-TIME HIRE?</text>
+      <text x="540" y="1320" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="92" font-weight="700" fill="#171717">NOT ALWAYS.</text>
+
+    <rect x="64" y="1575" width="952" height="246" rx="38" fill="#171717"/>
+    <text x="540" y="1664" text-anchor="middle" font-family="Arial, 'Nimbus Sans', sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">The answer is not always hiring</text>
+<text x="540" y="1722" text-anchor="middle" font-family="Arial, 'Nimbus Sans', sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">another full-time person.</text>
+  </svg>

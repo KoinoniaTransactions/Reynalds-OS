@@ -13,6 +13,8 @@ This directory implements the storage and naming standard defined in
 - `02_Copy_Scripts/T01_ANIMATED_STORYBOARD.md`
 - `02_Copy_Scripts/T02_ANIMATED_STORYBOARD.md`
 - `03_Source_Assets/KOINONIA_SOCIAL_STATIC_MASTER_v01.svg`
+- `03_Source_Assets/T01_ANIMATIC/`
+- `04_Drafts/T01_ANIMATIC/DRAFT_TT_IG_T01_MORE_CLOSINGS_ANIMATIC_v01.mp4`
 - `05_Approved/DRAFT_FB_IG_S01_MORE_OPPORTUNITY_STATIC_v01.svg`
 - `05_Approved/DRAFT_FB_IG_S01_MORE_OPPORTUNITY_STATIC_v01.png`
 

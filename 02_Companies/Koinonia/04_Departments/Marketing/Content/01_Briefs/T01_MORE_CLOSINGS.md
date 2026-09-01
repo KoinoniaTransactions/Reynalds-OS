@@ -1,6 +1,6 @@
 # T01_MORE_CLOSINGS
 
-Status: Storyboard Ready / Animation Pending
+Status: Animatic Review
 Channels: TikTok + Instagram Reel
 Format: Faceless animated vertical video with voiceover
 Content job: Problem Recognition
@@ -31,6 +31,13 @@ Use `../../30_DAY_MARKETING_LAUNCH_CALENDAR_2026-08-18.md`, section
 
 Use `../02_Copy_Scripts/T01_ANIMATED_STORYBOARD.md`.
 
+## Review Files
+
+- silent animatic: `../04_Drafts/T01_ANIMATIC/DRAFT_TT_IG_T01_MORE_CLOSINGS_ANIMATIC_v01.mp4`
+- review poster: `../04_Drafts/T01_ANIMATIC/DRAFT_TT_IG_T01_MORE_CLOSINGS_POSTER_v01.png`
+- contact sheet: `../04_Drafts/T01_ANIMATIC/T01_ANIMATIC_CONTACT_SHEET_v01.png`
+- scene sources and build script: `../03_Source_Assets/T01_ANIMATIC/`
+
 ## Cover Text
 
 **More opportunity. Less operational chaos.**
@@ -38,6 +45,8 @@ Use `../02_Copy_Scripts/T01_ANIMATED_STORYBOARD.md`.
 ## Approval Gate
 
 - [x] animated storyboard prepared
+- [x] silent visual animatic rendered and technically validated
+- [ ] visual animatic approved by user
 - [ ] master animation rendered
 - [ ] voiceover approved
 - [ ] captions checked

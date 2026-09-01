@@ -62,6 +62,8 @@ steps remain superseded.
 - [x] content records reference canonical copy/scripts
 - [x] S1 visual approved by user on 2026-09-01
 - [x] T1/T2 faceless animated storyboards prepared
+- [x] T1 silent visual animatic rendered for review
+- [ ] T1 visual animatic approved
 - [ ] T1 master video is animated, voiced, captioned, and reviewed
 - [ ] T2 master video is animated, voiced, captioned, and reviewed
 - [ ] named owner is confirmed for website consultations and social DMs/comments
