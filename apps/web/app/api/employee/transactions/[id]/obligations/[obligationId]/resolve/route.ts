@@ -3,6 +3,7 @@ import { getAuthErrorResponse } from "../../../../../../../../lib/api-auth";
 import { assertPermission } from "../../../../../../../../lib/auth";
 import { prisma } from "../../../../../../../../lib/db";
 import { resolveTransactionObligationByStaff } from "../../../../../../../../lib/transaction-obligation-resolution";
+import type { TransactionObligationOutcome } from "../../../../../../../../lib/transaction-obligations";
 
 export const dynamic = "force-dynamic";
 
@@ -21,10 +22,17 @@ export async function PATCH(request: Request, context: RouteContext) {
         ? record.resolution
         : null;
     const reason = typeof record.reason === "string" ? record.reason.trim() : "";
+    const outcome = parseOutcome(record.outcome);
 
     if (!resolution) {
       return NextResponse.json(
         { error: "resolution must be satisfied or not_applicable." },
+        { status: 400 }
+      );
+    }
+    if (record.outcome !== undefined && !outcome) {
+      return NextResponse.json(
+        { error: "outcome must be occurred, no_event, or completed when provided." },
         { status: 400 }
       );
     }
@@ -64,7 +72,8 @@ export async function PATCH(request: Request, context: RouteContext) {
         actorId: actor.id,
         resolution,
         reason,
-        occurredAt
+        occurredAt,
+        outcome: outcome ?? undefined
       });
 
       await tx.auditEvent.create({
@@ -80,6 +89,7 @@ export async function PATCH(request: Request, context: RouteContext) {
             transactionId: transaction.id,
             obligationKey: resolved.obligationKey,
             resolution,
+            outcome: resolved.satisfactionOutcome ?? null,
             reason
           }
         }
@@ -109,4 +119,8 @@ export async function PATCH(request: Request, context: RouteContext) {
 
     throw error;
   }
+}
+
+function parseOutcome(value: unknown): TransactionObligationOutcome | null {
+  return value === "occurred" || value === "no_event" || value === "completed" ? value : null;
 }
