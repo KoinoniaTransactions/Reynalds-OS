@@ -7,6 +7,7 @@ import {
   transactionObligationObjectType,
   transactionObligationRelationshipType
 } from "../../../../../../lib/transaction-obligations";
+import type { TransactionSide, TransactionStage } from "../../../../../../lib/transaction-intake";
 
 export const dynamic = "force-dynamic";
 
@@ -45,8 +46,14 @@ export async function GET(_request: Request, context: RouteContext) {
     });
 
     const data = asRecord(transaction.data) ?? {};
-    const side = data.side === "seller" ? "seller" : data.side === "buyer" ? "buyer" : null;
-    const stage = data.stage === "under_contract" ? "under_contract" : data.stage === "pre_contract" ? "pre_contract" : null;
+    const side: TransactionSide | null =
+      data.side === "seller" ? "seller" : data.side === "buyer" ? "buyer" : null;
+    const stage: TransactionStage | null =
+      data.stage === "under_contract"
+        ? "under_contract"
+        : data.stage === "pre_contract"
+          ? "pre_contract"
+          : null;
 
     return NextResponse.json({
       staff: buildStaffTransactionOperations({
