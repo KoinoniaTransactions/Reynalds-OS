@@ -47,6 +47,7 @@ export type TransactionDocumentRequirement = {
   source: "colorado_dre" | "transaction_workflow";
   appliesWhen?: (facts: TransactionFacts) => boolean | undefined;
   factKeys?: TransactionFactKey[];
+  eventDriven?: boolean;
 };
 
 export type TransactionDocumentChecklistStatus =
@@ -106,7 +107,7 @@ const requirementSets: RequirementSet[] = [
       req("buyer-agency-agreement", "Buyer Agency / Representation Agreement", "required", "representation", ["exclusive right to buy listing contract", "buyer agency agreement", "buyer representation agreement"], "Buyer representation agreement for the client relationship.", "colorado_dre"),
       req("counterproposal", "Counterproposal", "required", "contract", ["counterproposal", "counter proposal"], "Required when a counterproposal forms part of the agreement.", "colorado_dre", (facts) => facts.hasCounterproposal, ["hasCounterproposal"]),
       req("contract-addenda", "Contract Addenda / Attachments", "expected", "contract", ["addendum", "addenda", "contract attachment"], "Retain addenda and attachments that form part of the contract.", "colorado_dre"),
-      req("amend-extend", "Agreement to Amend / Extend", "required", "due_diligence", ["agreement to amend extend", "amend extend", "amendment", "extension"], "Required when contract terms or deadlines are amended.", "colorado_dre", (facts) => facts.contractAmended, ["contractAmended"]),
+      eventReq("amend-extend", "Agreement to Amend / Extend", "due_diligence", ["agreement to amend extend", "amend extend", "amendment", "extension"], "Tracked when contract terms or deadlines are changed; deadline health determines when review may be needed.", "colorado_dre"),
       req("earnest-money-receipt", "Earnest Money Receipt", "expected", "contract", ["earnest money receipt", "earnest money deposit receipt"], "Track receipt/third-party evidence when earnest money is delivered.", "colorado_dre"),
       req("seller-property-disclosure", "Seller Property Disclosure", "expected", "due_diligence", ["seller property disclosure", "seller's property disclosure", "sellers property disclosure"], "Common residential due-diligence document unless the seller/transaction is exempt.", "colorado_dre", residentialAndNotExempt, ["propertyUse", "sellerDisclosureExempt"]),
       req("square-footage-disclosure", "Square Footage Disclosure", "required", "due_diligence", ["square footage disclosure"], "Required when a broker advertises residential square footage.", "colorado_dre", (facts) => residentialRule(facts, facts.squareFootageAdvertised), ["propertyUse", "squareFootageAdvertised"]),
@@ -139,7 +140,7 @@ const requirementSets: RequirementSet[] = [
     stage: "pre_contract",
     requirements: [
       req("listing-agreement", "Listing Agreement", "required", "listing", ["exclusive right to sell listing contract", "listing agreement", "executed listing agreement"], "Primary listing-side agreement.", "colorado_dre"),
-      req("listing-amend-extend", "Listing Contract Amend / Extend", "required", "listing", ["listing contract amend extend", "listing amend extend"], "Required when the listing agreement is amended or extended.", "colorado_dre", (facts) => facts.contractAmended, ["contractAmended"]),
+      eventReq("listing-amend-extend", "Listing Contract Amend / Extend", "listing", ["listing contract amend extend", "listing amend extend"], "Tracked when the listing term is changed or extended; listing expiration health determines when review may be needed.", "colorado_dre"),
       req("seller-property-disclosure", "Seller Property Disclosure", "expected", "listing", ["seller property disclosure", "seller's property disclosure", "sellers property disclosure"], "Common residential listing document unless the seller/transaction is exempt.", "colorado_dre", residentialAndNotExempt, ["propertyUse", "sellerDisclosureExempt"]),
       req("square-footage-disclosure", "Square Footage Disclosure", "required", "listing", ["square footage disclosure"], "Required when a broker advertises residential square footage, including MLS advertising.", "colorado_dre", (facts) => residentialRule(facts, facts.squareFootageAdvertised), ["propertyUse", "squareFootageAdvertised"]),
       req("lead-based-paint-disclosure", "Lead-Based Paint Disclosure", "required", "listing", ["lead-based paint disclosure", "lead based paint disclosure", "lead-based paint"], "Applies to covered residential housing built before 1978.", "colorado_dre", leadPaintRule, ["propertyUse", "yearBuilt"]),
@@ -195,11 +196,14 @@ export function buildTransactionDocumentChecklist(
   const currentPhaseIndex = transactionDocumentPhaseOrder.indexOf(currentPhase);
 
   return getTransactionDocumentRequirements(side, stage).flatMap((requirement) => {
+    const matchIndex = availableDocuments.findIndex((document) => documentTypeMatchesRequirement(document.documentType, requirement));
+    const matched = matchIndex >= 0 ? availableDocuments.splice(matchIndex, 1)[0] : undefined;
+
+    if (requirement.eventDriven && !matched) return [];
+
     const applies = requirement.appliesWhen?.(facts);
     if (applies === false || (applies === undefined && requirement.appliesWhen)) return [];
 
-    const matchIndex = availableDocuments.findIndex((document) => documentTypeMatchesRequirement(document.documentType, requirement));
-    const matched = matchIndex >= 0 ? availableDocuments.splice(matchIndex, 1)[0] : undefined;
     const requirementPhaseIndex = transactionDocumentPhaseOrder.indexOf(requirement.phase);
 
     return [{
@@ -229,7 +233,7 @@ export function getTransactionRequirementQuestions(
   const unresolved = new Set<TransactionFactKey>();
 
   const hasUnresolvedResidentialRequirement = getTransactionDocumentRequirements(side, stage).some((requirement) => {
-    if (!requirement.appliesWhen) return false;
+    if (requirement.eventDriven || !requirement.appliesWhen) return false;
     if (transactionDocumentPhaseOrder.indexOf(requirement.phase) > currentPhaseIndex) return false;
     return (requirement.factKeys ?? []).includes("propertyUse") && requirement.appliesWhen(facts) === undefined;
   });
@@ -238,7 +242,7 @@ export function getTransactionRequirementQuestions(
   }
 
   for (const requirement of getTransactionDocumentRequirements(side, stage)) {
-    if (!requirement.appliesWhen) continue;
+    if (requirement.eventDriven || !requirement.appliesWhen) continue;
     if (transactionDocumentPhaseOrder.indexOf(requirement.phase) > currentPhaseIndex) continue;
     if (requirement.appliesWhen(facts) !== undefined) continue;
 
@@ -248,6 +252,7 @@ export function getTransactionRequirementQuestions(
   }
 
   unresolved.delete("propertyUse");
+  unresolved.delete("contractAmended");
   return [...unresolved]
     .map((factKey) => factQuestions[factKey])
     .filter((question): question is TransactionRequirementQuestion => Boolean(question));
@@ -283,7 +288,6 @@ const factQuestions: Partial<Record<TransactionFactKey, TransactionRequirementQu
   foreclosure: q("foreclosure", "Is the property in foreclosure or potentially subject to Colorado Foreclosure Protection Act requirements?", "Covered foreclosure transactions need specialized broker/legal review and additional documents.", "choice", [["Yes / needs review", "true"], ["No", "false"]]),
   manufacturedHome: q("manufacturedHome", "Does the transaction include a manufactured home?", "A manufactured-home addendum or specialized contract may be required depending on the structure of the deal.", "choice", [["Yes", "true"], ["No", "false"]]),
   hasCounterproposal: q("hasCounterproposal", "Was a counterproposal used to form the agreement?", "If yes, it becomes part of the required contract file.", "choice", [["Yes", "true"], ["No", "false"]]),
-  contractAmended: q("contractAmended", "Has this agreement been amended or extended?", "If yes, Koinonia will require the applicable Amend/Extend document.", "choice", [["Yes", "true"], ["No", "false"]]),
   powerOfAttorneyUsed: q("powerOfAttorneyUsed", "Will any party sign through a power of attorney?", "If yes, the file should retain the relevant power-of-attorney document.", "choice", [["Yes", "true"], ["No", "false"]]),
   personalPropertyAgreementUsed: q("personalPropertyAgreementUsed", "Is personal property being handled in a separate agreement or bill of sale?", "If yes, track that agreement in the transaction file.", "choice", [["Yes", "true"], ["No", "false"]]),
   affiliatedBusinessReferral: q("affiliatedBusinessReferral", "Is there an affiliated-business referral or arrangement in this transaction?", "If yes, the appropriate disclosure must be tracked.", "choice", [["Yes", "true"], ["No", "false"]]),
@@ -309,6 +313,17 @@ function req(
   factKeys?: TransactionFactKey[]
 ): TransactionDocumentRequirement {
   return { id, label, level, phase, aliases, guidance, source, appliesWhen, factKeys };
+}
+
+function eventReq(
+  id: string,
+  label: string,
+  phase: TransactionDocumentRequirementPhase,
+  aliases: string[],
+  guidance: string,
+  source: TransactionDocumentRequirement["source"]
+): TransactionDocumentRequirement {
+  return { id, label, level: "optional", phase, aliases, guidance, source, eventDriven: true };
 }
 
 function q(
