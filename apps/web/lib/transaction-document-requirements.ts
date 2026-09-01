@@ -66,6 +66,7 @@ export type TransactionRequirementQuestion = {
   factKey: TransactionFactKey;
   prompt: string;
   helpText: string;
+  inputType: "choice" | "number";
   options: Array<{ label: string; value: string }>;
 };
 
@@ -75,6 +76,15 @@ type RequirementSet = {
   requirements: TransactionDocumentRequirement[];
 };
 
+export const transactionDocumentPhaseOrder: TransactionDocumentRequirementPhase[] = [
+  "representation",
+  "listing",
+  "contract",
+  "due_diligence",
+  "closing",
+  "final_file"
+];
+
 const requirementSets: RequirementSet[] = [
   {
     side: "buyer",
@@ -83,7 +93,7 @@ const requirementSets: RequirementSet[] = [
       req("buyer-agency-agreement", "Buyer Agency / Representation Agreement", "required", "representation", ["exclusive right to buy listing contract", "buyer agency agreement", "buyer representation agreement"], "Establishes the buyer representation relationship.", "colorado_dre"),
       req("brokerage-disclosure-buyer", "Brokerage Disclosure to Buyer", "expected", "representation", ["brokerage disclosure to buyer"], "Used when the brokerage relationship requires this disclosure rather than an agency listing contract.", "colorado_dre"),
       req("definitions-working-relationships", "Definitions of Working Relationships", "expected", "representation", ["definitions of working relationships"], "Relationship disclosure retained when used.", "colorado_dre"),
-      req("lender-letter", "Lender Pre-Approval / Prequalification", "expected", "representation", ["pre-approval letter", "preapproval letter", "prequalification letter", "lender letter"], "Track for financed buyers when the broker receives a copy.", "colorado_dre", (facts) => boolWhen(facts.financingType, (value) => value === "loan"), ["financingType"]),
+      req("lender-letter", "Lender Pre-Approval / Prequalification", "expected", "representation", ["pre-approval letter", "preapproval letter", "prequalification letter", "lender letter"], "Track for financed buyers when the broker receives a copy.", "colorado_dre", (facts) => enumWhen(facts.financingType, (value) => value === "loan"), ["financingType"]),
       req("affiliated-business-disclosure", "Affiliated Business Arrangement Disclosure", "required", "representation", ["affiliated business arrangement disclosure", "affiliated business disclosure"], "Required when an affiliated-business referral/disclosure is triggered.", "colorado_dre", (facts) => facts.affiliatedBusinessReferral, ["affiliatedBusinessReferral"]),
       req("referral-fee-agreement", "Referral Fee Agreement", "required", "representation", ["referral fee agreement"], "Track when a referral fee applies.", "colorado_dre", (facts) => facts.referralFee, ["referralFee"])
     ]
@@ -121,7 +131,7 @@ const requirementSets: RequirementSet[] = [
       req("agreement-to-revive", "Agreement to Revive Contract", "required", "contract", ["agreement to revive contract"], "Required when a terminated/expired contract is revived.", "colorado_dre", (facts) => facts.contractRevived, ["contractRevived"]),
       req("affiliated-business-disclosure", "Affiliated Business Arrangement Disclosure", "required", "contract", ["affiliated business arrangement disclosure", "affiliated business disclosure"], "Required when an affiliated-business referral/disclosure is triggered.", "colorado_dre", (facts) => facts.affiliatedBusinessReferral, ["affiliatedBusinessReferral"]),
       req("referral-fee-agreement", "Referral Fee Agreement", "required", "final_file", ["referral fee agreement"], "Track when a referral fee applies.", "colorado_dre", (facts) => facts.referralFee, ["referralFee"]),
-      req("lender-letter", "Lender Letter / Pre-Approval", "expected", "contract", ["pre-approval letter", "preapproval letter", "prequalification letter", "lender letter"], "Retain when the broker has a copy for financed transactions.", "colorado_dre", (facts) => boolWhen(facts.financingType, (value) => value === "loan"), ["financingType"])
+      req("lender-letter", "Lender Letter / Pre-Approval", "expected", "contract", ["pre-approval letter", "preapproval letter", "prequalification letter", "lender letter"], "Retain when the broker has a copy for financed transactions.", "colorado_dre", (facts) => enumWhen(facts.financingType, (value) => value === "loan"), ["financingType"])
     ]
   },
   {
@@ -151,7 +161,6 @@ const requirementSets: RequirementSet[] = [
   }
 ];
 
-// Seller-under-contract needs the listing file plus the sale-side contract-to-close file.
 requirementSets.find((set) => set.side === "seller" && set.stage === "under_contract")!.requirements = [
   ...requirementSets.find((set) => set.side === "seller" && set.stage === "pre_contract")!.requirements,
   ...requirementSets.find((set) => set.side === "buyer" && set.stage === "under_contract")!.requirements.filter(
@@ -164,17 +173,6 @@ export function getTransactionDocumentRequirements(
   stage: TransactionStage
 ): TransactionDocumentRequirement[] {
   return requirementSets.find((set) => set.side === side && set.stage === stage)?.requirements ?? [];
-}
-
-export function getApplicableTransactionDocumentRequirements(
-  side: TransactionSide,
-  stage: TransactionStage,
-  facts: TransactionFacts
-): TransactionDocumentRequirement[] {
-  return getTransactionDocumentRequirements(side, stage).filter((requirement) => {
-    if (!requirement.appliesWhen) return true;
-    return requirement.appliesWhen(facts) === true;
-  });
 }
 
 export function getTransactionDocumentRequirement(
@@ -191,21 +189,18 @@ export function buildTransactionDocumentChecklist(
   stage: TransactionStage,
   documents: Array<{ id: string; documentType: string; fileName: string }>,
   facts: TransactionFacts = {},
-  currentPhase: TransactionDocumentRequirementPhase = stage === "pre_contract"
-    ? side === "seller" ? "listing" : "representation"
-    : "contract"
+  currentPhase: TransactionDocumentRequirementPhase = defaultPhase(side, stage)
 ): TransactionDocumentChecklistItem[] {
   const availableDocuments = [...documents];
-  const phaseOrder: TransactionDocumentRequirementPhase[] = ["representation", "listing", "contract", "due_diligence", "closing", "final_file"];
-  const currentPhaseIndex = phaseOrder.indexOf(currentPhase);
+  const currentPhaseIndex = transactionDocumentPhaseOrder.indexOf(currentPhase);
 
   return getTransactionDocumentRequirements(side, stage).flatMap((requirement) => {
     const applies = requirement.appliesWhen?.(facts);
-    if (applies === false || applies === undefined && requirement.appliesWhen) return [];
+    if (applies === false || (applies === undefined && requirement.appliesWhen)) return [];
 
     const matchIndex = availableDocuments.findIndex((document) => documentTypeMatchesRequirement(document.documentType, requirement));
     const matched = matchIndex >= 0 ? availableDocuments.splice(matchIndex, 1)[0] : undefined;
-    const requirementPhaseIndex = phaseOrder.indexOf(requirement.phase);
+    const requirementPhaseIndex = transactionDocumentPhaseOrder.indexOf(requirement.phase);
 
     return [{
       ...requirement,
@@ -225,16 +220,33 @@ export function buildTransactionDocumentChecklist(
 export function getTransactionRequirementQuestions(
   side: TransactionSide,
   stage: TransactionStage,
-  facts: TransactionFacts
+  facts: TransactionFacts,
+  currentPhase: TransactionDocumentRequirementPhase = defaultPhase(side, stage)
 ): TransactionRequirementQuestion[] {
+  const currentPhaseIndex = transactionDocumentPhaseOrder.indexOf(currentPhase);
   const unresolved = new Set<TransactionFactKey>();
+
+  // Resolve property type first. That one answer can eliminate many residential-only questions.
+  const hasUnresolvedResidentialRequirement = getTransactionDocumentRequirements(side, stage).some((requirement) => {
+    if (!requirement.appliesWhen) return false;
+    if (transactionDocumentPhaseOrder.indexOf(requirement.phase) > currentPhaseIndex) return false;
+    return (requirement.factKeys ?? []).includes("propertyUse") && requirement.appliesWhen(facts) === undefined;
+  });
+  if (hasUnresolvedResidentialRequirement && (facts.propertyUse === undefined || facts.propertyUse === "unknown")) {
+    return [factQuestions.propertyUse!];
+  }
+
   for (const requirement of getTransactionDocumentRequirements(side, stage)) {
-    if (!requirement.appliesWhen || requirement.appliesWhen(facts) !== undefined) continue;
+    if (!requirement.appliesWhen) continue;
+    if (transactionDocumentPhaseOrder.indexOf(requirement.phase) > currentPhaseIndex) continue;
+    if (requirement.appliesWhen(facts) !== undefined) continue;
+
     for (const factKey of requirement.factKeys ?? []) {
       if (facts[factKey] === undefined || facts[factKey] === "unknown") unresolved.add(factKey);
     }
   }
 
+  unresolved.delete("propertyUse");
   return [...unresolved]
     .map((factKey) => factQuestions[factKey])
     .filter((question): question is TransactionRequirementQuestion => Boolean(question));
@@ -250,23 +262,38 @@ export function documentTypeMatchesRequirement(
     .some((candidate) => candidate === normalized || normalized.includes(candidate) || candidate.includes(normalized));
 }
 
+export function defaultPhase(
+  side: TransactionSide,
+  stage: TransactionStage
+): TransactionDocumentRequirementPhase {
+  if (stage === "under_contract") return "contract";
+  return side === "seller" ? "listing" : "representation";
+}
+
 const factQuestions: Partial<Record<TransactionFactKey, TransactionRequirementQuestion>> = {
-  propertyUse: q("propertyUse", "What type of property is this?", "This controls residential-only disclosures and property-specific forms.", [["Residential", "residential"], ["Income-residential", "income_residential"], ["Land", "land"], ["Commercial", "commercial"]]),
-  yearBuilt: q("yearBuilt", "What year was the dwelling built?", "Lead-based-paint requirements generally apply to covered residential housing built before 1978.", []),
-  inHoa: q("inHoa", "Is the property in an HOA or other common-interest community?", "If yes, the transaction needs the association-document workflow.", [["Yes", "true"], ["No", "false"]]),
-  squareFootageAdvertised: q("squareFootageAdvertised", "Will residential square footage be advertised or entered in MLS?", "Colorado requires the approved square-footage disclosure when a broker advertises residential square footage.", [["Yes", "true"], ["No", "false"]]),
-  sellerDisclosureExempt: q("sellerDisclosureExempt", "Is the seller/transaction exempt from the Seller Property Disclosure workflow?", "If you are unsure, leave this for broker review rather than guessing.", [["No / use disclosure", "false"], ["Yes / exempt", "true"]]),
-  waterDisclosureSatisfied: q("waterDisclosureSatisfied", "Is the residential source-of-water disclosure already satisfied in the listing contract, sale contract, or Seller Property Disclosure?", "If not, the Source of Water Addendum/Disclosure remains outstanding.", [["Yes", "true"], ["No", "false"]]),
-  financingType: q("financingType", "How is the buyer planning to purchase?", "This helps determine lender-document tracking.", [["Financing / loan", "loan"], ["Cash", "cash"], ["Owner carry", "owner_carry"]]),
-  shortSale: q("shortSale", "Is this a short sale?", "Short-sale files use additional Colorado forms.", [["Yes", "true"], ["No", "false"]]),
-  foreclosure: q("foreclosure", "Is the property in foreclosure or potentially subject to Colorado Foreclosure Protection Act requirements?", "Covered foreclosure transactions need specialized broker/legal review and additional documents.", [["Yes / needs review", "true"], ["No", "false"]]),
-  manufacturedHome: q("manufacturedHome", "Does the transaction include a manufactured home?", "A manufactured-home addendum or specialized contract may be required depending on the structure of the deal.", [["Yes", "true"], ["No", "false"]]),
-  postClosingOccupancy: q("postClosingOccupancy", "Will the seller remain in the property after closing?", "A post-closing occupancy agreement is tracked when the seller has a rent-back/continued possession arrangement.", [["Yes", "true"], ["No", "false"]]),
-  preClosingOccupancy: q("preClosingOccupancy", "Will anyone occupy the property before closing?", "A pre-closing rental/occupancy agreement is tracked when applicable.", [["Yes", "true"], ["No", "false"]]),
-  powerOfAttorneyUsed: q("powerOfAttorneyUsed", "Will any party sign through a power of attorney?", "If yes, the file should retain the relevant power-of-attorney document.", [["Yes", "true"], ["No", "false"]]),
-  personalPropertyAgreementUsed: q("personalPropertyAgreementUsed", "Is personal property being handled in a separate agreement or bill of sale?", "If yes, track that agreement in the transaction file.", [["Yes", "true"], ["No", "false"]]),
-  affiliatedBusinessReferral: q("affiliatedBusinessReferral", "Is there an affiliated-business referral or arrangement in this transaction?", "If yes, the appropriate disclosure must be tracked.", [["Yes", "true"], ["No", "false"]]),
-  referralFee: q("referralFee", "Is there a referral fee agreement for this client or transaction?", "If yes, retain the referral agreement.", [["Yes", "true"], ["No", "false"]])
+  propertyUse: q("propertyUse", "What type of property is this?", "This controls residential-only disclosures and property-specific forms.", "choice", [["Residential", "residential"], ["Income-residential", "income_residential"], ["Land", "land"], ["Commercial", "commercial"]]),
+  yearBuilt: q("yearBuilt", "What year was the dwelling built?", "Lead-based-paint requirements generally apply to covered residential housing built before 1978.", "number", []),
+  inHoa: q("inHoa", "Is the property in an HOA or other common-interest community?", "If yes, the transaction needs the association-document workflow.", "choice", [["Yes", "true"], ["No", "false"]]),
+  squareFootageAdvertised: q("squareFootageAdvertised", "Will residential square footage be advertised or entered in MLS?", "Colorado requires the approved square-footage disclosure when a broker advertises residential square footage.", "choice", [["Yes", "true"], ["No", "false"]]),
+  sellerDisclosureExempt: q("sellerDisclosureExempt", "Is the seller/transaction exempt from the Seller Property Disclosure workflow?", "If you are unsure, leave this for broker review rather than guessing.", "choice", [["No / use disclosure", "false"], ["Yes / exempt", "true"]]),
+  waterDisclosureSatisfied: q("waterDisclosureSatisfied", "Is the residential source-of-water disclosure already satisfied in another approved transaction document?", "If not, the Source of Water Addendum/Disclosure remains outstanding.", "choice", [["Yes", "true"], ["No", "false"]]),
+  financingType: q("financingType", "How is the buyer planning to purchase?", "This helps determine lender-document tracking.", "choice", [["Financing / loan", "loan"], ["Cash", "cash"], ["Owner carry", "owner_carry"]]),
+  shortSale: q("shortSale", "Is this a short sale?", "Short-sale files use additional Colorado forms.", "choice", [["Yes", "true"], ["No", "false"]]),
+  foreclosure: q("foreclosure", "Is the property in foreclosure or potentially subject to Colorado Foreclosure Protection Act requirements?", "Covered foreclosure transactions need specialized broker/legal review and additional documents.", "choice", [["Yes / needs review", "true"], ["No", "false"]]),
+  manufacturedHome: q("manufacturedHome", "Does the transaction include a manufactured home?", "A manufactured-home addendum or specialized contract may be required depending on the structure of the deal.", "choice", [["Yes", "true"], ["No", "false"]]),
+  hasCounterproposal: q("hasCounterproposal", "Was a counterproposal used to form the agreement?", "If yes, it becomes part of the required contract file.", "choice", [["Yes", "true"], ["No", "false"]]),
+  contractAmended: q("contractAmended", "Has this agreement been amended or extended?", "If yes, Koinonia will require the applicable Amend/Extend document.", "choice", [["Yes", "true"], ["No", "false"]]),
+  powerOfAttorneyUsed: q("powerOfAttorneyUsed", "Will any party sign through a power of attorney?", "If yes, the file should retain the relevant power-of-attorney document.", "choice", [["Yes", "true"], ["No", "false"]]),
+  personalPropertyAgreementUsed: q("personalPropertyAgreementUsed", "Is personal property being handled in a separate agreement or bill of sale?", "If yes, track that agreement in the transaction file.", "choice", [["Yes", "true"], ["No", "false"]]),
+  affiliatedBusinessReferral: q("affiliatedBusinessReferral", "Is there an affiliated-business referral or arrangement in this transaction?", "If yes, the appropriate disclosure must be tracked.", "choice", [["Yes", "true"], ["No", "false"]]),
+  referralFee: q("referralFee", "Is there a referral fee agreement for this client or transaction?", "If yes, retain the referral agreement.", "choice", [["Yes", "true"], ["No", "false"]]),
+  inspectionObjectionUsed: q("inspectionObjectionUsed", "Was an inspection objection submitted?", "If yes, track both the objection and any written resolution.", "choice", [["Yes", "true"], ["No", "false"]]),
+  titleObjectionUsed: q("titleObjectionUsed", "Was a title-related objection submitted?", "If yes, track the written objection notice.", "choice", [["Yes", "true"], ["No", "false"]]),
+  appraisalObjectionUsed: q("appraisalObjectionUsed", "Was the appraisal objection process used?", "If yes, track the written appraisal objection.", "choice", [["Yes", "true"], ["No", "false"]]),
+  contractTerminated: q("contractTerminated", "Has the contract been terminated?", "If yes, track the written Notice to Terminate.", "choice", [["Yes", "true"], ["No", "false"]]),
+  contractRevived: q("contractRevived", "Was a terminated or expired contract revived?", "If yes, track the Agreement to Revive Contract.", "choice", [["Yes", "true"], ["No", "false"]]),
+  postClosingOccupancy: q("postClosingOccupancy", "Will the seller remain in the property after closing?", "A post-closing occupancy agreement is tracked for a rent-back/continued possession arrangement.", "choice", [["Yes", "true"], ["No", "false"]]),
+  preClosingOccupancy: q("preClosingOccupancy", "Will anyone occupy the property before closing?", "A pre-closing rental/occupancy agreement is tracked when applicable.", "choice", [["Yes", "true"], ["No", "false"]])
 };
 
 function req(
@@ -287,9 +314,10 @@ function q(
   factKey: TransactionFactKey,
   prompt: string,
   helpText: string,
+  inputType: TransactionRequirementQuestion["inputType"],
   options: Array<[string, string]>
 ): TransactionRequirementQuestion {
-  return { factKey, prompt, helpText, options: options.map(([label, value]) => ({ label, value })) };
+  return { factKey, prompt, helpText, inputType, options: options.map(([label, value]) => ({ label, value })) };
 }
 
 function leadPaintRule(facts: TransactionFacts): boolean | undefined {
@@ -318,7 +346,7 @@ function residentialState(facts: TransactionFacts): boolean | undefined {
   return facts.propertyUse === "residential" || facts.propertyUse === "income_residential";
 }
 
-function boolWhen<T>(value: T | undefined, test: (value: T) => boolean): boolean | undefined {
+function enumWhen<T extends string>(value: T | undefined, test: (value: T) => boolean): boolean | undefined {
   return value === undefined || value === "unknown" ? undefined : test(value);
 }
 
