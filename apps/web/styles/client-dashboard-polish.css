@@ -1,75 +1,280 @@
-/* Client dashboard transaction-first polish. */
+/* Modern Realtor dashboard. */
 
-.koinonia-client-dashboard-toolbar {
+.koinonia-client-dashboard-hero-modern {
+  padding-top: 26px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--portal-border);
+}
+
+.koinonia-client-dashboard-topline,
+.koinonia-client-index-heading {
   display: flex;
-  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.koinonia-client-dashboard-title {
+  margin: 5px 0 7px;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.koinonia-client-dashboard-subtitle,
+.koinonia-client-index-heading p,
+.koinonia-client-attention-copy p {
+  margin: 0;
+  color: var(--portal-muted);
+  line-height: 1.55;
+}
+
+.koinonia-client-dashboard-body {
+  padding-top: 26px;
+}
+
+.koinonia-client-calm-status,
+.koinonia-client-attention-strip {
+  margin-top: 20px;
+  border: 1px solid var(--portal-border);
+  border-radius: 16px;
+  background: var(--portal-surface);
+}
+
+.koinonia-client-calm-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+}
+
+.koinonia-client-calm-status > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 999px;
+  background: var(--portal-surface-gold);
+  color: var(--portal-gold-dark);
+  font-weight: 900;
+}
+
+.koinonia-client-calm-status p {
+  margin: 0;
+}
+
+.koinonia-client-attention-strip {
+  display: grid;
+  grid-template-columns: minmax(230px, .8fr) minmax(0, 1.7fr);
+  gap: 18px;
+  padding: 16px;
+}
+
+.koinonia-client-attention-copy {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.koinonia-client-attention-copy > span {
+  display: grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--portal-surface-gold);
+  color: var(--portal-gold-dark);
+  font-weight: 900;
+}
+
+.koinonia-client-attention-links {
+  display: grid;
+  gap: 2px;
+}
+
+.koinonia-client-attention-links a {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.koinonia-client-attention-links a:hover {
+  background: var(--portal-surface-soft);
+}
+
+.koinonia-client-attention-links span {
+  color: var(--portal-muted);
+  font-size: 13px;
+  text-align: right;
+}
+
+.koinonia-client-transaction-index {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.koinonia-client-index-heading {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--portal-border);
+}
+
+.koinonia-client-index-heading h2 {
+  margin: 0 0 4px;
+  font-size: 24px;
+}
+
+.koinonia-client-dashboard-toolbar-modern {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px 18px;
-  margin-bottom: 18px;
+  gap: 14px;
+  margin: 12px 0 6px;
 }
 
 .koinonia-client-dashboard-filters {
   display: inline-flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 4px;
-  background: var(--portal-surface-soft);
-  border: 1px solid var(--portal-border);
-  border-radius: 999px;
+  gap: 3px;
 }
 
 .koinonia-client-dashboard-filter {
   display: inline-flex;
   align-items: center;
-  min-height: 38px;
-  padding: 8px 14px;
-  border-radius: 999px;
+  min-height: 34px;
+  padding: 6px 10px;
+  border-radius: 9px;
   color: var(--portal-muted);
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 750;
   text-decoration: none;
-  transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
 }
 
 .koinonia-client-dashboard-filter:hover,
-.koinonia-client-dashboard-filter:focus-visible {
+.koinonia-client-dashboard-filter.is-active {
   color: var(--portal-text);
-  background: var(--portal-surface);
-}
-
-.koinonia-client-dashboard-filter:focus-visible {
-  outline: 3px solid rgba(177, 124, 48, 0.28);
-  outline-offset: 2px;
+  background: var(--portal-surface-soft);
 }
 
 .koinonia-client-dashboard-filter.is-active {
-  color: var(--portal-text);
-  background: var(--portal-surface);
-  box-shadow: 0 4px 14px rgba(39, 31, 21, 0.08);
+  box-shadow: inset 0 0 0 1px var(--portal-border);
 }
 
-.koinonia-client-dashboard-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.koinonia-client-dashboard-search-modern {
   margin-left: auto;
 }
 
-.koinonia-client-dashboard-search-field input {
-  min-width: min(300px, 48vw);
-  min-height: 42px;
-  padding: 9px 12px;
-  border: 1px solid var(--portal-border-strong);
-  border-radius: var(--portal-radius-sm);
-  background: var(--portal-surface);
+.koinonia-client-dashboard-search-modern input {
+  width: min(330px, 42vw);
+  min-height: 38px;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid var(--portal-border);
+  border-radius: 999px;
+  background: var(--portal-surface) no-repeat 13px center;
   color: var(--portal-text);
   font: inherit;
 }
 
-.koinonia-client-dashboard-search-field input:focus {
-  outline: 3px solid rgba(177, 124, 48, 0.22);
-  outline-offset: 2px;
+.koinonia-client-dashboard-search-modern input:focus {
+  outline: 3px solid rgba(177, 124, 48, .16);
+  border-color: var(--portal-border-strong);
+}
+
+.koinonia-client-clear-search {
+  color: var(--portal-muted);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.koinonia-client-transaction-list {
+  border-top: 1px solid var(--portal-border);
+}
+
+.koinonia-client-transaction-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 20px;
+  align-items: center;
+  gap: 22px;
+  min-height: 78px;
+  padding: 14px 8px;
+  border-bottom: 1px solid var(--portal-border);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.koinonia-client-transaction-row:hover {
+  background: var(--portal-surface-soft);
+  transform: translateX(2px);
+}
+
+.koinonia-client-transaction-row-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.koinonia-client-transaction-row h3 {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+
+.koinonia-client-transaction-row p {
+  margin: 4px 0 0;
+  color: var(--portal-muted);
+  font-size: 13px;
+}
+
+.koinonia-client-transaction-row-title span {
+  display: inline-flex;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--portal-surface-soft);
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.koinonia-client-transaction-row-title span.is-attention {
+  background: var(--portal-surface-gold);
+  color: var(--portal-gold-dark);
+}
+
+.koinonia-client-transaction-row-status {
+  display: grid;
+  gap: 4px;
+  text-align: right;
+}
+
+.koinonia-client-transaction-row-status strong {
+  font-size: 13px;
+}
+
+.koinonia-client-transaction-row-status span {
+  color: var(--portal-muted);
+  font-size: 12px;
+}
+
+.koinonia-client-row-chevron {
+  color: var(--portal-muted);
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.koinonia-client-empty-state {
+  padding: 34px 8px;
+  text-align: center;
+}
+
+.koinonia-client-empty-state p {
+  margin: 6px 0 0;
+  color: var(--portal-muted);
 }
 
 .koinonia-sr-only {
@@ -84,40 +289,55 @@
   border: 0;
 }
 
-@media (max-width: 720px) {
-  .koinonia-client-dashboard-toolbar,
-  .koinonia-client-dashboard-search {
+@media (max-width: 760px) {
+  .koinonia-client-dashboard-topline,
+  .koinonia-client-index-heading,
+  .koinonia-client-dashboard-toolbar-modern {
     align-items: stretch;
+    flex-direction: column;
   }
 
-  .koinonia-client-dashboard-toolbar,
-  .koinonia-client-dashboard-search,
-  .koinonia-client-dashboard-search-field {
+  .koinonia-client-dashboard-topline .koinonia-button {
+    align-self: flex-start;
+  }
+
+  .koinonia-client-attention-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .koinonia-client-attention-links a {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .koinonia-client-attention-links span {
+    text-align: left;
+  }
+
+  .koinonia-client-dashboard-search-modern,
+  .koinonia-client-dashboard-search-field,
+  .koinonia-client-dashboard-search-modern input {
     width: 100%;
   }
 
-  .koinonia-client-dashboard-search {
-    margin-left: 0;
-  }
-
-  .koinonia-client-dashboard-search-field {
-    flex: 1;
-  }
-
-  .koinonia-client-dashboard-search-field input {
-    width: 100%;
+  .koinonia-client-dashboard-search-modern input {
     min-width: 0;
   }
 
-  .koinonia-client-dashboard-filters {
-    width: 100%;
-    justify-content: space-between;
-    border-radius: var(--portal-radius-sm);
+  .koinonia-client-transaction-row {
+    grid-template-columns: minmax(0, 1fr) 16px;
+    gap: 12px;
   }
 
-  .koinonia-client-dashboard-filter {
-    flex: 1;
-    justify-content: center;
-    padding-inline: 10px;
+  .koinonia-client-transaction-row-status {
+    grid-column: 1;
+    text-align: left;
+  }
+
+  .koinonia-client-row-chevron {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
   }
 }
