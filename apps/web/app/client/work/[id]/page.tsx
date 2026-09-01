@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { absoluteUrl } from "../../../../config/seo.config";
 import { Footer, Header } from "../../../../components/site";
-import { isPortalDocumentR2Configured, isPortalDocumentR2UploadEnabled } from "../../../../lib/portal-document-r2";
+import { isPortalDocumentR2Configured } from "../../../../lib/portal-document-r2";
 import { prisma } from "../../../../lib/db";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
 import {
@@ -58,86 +58,77 @@ export default async function ClientWorkDetailPage({ params }: Params) {
 
       <section className="koinonia-section koinonia-workspace-hero">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
-            <p className="koinonia-eyebrow">{workspace.summary.type}</p>
-            <h1 className="koinonia-title">{workspace.summary.title}</h1>
-            <p className="koinonia-lead">{workspace.summary.nextAction}</p>
+          <a className="koinonia-document-link" href="/client/dashboard">
+            ← Back to Dashboard
+          </a>
+
+          <div className="koinonia-workspace-transaction-header">
+            <div className="koinonia-section-header">
+              <p className="koinonia-eyebrow">{workspace.summary.type}</p>
+              <h1 className="koinonia-title">{workspace.summary.title}</h1>
+              <p className="koinonia-lead">{workspace.summary.nextAction}</p>
+            </div>
+
+            <div className="koinonia-workspace-health-strip" aria-label="Transaction status">
+              <span>{workspace.summary.status}</span>
+              <strong>{workspace.summary.health}</strong>
+              <span>{workspace.summary.due}</span>
+            </div>
           </div>
 
           {workspace.notice ? (
             <p className="koinonia-client-security-note">{workspace.notice}</p>
           ) : null}
 
-          <div className="koinonia-workspace-summary-grid">
-            <article>
-              <span>Status</span>
-              <strong>{workspace.summary.status}</strong>
-              <p>{workspace.summary.health}</p>
-            </article>
-            <article>
-              <span>Due</span>
-              <strong>{workspace.summary.due}</strong>
-              <p>Next timing on file</p>
-            </article>
-            <article>
-              <span>Updated</span>
-              <strong>{workspace.summary.updated}</strong>
-              <p>Latest portal activity</p>
-            </article>
-            <article>
-              <span>Opened</span>
-              <strong>{workspace.summary.created}</strong>
-              <p>Work item created</p>
-            </article>
-          </div>
+          <nav className="koinonia-workspace-tabs" aria-label="Transaction workspace sections">
+            <a href="#overview">Overview</a>
+            <a href="#documents">Documents</a>
+            <a href="#timeline">Timeline</a>
+          </nav>
         </div>
       </section>
 
       <section className="koinonia-section">
         <div className="koinonia-container">
-          <div className="koinonia-workspace-layout">
-            <div className="koinonia-workspace-main-stack">
-              <section className="koinonia-workspace-panel" aria-labelledby="client-work-overview">
-                <div className="koinonia-workspace-panel-heading">
+          <div className="koinonia-workspace-main-stack">
+            <section
+              id="overview"
+              className="koinonia-workspace-panel koinonia-workspace-overview-panel"
+              aria-labelledby="client-work-overview"
+            >
+              <div className="koinonia-workspace-panel-heading">
+                <div>
                   <p className="koinonia-eyebrow">Overview</p>
-                  <h2 id="client-work-overview">Work Details</h2>
+                  <h2 id="client-work-overview">What matters right now</h2>
                 </div>
+                <p>Updated {workspace.summary.updated}</p>
+              </div>
 
-                <div className="koinonia-workspace-meta-grid">
-                  {workspace.summary.meta.map((item) => (
-                    <article key={item.label}>
-                      <span>{item.label}</span>
-                      <strong>{item.value}</strong>
-                    </article>
-                  ))}
-                </div>
-              </section>
+              <div className="koinonia-workspace-next-action">
+                <span>Next up</span>
+                <strong>{workspace.summary.nextAction}</strong>
+              </div>
 
-              <WorkspaceDocuments documents={workspace.documents} isEmployee={false} />
-              <WorkspaceTimeline events={workspace.events} isEmployee={false} />
-            </div>
+              <div className="koinonia-workspace-meta-grid">
+                {workspace.summary.meta.map((item) => (
+                  <article key={item.label}>
+                    <span>{item.label}</span>
+                    <strong>{item.value}</strong>
+                  </article>
+                ))}
+              </div>
+            </section>
 
-            <aside className="koinonia-workspace-side-panel" aria-label="Client work actions">
-              <section className="koinonia-workspace-panel">
-                <p className="koinonia-eyebrow">Next Step</p>
-                <p>{workspace.summary.nextAction}</p>
-                <a className="koinonia-document-link" href="/client/documents">
-                  Open Document Center
-                </a>
-                <a className="koinonia-document-link" href="/client/billing">
-                  Open Billing Center
-                </a>
-              </section>
+            <WorkspaceDocuments documents={workspace.documents} isEmployee={false} />
+            <WorkspaceTimeline events={workspace.events} isEmployee={false} />
 
-              <section className="koinonia-workspace-panel koinonia-workspace-boundary-card">
-                <p className="koinonia-eyebrow">Security Boundary</p>
-                <p>
-                  Keep passwords, access codes, card numbers, and private login
-                  details out of portal notes. Use approved delegated access or
-                  processor-hosted payment setup instead.
-                </p>
-              </section>
-            </aside>
+            <section className="koinonia-workspace-panel koinonia-workspace-boundary-card">
+              <p className="koinonia-eyebrow">Keep sensitive access private</p>
+              <p>
+                Do not place passwords, access codes, card numbers, or private login details in portal notes.
+                Use approved delegated access or processor-hosted payment setup instead.
+              </p>
+            </section>
           </div>
         </div>
       </section>
@@ -155,10 +146,15 @@ function WorkspaceDocuments({
   isEmployee: boolean;
 }) {
   return (
-    <section className="koinonia-workspace-panel" aria-labelledby="client-work-documents">
+    <section id="documents" className="koinonia-workspace-panel" aria-labelledby="client-work-documents">
       <div className="koinonia-workspace-panel-heading">
-        <p className="koinonia-eyebrow">Documents</p>
-        <h2 id="client-work-documents">Attached Documents</h2>
+        <div>
+          <p className="koinonia-eyebrow">Documents</p>
+          <h2 id="client-work-documents">Attached documents</h2>
+        </div>
+        <a className="koinonia-document-link" href="/client/documents">
+          Document Center
+        </a>
       </div>
 
       <div className="koinonia-workspace-list">
@@ -194,10 +190,12 @@ function WorkspaceTimeline({
   isEmployee: boolean;
 }) {
   return (
-    <section className="koinonia-workspace-panel" aria-labelledby="client-work-history">
+    <section id="timeline" className="koinonia-workspace-panel" aria-labelledby="client-work-history">
       <div className="koinonia-workspace-panel-heading">
-        <p className="koinonia-eyebrow">History</p>
-        <h2 id="client-work-history">Work Timeline</h2>
+        <div>
+          <p className="koinonia-eyebrow">Timeline</p>
+          <h2 id="client-work-history">Recent activity</h2>
+        </div>
       </div>
 
       <div className="koinonia-workspace-timeline">
