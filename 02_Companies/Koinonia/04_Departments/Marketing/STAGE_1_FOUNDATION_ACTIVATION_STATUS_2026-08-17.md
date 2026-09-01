@@ -4,6 +4,31 @@ Status: Partially Complete / Manual Social Configuration Pending
 Date: 2026-08-17  
 Stage: Foundation Activation
 
+## 2026-09-01 Reconciliation
+
+Stage 1 remains partially complete. The production website foundation has advanced, but social
+profile configuration, named inbound ownership, and a controlled live attribution test still need
+human confirmation.
+
+Verified since the original checkpoint:
+
+- GA4 property and web stream created for `https://www.koinoniatransactions.com`
+- GA4 measurement ID configured only in Vercel Production
+- GA4 tag deployed and verified on the public Koinonia website
+- internal OS and secure portal routes remain excluded from GA4
+- successful consultation requests emit `generate_lead` without personal information
+- production deployment `dpl_DHHeV1EgXd2vfezxQx2jeTtDQ1Gd` reached `READY`
+
+Reconciliation work on isolated branch
+`feature/koinonia-stage1-marketing-reconciliation` corrects attribution so the CRM can preserve:
+
+- original first touch
+- latest attributable touch
+- conversion touch
+
+That correction is not represented as live until it is reviewed, released, and verified against a
+controlled production consultation.
+
 ## Purpose
 
 Record what was actually activated and verified during Stage 1 of the Koinonia marketing implementation plan.
@@ -106,6 +131,7 @@ Before Stage 1 is marked fully complete, manually verify from a normal public br
 - a controlled UTM test preserves source/medium/campaign/content
 - an existing Relationship's original first-touch values are not overwritten by later consultation activity
 - expected consultation notification behavior works if configured
+- GA4 `generate_lead` appears in Realtime/DebugView after a controlled consultation
 
 A real form submission should use clearly labeled internal/test data and be cleaned up or retained as test evidence according to normal CRM practice.
 

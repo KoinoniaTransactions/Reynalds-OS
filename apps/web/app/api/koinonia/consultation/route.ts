@@ -7,6 +7,11 @@ import {
   normalizeKoinoniaRelationshipData,
   preserveAdvancedLifecycle
 } from "../../../../lib/koinonia-relationship";
+import {
+  normalizeMarketingTouch,
+  type MarketingAttributionSubmission,
+  type MarketingTouch
+} from "../../../../lib/marketing-attribution";
 
 export const runtime = "nodejs";
 
@@ -21,6 +26,10 @@ type AttributionPayload = {
   fbclid?: unknown;
   ttclid?: unknown;
   referrer?: unknown;
+  version?: unknown;
+  firstTouch?: unknown;
+  latestTouch?: unknown;
+  conversionTouch?: unknown;
 };
 
 type ConsultationPayload = {
@@ -92,13 +101,8 @@ function toPrismaJson(input: unknown): Prisma.InputJsonValue {
   return JSON.parse(JSON.stringify(input)) as Prisma.InputJsonValue;
 }
 
-function normalizeAttribution(input: unknown) {
-  const source =
-    input && typeof input === "object" && !Array.isArray(input)
-      ? (input as AttributionPayload)
-      : {};
-
-  return {
+function legacyTouch(source: AttributionPayload): MarketingTouch {
+  return normalizeMarketingTouch({
     utmSource: value(source.utmSource),
     utmMedium: value(source.utmMedium),
     utmCampaign: value(source.utmCampaign),
@@ -106,21 +110,51 @@ function normalizeAttribution(input: unknown) {
     fbclid: value(source.fbclid),
     ttclid: value(source.ttclid),
     referrer: value(source.referrer)
+  });
+}
+
+function normalizeAttribution(input: unknown): MarketingAttributionSubmission {
+  const source =
+    input && typeof input === "object" && !Array.isArray(input)
+      ? (input as AttributionPayload)
+      : {};
+
+  if (source.version === 2 && source.firstTouch && source.latestTouch) {
+    const firstTouch = normalizeMarketingTouch(source.firstTouch);
+    const latestTouch = normalizeMarketingTouch(source.latestTouch);
+
+    return {
+      version: 2,
+      firstTouch,
+      latestTouch,
+      conversionTouch: source.conversionTouch
+        ? normalizeMarketingTouch(source.conversionTouch)
+        : latestTouch
+    };
+  }
+
+  const touch = legacyTouch(source);
+
+  return {
+    version: 2,
+    firstTouch: touch,
+    latestTouch: touch,
+    conversionTouch: touch
   };
 }
 
-function deriveAcquisition(attribution: ReturnType<typeof normalizeAttribution>) {
-  const sourceName = attribution.utmSource.toLowerCase();
-  const medium = attribution.utmMedium.toLowerCase();
+function deriveAcquisition(touch: MarketingTouch) {
+  const sourceName = touch.utmSource.toLowerCase();
+  const medium = touch.utmMedium.toLowerCase();
   const isInstagram = sourceName.includes("instagram");
   const isFacebook = sourceName.includes("facebook") || sourceName.includes("meta");
-  const isTikTok = sourceName.includes("tiktok") || Boolean(attribution.ttclid);
+  const isTikTok = sourceName.includes("tiktok") || Boolean(touch.ttclid);
   const isEmail = sourceName.includes("email") || medium.includes("email");
   const isPaid =
     medium.includes("paid") ||
     medium.includes("cpc") ||
-    Boolean(attribution.fbclid) ||
-    Boolean(attribution.ttclid);
+    Boolean(touch.fbclid) ||
+    Boolean(touch.ttclid);
 
   let source = "Website";
   let firstTouchChannel = "Website";
@@ -137,25 +171,25 @@ function deriveAcquisition(attribution: ReturnType<typeof normalizeAttribution>)
   } else if (isEmail) {
     source = "Email";
     firstTouchChannel = "Email";
-    sourceDetail = attribution.utmSource || "Email campaign";
-  } else if (attribution.utmSource) {
-    sourceDetail = attribution.utmSource;
-  } else if (attribution.referrer) {
-    sourceDetail = `Referral from ${attribution.referrer}`;
+    sourceDetail = touch.utmSource || "Email campaign";
+  } else if (touch.utmSource) {
+    sourceDetail = touch.utmSource;
+  } else if (touch.referrer) {
+    sourceDetail = `Referral from ${touch.referrer}`;
   }
 
   const detailParts = [
     sourceDetail,
-    attribution.utmMedium ? `medium=${attribution.utmMedium}` : "",
-    attribution.utmContent ? `content=${attribution.utmContent}` : ""
+    touch.utmMedium ? `medium=${touch.utmMedium}` : "",
+    touch.utmContent ? `content=${touch.utmContent}` : ""
   ].filter(Boolean);
 
   return {
     source,
     sourceDetail: detailParts.join(" · "),
     firstTouchChannel,
-    campaign: attribution.utmCampaign,
-    referrer: attribution.referrer
+    campaign: touch.utmCampaign,
+    referrer: touch.referrer
   };
 }
 
@@ -262,10 +296,10 @@ async function persistConsultationRelationship({
   preferredDate: string;
   preferredTime: string;
   notes: string;
-  attribution: ReturnType<typeof normalizeAttribution>;
+  attribution: MarketingAttributionSubmission;
 }) {
   const intent = mapConsultationTypeToRelationshipIntent(consultationType);
-  const acquisition = deriveAcquisition(attribution);
+  const acquisition = deriveAcquisition(attribution.firstTouch);
   const relationships = await prisma.rosObject.findMany({
     where: {
       workspaceId: koinoniaWorkspaceId,
@@ -308,7 +342,11 @@ async function persistConsultationRelationship({
       material: existingProfile.acquisition?.material || "Website",
       firstTouchDate:
         existingProfile.acquisition?.firstTouchDate || submittedAt.slice(0, 10),
-      referrer: existingProfile.acquisition?.referrer || acquisition.referrer
+      referrer: existingProfile.acquisition?.referrer || acquisition.referrer,
+      firstTouch:
+        existingProfile.acquisition?.firstTouch || attribution.firstTouch,
+      latestTouch: attribution.latestTouch,
+      conversionTouch: attribution.conversionTouch
     },
     problem: {
       primaryPressure:

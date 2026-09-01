@@ -1,6 +1,6 @@
 # Koinonia Transactions — Marketing System Build Checklist
 
-Status: Build Complete / Awaiting Activation Decision  
+Status: Stage 1 Active / Reconciliation In Progress
 Business: Koinonia Transactions  
 Owner: Marketing + Sales
 
@@ -50,15 +50,19 @@ Until activation is approved:
 - [x] Marketing Activation Readiness Plan
 - [x] Relative 30-Day Marketing Activation Template
 
-### Website / Conversion Infrastructure — Build Complete, Implementation Pending
+### Website / Conversion Infrastructure — Production Foundation Active
 
 - [x] consultation conversion path defined
-- [x] first-touch UTM attribution implemented on integration branch
-- [x] CRM attribution mapping implemented on integration branch
-- [x] website privacy notice implemented on integration branch
+- [x] first-touch UTM attribution implemented
+- [x] CRM attribution mapping implemented
+- [x] website privacy notice implemented
 - [x] Day 1 readiness record
-- [ ] approved surgical production release of launch-critical website changes
+- [x] approved surgical production release of launch-critical website changes
+- [x] GA4 production property, stream, tag, and public-site deployment
+- [x] privacy and consultation routes verified in the original public-site launch
+- [x] first/latest/conversion-touch correction implemented and unit-tested on reconciliation branch
 - [ ] live conversion-path and UTM verification after release
+- [ ] GA4 Realtime/DebugView verification of a controlled `generate_lead`
 
 ### Social Profile System — Build Complete, Implementation Pending
 
@@ -216,13 +220,9 @@ They are no longer controlling.
 
 Use `MARKETING_ACTIVATION_READINESS_PLAN.md` and `30_DAY_MARKETING_ACTIVATION_TEMPLATE.md` for live implementation sequencing.
 
-## Next Decision
+## Current Activation Decision
 
-The marketing machine is built.
-
-The next decision is:
-
-**Activate Stage 1 — Foundation Activation?**
+The marketing machine is built and Stage 1 Foundation Activation is active.
 
 Stage 1 means only:
 
@@ -232,3 +232,6 @@ Stage 1 means only:
 4. lead-owner/dashboard readiness
 
 It does **not** automatically authorize outreach, social publishing, nurture, Meta spend, brokerage contact, or TikTok paid.
+
+Before Stage 2, finish the controlled production attribution test, configure the three live social
+profiles, confirm the named inbound owner, and establish the first dashboard review baseline.

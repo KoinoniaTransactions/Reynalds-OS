@@ -1262,8 +1262,34 @@ Koinonia website only.
 - `/dashboard` does not contain the GA4 tag.
 - The production client bundle contains the expected `generate_lead` event.
 
-### Remaining Production Step
+### Production Activation Completed
 
-Create the GA4 web stream for `https://www.koinoniatransactions.com`, set
-`NEXT_PUBLIC_GA_MEASUREMENT_ID` in the Vercel Production environment, deploy, and verify the
-live page view and lead event in GA4 Realtime.
+- GA4 web stream created for `https://www.koinoniatransactions.com`.
+- Measurement ID `G-CNMN80KHQE` configured only in Vercel Production.
+- Production deployment `dpl_DHHeV1EgXd2vfezxQx2jeTtDQ1Gd` reached `READY`.
+- The live public website exposes the GA4 tag; runtime error scan was clean.
+- GA4 data collection is pending Google's initial processing window.
+
+### 2026-09-01 — Stage 1 Marketing Reconciliation
+
+Isolated branch:
+
+`feature/koinonia-stage1-marketing-reconciliation`
+
+The public-site attribution model now preserves original first touch, latest attributable touch,
+and conversion touch across campaign visits. Legacy single-session attribution migrates into the
+new model. Consultation CRM persistence accepts the richer structure while retaining legacy
+compatibility, and `generate_lead` continues to exclude personal information.
+
+Focused validation: 12 attribution/relationship tests pass.
+
+Remaining before Stage 2:
+
+- review and release the attribution correction to `koinonia-production`
+- run a controlled live UTM consultation and verify CRM, notification, and GA4 Realtime/DebugView
+- configure Facebook, Instagram, and TikTok profiles with the approved tracked destinations
+- confirm the named owner for website leads and social comments/DMs
+- establish the first weekly marketing dashboard baseline
+
+Do not activate organic publishing, outbound email, brokerage outreach, Meta spend, TikTok paid,
+or promotional SMS as part of this Stage 1 reconciliation.

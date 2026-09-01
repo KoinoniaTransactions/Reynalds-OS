@@ -3,6 +3,16 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { useEffect, useId, useMemo, useState } from "react";
 import { trackGoogleAnalyticsEvent } from "@/lib/google-analytics";
+import {
+  buildMarketingAttributionSubmission,
+  createMarketingTouch,
+  emptyMarketingAttributionSubmission,
+  legacyMarketingAttributionStorageKey,
+  marketingAttributionStorageKey,
+  migrateLegacyMarketingAttribution,
+  normalizeMarketingAttributionState,
+  type MarketingAttributionSubmission
+} from "@/lib/marketing-attribution";
 
 type ConsultationOption = {
   readonly title: string;
@@ -31,16 +41,6 @@ type IntakeFormState = {
   website: string;
 };
 
-type AttributionState = {
-  utmSource: string;
-  utmMedium: string;
-  utmCampaign: string;
-  utmContent: string;
-  fbclid: string;
-  ttclid: string;
-  referrer: string;
-};
-
 type SubmissionState =
   | { kind: "idle"; message: string }
   | { kind: "submitting"; message: string }
@@ -58,8 +58,6 @@ const consultationTimes = [
   "4:00 PM – 5:00 PM"
 ];
 
-const attributionStorageKey = "koinonia_marketing_attribution";
-
 const initialFormState: IntakeFormState = {
   name: "",
   email: "",
@@ -68,16 +66,6 @@ const initialFormState: IntakeFormState = {
   requestedTime: "",
   notes: "",
   website: ""
-};
-
-const initialAttributionState: AttributionState = {
-  utmSource: "",
-  utmMedium: "",
-  utmCampaign: "",
-  utmContent: "",
-  fbclid: "",
-  ttclid: "",
-  referrer: ""
 };
 
 function formatDateForInput(date: Date) {
@@ -93,24 +81,26 @@ function isWeekendDate(value: string) {
   return day === 0 || day === 6;
 }
 
-function readStoredAttribution(): AttributionState {
+function readSubmissionAttribution(): MarketingAttributionSubmission {
+  const current = createMarketingTouch({
+    search: window.location.search,
+    referrer: document.referrer ?? "",
+    landingPage: window.location.href,
+    capturedAt: new Date().toISOString()
+  });
+
   try {
-    const stored = window.sessionStorage.getItem(attributionStorageKey);
-    if (!stored) return initialAttributionState;
+    const stored = normalizeMarketingAttributionState(
+      JSON.parse(window.localStorage.getItem(marketingAttributionStorageKey) ?? "null")
+    );
+    const migrated = stored ?? migrateLegacyMarketingAttribution(
+      JSON.parse(window.sessionStorage.getItem(legacyMarketingAttributionStorageKey) ?? "null"),
+      current
+    );
 
-    const parsed = JSON.parse(stored) as Partial<AttributionState>;
-
-    return {
-      utmSource: parsed.utmSource ?? "",
-      utmMedium: parsed.utmMedium ?? "",
-      utmCampaign: parsed.utmCampaign ?? "",
-      utmContent: parsed.utmContent ?? "",
-      fbclid: parsed.fbclid ?? "",
-      ttclid: parsed.ttclid ?? "",
-      referrer: parsed.referrer ?? ""
-    };
+    return buildMarketingAttributionSubmission(migrated, current);
   } catch {
-    return initialAttributionState;
+    return buildMarketingAttributionSubmission(null, current);
   }
 }
 
@@ -128,7 +118,9 @@ export function ConsultationSchedulerButton({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState(options[0]?.title ?? "");
   const [form, setForm] = useState<IntakeFormState>(initialFormState);
-  const [attribution, setAttribution] = useState<AttributionState>(initialAttributionState);
+  const [attribution, setAttribution] = useState<MarketingAttributionSubmission>(
+    emptyMarketingAttributionSubmission()
+  );
   const [status, setStatus] = useState<SubmissionState>({ kind: "idle", message: "" });
 
   const selectedOption = useMemo(
@@ -140,18 +132,7 @@ export function ConsultationSchedulerButton({
   const isSubmitting = status.kind === "submitting";
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const stored = readStoredAttribution();
-
-    setAttribution({
-      utmSource: params.get("utm_source") ?? stored.utmSource,
-      utmMedium: params.get("utm_medium") ?? stored.utmMedium,
-      utmCampaign: params.get("utm_campaign") ?? stored.utmCampaign,
-      utmContent: params.get("utm_content") ?? stored.utmContent,
-      fbclid: params.get("fbclid") ?? stored.fbclid,
-      ttclid: params.get("ttclid") ?? stored.ttclid,
-      referrer: stored.referrer || document.referrer || ""
-    });
+    setAttribution(readSubmissionAttribution());
   }, []);
 
   useEffect(() => {
