@@ -16,6 +16,10 @@ import {
   type PortalWorkspaceSummary
 } from "../../../../lib/portal-workspace";
 import { clientPortalWorkObjectTypes } from "../../../../lib/portal-work-items";
+import {
+  buildTransactionDocumentChecklist,
+  type TransactionDocumentChecklistItem
+} from "../../../../lib/transaction-document-requirements";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +41,7 @@ type Params = {
 };
 
 type ClientWorkWorkspaceView = {
+  checklist: TransactionDocumentChecklistItem[];
   documents: PortalWorkspaceDocumentItem[];
   events: PortalWorkspaceEventItem[];
   notice?: string;
@@ -119,7 +124,7 @@ export default async function ClientWorkDetailPage({ params }: Params) {
               </div>
             </section>
 
-            <WorkspaceDocuments documents={workspace.documents} isEmployee={false} />
+            <WorkspaceDocuments checklist={workspace.checklist} documents={workspace.documents} isEmployee={false} />
             <WorkspaceTimeline events={workspace.events} isEmployee={false} />
 
             <section className="koinonia-workspace-panel koinonia-workspace-boundary-card">
@@ -139,22 +144,61 @@ export default async function ClientWorkDetailPage({ params }: Params) {
 }
 
 function WorkspaceDocuments({
+  checklist,
   documents,
   isEmployee
 }: {
+  checklist: TransactionDocumentChecklistItem[];
   documents: PortalWorkspaceDocumentItem[];
   isEmployee: boolean;
 }) {
+  const receivedCount = checklist.filter((item) => item.status === "received").length;
+  const requiredMissingCount = checklist.filter((item) => item.status === "missing").length;
+
   return (
     <section id="documents" className="koinonia-workspace-panel" aria-labelledby="client-work-documents">
       <div className="koinonia-workspace-panel-heading">
         <div>
           <p className="koinonia-eyebrow">Documents</p>
-          <h2 id="client-work-documents">Attached documents</h2>
+          <h2 id="client-work-documents">What we have and what is still needed</h2>
         </div>
         <a className="koinonia-document-link" href="/client/documents">
           Document Center
         </a>
+      </div>
+
+      {checklist.length ? (
+        <div className="koinonia-document-checklist">
+          <div className="koinonia-document-checklist-summary">
+            <strong>{receivedCount} received</strong>
+            <span>
+              {requiredMissingCount
+                ? `${requiredMissingCount} required ${requiredMissingCount === 1 ? "document" : "documents"} still missing`
+                : "No required documents currently missing"}
+            </span>
+          </div>
+
+          <div className="koinonia-document-checklist-list">
+            {checklist.map((item) => (
+              <article className={`koinonia-document-checklist-item is-${item.status}`} key={item.id}>
+                <div>
+                  <span>{formatChecklistStatus(item)}</span>
+                  <h3>{item.label}</h3>
+                  <p>{item.guidance}</p>
+                  {item.fileName ? <p>Received: {item.fileName}</p> : null}
+                </div>
+                <strong>{formatRequirementLevel(item.level)}</strong>
+              </article>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="koinonia-workspace-panel-heading koinonia-workspace-documents-heading">
+        <div>
+          <p className="koinonia-eyebrow">Attached</p>
+          <h3>Files in this transaction</h3>
+        </div>
       </div>
 
       <div className="koinonia-workspace-list">
@@ -256,7 +300,31 @@ async function getClientWorkWorkspace(
       })
     ]);
 
+    const data = asRecord(workItem.data) ?? {};
+    const side = data.side === "seller" ? "seller" : data.side === "buyer" ? "buyer" : null;
+    const stage =
+      data.stage === "under_contract"
+        ? "under_contract"
+        : data.stage === "pre_contract"
+          ? "pre_contract"
+          : null;
+    const checklist =
+      side && stage
+        ? buildTransactionDocumentChecklist(
+            side,
+            stage,
+            documents
+              .filter((document) => !document.removedAt && document.lifecycleState === "active")
+              .map((document) => ({
+                id: document.id,
+                documentType: document.documentType,
+                fileName: document.fileName
+              }))
+          )
+        : [];
+
     return {
+      checklist,
       documents: withWorkspaceDocuments(
         buildPortalWorkspaceDocuments(documents, {
           downloadBasePath: "/api/portal/documents",
@@ -272,6 +340,7 @@ async function getClientWorkWorkspace(
     }
 
     return {
+      checklist: [],
       documents: buildEmptyPortalWorkspaceDocuments(),
       events: buildEmptyPortalWorkspaceTimeline(),
       notice:
@@ -279,6 +348,19 @@ async function getClientWorkWorkspace(
       summary: buildUnavailableWorkspaceSummary(workItemId)
     };
   }
+}
+
+function formatChecklistStatus(item: TransactionDocumentChecklistItem): string {
+  if (item.status === "received") return "Received";
+  if (item.status === "missing") return "Missing";
+  if (item.status === "conditional") return "If applicable";
+  return "Optional";
+}
+
+function formatRequirementLevel(level: TransactionDocumentChecklistItem["level"]): string {
+  if (level === "required") return "Required";
+  if (level === "conditional") return "Conditional";
+  return "Optional";
 }
 
 function withWorkspaceDocuments(
@@ -308,6 +390,12 @@ function buildUnavailableWorkspaceSummary(workItemId: string): PortalWorkspaceSu
     type: "Portal Work",
     updated: "Storage unavailable"
   };
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {
