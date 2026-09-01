@@ -1,0 +1,119 @@
+/* Client transaction workspace polish. */
+
+.koinonia-workspace-transaction-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px 28px;
+  margin-top: 18px;
+}
+
+.koinonia-workspace-health-strip {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: 999px;
+}
+
+.koinonia-workspace-health-strip span,
+.koinonia-workspace-health-strip strong {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.koinonia-workspace-health-strip strong {
+  background: var(--portal-surface-gold);
+  color: var(--portal-gold-dark);
+}
+
+.koinonia-workspace-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+  padding-bottom: 2px;
+}
+
+.koinonia-workspace-tabs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 14px;
+  color: var(--portal-muted);
+  background: var(--portal-surface);
+  border: 1px solid var(--portal-border);
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.koinonia-workspace-tabs a:hover,
+.koinonia-workspace-tabs a:focus-visible {
+  color: var(--portal-text);
+  border-color: var(--portal-border-strong);
+}
+
+.koinonia-workspace-tabs a:focus-visible {
+  outline: 3px solid rgba(177, 124, 48, 0.24);
+  outline-offset: 2px;
+}
+
+.koinonia-workspace-overview-panel,
+#documents,
+#timeline {
+  scroll-margin-top: 110px;
+}
+
+.koinonia-workspace-next-action {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 18px;
+  padding: 16px 18px;
+  background: var(--portal-surface-gold);
+  border: 1px solid var(--portal-border-strong);
+  border-radius: var(--portal-radius-md);
+}
+
+.koinonia-workspace-next-action span {
+  color: var(--portal-gold-dark);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-workspace-next-action strong {
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+@media (max-width: 720px) {
+  .koinonia-workspace-transaction-header {
+    align-items: stretch;
+  }
+
+  .koinonia-workspace-health-strip {
+    width: 100%;
+    border-radius: var(--portal-radius-sm);
+  }
+
+  .koinonia-workspace-health-strip span,
+  .koinonia-workspace-health-strip strong {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .koinonia-workspace-tabs a {
+    flex: 1;
+    justify-content: center;
+  }
+}
