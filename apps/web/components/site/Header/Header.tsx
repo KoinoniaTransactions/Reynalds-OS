@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { brandContent } from "@/content/brand";
+import { GoogleAnalytics } from "../GoogleAnalytics/GoogleAnalytics";
 
 const publicNavigationItems = [
   {
@@ -120,6 +121,7 @@ export function Header({
 
   return (
     <header className={`koinonia-header${isMenuOpen ? " menu-open" : ""}`}>
+      {!isPortalPage ? <GoogleAnalytics /> : null}
       <div className="koinonia-header-inner">
         <a
           className="koinonia-header-brand"
