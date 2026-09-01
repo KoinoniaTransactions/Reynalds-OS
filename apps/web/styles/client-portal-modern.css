@@ -1,0 +1,238 @@
+/* Shared modern client-portal layer. Keep staff density untouched. */
+
+.koinonia-client-dashboard,
+.koinonia-client-documents,
+.koinonia-client-workspace-detail {
+  --client-max-content: 1120px;
+}
+
+.koinonia-client-dashboard .koinonia-section,
+.koinonia-client-documents .koinonia-section,
+.koinonia-client-workspace-detail .koinonia-section {
+  padding-block: clamp(24px, 4vw, 44px);
+}
+
+.koinonia-client-dashboard .koinonia-container,
+.koinonia-client-documents .koinonia-container,
+.koinonia-client-workspace-detail .koinonia-container {
+  max-width: var(--client-max-content);
+}
+
+/* Document center: turn the old control dashboard into upload + review + library. */
+.koinonia-client-documents .koinonia-document-hero {
+  padding-top: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--portal-border);
+}
+
+.koinonia-client-documents .koinonia-document-hero .koinonia-section-header {
+  max-width: 720px;
+}
+
+.koinonia-client-documents .koinonia-document-hero .koinonia-title {
+  margin: 5px 0 8px;
+  max-width: 680px;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.koinonia-client-documents .koinonia-document-hero .koinonia-lead {
+  max-width: 660px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.koinonia-client-documents .koinonia-document-summary-grid {
+  display: none;
+}
+
+.koinonia-client-documents .koinonia-document-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 320px);
+  gap: 26px;
+  align-items: start;
+}
+
+.koinonia-client-documents .koinonia-document-main-stack {
+  gap: 22px;
+}
+
+.koinonia-client-documents .koinonia-document-panel {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.koinonia-client-documents .koinonia-document-panel-heading {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--portal-border);
+}
+
+.koinonia-client-documents .koinonia-document-panel-heading h2 {
+  margin: 3px 0 0;
+  font-size: 20px;
+  letter-spacing: -0.015em;
+}
+
+.koinonia-client-documents .koinonia-document-card-list {
+  gap: 0;
+}
+
+.koinonia-client-documents .koinonia-document-work-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  padding: 14px 6px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--portal-border);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.koinonia-client-documents .koinonia-document-work-item h3 {
+  margin: 2px 0 4px;
+  font-size: 16px;
+}
+
+.koinonia-client-documents .koinonia-document-work-item p,
+.koinonia-client-documents .koinonia-document-work-item span {
+  color: var(--portal-muted);
+  font-size: 13px;
+}
+
+.koinonia-client-documents .koinonia-document-work-meta {
+  min-width: 130px;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.koinonia-client-documents .koinonia-document-side-panel {
+  position: sticky;
+  top: 88px;
+  gap: 14px;
+}
+
+.koinonia-client-documents .koinonia-document-side-panel > .koinonia-document-panel,
+.koinonia-client-documents .koinonia-document-side-panel > form,
+.koinonia-client-documents .koinonia-document-side-panel .koinonia-document-upload-form {
+  padding: 18px;
+  background: var(--portal-surface);
+  border: 1px solid var(--portal-border);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(40, 32, 20, .035);
+}
+
+.koinonia-client-documents details {
+  margin-top: 8px;
+}
+
+.koinonia-client-documents details > summary {
+  cursor: pointer;
+  color: var(--portal-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Upload and intake: make choosing documents feel like the main action. */
+.koinonia-client-dashboard .koinonia-client-work-panel,
+.koinonia-client-workspace-detail .koinonia-workspace-panel {
+  box-shadow: none;
+}
+
+.koinonia-client-dashboard .koinonia-client-request-card {
+  padding: 20px;
+  border: 1px solid var(--portal-border);
+  border-radius: 16px;
+  background: var(--portal-surface);
+  box-shadow: none;
+}
+
+.koinonia-client-dashboard .koinonia-client-request-card label:has(input[type="file"]) {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  min-height: 190px;
+  padding: 28px;
+  border: 1.5px dashed var(--portal-border-strong);
+  border-radius: 16px;
+  background: var(--portal-surface-soft);
+  text-align: center;
+  cursor: pointer;
+}
+
+.koinonia-client-dashboard .koinonia-client-request-card label:has(input[type="file"]) > span {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.koinonia-client-dashboard .koinonia-client-request-card input[type="file"] {
+  max-width: 100%;
+  color: var(--portal-muted);
+}
+
+.koinonia-client-dashboard .koinonia-client-request-card .koinonia-client-work-list {
+  margin-top: 14px;
+}
+
+.koinonia-client-dashboard .koinonia-client-request-card .koinonia-client-work-item {
+  padding: 10px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--portal-border);
+  border-radius: 0;
+}
+
+/* Make client-facing forms feel lighter and stop button walls. */
+.koinonia-client-documents .koinonia-button,
+.koinonia-client-dashboard .koinonia-button,
+.koinonia-client-workspace-detail .koinonia-button {
+  min-height: 38px;
+  padding: 8px 14px;
+  border-radius: 10px;
+}
+
+.koinonia-client-documents textarea,
+.koinonia-client-documents input:not([type="file"]),
+.koinonia-client-documents select,
+.koinonia-client-dashboard textarea,
+.koinonia-client-dashboard input:not([type="file"]),
+.koinonia-client-dashboard select {
+  border-radius: 10px;
+}
+
+.koinonia-client-documents .koinonia-document-security-note,
+.koinonia-client-dashboard .koinonia-client-security-note,
+.koinonia-client-workspace-detail .koinonia-client-security-note {
+  padding: 11px 13px;
+  border-radius: 11px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Mobile: preserve simple vertical flow. */
+@media (max-width: 860px) {
+  .koinonia-client-documents .koinonia-document-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .koinonia-client-documents .koinonia-document-side-panel {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 620px) {
+  .koinonia-client-documents .koinonia-document-work-item {
+    grid-template-columns: 1fr;
+  }
+
+  .koinonia-client-documents .koinonia-document-work-meta {
+    min-width: 0;
+    align-items: flex-start;
+    text-align: left;
+  }
+}
