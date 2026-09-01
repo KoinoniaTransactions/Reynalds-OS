@@ -40,6 +40,14 @@ type ModelExtraction = {
   propertyAddress: string | null;
   identifiedDocumentType: string;
   documentRequirementId: string;
+  requirementFacts: {
+    propertyUse: "residential" | "income_residential" | "land" | "commercial" | null;
+    yearBuilt: number | null;
+    inHoa: boolean | null;
+    manufacturedHome: boolean | null;
+    shortSale: boolean | null;
+    hasCounterproposal: boolean | null;
+  };
   listPrice: number | null;
   listingEffectiveDate: string | null;
   listingExpirationDate: string | null;
@@ -87,12 +95,14 @@ export async function extractTransactionDocumentWithOpenAI(
     const documentRequirementId = allowedRequirementIds.has(modelExtraction.documentRequirementId)
       ? modelExtraction.documentRequirementId
       : undefined;
+    const requirementFacts = compactRequirementFacts(modelExtraction.requirementFacts);
 
     return validateTransactionExtractionProposal({
       clientNames: modelExtraction.clientNames,
       propertyAddress: modelExtraction.propertyAddress ?? undefined,
       identifiedDocumentType: modelExtraction.identifiedDocumentType,
       documentRequirementId,
+      requirementFacts,
       listPrice: modelExtraction.listPrice ?? undefined,
       listingEffectiveDate: modelExtraction.listingEffectiveDate ?? undefined,
       listingExpirationDate: modelExtraction.listingExpirationDate ?? undefined,
@@ -185,7 +195,7 @@ async function createStructuredExtraction(
             {
               type: "input_text",
               text:
-                "You extract factual Colorado real-estate transaction information from documents for human review. Never invent a value. Use null when a field is not stated clearly or is not applicable. First identify what document actually was uploaded, then classify it against the exact checklist supplied by the user. documentRequirementId must be one supplied checklist ID or other. Use a checklist ID when the document clearly satisfies that requirement even if its printed title varies. Use other when none fit. documentMatch asks whether the upload belongs in the selected transaction path at all: match when suitable, mismatch when clearly unrelated/unsuitable, uncertain when ambiguous. A valid supporting or conditional document can be a match even when it is not the primary contract. Client names must be the represented clients for the requested side, not every party named. A listing agreement's list price is listPrice, not purchasePrice. A listing agreement's minimum acceptable earnest-money term is not transaction earnestMoney. Listing effective/expiration dates belong in listingEffectiveDate/listingExpirationDate, not closingDate. Purchase-contract fields are only for documents that actually establish an accepted sale transaction. Deadlines must be genuine deadlines for the identified document. Confidence is high only when the important fields for this document type are explicit and legible."
+                "You extract factual Colorado real-estate transaction information from documents for human review. Never invent a value. Use null when a field is not stated clearly or is not applicable. First identify what document actually was uploaded, then classify it against the exact checklist supplied by the user. documentRequirementId must be one supplied checklist ID or other. Use a checklist ID when the document clearly satisfies that requirement even if its printed title varies. Use other when none fit. documentMatch asks whether the upload belongs in the selected transaction path at all: match when suitable, mismatch when clearly unrelated/unsuitable, uncertain when ambiguous. A valid supporting or conditional document can be a match even when it is not the primary contract. Client names must be the represented clients for the requested side, not every party named. A listing agreement's list price is listPrice, not purchasePrice. A listing agreement's minimum acceptable earnest-money term is not transaction earnestMoney. Listing effective/expiration dates belong in listingEffectiveDate/listingExpirationDate, not closingDate. Purchase-contract fields are only for documents that actually establish an accepted sale transaction. Deadlines must be genuine deadlines for the identified document. For requirementFacts, populate a value only when the document explicitly supports it. Do not infer year built from appearance, HOA status from an address, manufactured-home status from assumptions, or short-sale/counterproposal status unless the document states or unmistakably establishes it. Null means Koinonia should ask the Realtor later if the fact affects requirements. Confidence is high only when the important fields for this document type are explicit and legible."
             }
           ]
         },
@@ -194,7 +204,7 @@ async function createStructuredExtraction(
           content: [
             {
               type: "input_text",
-              text: `Selected path: ${definition.title}. ${stageGuidance}\n\nKnown document checklist for this path:\n${requirementGuide}\n\nThe upload was provisionally labeled "${input.sourceDocumentType}" by the intake UI; do not assume that label is correct. Identify the document from its contents, choose the best checklist ID or other, assess whether it belongs in this selected path, and extract fields appropriate to the identified document.`
+              text: `Selected path: ${definition.title}. ${stageGuidance}\n\nKnown document checklist for this path:\n${requirementGuide}\n\nThe upload was provisionally labeled "${input.sourceDocumentType}" by the intake UI; do not assume that label is correct. Identify the document from its contents, choose the best checklist ID or other, assess whether it belongs in this selected path, extract fields appropriate to the identified document, and capture only explicitly supported checklist-driving facts.`
             },
             {
               type: "input_file",
@@ -267,6 +277,29 @@ function buildExtractionJsonSchema(requirements: TransactionDocumentRequirement[
         type: "string",
         enum: [...requirements.map((requirement) => requirement.id), "other"]
       },
+      requirementFacts: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          propertyUse: {
+            type: ["string", "null"],
+            enum: ["residential", "income_residential", "land", "commercial", null]
+          },
+          yearBuilt: { type: ["number", "null"] },
+          inHoa: { type: ["boolean", "null"] },
+          manufacturedHome: { type: ["boolean", "null"] },
+          shortSale: { type: ["boolean", "null"] },
+          hasCounterproposal: { type: ["boolean", "null"] }
+        },
+        required: [
+          "propertyUse",
+          "yearBuilt",
+          "inHoa",
+          "manufacturedHome",
+          "shortSale",
+          "hasCounterproposal"
+        ]
+      },
       listPrice: { type: ["number", "null"] },
       listingEffectiveDate: { type: ["string", "null"] },
       listingExpirationDate: { type: ["string", "null"] },
@@ -299,6 +332,7 @@ function buildExtractionJsonSchema(requirements: TransactionDocumentRequirement[
       "propertyAddress",
       "identifiedDocumentType",
       "documentRequirementId",
+      "requirementFacts",
       "listPrice",
       "listingEffectiveDate",
       "listingExpirationDate",
@@ -316,6 +350,17 @@ function buildExtractionJsonSchema(requirements: TransactionDocumentRequirement[
       "notes"
     ]
   } as const;
+}
+
+function compactRequirementFacts(facts: ModelExtraction["requirementFacts"]) {
+  return {
+    ...(facts.propertyUse ? { propertyUse: facts.propertyUse } : {}),
+    ...(facts.yearBuilt !== null ? { yearBuilt: facts.yearBuilt } : {}),
+    ...(facts.inHoa !== null ? { inHoa: facts.inHoa } : {}),
+    ...(facts.manufacturedHome !== null ? { manufacturedHome: facts.manufacturedHome } : {}),
+    ...(facts.shortSale !== null ? { shortSale: facts.shortSale } : {}),
+    ...(facts.hasCounterproposal !== null ? { hasCounterproposal: facts.hasCounterproposal } : {})
+  };
 }
 
 async function deleteOpenAiFileQuietly(fileId: string, apiKey: string) {
