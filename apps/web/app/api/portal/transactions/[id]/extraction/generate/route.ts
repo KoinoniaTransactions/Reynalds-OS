@@ -69,8 +69,16 @@ export async function POST(request: Request, context: RouteContext) {
     }
 
     const transactionData = asRecord(transaction.data) ?? {};
-    const side = transactionData.side === "seller" ? "seller" : "buyer";
-    const stage = transactionData.stage === "under_contract" ? "under_contract" : "pre_contract";
+    const side = transactionData.side === "seller"
+      ? "seller"
+      : transactionData.side === "buyer"
+        ? "buyer"
+        : undefined;
+    const stage = transactionData.stage === "under_contract"
+      ? "under_contract"
+      : transactionData.stage === "pre_contract"
+        ? "pre_contract"
+        : undefined;
     const bytes = await getPortalDocumentFromR2(document.storageKey);
     const proposal = await extractTransactionDocumentWithOpenAI({
       bytes,
@@ -103,7 +111,9 @@ export async function POST(request: Request, context: RouteContext) {
         nextAction:
           proposal.documentMatch === "mismatch"
             ? "Review the document-type warning and decide whether to replace the document or continue."
-            : "Review extracted transaction information before applying it to the file.",
+            : !proposal.inferredSide || !proposal.inferredStage
+              ? "Review the document and confirm any transaction identity Koinonia could not determine."
+              : "Review extracted transaction information before applying it to the file.",
         data: nextData
       }
     });
@@ -119,6 +129,8 @@ export async function POST(request: Request, context: RouteContext) {
           confidence: proposal.confidence,
           documentMatch: proposal.documentMatch,
           documentMatchReason: proposal.documentMatchReason ?? null,
+          inferredSide: proposal.inferredSide ?? null,
+          inferredStage: proposal.inferredStage ?? null,
           identifiedDocumentType: proposal.identifiedDocumentType,
           sourceDocumentId: proposal.sourceDocumentId,
           provider: "openai"
@@ -138,6 +150,8 @@ export async function POST(request: Request, context: RouteContext) {
         metadata: {
           confidence: proposal.confidence,
           documentMatch: proposal.documentMatch,
+          inferredSide: proposal.inferredSide ?? null,
+          inferredStage: proposal.inferredStage ?? null,
           identifiedDocumentType: proposal.identifiedDocumentType,
           sourceDocumentId: proposal.sourceDocumentId,
           provider: "openai"
