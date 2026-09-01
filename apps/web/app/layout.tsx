@@ -4,6 +4,7 @@ import { AuthProvider } from "../components/auth/AuthProvider";
 import { MarketingAttribution } from "../components/site/MarketingAttribution/MarketingAttribution";
 import "@reynalds-os/design-system/styles.css";
 import "../styles/koinonia-layout.css";
+import "../styles/transaction-intake-controls.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(seoConfig.siteUrl),
