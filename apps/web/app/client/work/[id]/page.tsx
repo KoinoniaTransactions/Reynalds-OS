@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { absoluteUrl } from "../../../../config/seo.config";
 import { Footer, Header } from "../../../../components/site";
+import { TransactionRequirementQuestions } from "../../../../components/client/TransactionRequirementQuestions";
 import { isPortalDocumentR2Configured } from "../../../../lib/portal-document-r2";
 import { prisma } from "../../../../lib/db";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
@@ -18,7 +19,11 @@ import {
 import { clientPortalWorkObjectTypes } from "../../../../lib/portal-work-items";
 import {
   buildTransactionDocumentChecklist,
-  type TransactionDocumentChecklistItem
+  defaultPhase,
+  getTransactionRequirementQuestions,
+  type TransactionDocumentChecklistItem,
+  type TransactionFacts,
+  type TransactionRequirementQuestion
 } from "../../../../lib/transaction-document-requirements";
 
 export const dynamic = "force-dynamic";
@@ -45,7 +50,9 @@ type ClientWorkWorkspaceView = {
   documents: PortalWorkspaceDocumentItem[];
   events: PortalWorkspaceEventItem[];
   notice?: string;
+  questions: TransactionRequirementQuestion[];
   summary: PortalWorkspaceSummary;
+  transactionId: string;
 };
 
 export default async function ClientWorkDetailPage({ params }: Params) {
@@ -124,7 +131,13 @@ export default async function ClientWorkDetailPage({ params }: Params) {
               </div>
             </section>
 
-            <WorkspaceDocuments checklist={workspace.checklist} documents={workspace.documents} isEmployee={false} />
+            <WorkspaceDocuments
+              checklist={workspace.checklist}
+              documents={workspace.documents}
+              isEmployee={false}
+              questions={workspace.questions}
+              transactionId={workspace.transactionId}
+            />
             <WorkspaceTimeline events={workspace.events} isEmployee={false} />
 
             <section className="koinonia-workspace-panel koinonia-workspace-boundary-card">
@@ -146,11 +159,15 @@ export default async function ClientWorkDetailPage({ params }: Params) {
 function WorkspaceDocuments({
   checklist,
   documents,
-  isEmployee
+  isEmployee,
+  questions,
+  transactionId
 }: {
   checklist: TransactionDocumentChecklistItem[];
   documents: PortalWorkspaceDocumentItem[];
   isEmployee: boolean;
+  questions: TransactionRequirementQuestion[];
+  transactionId: string;
 }) {
   const receivedCount = checklist.filter((item) => item.status === "received").length;
   const requiredMissingCount = checklist.filter((item) => item.status === "missing").length;
@@ -167,6 +184,8 @@ function WorkspaceDocuments({
         </a>
       </div>
 
+      <TransactionRequirementQuestions transactionId={transactionId} questions={questions} />
+
       {checklist.length ? (
         <div className="koinonia-document-checklist">
           <div className="koinonia-document-checklist-summary">
@@ -174,7 +193,7 @@ function WorkspaceDocuments({
             <span>
               {requiredMissingCount
                 ? `${requiredMissingCount} required ${requiredMissingCount === 1 ? "document" : "documents"} still missing`
-                : "No required documents currently missing"}
+                : "No currently-required documents missing"}
             </span>
           </div>
 
@@ -288,7 +307,7 @@ async function getClientWorkWorkspace(
           }
         },
         orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-        take: 25
+        take: 50
       }),
       prisma.timelineEvent.findMany({
         where: {
@@ -308,8 +327,10 @@ async function getClientWorkWorkspace(
         : data.stage === "pre_contract"
           ? "pre_contract"
           : null;
+    const facts = readRequirementFacts(data);
+    const phase = side && stage ? defaultPhase(side, stage) : null;
     const checklist =
-      side && stage
+      side && stage && phase
         ? buildTransactionDocumentChecklist(
             side,
             stage,
@@ -319,8 +340,14 @@ async function getClientWorkWorkspace(
                 id: document.id,
                 documentType: document.documentType,
                 fileName: document.fileName
-              }))
+              })),
+            facts,
+            phase
           )
+        : [];
+    const questions =
+      side && stage && phase
+        ? getTransactionRequirementQuestions(side, stage, facts, phase)
         : [];
 
     return {
@@ -332,7 +359,9 @@ async function getClientWorkWorkspace(
         })
       ),
       events: withWorkspaceEvents(buildPortalWorkspaceTimeline(events)),
-      summary: buildPortalWorkspaceSummary(workItem)
+      questions,
+      summary: buildPortalWorkspaceSummary(workItem),
+      transactionId: workItem.id
     };
   } catch (error) {
     if (!isDatabaseUnavailableError(error)) {
@@ -345,21 +374,83 @@ async function getClientWorkWorkspace(
       events: buildEmptyPortalWorkspaceTimeline(),
       notice:
         "Work detail storage is not reachable in this preview, so live status, documents, and history cannot be shown yet.",
-      summary: buildUnavailableWorkspaceSummary(workItemId)
+      questions: [],
+      summary: buildUnavailableWorkspaceSummary(workItemId),
+      transactionId: workItemId
     };
   }
 }
 
+function readRequirementFacts(data: Record<string, unknown>): TransactionFacts {
+  const stored = asRecord(data.requirementFacts) ?? {};
+  const facts: TransactionFacts = {};
+
+  const propertyUse = stored.propertyUse ?? data.propertyUse;
+  if (
+    propertyUse === "residential" ||
+    propertyUse === "income_residential" ||
+    propertyUse === "land" ||
+    propertyUse === "commercial" ||
+    propertyUse === "unknown"
+  ) facts.propertyUse = propertyUse;
+
+  const yearBuilt = stored.yearBuilt ?? data.yearBuilt;
+  if (typeof yearBuilt === "number" && Number.isInteger(yearBuilt)) facts.yearBuilt = yearBuilt;
+
+  const financingType = stored.financingType ?? data.financingType;
+  if (financingType === "cash" || financingType === "loan" || financingType === "owner_carry" || financingType === "unknown") {
+    facts.financingType = financingType;
+  } else if (typeof financingType === "string") {
+    const normalized = financingType.toLocaleLowerCase("en-US");
+    if (normalized.includes("cash")) facts.financingType = "cash";
+    else if (normalized.includes("owner") || normalized.includes("seller")) facts.financingType = "owner_carry";
+    else if (normalized.includes("loan") || normalized.includes("conventional") || normalized.includes("fha") || normalized.includes("va")) facts.financingType = "loan";
+  }
+
+  const booleanKeys: Array<keyof TransactionFacts> = [
+    "inHoa",
+    "squareFootageAdvertised",
+    "sellerDisclosureExempt",
+    "waterDisclosureSatisfied",
+    "shortSale",
+    "foreclosure",
+    "manufacturedHome",
+    "hasCounterproposal",
+    "contractAmended",
+    "inspectionObjectionUsed",
+    "titleObjectionUsed",
+    "appraisalObjectionUsed",
+    "contractTerminated",
+    "contractRevived",
+    "powerOfAttorneyUsed",
+    "personalPropertyAgreementUsed",
+    "postClosingOccupancy",
+    "preClosingOccupancy",
+    "affiliatedBusinessReferral",
+    "referralFee"
+  ];
+
+  for (const key of booleanKeys) {
+    const value = stored[key] ?? data[key];
+    if (typeof value === "boolean") {
+      (facts as Record<string, unknown>)[key] = value;
+    }
+  }
+
+  return facts;
+}
+
 function formatChecklistStatus(item: TransactionDocumentChecklistItem): string {
   if (item.status === "received") return "Received";
-  if (item.status === "missing") return "Missing";
-  if (item.status === "conditional") return "If applicable";
+  if (item.status === "missing") return "Missing now";
+  if (item.status === "expected") return "Expected";
+  if (item.status === "upcoming") return "Upcoming";
   return "Optional";
 }
 
 function formatRequirementLevel(level: TransactionDocumentChecklistItem["level"]): string {
   if (level === "required") return "Required";
-  if (level === "conditional") return "Conditional";
+  if (level === "expected") return "Expected";
   return "Optional";
 }
 
