@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default async function NewClientTransactionPage() {
   const actor = await requirePortalPermission(
-    "client-portal:view",
+    "client-portal:transactions:create",
     "/client/transactions/new"
   );
 
