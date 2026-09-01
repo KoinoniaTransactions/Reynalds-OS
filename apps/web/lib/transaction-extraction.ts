@@ -1,13 +1,20 @@
 import type { TransactionSide } from "./transaction-intake";
+import type { TransactionFacts } from "./transaction-document-requirements";
 
 export type ExtractionConfidence = "high" | "medium" | "low";
 export type DocumentMatch = "match" | "mismatch" | "uncertain";
+
+export type ExtractedRequirementFacts = Pick<
+  TransactionFacts,
+  "propertyUse" | "yearBuilt" | "inHoa" | "manufacturedHome" | "shortSale" | "hasCounterproposal"
+>;
 
 export type TransactionExtractionProposal = {
   clientNames: string[];
   propertyAddress?: string;
   identifiedDocumentType: string;
   documentRequirementId?: string;
+  requirementFacts?: ExtractedRequirementFacts;
   listPrice?: number;
   listingEffectiveDate?: string;
   listingExpirationDate?: string;
@@ -53,6 +60,7 @@ export function validateTransactionExtractionProposal(
     propertyAddress: optionalString(value.propertyAddress),
     identifiedDocumentType: optionalString(value.identifiedDocumentType) ?? sourceDocumentType,
     documentRequirementId: optionalString(value.documentRequirementId),
+    requirementFacts: optionalExtractedRequirementFacts(value.requirementFacts),
     listPrice: optionalPositiveNumber(value.listPrice, "listPrice"),
     listingEffectiveDate: optionalDateString(value.listingEffectiveDate, "listingEffectiveDate"),
     listingExpirationDate: optionalDateString(value.listingExpirationDate, "listingExpirationDate"),
@@ -102,6 +110,13 @@ export function mergeExtractionIntoTransactionData(
   confirmedAt: string
 ): Record<string, unknown> {
   const base = isRecord(existingData) ? { ...existingData } : {};
+  const existingRequirementFacts = isRecord(base.requirementFacts) ? base.requirementFacts : {};
+  const derivedFinancingType = normalizeFinancingFact(proposal.financingType);
+  const nextRequirementFacts = {
+    ...existingRequirementFacts,
+    ...(proposal.requirementFacts ?? {}),
+    ...(derivedFinancingType ? { financingType: derivedFinancingType } : {})
+  };
 
   return {
     ...base,
@@ -118,6 +133,7 @@ export function mergeExtractionIntoTransactionData(
     financingType: proposal.financingType ?? base.financingType ?? null,
     deadlines: proposal.deadlines,
     clientNames: proposal.clientNames,
+    requirementFacts: nextRequirementFacts,
     extraction: {
       status: "confirmed",
       confidence: proposal.confidence,
@@ -125,6 +141,7 @@ export function mergeExtractionIntoTransactionData(
       documentMatchReason: proposal.documentMatchReason ?? null,
       identifiedDocumentType: proposal.identifiedDocumentType,
       documentRequirementId: proposal.documentRequirementId ?? null,
+      requirementFacts: proposal.requirementFacts ?? {},
       sourceDocumentId: proposal.sourceDocumentId,
       sourceDocumentType: proposal.sourceDocumentType,
       confirmedAt,
@@ -148,6 +165,51 @@ function optionalDocumentMatch(value: unknown): DocumentMatch {
   throw new TransactionExtractionValidationError(
     "documentMatch must be match, mismatch, or uncertain."
   );
+}
+
+function optionalExtractedRequirementFacts(value: unknown): ExtractedRequirementFacts | undefined {
+  if (value === undefined || value === null) return undefined;
+  if (!isRecord(value)) {
+    throw new TransactionExtractionValidationError("requirementFacts must be an object.");
+  }
+
+  const result: ExtractedRequirementFacts = {};
+  const propertyUse = value.propertyUse;
+  if (
+    propertyUse === "residential" ||
+    propertyUse === "income_residential" ||
+    propertyUse === "land" ||
+    propertyUse === "commercial"
+  ) result.propertyUse = propertyUse;
+
+  if (value.yearBuilt !== undefined && value.yearBuilt !== null) {
+    const yearBuilt = Number(value.yearBuilt);
+    if (!Number.isInteger(yearBuilt) || yearBuilt < 1600 || yearBuilt > new Date().getFullYear() + 1) {
+      throw new TransactionExtractionValidationError("requirementFacts.yearBuilt must be a valid year.");
+    }
+    result.yearBuilt = yearBuilt;
+  }
+
+  for (const key of ["inHoa", "manufacturedHome", "shortSale", "hasCounterproposal"] as const) {
+    const item = value[key];
+    if (item === true || item === false) result[key] = item;
+  }
+
+  return Object.keys(result).length ? result : undefined;
+}
+
+function normalizeFinancingFact(value: string | undefined): TransactionFacts["financingType"] | undefined {
+  if (!value) return undefined;
+  const normalized = value.toLocaleLowerCase("en-US");
+  if (normalized.includes("cash")) return "cash";
+  if (normalized.includes("owner") || normalized.includes("seller")) return "owner_carry";
+  if (
+    normalized.includes("loan") ||
+    normalized.includes("conventional") ||
+    normalized.includes("fha") ||
+    normalized.includes("va")
+  ) return "loan";
+  return undefined;
 }
 
 function requiredString(value: unknown, field: string): string {
