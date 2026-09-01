@@ -99,30 +99,34 @@ export default async function ClientDashboardPage({ searchParams }: PageProps) {
 
             <section className="koinonia-client-work-panel" aria-labelledby="transactions-title">
               <div className="koinonia-client-panel-heading">
-                <p className="koinonia-eyebrow">Transactions</p>
-                <h2 id="transactions-title">Your files</h2>
-                <p>Search by client or property, or narrow the list to the files you need right now.</p>
+                <div>
+                  <p className="koinonia-eyebrow">Transactions</p>
+                  <h2 id="transactions-title">Your files</h2>
+                </div>
+                <p>Search by client or property, then narrow the list if needed.</p>
               </div>
 
-              <form action="/client/dashboard" method="get" className="koinonia-client-request-card">
-                <label>
-                  <span>Search transactions</span>
-                  <input
-                    type="search"
-                    name="q"
-                    defaultValue={search}
-                    placeholder="Client or property address"
-                  />
-                </label>
-                <input type="hidden" name="filter" value={filter} />
-                <button className="koinonia-button" type="submit">Search</button>
-              </form>
+              <div className="koinonia-client-dashboard-toolbar">
+                <nav className="koinonia-client-dashboard-filters" aria-label="Transaction filters">
+                  <FilterLink active={filter === "active"} filter="active" label="Active" search={search} />
+                  <FilterLink active={filter === "closing"} filter="closing" label="Closing Soon" search={search} />
+                  <FilterLink active={filter === "closed"} filter="closed" label="Closed" search={search} />
+                </nav>
 
-              <nav className="koinonia-client-work-list" aria-label="Transaction filters">
-                <FilterLink active={filter === "active"} filter="active" label="Active" search={search} />
-                <FilterLink active={filter === "closing"} filter="closing" label="Closing Soon" search={search} />
-                <FilterLink active={filter === "closed"} filter="closed" label="Closed" search={search} />
-              </nav>
+                <form action="/client/dashboard" method="get" className="koinonia-client-dashboard-search">
+                  <label className="koinonia-client-dashboard-search-field">
+                    <span className="koinonia-sr-only">Search transactions</span>
+                    <input
+                      type="search"
+                      name="q"
+                      defaultValue={search}
+                      placeholder="Search client or property"
+                    />
+                  </label>
+                  <input type="hidden" name="filter" value={filter} />
+                  <button className="koinonia-button" type="submit">Search</button>
+                </form>
+              </div>
 
               <div className="koinonia-client-work-list">
                 {visibleTransactions.length ? (
@@ -143,16 +147,6 @@ export default async function ClientDashboardPage({ searchParams }: PageProps) {
                   </article>
                 )}
               </div>
-            </section>
-
-            <section className="koinonia-client-request-card">
-              <p className="koinonia-eyebrow">Portal Centers</p>
-              <p>Documents and billing stay available without competing with your transaction list.</p>
-              <p>
-                <a className="koinonia-document-link" href="/client/documents">Documents</a>
-                {" · "}
-                <a className="koinonia-billing-link" href="/client/billing">Billing</a>
-              </p>
             </section>
           </div>
         </div>
@@ -205,14 +199,11 @@ function FilterLink({
 
   return (
     <a
-      className="koinonia-client-work-item"
+      className={`koinonia-client-dashboard-filter${active ? " is-active" : ""}`}
       href={`/client/dashboard?${query.toString()}`}
       aria-current={active ? "page" : undefined}
     >
-      <div>
-        <span>{active ? "Selected" : "Filter"}</span>
-        <h3>{label}</h3>
-      </div>
+      {label}
     </a>
   );
 }
@@ -315,7 +306,8 @@ function needsAttention(transaction: DashboardTransaction): boolean {
     status.includes("waiting") ||
     status.includes("needs") ||
     status.includes("review") ||
-    status.includes("processing")
+    status.includes("processing") ||
+    status.includes("wrong document")
   );
 }
 
