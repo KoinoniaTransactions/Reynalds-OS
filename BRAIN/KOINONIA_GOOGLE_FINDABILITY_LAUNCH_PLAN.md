@@ -143,6 +143,27 @@ Track:
 - https://www.koinoniatransactions.com/sitemap.xml
 - https://www.koinoniatransactions.com/manifest.webmanifest
 
+## Legacy `/appointments` Migration — Completed 2026-09-01
+
+The former Squarespace URL `https://www.koinoniatransactions.com/appointments` remained visible in Google after the website migration. A permanent Next.js redirect was therefore deployed from `/appointments` to `/contact#schedule-consultation`.
+
+Production implementation:
+
+- Branch: `koinonia-production`
+- Commit: `6644802cce54c4e295df7d98895b1493fc79a337`
+- Vercel deployment: `dpl_2b6TSqut4en7821pJHFFjoWsq9ii`
+- Deployment status: `READY`
+- Live verification: `/appointments` resolves through the current `/contact` route and the destination page contains the `schedule-consultation` section.
+- Detailed production record: `BRAIN/KOINONIA_APPOINTMENTS_REDIRECT_PRODUCTION_RECORD.md`
+
+Do not add `/appointments` to the sitemap or recreate the old Squarespace page. Keep the permanent redirect in place long-term. Google may continue showing the old search-result title/snippet until it recrawls and updates its index.
+
+Search Console follow-up for this migration:
+
+1. Inspect `https://www.koinoniatransactions.com/appointments`.
+2. Inspect and request indexing for `https://www.koinoniatransactions.com/contact`.
+3. Monitor until the obsolete Squarespace result is replaced or removed.
+
 ## Next Manual Step
 
 Create or open Google Search Console and add the URL-prefix property for https://www.koinoniatransactions.com/. After Google shows the verification options, stop and record the exact verification method before changing the website or DNS.
