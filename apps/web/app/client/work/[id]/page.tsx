@@ -67,49 +67,75 @@ export default async function ClientWorkDetailPage({ params }: Params) {
     notFound();
   }
 
+  const displayTitle = getCompactTransactionTitle(workspace.summary.title);
+
   return (
     <main className="koinonia-site koinonia-workspace-detail koinonia-client-workspace-detail">
       <Header />
 
-      <section className="koinonia-section koinonia-workspace-hero">
+      <section className="koinonia-section koinonia-workspace-hero koinonia-client-transaction-hero">
         <div className="koinonia-container">
-          <a className="koinonia-document-link" href="/client/dashboard">
-            ← Back to Dashboard
-          </a>
+          <div className="koinonia-client-transaction-toolbar">
+            <a className="koinonia-client-back-link" href="/client/dashboard">
+              ← Transactions
+            </a>
 
-          <div className="koinonia-workspace-transaction-header">
-            <div className="koinonia-section-header">
-              <p className="koinonia-eyebrow">Koinonia Transaction</p>
-              <h1 className="koinonia-title">{workspace.summary.title}</h1>
-              <p className="koinonia-lead">{workspace.summary.nextAction}</p>
+            <div className="koinonia-client-transaction-actions">
+              <a className="koinonia-button primary koinonia-client-send-document" href="/client/documents">
+                Send document
+              </a>
+              <details className="koinonia-client-more-menu">
+                <summary aria-label="More transaction options">More</summary>
+                <div className="koinonia-client-more-menu-popover">
+                  <a href="#overview">Overview</a>
+                  {workspace.reviewDocuments.length ? <a href="#review">Needs your review</a> : null}
+                  <a href="#documents">Files Koinonia has</a>
+                  <a href="#timeline">Activity</a>
+                  <a href="/client/documents">Document Center</a>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <div className="koinonia-client-transaction-heading">
+            <div>
+              <p className="koinonia-client-transaction-kicker">Koinonia Transaction</p>
+              <h1 className="koinonia-client-transaction-title">{displayTitle}</h1>
+              <div className="koinonia-client-transaction-context" aria-label="Transaction status">
+                <span>{workspace.summary.status}</span>
+                <span aria-hidden="true">·</span>
+                <strong>{workspace.summary.health}</strong>
+                {workspace.summary.due ? (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <span>{workspace.summary.due}</span>
+                  </>
+                ) : null}
+              </div>
             </div>
 
-            <div className="koinonia-workspace-health-strip" aria-label="Transaction status">
-              <span>{workspace.summary.status}</span>
-              <strong>{workspace.summary.health}</strong>
-              <span>{workspace.summary.due}</span>
-            </div>
+            {workspace.reviewDocuments.length ? (
+              <a className="koinonia-client-review-indicator" href="#review">
+                <span>{workspace.reviewDocuments.length}</span>
+                {workspace.reviewDocuments.length === 1 ? "review needed" : "reviews needed"}
+              </a>
+            ) : (
+              <span className="koinonia-client-on-track-indicator">Koinonia has it</span>
+            )}
           </div>
 
           {workspace.notice ? (
             <p className="koinonia-client-security-note">{workspace.notice}</p>
           ) : null}
-
-          <nav className="koinonia-workspace-tabs" aria-label="Transaction workspace sections">
-            <a href="#overview">Overview</a>
-            {workspace.reviewDocuments.length ? <a href="#review">Needs Your Review</a> : null}
-            <a href="#documents">Files</a>
-            <a href="#timeline">Activity</a>
-          </nav>
         </div>
       </section>
 
-      <section className="koinonia-section">
+      <section className="koinonia-section koinonia-client-workspace-body">
         <div className="koinonia-container">
           <div className="koinonia-workspace-main-stack">
             <section
               id="overview"
-              className="koinonia-workspace-panel koinonia-workspace-overview-panel"
+              className="koinonia-workspace-panel koinonia-workspace-overview-panel koinonia-client-overview-panel"
               aria-labelledby="client-work-overview"
             >
               <div className="koinonia-workspace-panel-heading">
@@ -118,13 +144,13 @@ export default async function ClientWorkDetailPage({ params }: Params) {
                   <h2 id="client-work-overview">
                     {workspace.reviewDocuments.length
                       ? "We need a quick review from you"
-                      : "Koinonia has the transaction from here"}
+                      : "Everything is moving forward"}
                   </h2>
                 </div>
                 <p>Updated {workspace.summary.updated}</p>
               </div>
 
-              <div className="koinonia-workspace-next-action">
+              <div className="koinonia-workspace-next-action koinonia-client-status-message">
                 <span>{workspace.reviewDocuments.length ? "Needed from you" : "Right now"}</span>
                 <strong>
                   {workspace.reviewDocuments.length
@@ -133,7 +159,7 @@ export default async function ClientWorkDetailPage({ params }: Params) {
                 </strong>
               </div>
 
-              <div className="koinonia-workspace-meta-grid">
+              <div className="koinonia-workspace-meta-grid koinonia-client-meta-grid">
                 {workspace.summary.meta.slice(0, 4).map((item) => (
                   <article key={item.label}>
                     <span>{item.label}</span>
@@ -195,7 +221,7 @@ function WorkspaceDocuments({ documents }: { documents: PortalWorkspaceDocumentI
           <h2 id="client-work-documents">Received and filed</h2>
         </div>
         <a className="koinonia-document-link" href="/client/documents">
-          Send / Upload Documents
+          Send another
         </a>
       </div>
 
@@ -276,13 +302,12 @@ async function getClientWorkWorkspace(
           workspaceId,
           relatedObjectId: workItem.id,
           archivedAt: null,
-          removedAt: null,
           accessLevel: {
             in: ["client", "client_and_staff"]
           }
         },
         orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-        take: 80
+        take: 50
       }),
       prisma.timelineEvent.findMany({
         where: {
@@ -294,16 +319,17 @@ async function getClientWorkWorkspace(
       })
     ]);
 
+    const activeDocuments = documents.filter(
+      (document) => !document.removedAt && getPortalDocumentLifecycleState(document) === "active"
+    );
     const versionGroups = groupPortalDocumentVersions(
-      documents.map((document) => ({
+      activeDocuments.map((document) => ({
         ...document,
         lifecycleState: getPortalDocumentLifecycleState(document)
       }))
     );
-    const currentDocuments = versionGroups
+    const reviewDocuments = versionGroups
       .map((group) => group.current)
-      .filter((document) => document.lifecycleState === "active" && !document.supersededByDocumentId);
-    const reviewDocuments = currentDocuments
       .filter((document) => document.status === "Ready for Client Review")
       .map((document) => ({
         id: document.id,
@@ -316,7 +342,7 @@ async function getClientWorkWorkspace(
 
     return {
       documents: withWorkspaceDocuments(
-        buildPortalWorkspaceDocuments(currentDocuments, {
+        buildPortalWorkspaceDocuments(documents, {
           downloadBasePath: "/api/portal/documents",
           storageReady: isDocumentStorageConfigured()
         })
@@ -343,6 +369,16 @@ async function getClientWorkWorkspace(
   }
 }
 
+function getCompactTransactionTitle(title: string): string {
+  const compact = title
+    .replace(/\s+[—-]\s+Transaction Intake$/i, "")
+    .replace(/\s+[—-]\s+Transaction$/i, "")
+    .replace(/^Transaction\s+[—-]\s+/i, "")
+    .trim();
+
+  return compact || "Transaction";
+}
+
 function withWorkspaceDocuments(
   documents: PortalWorkspaceDocumentItem[]
 ): PortalWorkspaceDocumentItem[] {
@@ -364,10 +400,10 @@ function buildUnavailableWorkspaceSummary(workItemId: string): PortalWorkspaceSu
     health: "Unavailable",
     id: workItemId,
     meta: [{ label: "Storage", value: "Work detail unavailable" }],
-    nextAction: "Koinonia will resume transaction management when storage reconnects.",
+    nextAction: "Connect production database storage before using live work detail pages.",
     status: "Storage Unavailable",
-    title: "Transaction temporarily unavailable",
-    type: "Transaction",
+    title: "Work detail temporarily unavailable",
+    type: "Portal Work",
     updated: "Storage unavailable"
   };
 }
