@@ -11,6 +11,7 @@ import {
   useState,
   type FormEvent
 } from "react";
+import { TransactionObligationResolutionControls } from "./TransactionObligationResolutionControls";
 
 export type PortalWorkAssignmentStaffOption = {
   id: string;
@@ -147,7 +148,7 @@ export function PortalWorkAssignmentForm({
 
   return (
     <>
-      {operations ? <StaffOperationsSummary operations={operations} /> : null}
+      {operations ? <StaffOperationsSummary operations={operations} workItemId={workItemId} /> : null}
 
       <form className="koinonia-work-assignment-form" onSubmit={submitAssignment}>
         <label>
@@ -206,7 +207,13 @@ export function PortalWorkAssignmentForm({
   );
 }
 
-function StaffOperationsSummary({ operations }: { operations: StaffOperations }) {
+function StaffOperationsSummary({
+  operations,
+  workItemId
+}: {
+  operations: StaffOperations;
+  workItemId: string;
+}) {
   const priorityItems = [
     ...operations.needsReview.map((item) => ({ ...item, bucket: "Needs Review" })),
     ...operations.dueToday.map((item) => ({ ...item, bucket: "Due Today" })),
@@ -252,6 +259,14 @@ function StaffOperationsSummary({ operations }: { operations: StaffOperations })
                   {item.dueDate ? `Contract date: ${formatDate(item.dueDate)}.` : "No date recorded."}
                   {item.sourceDocumentType ? ` Source: ${item.sourceDocumentType}.` : ""}
                 </p>
+                {item.bucket === "Needs Review" ? (
+                  <TransactionObligationResolutionControls
+                    transactionId={workItemId}
+                    obligationId={item.id}
+                    label={item.label}
+                    onResolved={() => window.location.reload()}
+                  />
+                ) : null}
               </div>
               <strong>{item.dueDate ? shortDate(item.dueDate) : item.state}</strong>
             </article>
