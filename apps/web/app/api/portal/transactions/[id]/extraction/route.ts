@@ -55,7 +55,9 @@ export async function POST(request: Request, context: RouteContext) {
     const nextAction =
       proposal.documentMatch === "mismatch"
         ? "Realtor must decide whether to replace the document or continue despite the mismatch warning."
-        : "Review extracted transaction information before applying it to the file.";
+        : !proposal.inferredSide || !proposal.inferredStage
+          ? "Review the document and confirm any transaction identity Koinonia could not determine."
+          : "Review extracted transaction information before applying it to the file.";
 
     const updated = await prisma.rosObject.update({
       where: { id: transaction.id },
@@ -80,6 +82,8 @@ export async function POST(request: Request, context: RouteContext) {
           confidence: proposal.confidence,
           documentMatch: proposal.documentMatch,
           documentMatchReason: proposal.documentMatchReason ?? null,
+          inferredSide: proposal.inferredSide ?? null,
+          inferredStage: proposal.inferredStage ?? null,
           identifiedDocumentType: proposal.identifiedDocumentType,
           documentRequirementId: proposal.documentRequirementId ?? null,
           sourceDocumentId: proposal.sourceDocumentId
@@ -103,7 +107,10 @@ export async function PATCH(request: Request, context: RouteContext) {
       return NextResponse.json({ error: "action must be confirm." }, { status: 400 });
     }
 
-    const mismatchOverride = (body as Record<string, unknown>).mismatchOverride === true;
+    const bodyRecord = body as Record<string, unknown>;
+    const mismatchOverride = bodyRecord.mismatchOverride === true;
+    const confirmedSide = parseSide(bodyRecord.confirmedSide);
+    const confirmedStage = parseStage(bodyRecord.confirmedStage);
 
     const transaction = await prisma.rosObject.findFirst({
       where: {
@@ -126,21 +133,47 @@ export async function PATCH(request: Request, context: RouteContext) {
       return NextResponse.json(
         {
           error:
-            "The uploaded document appears not to match the selected file type. Confirm the mismatch override to continue anyway."
+            "The uploaded document appears not to match this transaction. Confirm the mismatch override to continue anyway."
         },
         { status: 409 }
       );
     }
 
-    const side = data.side === "seller" ? "seller" : "buyer";
-    const stage = data.stage === "under_contract" ? "under_contract" : "pre_contract";
+    const side = data.side === "seller"
+      ? "seller"
+      : data.side === "buyer"
+        ? "buyer"
+        : confirmedSide ?? proposal.inferredSide;
+    const stage = data.stage === "under_contract"
+      ? "under_contract"
+      : data.stage === "pre_contract"
+        ? "pre_contract"
+        : confirmedStage ?? proposal.inferredStage;
+
+    if (!side || !stage) {
+      return NextResponse.json(
+        {
+          error: "Koinonia still needs the represented side and transaction stage before this document can build the file.",
+          needsTransactionIdentity: true,
+          needsSide: !side,
+          needsStage: !stage
+        },
+        { status: 409 }
+      );
+    }
+
+    const confirmedProposal = {
+      ...proposal,
+      inferredSide: side,
+      inferredStage: stage
+    };
     const requirement = getTransactionDocumentRequirement(
       side,
       stage,
-      proposal.documentRequirementId
+      confirmedProposal.documentRequirementId
     );
-    const confirmedDocumentType = requirement?.label ?? proposal.identifiedDocumentType;
-    const householdName = buildHouseholdName(proposal.clientNames);
+    const confirmedDocumentType = requirement?.label ?? confirmedProposal.identifiedDocumentType;
+    const householdName = buildHouseholdName(confirmedProposal.clientNames);
     const confirmedAt = new Date().toISOString();
 
     const result = await prisma.$transaction(async (tx) => {
@@ -195,7 +228,7 @@ export async function PATCH(request: Request, context: RouteContext) {
 
       const sourceDocument = await tx.document.findFirst({
         where: {
-          id: proposal.sourceDocumentId,
+          id: confirmedProposal.sourceDocumentId,
           workspaceId: actor.workspaceId,
           relatedObjectId: transaction.id,
           archivedAt: null,
@@ -217,24 +250,34 @@ export async function PATCH(request: Request, context: RouteContext) {
         });
       }
 
+      const mergedData = mergeExtractionIntoTransactionData(
+        transaction.data,
+        confirmedProposal,
+        confirmedAt
+      );
       const updatedTransaction = await tx.rosObject.update({
         where: { id: transaction.id },
         data: {
           clientObjectId,
           name: buildConfirmedTransactionName({
             clientName: householdName,
-            propertyAddress: proposal.propertyAddress,
+            propertyAddress: confirmedProposal.propertyAddress,
             side
           }),
+          status: stage === "under_contract" ? "Under Contract" : "Intake",
           health: "Healthy",
           nextAction: "Koinonia is managing the next transaction milestone.",
           data: {
-            ...mergeExtractionIntoTransactionData(transaction.data, proposal, confirmedAt),
-            extractionOverride: proposal.documentMatch === "mismatch"
+            ...mergedData,
+            side,
+            sideStatus: confirmedSide ? "realtor_confirmed" : "document_confirmed",
+            stage,
+            stageStatus: confirmedStage ? "realtor_confirmed" : "document_confirmed",
+            extractionOverride: confirmedProposal.documentMatch === "mismatch"
               ? {
                   confirmedByUserId: actor.id,
                   confirmedAt,
-                  reason: proposal.documentMatchReason ?? null
+                  reason: confirmedProposal.documentMatchReason ?? null
                 }
               : null
           } as Prisma.InputJsonObject
@@ -269,7 +312,7 @@ export async function PATCH(request: Request, context: RouteContext) {
         actorId: actor.id,
         side,
         stage,
-        proposal,
+        proposal: confirmedProposal,
         confirmedDocumentType,
         confirmedAt
       });
@@ -280,23 +323,27 @@ export async function PATCH(request: Request, context: RouteContext) {
           objectId: transaction.id,
           actorId: actor.id,
           eventType:
-            proposal.documentMatch === "mismatch"
+            confirmedProposal.documentMatch === "mismatch"
               ? "transaction.extraction.mismatch_overridden"
               : "transaction.extraction.confirmed",
           summary:
-            proposal.documentMatch === "mismatch"
+            confirmedProposal.documentMatch === "mismatch"
               ? `Document mismatch warning overridden for ${updatedTransaction.name}`
               : `Extracted transaction information confirmed for ${updatedTransaction.name}`,
           newValue: {
             clientObjectId,
-            propertyAddress: proposal.propertyAddress ?? null,
-            closingDate: proposal.closingDate ?? null,
-            identifiedDocumentType: proposal.identifiedDocumentType,
+            side,
+            stage,
+            sideSource: confirmedSide ? "realtor" : "document",
+            stageSource: confirmedStage ? "realtor" : "document",
+            propertyAddress: confirmedProposal.propertyAddress ?? null,
+            closingDate: confirmedProposal.closingDate ?? null,
+            identifiedDocumentType: confirmedProposal.identifiedDocumentType,
             confirmedDocumentType,
-            documentRequirementId: proposal.documentRequirementId ?? null,
+            documentRequirementId: confirmedProposal.documentRequirementId ?? null,
             priorDocumentType: sourceDocument.documentType,
-            sourceDocumentId: proposal.sourceDocumentId,
-            documentMatch: proposal.documentMatch,
+            sourceDocumentId: confirmedProposal.sourceDocumentId,
+            documentMatch: confirmedProposal.documentMatch,
             mismatchOverride,
             obligationChanges
           }
@@ -309,26 +356,30 @@ export async function PATCH(request: Request, context: RouteContext) {
           actorId: actor.id,
           actorEmail: actor.email,
           action:
-            proposal.documentMatch === "mismatch"
+            confirmedProposal.documentMatch === "mismatch"
               ? "portal.transaction.extraction.mismatch_overridden"
               : "portal.transaction.extraction.confirmed",
           subjectType: "RosObject",
           subjectId: transaction.id,
           summary:
-            proposal.documentMatch === "mismatch"
+            confirmedProposal.documentMatch === "mismatch"
               ? `Overrode document mismatch warning for ${updatedTransaction.name}`
               : `Confirmed extracted data for ${updatedTransaction.name}`,
           metadata: {
-            confidence: proposal.confidence,
-            documentMatch: proposal.documentMatch,
-            documentMatchReason: proposal.documentMatchReason ?? null,
-            identifiedDocumentType: proposal.identifiedDocumentType,
+            confidence: confirmedProposal.confidence,
+            documentMatch: confirmedProposal.documentMatch,
+            documentMatchReason: confirmedProposal.documentMatchReason ?? null,
+            side,
+            stage,
+            sideSource: confirmedSide ? "realtor" : "document",
+            stageSource: confirmedStage ? "realtor" : "document",
+            identifiedDocumentType: confirmedProposal.identifiedDocumentType,
             confirmedDocumentType,
-            documentRequirementId: proposal.documentRequirementId ?? null,
+            documentRequirementId: confirmedProposal.documentRequirementId ?? null,
             priorDocumentType: sourceDocument.documentType,
             mismatchOverride,
             reusedClient,
-            sourceDocumentId: proposal.sourceDocumentId,
+            sourceDocumentId: confirmedProposal.sourceDocumentId,
             obligationChanges
           }
         }
@@ -338,8 +389,10 @@ export async function PATCH(request: Request, context: RouteContext) {
         transaction: updatedTransaction,
         reusedClient,
         mismatchOverride,
+        side,
+        stage,
         documentType: confirmedDocumentType,
-        documentRequirementId: proposal.documentRequirementId ?? null,
+        documentRequirementId: confirmedProposal.documentRequirementId ?? null,
         obligationChanges
       };
     });
@@ -348,6 +401,14 @@ export async function PATCH(request: Request, context: RouteContext) {
   } catch (error) {
     return handleError(error);
   }
+}
+
+function parseSide(value: unknown): "buyer" | "seller" | undefined {
+  return value === "buyer" || value === "seller" ? value : undefined;
+}
+
+function parseStage(value: unknown): "pre_contract" | "under_contract" | undefined {
+  return value === "pre_contract" || value === "under_contract" ? value : undefined;
 }
 
 function handleError(error: unknown) {
