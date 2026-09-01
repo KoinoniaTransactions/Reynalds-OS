@@ -4,6 +4,7 @@ import {
   getClientTransactionNextAction,
   getClientTransactionPartyRelationshipType,
   getClientTransactionStatus,
+  getTransactionIntakeRequestId,
   normalizeClientIdentityName,
   validateClientTransactionIntakeInput
 } from "./client-transactions";
@@ -40,5 +41,25 @@ describe("client transaction intake helpers", () => {
     expect(getClientTransactionPartyRelationshipType("buyer")).toBe("transaction_party:buyer");
     expect(getClientTransactionPartyRelationshipType("seller")).toBe("transaction_party:seller");
     expect(normalizeClientIdentityName("  John   & Mary Smith ")).toBe("john & mary smith");
+  });
+
+  it("preserves a bounded intake request id for safe retries", () => {
+    const input = validateClientTransactionIntakeInput({
+      intakeRequestId: "intake-123",
+      side: "buyer",
+      sourceDocumentName: "Buyer Agency.pdf",
+      stage: "pre_contract"
+    });
+
+    expect(input.intakeRequestId).toBe("intake-123");
+    expect(getTransactionIntakeRequestId({ intakeRequestId: " intake-123 " })).toBe("intake-123");
+    expect(() =>
+      validateClientTransactionIntakeInput({
+        intakeRequestId: "x".repeat(101),
+        side: "buyer",
+        sourceDocumentName: "Buyer Agency.pdf",
+        stage: "pre_contract"
+      })
+    ).toThrow("request id is too long");
   });
 });
