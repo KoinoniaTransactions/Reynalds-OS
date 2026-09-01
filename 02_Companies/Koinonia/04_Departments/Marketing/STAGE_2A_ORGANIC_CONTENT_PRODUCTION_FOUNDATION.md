@@ -20,8 +20,8 @@ Stage 2A authorizes only:
 
 1. one reusable Koinonia social-static master
 2. one S1 Facebook/Instagram static asset
-3. one T1 TikTok/Reel recording package
-4. one T2 TikTok/Reel recording package
+3. one T1 TikTok/Reel faceless-animation package
+4. one T2 TikTok/Reel faceless-animation package
 5. content records, QA, dashboard baseline, and approval preparation
 
 ## Explicitly Not Authorized
@@ -52,8 +52,8 @@ steps remain superseded.
 | Content ID | Asset | Channels | Stage 2A target |
 |---|---|---|---|
 | `S01_MORE_OPPORTUNITY` | More Opportunity, Not More Chaos | Facebook + Instagram | Approved static master, not scheduled |
-| `T01_MORE_CLOSINGS` | More Closings Should Not Create More Chaos | TikTok + Reel | Recorded and reviewed master, not scheduled |
-| `T02_TWO_SHOWINGS` | Two Clients Need Showings at the Same Time | TikTok + Reel | Recorded and reviewed master, not scheduled |
+| `T01_MORE_CLOSINGS` | More Closings Should Not Create More Chaos | TikTok + Reel | Animated and reviewed master, not scheduled |
+| `T02_TWO_SHOWINGS` | Two Clients Need Showings at the Same Time | TikTok + Reel | Animated and reviewed master, not scheduled |
 
 ## Required Completion Gates
 
@@ -61,8 +61,9 @@ steps remain superseded.
 - [x] S1 static draft exists
 - [x] content records reference canonical copy/scripts
 - [x] S1 visual approved by user on 2026-09-01
-- [ ] T1 master video is recorded, captioned, and reviewed
-- [ ] T2 master video is recorded, captioned, and reviewed
+- [x] T1/T2 faceless animated storyboards prepared
+- [ ] T1 master video is animated, voiced, captioned, and reviewed
+- [ ] T2 master video is animated, voiced, captioned, and reviewed
 - [ ] named owner is confirmed for website consultations and social DMs/comments
 - [ ] first dashboard/control baseline is recorded
 - [ ] GA4 key-event reporting follow-up is resolved or explicitly accepted as non-blocking
