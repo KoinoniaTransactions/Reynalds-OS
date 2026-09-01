@@ -1,53 +1,44 @@
 "use client";
 
 import { useEffect } from "react";
-
-const storageKey = "koinonia_marketing_attribution";
-
-type MarketingAttribution = {
-  utmSource: string;
-  utmMedium: string;
-  utmCampaign: string;
-  utmContent: string;
-  fbclid: string;
-  ttclid: string;
-  referrer: string;
-};
-
-function readCurrentAttribution(): MarketingAttribution {
-  const params = new URLSearchParams(window.location.search);
-
-  return {
-    utmSource: params.get("utm_source") ?? "",
-    utmMedium: params.get("utm_medium") ?? "",
-    utmCampaign: params.get("utm_campaign") ?? "",
-    utmContent: params.get("utm_content") ?? "",
-    fbclid: params.get("fbclid") ?? "",
-    ttclid: params.get("ttclid") ?? "",
-    referrer: document.referrer ?? ""
-  };
-}
-
-function hasCampaignSignal(attribution: MarketingAttribution) {
-  return Boolean(
-    attribution.utmSource ||
-      attribution.utmMedium ||
-      attribution.utmCampaign ||
-      attribution.utmContent ||
-      attribution.fbclid ||
-      attribution.ttclid
-  );
-}
+import {
+  createMarketingTouch,
+  legacyMarketingAttributionStorageKey,
+  marketingAttributionStorageKey,
+  migrateLegacyMarketingAttribution,
+  normalizeMarketingAttributionState,
+  updateMarketingAttribution
+} from "@/lib/marketing-attribution";
 
 export function MarketingAttribution() {
   useEffect(() => {
-    const current = readCurrentAttribution();
-    const existing = window.sessionStorage.getItem(storageKey);
+    const current = createMarketingTouch({
+      search: window.location.search,
+      referrer: document.referrer ?? "",
+      landingPage: window.location.href,
+      capturedAt: new Date().toISOString()
+    });
 
-    if (existing && !hasCampaignSignal(current)) return;
+    let existing = null;
 
-    if (!existing || hasCampaignSignal(current)) {
-      window.sessionStorage.setItem(storageKey, JSON.stringify(current));
+    try {
+      existing = normalizeMarketingAttributionState(
+        JSON.parse(window.localStorage.getItem(marketingAttributionStorageKey) ?? "null")
+      );
+
+      if (!existing) {
+        existing = migrateLegacyMarketingAttribution(
+          JSON.parse(window.sessionStorage.getItem(legacyMarketingAttributionStorageKey) ?? "null"),
+          current
+        );
+      }
+
+      window.localStorage.setItem(
+        marketingAttributionStorageKey,
+        JSON.stringify(updateMarketingAttribution(existing, current))
+      );
+    } catch {
+      // Attribution must never block the public site or consultation flow.
     }
   }, []);
 

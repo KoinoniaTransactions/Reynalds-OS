@@ -101,6 +101,9 @@ export type KoinoniaRelationshipData = {
     material?: string;
     firstTouchDate?: string;
     referrer?: string;
+    firstTouch?: RelationshipMarketingTouch;
+    latestTouch?: RelationshipMarketingTouch;
+    conversionTouch?: RelationshipMarketingTouch;
   };
   problem?: {
     primaryPressure?: string;
@@ -151,6 +154,18 @@ export type KoinoniaRelationshipData = {
   [key: string]: unknown;
 };
 
+export type RelationshipMarketingTouch = {
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+  fbclid?: string;
+  ttclid?: string;
+  referrer?: string;
+  landingPage?: string;
+  capturedAt?: string;
+};
+
 type JsonRecord = Record<string, unknown>;
 
 function record(value: unknown): JsonRecord {
@@ -169,6 +184,26 @@ function numberValue(value: unknown): number | undefined {
 
 function booleanValue(value: unknown): boolean | undefined {
   return typeof value === "boolean" ? value : undefined;
+}
+
+function normalizeRelationshipMarketingTouch(
+  value: unknown
+): RelationshipMarketingTouch | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+
+  const source = record(value);
+
+  return {
+    utmSource: text(source.utmSource),
+    utmMedium: text(source.utmMedium),
+    utmCampaign: text(source.utmCampaign),
+    utmContent: text(source.utmContent),
+    fbclid: text(source.fbclid),
+    ttclid: text(source.ttclid),
+    referrer: text(source.referrer),
+    landingPage: text(source.landingPage),
+    capturedAt: text(source.capturedAt)
+  };
 }
 
 function normalizeQuickCaptureSuggestion(value: unknown): RelationshipQuickCaptureSuggestion {
@@ -242,7 +277,10 @@ export function normalizeKoinoniaRelationshipData(
       campaign: text(acquisition.campaign),
       material: text(acquisition.material),
       firstTouchDate: text(acquisition.firstTouchDate),
-      referrer: text(acquisition.referrer)
+      referrer: text(acquisition.referrer),
+      firstTouch: normalizeRelationshipMarketingTouch(acquisition.firstTouch),
+      latestTouch: normalizeRelationshipMarketingTouch(acquisition.latestTouch),
+      conversionTouch: normalizeRelationshipMarketingTouch(acquisition.conversionTouch)
     },
     problem: {
       ...problem,

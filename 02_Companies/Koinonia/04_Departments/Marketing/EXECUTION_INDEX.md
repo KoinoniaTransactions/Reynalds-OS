@@ -67,11 +67,18 @@ Current approved social/digital channels:
 
 LinkedIn is not used for Koinonia Transactions marketing.
 
-### 4. Current Launch Campaign
+### 4. Activation Control
+
+`MARKETING_ACTIVATION_READINESS_PLAN.md` and `30_DAY_MARKETING_ACTIVATION_TEMPLATE.md`
+
+Define the current activation gates and relative execution schedule. These documents control live
+implementation sequencing.
+
+### 5. Historical Launch Content Library
 
 `30_DAY_MARKETING_LAUNCH_CALENDAR_2026-08-18.md`
 
-Defines the first 30-day execution cycle, including:
+Contains the prepared first-cycle copy and campaign assets, including:
 
 - day-by-day launch actions
 - Facebook and Instagram posts
@@ -85,7 +92,9 @@ Defines the first 30-day execution cycle, including:
 - lead-response SOP
 - Month 1 reporting template
 
-The launch calendar is a time-bound execution document. Month 2 should be adjusted from actual relationship/outcome data rather than copied forward automatically.
+Its fixed Aug 18–Sep 16 dates and automatic-send assumptions are superseded. Use the content only
+after the applicable activation gate is approved, and schedule it relative to the actual activation
+date. Month 2 should be adjusted from real relationship/outcome data rather than copied forward.
 
 ## Governance Rule
 
