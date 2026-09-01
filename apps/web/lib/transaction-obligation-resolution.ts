@@ -5,7 +5,8 @@ import {
   obligationStatusFromState,
   readTransactionObligationData,
   transactionObligationRelationshipType,
-  type TransactionObligationData
+  type TransactionObligationData,
+  type TransactionObligationOutcome
 } from "./transaction-obligations";
 
 export async function satisfyTransactionObligationsFromDocument(input: {
@@ -43,12 +44,14 @@ export async function satisfyTransactionObligationsFromDocument(input: {
 
     const reason = matchingKeys.get(data.obligationKey)!;
     const evidenceDocumentIds = [...new Set([...(data.evidenceDocumentIds ?? []), input.documentId])];
+    const satisfactionOutcome = evidenceOutcomeForObligation(data.obligationKey);
     const nextData: TransactionObligationData = {
       ...data,
       state: "satisfied",
       evidenceDocumentIds,
       satisfiedAt: input.occurredAt,
-      satisfiedReason: reason
+      satisfiedReason: reason,
+      satisfactionOutcome
     };
 
     await input.tx.rosObject.update({
@@ -76,6 +79,7 @@ export async function satisfyTransactionObligationsFromDocument(input: {
         newValue: {
           obligationId: obligation.id,
           state: "satisfied",
+          satisfactionOutcome,
           evidenceDocumentId: input.documentId,
           documentType: input.documentType,
           reason
@@ -98,6 +102,7 @@ export async function resolveTransactionObligationByStaff(input: {
   resolution: "satisfied" | "not_applicable";
   reason: string;
   occurredAt: string;
+  outcome?: TransactionObligationOutcome;
 }): Promise<TransactionObligationData> {
   const link = await input.tx.objectRelationship.findFirst({
     where: {
@@ -113,9 +118,11 @@ export async function resolveTransactionObligationByStaff(input: {
   if (!data) throw new Error("Transaction obligation data is invalid.");
   if (data.state === "superseded") throw new Error("A superseded obligation cannot be resolved.");
 
+  const outcome = input.outcome ?? (input.resolution === "not_applicable" ? "no_event" : "completed");
   const nextData: TransactionObligationData = {
     ...data,
     state: input.resolution,
+    satisfactionOutcome: outcome,
     ...(input.resolution === "satisfied"
       ? { satisfiedAt: input.occurredAt, satisfiedReason: input.reason }
       : { satisfiedReason: input.reason })
@@ -148,10 +155,15 @@ export async function resolveTransactionObligationByStaff(input: {
       newValue: {
         obligationId: input.obligationId,
         state: input.resolution,
+        satisfactionOutcome: outcome,
         reason: input.reason
       }
     }
   });
 
   return nextData;
+}
+
+function evidenceOutcomeForObligation(obligationKey: string): TransactionObligationOutcome {
+  return obligationKey.includes("objection") ? "occurred" : "completed";
 }
