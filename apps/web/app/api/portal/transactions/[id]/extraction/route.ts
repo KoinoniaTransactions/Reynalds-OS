@@ -78,6 +78,7 @@ export async function POST(request: Request, context: RouteContext) {
           confidence: proposal.confidence,
           documentMatch: proposal.documentMatch,
           documentMatchReason: proposal.documentMatchReason ?? null,
+          identifiedDocumentType: proposal.identifiedDocumentType,
           sourceDocumentId: proposal.sourceDocumentId
         }
       }
@@ -182,6 +183,30 @@ export async function PATCH(request: Request, context: RouteContext) {
         }
       }
 
+      const sourceDocument = await tx.document.findFirst({
+        where: {
+          id: proposal.sourceDocumentId,
+          workspaceId: actor.workspaceId,
+          relatedObjectId: transaction.id,
+          archivedAt: null,
+          removedAt: null
+        },
+        select: { id: true, documentType: true }
+      });
+
+      if (!sourceDocument) {
+        throw new TransactionExtractionValidationError(
+          "The source document for this extraction is no longer available."
+        );
+      }
+
+      if (sourceDocument.documentType !== proposal.identifiedDocumentType) {
+        await tx.document.update({
+          where: { id: sourceDocument.id },
+          data: { documentType: proposal.identifiedDocumentType }
+        });
+      }
+
       const updatedTransaction = await tx.rosObject.update({
         where: { id: transaction.id },
         data: {
@@ -242,6 +267,8 @@ export async function PATCH(request: Request, context: RouteContext) {
             clientObjectId,
             propertyAddress: proposal.propertyAddress ?? null,
             closingDate: proposal.closingDate ?? null,
+            identifiedDocumentType: proposal.identifiedDocumentType,
+            priorDocumentType: sourceDocument.documentType,
             sourceDocumentId: proposal.sourceDocumentId,
             documentMatch: proposal.documentMatch,
             mismatchOverride
@@ -268,6 +295,8 @@ export async function PATCH(request: Request, context: RouteContext) {
             confidence: proposal.confidence,
             documentMatch: proposal.documentMatch,
             documentMatchReason: proposal.documentMatchReason ?? null,
+            identifiedDocumentType: proposal.identifiedDocumentType,
+            priorDocumentType: sourceDocument.documentType,
             mismatchOverride,
             reusedClient,
             sourceDocumentId: proposal.sourceDocumentId
@@ -275,7 +304,12 @@ export async function PATCH(request: Request, context: RouteContext) {
         }
       });
 
-      return { transaction: updatedTransaction, reusedClient, mismatchOverride };
+      return {
+        transaction: updatedTransaction,
+        reusedClient,
+        mismatchOverride,
+        documentType: proposal.identifiedDocumentType
+      };
     });
 
     return NextResponse.json(result);
