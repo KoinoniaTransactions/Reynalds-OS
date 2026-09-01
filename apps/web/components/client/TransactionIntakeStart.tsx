@@ -27,6 +27,12 @@ type DocumentUploadResult = {
 type ExtractionProposal = {
   clientNames: string[];
   propertyAddress?: string;
+  identifiedDocumentType: string;
+  listPrice?: number;
+  listingEffectiveDate?: string;
+  listingExpirationDate?: string;
+  brokerageName?: string;
+  agentName?: string;
   purchasePrice?: number;
   earnestMoney?: number;
   closingDate?: string;
@@ -185,8 +191,8 @@ export function TransactionIntakeStart() {
       setStatus("done");
       setMessage(
         proposal.documentMatch === "mismatch"
-          ? "File created. Your decision to continue despite the AI mismatch warning was recorded."
-          : "File created. The confirmed document information is now attached to the transaction."
+          ? `File created. Your decision to continue despite the AI mismatch warning was recorded, and the document was filed as ${proposal.identifiedDocumentType}.`
+          : `File created. The confirmed document was filed as ${proposal.identifiedDocumentType} and its information is attached to the transaction.`
       );
     } catch (error) {
       setStatus("review");
@@ -216,6 +222,8 @@ export function TransactionIntakeStart() {
     setMismatchOverride(false);
     setIntakeRequestId(createTransactionIntakeRequestId());
   }
+
+  const isSellerListingStage = side === "seller" && stage === "pre_contract";
 
   return (
     <div className="koinonia-client-main-stack">
@@ -381,7 +389,7 @@ export function TransactionIntakeStart() {
               <p className="koinonia-eyebrow">Review</p>
               <h2 id="extraction-review-title">Here&apos;s what we found</h2>
               <p>
-                Confidence: <strong>{proposal.confidence}</strong>. Nothing below is applied until you confirm it.
+                Identified document: <strong>{proposal.identifiedDocumentType}</strong> · Confidence: <strong>{proposal.confidence}</strong>. Nothing below is applied until you confirm it.
               </p>
             </div>
 
@@ -389,12 +397,12 @@ export function TransactionIntakeStart() {
               <div className="koinonia-client-request-card" role="alert">
                 <strong>
                   {proposal.documentMatch === "mismatch"
-                    ? "AI thinks this may be the wrong document"
-                    : "AI is not sure this document matches"}
+                    ? "AI thinks this document may not fit the selected file stage"
+                    : "AI is not sure this document matches the selected file stage"}
                 </strong>
                 <p>
                   {proposal.documentMatchReason ??
-                    "The document could not be confidently matched to the file type you selected."}
+                    "The document could not be confidently matched to the file type and stage you selected."}
                 </p>
                 <p>
                   This is an AI recommendation, not a final decision. Review the document and choose what Koinonia should do.
@@ -421,24 +429,40 @@ export function TransactionIntakeStart() {
             ) : null}
 
             <div className="koinonia-client-work-list">
-              <ExtractionItem label="Clients" value={proposal.clientNames.join(" & ") || "Not found"} />
+              <ExtractionItem label={side === "seller" ? "Sellers" : "Buyers"} value={proposal.clientNames.join(" & ") || "Not found"} />
               <ExtractionItem label="Property" value={proposal.propertyAddress ?? "Not found"} />
-              <ExtractionItem
-                label="Purchase price"
-                value={proposal.purchasePrice !== undefined ? formatMoney(proposal.purchasePrice) : "Not found"}
-              />
-              <ExtractionItem
-                label="Earnest money"
-                value={proposal.earnestMoney !== undefined ? formatMoney(proposal.earnestMoney) : "Not found"}
-              />
-              <ExtractionItem label="Closing" value={proposal.closingDate ?? "Not found"} />
-              <ExtractionItem label="Financing" value={proposal.financingType ?? "Not found"} />
-              <ExtractionItem label="Possession" value={proposal.possession ?? "Not found"} />
+
+              {isSellerListingStage ? (
+                <>
+                  <ExtractionItem
+                    label="List price"
+                    value={proposal.listPrice !== undefined ? formatMoney(proposal.listPrice) : "Not found"}
+                  />
+                  <ExtractionItem label="Listing effective" value={proposal.listingEffectiveDate ?? "Not found"} />
+                  <ExtractionItem label="Listing expiration" value={proposal.listingExpirationDate ?? "Not found"} />
+                  <ExtractionItem label="Brokerage" value={proposal.brokerageName ?? "Not found"} />
+                  <ExtractionItem label="Listing agent" value={proposal.agentName ?? "Not found"} />
+                </>
+              ) : (
+                <>
+                  <ExtractionItem
+                    label="Purchase price"
+                    value={proposal.purchasePrice !== undefined ? formatMoney(proposal.purchasePrice) : "Not found"}
+                  />
+                  <ExtractionItem
+                    label="Earnest money"
+                    value={proposal.earnestMoney !== undefined ? formatMoney(proposal.earnestMoney) : "Not found"}
+                  />
+                  <ExtractionItem label="Closing" value={proposal.closingDate ?? "Not found"} />
+                  <ExtractionItem label="Financing" value={proposal.financingType ?? "Not found"} />
+                  <ExtractionItem label="Possession" value={proposal.possession ?? "Not found"} />
+                </>
+              )}
             </div>
 
             {Object.keys(proposal.deadlines).length ? (
               <div className="koinonia-client-request-card">
-                <strong>Contract deadlines</strong>
+                <strong>{isSellerListingStage ? "Listing dates and deadlines" : "Contract deadlines"}</strong>
                 <ul className="koinonia-client-showing-notes">
                   {Object.entries(proposal.deadlines).map(([name, date]) => (
                     <li key={`${name}-${date}`}>{name}: {date}</li>
