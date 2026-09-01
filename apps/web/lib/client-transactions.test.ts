@@ -10,7 +10,21 @@ import {
 } from "./client-transactions";
 
 describe("client transaction intake helpers", () => {
-  it("allows document-first intake without manual client/property fields", () => {
+  it("starts from a document without asking Buyer Seller or stage first", () => {
+    const input = validateClientTransactionIntakeInput({
+      sourceDocumentName: "123 Main Contract.pdf"
+    });
+
+    expect(input.side).toBeUndefined();
+    expect(input.stage).toBeUndefined();
+    expect(input.clientName).toBeUndefined();
+    expect(input.propertyAddress).toBeUndefined();
+    expect(buildClientTransactionName(input)).toBe("123 Main Contract — Transaction Intake");
+    expect(getClientTransactionStatus(input.stage)).toBe("Intake - Processing");
+    expect(getClientTransactionNextAction(input)).toContain("Identify the transaction side");
+  });
+
+  it("still accepts known transaction context when it already exists", () => {
     const input = validateClientTransactionIntakeInput({
       side: "seller",
       sourceDocumentName: "123 Main Listing Agreement.pdf",
@@ -46,9 +60,7 @@ describe("client transaction intake helpers", () => {
   it("preserves a bounded intake request id for safe retries", () => {
     const input = validateClientTransactionIntakeInput({
       intakeRequestId: "intake-123",
-      side: "buyer",
-      sourceDocumentName: "Buyer Agency.pdf",
-      stage: "pre_contract"
+      sourceDocumentName: "Buyer Agency.pdf"
     });
 
     expect(input.intakeRequestId).toBe("intake-123");
@@ -56,9 +68,7 @@ describe("client transaction intake helpers", () => {
     expect(() =>
       validateClientTransactionIntakeInput({
         intakeRequestId: "x".repeat(101),
-        side: "buyer",
-        sourceDocumentName: "Buyer Agency.pdf",
-        stage: "pre_contract"
+        sourceDocumentName: "Buyer Agency.pdf"
       })
     ).toThrow("request id is too long");
   });
