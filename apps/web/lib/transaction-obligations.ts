@@ -1,3 +1,4 @@
+import { canonicalizeContractDeadline } from "./colorado-contract-deadlines";
 import type { TransactionExtractionProposal } from "./transaction-extraction";
 import type { TransactionSide, TransactionStage } from "./transaction-intake";
 
@@ -95,11 +96,15 @@ export function deriveConfirmedExtractionObligations(input: {
   for (const [name, date] of Object.entries(input.proposal.deadlines)) {
     const dueDate = normalizeDate(date);
     if (!dueDate) continue;
+
+    const canonical = canonicalizeContractDeadline(name);
+    if (!canonical.operationalDate) continue;
+
     seeds.push(
       buildSeed({
-        key: `contract.${normalizeKey(name)}`,
-        label: name,
-        category: inferDeadlineCategory(name),
+        key: `contract.${canonical.key}`,
+        label: canonical.name,
+        category: canonical.category,
         dueDate,
         activatedAt: input.confirmedAt,
         sourceDocumentId: input.proposal.sourceDocumentId,
@@ -117,7 +122,7 @@ export function deriveConfirmedExtractionObligations(input: {
     seeds.push(
       buildSeed({
         key: "contract.closing",
-        label: "Closing",
+        label: "Closing Date",
         category: "closing",
         dueDate: input.proposal.closingDate,
         activatedAt: input.confirmedAt,
@@ -176,8 +181,6 @@ export function evaluateTransactionObligation(
   const monitorDay = data.monitorAfter ? dayValue(data.monitorAfter) : dayValue(data.activatedAt);
   if (dueDay === null || monitorDay === null) return null;
 
-  // A contract received after a deadline has already passed establishes historical baseline only.
-  // It must not immediately manufacture an Amend / Extend request during intake.
   if (dueDay < monitorDay) return null;
 
   const daysUntil = Math.floor((dueDay - nowDay) / 86_400_000);
@@ -267,28 +270,6 @@ function amendmentRecommendation(
   return data.category === "listing_term"
     ? "Listing Contract Amend / Extend"
     : "Agreement to Amend / Extend";
-}
-
-function inferDeadlineCategory(name: string): string {
-  const value = name.toLocaleLowerCase("en-US");
-  if (value.includes("inspection")) return "inspection";
-  if (value.includes("title")) return "title";
-  if (value.includes("apprais")) return "appraisal";
-  if (value.includes("loan") || value.includes("financ")) return "financing";
-  if (value.includes("earnest")) return "earnest_money";
-  if (value.includes("association") || value.includes("hoa")) return "hoa";
-  if (value.includes("closing")) return "closing";
-  if (value.includes("possession")) return "possession";
-  return "contract_deadline";
-}
-
-function normalizeKey(value: string): string {
-  const normalized = value
-    .trim()
-    .toLocaleLowerCase("en-US")
-    .replace(/[^a-z0-9]+/g, ".")
-    .replace(/^\.+|\.+$/g, "");
-  return normalized || "deadline";
 }
 
 function normalizeDate(value: string): string | null {
