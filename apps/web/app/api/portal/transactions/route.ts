@@ -104,7 +104,9 @@ export async function POST(request: Request) {
           }))
         : null;
 
-      const hasConfirmedIdentity = Boolean(input.clientName && (input.side === "buyer" || input.propertyAddress));
+      const hasConfirmedIdentity = Boolean(
+        input.side && input.stage && input.clientName && (input.side === "buyer" || input.propertyAddress)
+      );
       const transaction = await tx.rosObject.create({
         data: {
           workspaceId: actor.workspaceId,
@@ -121,15 +123,17 @@ export async function POST(request: Request) {
             intakeRequestId: input.intakeRequestId ?? null,
             intakeSource: "client_portal",
             propertyAddress: input.propertyAddress ?? null,
-            side: input.side,
+            side: input.side ?? null,
+            sideStatus: input.side ? "provided" : "pending_document_review",
             sourceDocumentName: input.sourceDocumentName,
-            stage: input.stage,
+            stage: input.stage ?? null,
+            stageStatus: input.stage ? "provided" : "pending_document_review",
             extractionStatus: hasConfirmedIdentity ? "partially_confirmed" : "pending"
           } as Prisma.InputJsonObject
         }
       });
 
-      const relationship = clientObject
+      const relationship = clientObject && input.side
         ? await tx.objectRelationship.create({
             data: {
               sourceObjectId: clientObject.id,
@@ -145,13 +149,15 @@ export async function POST(request: Request) {
           objectId: transaction.id,
           actorId: actor.id,
           eventType: "transaction.intake_started",
-          summary: `${input.side === "buyer" ? "Buyer" : "Seller"} transaction intake started from ${input.sourceDocumentName}`,
+          summary: input.side
+            ? `${input.side === "buyer" ? "Buyer" : "Seller"} transaction intake started from ${input.sourceDocumentName}`
+            : `Document-first transaction intake started from ${input.sourceDocumentName}`,
           newValue: {
             clientObjectId: clientObject?.id ?? null,
             intakeRequestId: input.intakeRequestId ?? null,
             propertyAddress: input.propertyAddress ?? null,
-            side: input.side,
-            stage: input.stage,
+            side: input.side ?? null,
+            stage: input.stage ?? null,
             sourceDocumentName: input.sourceDocumentName
           }
         }
@@ -183,11 +189,11 @@ export async function POST(request: Request) {
           summary: `Transaction intake started for ${transaction.name}`,
           metadata: {
             clientObjectId: clientObject?.id ?? null,
-            identityPending: !clientObject,
+            identityPending: !clientObject || !input.side || !input.stage,
             intakeRequestId: input.intakeRequestId ?? null,
             reusedClient: Boolean(matchedClient),
-            side: input.side,
-            stage: input.stage
+            side: input.side ?? null,
+            stage: input.stage ?? null
           }
         }
       });
