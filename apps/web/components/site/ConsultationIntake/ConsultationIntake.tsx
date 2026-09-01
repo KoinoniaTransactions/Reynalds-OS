@@ -2,6 +2,7 @@
 
 import type { ChangeEvent, FormEvent } from "react";
 import { useEffect, useId, useMemo, useState } from "react";
+import { trackGoogleAnalyticsEvent } from "@/lib/google-analytics";
 
 type ConsultationOption = {
   readonly title: string;
@@ -218,6 +219,12 @@ export function ConsultationSchedulerButton({
           ? data.message
           : "Your consultation request has been sent. Koinonia will follow up with next steps."
       });
+
+      trackGoogleAnalyticsEvent("generate_lead", {
+        method: "consultation_form",
+        service_type: selectedOption.title
+      });
+
       setForm(initialFormState);
     } catch (error) {
       setStatus({
