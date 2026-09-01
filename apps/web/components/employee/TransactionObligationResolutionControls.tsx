@@ -9,6 +9,12 @@ type Props = {
   onResolved?: () => void;
 };
 
+type ResolutionAction = {
+  resolution: "satisfied" | "not_applicable";
+  outcome: "occurred" | "no_event" | "completed";
+  label: string;
+};
+
 export function TransactionObligationResolutionControls({
   transactionId,
   obligationId,
@@ -16,10 +22,20 @@ export function TransactionObligationResolutionControls({
   onResolved
 }: Props) {
   const [reason, setReason] = useState("");
-  const [saving, setSaving] = useState<"satisfied" | "not_applicable" | null>(null);
+  const [saving, setSaving] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const isObjectionMilestone = label.toLocaleLowerCase("en-US").includes("objection");
+  const actions: ResolutionAction[] = isObjectionMilestone
+    ? [
+        { resolution: "satisfied", outcome: "occurred", label: "Objection occurred" },
+        { resolution: "satisfied", outcome: "no_event", label: "No objection occurred" }
+      ]
+    : [
+        { resolution: "satisfied", outcome: "completed", label: "Resolved / Completed" },
+        { resolution: "not_applicable", outcome: "no_event", label: "Not Applicable" }
+      ];
 
-  async function resolve(resolution: "satisfied" | "not_applicable") {
+  async function resolve(action: ResolutionAction) {
     if (saving) return;
     const normalizedReason = reason.trim();
     if (normalizedReason.length < 3) {
@@ -27,7 +43,7 @@ export function TransactionObligationResolutionControls({
       return;
     }
 
-    setSaving(resolution);
+    setSaving(action.outcome);
     setMessage(null);
 
     try {
@@ -36,7 +52,11 @@ export function TransactionObligationResolutionControls({
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ resolution, reason: normalizedReason })
+          body: JSON.stringify({
+            resolution: action.resolution,
+            outcome: action.outcome,
+            reason: normalizedReason
+          })
         }
       );
       const payload = (await response.json()) as { error?: string };
@@ -61,22 +81,17 @@ export function TransactionObligationResolutionControls({
         placeholder="Internal outcome / reason"
         aria-label={`Internal resolution reason for ${label}`}
       />
-      <button
-        className="koinonia-button"
-        type="button"
-        disabled={Boolean(saving)}
-        onClick={() => void resolve("satisfied")}
-      >
-        {saving === "satisfied" ? "Saving…" : "Resolved / Completed"}
-      </button>
-      <button
-        className="koinonia-button"
-        type="button"
-        disabled={Boolean(saving)}
-        onClick={() => void resolve("not_applicable")}
-      >
-        {saving === "not_applicable" ? "Saving…" : "Not Applicable"}
-      </button>
+      {actions.map((action) => (
+        <button
+          className="koinonia-button"
+          type="button"
+          disabled={Boolean(saving)}
+          key={action.outcome}
+          onClick={() => void resolve(action)}
+        >
+          {saving === action.outcome ? "Saving…" : action.label}
+        </button>
+      ))}
       {message ? <small className="koinonia-work-assignment-status">{message}</small> : null}
     </div>
   );
