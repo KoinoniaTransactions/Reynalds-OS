@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { TransactionRequirementQuestion } from "../../lib/transaction-document-requirements";
 
 type Props = {
@@ -9,12 +9,37 @@ type Props = {
   questions: TransactionRequirementQuestion[];
 };
 
+type PackageStatus = "checking" | "incomplete" | "complete";
+
 export function TransactionRequirementQuestions({ transactionId, questions }: Props) {
   const router = useRouter();
+  const [packageStatus, setPackageStatus] = useState<PackageStatus>("checking");
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
-  if (!questions.length) return null;
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPackageStatus() {
+      try {
+        const response = await fetch(
+          `/api/portal/transactions/${encodeURIComponent(transactionId)}/intake-package`,
+          { cache: "no-store" }
+        );
+        const payload = await response.json() as { complete?: boolean };
+        if (!cancelled) setPackageStatus(payload.complete ? "complete" : "incomplete");
+      } catch {
+        if (!cancelled) setPackageStatus("incomplete");
+      }
+    }
+
+    void loadPackageStatus();
+    return () => {
+      cancelled = true;
+    };
+  }, [transactionId]);
+
+  if (!questions.length || packageStatus !== "complete") return null;
 
   async function saveAnswer(factKey: string, value: string) {
     if (savingKey) return;
@@ -46,10 +71,10 @@ export function TransactionRequirementQuestions({ transactionId, questions }: Pr
     <section className="koinonia-workspace-requirement-questions" aria-labelledby="requirement-questions-title">
       <div className="koinonia-workspace-panel-heading">
         <div>
-          <p className="koinonia-eyebrow">A few details</p>
-          <h3 id="requirement-questions-title">Help us finish the document checklist</h3>
+          <p className="koinonia-eyebrow">Only what is still unknown</p>
+          <h3 id="requirement-questions-title">A few details we could not determine from your documents</h3>
         </div>
-        <p>Only questions that change what this transaction needs appear here.</p>
+        <p>These questions appear only after Koinonia has read the initial document package.</p>
       </div>
 
       <div className="koinonia-workspace-question-list">
