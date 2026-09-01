@@ -11,6 +11,7 @@ import {
   validateTransactionExtractionProposal
 } from "../../../../../../lib/transaction-extraction";
 import { getTransactionDocumentRequirement } from "../../../../../../lib/transaction-document-requirements";
+import { reconcileConfirmedTransactionObligations } from "../../../../../../lib/transaction-obligation-persistence";
 import {
   clientRelationshipObjectType,
   getClientTransactionPartyRelationshipType,
@@ -259,6 +260,20 @@ export async function PATCH(request: Request, context: RouteContext) {
         }
       }
 
+      const obligationChanges = await reconcileConfirmedTransactionObligations({
+        tx,
+        workspaceId: actor.workspaceId,
+        transactionId: transaction.id,
+        ownerId: transaction.ownerId,
+        clientUserId: transaction.clientUserId,
+        actorId: actor.id,
+        side,
+        stage,
+        proposal,
+        confirmedDocumentType,
+        confirmedAt
+      });
+
       await tx.timelineEvent.create({
         data: {
           workspaceId: actor.workspaceId,
@@ -282,7 +297,8 @@ export async function PATCH(request: Request, context: RouteContext) {
             priorDocumentType: sourceDocument.documentType,
             sourceDocumentId: proposal.sourceDocumentId,
             documentMatch: proposal.documentMatch,
-            mismatchOverride
+            mismatchOverride,
+            obligationChanges
           }
         }
       });
@@ -312,7 +328,8 @@ export async function PATCH(request: Request, context: RouteContext) {
             priorDocumentType: sourceDocument.documentType,
             mismatchOverride,
             reusedClient,
-            sourceDocumentId: proposal.sourceDocumentId
+            sourceDocumentId: proposal.sourceDocumentId,
+            obligationChanges
           }
         }
       });
@@ -322,7 +339,8 @@ export async function PATCH(request: Request, context: RouteContext) {
         reusedClient,
         mismatchOverride,
         documentType: confirmedDocumentType,
-        documentRequirementId: proposal.documentRequirementId ?? null
+        documentRequirementId: proposal.documentRequirementId ?? null,
+        obligationChanges
       };
     });
 
