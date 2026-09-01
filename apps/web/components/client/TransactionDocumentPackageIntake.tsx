@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getTransactionDocumentRequirements } from "../../lib/transaction-document-requirements";
 import type { TransactionSide, TransactionStage } from "../../lib/transaction-intake";
 
@@ -22,6 +22,8 @@ type DocumentUploadResult = {
 type ExtractionProposal = {
   clientNames: string[];
   propertyAddress?: string;
+  inferredSide?: TransactionSide;
+  inferredStage?: TransactionStage;
   identifiedDocumentType: string;
   documentRequirementId?: string;
   listPrice?: number;
@@ -46,6 +48,14 @@ type ExtractionResult = {
   error?: string;
 };
 
+type ConfirmResult = {
+  transaction?: { id: string; name: string };
+  side?: TransactionSide;
+  stage?: TransactionStage;
+  documentType?: string;
+  error?: string;
+};
+
 type PackageStatus =
   | "idle"
   | "processing"
@@ -62,8 +72,10 @@ type ProcessedDocument = {
 
 export function TransactionDocumentPackageIntake() {
   const router = useRouter();
-  const [side, setSide] = useState<TransactionSide>("buyer");
-  const [stage, setStage] = useState<TransactionStage>("pre_contract");
+  const [resolvedSide, setResolvedSide] = useState<TransactionSide | null>(null);
+  const [resolvedStage, setResolvedStage] = useState<TransactionStage | null>(null);
+  const [sideOverride, setSideOverride] = useState<TransactionSide | null>(null);
+  const [stageOverride, setStageOverride] = useState<TransactionStage | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transactionId, setTransactionId] = useState<string | null>(null);
@@ -76,17 +88,26 @@ export function TransactionDocumentPackageIntake() {
   const [message, setMessage] = useState<string | null>(null);
   const [intakeRequestId, setIntakeRequestId] = useState(createTransactionIntakeRequestId);
 
+  const effectiveSide = resolvedSide ?? proposal?.inferredSide ?? sideOverride;
+  const effectiveStage = resolvedStage ?? proposal?.inferredStage ?? stageOverride;
   const documentRequirements = useMemo(
-    () => getTransactionDocumentRequirements(side, stage),
-    [side, stage]
+    () => effectiveSide && effectiveStage
+      ? getTransactionDocumentRequirements(effectiveSide, effectiveStage)
+      : [],
+    [effectiveSide, effectiveStage]
   );
   const currentFile = files[currentIndex] ?? null;
   const matchedRequirement = proposal?.documentRequirementId
     ? documentRequirements.find((requirement) => requirement.id === proposal.documentRequirementId)
     : undefined;
   const busy = status === "processing" || status === "confirming" || status === "finishing";
+  const identityReady = Boolean(effectiveSide && effectiveStage);
 
   function resetPackage() {
+    setResolvedSide(null);
+    setResolvedStage(null);
+    setSideOverride(null);
+    setStageOverride(null);
     setFiles([]);
     setCurrentIndex(0);
     setTransactionId(null);
@@ -98,18 +119,6 @@ export function TransactionDocumentPackageIntake() {
     setStatus("idle");
     setMessage(null);
     setIntakeRequestId(createTransactionIntakeRequestId());
-  }
-
-  function changeSide(next: TransactionSide) {
-    if (busy || status === "review") return;
-    setSide(next);
-    resetPackage();
-  }
-
-  function changeStage(next: TransactionStage) {
-    if (busy || status === "review") return;
-    setStage(next);
-    resetPackage();
   }
 
   function chooseFiles(selected: File[]) {
@@ -133,14 +142,14 @@ export function TransactionDocumentPackageIntake() {
 
     setFiles(selected);
     setStatus("idle");
-    setMessage(`${selected.length} ${selected.length === 1 ? "document" : "documents"} ready. Koinonia will process them one at a time.`);
+    setMessage(`${selected.length} ${selected.length === 1 ? "document" : "documents"} ready. Koinonia will figure out the transaction from what you uploaded.`);
   }
 
   async function startPackage() {
     if (!files.length || busy) return;
 
     setStatus("processing");
-    setMessage("Starting the transaction and preparing the first document…");
+    setMessage("Starting the file and reading your first document…");
 
     try {
       const response = await fetch("/api/portal/transactions", {
@@ -148,9 +157,7 @@ export function TransactionDocumentPackageIntake() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           intakeRequestId,
-          side,
-          sourceDocumentName: files[0].name,
-          stage
+          sourceDocumentName: files[0].name
         })
       });
       const result = await readApiResult<IntakeResult>(response);
@@ -171,7 +178,7 @@ export function TransactionDocumentPackageIntake() {
     const file = files[index];
     if (!file) {
       setStatus("package-ready");
-      setMessage("All selected documents have been reviewed. When you are done adding what you have, finish the package so Koinonia can calculate what is still missing.");
+      setMessage("All selected documents have been reviewed. Finish the package when you have uploaded what you currently have.");
       return;
     }
 
@@ -180,6 +187,8 @@ export function TransactionDocumentPackageIntake() {
     setProposal(null);
     setCurrentDocumentId(null);
     setMismatchOverride(false);
+    setSideOverride(null);
+    setStageOverride(null);
     setMessage(`Reading ${file.name} (${index + 1} of ${files.length})…`);
 
     const form = new FormData();
@@ -187,7 +196,7 @@ export function TransactionDocumentPackageIntake() {
     form.set("documentType", PENDING_DOCUMENT_TYPE);
     form.set("relatedObjectId", txId);
     form.set("transactionName", txName);
-    form.set("requestedAction", "Identify this document, match it to the transaction checklist, and extract only facts supported by the document");
+    form.set("requestedAction", "Identify this document, infer the transaction context when supported, and extract only facts supported by the document");
 
     const uploadResponse = await fetch("/api/portal/documents", { method: "POST", body: form });
     const uploadResult = await readApiResult<DocumentUploadResult>(uploadResponse);
@@ -216,8 +225,8 @@ export function TransactionDocumentPackageIntake() {
     setStatus("review");
     setMessage(
       extractionResult.proposal.documentMatch === "mismatch"
-        ? "AI flagged this document for review. You decide whether it belongs in the file."
-        : "Review this classification, then continue to the next document."
+        ? "Koinonia flagged this document for review. You decide whether it belongs in the file."
+        : "Koinonia read the document. Confirm what it found, and we will keep building the transaction."
     );
   }
 
@@ -227,9 +236,13 @@ export function TransactionDocumentPackageIntake() {
       setMessage("Choose Continue Anyway or remove this document from the package.");
       return;
     }
+    if (!identityReady) {
+      setMessage("Koinonia could not determine all of the transaction context from this document. Choose only the missing item below to continue.");
+      return;
+    }
 
     setStatus("confirming");
-    setMessage("Filing the confirmed document…");
+    setMessage("Filing the confirmed document and updating the transaction…");
 
     try {
       const response = await fetch(
@@ -239,16 +252,22 @@ export function TransactionDocumentPackageIntake() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             action: "confirm",
+            confirmedSide: resolvedSide || proposal.inferredSide ? undefined : sideOverride,
+            confirmedStage: resolvedStage || proposal.inferredStage ? undefined : stageOverride,
             mismatchOverride: proposal.documentMatch === "mismatch" ? mismatchOverride : false
           })
         }
       );
-      const result = await readApiResult<{ error?: string; documentType?: string }>(response);
+      const result = await readApiResult<ConfirmResult>(response);
       if (!response.ok) throw new Error(result.error ?? "Koinonia could not confirm this document.");
 
       const documentType = result.documentType ?? proposal.identifiedDocumentType;
+      const nextName = result.transaction?.name ?? transactionName;
+      if (result.side) setResolvedSide(result.side);
+      if (result.stage) setResolvedStage(result.stage);
+      setTransactionName(nextName);
       setProcessed((items) => [...items, { fileName: currentFile?.name ?? "Document", documentType }]);
-      await processDocument(transactionId, transactionName, currentIndex + 1);
+      await processDocument(transactionId, nextName, currentIndex + 1);
     } catch (error) {
       setStatus("review");
       setMessage(error instanceof Error ? error.message : "Koinonia could not confirm this document.");
@@ -308,46 +327,14 @@ export function TransactionDocumentPackageIntake() {
 
   return (
     <div className="koinonia-client-main-stack">
-      <section className="koinonia-client-work-panel" aria-labelledby="package-side-title">
-        <div className="koinonia-client-panel-heading">
-          <p className="koinonia-eyebrow">Step 1</p>
-          <h2 id="package-side-title">Who are you representing?</h2>
-          <p>Choose the transaction side. Koinonia will use it to classify the document package.</p>
-        </div>
-        <div className="koinonia-client-summary-grid">
-          <ChoiceCard selected={side === "buyer"} title="Buyer" disabled={busy || status === "review"} onClick={() => changeSide("buyer")} />
-          <ChoiceCard selected={side === "seller"} title="Seller" disabled={busy || status === "review"} onClick={() => changeSide("seller")} />
-        </div>
-      </section>
-
-      <section className="koinonia-client-work-panel" aria-labelledby="package-stage-title">
-        <div className="koinonia-client-panel-heading">
-          <p className="koinonia-eyebrow">Step 2</p>
-          <h2 id="package-stage-title">Where is the transaction now?</h2>
-        </div>
-        <div className="koinonia-client-work-list">
-          <StageChoice
-            selected={stage === "pre_contract"}
-            title={side === "seller" ? "Listing / Not Under Contract Yet" : "Not Under Contract Yet"}
-            disabled={busy || status === "review"}
-            onClick={() => changeStage("pre_contract")}
-          />
-          <StageChoice
-            selected={stage === "under_contract"}
-            title="Under Contract"
-            disabled={busy || status === "review"}
-            onClick={() => changeStage("under_contract")}
-          />
-        </div>
-      </section>
-
       <section className="koinonia-client-work-panel" aria-labelledby="package-upload-title">
         <div className="koinonia-client-panel-heading">
-          <p className="koinonia-eyebrow">Step 3</p>
-          <h2 id="package-upload-title">Upload what you already have</h2>
+          <p className="koinonia-eyebrow">Start with what you have</p>
+          <h2 id="package-upload-title">Give Koinonia your transaction documents.</h2>
           <p>
-            Select the transaction documents you already have. You do not need to organize or rename them.
-            Koinonia will read each one, identify it, and combine the information across the package before asking you anything.
+            Contract, listing agreement, disclosure, addendum, or whatever you have right now.
+            You do not need to organize or rename anything. Koinonia will identify the transaction,
+            build the file, and only ask you for information the documents cannot answer.
           </p>
         </div>
 
@@ -384,15 +371,20 @@ export function TransactionDocumentPackageIntake() {
               disabled={!files.length || busy}
               onClick={() => void startPackage()}
             >
-              {status === "processing" ? "Starting package…" : `Process ${files.length || ""} ${files.length === 1 ? "Document" : "Documents"}`.trim()}
+              {status === "processing" ? "Reading documents…" : `Build File from ${files.length || ""} ${files.length === 1 ? "Document" : "Documents"}`.trim()}
             </button>
           </div>
         ) : null}
 
         {transactionId ? (
           <div className="koinonia-client-request-card">
-            <strong>Document package</strong>
+            <strong>Koinonia is building the file</strong>
             <p>{processed.length} of {files.length} documents confirmed.</p>
+            {resolvedSide && resolvedStage ? (
+              <p>
+                Transaction identified: <strong>{sideLabel(resolvedSide)}</strong> · <strong>{stageLabel(resolvedStage, resolvedSide)}</strong>
+              </p>
+            ) : null}
             {processed.length ? (
               <ul className="koinonia-client-showing-notes">
                 {processed.map((item) => <li key={`${item.fileName}-${item.documentType}`}>{item.fileName} → {item.documentType}</li>)}
@@ -407,10 +399,10 @@ export function TransactionDocumentPackageIntake() {
           <section className="koinonia-client-work-panel" aria-labelledby="package-review-title">
             <div className="koinonia-client-panel-heading">
               <p className="koinonia-eyebrow">Document {currentIndex + 1} of {files.length}</p>
-              <h2 id="package-review-title">Review {currentFile.name}</h2>
+              <h2 id="package-review-title">Here is what Koinonia found.</h2>
               <p>
-                Identified as <strong>{proposal.identifiedDocumentType}</strong>
-                {matchedRequirement ? <> · Checklist item: <strong>{matchedRequirement.label}</strong></> : null}
+                <strong>{proposal.identifiedDocumentType}</strong>
+                {matchedRequirement ? <> · <strong>{matchedRequirement.label}</strong></> : null}
                 {" "}· Confidence: <strong>{proposal.confidence}</strong>
               </p>
             </div>
@@ -434,9 +426,33 @@ export function TransactionDocumentPackageIntake() {
             ) : null}
 
             <div className="koinonia-client-work-list">
-              <ExtractionItem label={side === "seller" ? "Sellers" : "Buyers"} value={proposal.clientNames.join(" & ") || "Not found"} />
+              <ExtractionItem label="Transaction side" value={effectiveSide ? sideLabel(effectiveSide) : "Could not determine"} />
+              <ExtractionItem label="Transaction stage" value={effectiveStage ? stageLabel(effectiveStage, effectiveSide) : "Could not determine"} />
+              <ExtractionItem label="Client" value={proposal.clientNames.join(" & ") || "Not established by this document"} />
               <ExtractionItem label="Property" value={proposal.propertyAddress ?? "Not found"} />
             </div>
+
+            {!effectiveSide ? (
+              <div className="koinonia-client-request-card">
+                <strong>One thing we could not determine: which side do you represent?</strong>
+                <p>Only answer this because the uploaded document did not establish it.</p>
+                <div className="koinonia-workspace-question-options">
+                  <ChoiceButton selected={sideOverride === "buyer"} label="Buyer" onClick={() => setSideOverride("buyer")} />
+                  <ChoiceButton selected={sideOverride === "seller"} label="Seller" onClick={() => setSideOverride("seller")} />
+                </div>
+              </div>
+            ) : null}
+
+            {!effectiveStage ? (
+              <div className="koinonia-client-request-card">
+                <strong>One thing we could not determine: where is the transaction now?</strong>
+                <p>Only answer this because the uploaded document did not establish the stage.</p>
+                <div className="koinonia-workspace-question-options">
+                  <ChoiceButton selected={stageOverride === "pre_contract"} label="Not under contract yet" onClick={() => setStageOverride("pre_contract")} />
+                  <ChoiceButton selected={stageOverride === "under_contract"} label="Under contract" onClick={() => setStageOverride("under_contract")} />
+                </div>
+              </div>
+            ) : null}
 
             {proposal.notes?.length ? (
               <div className="koinonia-client-request-card">
@@ -454,7 +470,7 @@ export function TransactionDocumentPackageIntake() {
               <button
                 className="koinonia-button koinonia-button-primary"
                 type="button"
-                disabled={busy || (proposal.documentMatch === "mismatch" && !mismatchOverride)}
+                disabled={busy || !identityReady || (proposal.documentMatch === "mismatch" && !mismatchOverride)}
                 onClick={() => void confirmCurrentDocument()}
               >
                 {status === "confirming" ? "Confirming…" : currentIndex + 1 < files.length ? "Confirm & Read Next" : "Confirm Document"}
@@ -467,8 +483,8 @@ export function TransactionDocumentPackageIntake() {
           <div className="koinonia-client-request-card">
             <strong>Done uploading what you have?</strong>
             <p>
-              When you finish the package, Koinonia will combine the facts found across these documents,
-              determine which conditional documents apply, and only then ask for anything the documents could not answer.
+              Koinonia will now combine the facts found across the package, determine what applies to this transaction,
+              and ask only for anything that still cannot be determined from the documents.
             </p>
             <button className="koinonia-button koinonia-button-primary" type="button" onClick={() => void finishPackage()}>
               Done Uploading What I Have
@@ -480,30 +496,25 @@ export function TransactionDocumentPackageIntake() {
   );
 }
 
-function ChoiceCard({ selected, title, disabled, onClick }: { selected: boolean; title: string; disabled: boolean; onClick: () => void }) {
+function ChoiceButton({ selected, label, onClick }: { selected: boolean; label: string; onClick: () => void }) {
   return (
-    <button className="koinonia-client-summary-card" type="button" aria-pressed={selected} disabled={disabled} onClick={onClick}>
-      <span>{title}</span>
-      <strong>{selected ? "Selected" : "Choose"}</strong>
-      <p>{title === "Buyer" ? "Buyer-side transaction workflow." : "Seller-side transaction workflow."}</p>
-    </button>
-  );
-}
-
-function StageChoice({ selected, title, disabled, onClick }: { selected: boolean; title: string; disabled: boolean; onClick: () => void }) {
-  return (
-    <button className="koinonia-client-work-item" type="button" aria-pressed={selected} disabled={disabled} onClick={onClick}>
-      <div>
-        <span>Transaction stage</span>
-        <h3>{title}</h3>
-      </div>
-      <div className="koinonia-client-work-meta"><strong>{selected ? "Selected" : "Choose"}</strong></div>
+    <button className="koinonia-button" type="button" aria-pressed={selected} onClick={onClick}>
+      {selected ? `${label} ✓` : label}
     </button>
   );
 }
 
 function ExtractionItem({ label, value }: { label: string; value: string }) {
   return <article className="koinonia-client-work-item"><div><span>{label}</span><h3>{value}</h3></div></article>;
+}
+
+function sideLabel(side: TransactionSide): string {
+  return side === "buyer" ? "Buyer" : "Seller";
+}
+
+function stageLabel(stage: TransactionStage, side?: TransactionSide | null): string {
+  if (stage === "under_contract") return "Under Contract";
+  return side === "seller" ? "Listing / Not Under Contract Yet" : "Not Under Contract Yet";
 }
 
 async function readApiResult<T extends { error?: string }>(response: Response): Promise<T> {
