@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Start a New File | Koinonia",
-  description: "Start a buyer or seller transaction with Koinonia.",
+  description: "Start a real-estate transaction by uploading the documents you already have.",
   alternates: {
     canonical: absoluteUrl("/client/transactions/new")
   },
@@ -35,10 +35,10 @@ export default async function NewClientTransactionPage() {
         <div className="koinonia-container">
           <div className="koinonia-section-header">
             <p className="koinonia-eyebrow">New Transaction</p>
-            <h1 className="koinonia-title">Start a new file.</h1>
+            <h1 className="koinonia-title">Just give us what you have.</h1>
             <p className="koinonia-lead">
-              Tell Koinonia which side you represent, then upload the transaction documents you already have.
-              We will identify them, combine the information across the package, and only ask for details the documents could not answer.
+              Upload whatever transaction documents you have right now. Koinonia will identify the file,
+              determine the transaction context, extract the information, and ask only for anything the documents cannot answer.
             </p>
             <p>
               <a className="koinonia-document-link" href="/client/dashboard">
