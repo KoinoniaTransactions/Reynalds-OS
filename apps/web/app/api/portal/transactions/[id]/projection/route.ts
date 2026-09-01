@@ -10,6 +10,7 @@ import {
   transactionObligationObjectType,
   transactionObligationRelationshipType
 } from "../../../../../../lib/transaction-obligations";
+import type { TransactionSide, TransactionStage } from "../../../../../../lib/transaction-intake";
 
 export const dynamic = "force-dynamic";
 
@@ -46,22 +47,37 @@ export async function GET(_request: Request, context: RouteContext) {
     });
 
     const data = asRecord(transaction.data) ?? {};
-    const side = data.side === "seller" ? "seller" : data.side === "buyer" ? "buyer" : null;
-    const stage = data.stage === "under_contract" ? "under_contract" : data.stage === "pre_contract" ? "pre_contract" : null;
+    const side: TransactionSide | null =
+      data.side === "seller" ? "seller" : data.side === "buyer" ? "buyer" : null;
+    const stage: TransactionStage | null =
+      data.stage === "under_contract"
+        ? "under_contract"
+        : data.stage === "pre_contract"
+          ? "pre_contract"
+          : null;
     const realtorNeeds = getRealtorNeeds(data);
     const obligations = links.map((link) => link.targetObject);
-    const projectionInput = {
-      side,
-      stage,
-      closingDate: data.closingDate,
-      status: transaction.status,
-      obligations,
-      realtorNeeds
-    };
 
     return NextResponse.json({
-      realtor: buildRealtorTransactionOverview(projectionInput),
-      staff: actor.role === "Client" ? undefined : buildStaffTransactionOperations(projectionInput)
+      realtor: buildRealtorTransactionOverview({
+        side,
+        stage,
+        closingDate: data.closingDate,
+        status: transaction.status,
+        obligations,
+        realtorNeeds
+      }),
+      staff:
+        actor.role === "Client"
+          ? undefined
+          : buildStaffTransactionOperations({
+              side,
+              stage,
+              closingDate: data.closingDate,
+              status: transaction.status,
+              obligations,
+              realtorNeeds
+            })
     });
   } catch (error) {
     const authResponse = getAuthErrorResponse(error);
