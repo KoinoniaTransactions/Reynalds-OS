@@ -1,0 +1,123 @@
+/* Client dashboard transaction-first polish. */
+
+.koinonia-client-dashboard-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 18px;
+  margin-bottom: 18px;
+}
+
+.koinonia-client-dashboard-filters {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: 999px;
+}
+
+.koinonia-client-dashboard-filter {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: var(--portal-muted);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+
+.koinonia-client-dashboard-filter:hover,
+.koinonia-client-dashboard-filter:focus-visible {
+  color: var(--portal-text);
+  background: var(--portal-surface);
+}
+
+.koinonia-client-dashboard-filter:focus-visible {
+  outline: 3px solid rgba(177, 124, 48, 0.28);
+  outline-offset: 2px;
+}
+
+.koinonia-client-dashboard-filter.is-active {
+  color: var(--portal-text);
+  background: var(--portal-surface);
+  box-shadow: 0 4px 14px rgba(39, 31, 21, 0.08);
+}
+
+.koinonia-client-dashboard-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.koinonia-client-dashboard-search-field input {
+  min-width: min(300px, 48vw);
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid var(--portal-border-strong);
+  border-radius: var(--portal-radius-sm);
+  background: var(--portal-surface);
+  color: var(--portal-text);
+  font: inherit;
+}
+
+.koinonia-client-dashboard-search-field input:focus {
+  outline: 3px solid rgba(177, 124, 48, 0.22);
+  outline-offset: 2px;
+}
+
+.koinonia-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 720px) {
+  .koinonia-client-dashboard-toolbar,
+  .koinonia-client-dashboard-search {
+    align-items: stretch;
+  }
+
+  .koinonia-client-dashboard-toolbar,
+  .koinonia-client-dashboard-search,
+  .koinonia-client-dashboard-search-field {
+    width: 100%;
+  }
+
+  .koinonia-client-dashboard-search {
+    margin-left: 0;
+  }
+
+  .koinonia-client-dashboard-search-field {
+    flex: 1;
+  }
+
+  .koinonia-client-dashboard-search-field input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .koinonia-client-dashboard-filters {
+    width: 100%;
+    justify-content: space-between;
+    border-radius: var(--portal-radius-sm);
+  }
+
+  .koinonia-client-dashboard-filter {
+    flex: 1;
+    justify-content: center;
+    padding-inline: 10px;
+  }
+}
