@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   buildTransactionDocumentChecklist,
-  getTransactionDocumentRequirements
+  getTransactionDocumentRequirements,
+  getTransactionRequirementQuestions
 } from "./transaction-document-requirements";
 
 describe("transaction document requirements", () => {
@@ -53,5 +54,72 @@ describe("transaction document requirements", () => {
     ]);
 
     expect(checklist.find((item) => item.id === "purchase-contract")?.status).toBe("received");
+  });
+
+  it("requires lead-based-paint disclosure for covered pre-1978 residential property", () => {
+    const checklist = buildTransactionDocumentChecklist(
+      "seller",
+      "pre_contract",
+      [],
+      {
+        propertyUse: "residential",
+        yearBuilt: 1965,
+        squareFootageAdvertised: false,
+        sellerDisclosureExempt: false,
+        waterDisclosureSatisfied: true,
+        inHoa: false,
+        shortSale: false,
+        powerOfAttorneyUsed: false,
+        affiliatedBusinessReferral: false,
+        referralFee: false,
+        contractAmended: false
+      }
+    );
+
+    expect(checklist.find((item) => item.id === "lead-based-paint-disclosure")?.status).toBe("missing");
+  });
+
+  it("does not show lead-based-paint disclosure for newer residential property", () => {
+    const checklist = buildTransactionDocumentChecklist(
+      "seller",
+      "pre_contract",
+      [],
+      {
+        propertyUse: "residential",
+        yearBuilt: 1995,
+        squareFootageAdvertised: false,
+        sellerDisclosureExempt: false,
+        waterDisclosureSatisfied: true,
+        inHoa: false,
+        shortSale: false,
+        powerOfAttorneyUsed: false,
+        affiliatedBusinessReferral: false,
+        referralFee: false,
+        contractAmended: false
+      }
+    );
+
+    expect(checklist.find((item) => item.id === "lead-based-paint-disclosure")).toBeUndefined();
+  });
+
+  it("asks property type before residential-only follow-up facts", () => {
+    const questions = getTransactionRequirementQuestions("seller", "pre_contract", {});
+    expect(questions).toHaveLength(1);
+    expect(questions[0]?.factKey).toBe("propertyUse");
+  });
+
+  it("asks for year built after a seller listing is known to be residential", () => {
+    const questions = getTransactionRequirementQuestions("seller", "pre_contract", {
+      propertyUse: "residential"
+    });
+    expect(questions.some((question) => question.factKey === "yearBuilt")).toBe(true);
+  });
+
+  it("does not ask future due-diligence questions at initial under-contract setup", () => {
+    const questions = getTransactionRequirementQuestions("buyer", "under_contract", {
+      propertyUse: "residential"
+    });
+    expect(questions.some((question) => question.factKey === "inspectionObjectionUsed")).toBe(false);
+    expect(questions.some((question) => question.factKey === "titleObjectionUsed")).toBe(false);
   });
 });
