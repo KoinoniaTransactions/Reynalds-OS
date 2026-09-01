@@ -11,9 +11,9 @@ export type ClientTransactionIntakeInput = {
   clientName?: string;
   intakeRequestId?: string;
   propertyAddress?: string;
-  side: TransactionSide;
+  side?: TransactionSide;
   sourceDocumentName: string;
-  stage: TransactionStage;
+  stage?: TransactionStage;
 };
 
 export class ClientTransactionValidationError extends Error {
@@ -35,17 +35,17 @@ export function validateClientTransactionIntakeInput(
     value.sourceDocumentName,
     "A source document is required to start the file."
   );
-  const side = value.side;
-  const stage = value.stage;
+  const side = optionalTransactionSide(value.side);
+  const stage = optionalTransactionStage(value.stage);
   const intakeRequestId = optionalString(value.intakeRequestId);
 
-  if (side !== "buyer" && side !== "seller") {
-    throw new ClientTransactionValidationError("Transaction side must be buyer or seller.");
+  if (value.side !== undefined && !side) {
+    throw new ClientTransactionValidationError("Transaction side must be buyer or seller when provided.");
   }
 
-  if (stage !== "pre_contract" && stage !== "under_contract") {
+  if (value.stage !== undefined && !stage) {
     throw new ClientTransactionValidationError(
-      "Transaction stage must be pre_contract or under_contract."
+      "Transaction stage must be pre_contract or under_contract when provided."
     );
   }
 
@@ -65,14 +65,15 @@ export function validateClientTransactionIntakeInput(
 
 export function buildClientTransactionName(input: ClientTransactionIntakeInput): string {
   const anchor = input.propertyAddress ?? input.clientName ?? stripFileExtension(input.sourceDocumentName);
+  if (!input.side) return `${anchor} — Transaction Intake`;
   return `${anchor} — ${input.side === "buyer" ? "Buyer" : "Seller"}`;
 }
 
 export function getClientTransactionStatus(
-  stage: TransactionStage,
+  stage?: TransactionStage,
   hasConfirmedIdentity = false
 ): string {
-  if (!hasConfirmedIdentity) {
+  if (!hasConfirmedIdentity || !stage) {
     return "Intake - Processing";
   }
 
@@ -82,6 +83,10 @@ export function getClientTransactionStatus(
 export function getClientTransactionNextAction(
   input: ClientTransactionIntakeInput
 ): string {
+  if (!input.side || !input.stage) {
+    return "Identify the transaction side, stage, client, property, and transaction details from the uploaded documents.";
+  }
+
   if (!input.clientName || (input.side === "seller" && !input.propertyAddress)) {
     return "Extract client, property, and transaction details from the uploaded document.";
   }
@@ -119,6 +124,14 @@ function requiredString(value: unknown, message: string): string {
   }
 
   return normalized;
+}
+
+function optionalTransactionSide(value: unknown): TransactionSide | undefined {
+  return value === "buyer" || value === "seller" ? value : undefined;
+}
+
+function optionalTransactionStage(value: unknown): TransactionStage | undefined {
+  return value === "pre_contract" || value === "under_contract" ? value : undefined;
 }
 
 function optionalString(value: unknown): string | undefined {
