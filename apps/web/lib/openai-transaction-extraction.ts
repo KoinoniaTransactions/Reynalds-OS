@@ -6,11 +6,7 @@ import {
   getTransactionDocumentRequirements,
   type TransactionDocumentRequirement
 } from "./transaction-document-requirements";
-import {
-  getTransactionIntakeDefinition,
-  type TransactionSide,
-  type TransactionStage
-} from "./transaction-intake";
+import type { TransactionSide, TransactionStage } from "./transaction-intake";
 
 const openAiApiBase = "https://api.openai.com/v1";
 const defaultModel = "gpt-5.6-luna";
@@ -31,13 +27,15 @@ type ExtractDocumentInput = {
   mimeType: string;
   sourceDocumentId: string;
   sourceDocumentType: string;
-  side: TransactionSide;
-  stage: TransactionStage;
+  side?: TransactionSide;
+  stage?: TransactionStage;
 };
 
 type ModelExtraction = {
   clientNames: string[];
   propertyAddress: string | null;
+  inferredSide: "buyer" | "seller" | null;
+  inferredStage: "pre_contract" | "under_contract" | null;
   identifiedDocumentType: string;
   documentRequirementId: string;
   requirementFacts: {
@@ -84,7 +82,9 @@ export async function extractTransactionDocumentWithOpenAI(
   const openAiFileId = await uploadShortLivedFile(input, apiKey);
 
   try {
-    const requirements = getTransactionDocumentRequirements(input.side, input.stage);
+    const requirements = input.side && input.stage
+      ? getTransactionDocumentRequirements(input.side, input.stage)
+      : getAllTransactionDocumentRequirements();
     const modelExtraction = await createStructuredExtraction(
       input,
       openAiFileId,
@@ -100,6 +100,8 @@ export async function extractTransactionDocumentWithOpenAI(
     return validateTransactionExtractionProposal({
       clientNames: modelExtraction.clientNames,
       propertyAddress: modelExtraction.propertyAddress ?? undefined,
+      inferredSide: modelExtraction.inferredSide ?? input.side ?? undefined,
+      inferredStage: modelExtraction.inferredStage ?? input.stage ?? undefined,
       identifiedDocumentType: modelExtraction.identifiedDocumentType,
       documentRequirementId,
       requirementFacts,
@@ -170,8 +172,7 @@ async function createStructuredExtraction(
   apiKey: string,
   requirements: TransactionDocumentRequirement[]
 ): Promise<ModelExtraction> {
-  const definition = getTransactionIntakeDefinition(input.side, input.stage);
-  const stageGuidance = buildStageGuidance(input.side, input.stage);
+  const contextGuidance = buildContextGuidance(input.side, input.stage);
   const requirementGuide = requirements
     .map(
       (requirement) =>
@@ -195,7 +196,7 @@ async function createStructuredExtraction(
             {
               type: "input_text",
               text:
-                "You extract factual Colorado real-estate transaction information from documents for human review. Never invent a value. Use null when a field is not stated clearly or is not applicable. First identify what document actually was uploaded, then classify it against the exact checklist supplied by the user. documentRequirementId must be one supplied checklist ID or other. Use a checklist ID when the document clearly satisfies that requirement even if its printed title varies. Use other when none fit. documentMatch asks whether the upload belongs in the selected transaction path at all: match when suitable, mismatch when clearly unrelated/unsuitable, uncertain when ambiguous. A valid supporting or conditional document can be a match even when it is not the primary contract. Client names must be the represented clients for the requested side, not every party named. A listing agreement's list price is listPrice, not purchasePrice. A listing agreement's minimum acceptable earnest-money term is not transaction earnestMoney. Listing effective/expiration dates belong in listingEffectiveDate/listingExpirationDate, not closingDate. Purchase-contract fields are only for documents that actually establish an accepted sale transaction. Deadlines must be genuine deadlines for the identified document. For requirementFacts, populate a value only when the document explicitly supports it. Do not infer year built from appearance, HOA status from an address, manufactured-home status from assumptions, or short-sale/counterproposal status unless the document states or unmistakably establishes it. Null means Koinonia should ask the Realtor later if the fact affects requirements. Confidence is high only when the important fields for this document type are explicit and legible."
+                "You extract factual Colorado real-estate transaction information from documents for human review. Never invent a value. Use null when a field is not stated clearly or is not applicable. First identify what document actually was uploaded. When transaction side or stage is not already known, infer them only when the document itself supports the conclusion. inferredSide is buyer only when the document establishes that the uploading Realtor represents the buyer side; seller only when it establishes seller representation; otherwise null. Do not infer the Realtor's represented side merely because both buyer and seller names appear in a purchase contract. inferredStage is under_contract when the document establishes an accepted/executed sale contract or a later contract-to-close event; pre_contract for a representation/listing-stage document without an accepted sale contract; otherwise null. Classify the document against the supplied requirement vocabulary. documentRequirementId must be one supplied ID or other. Use a checklist ID when the document clearly satisfies that requirement even if its printed title varies. Use other when none fit. documentMatch asks whether this appears to be a legitimate real-estate transaction document for the file context: match when suitable, mismatch when clearly unrelated, uncertain when ambiguous. Client names must be the represented clients only when represented side is supported; if representation cannot be determined, return an empty clientNames array rather than guessing. A listing agreement's list price is listPrice, not purchasePrice. A listing agreement's minimum acceptable earnest-money term is not transaction earnestMoney. Listing effective/expiration dates belong in listingEffectiveDate/listingExpirationDate, not closingDate. Purchase-contract fields are only for documents that actually establish an accepted sale transaction. Deadlines must be genuine deadlines for the identified document. For requirementFacts, populate a value only when the document explicitly supports it. Do not infer year built from appearance, HOA status from an address, manufactured-home status from assumptions, or short-sale/counterproposal status unless the document states or unmistakably establishes it. Null means Koinonia can resolve the fact from another document or ask the Realtor later if necessary. Confidence is high only when the important fields and any side/stage inference are explicit and legible."
             }
           ]
         },
@@ -204,7 +205,7 @@ async function createStructuredExtraction(
           content: [
             {
               type: "input_text",
-              text: `Selected path: ${definition.title}. ${stageGuidance}\n\nKnown document checklist for this path:\n${requirementGuide}\n\nThe upload was provisionally labeled "${input.sourceDocumentType}" by the intake UI; do not assume that label is correct. Identify the document from its contents, choose the best checklist ID or other, assess whether it belongs in this selected path, extract fields appropriate to the identified document, and capture only explicitly supported checklist-driving facts.`
+              text: `${contextGuidance}\n\nKnown transaction-document vocabulary:\n${requirementGuide}\n\nThe upload was provisionally labeled "${input.sourceDocumentType}" by the intake UI; do not assume that label is correct. Identify the document from its contents, infer side/stage only when supported, choose the best requirement ID or other, extract fields appropriate to the identified document, and capture only explicitly supported checklist-driving facts.`
             },
             {
               type: "input_file",
@@ -249,20 +250,39 @@ async function createStructuredExtraction(
   }
 }
 
-function buildStageGuidance(side: TransactionSide, stage: TransactionStage): string {
+function buildContextGuidance(side?: TransactionSide, stage?: TransactionStage): string {
+  if (!side || !stage) {
+    return "No Buyer/Seller or transaction-stage selection was supplied. This is intentional document-first intake. Determine only what the uploaded document itself establishes; leave side or stage null when the evidence is ambiguous.";
+  }
+
   if (side === "seller" && stage === "pre_contract") {
-    return "This is a seller listing-stage file. A listing agreement is a primary expected document. Seller disclosures, property/HOA documents, and MLS information may also legitimately belong in this file. Do not expect an accepted sale contract yet.";
+    return "Known context: seller listing-stage file. A listing agreement is a primary expected document. Seller disclosures, property/HOA documents, and MLS information may also legitimately belong in this file. Do not expect an accepted sale contract yet.";
   }
 
   if (side === "seller" && stage === "under_contract") {
-    return "This seller file is under contract. The executed purchase contract is the primary source for accepted sale terms, while the listing agreement and applicable seller/property disclosures remain valid required or supporting documents.";
+    return "Known context: seller file under contract. The executed purchase contract is the primary source for accepted sale terms, while the listing agreement and applicable seller/property disclosures remain valid required or supporting documents.";
   }
 
   if (side === "buyer" && stage === "pre_contract") {
-    return "This is a buyer representation-stage file. A buyer agency/representation agreement is primary; lender qualification material and buyer intake material may also legitimately belong in the file. A purchase contract is not required yet.";
+    return "Known context: buyer representation-stage file. A buyer agency/representation agreement is primary; lender qualification material and buyer intake material may also legitimately belong in the file. A purchase contract is not required yet.";
   }
 
-  return "This buyer file is under contract. The executed purchase contract is primary for sale terms, while the buyer representation agreement and applicable lender/counter/amendment documents also legitimately belong in the file.";
+  return "Known context: buyer file under contract. The executed purchase contract is primary for sale terms, while the buyer representation agreement and applicable lender/counter/amendment documents also legitimately belong in the file.";
+}
+
+function getAllTransactionDocumentRequirements(): TransactionDocumentRequirement[] {
+  const all = [
+    ...getTransactionDocumentRequirements("buyer", "pre_contract"),
+    ...getTransactionDocumentRequirements("buyer", "under_contract"),
+    ...getTransactionDocumentRequirements("seller", "pre_contract"),
+    ...getTransactionDocumentRequirements("seller", "under_contract")
+  ];
+  const seen = new Set<string>();
+  return all.filter((requirement) => {
+    if (seen.has(requirement.id)) return false;
+    seen.add(requirement.id);
+    return true;
+  });
 }
 
 function buildExtractionJsonSchema(requirements: TransactionDocumentRequirement[]) {
@@ -272,6 +292,14 @@ function buildExtractionJsonSchema(requirements: TransactionDocumentRequirement[
     properties: {
       clientNames: { type: "array", items: { type: "string" } },
       propertyAddress: { type: ["string", "null"] },
+      inferredSide: {
+        type: ["string", "null"],
+        enum: ["buyer", "seller", null]
+      },
+      inferredStage: {
+        type: ["string", "null"],
+        enum: ["pre_contract", "under_contract", null]
+      },
       identifiedDocumentType: { type: "string" },
       documentRequirementId: {
         type: "string",
@@ -330,6 +358,8 @@ function buildExtractionJsonSchema(requirements: TransactionDocumentRequirement[
     required: [
       "clientNames",
       "propertyAddress",
+      "inferredSide",
+      "inferredStage",
       "identifiedDocumentType",
       "documentRequirementId",
       "requirementFacts",
