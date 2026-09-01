@@ -82,10 +82,11 @@ export async function POST(request: Request, context: RouteContext) {
       stage
     });
 
+    const reviewStatus = getExtractionReviewStatus(proposal.confidence, proposal.documentMatch);
     const nextData = {
       ...transactionData,
       extraction: {
-        status: getExtractionReviewStatus(proposal.confidence),
+        status: reviewStatus,
         proposal,
         generatedAt: new Date().toISOString(),
         provider: "openai"
@@ -95,8 +96,14 @@ export async function POST(request: Request, context: RouteContext) {
     const updated = await prisma.rosObject.update({
       where: { id: transaction.id },
       data: {
-        health: proposal.confidence === "low" ? "Attention" : transaction.health,
-        nextAction: "Review extracted transaction information before applying it to the file.",
+        health:
+          proposal.confidence === "low" || proposal.documentMatch !== "match"
+            ? "Attention"
+            : transaction.health,
+        nextAction:
+          proposal.documentMatch === "mismatch"
+            ? "Review the document-type warning and decide whether to replace the document or continue."
+            : "Review extracted transaction information before applying it to the file.",
         data: nextData
       }
     });
@@ -110,6 +117,9 @@ export async function POST(request: Request, context: RouteContext) {
         summary: `Automatic document extraction generated for ${transaction.name}`,
         newValue: {
           confidence: proposal.confidence,
+          documentMatch: proposal.documentMatch,
+          documentMatchReason: proposal.documentMatchReason ?? null,
+          identifiedDocumentType: proposal.identifiedDocumentType,
           sourceDocumentId: proposal.sourceDocumentId,
           provider: "openai"
         }
@@ -127,6 +137,8 @@ export async function POST(request: Request, context: RouteContext) {
         summary: `Generated transaction extraction for ${transaction.name}`,
         metadata: {
           confidence: proposal.confidence,
+          documentMatch: proposal.documentMatch,
+          identifiedDocumentType: proposal.identifiedDocumentType,
           sourceDocumentId: proposal.sourceDocumentId,
           provider: "openai"
         }
