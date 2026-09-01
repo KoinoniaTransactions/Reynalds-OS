@@ -10,6 +10,7 @@ import {
   TransactionExtractionValidationError,
   validateTransactionExtractionProposal
 } from "../../../../../../lib/transaction-extraction";
+import { getTransactionDocumentRequirement } from "../../../../../../lib/transaction-document-requirements";
 import {
   clientRelationshipObjectType,
   getClientTransactionPartyRelationshipType,
@@ -79,6 +80,7 @@ export async function POST(request: Request, context: RouteContext) {
           documentMatch: proposal.documentMatch,
           documentMatchReason: proposal.documentMatchReason ?? null,
           identifiedDocumentType: proposal.identifiedDocumentType,
+          documentRequirementId: proposal.documentRequirementId ?? null,
           sourceDocumentId: proposal.sourceDocumentId
         }
       }
@@ -130,6 +132,13 @@ export async function PATCH(request: Request, context: RouteContext) {
     }
 
     const side = data.side === "seller" ? "seller" : "buyer";
+    const stage = data.stage === "under_contract" ? "under_contract" : "pre_contract";
+    const requirement = getTransactionDocumentRequirement(
+      side,
+      stage,
+      proposal.documentRequirementId
+    );
+    const confirmedDocumentType = requirement?.label ?? proposal.identifiedDocumentType;
     const householdName = buildHouseholdName(proposal.clientNames);
     const confirmedAt = new Date().toISOString();
 
@@ -200,10 +209,10 @@ export async function PATCH(request: Request, context: RouteContext) {
         );
       }
 
-      if (sourceDocument.documentType !== proposal.identifiedDocumentType) {
+      if (sourceDocument.documentType !== confirmedDocumentType) {
         await tx.document.update({
           where: { id: sourceDocument.id },
-          data: { documentType: proposal.identifiedDocumentType }
+          data: { documentType: confirmedDocumentType }
         });
       }
 
@@ -268,6 +277,8 @@ export async function PATCH(request: Request, context: RouteContext) {
             propertyAddress: proposal.propertyAddress ?? null,
             closingDate: proposal.closingDate ?? null,
             identifiedDocumentType: proposal.identifiedDocumentType,
+            confirmedDocumentType,
+            documentRequirementId: proposal.documentRequirementId ?? null,
             priorDocumentType: sourceDocument.documentType,
             sourceDocumentId: proposal.sourceDocumentId,
             documentMatch: proposal.documentMatch,
@@ -296,6 +307,8 @@ export async function PATCH(request: Request, context: RouteContext) {
             documentMatch: proposal.documentMatch,
             documentMatchReason: proposal.documentMatchReason ?? null,
             identifiedDocumentType: proposal.identifiedDocumentType,
+            confirmedDocumentType,
+            documentRequirementId: proposal.documentRequirementId ?? null,
             priorDocumentType: sourceDocument.documentType,
             mismatchOverride,
             reusedClient,
@@ -308,7 +321,8 @@ export async function PATCH(request: Request, context: RouteContext) {
         transaction: updatedTransaction,
         reusedClient,
         mismatchOverride,
-        documentType: proposal.identifiedDocumentType
+        documentType: confirmedDocumentType,
+        documentRequirementId: proposal.documentRequirementId ?? null
       };
     });
 
