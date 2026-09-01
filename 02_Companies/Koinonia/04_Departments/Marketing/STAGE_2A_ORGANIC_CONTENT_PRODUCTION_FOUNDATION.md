@@ -51,7 +51,7 @@ steps remain superseded.
 
 | Content ID | Asset | Channels | Stage 2A target |
 |---|---|---|---|
-| `S01_MORE_OPPORTUNITY` | More Opportunity, Not More Chaos | Facebook + Instagram | Review-ready static draft, not scheduled |
+| `S01_MORE_OPPORTUNITY` | More Opportunity, Not More Chaos | Facebook + Instagram | Approved static master, not scheduled |
 | `T01_MORE_CLOSINGS` | More Closings Should Not Create More Chaos | TikTok + Reel | Recorded and reviewed master, not scheduled |
 | `T02_TWO_SHOWINGS` | Two Clients Need Showings at the Same Time | TikTok + Reel | Recorded and reviewed master, not scheduled |
 
@@ -60,7 +60,7 @@ steps remain superseded.
 - [x] reusable social-static master exists
 - [x] S1 static draft exists
 - [x] content records reference canonical copy/scripts
-- [ ] S1 visual receives user approval
+- [x] S1 visual approved by user on 2026-09-01
 - [ ] T1 master video is recorded, captioned, and reviewed
 - [ ] T2 master video is recorded, captioned, and reviewed
 - [ ] named owner is confirmed for website consultations and social DMs/comments

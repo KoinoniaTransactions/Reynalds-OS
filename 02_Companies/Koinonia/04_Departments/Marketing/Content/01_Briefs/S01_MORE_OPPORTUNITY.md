@@ -1,9 +1,12 @@
 # S01_MORE_OPPORTUNITY
 
-Status: Review
+Status: Approved — Not Scheduled
 Channels: Facebook + Instagram
 Format: Static 1080x1080
 Content job: Problem Recognition
+Reviewer: Jeremiah Reynalds
+Visual approval date: 2026-09-01
+Intended publish date: Not set
 
 ## Working Title
 
@@ -33,8 +36,8 @@ explicit content-review decision.
 ## Files
 
 - source master: `../03_Source_Assets/KOINONIA_SOCIAL_STATIC_MASTER_v01.svg`
-- review asset: `../04_Drafts/DRAFT_FB_IG_S01_MORE_OPPORTUNITY_STATIC_v01.svg`
-- review export: `../04_Drafts/DRAFT_FB_IG_S01_MORE_OPPORTUNITY_STATIC_v01.png`
+- approved source: `../05_Approved/DRAFT_FB_IG_S01_MORE_OPPORTUNITY_STATIC_v01.svg`
+- approved export: `../05_Approved/DRAFT_FB_IG_S01_MORE_OPPORTUNITY_STATIC_v01.png`
 
 ## Destination / Attribution
 
@@ -46,7 +49,7 @@ Instagram should use the existing tracked profile link unless a Story link is se
 
 ## Approval Gate
 
-- [ ] visual approved by user
+- [x] visual approved by user on 2026-09-01
 - [ ] Facebook caption approved against canonical source
 - [ ] Instagram caption approved against canonical source
 - [ ] correct Koinonia accounts confirmed at publish time
