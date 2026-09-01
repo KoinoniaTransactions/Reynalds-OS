@@ -96,6 +96,106 @@
   line-height: 1.4;
 }
 
+.koinonia-document-checklist {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 26px;
+}
+
+.koinonia-document-checklist-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  padding: 14px 16px;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+}
+
+.koinonia-document-checklist-summary strong {
+  font-size: 16px;
+}
+
+.koinonia-document-checklist-summary span {
+  color: var(--portal-muted);
+  font-size: 14px;
+}
+
+.koinonia-document-checklist-list {
+  display: grid;
+  gap: 10px;
+}
+
+.koinonia-document-checklist-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 15px 16px;
+  background: var(--portal-surface);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+}
+
+.koinonia-document-checklist-item > div {
+  min-width: 0;
+}
+
+.koinonia-document-checklist-item span {
+  display: inline-block;
+  margin-bottom: 5px;
+  color: var(--portal-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koinonia-document-checklist-item h3 {
+  margin: 0 0 5px;
+  font-size: 16px;
+}
+
+.koinonia-document-checklist-item p {
+  margin: 0;
+  color: var(--portal-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.koinonia-document-checklist-item p + p {
+  margin-top: 5px;
+}
+
+.koinonia-document-checklist-item > strong {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  color: var(--portal-muted);
+  background: var(--portal-surface-soft);
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.koinonia-document-checklist-item.is-received {
+  background: var(--portal-surface-gold);
+  border-color: var(--portal-border-strong);
+}
+
+.koinonia-document-checklist-item.is-received span,
+.koinonia-document-checklist-item.is-received > strong {
+  color: var(--portal-gold-dark);
+}
+
+.koinonia-document-checklist-item.is-missing {
+  border-style: dashed;
+}
+
+.koinonia-workspace-documents-heading {
+  margin-top: 6px;
+}
+
 @media (max-width: 720px) {
   .koinonia-workspace-transaction-header {
     align-items: stretch;
@@ -115,5 +215,15 @@
   .koinonia-workspace-tabs a {
     flex: 1;
     justify-content: center;
+  }
+
+  .koinonia-document-checklist-summary,
+  .koinonia-document-checklist-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .koinonia-document-checklist-item > strong {
+    align-self: flex-start;
   }
 }
