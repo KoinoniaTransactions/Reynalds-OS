@@ -61,7 +61,9 @@ export function PortalDocumentStatusForm({
           requestedAction:
             selectedStatus === "Approved"
               ? ""
-              : String(formData.get("requestedAction") ?? ""),
+              : selectedStatus === "Ready for Client Review"
+                ? String(formData.get("requestedAction") ?? "") || "Please review this document for accuracy."
+                : String(formData.get("requestedAction") ?? ""),
           status: String(formData.get("status") ?? "")
         })
       });
@@ -75,7 +77,11 @@ export function PortalDocumentStatusForm({
       setSelectedStatus(payload.document?.status ?? selectedStatus);
       setRequestAction(payload.document?.requestedAction ?? "");
       setStatus("success");
-      setMessage("Document status updated and recorded in the file history.");
+      setMessage(
+        payload.document?.status === "Ready for Client Review"
+          ? "Sent to the Realtor dashboard for review."
+          : "Document status updated and recorded in the file history."
+      );
       router.refresh();
     } catch (error) {
       setStatus("error");
@@ -88,7 +94,7 @@ export function PortalDocumentStatusForm({
   return (
     <form className="koinonia-document-status-form" onSubmit={handleSubmit}>
       <label>
-        Status
+        Workflow
         <select
           disabled={isDisabled}
           name="status"
@@ -98,20 +104,22 @@ export function PortalDocumentStatusForm({
 
             if (nextStatus === "Approved") {
               setRequestAction("");
+            } else if (nextStatus === "Ready for Client Review" && !requestAction.trim()) {
+              setRequestAction("Please review this document for accuracy.");
             }
           }}
           value={selectedStatus}
         >
           {statusOptions.map((option) => (
             <option key={option} value={option}>
-              {option}
+              {getStaffStatusLabel(option)}
             </option>
           ))}
         </select>
       </label>
 
       <label>
-        Next Action
+        Message / Next Action
         <input
           disabled={isDisabled || selectedStatus === "Approved"}
           name="requestedAction"
@@ -119,30 +127,31 @@ export function PortalDocumentStatusForm({
           placeholder={
             selectedStatus === "Approved"
               ? "Approved documents do not require a next action"
-              : "What needs to happen next"
+              : selectedStatus === "Ready for Client Review"
+                ? "What should the Realtor check?"
+                : "What needs to happen next"
           }
           type="text"
           value={requestAction}
         />
-        {selectedStatus === "Approved" ? (
-          <small>
-            Approving this document clears the outstanding action.
-          </small>
-        ) : null}
       </label>
 
       <label>
-        Update Note
+        Internal Update Note
         <textarea
           disabled={isDisabled}
           name="notes"
-          placeholder="Client-safe note; no passwords, card data, or access codes"
+          placeholder="Optional internal context; no passwords, card data, or access codes"
           rows={3}
         />
       </label>
 
       <button className="koinonia-button primary" disabled={isDisabled} type="submit">
-        {isSubmitting ? "Saving" : "Save Status"}
+        {isSubmitting
+          ? "Saving"
+          : selectedStatus === "Ready for Client Review"
+            ? "Send to Realtor for Review"
+            : "Save Status"}
       </button>
 
       {disabled ? (
@@ -156,6 +165,12 @@ export function PortalDocumentStatusForm({
       ) : null}
     </form>
   );
+}
+
+function getStaffStatusLabel(status: (typeof statusOptions)[number]): string {
+  if (status === "Ready for Client Review") return "Send to Realtor for Review";
+  if (status === "Revision Requested") return "Realtor Requested Changes";
+  return status;
 }
 
 function normalizeStatus(status: string): string {
