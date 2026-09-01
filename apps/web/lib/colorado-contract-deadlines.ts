@@ -6,6 +6,7 @@ export type ColoradoContractDeadlineCategory =
   | "financing"
   | "appraisal"
   | "survey"
+  | "inspection"
   | "due_diligence"
   | "conditional_sale"
   | "lead_paint"
@@ -56,9 +57,9 @@ export const coloradoResidentialContractDeadlines: readonly ColoradoContractDead
   { item: 27, name: "New ILC or New Survey Resolution Deadline", key: "new-ilc-survey-resolution", category: "survey", phaseOrder: 5, sequenceOrder: 27, operationalDate: true },
   { item: 28, name: "Water Rights Examination Deadline", key: "water-rights-examination", category: "due_diligence", phaseOrder: 6, sequenceOrder: 28, operationalDate: true },
   { item: 29, name: "Mineral Rights Examination Deadline", key: "mineral-rights-examination", category: "due_diligence", phaseOrder: 6, sequenceOrder: 29, operationalDate: true },
-  { item: 30, name: "Inspection Termination Deadline", key: "inspection-termination", category: "due_diligence", phaseOrder: 6, sequenceOrder: 30, operationalDate: true },
-  { item: 31, name: "Inspection Objection Deadline", key: "inspection-objection", category: "due_diligence", phaseOrder: 6, sequenceOrder: 31, operationalDate: true },
-  { item: 32, name: "Inspection Resolution Deadline", key: "inspection-resolution", category: "due_diligence", phaseOrder: 6, sequenceOrder: 32, operationalDate: true },
+  { item: 30, name: "Inspection Termination Deadline", key: "inspection-termination", category: "inspection", phaseOrder: 6, sequenceOrder: 30, operationalDate: true },
+  { item: 31, name: "Inspection Objection Deadline", key: "inspection-objection", category: "inspection", phaseOrder: 6, sequenceOrder: 31, operationalDate: true },
+  { item: 32, name: "Inspection Resolution Deadline", key: "inspection-resolution", category: "inspection", phaseOrder: 6, sequenceOrder: 32, operationalDate: true },
   { item: 33, name: "Property Insurance Termination Deadline", key: "property-insurance-termination", category: "due_diligence", phaseOrder: 6, sequenceOrder: 33, operationalDate: true },
   { item: 34, name: "Due Diligence Documents Delivery Deadline", key: "due-diligence-documents-delivery", category: "due_diligence", phaseOrder: 6, sequenceOrder: 34, operationalDate: true },
   { item: 35, name: "Due Diligence Documents Objection Deadline", key: "due-diligence-documents-objection", category: "due_diligence", phaseOrder: 6, sequenceOrder: 35, operationalDate: true },
@@ -81,7 +82,6 @@ export function matchColoradoResidentialDeadline(name: string): ColoradoContract
   const exact = normalizedIndex.get(normalized);
   if (exact) return exact;
 
-  // Common punctuation/wording variants from PDFs and contract platforms.
   if (normalized.includes("record title deadline") && !normalized.includes("objection")) return byKey("record-title");
   if (normalized.includes("association documents termination")) return byKey("association-documents-termination");
   if (normalized.includes("association documents") && normalized.includes("deadline")) return byKey("association-documents");
