@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { getAuthErrorResponse } from "../../../../../../../../../lib/api-auth";
-import { assertPermission } from "../../../../../../../../../lib/auth";
-import { prisma } from "../../../../../../../../../lib/db";
-import { resolveTransactionObligationByStaff } from "../../../../../../../../../lib/transaction-obligation-resolution";
+import { getAuthErrorResponse } from "../../../../../../../../lib/api-auth";
+import { assertPermission } from "../../../../../../../../lib/auth";
+import { prisma } from "../../../../../../../../lib/db";
+import { resolveTransactionObligationByStaff } from "../../../../../../../../lib/transaction-obligation-resolution";
 
 export const dynamic = "force-dynamic";
 
