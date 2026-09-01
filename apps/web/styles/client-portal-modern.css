@@ -137,6 +137,66 @@
   font-weight: 700;
 }
 
+/* New-file intake: one focused moment, then let Koinonia do the work. */
+.koinonia-client-new-file-hero {
+  padding-top: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--portal-border);
+}
+
+.koinonia-client-new-file-copy {
+  max-width: 720px;
+  margin-top: 18px;
+}
+
+.koinonia-client-new-file-copy h1 {
+  margin: 5px 0 9px;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.koinonia-client-new-file-copy > p:last-child {
+  margin: 0;
+  max-width: 660px;
+  color: var(--portal-muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.koinonia-client-new-file-body {
+  padding-top: 26px !important;
+}
+
+.koinonia-client-new-transaction .koinonia-client-main-stack {
+  max-width: 900px;
+  margin: 0 auto;
+  gap: 18px;
+}
+
+.koinonia-client-new-transaction .koinonia-client-work-panel {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.koinonia-client-new-transaction .koinonia-client-panel-heading {
+  margin-bottom: 14px;
+}
+
+.koinonia-client-new-transaction .koinonia-client-panel-heading h2 {
+  margin: 3px 0 6px;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.koinonia-client-new-transaction .koinonia-client-panel-heading p {
+  max-width: 680px;
+  color: var(--portal-muted);
+  line-height: 1.55;
+}
+
 /* Upload and intake: make choosing documents feel like the main action. */
 .koinonia-client-dashboard .koinonia-client-work-panel,
 .koinonia-client-workspace-detail .koinonia-workspace-panel {
@@ -184,6 +244,11 @@
   border: 0;
   border-bottom: 1px solid var(--portal-border);
   border-radius: 0;
+}
+
+.koinonia-client-new-transaction .koinonia-client-request-card > .koinonia-button {
+  margin-top: 14px;
+  width: auto;
 }
 
 /* Make client-facing forms feel lighter and stop button walls. */
@@ -234,5 +299,9 @@
     min-width: 0;
     align-items: flex-start;
     text-align: left;
+  }
+
+  .koinonia-client-new-file-copy h1 {
+    font-size: 34px;
   }
 }
