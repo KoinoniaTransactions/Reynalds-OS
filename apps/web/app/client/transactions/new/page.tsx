@@ -7,8 +7,8 @@ import { requirePortalPermission } from "../../../../lib/portal-auth";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Start a New File | Koinonia",
-  description: "Start a real-estate transaction by uploading the documents you already have.",
+  title: "Start a File | Koinonia",
+  description: "Start a real-estate transaction by sending Koinonia the documents you already have.",
   alternates: {
     canonical: absoluteUrl("/client/transactions/new")
   },
@@ -25,31 +25,27 @@ export default async function NewClientTransactionPage() {
   );
 
   return (
-    <main className="koinonia-site koinonia-client-dashboard">
+    <main className="koinonia-site koinonia-client-dashboard koinonia-client-new-transaction">
       <Header
         canAccessClientPortal={actor.permissions.includes("client-portal:view")}
         canAccessEmployeePortal={actor.permissions.includes("employee-portal:view")}
       />
 
-      <section className="koinonia-section koinonia-client-dashboard-hero">
+      <section className="koinonia-section koinonia-client-dashboard-hero koinonia-client-new-file-hero">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
-            <p className="koinonia-eyebrow">New Transaction</p>
-            <h1 className="koinonia-title">Just give us what you have.</h1>
-            <p className="koinonia-lead">
-              Upload whatever transaction documents you have right now. Koinonia will identify the file,
-              determine the transaction context, extract the information, and ask only for anything the documents cannot answer.
-            </p>
+          <a className="koinonia-client-back-link" href="/client/dashboard">← Transactions</a>
+          <div className="koinonia-client-new-file-copy">
+            <p className="koinonia-client-transaction-kicker">Start a file</p>
+            <h1>Send us what you have.</h1>
             <p>
-              <a className="koinonia-document-link" href="/client/dashboard">
-                ← Back to dashboard
-              </a>
+              Drop in the contract, listing agreement, disclosure, addendum, or whatever you have right now.
+              You do not need to organize or rename anything. Koinonia will build the file from there.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="koinonia-section">
+      <section className="koinonia-section koinonia-client-new-file-body">
         <div className="koinonia-container">
           <TransactionDocumentPackageIntake />
         </div>
