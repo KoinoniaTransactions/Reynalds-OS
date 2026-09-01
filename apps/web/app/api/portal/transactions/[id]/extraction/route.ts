@@ -23,7 +23,7 @@ type RouteContext = { params: Promise<{ id: string }> };
 
 export async function POST(request: Request, context: RouteContext) {
   try {
-    const actor = await assertPermission("client-portal:view");
+    const actor = await assertPermission("client-portal:transactions:update");
     const { id } = await context.params;
     const proposal = validateTransactionExtractionProposal(await request.json());
 
@@ -80,7 +80,7 @@ export async function POST(request: Request, context: RouteContext) {
 
 export async function PATCH(request: Request, context: RouteContext) {
   try {
-    const actor = await assertPermission("client-portal:view");
+    const actor = await assertPermission("client-portal:transactions:update");
     const { id } = await context.params;
     const body = await request.json();
 
