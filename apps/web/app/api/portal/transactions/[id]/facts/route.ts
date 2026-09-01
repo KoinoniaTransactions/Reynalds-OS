@@ -1,12 +1,11 @@
 import type { Prisma } from "@reynalds-os/database";
 import { NextResponse } from "next/server";
-import { getAuthErrorResponse } from "../../../../../../../lib/api-auth";
-import { assertPermission } from "../../../../../../../lib/auth";
-import { prisma } from "../../../../../../../lib/db";
+import { getAuthErrorResponse } from "../../../../../../lib/api-auth";
+import { assertPermission } from "../../../../../../lib/auth";
+import { prisma } from "../../../../../../lib/db";
 import type {
-  TransactionFactKey,
-  TransactionFacts
-} from "../../../../../../../lib/transaction-document-requirements";
+  TransactionFactKey
+} from "../../../../../../lib/transaction-document-requirements";
 
 export const dynamic = "force-dynamic";
 
