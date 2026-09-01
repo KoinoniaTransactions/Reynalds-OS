@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    const actor = await assertPermission("client-portal:view");
+    const actor = await assertPermission("client-portal:transactions:create");
     const input = validateClientTransactionIntakeInput(await request.json());
     const normalizedClientName = input.clientName
       ? normalizeClientIdentityName(input.clientName)
