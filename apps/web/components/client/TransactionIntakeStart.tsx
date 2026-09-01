@@ -34,6 +34,8 @@ type ExtractionProposal = {
   financingType?: string;
   deadlines: Record<string, string>;
   confidence: "high" | "medium" | "low";
+  documentMatch: "match" | "mismatch" | "uncertain";
+  documentMatchReason?: string;
   notes?: string[];
 };
 
@@ -52,6 +54,7 @@ export function TransactionIntakeStart() {
   const [message, setMessage] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState<string | null>(null);
   const [proposal, setProposal] = useState<ExtractionProposal | null>(null);
+  const [mismatchOverride, setMismatchOverride] = useState(false);
   const [intakeRequestId, setIntakeRequestId] = useState(createTransactionIntakeRequestId);
 
   const definition = useMemo(
@@ -75,6 +78,7 @@ export function TransactionIntakeStart() {
     setStatus("saving");
     setMessage("Starting the file and reading your document…");
     setProposal(null);
+    setMismatchOverride(false);
 
     try {
       const transactionResponse = await fetch("/api/portal/transactions", {
@@ -138,7 +142,11 @@ export function TransactionIntakeStart() {
 
       setProposal(extractionResult.proposal);
       setStatus("review");
-      setMessage("We found the information below. Review it before Koinonia applies it to the file.");
+      setMessage(
+        extractionResult.proposal.documentMatch === "mismatch"
+          ? "AI flagged this as a possible document mismatch. Review the warning and decide whether to replace it or continue anyway."
+          : "We found the information below. Review it before Koinonia applies it to the file."
+      );
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Koinonia could not start the file.");
@@ -147,6 +155,11 @@ export function TransactionIntakeStart() {
 
   async function confirmExtraction() {
     if (!transactionId || !proposal || status === "confirming") return;
+
+    if (proposal.documentMatch === "mismatch" && !mismatchOverride) {
+      setMessage("Choose whether to replace the document or explicitly continue despite the AI mismatch warning.");
+      return;
+    }
 
     setStatus("confirming");
     setMessage("Applying the confirmed information…");
@@ -157,7 +170,10 @@ export function TransactionIntakeStart() {
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "confirm" })
+          body: JSON.stringify({
+            action: "confirm",
+            mismatchOverride: proposal.documentMatch === "mismatch" ? mismatchOverride : false
+          })
         }
       );
       const result = await readApiResult<{ error?: string }>(response);
@@ -167,7 +183,11 @@ export function TransactionIntakeStart() {
       }
 
       setStatus("done");
-      setMessage("File created. The confirmed document information is now attached to the transaction.");
+      setMessage(
+        proposal.documentMatch === "mismatch"
+          ? "File created. Your decision to continue despite the AI mismatch warning was recorded."
+          : "File created. The confirmed document information is now attached to the transaction."
+      );
     } catch (error) {
       setStatus("review");
       setMessage(
@@ -178,11 +198,22 @@ export function TransactionIntakeStart() {
     }
   }
 
+  function replaceDocument() {
+    setFile(null);
+    setProposal(null);
+    setTransactionId(null);
+    setMismatchOverride(false);
+    setStatus("idle");
+    setMessage("Choose the correct document and start the file again.");
+    setIntakeRequestId(createTransactionIntakeRequestId());
+  }
+
   function resetSelection() {
     setStatus("idle");
     setMessage(null);
     setProposal(null);
     setTransactionId(null);
+    setMismatchOverride(false);
     setIntakeRequestId(createTransactionIntakeRequestId());
   }
 
@@ -354,6 +385,41 @@ export function TransactionIntakeStart() {
               </p>
             </div>
 
+            {proposal.documentMatch !== "match" ? (
+              <div className="koinonia-client-request-card" role="alert">
+                <strong>
+                  {proposal.documentMatch === "mismatch"
+                    ? "AI thinks this may be the wrong document"
+                    : "AI is not sure this document matches"}
+                </strong>
+                <p>
+                  {proposal.documentMatchReason ??
+                    "The document could not be confidently matched to the file type you selected."}
+                </p>
+                <p>
+                  This is an AI recommendation, not a final decision. Review the document and choose what Koinonia should do.
+                </p>
+                {proposal.documentMatch === "mismatch" ? (
+                  <div className="koinonia-client-work-list">
+                    <button className="koinonia-button" type="button" onClick={replaceDocument}>
+                      Replace Document
+                    </button>
+                    <button
+                      className="koinonia-button koinonia-button-primary"
+                      type="button"
+                      aria-pressed={mismatchOverride}
+                      onClick={() => {
+                        setMismatchOverride(true);
+                        setMessage("You chose to continue despite the AI mismatch warning. Review the extracted fields, then confirm the file.");
+                      }}
+                    >
+                      {mismatchOverride ? "Continue Anyway Selected" : "This Is the Correct File — Continue"}
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
             <div className="koinonia-client-work-list">
               <ExtractionItem label="Clients" value={proposal.clientNames.join(" & ") || "Not found"} />
               <ExtractionItem label="Property" value={proposal.propertyAddress ?? "Not found"} />
@@ -393,10 +459,17 @@ export function TransactionIntakeStart() {
             <button
               className="koinonia-button koinonia-button-primary"
               type="button"
-              disabled={status === "confirming"}
+              disabled={
+                status === "confirming" ||
+                (proposal.documentMatch === "mismatch" && !mismatchOverride)
+              }
               onClick={confirmExtraction}
             >
-              {status === "confirming" ? "Confirming…" : "Confirm & Build File"}
+              {status === "confirming"
+                ? "Confirming…"
+                : proposal.documentMatch === "mismatch"
+                  ? "Confirm Decision & Build File"
+                  : "Confirm & Build File"}
             </button>
           </section>
         ) : (
