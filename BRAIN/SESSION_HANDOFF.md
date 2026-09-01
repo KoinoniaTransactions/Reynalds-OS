@@ -1238,3 +1238,32 @@ Squarespace DNS was used for the launch DNS changes and should not be canceled y
 
 Do not remove Resend records during any future DNS migration.
 
+---
+
+## 2026-09-01 — Koinonia GA4 Implementation Checkpoint
+
+Google Analytics 4 support has been added to the `koinonia-production` branch for the public
+Koinonia website only.
+
+### Implementation
+
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` controls whether Analytics loads.
+- The shared Koinonia Header loads the GA4 tag only on public pages when the environment value
+  is a valid `G-...` measurement ID.
+- Internal Reynalds OS and secure portal routes are excluded.
+- A successful consultation request emits `generate_lead` with only the submission method and
+  selected service type.
+- No consultation-form personal information is transmitted to GA4.
+
+### Verification
+
+- Production build passes.
+- With a test measurement ID, public Koinonia routes contain the GA4 tag.
+- `/dashboard` does not contain the GA4 tag.
+- The production client bundle contains the expected `generate_lead` event.
+
+### Remaining Production Step
+
+Create the GA4 web stream for `https://www.koinoniatransactions.com`, set
+`NEXT_PUBLIC_GA_MEASUREMENT_ID` in the Vercel Production environment, deploy, and verify the
+live page view and lead event in GA4 Realtime.
