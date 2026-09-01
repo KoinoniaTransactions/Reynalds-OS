@@ -36,12 +36,11 @@ export async function GET(request: Request, { params }: Params) {
       where: {
         id,
         workspaceId: actor.workspaceId,
-        archivedAt: null,
-        ...(canViewAllDocuments(actor) ? {} : { ownerId: actor.id })
+        archivedAt: null
       }
     });
 
-    if (!document) {
+    if (!document || !(await canActorAccessDocument(actor, document))) {
       return NextResponse.json({ error: "Document not found." }, { status: 404 });
     }
 
@@ -70,7 +69,8 @@ export async function GET(request: Request, { params }: Params) {
           mimeType: document.mimeType ?? null,
           requestSource:
             actor.role === "Client" ? "client-portal" : "employee-portal",
-          storageKey
+          storageKey,
+          versionNumber: document.versionNumber
         }
       }
     });
@@ -89,6 +89,28 @@ export async function GET(request: Request, { params }: Params) {
   } catch (error) {
     return handlePortalDocumentDownloadError(error);
   }
+}
+
+async function canActorAccessDocument(
+  actor: AuthUser,
+  document: { ownerId: string | null; relatedObjectId: string | null; accessLevel: string }
+): Promise<boolean> {
+  if (canViewAllDocuments(actor)) return true;
+  if (document.accessLevel !== "client" && document.accessLevel !== "client_and_staff") return false;
+  if (document.ownerId === actor.id) return true;
+  if (!document.relatedObjectId) return false;
+
+  const relatedTransaction = await prisma.rosObject.findFirst({
+    where: {
+      id: document.relatedObjectId,
+      workspaceId: actor.workspaceId,
+      archivedAt: null,
+      OR: [{ clientUserId: actor.id }, { ownerId: actor.id }]
+    },
+    select: { id: true }
+  });
+
+  return Boolean(relatedTransaction);
 }
 
 type PortalDocumentDisposition = "attachment" | "inline";
