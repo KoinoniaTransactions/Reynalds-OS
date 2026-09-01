@@ -68,6 +68,7 @@
 }
 
 .koinonia-workspace-overview-panel,
+#review,
 #documents,
 #timeline {
   scroll-margin-top: 110px;
@@ -77,8 +78,8 @@
   display: grid;
   gap: 5px;
   margin-bottom: 18px;
-  padding: 16px 18px;
-  background: var(--portal-surface-gold);
+  padding: 18px 20px;
+  background: linear-gradient(135deg, var(--portal-surface-gold), var(--portal-surface));
   border: 1px solid var(--portal-border-strong);
   border-radius: var(--portal-radius-md);
 }
@@ -94,6 +95,92 @@
 .koinonia-workspace-next-action strong {
   font-size: 18px;
   line-height: 1.4;
+}
+
+.koinonia-client-review-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.koinonia-client-review-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 24px;
+  padding: 22px;
+  background: var(--portal-surface);
+  border: 1px solid var(--portal-border-strong);
+  border-radius: 18px;
+  box-shadow: 0 14px 40px rgba(40, 32, 20, 0.07);
+}
+
+.koinonia-client-review-card-copy span {
+  display: inline-flex;
+  margin-bottom: 8px;
+  padding: 5px 9px;
+  color: var(--portal-gold-dark);
+  background: var(--portal-surface-gold);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.koinonia-client-review-card-copy h3 {
+  margin: 0 0 8px;
+  font-size: clamp(20px, 2vw, 26px);
+}
+
+.koinonia-client-review-card-copy p {
+  margin: 0;
+  color: var(--portal-muted);
+  line-height: 1.6;
+}
+
+.koinonia-client-review-card-copy .koinonia-client-review-file {
+  margin-top: 12px;
+  color: var(--portal-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.koinonia-client-review-actions {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--portal-surface-soft);
+  border: 1px solid var(--portal-border);
+  border-radius: 14px;
+}
+
+.koinonia-client-review-actions textarea {
+  width: 100%;
+  min-height: 72px;
+  resize: vertical;
+  padding: 11px 12px;
+  color: var(--portal-text);
+  background: var(--portal-surface);
+  border: 1px solid var(--portal-border);
+  border-radius: 12px;
+  font: inherit;
+  line-height: 1.45;
+}
+
+.koinonia-client-review-actions textarea:focus-visible {
+  outline: 3px solid rgba(177, 124, 48, 0.2);
+  outline-offset: 1px;
+  border-color: var(--portal-border-strong);
+}
+
+.koinonia-client-review-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.koinonia-client-review-buttons .koinonia-button {
+  flex: 1 1 140px;
 }
 
 .koinonia-workspace-requirement-questions {
@@ -150,108 +237,10 @@
   font: inherit;
 }
 
-.koinonia-document-checklist {
-  display: grid;
-  gap: 14px;
-  margin-bottom: 26px;
-}
-
-.koinonia-document-checklist-summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px 18px;
-  padding: 14px 16px;
-  background: var(--portal-surface-soft);
-  border: 1px solid var(--portal-border);
-  border-radius: var(--portal-radius-md);
-}
-
-.koinonia-document-checklist-summary strong {
-  font-size: 16px;
-}
-
-.koinonia-document-checklist-summary span {
-  color: var(--portal-muted);
-  font-size: 14px;
-}
-
-.koinonia-document-checklist-list {
-  display: grid;
-  gap: 10px;
-}
-
-.koinonia-document-checklist-item {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 15px 16px;
-  background: var(--portal-surface);
-  border: 1px solid var(--portal-border);
-  border-radius: var(--portal-radius-md);
-}
-
-.koinonia-document-checklist-item > div {
-  min-width: 0;
-}
-
-.koinonia-document-checklist-item span {
-  display: inline-block;
-  margin-bottom: 5px;
-  color: var(--portal-muted);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.koinonia-document-checklist-item h3 {
-  margin: 0 0 5px;
-  font-size: 16px;
-}
-
-.koinonia-document-checklist-item p {
-  margin: 0;
-  color: var(--portal-muted);
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.koinonia-document-checklist-item p + p {
-  margin-top: 5px;
-}
-
-.koinonia-document-checklist-item > strong {
-  flex: 0 0 auto;
-  padding: 5px 9px;
-  color: var(--portal-muted);
-  background: var(--portal-surface-soft);
-  border-radius: 999px;
-  font-size: 11px;
-}
-
-.koinonia-document-checklist-item.is-received {
-  background: var(--portal-surface-gold);
-  border-color: var(--portal-border-strong);
-}
-
-.koinonia-document-checklist-item.is-received span,
-.koinonia-document-checklist-item.is-received > strong {
-  color: var(--portal-gold-dark);
-}
-
-.koinonia-document-checklist-item.is-missing {
-  border-style: dashed;
-}
-
-.koinonia-document-checklist-item.is-upcoming {
-  opacity: 0.72;
-}
-
-.koinonia-workspace-documents-heading {
-  margin-top: 6px;
+@media (max-width: 820px) {
+  .koinonia-client-review-card {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -275,18 +264,9 @@
     justify-content: center;
   }
 
-  .koinonia-document-checklist-summary,
-  .koinonia-document-checklist-item {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .koinonia-document-checklist-item > strong {
-    align-self: flex-start;
-  }
-
   .koinonia-workspace-question-options .koinonia-button,
-  .koinonia-workspace-question form .koinonia-button {
-    flex: 1;
+  .koinonia-workspace-question form .koinonia-button,
+  .koinonia-client-review-buttons .koinonia-button {
+    flex: 1 1 100%;
   }
 }
