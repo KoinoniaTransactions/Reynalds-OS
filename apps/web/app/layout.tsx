@@ -7,6 +7,7 @@ import "../styles/koinonia-layout.css";
 import "../styles/transaction-intake-controls.css";
 import "../styles/client-dashboard-polish.css";
 import "../styles/client-workspace-polish.css";
+import "../styles/client-portal-modern.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(seoConfig.siteUrl),
