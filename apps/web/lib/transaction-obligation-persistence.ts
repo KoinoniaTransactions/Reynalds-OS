@@ -10,6 +10,7 @@ import {
   type TransactionObligationSeed,
   type TransactionObligationState
 } from "./transaction-obligations";
+import { satisfyTransactionObligationsFromDocument } from "./transaction-obligation-resolution";
 import type { TransactionExtractionProposal } from "./transaction-extraction";
 import type { TransactionSide, TransactionStage } from "./transaction-intake";
 
@@ -25,7 +26,7 @@ export async function reconcileConfirmedTransactionObligations(input: {
   proposal: TransactionExtractionProposal;
   confirmedDocumentType: string;
   confirmedAt: string;
-}): Promise<{ created: number; superseded: number; unchanged: number }> {
+}): Promise<{ created: number; superseded: number; unchanged: number; evidenceSatisfied: number }> {
   const seeds = deriveConfirmedExtractionObligations({
     side: input.side,
     stage: input.stage,
@@ -33,8 +34,6 @@ export async function reconcileConfirmedTransactionObligations(input: {
     confirmedDocumentType: input.confirmedDocumentType,
     confirmedAt: input.confirmedAt
   });
-
-  if (!seeds.length) return { created: 0, superseded: 0, unchanged: 0 };
 
   const links = await input.tx.objectRelationship.findMany({
     where: {
@@ -171,7 +170,22 @@ export async function reconcileConfirmedTransactionObligations(input: {
     created += 1;
   }
 
-  return { created, superseded, unchanged };
+  const evidence = await satisfyTransactionObligationsFromDocument({
+    tx: input.tx,
+    workspaceId: input.workspaceId,
+    transactionId: input.transactionId,
+    actorId: input.actorId,
+    documentId: input.proposal.sourceDocumentId,
+    documentType: input.confirmedDocumentType,
+    occurredAt: input.confirmedAt
+  });
+
+  return {
+    created,
+    superseded,
+    unchanged,
+    evidenceSatisfied: evidence.satisfied
+  };
 }
 
 async function appendSourceDocument(
