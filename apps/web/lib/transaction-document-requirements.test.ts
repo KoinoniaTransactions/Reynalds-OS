@@ -56,6 +56,26 @@ describe("transaction document requirements", () => {
     expect(checklist.find((item) => item.id === "purchase-contract")?.status).toBe("received");
   });
 
+  it("keeps listing Amend / Extend out of a fresh seller listing until amendment is explicit", () => {
+    const checklist = buildTransactionDocumentChecklist("seller", "pre_contract", [], {});
+    expect(checklist.find((item) => item.id === "listing-amend-extend")).toBeUndefined();
+  });
+
+  it("keeps Square Footage Disclosure out until advertising is explicitly established", () => {
+    const checklist = buildTransactionDocumentChecklist("seller", "pre_contract", [], {
+      propertyUse: "residential"
+    });
+    expect(checklist.find((item) => item.id === "square-footage-disclosure")).toBeUndefined();
+  });
+
+  it("shows Square Footage Disclosure only when residential advertising is explicit", () => {
+    const checklist = buildTransactionDocumentChecklist("seller", "pre_contract", [], {
+      propertyUse: "residential",
+      squareFootageAdvertised: true
+    });
+    expect(checklist.find((item) => item.id === "square-footage-disclosure")?.status).toBe("missing");
+  });
+
   it("requires lead-based-paint disclosure for covered pre-1978 residential property", () => {
     const checklist = buildTransactionDocumentChecklist(
       "seller",
