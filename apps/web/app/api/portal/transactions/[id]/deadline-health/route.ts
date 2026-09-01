@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 import { getAuthErrorResponse } from "../../../../../../lib/api-auth";
 import { assertPermission } from "../../../../../../lib/auth";
 import { prisma } from "../../../../../../lib/db";
-import { evaluateTransactionDeadlineHealth } from "../../../../../../lib/transaction-deadline-health";
+import {
+  evaluateTransactionObligation,
+  transactionObligationObjectType,
+  transactionObligationRelationshipType
+} from "../../../../../../lib/transaction-obligations";
 
 export const dynamic = "force-dynamic";
 
@@ -26,18 +30,29 @@ export async function GET(_request: Request, context: RouteContext) {
       return NextResponse.json({ error: "Transaction was not found." }, { status: 404 });
     }
 
-    const data = asRecord(transaction.data) ?? {};
-    const side = data.side === "seller" ? "seller" : "buyer";
-    const stage = data.stage === "under_contract" ? "under_contract" : "pre_contract";
+    const links = await prisma.objectRelationship.findMany({
+      where: {
+        sourceObjectId: transaction.id,
+        relationshipType: transactionObligationRelationshipType
+      },
+      include: {
+        targetObject: true
+      }
+    });
 
-    return NextResponse.json(
-      evaluateTransactionDeadlineHealth({
-        side,
-        stage,
-        listingExpirationDate: data.listingExpirationDate,
-        deadlines: data.deadlines
-      })
-    );
+    const alerts = links
+      .map((link) => link.targetObject)
+      .filter(
+        (obligation) =>
+          obligation.objectType === transactionObligationObjectType && !obligation.archivedAt
+      )
+      .map((obligation) => evaluateTransactionObligation(obligation))
+      .filter((alert): alert is NonNullable<typeof alert> => Boolean(alert));
+
+    return NextResponse.json({
+      status: alerts.some((alert) => alert.state === "passed_needs_review") ? "review" : "clear",
+      alerts
+    });
   } catch (error) {
     const authResponse = getAuthErrorResponse(error);
     if (authResponse) return authResponse;
@@ -51,10 +66,4 @@ export async function GET(_request: Request, context: RouteContext) {
 
     throw error;
   }
-}
-
-function asRecord(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : null;
 }
