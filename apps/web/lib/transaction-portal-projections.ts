@@ -1,4 +1,7 @@
 import {
+  getTransactionObligationDependencyStatus
+} from "./transaction-obligation-dependencies";
+import {
   evaluateTransactionObligation,
   readTransactionObligationData,
   type TransactionObligationRecord
@@ -48,15 +51,21 @@ type ProjectionInput = {
 
 export function buildStaffTransactionOperations(input: ProjectionInput): StaffTransactionOperations {
   const now = startOfUtcDay(input.now ?? new Date());
-  const current = input.obligations
+  const activeRecords = input.obligations.filter((record) => {
+    const data = readTransactionObligationData(record.data);
+    if (!data) return false;
+    if (data.state === "superseded" || data.state === "not_applicable") return false;
+    return getTransactionObligationDependencyStatus(record, input.obligations) === "active";
+  });
+
+  const current = activeRecords
     .map(toItem)
-    .filter((item): item is StaffObligationItem => Boolean(item))
-    .filter((item) => item.state !== "superseded" && item.state !== "not_applicable");
+    .filter((item): item is StaffObligationItem => Boolean(item));
 
   const classified = current.map((item) => ({
     item,
     alert: evaluateTransactionObligation(
-      input.obligations.find((record) => record.id === item.id)!,
+      activeRecords.find((record) => record.id === item.id)!,
       now
     )
   }));
