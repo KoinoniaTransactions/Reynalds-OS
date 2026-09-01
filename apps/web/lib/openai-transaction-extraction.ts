@@ -3,6 +3,10 @@ import {
   type TransactionExtractionProposal
 } from "./transaction-extraction";
 import {
+  getTransactionDocumentRequirements,
+  type TransactionDocumentRequirement
+} from "./transaction-document-requirements";
+import {
   getTransactionIntakeDefinition,
   type TransactionSide,
   type TransactionStage
@@ -35,6 +39,7 @@ type ModelExtraction = {
   clientNames: string[];
   propertyAddress: string | null;
   identifiedDocumentType: string;
+  documentRequirementId: string;
   listPrice: number | null;
   listingEffectiveDate: string | null;
   listingExpirationDate: string | null;
@@ -71,12 +76,23 @@ export async function extractTransactionDocumentWithOpenAI(
   const openAiFileId = await uploadShortLivedFile(input, apiKey);
 
   try {
-    const modelExtraction = await createStructuredExtraction(input, openAiFileId, apiKey);
+    const requirements = getTransactionDocumentRequirements(input.side, input.stage);
+    const modelExtraction = await createStructuredExtraction(
+      input,
+      openAiFileId,
+      apiKey,
+      requirements
+    );
+    const allowedRequirementIds = new Set(requirements.map((requirement) => requirement.id));
+    const documentRequirementId = allowedRequirementIds.has(modelExtraction.documentRequirementId)
+      ? modelExtraction.documentRequirementId
+      : undefined;
 
     return validateTransactionExtractionProposal({
       clientNames: modelExtraction.clientNames,
       propertyAddress: modelExtraction.propertyAddress ?? undefined,
       identifiedDocumentType: modelExtraction.identifiedDocumentType,
+      documentRequirementId,
       listPrice: modelExtraction.listPrice ?? undefined,
       listingEffectiveDate: modelExtraction.listingEffectiveDate ?? undefined,
       listingExpirationDate: modelExtraction.listingExpirationDate ?? undefined,
@@ -141,11 +157,17 @@ async function uploadShortLivedFile(
 async function createStructuredExtraction(
   input: ExtractDocumentInput,
   fileId: string,
-  apiKey: string
+  apiKey: string,
+  requirements: TransactionDocumentRequirement[]
 ): Promise<ModelExtraction> {
   const definition = getTransactionIntakeDefinition(input.side, input.stage);
-  const expectedDocuments = [definition.preferredDocument, ...definition.alternateDocuments];
   const stageGuidance = buildStageGuidance(input.side, input.stage);
+  const requirementGuide = requirements
+    .map(
+      (requirement) =>
+        `${requirement.id}: ${requirement.label} (${requirement.level}) — ${requirement.guidance}`
+    )
+    .join("\n");
 
   const response = await fetch(`${openAiApiBase}/responses`, {
     method: "POST",
@@ -163,7 +185,7 @@ async function createStructuredExtraction(
             {
               type: "input_text",
               text:
-                "You extract factual Colorado real-estate transaction information from documents for human review. Never invent a value. Use null when a field is not stated clearly or is not applicable to this document. Client names must be the represented clients for the requested side, not every party named. First identify what document actually was uploaded (for example Listing Agreement, Buyer Agency Agreement, Contract to Buy and Sell, Counterproposal, Seller Disclosure, Pre-Approval Letter). Then decide whether that identified document is appropriate for the selected transaction side and stage. Do not mark a valid listing agreement as a mismatch merely because it is not a purchase contract. Listing agreements are expected seller-side documents before the property is under contract. Purchase-contract fields such as buyer purchase price, transaction earnest money, closing date, buyer financing, and contract possession are not required for a listing agreement and should be null unless this document truly establishes them for a sale transaction. A listing agreement's list price is listPrice, not purchasePrice. A listing agreement's minimum acceptable earnest-money term is not transaction earnestMoney. Listing effective/expiration dates belong in listingEffectiveDate/listingExpirationDate, not closingDate. Deadlines should contain only dates that actually function as deadlines for the identified document. Confidence is high only when the important fields for this document type are explicit and legible. documentMatch is advisory for the Realtor; use match when the document is suitable for the selected side/stage, mismatch when clearly unsuitable, and uncertain when ambiguous."
+                "You extract factual Colorado real-estate transaction information from documents for human review. Never invent a value. Use null when a field is not stated clearly or is not applicable. First identify what document actually was uploaded, then classify it against the exact checklist supplied by the user. documentRequirementId must be one supplied checklist ID or other. Use a checklist ID when the document clearly satisfies that requirement even if its printed title varies. Use other when none fit. documentMatch asks whether the upload belongs in the selected transaction path at all: match when suitable, mismatch when clearly unrelated/unsuitable, uncertain when ambiguous. A valid supporting or conditional document can be a match even when it is not the primary contract. Client names must be the represented clients for the requested side, not every party named. A listing agreement's list price is listPrice, not purchasePrice. A listing agreement's minimum acceptable earnest-money term is not transaction earnestMoney. Listing effective/expiration dates belong in listingEffectiveDate/listingExpirationDate, not closingDate. Purchase-contract fields are only for documents that actually establish an accepted sale transaction. Deadlines must be genuine deadlines for the identified document. Confidence is high only when the important fields for this document type are explicit and legible."
             }
           ]
         },
@@ -172,7 +194,7 @@ async function createStructuredExtraction(
           content: [
             {
               type: "input_text",
-              text: `Selected file path: ${definition.title}. Expected/acceptable starting documents include: ${expectedDocuments.join(", ")}. ${stageGuidance} The upload was provisionally labeled "${input.sourceDocumentType}" by the intake UI; do not assume that label is correct. Identify the document from its contents, assess whether it belongs in this selected file path, and extract only fields appropriate to the identified document.`
+              text: `Selected path: ${definition.title}. ${stageGuidance}\n\nKnown document checklist for this path:\n${requirementGuide}\n\nThe upload was provisionally labeled "${input.sourceDocumentType}" by the intake UI; do not assume that label is correct. Identify the document from its contents, choose the best checklist ID or other, assess whether it belongs in this selected path, and extract fields appropriate to the identified document.`
             },
             {
               type: "input_file",
@@ -186,7 +208,7 @@ async function createStructuredExtraction(
           type: "json_schema",
           name: "koinonia_transaction_extraction",
           strict: true,
-          schema: extractionJsonSchema
+          schema: buildExtractionJsonSchema(requirements)
         }
       }
     })
@@ -219,18 +241,81 @@ async function createStructuredExtraction(
 
 function buildStageGuidance(side: TransactionSide, stage: TransactionStage): string {
   if (side === "seller" && stage === "pre_contract") {
-    return "This is a seller listing-stage file. An executed listing agreement is a primary expected document and should normally be classified as a match. Extract seller names, property address, list price, listing dates, brokerage/agent, and other clearly stated listing terms. Do not expect a sale closing date or buyer purchase terms yet.";
+    return "This is a seller listing-stage file. A listing agreement is a primary expected document. Seller disclosures, property/HOA documents, and MLS information may also legitimately belong in this file. Do not expect an accepted sale contract yet.";
   }
 
   if (side === "seller" && stage === "under_contract") {
-    return "This is a seller file that is now under contract. The executed Contract to Buy and Sell is the primary transaction document; a listing agreement is still a valid supporting document but by itself does not establish the accepted sale terms.";
+    return "This seller file is under contract. The executed purchase contract is the primary source for accepted sale terms, while the listing agreement and applicable seller/property disclosures remain valid required or supporting documents.";
   }
 
   if (side === "buyer" && stage === "pre_contract") {
-    return "This is a buyer representation-stage file. A buyer agency/representation agreement is a primary expected document. A property or purchase contract is not required yet.";
+    return "This is a buyer representation-stage file. A buyer agency/representation agreement is primary; lender qualification material and buyer intake material may also legitimately belong in the file. A purchase contract is not required yet.";
   }
 
-  return "This is a buyer file that is under contract. The executed Contract to Buy and Sell is the primary source for purchase price, earnest money, deadlines, closing, possession, and financing terms.";
+  return "This buyer file is under contract. The executed purchase contract is primary for sale terms, while the buyer representation agreement and applicable lender/counter/amendment documents also legitimately belong in the file.";
+}
+
+function buildExtractionJsonSchema(requirements: TransactionDocumentRequirement[]) {
+  return {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      clientNames: { type: "array", items: { type: "string" } },
+      propertyAddress: { type: ["string", "null"] },
+      identifiedDocumentType: { type: "string" },
+      documentRequirementId: {
+        type: "string",
+        enum: [...requirements.map((requirement) => requirement.id), "other"]
+      },
+      listPrice: { type: ["number", "null"] },
+      listingEffectiveDate: { type: ["string", "null"] },
+      listingExpirationDate: { type: ["string", "null"] },
+      brokerageName: { type: ["string", "null"] },
+      agentName: { type: ["string", "null"] },
+      purchasePrice: { type: ["number", "null"] },
+      earnestMoney: { type: ["number", "null"] },
+      closingDate: { type: ["string", "null"] },
+      possession: { type: ["string", "null"] },
+      financingType: { type: ["string", "null"] },
+      deadlines: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            name: { type: "string" },
+            date: { type: "string" }
+          },
+          required: ["name", "date"]
+        }
+      },
+      confidence: { type: "string", enum: ["high", "medium", "low"] },
+      documentMatch: { type: "string", enum: ["match", "mismatch", "uncertain"] },
+      documentMatchReason: { type: ["string", "null"] },
+      notes: { type: "array", items: { type: "string" } }
+    },
+    required: [
+      "clientNames",
+      "propertyAddress",
+      "identifiedDocumentType",
+      "documentRequirementId",
+      "listPrice",
+      "listingEffectiveDate",
+      "listingExpirationDate",
+      "brokerageName",
+      "agentName",
+      "purchasePrice",
+      "earnestMoney",
+      "closingDate",
+      "possession",
+      "financingType",
+      "deadlines",
+      "confidence",
+      "documentMatch",
+      "documentMatchReason",
+      "notes"
+    ]
+  } as const;
 }
 
 async function deleteOpenAiFileQuietly(fileId: string, apiKey: string) {
@@ -281,71 +366,3 @@ function getResponseOutputText(payload: Record<string, unknown>): string | null 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
-
-const extractionJsonSchema = {
-  type: "object",
-  additionalProperties: false,
-  properties: {
-    clientNames: {
-      type: "array",
-      items: { type: "string" }
-    },
-    propertyAddress: { type: ["string", "null"] },
-    identifiedDocumentType: { type: "string" },
-    listPrice: { type: ["number", "null"] },
-    listingEffectiveDate: { type: ["string", "null"] },
-    listingExpirationDate: { type: ["string", "null"] },
-    brokerageName: { type: ["string", "null"] },
-    agentName: { type: ["string", "null"] },
-    purchasePrice: { type: ["number", "null"] },
-    earnestMoney: { type: ["number", "null"] },
-    closingDate: { type: ["string", "null"] },
-    possession: { type: ["string", "null"] },
-    financingType: { type: ["string", "null"] },
-    deadlines: {
-      type: "array",
-      items: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          name: { type: "string" },
-          date: { type: "string" }
-        },
-        required: ["name", "date"]
-      }
-    },
-    confidence: {
-      type: "string",
-      enum: ["high", "medium", "low"]
-    },
-    documentMatch: {
-      type: "string",
-      enum: ["match", "mismatch", "uncertain"]
-    },
-    documentMatchReason: { type: ["string", "null"] },
-    notes: {
-      type: "array",
-      items: { type: "string" }
-    }
-  },
-  required: [
-    "clientNames",
-    "propertyAddress",
-    "identifiedDocumentType",
-    "listPrice",
-    "listingEffectiveDate",
-    "listingExpirationDate",
-    "brokerageName",
-    "agentName",
-    "purchasePrice",
-    "earnestMoney",
-    "closingDate",
-    "possession",
-    "financingType",
-    "deadlines",
-    "confidence",
-    "documentMatch",
-    "documentMatchReason",
-    "notes"
-  ]
-} as const;
