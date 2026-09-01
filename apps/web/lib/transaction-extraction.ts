@@ -7,6 +7,7 @@ export type TransactionExtractionProposal = {
   clientNames: string[];
   propertyAddress?: string;
   identifiedDocumentType: string;
+  documentRequirementId?: string;
   listPrice?: number;
   listingEffectiveDate?: string;
   listingExpirationDate?: string;
@@ -51,6 +52,7 @@ export function validateTransactionExtractionProposal(
     clientNames,
     propertyAddress: optionalString(value.propertyAddress),
     identifiedDocumentType: optionalString(value.identifiedDocumentType) ?? sourceDocumentType,
+    documentRequirementId: optionalString(value.documentRequirementId),
     listPrice: optionalPositiveNumber(value.listPrice, "listPrice"),
     listingEffectiveDate: optionalDateString(value.listingEffectiveDate, "listingEffectiveDate"),
     listingExpirationDate: optionalDateString(value.listingExpirationDate, "listingExpirationDate"),
@@ -122,6 +124,7 @@ export function mergeExtractionIntoTransactionData(
       documentMatch: proposal.documentMatch,
       documentMatchReason: proposal.documentMatchReason ?? null,
       identifiedDocumentType: proposal.identifiedDocumentType,
+      documentRequirementId: proposal.documentRequirementId ?? null,
       sourceDocumentId: proposal.sourceDocumentId,
       sourceDocumentType: proposal.sourceDocumentType,
       confirmedAt,
