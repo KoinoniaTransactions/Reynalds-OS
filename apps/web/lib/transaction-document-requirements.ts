@@ -1,6 +1,6 @@
 import type { TransactionSide, TransactionStage } from "./transaction-intake";
 
-export type TransactionDocumentRequirementLevel = "required" | "expected" | "optional";
+export type TransactionDocumentRequirementLevel = "required" | "expected" | "optional" | "conditional";
 export type TransactionDocumentRequirementPhase =
   | "representation"
   | "listing"
@@ -210,7 +210,9 @@ export function buildTransactionDocumentChecklist(
           ? "upcoming"
           : requirement.level === "required"
             ? "missing"
-            : requirement.level,
+            : requirement.level === "conditional"
+              ? "expected"
+              : requirement.level,
       documentId: matched?.id,
       fileName: matched?.fileName
     }];
@@ -226,7 +228,6 @@ export function getTransactionRequirementQuestions(
   const currentPhaseIndex = transactionDocumentPhaseOrder.indexOf(currentPhase);
   const unresolved = new Set<TransactionFactKey>();
 
-  // Resolve property type first. That one answer can eliminate many residential-only questions.
   const hasUnresolvedResidentialRequirement = getTransactionDocumentRequirements(side, stage).some((requirement) => {
     if (!requirement.appliesWhen) return false;
     if (transactionDocumentPhaseOrder.indexOf(requirement.phase) > currentPhaseIndex) return false;
