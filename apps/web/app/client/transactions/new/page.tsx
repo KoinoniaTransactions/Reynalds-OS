@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { TransactionIntakeStart } from "../../../../components/client/TransactionIntakeStart";
+import { TransactionDocumentPackageIntake } from "../../../../components/client/TransactionDocumentPackageIntake";
 import { Footer, Header } from "../../../../components/site";
 import { absoluteUrl } from "../../../../config/seo.config";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
@@ -37,8 +37,8 @@ export default async function NewClientTransactionPage() {
             <p className="koinonia-eyebrow">New Transaction</p>
             <h1 className="koinonia-title">Start a new file.</h1>
             <p className="koinonia-lead">
-              Tell Koinonia which side you represent, then give us the documents you already have.
-              We will use those documents to build the file and only ask for information that is still missing.
+              Tell Koinonia which side you represent, then upload the transaction documents you already have.
+              We will identify them, combine the information across the package, and only ask for details the documents could not answer.
             </p>
             <p>
               <a className="koinonia-document-link" href="/client/dashboard">
@@ -51,7 +51,7 @@ export default async function NewClientTransactionPage() {
 
       <section className="koinonia-section">
         <div className="koinonia-container">
-          <TransactionIntakeStart />
+          <TransactionDocumentPackageIntake />
         </div>
       </section>
 
