@@ -50,6 +50,7 @@ export function TransactionIntakeStart() {
   const [message, setMessage] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState<string | null>(null);
   const [proposal, setProposal] = useState<ExtractionProposal | null>(null);
+  const [intakeRequestId, setIntakeRequestId] = useState(createTransactionIntakeRequestId);
 
   const definition = useMemo(
     () => getTransactionIntakeDefinition(side, stage),
@@ -70,6 +71,7 @@ export function TransactionIntakeStart() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          intakeRequestId,
           side,
           sourceDocumentName: file.name,
           stage
@@ -171,6 +173,7 @@ export function TransactionIntakeStart() {
     setMessage(null);
     setProposal(null);
     setTransactionId(null);
+    setIntakeRequestId(createTransactionIntakeRequestId());
   }
 
   return (
@@ -308,7 +311,7 @@ export function TransactionIntakeStart() {
               disabled={!file || status === "saving" || status === "confirming"}
               onClick={startFile}
             >
-              {status === "saving" ? "Reading document…" : "Start File"}
+              {status === "saving" ? "Reading document…" : status === "error" && transactionId ? "Retry Upload" : "Start File"}
             </button>
           ) : null}
 
@@ -432,4 +435,12 @@ function formatMoney(value: number): string {
     currency: "USD",
     maximumFractionDigits: 0
   }).format(value);
+}
+
+function createTransactionIntakeRequestId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  return `intake-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
