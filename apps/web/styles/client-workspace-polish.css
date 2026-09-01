@@ -96,6 +96,60 @@
   line-height: 1.4;
 }
 
+.koinonia-workspace-requirement-questions {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 22px;
+  padding: 16px;
+  background: var(--portal-surface-gold);
+  border: 1px solid var(--portal-border-strong);
+  border-radius: var(--portal-radius-md);
+}
+
+.koinonia-workspace-question-list {
+  display: grid;
+  gap: 10px;
+}
+
+.koinonia-workspace-question {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  background: var(--portal-surface);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+}
+
+.koinonia-workspace-question strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.koinonia-workspace-question p {
+  margin: 0;
+  color: var(--portal-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.koinonia-workspace-question-options,
+.koinonia-workspace-question form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.koinonia-workspace-question input {
+  min-height: 42px;
+  min-width: 160px;
+  padding: 8px 12px;
+  color: var(--portal-text);
+  background: var(--portal-surface);
+  border: 1px solid var(--portal-border-strong);
+  border-radius: 999px;
+  font: inherit;
+}
+
 .koinonia-document-checklist {
   display: grid;
   gap: 14px;
@@ -192,6 +246,10 @@
   border-style: dashed;
 }
 
+.koinonia-document-checklist-item.is-upcoming {
+  opacity: 0.72;
+}
+
 .koinonia-workspace-documents-heading {
   margin-top: 6px;
 }
@@ -225,5 +283,10 @@
 
   .koinonia-document-checklist-item > strong {
     align-self: flex-start;
+  }
+
+  .koinonia-workspace-question-options .koinonia-button,
+  .koinonia-workspace-question form .koinonia-button {
+    flex: 1;
   }
 }
