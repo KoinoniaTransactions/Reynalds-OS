@@ -1,4 +1,4 @@
-import type { TransactionSide } from "./transaction-intake";
+import type { TransactionSide, TransactionStage } from "./transaction-intake";
 import type { TransactionFacts } from "./transaction-document-requirements";
 
 export type ExtractionConfidence = "high" | "medium" | "low";
@@ -12,6 +12,8 @@ export type ExtractedRequirementFacts = Pick<
 export type TransactionExtractionProposal = {
   clientNames: string[];
   propertyAddress?: string;
+  inferredSide?: TransactionSide;
+  inferredStage?: TransactionStage;
   identifiedDocumentType: string;
   documentRequirementId?: string;
   requirementFacts?: ExtractedRequirementFacts;
@@ -58,6 +60,8 @@ export function validateTransactionExtractionProposal(
   return {
     clientNames,
     propertyAddress: optionalString(value.propertyAddress),
+    inferredSide: optionalTransactionSide(value.inferredSide),
+    inferredStage: optionalTransactionStage(value.inferredStage),
     identifiedDocumentType: optionalString(value.identifiedDocumentType) ?? sourceDocumentType,
     documentRequirementId: optionalString(value.documentRequirementId),
     requirementFacts: optionalExtractedRequirementFacts(value.requirementFacts),
@@ -125,6 +129,8 @@ export function mergeExtractionIntoTransactionData(
 
   return {
     ...base,
+    ...(proposal.inferredSide ? { side: proposal.inferredSide } : {}),
+    ...(proposal.inferredStage ? { stage: proposal.inferredStage } : {}),
     propertyAddress: proposal.propertyAddress ?? base.propertyAddress ?? null,
     listPrice: proposal.listPrice ?? base.listPrice ?? null,
     listingEffectiveDate: proposal.listingEffectiveDate ?? base.listingEffectiveDate ?? null,
@@ -144,6 +150,8 @@ export function mergeExtractionIntoTransactionData(
       confidence: proposal.confidence,
       documentMatch: proposal.documentMatch,
       documentMatchReason: proposal.documentMatchReason ?? null,
+      inferredSide: proposal.inferredSide ?? null,
+      inferredStage: proposal.inferredStage ?? null,
       identifiedDocumentType: proposal.identifiedDocumentType,
       documentRequirementId: proposal.documentRequirementId ?? null,
       requirementFacts: proposal.requirementFacts ?? {},
@@ -170,6 +178,14 @@ function optionalDocumentMatch(value: unknown): DocumentMatch {
   throw new TransactionExtractionValidationError(
     "documentMatch must be match, mismatch, or uncertain."
   );
+}
+
+function optionalTransactionSide(value: unknown): TransactionSide | undefined {
+  return value === "buyer" || value === "seller" ? value : undefined;
+}
+
+function optionalTransactionStage(value: unknown): TransactionStage | undefined {
+  return value === "pre_contract" || value === "under_contract" ? value : undefined;
 }
 
 function optionalExtractedRequirementFacts(value: unknown): ExtractedRequirementFacts | undefined {
