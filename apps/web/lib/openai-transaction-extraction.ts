@@ -2,7 +2,11 @@ import {
   validateTransactionExtractionProposal,
   type TransactionExtractionProposal
 } from "./transaction-extraction";
-import type { TransactionSide, TransactionStage } from "./transaction-intake";
+import {
+  getTransactionIntakeDefinition,
+  type TransactionSide,
+  type TransactionStage
+} from "./transaction-intake";
 
 const openAiApiBase = "https://api.openai.com/v1";
 const defaultModel = "gpt-5.6-luna";
@@ -30,6 +34,12 @@ type ExtractDocumentInput = {
 type ModelExtraction = {
   clientNames: string[];
   propertyAddress: string | null;
+  identifiedDocumentType: string;
+  listPrice: number | null;
+  listingEffectiveDate: string | null;
+  listingExpirationDate: string | null;
+  brokerageName: string | null;
+  agentName: string | null;
   purchasePrice: number | null;
   earnestMoney: number | null;
   closingDate: string | null;
@@ -61,15 +71,17 @@ export async function extractTransactionDocumentWithOpenAI(
   const openAiFileId = await uploadShortLivedFile(input, apiKey);
 
   try {
-    const modelExtraction = await createStructuredExtraction(
-      input,
-      openAiFileId,
-      apiKey
-    );
+    const modelExtraction = await createStructuredExtraction(input, openAiFileId, apiKey);
 
     return validateTransactionExtractionProposal({
       clientNames: modelExtraction.clientNames,
       propertyAddress: modelExtraction.propertyAddress ?? undefined,
+      identifiedDocumentType: modelExtraction.identifiedDocumentType,
+      listPrice: modelExtraction.listPrice ?? undefined,
+      listingEffectiveDate: modelExtraction.listingEffectiveDate ?? undefined,
+      listingExpirationDate: modelExtraction.listingExpirationDate ?? undefined,
+      brokerageName: modelExtraction.brokerageName ?? undefined,
+      agentName: modelExtraction.agentName ?? undefined,
       purchasePrice: modelExtraction.purchasePrice ?? undefined,
       earnestMoney: modelExtraction.earnestMoney ?? undefined,
       closingDate: modelExtraction.closingDate ?? undefined,
@@ -131,6 +143,10 @@ async function createStructuredExtraction(
   fileId: string,
   apiKey: string
 ): Promise<ModelExtraction> {
+  const definition = getTransactionIntakeDefinition(input.side, input.stage);
+  const expectedDocuments = [definition.preferredDocument, ...definition.alternateDocuments];
+  const stageGuidance = buildStageGuidance(input.side, input.stage);
+
   const response = await fetch(`${openAiApiBase}/responses`, {
     method: "POST",
     headers: {
@@ -147,7 +163,7 @@ async function createStructuredExtraction(
             {
               type: "input_text",
               text:
-                "You extract factual real-estate transaction information from documents for human review. Never invent a value. Use null when the document does not state a value clearly. Client names must be the represented clients for the requested side, not every party in the document. Deadlines must contain only dates explicitly stated or unambiguously calculable from the document itself. Confidence is high only when the key identity/property fields are explicit and legible; otherwise use medium or low. Also assess whether the uploaded document actually matches the requested transaction document type and stage. Set documentMatch to match when it clearly does, mismatch when it clearly does not, and uncertain when you cannot tell. Explain that assessment briefly in documentMatchReason. A mismatch is advisory for the Realtor and must not be treated as a final decision."
+                "You extract factual Colorado real-estate transaction information from documents for human review. Never invent a value. Use null when a field is not stated clearly or is not applicable to this document. Client names must be the represented clients for the requested side, not every party named. First identify what document actually was uploaded (for example Listing Agreement, Buyer Agency Agreement, Contract to Buy and Sell, Counterproposal, Seller Disclosure, Pre-Approval Letter). Then decide whether that identified document is appropriate for the selected transaction side and stage. Do not mark a valid listing agreement as a mismatch merely because it is not a purchase contract. Listing agreements are expected seller-side documents before the property is under contract. Purchase-contract fields such as buyer purchase price, transaction earnest money, closing date, buyer financing, and contract possession are not required for a listing agreement and should be null unless this document truly establishes them for a sale transaction. A listing agreement's list price is listPrice, not purchasePrice. A listing agreement's minimum acceptable earnest-money term is not transaction earnestMoney. Listing effective/expiration dates belong in listingEffectiveDate/listingExpirationDate, not closingDate. Deadlines should contain only dates that actually function as deadlines for the identified document. Confidence is high only when the important fields for this document type are explicit and legible. documentMatch is advisory for the Realtor; use match when the document is suitable for the selected side/stage, mismatch when clearly unsuitable, and uncertain when ambiguous."
             }
           ]
         },
@@ -156,7 +172,7 @@ async function createStructuredExtraction(
           content: [
             {
               type: "input_text",
-              text: `Extract the ${input.side} transaction fields for a ${input.stage} file from this ${input.sourceDocumentType}. Return only the structured extraction and assess whether this document matches that requested file type.`
+              text: `Selected file path: ${definition.title}. Expected/acceptable starting documents include: ${expectedDocuments.join(", ")}. ${stageGuidance} The upload was provisionally labeled "${input.sourceDocumentType}" by the intake UI; do not assume that label is correct. Identify the document from its contents, assess whether it belongs in this selected file path, and extract only fields appropriate to the identified document.`
             },
             {
               type: "input_file",
@@ -199,6 +215,22 @@ async function createStructuredExtraction(
       "The extraction provider returned unreadable structured transaction data."
     );
   }
+}
+
+function buildStageGuidance(side: TransactionSide, stage: TransactionStage): string {
+  if (side === "seller" && stage === "pre_contract") {
+    return "This is a seller listing-stage file. An executed listing agreement is a primary expected document and should normally be classified as a match. Extract seller names, property address, list price, listing dates, brokerage/agent, and other clearly stated listing terms. Do not expect a sale closing date or buyer purchase terms yet.";
+  }
+
+  if (side === "seller" && stage === "under_contract") {
+    return "This is a seller file that is now under contract. The executed Contract to Buy and Sell is the primary transaction document; a listing agreement is still a valid supporting document but by itself does not establish the accepted sale terms.";
+  }
+
+  if (side === "buyer" && stage === "pre_contract") {
+    return "This is a buyer representation-stage file. A buyer agency/representation agreement is a primary expected document. A property or purchase contract is not required yet.";
+  }
+
+  return "This is a buyer file that is under contract. The executed Contract to Buy and Sell is the primary source for purchase price, earnest money, deadlines, closing, possession, and financing terms.";
 }
 
 async function deleteOpenAiFileQuietly(fileId: string, apiKey: string) {
@@ -259,6 +291,12 @@ const extractionJsonSchema = {
       items: { type: "string" }
     },
     propertyAddress: { type: ["string", "null"] },
+    identifiedDocumentType: { type: "string" },
+    listPrice: { type: ["number", "null"] },
+    listingEffectiveDate: { type: ["string", "null"] },
+    listingExpirationDate: { type: ["string", "null"] },
+    brokerageName: { type: ["string", "null"] },
+    agentName: { type: ["string", "null"] },
     purchasePrice: { type: ["number", "null"] },
     earnestMoney: { type: ["number", "null"] },
     closingDate: { type: ["string", "null"] },
@@ -293,6 +331,12 @@ const extractionJsonSchema = {
   required: [
     "clientNames",
     "propertyAddress",
+    "identifiedDocumentType",
+    "listPrice",
+    "listingEffectiveDate",
+    "listingExpirationDate",
+    "brokerageName",
+    "agentName",
     "purchasePrice",
     "earnestMoney",
     "closingDate",
