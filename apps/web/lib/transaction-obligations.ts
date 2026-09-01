@@ -14,6 +14,7 @@ export type TransactionObligationState =
   | "passed_needs_review"
   | "superseded"
   | "not_applicable";
+export type TransactionObligationOutcome = "occurred" | "no_event" | "completed";
 
 export type TransactionObligationData = {
   obligationKey: string;
@@ -34,6 +35,7 @@ export type TransactionObligationData = {
   supersededBySourceDocumentId?: string;
   satisfiedAt?: string;
   satisfiedReason?: string;
+  satisfactionOutcome?: TransactionObligationOutcome;
 };
 
 export type TransactionObligationSeed = {
@@ -164,7 +166,8 @@ export function readTransactionObligationData(value: unknown): TransactionObliga
     supersededBySourceDocumentId:
       typeof value.supersededBySourceDocumentId === "string" ? value.supersededBySourceDocumentId : undefined,
     satisfiedAt: typeof value.satisfiedAt === "string" ? value.satisfiedAt : undefined,
-    satisfiedReason: typeof value.satisfiedReason === "string" ? value.satisfiedReason : undefined
+    satisfiedReason: typeof value.satisfiedReason === "string" ? value.satisfiedReason : undefined,
+    satisfactionOutcome: isOutcome(value.satisfactionOutcome) ? value.satisfactionOutcome : undefined
   };
 }
 
@@ -180,7 +183,6 @@ export function evaluateTransactionObligation(
   const nowDay = startOfUtcDay(now).getTime();
   const monitorDay = data.monitorAfter ? dayValue(data.monitorAfter) : dayValue(data.activatedAt);
   if (dueDay === null || monitorDay === null) return null;
-
   if (dueDay < monitorDay) return null;
 
   const daysUntil = Math.floor((dueDay - nowDay) / 86_400_000);
@@ -323,6 +325,10 @@ function isState(value: unknown): value is TransactionObligationState {
     value === "superseded" ||
     value === "not_applicable"
   );
+}
+
+function isOutcome(value: unknown): value is TransactionObligationOutcome {
+  return value === "occurred" || value === "no_event" || value === "completed";
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
