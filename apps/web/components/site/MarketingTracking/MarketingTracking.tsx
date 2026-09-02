@@ -55,9 +55,14 @@ export function MarketingTracking() {
   const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
   const tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
   const linkedInPartnerId = process.env.NEXT_PUBLIC_LINKEDIN_PARTNER_ID;
+  const hasOptionalTracking = Boolean(
+    ga4Id || metaPixelId || tiktokPixelId || linkedInPartnerId
+  );
 
   useEffect(() => {
     captureMarketingAttribution();
+
+    if (!hasOptionalTracking) return;
 
     try {
       const stored = window.localStorage.getItem(consentKey);
@@ -67,7 +72,7 @@ export function MarketingTracking() {
     } catch {
       setConsent("unknown");
     }
-  }, []);
+  }, [hasOptionalTracking]);
 
   function choose(next: Exclude<ConsentState, "unknown">) {
     try {
@@ -78,7 +83,7 @@ export function MarketingTracking() {
     setConsent(next);
   }
 
-  const trackingEnabled = consent === "granted";
+  const trackingEnabled = hasOptionalTracking && consent === "granted";
 
   return (
     <>
@@ -112,7 +117,7 @@ export function MarketingTracking() {
         </Script>
       ) : null}
 
-      {consent === "unknown" ? (
+      {hasOptionalTracking && consent === "unknown" ? (
         <div
           role="dialog"
           aria-label="Analytics preferences"
