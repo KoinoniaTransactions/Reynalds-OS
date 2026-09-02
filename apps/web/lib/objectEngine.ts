@@ -1,5 +1,6 @@
 export type RosObjectType =
   | "relationship"
+  | "listing_engagement"
   | "transaction"
   | "task"
   | "invoice"
@@ -33,12 +34,13 @@ export const objectEnginePrinciples = {
   name: "Reynalds OS Object Engine",
   rule: "Everything important should be represented as an object whenever practical.",
   purpose:
-    "Provide a shared object model for companies, workflows, relationships, transactions, tasks, documents, finance, knowledge, and future Brain orchestration.",
+    "Provide a shared object model for companies, workflows, relationships, listing engagements, transactions, tasks, documents, finance, knowledge, and future Brain orchestration.",
   currentStatus: "Foundation established"
 };
 
 export const coreObjectTypes: RosObjectType[] = [
   "relationship",
+  "listing_engagement",
   "transaction",
   "task",
   "invoice",
