@@ -4,7 +4,8 @@ Status: Production master approved for creative; service-claim gating applies be
 Owner: Koinonia Transactions  
 Primary audience: Colorado Realtors  
 Primary objective: Qualified lead / consultation request  
-Primary CTA: See Your Coverage Options
+Primary CTA: See Your Coverage Options  
+Paid destination: `/coverage`
 
 ## Locked Core Message
 
@@ -98,20 +99,37 @@ CTA: Learn More
 - `KT_C02_TT_CAPACITY_MASTER_A`
 - `KT_C02_LI_CAPACITY_MASTER_A`
 
-## UTMs
+## Paid Destination + UTMs
 
-- Instagram: `utm_source=instagram&utm_medium=paid_social&utm_campaign=capacity_02&utm_content=master_a`
-- Facebook: `utm_source=facebook&utm_medium=paid_social&utm_campaign=capacity_02&utm_content=master_a`
-- TikTok: `utm_source=tiktok&utm_medium=paid_social&utm_campaign=capacity_02&utm_content=master_a`
-- LinkedIn: `utm_source=linkedin&utm_medium=paid_social&utm_campaign=capacity_02&utm_content=master_a`
+Base destination: `https://koinoniatransactions.com/coverage`
+
+- Instagram: `https://koinoniatransactions.com/coverage?utm_source=instagram&utm_medium=paid_social&utm_campaign=capacity_02&utm_content=master_a`
+- Facebook: `https://koinoniatransactions.com/coverage?utm_source=facebook&utm_medium=paid_social&utm_campaign=capacity_02&utm_content=master_a`
+- TikTok: `https://koinoniatransactions.com/coverage?utm_source=tiktok&utm_medium=paid_social&utm_campaign=capacity_02&utm_content=master_a`
+- LinkedIn: `https://koinoniatransactions.com/coverage?utm_source=linkedin&utm_medium=paid_social&utm_campaign=capacity_02&utm_content=master_a`
+
+Preserve `gclid`, `fbclid`, `ttclid`, and `li_fat_id` when supplied by the platform. The site stores first-party attribution for the current session and includes sanitized attribution with a successful consultation request.
+
+## Measurement Configuration
+
+Optional analytics/pixel scripts are consent-gated and must use confirmed production IDs only:
+
+- `NEXT_PUBLIC_GA4_MEASUREMENT_ID`
+- `NEXT_PUBLIC_META_PIXEL_ID`
+- `NEXT_PUBLIC_TIKTOK_PIXEL_ID`
+- `NEXT_PUBLIC_LINKEDIN_PARTNER_ID`
+- `NEXT_PUBLIC_LINKEDIN_CONVERSION_ID`
+
+A successful consultation submission is the conversion boundary. The client fires GA4 `generate_lead`, Meta `Lead`, TikTok `SubmitForm`, and the configured LinkedIn conversion only after the consultation API returns success. No PII is included in those client-side conversion events.
 
 ## Pre-Launch Checklist
 
 - Verify closing-coverage operational authority before using exact creative version.
-- Confirm destination page accurately reflects promoted services.
-- Confirm `GA4 lead` event fires on the production destination.
-- Confirm Meta / TikTok / LinkedIn pixels and consent behavior where applicable.
+- Confirm `/coverage` accurately reflects promoted services.
+- Confirm `GA4 generate_lead` fires on a successful production consultation submission after consent.
+- Confirm Meta / TikTok / LinkedIn pixels and consent behavior after real production IDs are configured.
 - Preserve click IDs and UTM parameters through form submission.
+- Smoke-test the consultation email and confirm Marketing Attribution is present in the received lead.
 - Upload 9:16 and 4:5 as placement-specific assets rather than relying on automatic cropping.
 - Check each platform preview for UI collisions before publishing.
 - Use commercial-cleared / original music only.

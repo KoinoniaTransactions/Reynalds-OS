@@ -1,4 +1,10 @@
 import { NextResponse } from "next/server";
+import {
+  marketingAttributionRows,
+  marketingAttributionText,
+  sanitizeMarketingAttribution,
+  type SanitizedMarketingAttribution
+} from "../../../../lib/marketingAttributionServer";
 
 export const runtime = "nodejs";
 
@@ -12,6 +18,7 @@ type ConsultationPayload = {
   preferredTime?: unknown;
   notes?: unknown;
   website?: unknown;
+  attribution?: unknown;
 };
 
 const recipientEmail =
@@ -65,7 +72,8 @@ function buildTextEmail({
   phone,
   preferredDate,
   preferredTime,
-  notes
+  notes,
+  attribution
 }: {
   consultationType: string;
   name: string;
@@ -74,6 +82,7 @@ function buildTextEmail({
   preferredDate: string;
   preferredTime: string;
   notes: string;
+  attribution: SanitizedMarketingAttribution;
 }) {
   return [
     "New Koinonia Consultation Request",
@@ -86,8 +95,11 @@ function buildTextEmail({
     `Requested Time: ${preferredTime}`,
     "",
     "Notes:",
-    notes
-  ].join("\n");
+    notes,
+    marketingAttributionText(attribution)
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function buildHtmlEmail({
@@ -97,7 +109,8 @@ function buildHtmlEmail({
   phone,
   preferredDate,
   preferredTime,
-  notes
+  notes,
+  attribution
 }: {
   consultationType: string;
   name: string;
@@ -106,6 +119,7 @@ function buildHtmlEmail({
   preferredDate: string;
   preferredTime: string;
   notes: string;
+  attribution: SanitizedMarketingAttribution;
 }) {
   const rows = [
     ["Consultation Type", consultationType],
@@ -115,6 +129,7 @@ function buildHtmlEmail({
     ["Requested Date", preferredDate],
     ["Requested Time", preferredTime]
   ];
+  const attributionRows = marketingAttributionRows(attribution);
 
   return `
     <div style="font-family: Arial, sans-serif; color: #181818; line-height: 1.55;">
@@ -140,6 +155,28 @@ function buildHtmlEmail({
       <div style="white-space: pre-wrap; border: 1px solid #e8dfcf; padding: 14px 16px; max-width: 680px; background: #fbf8f2;">
         ${escapeHtml(notes)}
       </div>
+
+      ${
+        attributionRows.length
+          ? `<h2 style="margin: 22px 0 8px;">Marketing Attribution</h2>
+             <table cellpadding="0" cellspacing="0" style="border-collapse: collapse; width: 100%; max-width: 680px;">
+               ${attributionRows
+                 .map(
+                   ([label, rowValue]) => `
+                     <tr>
+                       <td style="border: 1px solid #e8dfcf; padding: 10px 12px; font-weight: 700; width: 180px;">
+                         ${escapeHtml(label)}
+                       </td>
+                       <td style="border: 1px solid #e8dfcf; padding: 10px 12px; word-break: break-word;">
+                         ${escapeHtml(rowValue)}
+                       </td>
+                     </tr>
+                   `
+                 )
+                 .join("")}
+             </table>`
+          : ""
+      }
     </div>
   `;
 }
@@ -172,6 +209,7 @@ export async function POST(request: Request) {
   const preferredDate = value(payload.preferredDate);
   const preferredTime = value(payload.preferredTime);
   const notes = value(payload.notes);
+  const attribution = sanitizeMarketingAttribution(payload.attribution);
 
   if (
     !consultationType ||
@@ -235,7 +273,8 @@ export async function POST(request: Request) {
       phone,
       preferredDate,
       preferredTime,
-      notes
+      notes,
+      attribution
     }),
     text: buildTextEmail({
       consultationType,
@@ -244,7 +283,8 @@ export async function POST(request: Request) {
       phone,
       preferredDate,
       preferredTime,
-      notes
+      notes,
+      attribution
     })
   };
 
