@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { KoinoniaCoverage } from "../../components/site/PageAssemblies/KoinoniaCoverage";
 import { absoluteUrl, seoConfig } from "../../config/seo.config";
 
-const title = "Real Estate Operations Coverage for Colorado Realtors | Koinonia";
+const title = "Real Estate Operations Coverage for Colorado Realtors";
 const description =
   "Transaction management is only part of the job. Explore Koinonia support across licensed showings, professional open houses, contract and document support, transaction management, closing preparation, and day-to-day real estate operations.";
 
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     canonical: absoluteUrl("/coverage")
   },
   openGraph: {
-    title,
+    title: `${title} | Koinonia`,
     description,
     url: absoluteUrl("/coverage"),
     images: [
@@ -21,12 +21,12 @@ export const metadata: Metadata = {
         url: absoluteUrl(seoConfig.socialPreviewPath),
         width: seoConfig.socialPreviewWidth,
         height: seoConfig.socialPreviewHeight,
-        alt: title
+        alt: `${title} | Koinonia`
       }
     ]
   },
   twitter: {
-    title,
+    title: `${title} | Koinonia`,
     description,
     images: [absoluteUrl(seoConfig.socialPreviewPath)]
   }
