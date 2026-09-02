@@ -1,4 +1,5 @@
 export const marketingAttributionStorageKey = "koinonia_marketing_attribution_v3";
+export const previousMarketingAttributionStorageKey = "koinonia_marketing_attribution_v2";
 export const legacyMarketingAttributionStorageKey = "koinonia_marketing_attribution";
 
 export type MarketingTouch = {
