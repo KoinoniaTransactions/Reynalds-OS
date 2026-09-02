@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
+import { ClientTransactionQuickActions } from "../../../components/client/ClientTransactionQuickActions";
 import { ClientTransactionSearch } from "../../../components/client/ClientTransactionSearch";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
 import { clientTransactionObjectType } from "../../../lib/client-transactions";
+import { getTransactionInboundEmailAddress } from "../../../lib/transaction-inbound-email";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +23,7 @@ type DashboardTransaction = {
   closingDate: string | null;
   health: string;
   id: string;
+  inboundEmail: string | null;
   name: string;
   nextAction: string | null;
   propertyAddress: string;
@@ -142,20 +145,22 @@ export default async function ClientDashboardPage({ searchParams }: PageProps) {
 function TransactionRow({ transaction }: { transaction: DashboardTransaction }) {
   const needsYou = needsAttention(transaction);
   return (
-    <a className="koinonia-client-transaction-row" href={`/client/work/${transaction.id}`}>
-      <div className="koinonia-client-transaction-row-main">
-        <div className="koinonia-client-transaction-row-title">
-          <h3>{transaction.propertyAddress}</h3>
-          {needsYou ? <span className="is-attention">Needs you</span> : <span>{transaction.side}</span>}
+    <article className="koinonia-client-transaction-row">
+      <a className="koinonia-client-transaction-row-link" href={`/client/work/${transaction.id}`}>
+        <div className="koinonia-client-transaction-row-main">
+          <div className="koinonia-client-transaction-row-title">
+            <h3>{transaction.propertyAddress}</h3>
+            {needsYou ? <span className="is-attention">Needs you</span> : <span>{transaction.side}</span>}
+          </div>
+          <p>{transaction.clientName}</p>
         </div>
-        <p>{transaction.clientName}</p>
-      </div>
-      <div className="koinonia-client-transaction-row-status">
-        <strong>{humanizeStatus(transaction.status)}</strong>
-        <span>{transaction.closingDate ? `Closing ${formatDate(transaction.closingDate)}` : "Closing date pending"}</span>
-      </div>
-      <span className="koinonia-client-row-chevron" aria-hidden="true">›</span>
-    </a>
+        <div className="koinonia-client-transaction-row-status">
+          <strong>{humanizeStatus(transaction.status)}</strong>
+          <span>{transaction.closingDate ? `Closing ${formatDate(transaction.closingDate)}` : "Closing date pending"}</span>
+        </div>
+      </a>
+      <ClientTransactionQuickActions inboundEmail={transaction.inboundEmail} transactionId={transaction.id} />
+    </article>
   );
 }
 
@@ -181,7 +186,18 @@ async function getDashboardView(workspaceId: string, userId: string): Promise<Da
       const clientName = firstString(confirmed?.clientName, data.clientName, formatClientNames(confirmed?.clientNames), formatClientNames(proposal?.clientNames));
       const propertyAddress = firstString(confirmed?.propertyAddress, data.propertyAddress, proposal?.propertyAddress, stripTransactionSuffix(object.name));
       const closingDate = firstString(confirmed?.closingDate, data.closingDate, proposal?.closingDate);
-      return { clientName: clientName || "Client details pending", closingDate: closingDate || null, health: object.health, id: object.id, name: object.name, nextAction: object.nextAction, propertyAddress: propertyAddress || object.name, side, status: object.status } satisfies DashboardTransaction;
+      return {
+        clientName: clientName || "Client details pending",
+        closingDate: closingDate || null,
+        health: object.health,
+        id: object.id,
+        inboundEmail: getTransactionInboundEmailAddress(object.id),
+        name: object.name,
+        nextAction: object.nextAction,
+        propertyAddress: propertyAddress || object.name,
+        side,
+        status: object.status
+      } satisfies DashboardTransaction;
     });
     return { attention: transactions.filter(needsAttention), transactions };
   } catch (error) {
