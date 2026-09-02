@@ -1,14 +1,22 @@
 # Coverage Campaign 01 — Engagement Follow-up Email
 
-Status: Production Working Copy  
+Status: Production Working Copy — NOT AUTHORIZED FOR SEND  
 Owner: Koinonia Transactions  
 Campaign: Coverage Campaign 01
+
+## Sequence Position
+
+This is Follow-up A for the canonical initial cold email:
+
+`02_Companies/Koinonia/05_Business_Materials/coverage_campaign_01_initial_cold_email.md`
+
+This file does not authorize a send. Follow-up transmission requires its own scoped authorization unless Jeremiah explicitly authorizes the sequence.
 
 ## Purpose
 
 Prepared follow-up for a Realtor prospect who has demonstrated verified engagement with the initial campaign email but has not replied, booked a consultation, unsubscribed, or generated another stronger signal.
 
-This is not the initial cold/prospect email. It is the engagement follow-up referenced by:
+It is the engagement follow-up referenced by:
 
 `02_Companies/Koinonia/04_Departments/Marketing/prospect_engagement_visit_workflow.md`
 
@@ -65,3 +73,7 @@ Do not invent a personal relationship or claim that Jeremiah reviewed the prospe
 ## Compliance / Send Footer
 
 Final production email must include the sender-identification, postal-address, preference/unsubscribe, and other compliance elements required by the selected outbound-email platform and applicable law before activation.
+
+## Current State
+
+**STAGED ONLY — NO SEND AUTHORIZATION.**
