@@ -27,18 +27,11 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Transaction",
   description: "Protected Koinonia transaction status, documents, review requests, and activity.",
-  alternates: {
-    canonical: absoluteUrl("/client/work")
-  },
-  robots: {
-    index: false,
-    follow: false
-  }
+  alternates: { canonical: absoluteUrl("/client/work") },
+  robots: { index: false, follow: false }
 };
 
-type Params = {
-  params: Promise<{ id: string }>;
-};
+type Params = { params: Promise<{ id: string }> };
 
 type ClientReviewDocument = {
   id: string;
@@ -63,9 +56,7 @@ export default async function ClientWorkDetailPage({ params }: Params) {
   const { id } = await params;
   const workspace = await getClientWorkWorkspace(actor.workspaceId, actor.id, id);
 
-  if (!workspace) {
-    notFound();
-  }
+  if (!workspace) notFound();
 
   const displayTitle = getCompactTransactionTitle(workspace.summary.title);
 
@@ -76,20 +67,16 @@ export default async function ClientWorkDetailPage({ params }: Params) {
       <section className="koinonia-section koinonia-workspace-hero koinonia-client-transaction-hero">
         <div className="koinonia-container">
           <div className="koinonia-client-transaction-toolbar">
-            <a className="koinonia-client-back-link" href="/client/dashboard">
-              ← Transactions
-            </a>
+            <a className="koinonia-client-back-link" href="/client/dashboard">← Transactions</a>
 
             <div className="koinonia-client-transaction-actions">
-              <a className="koinonia-button primary koinonia-client-send-document" href="/client/documents">
-                Send document
-              </a>
+              <a className="koinonia-client-primary-action" href="/client/documents">＋ Send document</a>
               <details className="koinonia-client-more-menu">
-                <summary aria-label="More transaction options">More</summary>
+                <summary aria-label="More transaction options">•••</summary>
                 <div className="koinonia-client-more-menu-popover">
                   <a href="#overview">Overview</a>
                   {workspace.reviewDocuments.length ? <a href="#review">Needs your review</a> : null}
-                  <a href="#documents">Files Koinonia has</a>
+                  <a href="#documents">Files</a>
                   <a href="#timeline">Activity</a>
                   <a href="/client/documents">Document Center</a>
                 </div>
@@ -99,18 +86,13 @@ export default async function ClientWorkDetailPage({ params }: Params) {
 
           <div className="koinonia-client-transaction-heading">
             <div>
-              <p className="koinonia-client-transaction-kicker">Koinonia Transaction</p>
+              <p className="koinonia-client-transaction-kicker">Transaction</p>
               <h1 className="koinonia-client-transaction-title">{displayTitle}</h1>
               <div className="koinonia-client-transaction-context" aria-label="Transaction status">
                 <span>{workspace.summary.status}</span>
                 <span aria-hidden="true">·</span>
                 <strong>{workspace.summary.health}</strong>
-                {workspace.summary.due ? (
-                  <>
-                    <span aria-hidden="true">·</span>
-                    <span>{workspace.summary.due}</span>
-                  </>
-                ) : null}
+                {workspace.summary.due ? <><span aria-hidden="true">·</span><span>{workspace.summary.due}</span></> : null}
               </div>
             </div>
 
@@ -120,69 +102,50 @@ export default async function ClientWorkDetailPage({ params }: Params) {
                 {workspace.reviewDocuments.length === 1 ? "review needed" : "reviews needed"}
               </a>
             ) : (
-              <span className="koinonia-client-on-track-indicator">Koinonia has it</span>
+              <span className="koinonia-client-on-track-indicator">✓ Koinonia has it</span>
             )}
           </div>
 
-          {workspace.notice ? (
-            <p className="koinonia-client-security-note">{workspace.notice}</p>
-          ) : null}
+          {workspace.notice ? <p className="koinonia-client-security-note">{workspace.notice}</p> : null}
         </div>
       </section>
 
       <section className="koinonia-section koinonia-client-workspace-body">
         <div className="koinonia-container">
           <div className="koinonia-workspace-main-stack">
-            <section
-              id="overview"
-              className="koinonia-workspace-panel koinonia-workspace-overview-panel koinonia-client-overview-panel"
-              aria-labelledby="client-work-overview"
-            >
-              <div className="koinonia-workspace-panel-heading">
-                <div>
-                  <p className="koinonia-eyebrow">Koinonia Overview</p>
-                  <h2 id="client-work-overview">
-                    {workspace.reviewDocuments.length
-                      ? "We need a quick review from you"
-                      : "Everything is moving forward"}
-                  </h2>
-                </div>
-                <p>Updated {workspace.summary.updated}</p>
-              </div>
-
-              <div className="koinonia-workspace-next-action koinonia-client-status-message">
-                <span>{workspace.reviewDocuments.length ? "Needed from you" : "Right now"}</span>
-                <strong>
+            <section id="overview" className="koinonia-client-overview-compact" aria-labelledby="client-work-overview">
+              <div className="koinonia-client-overview-copy">
+                <span className="koinonia-client-section-label">Koinonia overview</span>
+                <h2 id="client-work-overview">
+                  {workspace.reviewDocuments.length ? "We need a quick review from you" : "Everything is moving forward"}
+                </h2>
+                <p>
                   {workspace.reviewDocuments.length
-                    ? `${workspace.reviewDocuments.length} ${workspace.reviewDocuments.length === 1 ? "document needs" : "documents need"} your accuracy review.`
+                    ? `${workspace.reviewDocuments.length} ${workspace.reviewDocuments.length === 1 ? "document needs" : "documents need"} your accuracy review. Koinonia will handle the next step after you respond.`
                     : "Nothing is needed from you right now. Koinonia is managing the file."}
-                </strong>
+                </p>
               </div>
+              <span className="koinonia-client-updated">Updated {workspace.summary.updated}</span>
 
-              <div className="koinonia-workspace-meta-grid koinonia-client-meta-grid">
-                {workspace.summary.meta.slice(0, 4).map((item) => (
-                  <article key={item.label}>
+              <div className="koinonia-client-facts-row">
+                {workspace.summary.meta.slice(0, 3).map((item) => (
+                  <div key={item.label}>
                     <span>{item.label}</span>
                     <strong>{item.value}</strong>
-                  </article>
+                  </div>
                 ))}
               </div>
             </section>
 
             {workspace.reviewDocuments.length ? (
-              <section
-                id="review"
-                className="koinonia-workspace-panel"
-                aria-labelledby="client-document-review"
-              >
-                <div className="koinonia-workspace-panel-heading">
+              <section id="review" className="koinonia-client-focus-section" aria-labelledby="client-document-review">
+                <div className="koinonia-client-section-heading">
                   <div>
-                    <p className="koinonia-eyebrow">Needs Your Review</p>
+                    <span className="koinonia-client-section-label">Needs your review</span>
                     <h2 id="client-document-review">A quick accuracy check</h2>
                   </div>
-                  <p>Koinonia will handle the next step after you respond.</p>
+                  <p>Koinonia continues as soon as you respond.</p>
                 </div>
-
                 <div className="koinonia-client-review-stack">
                   {workspace.reviewDocuments.map((document) => (
                     <ClientDocumentReviewCard document={document} key={document.id} />
@@ -193,16 +156,6 @@ export default async function ClientWorkDetailPage({ params }: Params) {
 
             <WorkspaceDocuments documents={workspace.documents} />
             <WorkspaceTimeline events={workspace.events} />
-
-            <section className="koinonia-workspace-panel koinonia-workspace-boundary-card">
-              <p className="koinonia-eyebrow">Send us what you have</p>
-              <p>
-                You do not need to organize the transaction file for Koinonia. Upload or send documents as you receive them and we will review, classify, and manage the file. If we need something specific from you, we will ask.
-              </p>
-              <a className="koinonia-document-link" href="/client/documents">
-                Send / Upload Documents
-              </a>
-            </section>
           </div>
         </div>
       </section>
@@ -213,88 +166,89 @@ export default async function ClientWorkDetailPage({ params }: Params) {
 }
 
 function WorkspaceDocuments({ documents }: { documents: PortalWorkspaceDocumentItem[] }) {
+  const recentDocuments = documents.slice(0, 5);
+  const olderDocuments = documents.slice(5);
+
   return (
-    <section id="documents" className="koinonia-workspace-panel" aria-labelledby="client-work-documents">
-      <div className="koinonia-workspace-panel-heading">
+    <section id="documents" className="koinonia-client-secondary-section" aria-labelledby="client-work-documents">
+      <div className="koinonia-client-section-heading">
         <div>
-          <p className="koinonia-eyebrow">Files Koinonia Has</p>
-          <h2 id="client-work-documents">Received and filed</h2>
+          <span className="koinonia-client-section-label">Files</span>
+          <h2 id="client-work-documents">Koinonia has these</h2>
         </div>
-        <a className="koinonia-document-link" href="/client/documents">
-          Send another
-        </a>
+        <a className="koinonia-client-text-action" href="/client/documents">Send another</a>
       </div>
 
-      <p className="koinonia-client-security-note">
-        This is a receipt of what Koinonia has on the file—not a homework list. We will contact you if something else is actually needed.
-      </p>
-
-      <div className="koinonia-workspace-list">
-        {documents.map((document) => (
-          <article className="koinonia-workspace-list-item" key={document.id}>
-            <div>
-              <span>{document.status}</span>
-              <h3>{document.title}</h3>
-              <p>{document.detail}</p>
-              <p>{document.fileInfo}</p>
-              {document.downloadHref ? (
-                <a className="koinonia-document-link" href={document.downloadHref}>
-                  View file
-                </a>
-              ) : null}
-            </div>
-            <strong>{document.submitted}</strong>
-          </article>
-        ))}
+      <div className="koinonia-client-file-list">
+        {recentDocuments.map((document) => <DocumentRow document={document} key={document.id} />)}
       </div>
+
+      {olderDocuments.length ? (
+        <details className="koinonia-client-expandable-list">
+          <summary>View {olderDocuments.length} more {olderDocuments.length === 1 ? "file" : "files"}</summary>
+          <div className="koinonia-client-file-list">
+            {olderDocuments.map((document) => <DocumentRow document={document} key={document.id} />)}
+          </div>
+        </details>
+      ) : null}
     </section>
+  );
+}
+
+function DocumentRow({ document }: { document: PortalWorkspaceDocumentItem }) {
+  return (
+    <article className="koinonia-client-file-row">
+      <div>
+        <h3>{document.title}</h3>
+        <p>{document.fileInfo || document.detail}</p>
+      </div>
+      <div className="koinonia-client-file-row-meta">
+        <span>{document.status}</span>
+        <small>{document.submitted}</small>
+        {document.downloadHref ? <a href={document.downloadHref}>View</a> : null}
+      </div>
+    </article>
   );
 }
 
 function WorkspaceTimeline({ events }: { events: PortalWorkspaceEventItem[] }) {
   return (
-    <section id="timeline" className="koinonia-workspace-panel" aria-labelledby="client-work-history">
-      <div className="koinonia-workspace-panel-heading">
-        <div>
-          <p className="koinonia-eyebrow">Activity</p>
-          <h2 id="client-work-history">What Koinonia has handled</h2>
-        </div>
-      </div>
-
-      <div className="koinonia-workspace-timeline">
+    <details id="timeline" className="koinonia-client-collapsed-section">
+      <summary>
+        <span>
+          <strong>Activity</strong>
+          <small>{events.length} recent {events.length === 1 ? "update" : "updates"}</small>
+        </span>
+        <span aria-hidden="true">＋</span>
+      </summary>
+      <div className="koinonia-client-activity-list">
         {events.map((event) => (
           <article key={event.id}>
-            <span>{event.label}</span>
-            <strong>{event.summary}</strong>
-            <p>{event.time}</p>
+            <div>
+              <strong>{event.summary}</strong>
+              <span>{event.label}</span>
+            </div>
+            <time>{event.time}</time>
           </article>
         ))}
       </div>
-    </section>
+    </details>
   );
 }
 
-async function getClientWorkWorkspace(
-  workspaceId: string,
-  userId: string,
-  workItemId: string
-): Promise<ClientWorkWorkspaceView | null> {
+async function getClientWorkWorkspace(workspaceId: string, userId: string, workItemId: string): Promise<ClientWorkWorkspaceView | null> {
   try {
     const workItem = await prisma.rosObject.findFirst({
       where: {
         id: workItemId,
         workspaceId,
-        objectType: {
-          in: [...clientPortalWorkObjectTypes]
-        },
+        objectType: { in: [...clientPortalWorkObjectTypes] },
         archivedAt: null,
         OR: [{ clientUserId: userId }, { ownerId: userId }]
       }
     });
 
-    if (!workItem) {
-      return null;
-    }
+    if (!workItem) return null;
 
     const [documents, events] = await Promise.all([
       prisma.document.findMany({
@@ -302,18 +256,13 @@ async function getClientWorkWorkspace(
           workspaceId,
           relatedObjectId: workItem.id,
           archivedAt: null,
-          accessLevel: {
-            in: ["client", "client_and_staff"]
-          }
+          accessLevel: { in: ["client", "client_and_staff"] }
         },
         orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
         take: 50
       }),
       prisma.timelineEvent.findMany({
-        where: {
-          workspaceId,
-          objectId: workItem.id
-        },
+        where: { workspaceId, objectId: workItem.id },
         orderBy: { createdAt: "desc" },
         take: 30
       })
@@ -323,10 +272,7 @@ async function getClientWorkWorkspace(
       (document) => !document.removedAt && getPortalDocumentLifecycleState(document) === "active"
     );
     const versionGroups = groupPortalDocumentVersions(
-      activeDocuments.map((document) => ({
-        ...document,
-        lifecycleState: getPortalDocumentLifecycleState(document)
-      }))
+      activeDocuments.map((document) => ({ ...document, lifecycleState: getPortalDocumentLifecycleState(document) }))
     );
     const reviewDocuments = versionGroups
       .map((group) => group.current)
@@ -341,27 +287,21 @@ async function getClientWorkWorkspace(
       }));
 
     return {
-      documents: withWorkspaceDocuments(
-        buildPortalWorkspaceDocuments(documents, {
-          downloadBasePath: "/api/portal/documents",
-          storageReady: isDocumentStorageConfigured()
-        })
-      ),
+      documents: withWorkspaceDocuments(buildPortalWorkspaceDocuments(documents, {
+        downloadBasePath: "/api/portal/documents",
+        storageReady: isDocumentStorageConfigured()
+      })),
       events: withWorkspaceEvents(buildPortalWorkspaceTimeline(events)),
       reviewDocuments,
       summary: buildPortalWorkspaceSummary(workItem),
       transactionId: workItem.id
     };
   } catch (error) {
-    if (!isDatabaseUnavailableError(error)) {
-      throw error;
-    }
-
+    if (!isDatabaseUnavailableError(error)) throw error;
     return {
       documents: buildEmptyPortalWorkspaceDocuments(),
       events: buildEmptyPortalWorkspaceTimeline(),
-      notice:
-        "Work detail storage is not reachable in this preview, so live status, documents, and history cannot be shown yet.",
+      notice: "Work detail storage is not reachable in this preview, so live status, documents, and history cannot be shown yet.",
       reviewDocuments: [],
       summary: buildUnavailableWorkspaceSummary(workItemId),
       transactionId: workItemId
@@ -375,13 +315,10 @@ function getCompactTransactionTitle(title: string): string {
     .replace(/\s+[—-]\s+Transaction$/i, "")
     .replace(/^Transaction\s+[—-]\s+/i, "")
     .trim();
-
   return compact || "Transaction";
 }
 
-function withWorkspaceDocuments(
-  documents: PortalWorkspaceDocumentItem[]
-): PortalWorkspaceDocumentItem[] {
+function withWorkspaceDocuments(documents: PortalWorkspaceDocumentItem[]): PortalWorkspaceDocumentItem[] {
   return documents.length ? documents : buildEmptyPortalWorkspaceDocuments();
 }
 
@@ -389,9 +326,7 @@ function withWorkspaceEvents(events: PortalWorkspaceEventItem[]): PortalWorkspac
   return events.length ? events : buildEmptyPortalWorkspaceTimeline();
 }
 
-function isDocumentStorageConfigured(): boolean {
-  return isPortalDocumentR2Configured();
-}
+function isDocumentStorageConfigured(): boolean { return isPortalDocumentR2Configured(); }
 
 function buildUnavailableWorkspaceSummary(workItemId: string): PortalWorkspaceSummary {
   return {
@@ -409,10 +344,9 @@ function buildUnavailableWorkspaceSummary(workItemId: string): PortalWorkspaceSu
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {
-  return (
-    error instanceof Error &&
-    (error.name === "PrismaClientInitializationError" ||
-      error.message.includes("Can't reach database server") ||
-      error.message.includes("ECONNREFUSED"))
+  return error instanceof Error && (
+    error.name === "PrismaClientInitializationError" ||
+    error.message.includes("Can't reach database server") ||
+    error.message.includes("ECONNREFUSED")
   );
 }
