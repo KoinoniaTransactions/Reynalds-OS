@@ -27,9 +27,11 @@ Digital engagement should help Jeremiah know who is paying attention. A physical
 
 ## Service-Area Gate
 
-The prospect must have a verified public business location in an approved Koinonia service-area city unless a later business decision establishes another valid service-area basis.
+The prospect must have a verified public business/brokerage location reasonably inside Koinonia's approved Boulder-to-Pueblo Colorado Front Range service corridor, unless a later business decision establishes another valid service-area basis.
 
-All currently listed Koinonia services are available throughout the approved service area. Do not use the retired statewide-remote versus 20-mile-field split.
+Do not require an exact city-name match against a fixed whitelist. Use city, ZIP, county, metro/region, and verified public business address together. Borderline locations should be retained for service-area review rather than silently excluded.
+
+All currently listed Koinonia services are available throughout the approved service area. Do not use the retired statewide-remote versus 20-mile-field split or the retired 17-city whitelist.
 
 ## Private Prospect Data
 
@@ -55,7 +57,7 @@ Recommended mapping:
   - `status`: lifecycle state
   - `health`: engagement state
   - `nextAction`: current human or automated follow-up
-  - `data`: business contact, brokerage, service-area, campaign and consent/suppression fields
+  - `data`: business contact, brokerage, service-area segment, campaign and consent/suppression fields
 - `TimelineEvent`
   - preserves outbound and engagement history
 - `Task`
@@ -198,6 +200,7 @@ The notification should contain:
 - full name;
 - brokerage/team;
 - public business city;
+- service-area segment;
 - verified public office address;
 - phone;
 - email;
@@ -323,6 +326,21 @@ A future branded leave-behind concept should be designed as part of the campaign
 
 ---
 
+# Campaign Routing Segments
+
+Use these operating segments for batches, analytics, and office-visit routing:
+
+1. Boulder / Broomfield / Northwest Metro
+2. Denver / Central Metro
+3. Aurora / East & Southeast Metro
+4. South Metro / Parker / Douglas County
+5. Monument / Colorado Springs / Pikes Peak
+6. Pueblo / Southern Corridor
+
+Segment assignment does not change service eligibility.
+
+---
+
 # Event Types for Reynalds OS
 
 Recommended event names:
@@ -405,15 +423,16 @@ Actions:
 
 1. Finalize Campaign 01 initial email creative/copy.
 2. Confirm outbound-email platform and sender compliance/deliverability configuration.
-3. Import only approved service-area prospects from the private staging list.
-4. Create prospect RosObjects or equivalent secured CRM records.
-5. Connect provider engagement events to TimelineEvents.
-6. Connect meaningful website/lead events.
-7. Implement notification rules.
-8. Implement Follow-up A conditions.
-9. Implement visit-review task creation.
-10. Design the physical leave-behind/gift.
-11. Run a small controlled pilot before scaling.
+3. Build a materially larger private prospect pool across all six corridor segments.
+4. Import only approved in-area prospects from the private staging list.
+5. Create prospect RosObjects or equivalent secured CRM records.
+6. Connect provider engagement events to TimelineEvents.
+7. Connect meaningful website/lead events.
+8. Implement notification rules.
+9. Implement Follow-up A conditions.
+10. Implement visit-review task creation and route visits by segment.
+11. Design the physical leave-behind/gift.
+12. Run small controlled batches before scaling.
 
 ## Activation Gate
 
@@ -422,7 +441,7 @@ Do not activate sending merely because the contact file exists.
 Before first send confirm:
 
 - final initial email copy/creative;
-- service-area selection;
+- corridor/service-area selection;
 - suppression list;
 - business-email validation;
 - sender identity and authentication;
