@@ -31,12 +31,7 @@ export function getPortalDocumentR2Config(): PortalDocumentR2Config | null {
     return null;
   }
 
-  return {
-    accountId,
-    accessKeyId,
-    secretAccessKey,
-    bucketName
-  };
+  return { accountId, accessKeyId, secretAccessKey, bucketName };
 }
 
 export function isPortalDocumentR2Configured(): boolean {
@@ -59,8 +54,24 @@ export async function persistPortalDocumentToR2({
   cleanName: string;
   file: File;
 }): Promise<StoredR2Document> {
+  return persistPortalDocumentToR2ForWorkspace({
+    workspaceId: actor.workspaceId,
+    cleanName,
+    file
+  });
+}
+
+export async function persistPortalDocumentToR2ForWorkspace({
+  workspaceId,
+  cleanName,
+  file
+}: {
+  workspaceId: string;
+  cleanName: string;
+  file: File;
+}): Promise<StoredR2Document> {
   const config = requirePortalDocumentR2Config();
-  const workspaceSegment = getSafeStorageSegment(actor.workspaceId);
+  const workspaceSegment = getSafeStorageSegment(workspaceId);
   const storageFileName = `${randomUUID()}-${cleanName}`;
   const storageKey = `${workspaceSegment}/${storageFileName}`;
   const body = new Uint8Array(await file.arrayBuffer());
@@ -74,7 +85,7 @@ export async function persistPortalDocumentToR2({
       ContentType: file.type || "application/octet-stream",
       Metadata: {
         originalFileName: cleanName,
-        workspaceId: actor.workspaceId
+        workspaceId
       }
     })
   );
@@ -104,7 +115,6 @@ export async function getPortalDocumentFromR2(storageKey: string): Promise<Uint8
 export async function removePortalDocumentFromR2Quietly(storageKey: string) {
   try {
     const config = requirePortalDocumentR2Config();
-
     await createR2Client(config).send(
       new DeleteObjectCommand({
         Bucket: config.bucketName,
@@ -118,11 +128,9 @@ export async function removePortalDocumentFromR2Quietly(storageKey: string) {
 
 function requirePortalDocumentR2Config(): PortalDocumentR2Config {
   const config = getPortalDocumentR2Config();
-
   if (!config) {
     throw new Error("Cloudflare R2 document storage is not configured.");
   }
-
   return config;
 }
 
@@ -137,32 +145,18 @@ function createR2Client(config: PortalDocumentR2Config): S3Client {
   });
 }
 
-function normalizeR2EnvironmentValue(
-  rawValue: string | undefined
-): string | null {
-  if (!rawValue) {
-    return null;
-  }
+function normalizeR2EnvironmentValue(rawValue: string | undefined): string | null {
+  if (!rawValue) return null;
 
   const lines = rawValue
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean);
 
-  if (lines.length === 0) {
-    return null;
-  }
-
+  if (lines.length === 0) return null;
   const [firstLine] = lines;
-
-  if (!lines.every((line) => line === firstLine)) {
-    return null;
-  }
-
-  if (/[^\x20-\x7E]/.test(firstLine)) {
-    return null;
-  }
-
+  if (!lines.every((line) => line === firstLine)) return null;
+  if (/[^\x20-\x7E]/.test(firstLine)) return null;
   return firstLine;
 }
 
