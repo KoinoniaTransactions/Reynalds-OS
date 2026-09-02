@@ -31,13 +31,25 @@ declare global {
   }
 }
 
+export const marketingEventName = "koinonia:marketing-event";
+
+export type KoinoniaMarketingEvent = {
+  eventName: string;
+  parameters?: GoogleAnalyticsEventParameters;
+};
+
 export function trackGoogleAnalyticsEvent(
   eventName: string,
   parameters?: GoogleAnalyticsEventParameters
 ) {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") {
-    return;
-  }
+  if (typeof window === "undefined") return;
 
+  window.dispatchEvent(
+    new CustomEvent<KoinoniaMarketingEvent>(marketingEventName, {
+      detail: { eventName, parameters }
+    })
+  );
+
+  if (typeof window.gtag !== "function") return;
   window.gtag("event", eventName, parameters);
 }
