@@ -1,4 +1,4 @@
-export const marketingAttributionStorageKey = "koinonia_marketing_attribution_v2";
+export const marketingAttributionStorageKey = "koinonia_marketing_attribution_v3";
 export const legacyMarketingAttributionStorageKey = "koinonia_marketing_attribution";
 
 export type MarketingTouch = {
@@ -6,15 +6,20 @@ export type MarketingTouch = {
   utmMedium: string;
   utmCampaign: string;
   utmContent: string;
+  utmTerm: string;
   fbclid: string;
   ttclid: string;
+  gclid: string;
+  gbraid: string;
+  wbraid: string;
+  msclkid: string;
   referrer: string;
   landingPage: string;
   capturedAt: string;
 };
 
 export type MarketingAttributionState = {
-  version: 2;
+  version: 3;
   firstTouch: MarketingTouch;
   latestTouch: MarketingTouch;
 };
@@ -28,8 +33,13 @@ const emptyTouch: MarketingTouch = {
   utmMedium: "",
   utmCampaign: "",
   utmContent: "",
+  utmTerm: "",
   fbclid: "",
   ttclid: "",
+  gclid: "",
+  gbraid: "",
+  wbraid: "",
+  msclkid: "",
   referrer: "",
   landingPage: "",
   capturedAt: ""
@@ -59,8 +69,13 @@ export function normalizeMarketingTouch(input: unknown): MarketingTouch {
     utmMedium: text(source.utmMedium),
     utmCampaign: text(source.utmCampaign),
     utmContent: text(source.utmContent),
+    utmTerm: text(source.utmTerm),
     fbclid: text(source.fbclid),
     ttclid: text(source.ttclid),
+    gclid: text(source.gclid),
+    gbraid: text(source.gbraid),
+    wbraid: text(source.wbraid),
+    msclkid: text(source.msclkid),
     referrer: text(source.referrer),
     landingPage: text(source.landingPage),
     capturedAt: text(source.capturedAt)
@@ -73,8 +88,13 @@ export function hasMarketingSignal(touch: MarketingTouch): boolean {
       touch.utmMedium ||
       touch.utmCampaign ||
       touch.utmContent ||
+      touch.utmTerm ||
       touch.fbclid ||
       touch.ttclid ||
+      touch.gclid ||
+      touch.gbraid ||
+      touch.wbraid ||
+      touch.msclkid ||
       touch.referrer
   );
 }
@@ -97,8 +117,13 @@ export function createMarketingTouch({
     utmMedium: params.get("utm_medium") ?? "",
     utmCampaign: params.get("utm_campaign") ?? "",
     utmContent: params.get("utm_content") ?? "",
+    utmTerm: params.get("utm_term") ?? "",
     fbclid: params.get("fbclid") ?? "",
     ttclid: params.get("ttclid") ?? "",
+    gclid: params.get("gclid") ?? "",
+    gbraid: params.get("gbraid") ?? "",
+    wbraid: params.get("wbraid") ?? "",
+    msclkid: params.get("msclkid") ?? "",
     referrer: externalReferrer(referrer, landingPage),
     landingPage,
     capturedAt
@@ -111,13 +136,12 @@ export function normalizeMarketingAttributionState(
   if (!input || typeof input !== "object" || Array.isArray(input)) return null;
 
   const source = input as Record<string, unknown>;
+  if (!source.firstTouch || !source.latestTouch) return null;
 
-  if (source.version !== 2 || !source.firstTouch || !source.latestTouch) {
-    return null;
-  }
+  if (source.version !== 2 && source.version !== 3) return null;
 
   return {
-    version: 2,
+    version: 3,
     firstTouch: normalizeMarketingTouch(source.firstTouch),
     latestTouch: normalizeMarketingTouch(source.latestTouch)
   };
@@ -138,7 +162,7 @@ export function migrateLegacyMarketingAttribution(
   if (!hasMarketingSignal(legacy)) return null;
 
   return {
-    version: 2,
+    version: 3,
     firstTouch: legacy,
     latestTouch: legacy
   };
@@ -150,14 +174,14 @@ export function updateMarketingAttribution(
 ): MarketingAttributionState {
   if (!existing) {
     return {
-      version: 2,
+      version: 3,
       firstTouch: current,
       latestTouch: current
     };
   }
 
   return {
-    version: 2,
+    version: 3,
     firstTouch: existing.firstTouch,
     latestTouch: hasMarketingSignal(current) ? current : existing.latestTouch
   };
@@ -177,7 +201,7 @@ export function buildMarketingAttributionSubmission(
 
 export function emptyMarketingAttributionSubmission(): MarketingAttributionSubmission {
   return {
-    version: 2,
+    version: 3,
     firstTouch: emptyTouch,
     latestTouch: emptyTouch,
     conversionTouch: emptyTouch
