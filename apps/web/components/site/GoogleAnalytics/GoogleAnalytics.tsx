@@ -16,6 +16,7 @@ const publicMarketingRoutes = new Set([
   "/",
   "/about",
   "/contact",
+  "/coverage",
   "/privacy",
   "/referrals",
   "/services"
