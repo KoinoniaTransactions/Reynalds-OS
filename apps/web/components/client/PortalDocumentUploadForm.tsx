@@ -19,10 +19,11 @@ export function PortalDocumentUploadForm({
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const requestedDocumentType =
-    searchParams?.get("documentType")?.trim() ?? "";
+  const requestedDocumentType = searchParams?.get("documentType")?.trim() ?? "";
+  const requestedRelatedObjectId = searchParams?.get("relatedObjectId")?.trim() ?? "";
+  const effectiveRelatedObjectId = relatedObjectId ?? requestedRelatedObjectId || undefined;
   const [documentType, setDocumentType] = useState(
-    requestedDocumentType || "Seller Property Disclosure"
+    requestedDocumentType || "Other Transaction Document"
   );
   const [message, setMessage] = useState<string | null>(null);
   const [status, setStatus] = useState<"error" | "success" | null>(null);
@@ -56,10 +57,16 @@ export function PortalDocumentUploadForm({
       form.reset();
       setStatus("success");
       setMessage(
-        "Document uploaded. It is now ready for staff review."
+        effectiveRelatedObjectId
+          ? "Got it. Koinonia is reviewing and filing this document to the selected transaction."
+          : "Got it. Koinonia is reviewing and filing this document."
       );
 
-      if (pathname) {
+      if (effectiveRelatedObjectId) {
+        router.replace(`/client/work/${encodeURIComponent(effectiveRelatedObjectId)}#documents`, {
+          scroll: true
+        });
+      } else if (pathname) {
         router.replace(`${pathname}#employee-work-documents`, {
           scroll: true
         });
@@ -78,14 +85,19 @@ export function PortalDocumentUploadForm({
 
   return (
     <section className="koinonia-document-panel" id="employee-document-upload">
-      <p className="koinonia-eyebrow">Upload</p>
+      <p className="koinonia-eyebrow">Send document</p>
+      {effectiveRelatedObjectId ? (
+        <p className="koinonia-document-security-note">
+          This upload will go directly to the transaction you selected. Koinonia will identify and file it.
+        </p>
+      ) : null}
       <form className="koinonia-document-upload-form" onSubmit={handleSubmit}>
-        {relatedObjectId ? (
-          <input name="relatedObjectId" type="hidden" value={relatedObjectId} />
+        {effectiveRelatedObjectId ? (
+          <input name="relatedObjectId" type="hidden" value={effectiveRelatedObjectId} />
         ) : null}
 
         <label>
-          Document Type
+          What are you sending?
           <select
             disabled={disabled}
             name="documentType"
@@ -102,39 +114,30 @@ export function PortalDocumentUploadForm({
               "Contract Source File",
               "Other Transaction Document"
             ].includes(requestedDocumentType) ? (
-              <option value={requestedDocumentType}>
-                {requestedDocumentType}
-              </option>
+              <option value={requestedDocumentType}>{requestedDocumentType}</option>
             ) : null}
+            <option value="Other Transaction Document">Let Koinonia identify it</option>
             <option value="Seller Property Disclosure">Seller Property Disclosure</option>
             <option value="Executed Agreement">Executed Agreement</option>
             <option value="Inspection Instructions">Inspection Instructions</option>
             <option value="Lender Contact Sheet">Lender Contact Sheet</option>
             <option value="Contract Source File">Contract Source File</option>
-            <option value="Other Transaction Document">Other Transaction Document</option>
           </select>
         </label>
 
-        <label>
-          Transaction
-          <input
-            disabled={disabled}
-            name="transactionName"
-            placeholder="Transaction or client file"
-            type="text"
-          />
-        </label>
+        {!effectiveRelatedObjectId ? (
+          <label>
+            Transaction
+            <input
+              disabled={disabled}
+              name="transactionName"
+              placeholder="Transaction or client file"
+              type="text"
+            />
+          </label>
+        ) : null}
 
-        <label>
-          Action Needed
-          <select disabled={disabled} name="requestedAction">
-            <option value="Review uploaded document">Review uploaded document</option>
-            <option value="Use for draft preparation">Use for draft preparation</option>
-            <option value="Add to transaction file">Add to transaction file</option>
-            <option value="Update checklist status">Update checklist status</option>
-            <option value="Archive final copy">Archive final copy</option>
-          </select>
-        </label>
+        <input name="requestedAction" type="hidden" value="Review, identify, and file this document to the transaction" />
 
         <label>
           File
@@ -149,17 +152,17 @@ export function PortalDocumentUploadForm({
         </label>
 
         <label>
-          Notes
+          Note <span className="koinonia-client-optional-label">optional</span>
           <textarea
             disabled={disabled}
             name="notes"
-            placeholder="Instructions only; no passwords or access codes"
-            rows={4}
+            placeholder="Anything Koinonia should know?"
+            rows={2}
           />
         </label>
 
         <button className="koinonia-button primary" disabled={disabled} type="submit">
-          {isSubmitting ? "Uploading" : "Upload Document"}
+          {isSubmitting ? "Sending…" : "Send to Koinonia"}
         </button>
 
         {!storageReady ? (
