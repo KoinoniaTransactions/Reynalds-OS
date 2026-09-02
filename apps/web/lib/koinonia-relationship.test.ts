@@ -41,6 +41,34 @@ describe("Koinonia relationship profile", () => {
     expect(result.growth?.repeatEngagementCount).toBe(0);
   });
 
+  it("preserves paid campaign click identifiers in relationship attribution", () => {
+    const result = normalizeKoinoniaRelationshipData({
+      acquisition: {
+        firstTouch: {
+          utmSource: "google",
+          utmMedium: "cpc",
+          utmCampaign: "showing-coverage",
+          utmTerm: "realtor showing coverage",
+          gclid: "google-click-id",
+          gbraid: "google-braid",
+          wbraid: "google-wbraid",
+          msclkid: "microsoft-click-id"
+        }
+      }
+    });
+
+    expect(result.acquisition?.firstTouch).toMatchObject({
+      utmSource: "google",
+      utmMedium: "cpc",
+      utmCampaign: "showing-coverage",
+      utmTerm: "realtor showing coverage",
+      gclid: "google-click-id",
+      gbraid: "google-braid",
+      wbraid: "google-wbraid",
+      msclkid: "microsoft-click-id"
+    });
+  });
+
   it("merges one profile section without erasing existing learning", () => {
     const result = mergeKoinoniaRelationshipData(
       {
