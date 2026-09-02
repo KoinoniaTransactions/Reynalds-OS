@@ -29,11 +29,11 @@ export async function POST(request: Request) {
     const event = parseResendEmailReceivedEvent(parsed);
 
     if (!event) {
-      return NextResponse.json({ received: true, ignored: true });
+      return NextResponse.json({ accepted: true, ignored: true });
     }
 
     const result = await ingestTransactionInboundEmail(event);
-    return NextResponse.json({ received: true, ...result });
+    return NextResponse.json({ accepted: true, ...result });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Inbound email processing failed.";
     const signatureFailure =
