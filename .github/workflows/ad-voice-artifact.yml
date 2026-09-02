@@ -1,0 +1,30 @@
+name: One-time ad voice artifact
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ad-voice-artifact.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download generated narration
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p voices
+          curl -L --fail --silent --show-error 'https://resource2.heygen.ai/text_to_speech/fe6821dcc4f044298ffc81b5a25fbda5/03dca9ebfca441dba55fb14afa0791b7/id=012944d9-4298-4232-82a8-39f7a0b4a34e.wav' -o voices/ig.wav
+          curl -L --fail --silent --show-error 'https://resource2.heygen.ai/text_to_speech/fe6821dcc4f044298ffc81b5a25fbda5/03dca9ebfca441dba55fb14afa0791b7/id=85f42f0b-4f6e-4d44-808b-5917ff4d07e5.wav' -o voices/tt.wav
+          curl -L --fail --silent --show-error 'https://resource2.heygen.ai/text_to_speech/fe6821dcc4f044298ffc81b5a25fbda5/03dca9ebfca441dba55fb14afa0791b7/id=fd97ba46-7322-425c-807d-37896137e15e.wav' -o voices/fb.wav
+          curl -L --fail --silent --show-error 'https://resource2.heygen.ai/text_to_speech/fe6821dcc4f044298ffc81b5a25fbda5/330290724a1b470fb63153f34d4c0183/id=1cca8fce-7fc5-4b1d-bf53-d7c9625a499e.wav' -o voices/li.wav
+          file voices/*.wav
+      - name: Upload narration artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: koinonia-production-voices
+          path: voices/*.wav
+          retention-days: 1
