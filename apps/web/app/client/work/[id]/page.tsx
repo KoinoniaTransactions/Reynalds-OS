@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { absoluteUrl } from "../../../../config/seo.config";
 import { ClientDocumentReviewCard } from "../../../../components/client/ClientDocumentReviewCard";
+import { ClientTransactionAttentionCard } from "../../../../components/client/ClientTransactionAttentionCard";
 import { Footer, Header } from "../../../../components/site";
 import { prisma } from "../../../../lib/db";
 import { isPortalDocumentR2Configured } from "../../../../lib/portal-document-r2";
@@ -42,7 +43,17 @@ type ClientReviewDocument = {
   requestedAction?: string | null;
 };
 
+type ClientTransactionAttention = {
+  transactionId: string;
+  title: string;
+  reason: string;
+  documentType?: string | null;
+  fileName?: string | null;
+  kind: "document_mismatch" | "general";
+};
+
 type ClientWorkWorkspaceView = {
+  attention: ClientTransactionAttention | null;
   documents: PortalWorkspaceDocumentItem[];
   events: PortalWorkspaceEventItem[];
   notice?: string;
@@ -59,6 +70,7 @@ export default async function ClientWorkDetailPage({ params }: Params) {
   if (!workspace) notFound();
 
   const displayTitle = getCompactTransactionTitle(workspace.summary.title);
+  const needsAttention = Boolean(workspace.attention || workspace.reviewDocuments.length);
 
   return (
     <main className="koinonia-site koinonia-workspace-detail koinonia-client-workspace-detail">
@@ -75,7 +87,7 @@ export default async function ClientWorkDetailPage({ params }: Params) {
                 <summary aria-label="More transaction options">•••</summary>
                 <div className="koinonia-client-more-menu-popover">
                   <a href="#overview">Overview</a>
-                  {workspace.reviewDocuments.length ? <a href="#review">Needs your review</a> : null}
+                  {needsAttention ? <a href="#attention">Needs your attention</a> : null}
                   <a href="#documents">Files</a>
                   <a href="#timeline">Activity</a>
                   <a href="/client/documents">Document Center</a>
@@ -96,10 +108,10 @@ export default async function ClientWorkDetailPage({ params }: Params) {
               </div>
             </div>
 
-            {workspace.reviewDocuments.length ? (
-              <a className="koinonia-client-review-indicator" href="#review">
-                <span>{workspace.reviewDocuments.length}</span>
-                {workspace.reviewDocuments.length === 1 ? "review needed" : "reviews needed"}
+            {needsAttention ? (
+              <a className="koinonia-client-review-indicator" href="#attention">
+                <span>!</span>
+                needs you
               </a>
             ) : (
               <span className="koinonia-client-on-track-indicator">✓ Koinonia has it</span>
@@ -117,12 +129,14 @@ export default async function ClientWorkDetailPage({ params }: Params) {
               <div className="koinonia-client-overview-copy">
                 <span className="koinonia-client-section-label">Koinonia overview</span>
                 <h2 id="client-work-overview">
-                  {workspace.reviewDocuments.length ? "We need a quick review from you" : "Everything is moving forward"}
+                  {needsAttention ? "We need one thing from you" : "Everything is moving forward"}
                 </h2>
                 <p>
-                  {workspace.reviewDocuments.length
-                    ? `${workspace.reviewDocuments.length} ${workspace.reviewDocuments.length === 1 ? "document needs" : "documents need"} your accuracy review. Koinonia will handle the next step after you respond.`
-                    : "Nothing is needed from you right now. Koinonia is managing the file."}
+                  {workspace.attention
+                    ? workspace.attention.title
+                    : workspace.reviewDocuments.length
+                      ? `${workspace.reviewDocuments.length} ${workspace.reviewDocuments.length === 1 ? "document needs" : "documents need"} your accuracy review. Koinonia will handle the next step after you respond.`
+                      : "Nothing is needed from you right now. Koinonia is managing the file."}
                 </p>
               </div>
               <span className="koinonia-client-updated">Updated {workspace.summary.updated}</span>
@@ -137,8 +151,14 @@ export default async function ClientWorkDetailPage({ params }: Params) {
               </div>
             </section>
 
+            {workspace.attention ? (
+              <div id="attention">
+                <ClientTransactionAttentionCard attention={workspace.attention} />
+              </div>
+            ) : null}
+
             {workspace.reviewDocuments.length ? (
-              <section id="review" className="koinonia-client-focus-section" aria-labelledby="client-document-review">
+              <section id={workspace.attention ? "review" : "attention"} className="koinonia-client-focus-section" aria-labelledby="client-document-review">
                 <div className="koinonia-client-section-heading">
                   <div>
                     <span className="koinonia-client-section-label">Needs your review</span>
@@ -287,6 +307,7 @@ async function getClientWorkWorkspace(workspaceId: string, userId: string, workI
       }));
 
     return {
+      attention: buildTransactionAttention(workItem, documents),
       documents: withWorkspaceDocuments(buildPortalWorkspaceDocuments(documents, {
         downloadBasePath: "/api/portal/documents",
         storageReady: isDocumentStorageConfigured()
@@ -299,6 +320,7 @@ async function getClientWorkWorkspace(workspaceId: string, userId: string, workI
   } catch (error) {
     if (!isDatabaseUnavailableError(error)) throw error;
     return {
+      attention: null,
       documents: buildEmptyPortalWorkspaceDocuments(),
       events: buildEmptyPortalWorkspaceTimeline(),
       notice: "Work detail storage is not reachable in this preview, so live status, documents, and history cannot be shown yet.",
@@ -307,6 +329,53 @@ async function getClientWorkWorkspace(workspaceId: string, userId: string, workI
       transactionId: workItemId
     };
   }
+}
+
+function buildTransactionAttention(
+  workItem: { id: string; health: string; nextAction: string | null; data: unknown },
+  documents: Array<{ id: string; fileName: string; documentType: string; removedAt: Date | null }>
+): ClientTransactionAttention | null {
+  if (workItem.health !== "Attention") return null;
+
+  const data = asRecord(workItem.data) ?? {};
+  const extraction = asRecord(data.extraction);
+  const proposal = asRecord(extraction?.proposal);
+  const documentMatch = proposal?.documentMatch;
+  const sourceDocumentId = typeof proposal?.sourceDocumentId === "string" ? proposal.sourceDocumentId : null;
+  const sourceDocument = sourceDocumentId
+    ? documents.find((document) => document.id === sourceDocumentId && !document.removedAt)
+    : undefined;
+
+  if (documentMatch === "mismatch") {
+    const reason = typeof proposal?.documentMatchReason === "string" && proposal.documentMatchReason.trim()
+      ? proposal.documentMatchReason.trim()
+      : "Koinonia found information in this upload that does not appear to match the transaction.";
+    const identifiedDocumentType = typeof proposal?.identifiedDocumentType === "string"
+      ? proposal.identifiedDocumentType
+      : sourceDocument?.documentType;
+
+    return {
+      transactionId: workItem.id,
+      kind: "document_mismatch",
+      title: "Koinonia is not sure this document belongs to this transaction.",
+      reason,
+      documentType: identifiedDocumentType ?? null,
+      fileName: sourceDocument?.fileName ?? null
+    };
+  }
+
+  return {
+    transactionId: workItem.id,
+    kind: "general",
+    title: "Koinonia needs a quick answer before continuing.",
+    reason: workItem.nextAction?.trim() || "Open the requested item below and tell Koinonia how to proceed."
+  };
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
 }
 
 function getCompactTransactionTitle(title: string): string {
