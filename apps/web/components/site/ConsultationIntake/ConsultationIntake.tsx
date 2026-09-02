@@ -2,6 +2,8 @@
 
 import type { ChangeEvent, FormEvent } from "react";
 import { useEffect, useId, useMemo, useState } from "react";
+import { getMarketingAttribution } from "../../../lib/marketingAttribution";
+import { trackConsultationLead } from "../MarketingTracking/MarketingTracking";
 
 type ConsultationOption = {
   readonly title: string;
@@ -148,6 +150,8 @@ export function ConsultationSchedulerButton({
       return;
     }
 
+    const attribution = getMarketingAttribution();
+
     setStatus({
       kind: "submitting",
       message: "Sending your consultation request..."
@@ -164,6 +168,7 @@ export function ConsultationSchedulerButton({
           consultationSubject: selectedOption.subject,
           preferredDate: form.requestedDate,
           preferredTime: form.requestedTime,
+          attribution,
           ...form
         })
       });
@@ -184,6 +189,12 @@ export function ConsultationSchedulerButton({
           typeof data.message === "string"
             ? data.message
             : "Your consultation request has been sent. Koinonia will follow up with next steps."
+      });
+
+      trackConsultationLead({
+        consultationType: selectedOption.title,
+        utmSource: attribution.utmSource,
+        utmCampaign: attribution.utmCampaign
       });
 
       setForm(initialFormState);
