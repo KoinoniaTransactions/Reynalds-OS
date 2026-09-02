@@ -3,6 +3,7 @@ import { absoluteUrl, seoConfig } from "../config/seo.config";
 import { AuthProvider } from "../components/auth/AuthProvider";
 import { GoogleAnalytics } from "../components/site/GoogleAnalytics/GoogleAnalytics";
 import { MarketingAttribution } from "../components/site/MarketingAttribution/MarketingAttribution";
+import { MarketingPrivacyControls } from "../components/site/MarketingPrivacyControls/MarketingPrivacyControls";
 import "@reynalds-os/design-system/styles.css";
 import "../styles/koinonia-layout.css";
 
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <GoogleAnalytics />
         <MarketingAttribution />
+        <MarketingPrivacyControls />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
