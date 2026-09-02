@@ -24,18 +24,19 @@ export function ClientTransactionAttentionCard({ attention }: { attention: Trans
     setMessage("");
 
     try {
-      const response = await fetch(
-        `/api/portal/transactions/${encodeURIComponent(attention.transactionId)}/extraction`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(
-            action === "keep"
-              ? { action: "confirm", mismatchOverride: true }
-              : { action: "remove_mismatched_document" }
-          )
-        }
-      );
+      const endpoint = action === "keep"
+        ? `/api/portal/transactions/${encodeURIComponent(attention.transactionId)}/extraction`
+        : `/api/portal/transactions/${encodeURIComponent(attention.transactionId)}/attention`;
+      const method = action === "keep" ? "PATCH" : "POST";
+      const body = action === "keep"
+        ? { action: "confirm", mismatchOverride: true }
+        : { action: "remove_mismatched_document" };
+
+      const response = await fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
       const payload = (await response.json().catch(() => ({}))) as { error?: string };
       if (!response.ok) throw new Error(payload.error ?? "Koinonia could not save your choice.");
 
