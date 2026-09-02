@@ -11,6 +11,7 @@ import {
   marketingAttributionStorageKey,
   migrateLegacyMarketingAttribution,
   normalizeMarketingAttributionState,
+  previousMarketingAttributionStorageKey,
   type MarketingAttributionSubmission
 } from "@/lib/marketing-attribution";
 
@@ -93,7 +94,10 @@ function readSubmissionAttribution(): MarketingAttributionSubmission {
     const stored = normalizeMarketingAttributionState(
       JSON.parse(window.localStorage.getItem(marketingAttributionStorageKey) ?? "null")
     );
-    const migrated = stored ?? migrateLegacyMarketingAttribution(
+    const previous = stored ?? normalizeMarketingAttributionState(
+      JSON.parse(window.localStorage.getItem(previousMarketingAttributionStorageKey) ?? "null")
+    );
+    const migrated = previous ?? migrateLegacyMarketingAttribution(
       JSON.parse(window.sessionStorage.getItem(legacyMarketingAttributionStorageKey) ?? "null"),
       current
     );
@@ -156,6 +160,21 @@ export function ConsultationSchedulerButton({
   function handleChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
+  }
+
+  function openModal() {
+    setIsOpen(true);
+    setStatus({ kind: "idle", message: "" });
+    trackGoogleAnalyticsEvent("consultation_scheduler_open", {
+      service_type: selectedOption.title
+    });
+  }
+
+  function selectConsultationType(value: string) {
+    setSelectedTitle(value);
+    trackGoogleAnalyticsEvent("consultation_type_select", {
+      service_type: value
+    });
   }
 
   function closeModal() {
@@ -224,7 +243,7 @@ export function ConsultationSchedulerButton({
           <p>{lead}</p>
           <span>{availability}</span>
         </div>
-        <button className="koinonia-button primary" type="button" onClick={() => { setIsOpen(true); setStatus({ kind: "idle", message: "" }); }}>
+        <button className="koinonia-button primary" type="button" onClick={openModal}>
           {buttonLabel}
         </button>
       </article>
@@ -247,7 +266,7 @@ export function ConsultationSchedulerButton({
               <div className="koinonia-form-grid">
                 <label className="koinonia-form-full">
                   <span>{selectorLabel}</span>
-                  <select value={selectedOption.title} onChange={(event) => setSelectedTitle(event.target.value)}>
+                  <select value={selectedOption.title} onChange={(event) => selectConsultationType(event.target.value)}>
                     {options.map((option) => <option key={option.title} value={option.title}>{option.title}</option>)}
                   </select>
                 </label>
