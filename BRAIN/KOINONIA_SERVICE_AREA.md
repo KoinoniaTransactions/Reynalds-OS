@@ -8,63 +8,132 @@ Effective: 2026-09-02
 
 This document is the canonical geographic service-area rule for Koinonia Transactions.
 
-It replaces the retired model that treated remote/operational services as statewide while applying a separate 20-mile radius to showing or other licensed field coverage.
+It replaces both of the retired targeting models:
+
+1. statewide remote/operational services with a separate local field-service radius; and
+2. a brittle fixed city whitelist that could incorrectly exclude valid Front Range prospects.
 
 ## Governing Rule
 
 All currently listed Koinonia services are available to Realtors throughout the approved Koinonia service area.
 
-There is no separate marketing geography for Transaction Management, Contract & Document Support, Licensed Showing Coverage, Business Operations Support, or other currently approved services.
+There is no separate marketing geography for Transaction Management, Contract & Document Support, Licensed Showing Coverage, Professional Open House Coverage, Business Operations Support, or other currently approved services.
 
-Being inside the approved service area is the geographic eligibility gate for the full current service catalog.
+Individual requests remain subject to normal operating requirements such as scheduling, provider availability, licensing, access, safety, scope, urgency, travel practicality, and capacity. Those operating requirements do not create separate geographic marketing tiers.
 
-Individual requests remain subject to normal service-specific operating requirements, including scheduling, provider availability, licensing, access, safety, scope, urgency, and capacity. Those operating requirements do not create a separate geographic marketing tier.
+## Approved Service-Area Geography
 
-## Approved Service-Area Cities
+Koinonia's working service area is the Colorado Front Range corridor running approximately from the Boulder/Broomfield market south through the Denver metropolitan area, Douglas County, the Pikes Peak/Colorado Springs market, and through the Pueblo market.
 
-- Aurora
-- Denver
-- Parker
-- Pueblo
-- Fountain
-- Lakewood
-- Monument
+The corridor is the geographic rule. A short city list must never be used to exclude a prospect who is plainly inside this service corridor.
+
+### Northern Corridor
+
+Includes Boulder/Broomfield and surrounding Front Range communities, including examples such as:
+
+- Boulder
+- Broomfield
+- Louisville
+- Lafayette
+- Superior
+- Westminster
+- Arvada
 - Thornton
-- Littleton
+- Northglenn
+- nearby corridor communities reasonably within the same operating market
+
+### Denver Metro Corridor
+
+Includes Denver and surrounding metro communities, including examples such as:
+
+- Denver
+- Lakewood
+- Golden
+- Wheat Ridge
+- Commerce City
+- Aurora
+- Englewood
+- Greenwood Village
 - Centennial
+- Littleton
+- Highlands Ranch
+- Lone Tree
+- Parker
+- nearby Denver-metro communities within the corridor
+
+### Douglas / South Metro Corridor
+
+Includes the communities connecting Denver metro to the Pikes Peak market, including examples such as:
+
+- Castle Pines
 - Castle Rock
+- Franktown
+- Larkspur
+- Elizabeth and adjacent serviceable communities
+
+### Pikes Peak Corridor
+
+Includes Colorado Springs and surrounding communities, including examples such as:
+
+- Monument
+- Palmer Lake
+- Colorado Springs
+- Manitou Springs
 - Falcon
 - Peyton
-- Commerce City
-- Manitou Springs
-- Colorado Springs
-- Woodland Park
+- Fountain
+- Security-Widefield
+- nearby El Paso County communities within the operating corridor
 
-All cities above are in Colorado.
+### Southern Corridor
 
-## Marketing Rule
+Includes Pueblo and surrounding serviceable communities, including examples such as:
 
-Marketing audience selection should use the approved service-area list rather than a statewide-versus-local service split.
+- Pueblo
+- Pueblo West
+- nearby Pueblo-area communities within the operating corridor
 
-For prospecting databases:
+## Prospecting Geography Rule
 
-- A verified public business location in an approved service-area city qualifies the prospect geographically for campaigns covering the full Koinonia service catalog.
-- Market/service-area overlap may be retained as supporting context, but an out-of-area business location should not be silently treated as in-area without separate verification.
-- Do not describe any approved service-area city as eligible for only a subset of Koinonia services.
+For prospecting databases and campaign selection:
+
+- First determine whether the prospect's verified public business/brokerage location is reasonably inside the Boulder-to-Pueblo Front Range service corridor.
+- Do not require an exact city-name match against a fixed whitelist.
+- Use city, ZIP, county, metro/region, and verified public business address together when practical.
+- A prospect in an obvious corridor city such as Westminster, Broomfield, Arvada, Boulder, Castle Rock, Colorado Springs, or Pueblo must not be excluded merely because an older city list omitted that city.
+- If a location sits near the practical edge of the corridor, retain it as `SERVICE AREA REVIEW` rather than automatically excluding it.
+- All approved in-area prospects are eligible for marketing around the full current Koinonia service catalog.
+
+## Campaign Segmentation
+
+The corridor should be segmented for routing, measurement, and in-person follow-up without changing service eligibility:
+
+1. Boulder / Broomfield / Northwest Metro
+2. Denver / Central Metro
+3. Aurora / East & Southeast Metro
+4. South Metro / Parker / Douglas County
+5. Monument / Colorado Springs / Pikes Peak
+6. Pueblo / Southern Corridor
+
+These segments help prioritize email batches, office visits, travel days, and campaign performance. They are not separate service tiers.
 
 ## Public Profile Alignment
 
-Google Business Profile, website structured data, social profiles, paid-media targeting, prospecting filters, and future CRM geography should be reconciled to this list when edited.
+Google Business Profile is an important public reference for the intended service footprint. Website structured data, social profiles, paid-media targeting, prospecting filters, CRM geography, and future service-area documentation should remain aligned with the Boulder-to-Pueblo Front Range operating corridor.
 
-If the approved service area changes, update this file first and then reconcile dependent marketing, website, Google, and prospecting assets.
+If an exact public profile city list is later exported or recovered, use it to refine examples and edge cases without replacing the corridor principle with another brittle whitelist.
 
 ## Related Sources
 
 - `02_Companies/Koinonia/01_Services/`
 - `BRAIN/KOINONIA_SERVICE_BOUNDARY_DECISIONS.md`
 - `02_Companies/Koinonia/04_Departments/Marketing/README.md`
+- `02_Companies/Koinonia/04_Departments/Marketing/prospect_engagement_visit_workflow.md`
 - `02_Companies/Koinonia/05_Business_Materials/social_paid_campaign_01_coverage.md`
 
-## Retired Rule
+## Retired Rules
 
-Do not use the former 20-mile operating-radius rule as a marketing or service-area restriction.
+Do not use either of these as a service-area restriction:
+
+- the former 20-mile operating-radius rule; or
+- the former 17-city approved-service-area whitelist.
