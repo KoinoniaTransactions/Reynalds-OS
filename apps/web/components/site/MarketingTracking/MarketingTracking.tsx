@@ -14,6 +14,7 @@ declare global {
     gtag?: (...args: unknown[]) => void;
     fbq?: (...args: unknown[]) => void;
     ttq?: { track?: (event: string, payload?: Record<string, unknown>) => void };
+    lintrk?: (...args: unknown[]) => void;
     _linkedin_data_partner_ids?: string[];
   }
 }
@@ -35,6 +36,16 @@ export function trackConsultationLead(details: {
   window.ttq?.track?.("SubmitForm", {
     content_name: "Koinonia Consultation Request"
   });
+
+  const linkedInConversionId = process.env.NEXT_PUBLIC_LINKEDIN_CONVERSION_ID;
+  if (linkedInConversionId) {
+    const numericConversionId = Number(linkedInConversionId);
+    window.lintrk?.("track", {
+      conversion_id: Number.isFinite(numericConversionId)
+        ? numericConversionId
+        : linkedInConversionId
+    });
+  }
 }
 
 export function MarketingTracking() {
