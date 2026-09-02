@@ -3,7 +3,7 @@ export const privacyContent = {
   title: "Privacy Policy",
   lead:
     "This notice explains how Koinonia handles information shared through our website, consultation requests, marketing, and service relationships.",
-  lastUpdated: "August 17, 2026",
+  lastUpdated: "September 2, 2026",
   sections: [
     {
       title: "Information We Collect",
@@ -15,7 +15,7 @@ export const privacyContent = {
         "Contact and professional identity information.",
         "Consultation, service-request, scheduling, and relationship-history information.",
         "Information you include in emails, forms, messages, or other communications.",
-        "Website and campaign-attribution information such as referral source, campaign parameters, page visited, and similar technical information when available.",
+        "Website and campaign-attribution information such as referral source, campaign parameters, page visited, advertising click identifiers, and similar technical information when available.",
         "Basic device, browser, usage, analytics, or advertising information when those technologies are enabled on the site."
       ]
     },
@@ -30,8 +30,17 @@ export const privacyContent = {
     {
       title: "Marketing, Analytics, and Advertising",
       paragraphs: [
-        "Koinonia may use campaign links, analytics tools, advertising platforms, or similar technologies to understand how people discover the business and which content or campaigns lead to meaningful inquiries.",
-        "If advertising or retargeting technologies are enabled, those providers may receive limited website or device information according to their own terms and privacy practices. Koinonia does not use these tools as a substitute for the professional relationship record maintained after a person meaningfully engages with us."
+        "Koinonia may use campaign links and first-party attribution information to understand how people discover the business and which content or campaigns lead to meaningful inquiries.",
+        "Analytics technology is used only when the visitor allows analytics through the website privacy controls. Advertising and retargeting technology, when enabled, is used only when the visitor allows advertising technology through those controls.",
+        "Advertising providers may receive limited website or device information according to their own terms and privacy practices. Koinonia does not use advertising technology inside authenticated client or staff portal activity."
+      ],
+      items: []
+    },
+    {
+      title: "Privacy Choices and Global Privacy Control",
+      paragraphs: [
+        "Visitors can review or change website privacy choices through the Privacy choices control on public marketing pages.",
+        "When the browser provides a recognized Global Privacy Control signal, Koinonia treats that signal as an instruction to keep targeted advertising disabled for that browser."
       ],
       items: []
     },
