@@ -53,8 +53,8 @@ describe("transaction portal projections", () => {
         }),
         obligation({
           id: "title",
-          key: "contract.title-resolution",
-          label: "Title Resolution Deadline",
+          key: "contract.record-title",
+          label: "Record Title Deadline",
           category: "title",
           dueDate: "2026-09-10"
         }),
