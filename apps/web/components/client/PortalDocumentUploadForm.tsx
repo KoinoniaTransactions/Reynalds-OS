@@ -21,7 +21,7 @@ export function PortalDocumentUploadForm({
   const searchParams = useSearchParams();
   const requestedDocumentType = searchParams?.get("documentType")?.trim() ?? "";
   const requestedRelatedObjectId = searchParams?.get("relatedObjectId")?.trim() ?? "";
-  const effectiveRelatedObjectId = relatedObjectId ?? requestedRelatedObjectId || undefined;
+  const effectiveRelatedObjectId = relatedObjectId ?? (requestedRelatedObjectId || undefined);
   const [documentType, setDocumentType] = useState(
     requestedDocumentType || "Other Transaction Document"
   );
