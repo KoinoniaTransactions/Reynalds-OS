@@ -70,7 +70,7 @@ export async function POST(request: Request, { params }: Params) {
         ? listingData.sellerNames.trim()
         : "Seller";
 
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const transaction = await tx.rosObject.create({
         data: {
           workspaceId: user.workspaceId,
