@@ -2,147 +2,204 @@
 
 ## Active Phase
 
-Koinonia Production Website
+Koinonia White-Glove Service Expansion + Production Operations Backbone
 
 ---
 
 # Primary Objective
 
-Complete and launch the Koinonia website as the first production application built on Reynalds OS.
+Evolve Koinonia from a transaction-coordination-centered offering into the approved **white-glove, one-stop Realtor support relationship** while preserving the production website, existing transaction architecture, and repository-first operating standards.
 
-All development should support this objective unless a platform improvement directly accelerates website production.
-
----
-
-# Repository Status
-
-Current State:
-
-Production website under active development.
-
-Repository architecture is established.
-
-Core Brain documentation is established.
-
-GitHub workflow is established.
-
-Component architecture is established.
-
-Hero Image System is established.
-
-Current emphasis is implementation, refinement, and launch.
+The immediate platform objective is to make the expanded service model operational rather than merely marketable.
 
 ---
 
-# Current Production Milestones
+# Current Strategic Direction
 
-## ✅ Completed
+Koinonia is intended to support nearly any legitimate operational need around running and serving a Realtor's business, subject to clear legal, brokerage, professional-responsibility, capacity, and economic boundaries.
 
-- Repository architecture established
-- Brain documentation established
-- Canonical Registry established
-- Decision Log established
-- Development Standards established
-- Hero Composition Standard established
-- Koinonia Image System established
-- Shared content architecture established
-- Component-first website architecture established
-- Desktop and mobile hero system completed for:
-  - Home
-  - About
-  - Services
-  - Contact
-- Hero imagery implemented in React
-- Production build verified
-- GitHub workflow established and verified
+Client-facing capability umbrellas:
 
----
+1. Transactions & Contracts
+2. Listings & Seller Operations
+3. Licensed Field Coverage
+4. Marketing & Growth
+5. CRM, Client & Business Operations
 
-## Active Work
+The public architecture should remain simple even while the underlying capability catalog becomes broad.
 
-Complete the production pages.
+Core customer experience:
 
-Current page order:
+> Bring Koinonia the need. We help get it handled.
 
-1. Home
-2. Services
-3. About
-4. Contact
-5. Pricing
-6. FAQ
-7. Launch QA
+Canonical brand source:
+
+- `03_Knowledge/Brand/koinonia_brand_core.md`
+
+Owner direction:
+
+- `02_Companies/Koinonia/04_Departments/Operations/OWNER_DIRECTION_WHITE_GLOVE_ONE_STOP_SUPPORT_2026-09-02.md`
+
+Working capability master:
+
+- `02_Companies/Koinonia/04_Departments/Operations/realtor_capability_catalog_working_master_2026-09-02.md`
 
 ---
 
-# Current Development Workflow
+# Repository / Product Status
 
-Every production task follows this sequence:
+## Public website
 
-1. Understand the request.
-2. Review existing implementation.
-3. Recommend improvements if appropriate.
-4. Explain planned work.
-5. Wait for approval.
-6. Implement.
-7. Verify localhost.
-8. Verify production build.
-9. Commit.
-10. Push to GitHub.
-11. Update Brain only if a meaningful architectural discovery occurred.
+The Koinonia public website is established and remains the primary marketing/conversion destination.
 
----
+Current service/marketing copy must continue to follow canonical service-claim rules. Expanded capabilities should not be promoted as production-certified until the relevant operating and pricing rules are approved.
 
-# Development Philosophy
+## Existing production service foundation
 
-The repository should grow through refinement rather than reinvention.
+Canonical Service Catalog currently remains the source of truth for the existing certified service objects:
 
-Always:
+- Transaction Management
+- Contract Preparation & Writing
+- Licensed Showing Coverage
+- Business Operations Support
 
-- recover before reinventing
-- reuse before replacing
-- extend before creating
+The approved expansion work is intentionally being designed and implemented before those canonical objects are rewritten.
 
-The existing architecture should be strengthened, not restarted.
+## Marketing / positioning expansion
 
----
+Current design work establishes Marketing & Growth as an intended major Koinonia capability and supersedes earlier assumptions that Koinonia should avoid becoming a meaningful Realtor marketing provider.
 
-# Platform Development Rule
+Working marketing design:
 
-Operating system work is now secondary.
+- `02_Companies/Koinonia/04_Departments/Marketing/REALTOR_MARKETING_SERVICE_DESIGN_2026-09-02.md`
 
-Platform improvements should occur only when they:
+## Hand Us the Listing
 
-- remove repeated work,
-- solve an architectural limitation,
-- accelerate Koinonia production, or
-- improve long-term maintainability.
+`Hand Us the Listing` is the first integrated white-glove workflow being turned into application infrastructure.
 
-Do not interrupt website production for speculative platform development.
+Blueprint:
 
----
+- `02_Companies/Koinonia/04_Departments/Operations/HAND_US_THE_LISTING_INTEGRATED_WORKFLOW_2026-09-02.md`
 
-# Immediate Next Tasks
+Implemented backbone documentation:
 
-1. Refine Home page sections.
-2. Complete Services page.
-3. Complete About page.
-4. Complete Contact page.
-5. Build Pricing page.
-6. Complete responsive polish.
-7. QA every page.
-8. Launch.
+- `docs/HAND_US_THE_LISTING_BACKBONE_IMPLEMENTATION.md`
+
+Current implementation includes:
+
+- Listing Engagement domain model on the existing RosObject architecture
+- listing intake validation
+- `/api/koinonia/listings` create/list endpoint
+- automatic launch checklist tasks
+- listing timeline events
+- `/listings` Listing Center UI
+- accepted-offer handoff into the existing Transaction object/Transaction Center
+- idempotent Listing Engagement -> Transaction relationship
+- initial contract-to-close handoff tasks
 
 ---
 
-# Success Criteria
+# Current Development Principles
 
-The current milestone is achieved when:
+Every production task should continue to follow:
 
-- Every public page is production quality.
-- Desktop and mobile experiences are complete.
-- All pages use the shared component architecture.
-- Hero system is consistent across the site.
-- Production build passes.
-- Changes are committed and pushed to GitHub.
+1. Inspect existing implementation.
+2. Identify governing canonical documentation.
+3. Extend before creating parallel systems.
+4. Implement the smallest coherent working slice.
+5. Keep APIs workspace-scoped, permission-checked, validated, and auditable.
+6. Add tests for core logic.
+7. Run test/build verification.
+8. Update relevant continuity documentation.
 
-Only then should focus shift back toward broader Reynalds OS expansion.
+Core principle:
+
+**Recover before reinventing. Reuse before replacing. Extend before creating.**
+
+---
+
+# Active Work Order
+
+## Priority 1 — Listing Operations Backbone
+
+Continue the Hand Us the Listing implementation on the existing Object Engine.
+
+Next slices:
+
+1. Listing phase/status progression
+2. launch checklist completion controls
+3. approval queue
+4. Marketing Work Order
+5. Vendor Work Order
+6. quick action: Open House
+7. quick action: Property / Field Coverage
+8. quick action: Create / Refresh Marketing
+9. document/email intake integration
+10. accepted-offer handoff enhancements and transaction deadline automation
+
+## Priority 2 — Canonical Service Reconciliation
+
+After the underlying workflows are sufficiently defined:
+
+- formalize Listing Operations
+- expand Licensed Showing Coverage toward Licensed Field Coverage if approved
+- formalize Marketing & Growth service scope
+- reconcile Professional Open House Coverage
+- update packages/pricing
+- only then update public website/service claims
+
+## Priority 3 — Realtor Management Model
+
+Design the premium recurring relationship that can combine:
+
+- CRM / business operations
+- marketing
+- listing operations
+- contract support
+- transaction management
+- licensed field coverage
+- vacation / overflow coverage
+
+Do not promise unlimited usage until actual capacity and unit economics are measured.
+
+---
+
+# Current Non-Negotiable Boundaries
+
+- Do not build a proprietary Showami-style marketplace merely to fulfill field tasks.
+- Fulfillment method is not the product; Koinonia owns the service relationship and accountability.
+- Do not misrepresent third-party specialists/providers as Koinonia employees or licensees.
+- Do not perform or imply Realtor/broker professional judgment where authority remains with the responsible Realtor/brokerage.
+- Physical closing-attendance coverage remains specifically gated pending the approved brokerage/designation/responsibility model.
+- Expanded working capability documents do not automatically authorize public advertising or pricing.
+
+---
+
+# Immediate Next Task
+
+Complete and verify the first Listing Operations application slice, then continue into the **Listing Launch Control Board**:
+
+- phase/status progression
+- checklist completion
+- approvals
+- marketing/vendor work orders
+- field/open-house quick actions
+
+The goal is a Realtor experience where:
+
+> **I got a listing. I handed it to Koinonia. They kept the operational work moving all the way through closing and follow-up.**
+
+---
+
+# Success Criteria for Current Phase
+
+The current phase is successful when:
+
+- a Realtor can initiate a Listing Engagement with minimal input;
+- Koinonia can see and manage the launch work from one record;
+- listing marketing/vendor/field work can be attached without separate client-facing systems;
+- an accepted offer becomes a Transaction without duplicate intake;
+- operational approvals and exceptions are visible;
+- the service architecture remains consistent with the white-glove one-stop support direction;
+- test/build verification remains passing;
+- canonical service/pricing/public claims are updated only after operational certification.
