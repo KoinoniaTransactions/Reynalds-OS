@@ -159,8 +159,13 @@ export type RelationshipMarketingTouch = {
   utmMedium?: string;
   utmCampaign?: string;
   utmContent?: string;
+  utmTerm?: string;
   fbclid?: string;
   ttclid?: string;
+  gclid?: string;
+  gbraid?: string;
+  wbraid?: string;
+  msclkid?: string;
   referrer?: string;
   landingPage?: string;
   capturedAt?: string;
@@ -198,8 +203,13 @@ function normalizeRelationshipMarketingTouch(
     utmMedium: text(source.utmMedium),
     utmCampaign: text(source.utmCampaign),
     utmContent: text(source.utmContent),
+    utmTerm: text(source.utmTerm),
     fbclid: text(source.fbclid),
     ttclid: text(source.ttclid),
+    gclid: text(source.gclid),
+    gbraid: text(source.gbraid),
+    wbraid: text(source.wbraid),
+    msclkid: text(source.msclkid),
     referrer: text(source.referrer),
     landingPage: text(source.landingPage),
     capturedAt: text(source.capturedAt)
