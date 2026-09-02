@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     const listingData = buildListingData(input) as Prisma.InputJsonValue;
     const initialTasks = buildInitialListingTasks(input);
 
-    const listing = await prisma.$transaction(async (tx) => {
+    const listing = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const created = await tx.rosObject.create({
         data: {
           workspaceId: user.workspaceId,
