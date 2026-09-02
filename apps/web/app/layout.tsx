@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { absoluteUrl, seoConfig } from "../config/seo.config";
 import { AuthProvider } from "../components/auth/AuthProvider";
+import { AdvertisingPixels } from "../components/site/AdvertisingPixels/AdvertisingPixels";
 import { GoogleAnalytics } from "../components/site/GoogleAnalytics/GoogleAnalytics";
 import { MarketingAttribution } from "../components/site/MarketingAttribution/MarketingAttribution";
 import { MarketingPrivacyControls } from "../components/site/MarketingPrivacyControls/MarketingPrivacyControls";
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <GoogleAnalytics />
+        <AdvertisingPixels />
         <MarketingAttribution />
         <MarketingPrivacyControls />
         <AuthProvider>{children}</AuthProvider>
