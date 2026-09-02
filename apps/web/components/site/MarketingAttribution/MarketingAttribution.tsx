@@ -1,6 +1,8 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { isPublicMarketingRoute } from "../GoogleAnalytics/GoogleAnalytics";
 import {
   createMarketingTouch,
   legacyMarketingAttributionStorageKey,
@@ -11,7 +13,11 @@ import {
 } from "@/lib/marketing-attribution";
 
 export function MarketingAttribution() {
+  const pathname = usePathname();
+
   useEffect(() => {
+    if (!isPublicMarketingRoute(pathname)) return;
+
     const current = createMarketingTouch({
       search: window.location.search,
       referrer: document.referrer ?? "",
@@ -40,7 +46,7 @@ export function MarketingAttribution() {
     } catch {
       // Attribution must never block the public site or consultation flow.
     }
-  }, []);
+  }, [pathname]);
 
   return null;
 }
