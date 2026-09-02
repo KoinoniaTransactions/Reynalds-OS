@@ -1,6 +1,6 @@
 # Koinonia Service Boundary Decisions
 
-Status: Finalized Working Defaults v1  
+Status: Finalized Working Defaults v2  
 Owner: Koinonia Transactions  
 Purpose: Define the working boundaries for Koinonia services before additional website pricing, package, or visual refinements are made.
 
@@ -91,13 +91,9 @@ Recommended rule:
 - Additional work should be approved before it begins
 - The rate should be higher than the effective monthly plan rate
 
-Open decision:
+Current working rate:
 
-- Final additional-hour rate
-
-Suggested range:
-
-- $75–$100/hour depending on support type and urgency
+- $85/hour when accepted
 
 ---
 
@@ -115,9 +111,9 @@ Possible public wording:
 
 > Rush requests may be available depending on timing, complexity, and current capacity.
 
-Open decision:
+Current working rule:
 
-- Final rush fee structure
+- Accepted rush work may include a 50% premium with a $50 minimum rush premium
 
 ---
 
@@ -140,28 +136,29 @@ Recommended public wording:
 
 ---
 
-## 8. Showing Coverage Boundaries
+## 8. Licensed Showing Coverage Boundaries
 
-Licensed Showing Coverage should remain practical and flexible.
+Licensed Showing Coverage is available throughout the approved Koinonia service area.
 
-Recommended default:
+Canonical geography source:
 
-- Local showing coverage starts at $50
-- Distance, access complexity, urgent timing, or extended showing time may change pricing
-- Extended-distance showing coverage should be custom-priced
+- `BRAIN/KOINONIA_SERVICE_AREA.md`
+
+There is no separate 20-mile service-area restriction for showing coverage.
+
+Recommended operating rule:
+
+- Licensed Showing Coverage starts at $50
+- Coverage is available to Realtors throughout the approved Koinonia service area
 - Koinonia should confirm showing details before accepting the request
+- Individual assignments remain subject to scheduling, provider availability, licensing, access, safety, timing, urgency, scope, and capacity
+- Distance or travel burden may affect the final quote when appropriate, but does not create a separate marketing geography or make an approved service-area city ineligible for the service
 
-Open decisions:
+Preferred minimum notice:
 
-- Local service radius
-- Mileage policy
-- Extended-distance pricing
-- Minimum notice expectation
+- 24 hours
 
-Suggested starting point:
-
-- Local coverage: standard radius to be determined
-- Extended coverage: custom quote based on distance, timing, and complexity
+Same-day requests may be accepted when capacity allows and may be treated as rush requests.
 
 ---
 
@@ -250,19 +247,15 @@ Recommended default:
 
 Partner tier should include discounted or priority contract support, but not unlimited contract writing at launch.
 
-Reason:
-
-Unlimited contract support could create unclear workload and capacity issues.
-
-Open decision:
-
-- Whether Partner includes a set amount of contract/document support
-- Whether Partner receives a discount instead
-- Whether urgent contract work is always separate
-
 Recommended starting rule:
 
 > Partner clients receive priority scheduling and preferred pricing for contract/document support, but contract work remains subject to scope and availability.
+
+Working default:
+
+- Partner clients receive 20% preferred pricing on standard contract/document support when capacity allows
+- Contract/document work remains subject to scope, timing, and availability
+- Urgent contract/document work may still be treated as rush work
 
 ---
 
@@ -289,9 +282,17 @@ Contact page:
 
 ---
 
-## 14. Finalized Working Defaults v1
+## 14. Finalized Working Defaults v2
 
 The following decisions are approved as working defaults for launch planning and service operations.
+
+### Geographic Service Area
+
+All currently listed Koinonia services are available throughout the approved Koinonia service area defined in:
+
+- `BRAIN/KOINONIA_SERVICE_AREA.md`
+
+Do not use a statewide-versus-local split or a 20-mile showing-coverage restriction for campaign eligibility.
 
 ### Monthly Rollover
 
@@ -311,22 +312,21 @@ Rush requests are subject to availability and are never guaranteed.
 
 When accepted, rush work may include a 50% premium with a minimum rush premium of $50.
 
-### Showing Coverage Radius
+### Licensed Showing Coverage
 
-Standard local showing coverage starts at $50 within a 20-mile operating radius.
+Licensed Showing Coverage starts at $50 and is available throughout the approved Koinonia service area.
 
-The operating base should be treated as an internal business reference and does not need to be published as a precise address.
-
-### Extended Showing Coverage
-
-Showing coverage outside the standard local radius should be custom quoted based on:
+Assignment acceptance and final pricing may still depend on:
 
 - Drive time
-- Mileage
 - Timing
 - Urgency
 - Access complexity
 - Expected showing duration
+- Provider availability
+- Capacity
+
+These factors are operating and pricing considerations, not a separate geographic service-area gate.
 
 ### Minimum Showing Notice
 
@@ -340,17 +340,11 @@ Partner clients receive priority scheduling and preferred pricing for contract/d
 
 Partner tier does not include unlimited contract writing.
 
-Working default:
-
-- Partner clients receive 20% preferred pricing on standard contract/document support when capacity allows
-- Contract/document work remains subject to scope, timing, and availability
-- Urgent contract/document work may still be treated as rush work
-
 ### Public Website Posture
 
 The public website should continue to show starting prices and monthly tier pricing.
 
-Detailed exception rules, rush pricing, distance adjustments, and mileage formulas should remain consultation-based for now.
+Detailed exception rules, rush pricing, travel adjustments, and other assignment-specific pricing should remain consultation-based for now.
 
 ---
 
@@ -358,13 +352,16 @@ Detailed exception rules, rush pricing, distance adjustments, and mileage formul
 
 Use these defaults unless later changed by a documented business decision.
 
+- All currently listed Koinonia services are available throughout the approved Koinonia service area
+- The canonical geographic source is `BRAIN/KOINONIA_SERVICE_AREA.md`
+- The former 20-mile showing-coverage restriction is retired
 - Monthly hours do not roll over by default
 - Additional monthly work is billed at $85/hour when accepted
 - Additional monthly work must be approved before work begins
 - Rush requests are subject to availability
 - Accepted rush requests may include a 50% premium with a $50 minimum rush premium
-- Standard local showing coverage starts at $50 within a 20-mile operating radius
-- Showing coverage outside the standard local radius is custom quoted
+- Licensed Showing Coverage starts at $50 throughout the approved service area
+- Individual field assignments remain subject to timing, access, provider availability, urgency, scope, travel burden, and capacity
 - Preferred showing notice is 24 hours
 - Same-day showing requests may be treated as rush requests
 - Contract/document support is based on Realtor instructions only
@@ -373,4 +370,3 @@ Use these defaults unless later changed by a documented business decision.
 - Public pricing should remain as starting points
 - Final scope should be confirmed through consultation
 - Detailed exception rules should remain consultation-based for now
-
