@@ -6,6 +6,7 @@ import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
 import { clientTransactionObjectType } from "../../../lib/client-transactions";
+import { isResendInboundConfigured } from "../../../lib/resend-inbound-email";
 import { getTransactionInboundEmailAddress } from "../../../lib/transaction-inbound-email";
 
 export const dynamic = "force-dynamic";
@@ -177,6 +178,7 @@ async function getDashboardView(workspaceId: string, userId: string): Promise<Da
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
       take: 100
     });
+    const inboundReady = isResendInboundConfigured() && isPortalInboundDomainConfigured();
     const transactions = objects.map((object) => {
       const data = asRecord(object.data) ?? {};
       const extraction = asRecord(data.extraction);
@@ -191,7 +193,7 @@ async function getDashboardView(workspaceId: string, userId: string): Promise<Da
         closingDate: closingDate || null,
         health: object.health,
         id: object.id,
-        inboundEmail: getTransactionInboundEmailAddress(object.id),
+        inboundEmail: inboundReady ? getTransactionInboundEmailAddress(object.id) : null,
         name: object.name,
         nextAction: object.nextAction,
         propertyAddress: propertyAddress || object.name,
@@ -206,6 +208,10 @@ async function getDashboardView(workspaceId: string, userId: string): Promise<Da
     }
     throw error;
   }
+}
+
+function isPortalInboundDomainConfigured(): boolean {
+  return Boolean(process.env.KOINONIA_TRANSACTION_INBOUND_DOMAIN?.trim());
 }
 
 function filterTransactions(transactions: DashboardTransaction[], filter: DashboardFilter, search: string): DashboardTransaction[] {
