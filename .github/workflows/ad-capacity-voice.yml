@@ -17,11 +17,11 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p voice
-          curl -L --fail --silent --show-error 'https://resource2.heygen.ai/text_to_speech/fe6821dcc4f044298ffc81b5a25fbda5/03dca9ebfca441dba55fb14afa0791b7/id=f0937142-83cf-4edb-aa29-36e07c206c7c.wav' -o voice/capacity.wav
+          curl -L --fail --silent --show-error 'https://resource2.heygen.ai/text_to_speech/fe6821dcc4f044298ffc81b5a25fbda5/03dca9ebfca441dba55fb14afa0791b7/id=151d2e0f-7ddc-44fc-9a31-6a05e191386b.wav' -o voice/capacity.wav
           file voice/capacity.wav
       - name: Upload narration artifact
         uses: actions/upload-artifact@v4
         with:
-          name: koinonia-capacity-voice
+          name: koinonia-capacity-voice-v2
           path: voice/capacity.wav
           retention-days: 1
