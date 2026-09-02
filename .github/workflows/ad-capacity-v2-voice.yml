@@ -1,0 +1,27 @@
+name: One-time capacity v2 narration artifact
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ad-capacity-v2-voice.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download generated narration
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p voice
+          curl -L --fail --silent --show-error 'https://resource2.heygen.ai/text_to_speech/fe6821dcc4f044298ffc81b5a25fbda5/03dca9ebfca441dba55fb14afa0791b7/id=04a2e4a9-33e4-48bb-9379-300a0ca3606c.wav' -o voice/capacity-v2.wav
+          file voice/capacity-v2.wav
+      - name: Upload narration artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: koinonia-capacity-v2-voice
+          path: voice/capacity-v2.wav
+          retention-days: 1
