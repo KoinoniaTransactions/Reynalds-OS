@@ -1,4 +1,7 @@
+"use client";
+
 import { sharedContent } from "@/content/shared";
+import { trackGoogleAnalyticsEvent } from "@/lib/google-analytics";
 import { contactConfig, mailto } from "../../../config/contact.config";
 
 type ContactActionsProps = {
@@ -35,6 +38,13 @@ function getContactAction(action: (typeof sharedContent.contactActions.actions)[
 export function ContactActions({ variant = "cards" }: ContactActionsProps) {
   const actions = sharedContent.contactActions.actions.map(getContactAction);
 
+  function trackContactAction(key: string) {
+    trackGoogleAnalyticsEvent("contact_click", {
+      method: key,
+      placement: variant
+    });
+  }
+
   if (variant === "inline") {
     return (
       <div
@@ -47,6 +57,7 @@ export function ContactActions({ variant = "cards" }: ContactActionsProps) {
             className={`koinonia-button secondary${action.placeholder ? " disabled" : ""}`}
             href={action.href}
             aria-disabled={action.placeholder ? "true" : undefined}
+            onClick={() => trackContactAction(action.key)}
           >
             {action.eyebrow}: {action.label}
           </a>
@@ -69,6 +80,7 @@ export function ContactActions({ variant = "cards" }: ContactActionsProps) {
             className={`koinonia-button secondary${action.placeholder ? " disabled" : ""}`}
             href={action.href}
             aria-disabled={action.placeholder ? "true" : undefined}
+            onClick={() => trackContactAction(action.key)}
           >
             {action.label}
           </a>
