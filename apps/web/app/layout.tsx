@@ -9,6 +9,7 @@ import "../styles/client-dashboard-polish.css";
 import "../styles/client-workspace-polish.css";
 import "../styles/client-portal-modern.css";
 import "../styles/client-interactions-modern.css";
+import "../styles/client-quick-actions.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(seoConfig.siteUrl),
