@@ -1,5 +1,4 @@
-export const marketingAttributionStorageKey = "koinonia_marketing_attribution_v3";
-export const previousMarketingAttributionStorageKey = "koinonia_marketing_attribution_v2";
+export const marketingAttributionStorageKey = "koinonia_marketing_attribution_v2";
 export const legacyMarketingAttributionStorageKey = "koinonia_marketing_attribution";
 
 export type MarketingTouch = {
@@ -20,7 +19,7 @@ export type MarketingTouch = {
 };
 
 export type MarketingAttributionState = {
-  version: 3;
+  version: 2;
   firstTouch: MarketingTouch;
   latestTouch: MarketingTouch;
 };
@@ -137,12 +136,13 @@ export function normalizeMarketingAttributionState(
   if (!input || typeof input !== "object" || Array.isArray(input)) return null;
 
   const source = input as Record<string, unknown>;
-  if (!source.firstTouch || !source.latestTouch) return null;
 
-  if (source.version !== 2 && source.version !== 3) return null;
+  if (source.version !== 2 || !source.firstTouch || !source.latestTouch) {
+    return null;
+  }
 
   return {
-    version: 3,
+    version: 2,
     firstTouch: normalizeMarketingTouch(source.firstTouch),
     latestTouch: normalizeMarketingTouch(source.latestTouch)
   };
@@ -163,7 +163,7 @@ export function migrateLegacyMarketingAttribution(
   if (!hasMarketingSignal(legacy)) return null;
 
   return {
-    version: 3,
+    version: 2,
     firstTouch: legacy,
     latestTouch: legacy
   };
@@ -175,14 +175,14 @@ export function updateMarketingAttribution(
 ): MarketingAttributionState {
   if (!existing) {
     return {
-      version: 3,
+      version: 2,
       firstTouch: current,
       latestTouch: current
     };
   }
 
   return {
-    version: 3,
+    version: 2,
     firstTouch: existing.firstTouch,
     latestTouch: hasMarketingSignal(current) ? current : existing.latestTouch
   };
@@ -202,7 +202,7 @@ export function buildMarketingAttributionSubmission(
 
 export function emptyMarketingAttributionSubmission(): MarketingAttributionSubmission {
   return {
-    version: 3,
+    version: 2,
     firstTouch: emptyTouch,
     latestTouch: emptyTouch,
     conversionTouch: emptyTouch
