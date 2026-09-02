@@ -9,6 +9,7 @@ import {
   marketingAttributionStorageKey,
   migrateLegacyMarketingAttribution,
   normalizeMarketingAttributionState,
+  previousMarketingAttributionStorageKey,
   updateMarketingAttribution
 } from "@/lib/marketing-attribution";
 
@@ -31,6 +32,12 @@ export function MarketingAttribution() {
       existing = normalizeMarketingAttributionState(
         JSON.parse(window.localStorage.getItem(marketingAttributionStorageKey) ?? "null")
       );
+
+      if (!existing) {
+        existing = normalizeMarketingAttributionState(
+          JSON.parse(window.localStorage.getItem(previousMarketingAttributionStorageKey) ?? "null")
+        );
+      }
 
       if (!existing) {
         existing = migrateLegacyMarketingAttribution(
