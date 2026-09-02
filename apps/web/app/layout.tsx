@@ -8,6 +8,7 @@ import "../styles/transaction-intake-controls.css";
 import "../styles/client-dashboard-polish.css";
 import "../styles/client-workspace-polish.css";
 import "../styles/client-portal-modern.css";
+import "../styles/client-interactions-modern.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(seoConfig.siteUrl),
