@@ -17,8 +17,13 @@ export async function POST(request: Request, context: RouteContext) {
     const actor = await assertPermission("client-portal:transactions:update");
     const { id } = await context.params;
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const action = body.action;
 
-    if (body.action !== "remove_mismatched_document") {
+    if (
+      action !== "remove_mismatched_document" &&
+      action !== "provide_missing_facts" &&
+      action !== "wait_for_future_document"
+    ) {
       return NextResponse.json({ error: "Unsupported attention action." }, { status: 400 });
     }
 
@@ -38,6 +43,109 @@ export async function POST(request: Request, context: RouteContext) {
     const data = asRecord(transaction.data) ?? {};
     const extraction = asRecord(data.extraction);
     const proposal = validateTransactionExtractionProposal(extraction?.proposal);
+
+    if (action === "provide_missing_facts") {
+      const clientName = optionalString(body.clientName);
+      const propertyAddress = optionalString(body.propertyAddress);
+      const side = parseSide(body.side);
+      const stage = parseStage(body.stage);
+      const nextProposal = {
+        ...proposal,
+        clientNames: proposal.clientNames.length ? proposal.clientNames : clientName ? [clientName] : [],
+        propertyAddress: proposal.propertyAddress ?? propertyAddress,
+        inferredSide: proposal.inferredSide ?? side,
+        inferredStage: proposal.inferredStage ?? stage
+      };
+
+      const missing = getMissingIdentityFacts(nextProposal);
+      if (missing.length) {
+        return NextResponse.json(
+          { error: "A few transaction details are still missing.", missingFacts: missing },
+          { status: 409 }
+        );
+      }
+
+      const nextData = {
+        ...data,
+        extraction: {
+          ...extraction,
+          proposal: nextProposal,
+          manualFacts: {
+            providedAt: new Date().toISOString(),
+            providedByUserId: actor.id,
+            clientName: clientName ?? null,
+            propertyAddress: propertyAddress ?? null,
+            side: side ?? null,
+            stage: stage ?? null
+          }
+        }
+      } as Prisma.InputJsonObject;
+
+      await prisma.rosObject.update({
+        where: { id: transaction.id },
+        data: { data: nextData }
+      });
+
+      return NextResponse.json({ saved: true });
+    }
+
+    if (action === "wait_for_future_document") {
+      const now = new Date().toISOString();
+      const missing = getMissingIdentityFacts(proposal);
+      const nextData = {
+        ...data,
+        extraction: {
+          ...extraction,
+          status: "waiting_for_more_document",
+          proposal,
+          resolution: {
+            action: "wait_for_future_document",
+            missingFacts: missing,
+            resolvedAt: now,
+            resolvedByUserId: actor.id
+          }
+        }
+      } as Prisma.InputJsonObject;
+
+      const updatedTransaction = await prisma.$transaction(async (tx) => {
+        const updated = await tx.rosObject.update({
+          where: { id: transaction.id },
+          data: {
+            health: "Healthy",
+            nextAction: "Koinonia is waiting for another transaction document and will use it to fill in the remaining details.",
+            data: nextData
+          }
+        });
+
+        await tx.timelineEvent.create({
+          data: {
+            workspaceId: actor.workspaceId,
+            objectId: transaction.id,
+            actorId: actor.id,
+            eventType: "transaction.extraction.waiting_for_document",
+            summary: `Realtor chose to provide remaining transaction details through a future document for ${transaction.name}`,
+            newValue: { missingFacts: missing }
+          }
+        });
+
+        await tx.auditEvent.create({
+          data: {
+            workspaceId: actor.workspaceId,
+            actorId: actor.id,
+            actorEmail: actor.email,
+            action: "portal.transaction.extraction.waiting_for_document",
+            subjectType: "RosObject",
+            subjectId: transaction.id,
+            summary: `Deferred missing transaction details until another document arrives for ${transaction.name}`,
+            metadata: { missingFacts: missing }
+          }
+        });
+
+        return updated;
+      });
+
+      return NextResponse.json({ transaction: updatedTransaction });
+    }
 
     if (proposal.documentMatch !== "mismatch") {
       return NextResponse.json({ error: "This transaction does not have an active document mismatch." }, { status: 409 });
@@ -146,6 +254,34 @@ export async function POST(request: Request, context: RouteContext) {
 
     throw error;
   }
+}
+
+function getMissingIdentityFacts(proposal: {
+  clientNames: string[];
+  propertyAddress?: string;
+  inferredSide?: "buyer" | "seller";
+  inferredStage?: "pre_contract" | "under_contract";
+}): string[] {
+  const missing: string[] = [];
+  if (!proposal.clientNames.length) missing.push("clientName");
+  if (!proposal.propertyAddress) missing.push("propertyAddress");
+  if (!proposal.inferredSide) missing.push("side");
+  if (!proposal.inferredStage) missing.push("stage");
+  return missing;
+}
+
+function optionalString(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const normalized = value.trim().replace(/\s+/g, " ");
+  return normalized || undefined;
+}
+
+function parseSide(value: unknown): "buyer" | "seller" | undefined {
+  return value === "buyer" || value === "seller" ? value : undefined;
+}
+
+function parseStage(value: unknown): "pre_contract" | "under_contract" | undefined {
+  return value === "pre_contract" || value === "under_contract" ? value : undefined;
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {
