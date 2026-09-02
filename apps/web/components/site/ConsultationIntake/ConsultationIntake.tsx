@@ -11,7 +11,6 @@ import {
   marketingAttributionStorageKey,
   migrateLegacyMarketingAttribution,
   normalizeMarketingAttributionState,
-  previousMarketingAttributionStorageKey,
   type MarketingAttributionSubmission
 } from "@/lib/marketing-attribution";
 
@@ -94,10 +93,7 @@ function readSubmissionAttribution(): MarketingAttributionSubmission {
     const stored = normalizeMarketingAttributionState(
       JSON.parse(window.localStorage.getItem(marketingAttributionStorageKey) ?? "null")
     );
-    const previous = stored ?? normalizeMarketingAttributionState(
-      JSON.parse(window.localStorage.getItem(previousMarketingAttributionStorageKey) ?? "null")
-    );
-    const migrated = previous ?? migrateLegacyMarketingAttribution(
+    const migrated = stored ?? migrateLegacyMarketingAttribution(
       JSON.parse(window.sessionStorage.getItem(legacyMarketingAttributionStorageKey) ?? "null"),
       current
     );
