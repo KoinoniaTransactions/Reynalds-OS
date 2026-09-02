@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
+import { ClientTransactionSearch } from "../../../components/client/ClientTransactionSearch";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
@@ -97,13 +98,17 @@ export default async function ClientDashboardPage({ searchParams }: PageProps) {
                 <p>Property first. Client, status, and closing date stay visible without opening the file.</p>
               </div>
 
-              <form action="/client/dashboard" method="get" className="koinonia-client-dashboard-search koinonia-client-dashboard-search-modern">
-                <label className="koinonia-client-dashboard-search-field">
-                  <span className="koinonia-sr-only">Search transactions</span>
-                  <input type="search" name="q" defaultValue={search} placeholder="Search property or client" />
-                </label>
-                <input type="hidden" name="filter" value={filter} />
-              </form>
+              <ClientTransactionSearch
+                transactions={view.transactions.map((transaction) => ({
+                  id: transaction.id,
+                  propertyAddress: transaction.propertyAddress,
+                  clientName: transaction.clientName,
+                  status: transaction.status,
+                  side: transaction.side
+                }))}
+                initialQuery={search}
+                filter={filter}
+              />
             </div>
 
             <div className="koinonia-client-dashboard-toolbar koinonia-client-dashboard-toolbar-modern">
