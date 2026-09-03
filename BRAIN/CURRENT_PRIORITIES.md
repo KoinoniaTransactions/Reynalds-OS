@@ -2,230 +2,275 @@
 
 ## Active Phase
 
-Koinonia White-Glove Service Definition + Website Sales Architecture
+Koinonia White-Glove Commercial Reconciliation + Website Launch Readiness
 
 ---
 
 # Primary Objective
 
-Redefine and complete Koinonia's sellable service model so Realtors can clearly understand, evaluate, and buy the breadth of Koinonia's white-glove support through the public website.
+Finish reconciling the approved working white-glove product/sales architecture into canonical Koinonia objects, close the remaining fulfillment/compliance claim gates, and then implement the new client-facing Services/Pricing and homepage architecture.
 
-**Product definition, packaging, pricing architecture, and public presentation come before additional client-portal or operations-platform development.**
-
-The immediate mission is not to build more internal infrastructure. The immediate mission is to answer, with clarity and completeness:
-
-> **What can a Realtor hire Koinonia to do, how is it organized, how is it sold, and why should they choose Koinonia instead of assembling multiple vendors?**
+**Portal and internal operations-platform expansion remain parked until the public commercial model is implemented and sufficiently supported by operational readiness.**
 
 ---
 
-# Strategic Direction
+# Current Strategic Direction
 
-Koinonia is intended to become the **white-glove, one-stop support relationship for Realtors**.
+Koinonia is the **white-glove, one-stop real estate operations and Realtor support relationship**.
 
-A Realtor should be able to bring Koinonia nearly any legitimate operational need around running and serving their real estate business, and Koinonia should either:
-
-1. handle it directly;
-2. provide appropriately licensed coverage;
-3. coordinate and manage an approved specialist/vendor; or
-4. identify the narrow portion that must remain with the Realtor or brokerage.
-
-The client should not have to assemble and manage separate transaction coordinators, listing coordinators, showing platforms, marketing freelancers, CRM assistants, media vendors, and miscellaneous field providers when Koinonia can coordinate the relationship.
-
-Core customer concept:
-
-> **One relationship. More of your business covered.**
-
-Primary brand message remains:
+Primary message:
 
 > **You focus on your clients. We'll keep the business running.**
 
+Supporting message:
+
+> **One relationship. More of your business covered.**
+
+Customer experience:
+
+> **Bring Koinonia the need. We help get it handled.**
+
+The client should not have to assemble and manage a different transaction coordinator, listing coordinator, showing platform, marketing freelancer, CRM assistant, and miscellaneous provider every time the need changes.
+
 ---
 
-# Client-Facing Service Architecture — Working Direction
+# Product Definition Phase — Substantially Complete
 
-Keep the website architecture simple while making capability depth obvious.
+The following working architecture has now been defined and reconciled into the canonical catalog structure.
 
-Working umbrellas:
+## Five Client-Facing Capability Umbrellas
 
 1. **Transactions & Contracts**
-2. **Listings & Seller Operations**
+2. **Listing & Seller Support**
 3. **Licensed Field Coverage**
 4. **Marketing & Growth**
-5. **CRM, Client & Business Operations**
+5. **CRM & Business Operations**
 
-Vacation / Overflow Coverage, Hand Us the Listing, Realtor Management, and similar concepts should be evaluated as integrated solutions/packages rather than automatically becoming additional foundational service boxes.
+These describe **what Koinonia can handle**.
 
-The service architecture is still being defined and is **not yet final**.
+## Five Core Commercial Products
 
----
+1. **Transaction Management**
+2. **Hand Us the Listing**
+3. **Licensed Field Coverage**
+4. **Marketing Management**
+5. **Koinonia Partnership**
 
-# Current Source Documents
+These describe **how a Realtor hires Koinonia**.
 
-Brand direction:
-
-- `03_Knowledge/Brand/koinonia_brand_core.md`
-
-Owner direction:
-
-- `02_Companies/Koinonia/04_Departments/Operations/OWNER_DIRECTION_WHITE_GLOVE_ONE_STOP_SUPPORT_2026-09-02.md`
-
-Working capability inventory:
-
-- `02_Companies/Koinonia/04_Departments/Operations/realtor_capability_catalog_working_master_2026-09-02.md`
-
-Marketing design research:
-
-- `02_Companies/Koinonia/04_Departments/Marketing/REALTOR_MARKETING_SERVICE_DESIGN_2026-09-02.md`
-
-Hand Us the Listing workflow concept:
-
-- `02_Companies/Koinonia/04_Departments/Operations/HAND_US_THE_LISTING_INTEGRATED_WORKFLOW_2026-09-02.md`
+A defined need outside these products may use the Custom Project path. “Ask Koinonia” is universal intake, not a sixth named product.
 
 ---
 
-# Current Canonical Foundation
+# Current Working Launch Pricing
 
-The existing canonical Service Catalog currently contains:
+Subject to final readiness/publication approval:
 
-- Transaction Management
-- Contract Preparation & Writing
-- Licensed Showing Coverage
-- Business Operations Support
+- **Transaction Management — $450 per successful closing**
+- **Hand Us the Listing — $350 per listing**
+- **Licensed Field Coverage — from $75 per standard assignment**
+- **Professional Open House — $200 per standard event**
+- **Marketing Management — $750 per month**
+- **Koinonia Partnership — $1,250 per month**
+- **Custom Project — quoted before work begins**
 
-These objects remain useful source material but **do not define the final expanded sellable architecture**.
+Pricing principle:
 
-The current public website also contains newer service concepts such as Professional Open House Coverage and Monthly Operations Partnership that must be reconciled into the new model rather than blindly preserved or duplicated.
+> **Simple Koinonia service fee. Variable outside costs only when the work requires them.**
+
+Professional media, advertising spend, printing/postage, staging, repairs, specialty software, and similar outside expenses remain additional only when required and approved. Koinonia may still coordinate those needs as part of the white-glove relationship.
+
+Do not recreate task-by-task micro-fees or hidden vendor markups.
+
+---
+
+# Canonical Reconciliation Status
+
+## Current Service Catalog
+
+- OBJ-00000002 — Transaction Management Service — Production Certified
+- OBJ-00000014 — Contract & Document Support — Controlled / standalone compensation gated
+- OBJ-00000015 — Listing & Seller Support — Pre-Launch / certification pending
+- OBJ-00000016 — Licensed Field Coverage — Pre-Launch / expanded-scope certification pending
+- OBJ-00000017 — Marketing & Growth — Pre-Launch / certification pending
+- OBJ-00000018 — CRM & Business Operations — Pre-Launch / expanded certification pending
+
+Legacy OBJ-3/4/5 objects remain historical/narrower certified source material and do not override the current commercial definitions.
+
+## Current Package Catalog
+
+- OBJ-00000019 — Transaction Management
+- OBJ-00000020 — Hand Us the Listing
+- OBJ-00000021 — Licensed Field Coverage
+- OBJ-00000022 — Marketing Management
+- OBJ-00000023 — Koinonia Partnership
+
+Legacy packages OBJ-7/8/9 are retained as historical and superseded for current commercial use.
+
+## Current Pricing Rules
+
+- OBJ-00000024 — Transaction Management Pricing Rule
+- OBJ-00000025 — Hand Us the Listing Pricing Rule
+- OBJ-00000026 — Licensed Field Coverage Pricing Rule
+- OBJ-00000027 — Marketing Management Pricing Rule
+- OBJ-00000028 — Koinonia Partnership Pricing Rule
+- OBJ-00000029 — Custom Project & Outside Expense Pricing Rule
+
+Legacy OBJ-11/12/13 pricing is retained as historical and superseded for current commercial use.
+
+---
+
+# Contract / Document Gate
+
+Contract/document preparation remains an important Koinonia capability, but standalone public pricing is **not currently approved in the new architecture**.
+
+Do not restore or publish the legacy $75 standalone price unless the compensation structure is reviewed and approved under the applicable Colorado brokerage/legal operating model.
+
+This capability can be included only where the approved compensation, authority, brokerage relationship, and workflow permit it.
 
 ---
 
 # Active Work Order
 
-## Priority 1 — Define the Complete Sellable Product
+## Priority 1 — Close Public Claim / Fulfillment Readiness Gates
 
-Work through the entire Realtor business lifecycle and finish the capability/service model.
+Before representing every new capability as universally available, verify and document the minimum operational readiness for:
 
-For each client-facing umbrella determine:
+### Listing & Seller Support
 
-- customer problem solved;
-- exact capabilities included;
-- common Realtor use cases;
-- what is direct Koinonia work;
-- what requires licensed coverage;
-- what is Koinonia-managed specialist/vendor work;
-- what remains an Agent/Broker decision;
-- standalone versus recurring use;
-- natural add-ons;
-- natural bundles;
-- service boundaries/exclusions;
-- fulfillment assumptions;
-- pricing method;
-- website sales message.
+- brokerage/MLS authority assumptions;
+- listing intake/launch workflow;
+- vendor/media coordination process;
+- base listing-marketing deliverables;
+- active-listing communication/admin process;
+- accepted-offer handoff.
 
-Do **not** reduce the model to a separate top-level product box for every task.
+### Licensed Field Coverage
 
-## Priority 2 — Define How Services Are Sold
+- provider/licensing model;
+- service area/base travel assumptions;
+- showing/open-house standards;
+- inspection/appraisal/vendor-access standards;
+- property-task authority/safety rules;
+- explicit gating of final walk-through, closing attendance, dispute, and other higher-risk representation activities.
 
-After capability definition, establish the commercial architecture:
+### Marketing & Growth
 
-- one-off services;
-- per-listing services;
-- per-transaction services;
-- field assignments;
-- marketing projects;
-- monthly support tiers;
-- premium Realtor Management relationship;
-- bundled lifecycle solutions such as Hand Us the Listing;
-- specialist/vendor pass-through costs;
-- service allowances versus true unlimited usage.
+- client onboarding/brand intake;
+- approval/compliance process;
+- production cadence;
+- publishing access;
+- listing-marketing overlap rule;
+- reporting standard;
+- outside media/ad/print approval/payment process.
 
-Pricing should follow the product architecture rather than determine it prematurely.
+### CRM & Business Operations / Koinonia Partnership
 
-## Priority 3 — Rewrite the Website Sales Architecture
+- onboarding/access model;
+- recurring scope/capacity rules;
+- approved communication/follow-up process;
+- task/CRM/vendor workflow;
+- escalation/approval rules;
+- recurring review and over-capacity process.
 
-Once services and packaging are defined:
+## Priority 2 — Implement Services & Pricing Page
 
-- redefine Services page information architecture;
-- determine homepage positioning and capability proof;
-- create detailed capability sections without overwhelming Realtors;
-- show integrated solutions/use cases;
-- expose breadth through "What can Koinonia handle?" style content;
-- create clear CTAs for one-time help and deeper partnership;
-- reconcile existing service/pricing copy;
-- update public claims only after scope and fulfillment confidence is established.
+Once Priority 1 provides sufficient confidence for the public claims being used:
 
-## Priority 4 — Canonical Reconciliation
+- replace legacy four-service architecture;
+- remove old $389 / $75 / $50 / $299 pricing presentation;
+- remove old $299/$599/$999 hourly monthly tiers;
+- implement five capability discovery areas;
+- implement five commercial products and working launch prices;
+- add Marketing vs Koinonia Partnership comparison;
+- add popular solutions/use cases;
+- add clear outside-expense explanation;
+- add concise professional-scope language;
+- use “Tell Us What You Need” as primary universal CTA.
 
-Once the sellable model is approved:
+Source blueprint:
 
-- rewrite Service Catalog;
-- update/create service objects as appropriate;
-- reconcile Professional Open House Coverage;
-- rename/expand Showing Coverage if approved;
-- formalize Marketing & Growth;
-- update package catalog;
-- update pricing rules;
-- update marketing claim gates.
+`02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md`
+
+## Priority 3 — Update Homepage
+
+Stop leading primarily as transaction coordination with add-ons.
+
+Homepage should establish:
+
+1. white-glove one-support-partner promise;
+2. five-area breadth proof;
+3. “more than transaction coordination” differentiation;
+4. Hand Us the Listing flagship use case;
+5. Licensed Field Coverage differentiator;
+6. Marketing + operations differentiator;
+7. simple ways to work / starting prices;
+8. trust/process/boundaries;
+9. strong universal CTA.
+
+## Priority 4 — QA + Launch
+
+Before deployment:
+
+- reconcile every public price against the current Pricing Rules Catalog;
+- confirm no legacy package/pricing copy remains exposed;
+- confirm regulated/controlled capabilities do not overclaim authority;
+- verify forms/CTAs/routes;
+- verify desktop/mobile layout;
+- verify analytics/conversion tracking as appropriate;
+- complete final content/visual QA.
 
 ## Priority 5 — Client Portal / Infrastructure
 
-**Park additional portal and Listing Operations infrastructure development until Priorities 1–4 are sufficiently complete.**
+Resume portal and operations-platform work only after the public product model is implemented and the operational requirements are clear enough to drive the build.
 
-Existing Listing Engagement / Hand Us the Listing application work may remain in the repository as an implementation foundation, but it is not the current development priority and should not drive product decisions.
+Existing Listing Engagement / Hand Us the Listing application work remains a useful implementation foundation but should not drive product decisions.
 
-Portal work resumes after the product architecture tells us what the portal actually needs to support.
+---
+
+# Current Source Documents
+
+Brand:
+
+- `03_Knowledge/Brand/koinonia_brand_core.md`
+
+Service architecture:
+
+- `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_SELLABLE_SERVICE_ARCHITECTURE_2026-09-02.md`
+
+Minimum product set:
+
+- `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_MINIMUM_PRODUCT_SET_2026-09-03.md`
+
+Standard scopes:
+
+- `02_Companies/Koinonia/04_Departments/Operations/KOINONIA_STANDARD_PRODUCT_SCOPES_2026-09-03.md`
+
+Pricing architecture:
+
+- `02_Companies/Koinonia/03_Pricing/KOINONIA_SIMPLIFIED_PRICING_ARCHITECTURE_2026-09-02.md`
+- `02_Companies/Koinonia/03_Pricing/KOINONIA_MARKET_POSITIONED_PRICING_PROPOSAL_2026-09-03.md`
+
+Monthly-product differentiation:
+
+- `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_MONTHLY_OFFER_DIFFERENTIATION_2026-09-03.md`
+
+Website sales architecture:
+
+- `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md`
+
+Canonical objects:
+
+- `02_Companies/Koinonia/00_Master_Objects/OBJ-00000001_Service_Catalog.md`
+- `02_Companies/Koinonia/02_Packages/OBJ-00000006_Package_Catalog.md`
+- `02_Companies/Koinonia/03_Pricing/OBJ-00000010_Pricing_Rules_Catalog.md`
 
 ---
 
 # Immediate Next Task
 
-Create the **sellable Koinonia Service Architecture** from the working capability catalog.
+**Close the public claim/fulfillment readiness gates for the new pre-launch capabilities, beginning with Hand Us the Listing / Listing & Seller Support, then Licensed Field Coverage, Marketing & Growth, and Koinonia Partnership.**
 
-The next deliverable should define the complete five-umbrella offer from the Realtor/customer point of view — not database objects, portal screens, or internal workflows.
+Do not restart broad product ideation unless a readiness review exposes a genuine commercial design flaw.
 
-For each umbrella, produce:
-
-1. clear customer-facing name;
-2. one-sentence promise;
-3. major capability groups;
-4. detailed examples of what the Realtor can hand off;
-5. common scenarios;
-6. fulfillment model;
-7. important boundaries;
-8. likely purchasing model;
-9. bundle/relationship connections;
-10. website presentation recommendation.
-
-Then evaluate whether the five umbrellas are actually the best public architecture before freezing them.
-
----
-
-# Non-Negotiable Product Principles
-
-- Koinonia is broader than transaction coordination.
-- Marketing is part of the intended core capability model.
-- Koinonia should cover the useful Showami-style field-task universe and go substantially beyond it.
-- Do not create a new public service box for every individual task.
-- Fulfillment method is not the product; the Realtor is buying Koinonia's managed support relationship and accountability.
-- Do not misrepresent third-party specialists/providers as Koinonia employees or licensees.
-- Do not imply Koinonia owns professional judgment that remains with the responsible Realtor/brokerage.
-- Do not let current software architecture artificially constrain the sellable service model.
-- Do not let existing website boxes artificially constrain the sellable service model.
-- Define the product first. Build the supporting platform second.
-
----
-
-# Success Criteria for Current Phase
-
-This phase is complete when a Realtor can visit the Koinonia website and quickly understand:
-
-- what Koinonia is;
-- the breadth of work Koinonia can take off their plate;
-- which major service areas exist;
-- how one-time support differs from an ongoing partnership;
-- how integrated solutions such as listing-to-close or vacation coverage work;
-- where licensed field support fits;
-- where marketing fits;
-- how to start;
-- why Koinonia is materially different from a traditional TC, virtual assistant, marketing freelancer, or showing marketplace.
-
-Only after that product/sales architecture is approved should client-portal and operations infrastructure become the primary build focus again.
+After sufficient readiness is documented, implement the new Services/Pricing page and homepage architecture.
