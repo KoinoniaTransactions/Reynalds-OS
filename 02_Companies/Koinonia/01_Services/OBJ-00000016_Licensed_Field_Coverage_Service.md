@@ -7,8 +7,8 @@ Class: Service
 Type: Controlled Canonical Commercial Capability Object  
 Module: Koinonia  
 Parent Object: OBJ-00000001 — Service Catalog  
-Status: Pre-Launch / Expanded Scope Certification Pending  
-Version: 1.0  
+Status: Controlled Launch Approved  
+Version: 1.1  
 Owner: Koinonia  
 Memory Level: Institutional  
 Effective Date: 2026-09-03  
@@ -35,7 +35,7 @@ Koinonia coordinates and performs or assigns approved field work with clear inst
 
 ### Open-house coverage
 
-- licensed hosting where required/appropriate;
+- professional hosting by an active licensed Colorado real-estate broker under Koinonia's launch standard;
 - standard setup and teardown;
 - approved property information/materials;
 - visitor registration/lead-capture process;
@@ -52,6 +52,8 @@ Koinonia coordinates and performs or assigns approved field work with clear inst
 - measurement/floor-plan access.
 
 ### Approved property tasks
+
+Conditional on applicable property, brokerage, MLS/lockbox, insurance, and access authority:
 
 - visual property documentation visit;
 - vacancy/property check under written instruction;
@@ -74,6 +76,46 @@ Normal assignment coordination includes:
 - standard completion documentation/feedback;
 - issue escalation when needed.
 
+## Provider Standard
+
+Koinonia's controlled launch standard requires an active Colorado real-estate broker license for buyer showings, multi-property buyer tours, professional open-house hosting, and other substantially consumer-facing field assignments.
+
+A provider's license does not itself establish a Brokerage Relationship with the consumer and does not authorize the provider to give advice, negotiate, or make representation decisions under the standard Koinonia assignment.
+
+Access-only/property-task use of an unlicensed trained REAP may be evaluated later where Colorado law, Brokerage Firm policy, property authority, MLS/lockbox rules, insurance, and the assignment permit it. At launch, use licensed providers when there is uncertainty.
+
+## Ministerial / REAP Boundary
+
+The standard Koinonia Field Coverage assignment is an administrative/ministerial REAP assignment, not independent brokerage representation.
+
+Providers may:
+
+- provide authorized property access;
+- conduct approved showings/open houses;
+- distribute objective property information supplied/approved by the Broker;
+- follow Realtor instructions;
+- document observations and consumer feedback without professional conclusions;
+- collect approved visitor/lead information;
+- escalate substantive questions and decisions to the requesting Realtor.
+
+Providers may not under the standard assignment:
+
+- advise a buyer/seller on price, offer strategy, or whether to proceed;
+- negotiate;
+- prepare contracts/amendments;
+- interpret legal/contract rights;
+- provide property-condition/inspection conclusions;
+- independently establish a Brokerage Relationship with the consumer;
+- substitute for the requesting Realtor's professional judgment.
+
+## Consumer Disclosure
+
+For consumer-facing assignments, the provider must communicate the limited coverage role and direct brokerage/strategy/property-advice questions to the requesting Realtor.
+
+Working disclosure:
+
+> I'm here today providing coverage on behalf of [Requesting Realtor] for this appointment. I'm not establishing a separate brokerage relationship with you or replacing your Realtor. Questions about the property, pricing, terms, strategy, or representation should go back to [Requesting Realtor].
+
 ## Pricing Relationship
 
 Primary commercial product:
@@ -86,20 +128,68 @@ Current working pricing rule:
 
 Field pricing may legitimately vary with distance, notice, duration, number of properties, timing, and assignment complexity. Final price must be confirmed before booking when the request falls outside the standard base assignment.
 
-## Professional / Regulatory Boundaries
+## Green — Controlled Launch Approved
 
-Koinonia does not use this service as authority to provide unapproved negotiation, legal advice, property-condition warranties, technical inspection opinions, brokerage supervision, or representation decisions outside the established brokerage/licensing relationship.
+- buyer showing coverage;
+- approved multi-property tours quoted before booking;
+- professional open-house hosting;
+- inspection access;
+- appraisal access;
+- photographer/media access;
+- stager/vendor/contractor access;
+- completion feedback/documentation;
+- vacation/overflow use of the above approved assignment types.
 
-The following remain gated unless and until the applicable brokerage relationship, authority, licensing, and operating process are specifically approved:
+## Yellow — Client / Property-Specific Authority Required
 
-- final-walkthrough representation/coverage beyond scheduling or narrowly approved attendance;
-- physical closing attendance as a representation service;
-- closing-document review responsibility;
+- lockbox install/removal;
+- key pickup/drop-off;
+- sign tasks;
+- property documentation/status visits;
+- repair-completion visual documentation;
+- vacancy/securement observations;
+- unusual access assignments;
+- any assignment subject to additional Brokerage Firm, MLS, lockbox, insurer, or property-owner controls.
+
+## Red / Separate Gate
+
+Do not advertise as standard Field Coverage:
+
+- final-walk-through representation;
+- closing representation or closing-document review;
+- negotiation;
+- offer/contract preparation;
+- inspection-resolution negotiation;
+- legal/title/loan advice;
+- property-condition certification;
 - possession/property-condition disputes;
+- repair-quality certification;
+- independent Brokerage Relationship creation under the Koinonia field assignment;
 - any activity outside delegated or licensed authority.
 
 Unsafe or unauthorized access is never included.
 
+## Compensation Boundary
+
+The standard Koinonia assignment price is for the approved administrative/REAP field assignment. If the work crosses into Real Estate Brokerage Services, the standard assignment model stops and the required Brokerage Relationship, Brokerage Firm supervision/compensation, and licensing rules control.
+
+Do not use Koinonia field pricing to route brokerage-service compensation around the applicable Brokerage Firm.
+
+## Access / Security Rules
+
+- use the applicable listing/showing service and approved appointment process;
+- verify lawful access before dispatch;
+- do not bypass listing-broker restrictions;
+- do not use another person's MLS/showing/lockbox credentials contrary to platform rules;
+- secure the property after the assignment;
+- report access/security irregularities promptly.
+
+## Controlled Launch Source
+
+Detailed operating standard:
+
+`02_Companies/Koinonia/04_Departments/Operations/LICENSED_FIELD_COVERAGE_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+
 ## Legacy Note
 
-OBJ-00000004 remains a Production Certified historical service object for the narrower showing-coverage workflow. OBJ-00000016 is the current expanded commercial definition; the broader capabilities in this object require their own operational certification before being represented as universally available.
+OBJ-00000004 remains a Production Certified historical service object for the narrower showing-coverage workflow and serves as a fulfillment foundation. OBJ-00000016 is the current expanded commercial definition.
