@@ -4,7 +4,7 @@ Class: Master Object
 Type: Service Catalog  
 Module: Koinonia  
 Status: Active  
-Version: 2.0  
+Version: 2.1  
 Owner: Koinonia  
 Memory Level: Foundational  
 Effective Date: 2026-09-03
@@ -28,8 +28,8 @@ The public website may group these capabilities beneath simple client-facing umb
   Role: Approved document workflow support from Realtor-provided terms/instructions. Standalone public compensation is not currently authorized by this catalog.
 
 - **OBJ-00000015 — Listing & Seller Support Service**  
-  Status: Pre-Launch / Operational Certification Pending  
-  Role: Listing intake, preparation/vendor coordination, launch support, base listing marketing integration, active-listing administration, and accepted-offer handoff.
+  Status: Controlled Launch Approved  
+  Role: Listing intake, preparation/vendor coordination, launch support, base listing marketing integration, active-listing administration, and accepted-offer handoff under documented brokerage/MLS/approval controls.
 
 - **OBJ-00000016 — Licensed Field Coverage Service**  
   Status: Pre-Launch / Expanded Scope Certification Pending  
@@ -69,11 +69,12 @@ These umbrellas describe breadth; they are not a requirement to create a separat
 ## Governance
 
 1. A new commercial capability must be represented by a current service object or explicitly fit within an existing object's scope.
-2. New pre-launch capability objects are not automatically Production Certified.
-3. Regulated/licensed activities must preserve the applicable authority, brokerage relationship, approval, and compliance gates.
-4. Fulfillment method is not the product; Koinonia may perform approved work directly, through licensed coverage, or through managed specialists/providers as applicable.
-5. Koinonia must not represent third-party providers as employees/licensees when that is not true.
-6. Normal outside provider costs are governed by the active outside-expense pricing rule rather than embedded hidden micro-fees.
+2. New capability objects are not automatically Production Certified merely because they are commercially defined.
+3. A service may be publicly launched under a documented controlled-launch standard before full universal certification when the operating boundaries, client-specific gates, and claims are explicitly defined.
+4. Regulated/licensed activities must preserve the applicable authority, brokerage relationship, approval, and compliance gates.
+5. Fulfillment method is not the product; Koinonia may perform approved work directly, through licensed coverage, or through managed specialists/providers as applicable.
+6. Koinonia must not represent third-party providers as employees/licensees when that is not true.
+7. Normal outside provider costs are governed by the active outside-expense pricing rule rather than embedded hidden micro-fees.
 
 ## Referenced By
 
