@@ -6,8 +6,8 @@ Object ID: OBJ-00000020
 Class: Package / Commercial Product  
 Module: Koinonia  
 Parent Object: OBJ-00000006 — Package Catalog  
-Status: Pre-Launch Commercial Definition  
-Version: 1.0  
+Status: Controlled Launch Approved  
+Version: 1.1  
 Owner: Koinonia  
 Effective Date: 2026-09-03
 
@@ -36,9 +36,22 @@ For one standard listing engagement:
 - relaunch/withdrawal/expiration administration within normal scope;
 - accepted-offer operational handoff.
 
+## MLS Operating Model
+
+Hand Us the Listing does not require universal direct MLS access.
+
+Approved fulfillment modes:
+
+1. **Authorized Direct-Access Mode** — Koinonia uses its own properly authorized office-admin/assistant/other access and performs permitted listing actions under brokerage/MLS rules.
+2. **Broker-Submit Mode** — Koinonia prepares the complete launch/update packet and the Realtor, managing broker, participant, or authorized office administrator submits or changes the listing.
+
+Shared Realtor/MLS credentials are not an approved fulfillment method.
+
 ## Base Listing Marketing
 
 The listing-management fee includes the defined Koinonia coordination/production layer for standard listing marketing. Do not separately charge Koinonia coordination fees for normal photographer scheduling, sign coordination, basic listing marketing setup, or similar work already included in this product.
+
+Property-specific marketing uses approved facts, preserves required brokerage attribution, and follows the Realtor/brokerage's approval process.
 
 ## Outside Expenses
 
@@ -58,12 +71,24 @@ At accepted offer:
 
 ## Billing Relationship
 
-Current working pricing rule:
+Current pricing rule:
 
 - OBJ-00000025 — Hand Us the Listing Pricing Rule
 
-Working launch price: **$350 per listing**.
+Controlled launch price: **$350 per standard listing**.
 
 ## Boundaries
 
-The Realtor/brokerage retains seller advice, pricing strategy, CMA conclusions, negotiation, legal/compliance decisions, professional judgment, and required approvals.
+The Realtor/brokerage retains seller advice, pricing strategy, CMA conclusions, negotiation, legal/compliance decisions, disclosure/material-fact judgment, professional judgment, and required approvals.
+
+## Public Claim Control
+
+Approved public wording should describe Koinonia as managing the **operational work around the Realtor's listing**, not as becoming the listing brokerage.
+
+MLS, advertising, and brokerage-controlled actions are completed under the Realtor's and brokerage's approved authority, access, and required approvals.
+
+## Readiness Standard
+
+Controlled launch is governed by:
+
+- `02_Companies/Koinonia/04_Departments/Operations/HAND_US_THE_LISTING_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
