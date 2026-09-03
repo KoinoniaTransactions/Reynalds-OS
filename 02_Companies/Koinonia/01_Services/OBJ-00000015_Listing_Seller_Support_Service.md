@@ -7,8 +7,8 @@ Class: Service
 Type: Canonical Commercial Capability Object  
 Module: Koinonia  
 Parent Object: OBJ-00000001 — Service Catalog  
-Status: Pre-Launch / Operational Certification Pending  
-Version: 1.0  
+Status: Controlled Launch Approved  
+Version: 1.1  
 Owner: Koinonia  
 Memory Level: Institutional  
 Effective Date: 2026-09-03
@@ -55,6 +55,13 @@ Within approved brokerage/MLS authority and Realtor direction:
 - syndication/listing-live verification;
 - launch QA and confirmation.
 
+Koinonia may fulfill MLS-related work in either of two approved modes:
+
+1. **Authorized Direct-Access Mode** — Koinonia uses its own properly authorized office-admin/assistant/other access and performs only the actions permitted by the brokerage/MLS.
+2. **Broker-Submit Mode** — Koinonia prepares the complete listing-launch/update packet and the Realtor, managing broker, participant, or authorized office administrator performs the MLS submission/change.
+
+Shared Realtor/MLS credentials are not an approved fulfillment method.
+
 ### Listing marketing integration
 
 - approved property messaging/copy;
@@ -90,11 +97,26 @@ Not included as Koinonia-owned professional judgment:
 - CMA conclusions and list-price decisions;
 - negotiation;
 - legal advice;
+- disclosure/material-fact decisions;
 - unapproved material property representations;
 - brokerage supervision;
 - work outside delegated authority.
 
 Licensed field labor is not automatically included merely because Koinonia coordinates the assignment. Transaction Management begins separately at accepted offer unless a future written package expressly bundles it.
+
+## Client-Specific Authorization Gates
+
+The following require the applicable client/brokerage permission, approved account/access path, or written authority before Koinonia performs them directly:
+
+- MLS input/edit;
+- direct publishing to Realtor/brokerage marketing channels;
+- seller-facing administrative communication;
+- price/status/showing-instruction changes;
+- property media access/use;
+- vendor spending under standing authority;
+- dissemination of property advertising outside the Realtor's normal approved channels.
+
+Where direct MLS access is unavailable or inappropriate, Broker-Submit Mode is the default fulfillment path.
 
 ## Commercial Relationship
 
@@ -108,6 +130,10 @@ Related capabilities/products may include:
 - OBJ-00000017 — Marketing & Growth Service
 - OBJ-00000002 — Transaction Management Service
 
-## Certification Note
+## Readiness Standard
 
-This is the canonical commercial definition for the expanded listing capability. Detailed fulfillment SOPs, permissions, staffing/provider standards, and production certification must be completed before all described capabilities are represented as universally available.
+Controlled launch is governed by:
+
+- `02_Companies/Koinonia/04_Departments/Operations/HAND_US_THE_LISTING_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+
+The product may be publicly offered under that control standard. This status does not authorize activities prohibited by a client's brokerage, MLS, insurer, law, or applicable professional rules.
