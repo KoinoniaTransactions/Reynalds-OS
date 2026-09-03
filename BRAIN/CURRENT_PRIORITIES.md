@@ -94,29 +94,51 @@ Key operating decisions:
 - outside property costs remain separate when required and approved;
 - accepted offer hands directly into Transaction Management without duplicate intake/setup charges.
 
-Canonical status updated:
+Canonical status:
 
 - OBJ-00000015 — Listing & Seller Support — Controlled Launch Approved
 - OBJ-00000020 — Hand Us the Listing — Controlled Launch Approved
 
-## OPEN — Licensed Field Coverage
+## PASS — Licensed Field Coverage
 
-Next readiness review must resolve:
+Status: **Controlled Launch Approved**
 
-- provider/licensing model;
-- brokerage relationship/supervision assumptions for different assignment types;
-- service area/base travel assumptions;
-- showing standards;
-- professional open-house standards;
-- inspection/appraisal/vendor-access standards;
-- property-task authority/safety rules;
-- lead/client handling at open houses;
-- explicit gating of final walk-through, closing attendance/document review, disputes, possession/condition issues, and other higher-risk representation activity;
-- pricing boundary between standard $75 assignment and materially different distance/duration/complexity.
+Readiness standard:
+
+`02_Companies/Koinonia/04_Departments/Operations/LICENSED_FIELD_COVERAGE_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+
+Key operating decisions:
+
+- public launch includes buyer showing coverage, approved multi-property tours, professional open-house hosting, inspection/appraisal/media/stager/vendor/contractor access, and vacation/overflow use of approved assignment types;
+- active Colorado licensed providers are the launch standard for showings, tours, open houses, and other substantially consumer-facing assignments;
+- standard Field Coverage is an administrative/ministerial REAP assignment, not substitute brokerage representation;
+- providers disclose the limited coverage role and route pricing, strategy, negotiation, contract, property-advice, and representation questions to the requesting Realtor;
+- $75+ assignment pricing and $200 standard open-house pricing compensate the controlled field assignment, not independent brokerage services;
+- if work crosses into Real Estate Brokerage Services, the standard assignment stops and the applicable Brokerage Relationship, Brokerage Firm supervision/compensation, and licensing rules control;
+- lockbox/key/sign/property-status tasks remain conditional on property, Brokerage Firm, MLS/lockbox, insurer, and access authority;
+- final-walk-through representation, closing coverage/document review, negotiation, contract work, disputes, and property-condition certification remain gated;
+- lawful access, platform rules, property security, safety, and completion documentation are required on every assignment.
+
+Canonical status:
+
+- OBJ-00000016 — Licensed Field Coverage Service — Controlled Launch Approved
+- OBJ-00000021 — Licensed Field Coverage — Controlled Launch Approved
 
 ## OPEN — Marketing & Growth
 
-Must resolve onboarding/brand intake, approval/compliance process, production cadence, publishing access, listing-marketing overlap, reporting, and outside media/ad/print controls.
+Next readiness review must resolve:
+
+- client onboarding/brand intake;
+- brokerage/advertising approval and attribution rules;
+- content/property-fact approval process;
+- production cadence/capacity;
+- social/email/Google Business publishing access;
+- listing-marketing overlap with Hand Us the Listing;
+- paid-ad approval/budget/account ownership;
+- professional media/print/outside-cost workflow;
+- reporting standard;
+- claims/testimonial/review compliance;
+- rules for Koinonia-owned versus Realtor/brokerage-owned marketing channels.
 
 ## OPEN — CRM & Business Operations / Koinonia Partnership
 
@@ -157,8 +179,8 @@ Homepage should stop leading primarily as transaction coordination with add-ons 
 
 # Immediate Next Task
 
-**Close the public claim/fulfillment readiness gate for Licensed Field Coverage.**
+**Close the public claim/fulfillment readiness gate for Marketing & Growth / Marketing Management.**
 
 Do not return to broad product ideation unless the readiness review exposes a genuine commercial design flaw.
 
-After Field Coverage, review Marketing & Growth, then Koinonia Partnership. Once sufficient readiness is documented, implement the Services/Pricing page and homepage.
+After Marketing & Growth, review Koinonia Partnership. Once sufficient readiness is documented, implement the Services/Pricing page and homepage.
