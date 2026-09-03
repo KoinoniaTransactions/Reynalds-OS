@@ -24,6 +24,7 @@ Recover before reinventing.
 | Repository Architecture | docs/ARCHITECTURE.md | Active |
 | Decision Log | BRAIN/DECISION_LOG.md | Active |
 | Current Priorities | BRAIN/CURRENT_PRIORITIES.md | Active |
+| Private Case Workspace Architecture | BRAIN/PRIVATE_CASE_WORKSPACES.md | Active |
 
 ---
 
