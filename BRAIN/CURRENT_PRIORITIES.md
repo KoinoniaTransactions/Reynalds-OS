@@ -8,7 +8,7 @@ Koinonia White-Glove Commercial Reconciliation + Website Launch Readiness
 
 # Primary Objective
 
-Finish reconciling the approved working white-glove product/sales architecture into canonical Koinonia objects, close the remaining fulfillment/compliance claim gates, and then implement the new client-facing Services/Pricing and homepage architecture.
+Finish closing the remaining fulfillment/compliance claim gates for the new white-glove commercial model, then implement the new client-facing Services/Pricing and homepage architecture.
 
 **Portal and internal operations-platform expansion remain parked until the public commercial model is implemented and sufficiently supported by operational readiness.**
 
@@ -30,33 +30,25 @@ Customer experience:
 
 > **Bring Koinonia the need. We help get it handled.**
 
-The client should not have to assemble and manage a different transaction coordinator, listing coordinator, showing platform, marketing freelancer, CRM assistant, and miscellaneous provider every time the need changes.
-
 ---
 
-# Product Definition Phase — Substantially Complete
-
-The following working architecture has now been defined and reconciled into the canonical catalog structure.
+# Commercial Architecture — Reconciled
 
 ## Five Client-Facing Capability Umbrellas
 
-1. **Transactions & Contracts**
-2. **Listing & Seller Support**
-3. **Licensed Field Coverage**
-4. **Marketing & Growth**
-5. **CRM & Business Operations**
-
-These describe **what Koinonia can handle**.
+1. Transactions & Contracts
+2. Listing & Seller Support
+3. Licensed Field Coverage
+4. Marketing & Growth
+5. CRM & Business Operations
 
 ## Five Core Commercial Products
 
-1. **Transaction Management**
-2. **Hand Us the Listing**
-3. **Licensed Field Coverage**
-4. **Marketing Management**
-5. **Koinonia Partnership**
-
-These describe **how a Realtor hires Koinonia**.
+1. Transaction Management
+2. Hand Us the Listing
+3. Licensed Field Coverage
+4. Marketing Management
+5. Koinonia Partnership
 
 A defined need outside these products may use the Custom Project path. “Ask Koinonia” is universal intake, not a sixth named product.
 
@@ -64,213 +56,109 @@ A defined need outside these products may use the Custom Project path. “Ask Ko
 
 # Current Working Launch Pricing
 
-Subject to final readiness/publication approval:
+Subject to the readiness status of each product:
 
-- **Transaction Management — $450 per successful closing**
-- **Hand Us the Listing — $350 per listing**
-- **Licensed Field Coverage — from $75 per standard assignment**
-- **Professional Open House — $200 per standard event**
-- **Marketing Management — $750 per month**
-- **Koinonia Partnership — $1,250 per month**
-- **Custom Project — quoted before work begins**
+- Transaction Management — $450 per successful closing
+- Hand Us the Listing — $350 per standard listing
+- Licensed Field Coverage — from $75 per standard assignment
+- Professional Open House — $200 per standard event
+- Marketing Management — $750 per month
+- Koinonia Partnership — $1,250 per month
+- Custom Project — quoted before work begins
 
 Pricing principle:
 
 > **Simple Koinonia service fee. Variable outside costs only when the work requires them.**
 
-Professional media, advertising spend, printing/postage, staging, repairs, specialty software, and similar outside expenses remain additional only when required and approved. Koinonia may still coordinate those needs as part of the white-glove relationship.
-
-Do not recreate task-by-task micro-fees or hidden vendor markups.
-
 ---
 
-# Canonical Reconciliation Status
+# Readiness Status
 
-## Current Service Catalog
+## PASS — Hand Us the Listing / Listing & Seller Support
 
-- OBJ-00000002 — Transaction Management Service — Production Certified
-- OBJ-00000014 — Contract & Document Support — Controlled / standalone compensation gated
-- OBJ-00000015 — Listing & Seller Support — Pre-Launch / certification pending
-- OBJ-00000016 — Licensed Field Coverage — Pre-Launch / expanded-scope certification pending
-- OBJ-00000017 — Marketing & Growth — Pre-Launch / certification pending
-- OBJ-00000018 — CRM & Business Operations — Pre-Launch / expanded certification pending
+Status: **Controlled Launch Approved**
 
-Legacy OBJ-3/4/5 objects remain historical/narrower certified source material and do not override the current commercial definitions.
+Readiness standard:
 
-## Current Package Catalog
+`02_Companies/Koinonia/04_Departments/Operations/HAND_US_THE_LISTING_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
 
-- OBJ-00000019 — Transaction Management
-- OBJ-00000020 — Hand Us the Listing
-- OBJ-00000021 — Licensed Field Coverage
-- OBJ-00000022 — Marketing Management
-- OBJ-00000023 — Koinonia Partnership
+Key operating decisions:
 
-Legacy packages OBJ-7/8/9 are retained as historical and superseded for current commercial use.
+- product may be publicly offered at $350 per standard listing;
+- Koinonia manages the operational work around the Realtor's listing, not the listing brokerage relationship;
+- MLS activity uses either Authorized Direct-Access Mode or Broker-Submit Mode;
+- shared Realtor/MLS credentials are not permitted as the operating model;
+- direct MLS input/edit, seller communication, publishing, property media use, and specified change authority remain client/brokerage-specific permission gates;
+- Realtor/brokerage retains pricing strategy, CMA conclusions, negotiation, disclosure/material-fact judgment, legal/compliance decisions, and professional approval;
+- licensed open-house/field labor remains separately priced under Licensed Field Coverage;
+- outside property costs remain separate when required and approved;
+- accepted offer hands directly into Transaction Management without duplicate intake/setup charges.
 
-## Current Pricing Rules
+Canonical status updated:
 
-- OBJ-00000024 — Transaction Management Pricing Rule
-- OBJ-00000025 — Hand Us the Listing Pricing Rule
-- OBJ-00000026 — Licensed Field Coverage Pricing Rule
-- OBJ-00000027 — Marketing Management Pricing Rule
-- OBJ-00000028 — Koinonia Partnership Pricing Rule
-- OBJ-00000029 — Custom Project & Outside Expense Pricing Rule
+- OBJ-00000015 — Listing & Seller Support — Controlled Launch Approved
+- OBJ-00000020 — Hand Us the Listing — Controlled Launch Approved
 
-Legacy OBJ-11/12/13 pricing is retained as historical and superseded for current commercial use.
+## OPEN — Licensed Field Coverage
+
+Next readiness review must resolve:
+
+- provider/licensing model;
+- brokerage relationship/supervision assumptions for different assignment types;
+- service area/base travel assumptions;
+- showing standards;
+- professional open-house standards;
+- inspection/appraisal/vendor-access standards;
+- property-task authority/safety rules;
+- lead/client handling at open houses;
+- explicit gating of final walk-through, closing attendance/document review, disputes, possession/condition issues, and other higher-risk representation activity;
+- pricing boundary between standard $75 assignment and materially different distance/duration/complexity.
+
+## OPEN — Marketing & Growth
+
+Must resolve onboarding/brand intake, approval/compliance process, production cadence, publishing access, listing-marketing overlap, reporting, and outside media/ad/print controls.
+
+## OPEN — CRM & Business Operations / Koinonia Partnership
+
+Must resolve onboarding/access, recurring scope/capacity, approved communications/follow-up, task/CRM/vendor workflow, escalation/approval, review cadence, and over-capacity process.
 
 ---
 
 # Contract / Document Gate
 
-Contract/document preparation remains an important Koinonia capability, but standalone public pricing is **not currently approved in the new architecture**.
+Contract/document preparation remains important, but standalone public pricing is not currently approved.
 
 Do not restore or publish the legacy $75 standalone price unless the compensation structure is reviewed and approved under the applicable Colorado brokerage/legal operating model.
 
-This capability can be included only where the approved compensation, authority, brokerage relationship, and workflow permit it.
-
 ---
 
-# Active Work Order
+# Website Work Order After Readiness
 
-## Priority 1 — Close Public Claim / Fulfillment Readiness Gates
+Once the remaining claim gates are sufficiently closed:
 
-Before representing every new capability as universally available, verify and document the minimum operational readiness for:
-
-### Listing & Seller Support
-
-- brokerage/MLS authority assumptions;
-- listing intake/launch workflow;
-- vendor/media coordination process;
-- base listing-marketing deliverables;
-- active-listing communication/admin process;
-- accepted-offer handoff.
-
-### Licensed Field Coverage
-
-- provider/licensing model;
-- service area/base travel assumptions;
-- showing/open-house standards;
-- inspection/appraisal/vendor-access standards;
-- property-task authority/safety rules;
-- explicit gating of final walk-through, closing attendance, dispute, and other higher-risk representation activities.
-
-### Marketing & Growth
-
-- client onboarding/brand intake;
-- approval/compliance process;
-- production cadence;
-- publishing access;
-- listing-marketing overlap rule;
-- reporting standard;
-- outside media/ad/print approval/payment process.
-
-### CRM & Business Operations / Koinonia Partnership
-
-- onboarding/access model;
-- recurring scope/capacity rules;
-- approved communication/follow-up process;
-- task/CRM/vendor workflow;
-- escalation/approval rules;
-- recurring review and over-capacity process.
-
-## Priority 2 — Implement Services & Pricing Page
-
-Once Priority 1 provides sufficient confidence for the public claims being used:
-
-- replace legacy four-service architecture;
-- remove old $389 / $75 / $50 / $299 pricing presentation;
-- remove old $299/$599/$999 hourly monthly tiers;
-- implement five capability discovery areas;
-- implement five commercial products and working launch prices;
-- add Marketing vs Koinonia Partnership comparison;
-- add popular solutions/use cases;
-- add clear outside-expense explanation;
-- add concise professional-scope language;
-- use “Tell Us What You Need” as primary universal CTA.
+1. replace legacy four-service architecture;
+2. remove old $389 / $75 / $50 / $299 pricing presentation;
+3. remove old $299/$599/$999 hourly monthly tiers;
+4. implement five capability discovery areas;
+5. implement five commercial products/current launch prices;
+6. add Marketing vs Koinonia Partnership comparison;
+7. add popular solutions/use cases;
+8. add clear outside-expense explanation;
+9. add concise professional-scope language;
+10. use “Tell Us What You Need” as primary universal CTA.
 
 Source blueprint:
 
 `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md`
 
-## Priority 3 — Update Homepage
-
-Stop leading primarily as transaction coordination with add-ons.
-
-Homepage should establish:
-
-1. white-glove one-support-partner promise;
-2. five-area breadth proof;
-3. “more than transaction coordination” differentiation;
-4. Hand Us the Listing flagship use case;
-5. Licensed Field Coverage differentiator;
-6. Marketing + operations differentiator;
-7. simple ways to work / starting prices;
-8. trust/process/boundaries;
-9. strong universal CTA.
-
-## Priority 4 — QA + Launch
-
-Before deployment:
-
-- reconcile every public price against the current Pricing Rules Catalog;
-- confirm no legacy package/pricing copy remains exposed;
-- confirm regulated/controlled capabilities do not overclaim authority;
-- verify forms/CTAs/routes;
-- verify desktop/mobile layout;
-- verify analytics/conversion tracking as appropriate;
-- complete final content/visual QA.
-
-## Priority 5 — Client Portal / Infrastructure
-
-Resume portal and operations-platform work only after the public product model is implemented and the operational requirements are clear enough to drive the build.
-
-Existing Listing Engagement / Hand Us the Listing application work remains a useful implementation foundation but should not drive product decisions.
-
----
-
-# Current Source Documents
-
-Brand:
-
-- `03_Knowledge/Brand/koinonia_brand_core.md`
-
-Service architecture:
-
-- `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_SELLABLE_SERVICE_ARCHITECTURE_2026-09-02.md`
-
-Minimum product set:
-
-- `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_MINIMUM_PRODUCT_SET_2026-09-03.md`
-
-Standard scopes:
-
-- `02_Companies/Koinonia/04_Departments/Operations/KOINONIA_STANDARD_PRODUCT_SCOPES_2026-09-03.md`
-
-Pricing architecture:
-
-- `02_Companies/Koinonia/03_Pricing/KOINONIA_SIMPLIFIED_PRICING_ARCHITECTURE_2026-09-02.md`
-- `02_Companies/Koinonia/03_Pricing/KOINONIA_MARKET_POSITIONED_PRICING_PROPOSAL_2026-09-03.md`
-
-Monthly-product differentiation:
-
-- `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_MONTHLY_OFFER_DIFFERENTIATION_2026-09-03.md`
-
-Website sales architecture:
-
-- `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md`
-
-Canonical objects:
-
-- `02_Companies/Koinonia/00_Master_Objects/OBJ-00000001_Service_Catalog.md`
-- `02_Companies/Koinonia/02_Packages/OBJ-00000006_Package_Catalog.md`
-- `02_Companies/Koinonia/03_Pricing/OBJ-00000010_Pricing_Rules_Catalog.md`
+Homepage should stop leading primarily as transaction coordination with add-ons and establish the one-support-partner model.
 
 ---
 
 # Immediate Next Task
 
-**Close the public claim/fulfillment readiness gates for the new pre-launch capabilities, beginning with Hand Us the Listing / Listing & Seller Support, then Licensed Field Coverage, Marketing & Growth, and Koinonia Partnership.**
+**Close the public claim/fulfillment readiness gate for Licensed Field Coverage.**
 
-Do not restart broad product ideation unless a readiness review exposes a genuine commercial design flaw.
+Do not return to broad product ideation unless the readiness review exposes a genuine commercial design flaw.
 
-After sufficient readiness is documented, implement the new Services/Pricing page and homepage architecture.
+After Field Coverage, review Marketing & Growth, then Koinonia Partnership. Once sufficient readiness is documented, implement the Services/Pricing page and homepage.
