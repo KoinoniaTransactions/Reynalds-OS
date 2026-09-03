@@ -4,7 +4,7 @@ Class: Master Object
 Type: Service Catalog  
 Module: Koinonia  
 Status: Active  
-Version: 2.1  
+Version: 2.2  
 Owner: Koinonia  
 Memory Level: Foundational  
 Effective Date: 2026-09-03
@@ -32,8 +32,8 @@ The public website may group these capabilities beneath simple client-facing umb
   Role: Listing intake, preparation/vendor coordination, launch support, base listing marketing integration, active-listing administration, and accepted-offer handoff under documented brokerage/MLS/approval controls.
 
 - **OBJ-00000016 — Licensed Field Coverage Service**  
-  Status: Pre-Launch / Expanded Scope Certification Pending  
-  Role: Showing, open-house, access, and approved property field assignments within applicable authority.
+  Status: Controlled Launch Approved  
+  Role: Buyer showings, professional open houses, inspection/appraisal/vendor access, and approved property field assignments under documented REAP/ministerial, access, brokerage, and compensation controls. Final walk-through representation, closing coverage, negotiation, and other brokerage-service duties remain gated.
 
 - **OBJ-00000017 — Marketing & Growth Service**  
   Status: Pre-Launch / Operational Certification Pending  
@@ -61,17 +61,22 @@ These umbrellas describe breadth; they are not a requirement to create a separat
   Historical Production Certified object. Current commercial use and prior standalone-pricing assumptions are superseded by OBJ-00000014 and the active Pricing Rules Catalog.
 
 - **OBJ-00000004 — Licensed Showing Coverage Service**  
-  Production Certified historical/narrower workflow. Current expanded commercial field definition is OBJ-00000016. The showing subset remains useful fulfillment source material.
+  Production Certified historical/narrower workflow. It remains a fulfillment foundation for OBJ-00000016.
 
 - **OBJ-00000005 — Business Operations Support Service**  
   Production Certified historical/narrower workflow. Current expanded commercial definition is OBJ-00000018.
+
+## Controlled Launch Standards
+
+- Listing & Seller Support: `02_Companies/Koinonia/04_Departments/Operations/HAND_US_THE_LISTING_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+- Licensed Field Coverage: `02_Companies/Koinonia/04_Departments/Operations/LICENSED_FIELD_COVERAGE_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
 
 ## Governance
 
 1. A new commercial capability must be represented by a current service object or explicitly fit within an existing object's scope.
 2. New capability objects are not automatically Production Certified merely because they are commercially defined.
 3. A service may be publicly launched under a documented controlled-launch standard before full universal certification when the operating boundaries, client-specific gates, and claims are explicitly defined.
-4. Regulated/licensed activities must preserve the applicable authority, brokerage relationship, approval, and compliance gates.
+4. Regulated/licensed activities must preserve the applicable authority, brokerage relationship, approval, compensation, and compliance gates.
 5. Fulfillment method is not the product; Koinonia may perform approved work directly, through licensed coverage, or through managed specialists/providers as applicable.
 6. Koinonia must not represent third-party providers as employees/licensees when that is not true.
 7. Normal outside provider costs are governed by the active outside-expense pricing rule rather than embedded hidden micro-fees.
