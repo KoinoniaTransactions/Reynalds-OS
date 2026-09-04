@@ -7,8 +7,8 @@ Class: Service
 Type: Canonical Commercial Capability Object  
 Module: Koinonia  
 Parent Object: OBJ-00000001 — Service Catalog  
-Status: Pre-Launch / Expanded Operational Certification Pending  
-Version: 1.0  
+Status: Controlled Launch Approved  
+Version: 1.1  
 Owner: Koinonia  
 Memory Level: Institutional  
 Effective Date: 2026-09-03  
@@ -25,7 +25,6 @@ Koinonia provides defined, visible, accountable operational support with clear r
 ## Capability Scope
 
 ### CRM / pipeline
-
 - CRM setup/cleanup/import support;
 - duplicate cleanup and contact organization;
 - tags, segments, source/stage maintenance;
@@ -36,9 +35,7 @@ Koinonia provides defined, visible, accountable operational support with clear r
 - operational reports.
 
 ### Lead / client follow-through administration
-
 Within approved communication processes:
-
 - intake/acknowledgment support;
 - consultation scheduling support;
 - preapproval/status tracking where appropriate;
@@ -49,7 +46,6 @@ Within approved communication processes:
 - escalation of items requiring Realtor action.
 
 ### Past-client / referral systems
-
 - thank-you workflows;
 - review/referral request administration;
 - anniversaries and recurring touchpoints;
@@ -58,7 +54,6 @@ Within approved communication processes:
 - database touch planning with Marketing & Growth when applicable.
 
 ### Calendar / task / communication operations
-
 - recurring calendar/task support;
 - appointment/admin coordination where agreed;
 - inbox/communication triage within approved scope;
@@ -67,7 +62,6 @@ Within approved communication processes:
 - template/checklist maintenance.
 
 ### Systems / workflow / business administration
-
 - SOP and checklist creation/upkeep;
 - workflow documentation;
 - basic approved automation administration;
@@ -77,12 +71,23 @@ Within approved communication processes:
 - task distribution/process support;
 - invoice/expense/commission information organization for accounting or brokerage handoff.
 
+## Controlled-Launch Standard
+
+`02_Companies/Koinonia/04_Departments/Operations/KOINONIA_PARTNERSHIP_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+
+Key launch controls:
+- recurring CRM, follow-up, task, calendar, vendor, SOP, workflow and reporting support are approved within agreed scope;
+- direct sending, inbox access, account administration, data import/export, and spending authority require client-specific authorization;
+- delegated/user-specific access is preferred over shared credentials where available;
+- substantive professional, brokerage, negotiation, legal, tax, accounting, or financial decisions are escalated and remain outside standard operations support;
+- recurring capacity is controlled through scope review rather than surprise micro-billing;
+- client data is used only for approved business purposes and access is removed on offboarding.
+
 ## Boundaries
 
 This service is not a vague unlimited assistant relationship.
 
 It does not include:
-
 - legal, tax, accounting, or financial advice;
 - brokerage supervision;
 - unapproved licensed activity;
@@ -96,22 +101,20 @@ Professional judgment, client advice, negotiation, and brokerage decisions remai
 
 ## Capacity Principle
 
-Recurring products should be sold as managed outcomes/support levels rather than primarily as public hourly banks, but contractual/internal capacity boundaries are required.
+Recurring products are sold as managed outcomes/support levels rather than public hourly banks, but contractual/internal capacity boundaries apply.
 
-If recurring usage consistently exceeds the agreed level, Koinonia should review scope/capacity rather than issue random micro-fees.
+If recurring usage consistently exceeds the agreed level, Koinonia reviews scope/capacity rather than issuing random micro-fees.
 
 ## Commercial Relationships
 
 Primary recurring product:
-
 - OBJ-00000023 — Koinonia Partnership
 
 Defined one-time operational projects may be quoted under the Custom Project & Outside Expense Pricing Rule.
 
 Related service:
-
 - OBJ-00000017 — Marketing & Growth Service
 
 ## Legacy Note
 
-OBJ-00000005 remains a Production Certified historical foundation for narrower Business Operations Support. OBJ-00000018 is the current expanded commercial definition and requires expanded SOP/fulfillment certification before universal public availability is claimed.
+OBJ-00000005 remains a Production Certified historical foundation for narrower Business Operations Support. OBJ-00000018 is the current expanded commercial definition and is Controlled Launch Approved under the current readiness standard.
