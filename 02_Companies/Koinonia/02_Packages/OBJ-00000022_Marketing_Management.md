@@ -6,8 +6,8 @@ Object ID: OBJ-00000022
 Class: Package / Commercial Product  
 Module: Koinonia  
 Parent Object: OBJ-00000006 — Package Catalog  
-Status: Pre-Launch Commercial Definition  
-Version: 1.0  
+Status: Controlled Launch Approved  
+Version: 1.1  
 Owner: Koinonia  
 Effective Date: 2026-09-03
 
@@ -38,13 +38,26 @@ Working launch scope includes:
 
 The product is sold as managed marketing, not as a public hourly bank. Internal/contractual capacity boundaries still apply.
 
+## Controlled-Launch Standard
+
+`02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+
+Key launch controls:
+
+- social/content and standard publishing are approved with authorized account access and approval workflows;
+- recurring email/newsletter marketing requires compliant sender identity, physical address, unsubscribe, and suppression processes;
+- paid advertising remains campaign-specific and requires account, budget, claim, property-fact, and platform-policy controls;
+- SMS/text marketing is outside the standard launch promise until a separate consent/compliance workflow is approved;
+- no guaranteed leads, rankings, reach, appointments, sales, or closings;
+- client/brokerage retains responsibility for professional claims, material property facts, required advertising identity, and regulatory approvals.
+
 ## Billing Relationship
 
-Current working pricing rule:
+Current pricing rule:
 
 - OBJ-00000027 — Marketing Management Pricing Rule
 
-Working launch price: **$750 per month**.
+Launch price: **$750 per month**.
 
 ## Outside Expenses
 
@@ -61,6 +74,7 @@ Not included by default:
 - unlimited on-location production;
 - large custom websites/software builds;
 - arbitrary paid-media scope;
+- promotional SMS without an approved consent/compliance workflow;
 - professional claims or property facts not approved by the Realtor/brokerage.
 
 ## Relationship to Koinonia Partnership
