@@ -7,8 +7,8 @@ Class: Service
 Type: Canonical Commercial Capability Object  
 Module: Koinonia  
 Parent Object: OBJ-00000001 — Service Catalog  
-Status: Pre-Launch / Operational Certification Pending  
-Version: 1.0  
+Status: Controlled Launch Approved  
+Version: 1.1  
 Owner: Koinonia  
 Memory Level: Institutional  
 Effective Date: 2026-09-03
@@ -52,7 +52,7 @@ Koinonia provides managed real-estate marketing execution tied to the Realtor's 
 - tracked/QR links;
 - property page/landing-page support where included;
 - direct-mail campaign coordination;
-- paid listing promotion coordination.
+- paid listing promotion coordination when campaign-specific controls are satisfied.
 
 ### Email / database / referral marketing
 
@@ -66,11 +66,27 @@ Koinonia provides managed real-estate marketing execution tied to the Realtor's 
 
 ### Paid / specialty marketing coordination
 
-- Meta or other approved campaign coordination;
+- Meta or other approved campaign coordination, subject to campaign-specific platform/compliance/budget controls;
 - landing-page/source/UTM support;
 - print/mail coordination;
 - photography/video/drone/floor-plan/3D/virtual-staging coordination;
 - specialty production/vendor coordination.
+
+## Launch Controls
+
+Controlled-launch standard:
+
+`02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+
+Current operating decisions:
+
+- recurring social/content production and publishing are approved with authorized account access and client/brokerage approval controls;
+- recurring commercial email is approved with CAN-SPAM-compliant sending, opt-out, address, and suppression controls;
+- Google Business Profile support uses authorized owner/manager relationships rather than password sharing or unauthorized ownership transfer;
+- Hand Us the Listing baseline marketing is integrated without double-charging overlapping work;
+- paid advertising is campaign-specific and requires approved account access, budget, claims, property facts, and platform-policy checks;
+- SMS/text marketing is not part of the standard launch promise until a separate consent/opt-out/compliance workflow is approved;
+- Koinonia does not guarantee leads, appointments, closings, ranking, reach, or advertising results.
 
 ## Outside Expenses
 
@@ -91,7 +107,7 @@ Koinonia does not guarantee leads, appointments, sales, closings, ranking, reach
 
 The responsible Realtor/brokerage retains approval and responsibility for material property facts, advertising claims, required disclosures, brokerage advertising compliance, and professional representations.
 
-Unlimited custom creative, unlimited revisions, on-location production, large website/software builds, or unusually extensive paid-media management are not implied by the standard recurring service.
+Unlimited custom creative, unlimited revisions, on-location production, large website/software builds, arbitrary paid-media management, or promotional SMS without an approved consent/compliance workflow are not implied by the standard recurring service.
 
 ## Commercial Relationships
 
@@ -103,6 +119,6 @@ Primary products:
 
 One-time campaigns/projects may be quoted under the Custom Project & Outside Expense Pricing Rule.
 
-## Certification Note
+## Readiness Status
 
-This object is the canonical commercial definition for Marketing & Growth. Production SOPs, channel access, approval workflows, content QA, reporting standards, and specialist/vendor procedures must be certified before universal public availability is claimed.
+Controlled Launch Approved as of 2026-09-03. Universal channel availability still depends on client-specific access, brokerage requirements, platform rules, and campaign-specific controls where applicable.
