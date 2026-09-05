@@ -1,14 +1,14 @@
 # START HERE — Reynalds OS
 
+Last reconciled: 2026-09-05
+
 ## Welcome
 
 This is the mandatory entry point for every new development session.
 
 Whether you are an AI assistant, GitHub Copilot, or a human developer, begin here before making recommendations, writing code, creating documentation, designing assets, or modifying the repository.
 
-This document is intentionally brief.
-
-Its purpose is to establish the correct mindset and direct you to the canonical sources of truth.
+The repository is the primary source of truth. Conversation history is supporting context, not a substitute for repository inspection.
 
 ---
 
@@ -16,15 +16,19 @@ Its purpose is to establish the correct mindset and direct you to the canonical 
 
 Repository:
 
-Reynalds_OS_v11_3_1_Work
+`KoinoniaTransactions/Reynalds-OS`
 
-Primary Production Application:
+Primary application:
 
-Koinonia
+`apps/web`
 
-Current Development Phase:
+Current business/application focus:
 
-Production Website Completion
+**Koinonia public commercial platform + marketing launch readiness**
+
+Current immediate implementation focus:
+
+**Social/email/retargeting measurement and conversion infrastructure integrated safely against the current September Koinonia architecture.**
 
 ---
 
@@ -34,19 +38,20 @@ Reynalds OS is an actively developed production repository.
 
 It already contains:
 
-- established architecture
-- reusable React components
-- shared content systems
-- production design standards
-- business knowledge
-- documentation
-- operating rules
-- GitHub workflow
-- production image system
+- established architecture;
+- reusable React components;
+- shared content systems;
+- production design standards;
+- business knowledge;
+- commercial product/readiness rules;
+- operating workflows;
+- CRM/relationship data structures;
+- deployment infrastructure;
+- marketing/campaign specifications.
 
-Assume the repository contains significantly more capability than is immediately visible.
+Assume the repository contains more capability and newer decisions than any single old handoff may show.
 
-Never assume something does not exist until you have searched the repository.
+Never assume something does not exist until the repository has been searched.
 
 ---
 
@@ -58,91 +63,106 @@ Always:
 - Recover before reinventing.
 - Extend before creating.
 - Inspect before recommending.
-
-The repository is the source of truth.
-
-Conversation history is not.
+- Identify the canonical business source before changing claims/pricing.
+- Verify branch/deployment state before declaring something live.
 
 ---
 
 # Required Reading Order
 
-## Phase 1 — Understand the Repository
+## Phase 1 — Current Checkpoint
 
-1. BRAIN/README.md
-2. BRAIN/REYNALDS_OS_CONSTITUTION.md
-3. BRAIN/CANONICAL_REGISTRY.md
+1. `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md`
+2. `BRAIN/HANDOFF.md`
+3. `BRAIN/CURRENT_PRIORITIES.md`
+4. `CURRENT_STATE.md`
+5. `NEXT_ACTION.md`
 
----
+## Phase 2 — Governance / Canonical Sources
 
-## Phase 2 — Understand Current Development
+6. `BRAIN/REYNALDS_OS_CONSTITUTION.md`
+7. `BRAIN/CANONICAL_REGISTRY.md`
+8. `BRAIN/DEVELOPMENT_STANDARDS.md`
+9. `BRAIN/DECISION_LOG.md`
 
-4. BRAIN/CURRENT_PRIORITIES.md
-5. BRAIN/SESSION_HANDOFF.md
-6. BRAIN/DEVELOPMENT_STANDARDS.md
-7. BRAIN/DECISION_LOG.md
+## Phase 3 — Koinonia Marketing / Commercial Sources
 
----
+10. `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_MARKETING_TECHNICAL_READINESS_2026-09-05.md`
+11. `02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+12. `02_Companies/Koinonia/04_Departments/Operations/KOINONIA_PARTNERSHIP_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+13. `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md`
+14. `02_Companies/Koinonia/05_Business_Materials/social_paid_campaign_01_coverage.md`
 
-## Phase 3 — Inspect the Repository
-
-Before recommending or implementing anything:
-
-- Inspect the repository structure.
-- Search for existing implementations.
-- Identify the governing canonical source.
-- Review existing components and content.
-
-Do not recommend creating architecture, documentation, components, or workflows until repository inspection has been completed.
+Read additional product/service/pricing objects as required by the task.
 
 ---
 
-# Required Communication Workflow
+# Critical Branch Warning
 
-Before every meaningful implementation:
+Do not treat these branches as interchangeable:
 
-1. Restate your understanding of the request.
-2. Identify the governing repository standards.
-3. Recommend a better approach if one exists.
-4. Explain exactly what you intend to create or modify.
-5. Wait for approval.
-6. Execute.
-7. Validate.
-8. Commit.
-9. Push.
+- `main`
+- `koinonia-production`
+- `koinonia-marketing-readiness`
 
-This workflow is mandatory throughout the project.
+The marketing-readiness branch was built from an older production baseline and diverged from the newer September commercial/site work on `main`.
+
+For current marketing integration:
+
+**create a fresh branch from current `main` and selectively port/reimplement the readiness functionality. Do not merge the old readiness branch wholesale.**
+
+Never deploy production without explicit owner approval.
+
+---
+
+# Before Implementing Anything
+
+1. Inspect current repository state.
+2. Confirm the governing canonical source.
+3. Confirm the correct branch.
+4. Search for an existing implementation.
+5. Compare current commercial claims to the proposed implementation.
+6. Prefer a preview/non-production path for risky changes.
+7. Validate build/runtime behavior.
+8. Document meaningful decisions.
+9. Request explicit owner approval before production promotion.
 
 ---
 
 # Current Mission
 
-Complete the Koinonia production website.
+Prepare Koinonia's current public commercial system for a controlled marketing launch where paid/social/email traffic can be measured, retained, retargeted and converted without compromising privacy, CRM attribution or production stability.
 
-Platform work should only occur when it directly accelerates website completion or resolves a verified architectural issue.
+The immediate funnel is:
+
+**campaign -> public website -> attribution -> intent -> lead -> Koinonia relationship -> follow-up -> retargeting/nurture**
 
 ---
 
 # Definition of Success
 
-Progress is measured by production completion.
+Success is not merely adding pixels or producing more documentation.
 
-Not by:
+For the current phase, success means:
 
-- creating new architecture,
-- writing additional documentation,
-- or redesigning existing systems.
-
-The repository should become increasingly refined—not increasingly complex.
+- current commercial messaging remains accurate;
+- GA4 is proven with real events;
+- Meta/TikTok use verified IDs and test events;
+- public/private tracking boundaries are correct;
+- first/latest/conversion-touch attribution reaches the CRM;
+- retargeting audiences can be built;
+- email authentication/unsubscribe/suppression are ready;
+- a tagged test lead completes the entire funnel;
+- the owner reviews the result before production deployment.
 
 ---
 
 # Final Reminder
 
-The first responsibility of every development session is understanding what already exists.
-
 Inspect first.
 
-Recommend second.
+Recover second.
 
-Build third.
+Integrate carefully.
+
+Deploy only with authorization.
