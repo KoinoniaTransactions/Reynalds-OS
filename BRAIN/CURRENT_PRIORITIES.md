@@ -1,186 +1,236 @@
 # Current Priorities
 
+Last reconciled: 2026-09-05
+
 ## Active Phase
 
-Koinonia White-Glove Commercial Reconciliation + Website Launch Readiness
+**Koinonia Marketing Launch Integration + Controlled Campaign Readiness**
+
+The commercial/product readiness phase is substantially closed. The immediate work is now to make the current public site and CRM technically ready for a major social-media and email campaign without losing anonymous/high-intent traffic after the first click.
 
 ---
 
 # Primary Objective
 
-Finish closing the remaining fulfillment/compliance claim gates for the new white-glove commercial model, then implement the new client-facing Services/Pricing and homepage architecture.
+Build and verify the complete campaign path:
 
-**Portal and internal operations-platform expansion remain parked until the public commercial model is implemented and sufficiently supported by operational readiness.**
+**ad / post / email -> public Koinonia page -> attribution -> intent events -> consultation/lead -> Koinonia relationship record -> follow-up -> retargeting / nurture**
 
----
-
-# Current Strategic Direction
-
-Koinonia is the **white-glove, one-stop real estate operations and Realtor support relationship**.
-
-Primary message:
-
-> **You focus on your clients. We'll keep the business running.**
-
-Supporting message:
-
-> **One relationship. More of your business covered.**
-
-Customer experience:
-
-> **Bring Koinonia the need. We help get it handled.**
+Do not scale paid traffic until the measurement, privacy, retargeting and email-deliverability controls are proven in preview.
 
 ---
 
-# Commercial Architecture — Reconciled
+# Current Commercial Direction
 
-## Five Client-Facing Capability Umbrellas
+Koinonia is the **white-glove, one-stop real-estate operations and Realtor support relationship**.
 
-1. Transactions & Contracts
-2. Listing & Seller Support
-3. Licensed Field Coverage
-4. Marketing & Growth
-5. CRM & Business Operations
+Primary positioning remains broader than traditional transaction coordination.
 
-## Five Core Commercial Products
+Current controlled-launch products:
 
-1. Transaction Management
-2. Hand Us the Listing
-3. Licensed Field Coverage
-4. Marketing Management
-5. Koinonia Partnership
+1. Transaction Management — $450 per successful closing.
+2. Hand Us the Listing — $350 per standard listing.
+3. Licensed Field Coverage — from $75 per standard assignment.
+4. Professional Open House — $200 per standard event.
+5. Marketing Management — $750/month.
+6. Koinonia Partnership — $1,250/month.
+7. Custom Project — quoted before work begins.
 
-A defined need outside these products may use the Custom Project path. “Ask Koinonia” is universal intake, not a sixth named product.
+Canonical product/readiness documentation in `02_Companies/Koinonia/` controls over older pricing/service copy.
 
 ---
 
-# Current Working Launch Pricing
+# Commercial Readiness Status
 
-Subject to the readiness status of each product:
+## PASS — Hand Us the Listing
 
-- Transaction Management — $450 per successful closing
-- Hand Us the Listing — $350 per standard listing
-- Licensed Field Coverage — from $75 per standard assignment
-- Professional Open House — $200 per standard event
-- Marketing Management — $750 per month
-- Koinonia Partnership — $1,250 per month
-- Custom Project — quoted before work begins
+Controlled launch approved.
 
-Pricing principle:
-
-> **Simple Koinonia service fee. Variable outside costs only when the work requires them.**
-
----
-
-# Readiness Status
-
-## PASS — Hand Us the Listing / Listing & Seller Support
-
-Status: **Controlled Launch Approved**
-
-Readiness standard:
+Canonical readiness:
 
 `02_Companies/Koinonia/04_Departments/Operations/HAND_US_THE_LISTING_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
 
-Key operating decisions:
-
-- product may be publicly offered at $350 per standard listing;
-- Koinonia manages the operational work around the Realtor's listing, not the listing brokerage relationship;
-- MLS activity uses either Authorized Direct-Access Mode or Broker-Submit Mode;
-- shared Realtor/MLS credentials are not permitted as the operating model;
-- direct MLS input/edit, seller communication, publishing, property media use, and specified change authority remain client/brokerage-specific permission gates;
-- Realtor/brokerage retains pricing strategy, CMA conclusions, negotiation, disclosure/material-fact judgment, legal/compliance decisions, and professional approval;
-- licensed open-house/field labor remains separately priced under Licensed Field Coverage;
-- outside property costs remain separate when required and approved;
-- accepted offer hands directly into Transaction Management without duplicate intake/setup charges.
-
-Canonical status:
-
-- OBJ-00000015 — Listing & Seller Support — Controlled Launch Approved
-- OBJ-00000020 — Hand Us the Listing — Controlled Launch Approved
-
 ## PASS — Licensed Field Coverage
 
-Status: **Controlled Launch Approved**
+Controlled launch approved.
 
-Readiness standard:
+Canonical readiness:
 
 `02_Companies/Koinonia/04_Departments/Operations/LICENSED_FIELD_COVERAGE_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
 
-Key operating decisions:
+## PASS — Marketing Management
 
-- public launch includes buyer showing coverage, approved multi-property tours, professional open-house hosting, inspection/appraisal/media/stager/vendor/contractor access, and vacation/overflow use of approved assignment types;
-- active Colorado licensed providers are the launch standard for showings, tours, open houses, and other substantially consumer-facing assignments;
-- standard Field Coverage is an administrative/ministerial REAP assignment, not substitute brokerage representation;
-- providers disclose the limited coverage role and route pricing, strategy, negotiation, contract, property-advice, and representation questions to the requesting Realtor;
-- $75+ assignment pricing and $200 standard open-house pricing compensate the controlled field assignment, not independent brokerage services;
-- if work crosses into Real Estate Brokerage Services, the standard assignment stops and the applicable Brokerage Relationship, Brokerage Firm supervision/compensation, and licensing rules control;
-- lockbox/key/sign/property-status tasks remain conditional on property, Brokerage Firm, MLS/lockbox, insurer, and access authority;
-- final-walk-through representation, closing coverage/document review, negotiation, contract work, disputes, and property-condition certification remain gated;
-- lawful access, platform rules, property security, safety, and completion documentation are required on every assignment.
+Controlled launch approved at $750/month.
 
-Canonical status:
+Canonical readiness:
 
-- OBJ-00000016 — Licensed Field Coverage Service — Controlled Launch Approved
-- OBJ-00000021 — Licensed Field Coverage — Controlled Launch Approved
+`02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
 
-## OPEN — Marketing & Growth
+Important paid-ad rule: paid advertising is campaign-specific/conditional, requires approved account access/objective/budget/claims/tracking and separate ad spend.
 
-Next readiness review must resolve:
+## PASS — Koinonia Partnership / CRM & Business Operations
 
-- client onboarding/brand intake;
-- brokerage/advertising approval and attribution rules;
-- content/property-fact approval process;
-- production cadence/capacity;
-- social/email/Google Business publishing access;
-- listing-marketing overlap with Hand Us the Listing;
-- paid-ad approval/budget/account ownership;
-- professional media/print/outside-cost workflow;
-- reporting standard;
-- claims/testimonial/review compliance;
-- rules for Koinonia-owned versus Realtor/brokerage-owned marketing channels.
+Controlled launch approved at $1,250/month.
 
-## OPEN — CRM & Business Operations / Koinonia Partnership
+Canonical readiness:
 
-Must resolve onboarding/access, recurring scope/capacity, approved communications/follow-up, task/CRM/vendor workflow, escalation/approval, review cadence, and over-capacity process.
+`02_Companies/Koinonia/04_Departments/Operations/KOINONIA_PARTNERSHIP_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
 
 ---
 
-# Contract / Document Gate
+# Website State
 
-Contract/document preparation remains important, but standalone public pricing is not currently approved.
+The September `main` branch contains the newer white-glove product/site architecture and current SEO copy.
 
-Do not restore or publish the legacy $75 standalone price unless the compensation structure is reviewed and approved under the applicable Colorado brokerage/legal operating model.
+The public marketing instrumentation prototype was built separately on `koinonia-marketing-readiness`, which was forked from an older production baseline.
+
+**Do not merge that branch wholesale.**
+
+Current verified checkpoint heads:
+
+- `main` — `973f0dff568a87e0ddcce89ca340fe586709d187` before the documentation-reconciliation commits of 2026-09-05;
+- `koinonia-production` — `6644802cce54c4e295df7d98895b1493fc79a337`;
+- `koinonia-marketing-readiness` — `a3bc944e7eb950a4251416d6726266153d0c890e`.
+
+The marketing branch is a source of implementation ideas/code only. Integrate from a fresh branch based on current `main`.
 
 ---
 
-# Website Work Order After Readiness
+# Marketing Technical Readiness — Completed Prototype Work
 
-Once the remaining claim gates are sufficiently closed:
+The old readiness branch contains working preview implementations for:
 
-1. replace legacy four-service architecture;
-2. remove old $389 / $75 / $50 / $299 pricing presentation;
-3. remove old $299/$599/$999 hourly monthly tiers;
-4. implement five capability discovery areas;
-5. implement five commercial products/current launch prices;
-6. add Marketing vs Koinonia Partnership comparison;
-7. add popular solutions/use cases;
-8. add clear outside-expense explanation;
-9. add concise professional-scope language;
-10. use “Tell Us What You Need” as primary universal CTA.
+- GA4 loading limited to public marketing routes;
+- funnel/micro-conversion event tracking;
+- successful consultation `generate_lead` event;
+- UTM attribution;
+- first-touch/latest-touch/conversion-touch persistence;
+- `fbclid`, `ttclid`, `gclid`, `gbraid`, `wbraid`, `msclkid` capture/persistence;
+- CRM preservation of paid click IDs;
+- privacy choices and Global Privacy Control behavior;
+- consent-gated Meta/TikTok browser tracking shells;
+- a paid-social `/coverage` landing-page concept;
+- tests for paid-attribution persistence.
 
-Source blueprint:
+Latest readiness preview at checkpoint:
 
-`02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md`
+- branch head: `a3bc944e7eb950a4251416d6726266153d0c890e`
+- Vercel deployment: `dpl_DmuC9by5xSjVx8bwCg44uggRzFGj`
+- state: `READY`
+- target: preview, not production.
 
-Homepage should stop leading primarily as transaction coordination with add-ons and establish the one-support-partner model.
+---
+
+# Open Launch Gates
+
+## GA4
+
+Need to identify/confirm the real `G-...` Measurement ID and prove:
+
+- page view in realtime/debug;
+- successful `generate_lead` after test consultation.
+
+Code existence alone is not proof analytics is working.
+
+## Meta
+
+Need to create/identify the Koinonia Meta Dataset/Pixel and obtain the real ID.
+
+Then test:
+
+- consent denied;
+- consent granted;
+- PageView;
+- Lead;
+- audience eligibility;
+- converter exclusion.
+
+## TikTok
+
+Need to create/identify the Koinonia TikTok Pixel and obtain the real ID.
+
+Current intended conversion event: `Lead`.
+
+Test the same consent/page/lead path as Meta.
+
+## Server-Side Events
+
+Evaluate Meta Conversions API and TikTok Events API after browser tracking is proven.
+
+If browser + server events are both used, deduplicate them.
+
+Do not make server-side tracking a prerequisite for the first controlled test if browser tracking is accurate and sufficient to validate the funnel.
+
+## Email Campaign
+
+Before the major send, verify:
+
+- SPF;
+- DKIM;
+- DMARC;
+- compliant From/Reply-To identity;
+- working unsubscribe;
+- suppression of opted-out recipients;
+- physical business address where required;
+- list source/permission quality;
+- campaign UTM naming;
+- sending-domain/reputation strategy.
+
+Avoid purchased/harvested lists as the default workflow.
+
+---
+
+# Retargeting Strategy
+
+Initial launch audiences should remain broad enough to accumulate volume:
+
+- public-site visitors;
+- high-intent visitors (services/contact/scheduler interaction);
+- Meta social/video engagers;
+- TikTok engagers/video viewers;
+- successful converters excluded where practical.
+
+Capture service-interest detail from day one, but do not create many tiny service-specific retargeting audiences until traffic volume supports them.
+
+---
+
+# Campaign 01
+
+Current paid-social working spec:
+
+`02_Companies/Koinonia/05_Business_Materials/social_paid_campaign_01_coverage.md`
+
+Core existing idea:
+
+> Real estate does not happen one thing at a time.
+
+Response line:
+
+> Keep the client. Get the coverage.
+
+The dedicated landing-page concept remains recommended, but any implementation must be reconciled against the current September product architecture and current approved claims before launch.
+
+---
+
+# Search / Domain State
+
+- Search Console appeared correctly pointed; owner chose to leave sitemap alone.
+- Both Squarespace website subscriptions were canceled.
+- Vercel is the web host.
+- Old Squarespace-DNS retention instructions are historical and should not be treated as current truth without fresh verification.
+- Google Workspace Business Standard remains required for business email.
+- `koinoniaadmin.com` registrar/Google Domain Registration cleanup may still need final confirmation after Cloudflare transfer completion.
 
 ---
 
 # Immediate Next Task
 
-**Close the public claim/fulfillment readiness gate for Marketing & Growth / Marketing Management.**
+**Create a fresh marketing-integration branch from current `main` and selectively port/reimplement the verified readiness capabilities.**
 
-Do not return to broad product ideation unless the readiness review exposes a genuine commercial design flaw.
+Then connect GA4/Meta/TikTok in preview and run a complete tagged end-to-end test.
 
-After Marketing & Growth, review Koinonia Partnership. Once sufficient readiness is documented, implement the Services/Pricing page and homepage.
+Primary handoff:
+
+`BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md`
+
+Production deployment remains gated on explicit owner approval.
