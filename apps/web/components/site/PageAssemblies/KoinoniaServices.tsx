@@ -1,5 +1,6 @@
 import { servicesContent } from "@/content/services";
 import { CTA, FAQ, Footer, Header, Hero, UniversalCard } from "../index";
+import { ServicePricingExperience } from "../ServicePricingExperience/ServicePricingExperience";
 
 export function KoinoniaServices() {
   return (
@@ -75,38 +76,10 @@ export function KoinoniaServices() {
             <p className="koinonia-copy">{servicesContent.pricing.lead}</p>
           </div>
 
-          <div className="koinonia-grid three">
-            {servicesContent.pricing.products.map((product) => (
-              <article key={product.id} className="koinonia-card koinonia-pricing-card">
-                <div className="koinonia-price-badge">
-                  <span className="koinonia-price-badge-label">{product.priceNote}</span>
-                  <span className="koinonia-price-badge-value">{product.priceLabel}</span>
-                </div>
-
-                <h3>{product.title}</h3>
-                <p>{product.body}</p>
-
-                <ul>
-                  {product.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-
-                {"secondaryPrice" in product && product.secondaryPrice ? (
-                  <p className="koinonia-copy"><strong>{product.secondaryPrice}</strong></p>
-                ) : null}
-
-                <div className="koinonia-actions">
-                  <a className="koinonia-button secondary" href={`#${product.id}`}>
-                    See everything included
-                  </a>
-                  <a className="koinonia-button primary" href="/contact#schedule-consultation">
-                    {product.ctaLabel}
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
+          <ServicePricingExperience
+            products={servicesContent.pricing.products}
+            details={servicesContent.details}
+          />
         </div>
       </section>
 
@@ -160,88 +133,6 @@ export function KoinoniaServices() {
             <div className="koinonia-eyebrow">{servicesContent.outsideCosts.eyebrow}</div>
             <h2 className="koinonia-heading">{servicesContent.outsideCosts.title}</h2>
             <p className="koinonia-copy">{servicesContent.outsideCosts.lead}</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="koinonia-section koinonia-band">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">WHAT DO I ACTUALLY GET?</div>
-            <h2 className="koinonia-heading">See the full standard scope behind each price.</h2>
-            <p className="koinonia-copy">
-              The short cards make the pricing easy to compare. The sections below explain what you hand us, what Koinonia handles, what is included, what may be separate, and where your Realtor responsibilities remain.
-            </p>
-          </div>
-
-          <div style={{ display: "grid", gap: "2rem" }}>
-            {servicesContent.details.map((detail) => (
-              <article id={detail.id} key={detail.id} className="koinonia-card">
-                <div className="koinonia-eyebrow">{detail.eyebrow}</div>
-                <h2 className="koinonia-heading">{detail.title}</h2>
-                <h3>{detail.headline}</h3>
-                <p className="koinonia-copy">{detail.body}</p>
-
-                <div className="koinonia-grid two">
-                  <div>
-                    <h3>What you hand us</h3>
-                    <ul>
-                      {detail.handUs.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h3>What Koinonia handles</h3>
-                    <ul>
-                      {detail.handles.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h3>Included in the price</h3>
-                    <ul>
-                      {detail.included.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h3>What may be separate</h3>
-                    <ul>
-                      {detail.separate.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="koinonia-grid two">
-                  <div>
-                    <h3>What remains with you</h3>
-                    <ul>
-                      {detail.remains.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h3>{detail.exampleTitle}</h3>
-                    <p>{detail.exampleBody}</p>
-                  </div>
-                </div>
-
-                <div className="koinonia-actions">
-                  <a className="koinonia-button primary" href="/contact#schedule-consultation">
-                    {detail.ctaLabel}
-                  </a>
-                  <a className="koinonia-button secondary" href="#pricing">
-                    Back to pricing
-                  </a>
-                </div>
-              </article>
-            ))}
           </div>
         </div>
       </section>
