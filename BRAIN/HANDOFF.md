@@ -1,171 +1,161 @@
-# Developer Handoff
+# Developer / AI Handoff
 
-## Project Status
-
-Reynalds OS is in repository-first development.
-
-Current version: v11.0.0
+Last reconciled: 2026-09-05
 
 ## Start Here
 
-Read these first:
+For current work, read in this order:
 
-1. `START_HERE.md`
-2. `CURRENT_STATE.md`
-3. `PROJECT_MEMORY.md`
-4. `AI_DEVELOPMENT_CHARTER.md`
-5. `NEXT_ACTION.md`
+1. `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md`
+2. `BRAIN/CURRENT_PRIORITIES.md`
+3. `CURRENT_STATE.md`
+4. `BRAIN/CANONICAL_REGISTRY.md`
+5. `BRAIN/REYNALDS_OS_CONSTITUTION.md`
+6. `BRAIN/DEVELOPMENT_STANDARDS.md`
+7. `NEXT_ACTION.md`
 
-## Do Not Start From
+The dated Koinonia marketing handoff is the current session checkpoint for the social/email/retargeting launch work.
 
-Do not start from the old standalone app shell as the main application.
+---
 
-The v7.2 shell is preserved historically under:
-
-```text
-07_Application_Prototypes/ROS_Koinonia_Interactive_App_Shell_v7_2.html
-```
-
-It is not the active production app source.
-
-## Start From
+# Current Repository Reality
 
 Primary app:
 
-```text
-apps/web/
-```
+`apps/web/`
 
 Primary database schema:
 
-```text
-packages/database/prisma/schema.prisma
-```
+`packages/database/prisma/schema.prisma`
 
-Primary source-of-truth docs:
+Repository:
 
-```text
-BRAIN/
-START_HERE.md
-CURRENT_STATE.md
-PROJECT_MEMORY.md
-NEXT_ACTION.md
-AI_DEVELOPMENT_CHARTER.md
-```
+`KoinoniaTransactions/Reynalds-OS`
 
-Koinonia website knowledge:
+Current important branches at the 2026-09-05 checkpoint:
 
-```text
-03_Knowledge/Website/
-```
+- `main` — current commercial/business/application work and current public-site redesign source.
+- `koinonia-production` — separately controlled Koinonia production branch; do not assume it equals `main`.
+- `koinonia-marketing-readiness` — experimental/pre-production marketing instrumentation branch created from an older production baseline. Do not merge wholesale.
 
-## First Local Commands
+## Critical Branch Safety Rule
 
-```bash
-pnpm install
-cp .env.example .env
-docker compose up -d
-pnpm --filter @reynalds-os/database db:generate
-pnpm --filter @reynalds-os/database db:migrate
-pnpm --filter @reynalds-os/database db:seed
-pnpm dev
-```
+Never blindly merge `main` into `koinonia-production`, or `koinonia-marketing-readiness` into either branch.
 
-## First Routes To Check
+The marketing-readiness branch materially diverged from the newer commercial/site work on `main`. For marketing instrumentation, start a fresh integration branch from current `main` and selectively port/reimplement the needed work.
 
-- `/`
-- `/objects`
-- `/crm`
-- `/transactions`
-- `/operations`
-- `/finance`
-- `/knowledge`
-- `/copilot`
-- `/notifications`
-- `/workflows`
+Never deploy production without explicit owner authorization.
 
-## Most Important Warning
-
-Do not claim work is complete from conversation history alone. Complete means real repository files changed and the release package reflects those changes.
 ---
 
-# Session Handoff – 2026-07-07
+# Current Koinonia Business Direction
 
-## Milestone Achieved
-Completed the first major refactor of the Reynalds OS dashboard into a modular architecture.
+Koinonia is positioned as a white-glove real-estate operations and Realtor support relationship, not merely a traditional transaction-coordination company.
 
-### New dashboard component structure
+Current controlled-launch commercial products include:
 
-apps/web/components/dashboard/
+- Transaction Management — $450 per successful closing.
+- Hand Us the Listing — $350 per standard listing.
+- Licensed Field Coverage — from $75 per standard assignment.
+- Professional Open House — $200 per standard event.
+- Marketing Management — $750/month.
+- Koinonia Partnership — $1,250/month.
+- Custom Project — quoted before work begins.
 
-- Sidebar.tsx
-- TopBar.tsx
-- MissionCards.tsx
-- WorkspaceRegistry.tsx
-- BrainRuleCard.tsx
-- MetricGrid.tsx
-- index.ts
+Always confirm commercial claims against the current canonical product/readiness documents before modifying the public site or marketing materials.
 
-### New shared libraries
+---
 
-apps/web/lib/
+# Current Marketing / Retargeting Work
 
-- brain.ts
-- workspace.ts
-- objectEngine.ts
+The owner is preparing a major social and email campaign and asked for a complete click-retention/conversion system.
 
-## Accomplishments
+A non-production branch, `koinonia-marketing-readiness`, contains prototypes for:
 
-- Dashboard successfully split into reusable components.
-- Shared Brain state introduced.
-- Workspace Registry separated into its own component.
-- Brain Rule card separated into its own component.
-- Mission cards separated.
-- Sidebar separated.
-- TopBar separated.
-- Dashboard now imports through dashboard/index.ts.
-- Initial modular architecture is working.
+- GA4 public-route loading;
+- funnel events;
+- UTM/click-ID attribution;
+- first/latest/conversion-touch persistence;
+- Meta/TikTok browser pixel shells;
+- privacy/consent controls and GPC handling;
+- CRM persistence of `fbclid`, `ttclid`, `gclid`, `gbraid`, `wbraid`, `msclkid`;
+- a `/coverage` paid-social landing page.
 
-## Git
+This branch has a successful Vercel preview build, but it predates the current main-branch commercial/site architecture.
 
-Latest successful commit:
+Full checkpoint:
 
-ca12547
+`BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md`
 
-Message:
+---
 
-v11.3.1 - Modular dashboard foundation
+# Current External-Platform Gaps
 
-## Current Issue
+Still required before paid retargeting can be considered launch-ready:
 
-Development server entered an inconsistent Next.js cache state.
+- confirm the real GA4 measurement ID and prove live events;
+- create/identify the real Meta Dataset/Pixel ID;
+- create/identify the real TikTok Pixel ID;
+- test browser consent denied/granted behavior;
+- test page-view and lead events in platform test tools;
+- create initial retargeting audiences and converter exclusions;
+- decide whether to add server-side conversion APIs;
+- if browser + server events are both used, implement deduplication;
+- audit email authentication, unsubscribe and suppression before a large send.
 
-Observed errors included:
+Do not invent or guess external platform identifiers.
 
-- missing required error components
-- ENOENT app/page.js
-- localhost switching ports
-- stale .next cache
+---
 
-This appears to be a Next.js development cache issue rather than an application architecture problem.
+# Domain / Search / Legacy Squarespace State
 
-Before continuing development:
+At the latest owner checkpoint:
 
-1. Remove apps/web/.next
-2. Restart pnpm dev
-3. Verify dashboard loads normally
-4. Continue development from modular dashboard
+- both Squarespace website subscriptions were canceled;
+- Koinonia production site is hosted through Vercel;
+- `koinoniatransactions.com` is no longer relying on Squarespace website hosting;
+- Search Console appeared correctly pointed and the owner chose to leave the existing sitemap alone;
+- `koinoniaadmin.com` registrar-transfer cleanup and Google domain-registration billing may still need final confirmation after the transfer email/process completes;
+- Google Workspace Business Standard should remain active because it provides business email.
 
-## Next Priority
+The old instruction saying Squarespace must remain due to active DNS dependency is historical and must not be treated as current truth without fresh verification.
 
-Begin building the Brain Engine.
+---
 
-Planned order:
+# Do Not Start From
 
-1. Brain Service
-2. Object Registry
-3. Timeline Engine
-4. Universal Search
-5. AI Command Center
+Do not start from the old standalone HTML app shell as the active product source.
 
-The modular dashboard is now the permanent foundation for Reynalds OS.
+Historical reference only:
+
+`07_Application_Prototypes/ROS_Koinonia_Interactive_App_Shell_v7_2.html`
+
+Do not start marketing work from old July pricing/service documentation when September canonical product/readiness documents exist.
+
+---
+
+# Core Engineering Rules
+
+- Recover before reinventing.
+- Identify the canonical source before creating a duplicate source of truth.
+- Do not claim work is complete from conversation history alone.
+- Verify repository state and relevant deployment state.
+- Protect production from experimental branches.
+- Do not commit production secrets or platform credentials.
+- Do not put advertising trackers inside authenticated client/staff areas.
+- Do not call micro-events leads; successful consultation/lead submission remains the lead conversion.
+
+---
+
+# Recommended Next Work
+
+For the current Koinonia marketing launch:
+
+1. create a fresh integration branch from current `main`;
+2. selectively port/rebuild the marketing-readiness instrumentation;
+3. reconcile the paid landing page with the current commercial architecture;
+4. confirm GA4 and platform IDs;
+5. run full tagged click -> page -> intent event -> consultation -> CRM -> platform conversion test;
+6. audit outbound email authentication/compliance;
+7. show the owner the final preview;
+8. only deploy after explicit approval.
