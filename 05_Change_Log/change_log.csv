@@ -86,3 +86,4 @@ ROS-0084,Repository-First Continuity Standard,"Added continuity package, AI deve
 ROS-0085,2026-07-03,v11.2.0,Koinonia Contact Page Assembly,Completed /koinonia/contact production assembly and updated continuity files.
 ROS-0086,2026-07-03,v11.2.1,Koinonia Contact Configuration,Added centralized contact configuration and reusable Contact Actions component.
 ROS-0086,2026-07-04,11.3.1,Recovery Audit and Preservation Delta,Preserved v11.2.1 contact-config baseline and archived v11.3.0 Services & Pricing snapshot; marked repository as not-yet-Bible pending local validation and reconciliation.
+ROS-0087,Koinonia Commercial Website Continuity,"Reconciled controlled-launch service statuses, documented current pricing/product model, preserved unfinished Homepage and Services & Pricing work as preview-only, and added a dedicated AI handoff."
