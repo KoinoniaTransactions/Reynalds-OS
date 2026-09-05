@@ -1,226 +1,206 @@
 # Koinonia Deployment Readiness
 
-Status: Approved Deployment Plan v1
-Decision Date: 2026-07-13
+Last reconciled: 2026-09-05  
 Owner: Koinonia Transactions / Reynalds OS
 
 ---
 
-## Decision
+## Current Hosting Decision
 
-Koinonia should launch from the current custom Next.js site inside the Reynalds OS monorepo.
+Koinonia uses the custom Next.js application inside the Reynalds OS monorepo and deploys through Vercel.
 
-Approved direction:
+Do not reopen the Squarespace-vs-custom-site decision unless the owner explicitly asks to reconsider it.
 
-- Use the existing GitHub repository
-- Deploy the current Next.js app
-- Use a Vercel-style deployment path
-- Do not rebuild in Squarespace before launch
-- Keep the public Koinonia website on root paths
-- Keep Reynalds OS preserved at /dashboard
-- Keep /koinonia routes available as aliases unless intentionally removed later
+Primary repository:
 
----
-
-## Repository
-
-- GitHub repo: KoinoniaTransactions/Reynalds-OS
-- Current branch: feature/app-shell-foundation
-- Remote: git@github.com:KoinoniaTransactions/Reynalds-OS.git
-
----
-
-## Current Routes
-
-Public Koinonia routes:
-
-- /
-- /services
-- /about
-- /contact
-
-Alias routes still available:
-
-- /koinonia
-- /koinonia/services
-- /koinonia/about
-- /koinonia/contact
-
-Internal Reynalds OS route:
-
-- /dashboard
-
----
-
-## Recommended Deployment Platform
-
-- Vercel or a Vercel-style Next.js deployment platform
-- Recommended production domain: https://koinoniatransactions.com
-- SEO config supports NEXT_PUBLIC_SITE_URL
-- Fallback domain in code is https://koinoniatransactions.com
-
----
-
-## Monorepo Structure
-
-The repository is a pnpm monorepo.
+`KoinoniaTransactions/Reynalds-OS`
 
 Deployable app:
 
-- apps/web
+`apps/web`
 
-The web app depends on workspace packages including database and design-system packages.
+Vercel project:
 
-Because the web app depends on the database package, Prisma Client generation should run before the production web build.
+- name: `reynalds-os-web`
+- project ID: `prj_7WLWYfFPKfmzLNPzaA0247ENMGjd`
+- team ID: `team_RS9WLroI94mnI3PQ3eh3u1sw`
 
----
+Known project domains include:
 
-## Verified Local Deployment Build Sequence
-
-This sequence was verified locally and passed:
-
-1. pnpm install --frozen-lockfile
-2. pnpm --filter @reynalds-os/database db:generate
-3. cd apps/web
-4. pnpm build
-
-The build generated the public Koinonia routes, dashboard route, sitemap, robots file, and manifest route.
+- `koinoniatransactions.com`
+- `www.koinoniatransactions.com`
 
 ---
 
-## Recommended Vercel Settings
+# Branch / Production Safety
 
-Framework Preset:
+Current verified branch heads at the 2026-09-05 checkpoint:
 
-- Next.js
-
-Root Directory:
-
-- apps/web
-
-Install Command:
-
-- cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @reynalds-os/database db:generate
-
-Build Command:
-
-- pnpm build
-
-Output Directory:
-
-- Leave default / do not override
-
----
-
-## Required Environment Variables
-
-Minimum recommended production environment variables:
-
-- NEXT_PUBLIC_SITE_URL=https://koinoniatransactions.com
-- NEXT_PUBLIC_APP_NAME=Koinonia
-- AUTH_PROVIDER=mock
-- ROS_MOCK_WORKSPACE_ID=production-safe value
-- DATABASE_URL=production or placeholder database URL
+- `koinonia-production` — `6644802cce54c4e295df7d98895b1493fc79a337`
+- `main` — `973f0dff568a87e0ddcce89ca340fe586709d187` before the 2026-09-05 documentation reconciliation commits
+- `koinonia-marketing-readiness` — `a3bc944e7eb950a4251416d6726266153d0c890e`
 
 Important:
 
-- Do not commit production secrets to the repository
-- Do not blindly copy local .env secrets into Vercel
-- Add only variables required for public launch
-- Treat dashboard and API variables separately from the public website launch
+- do not assume `main` is production;
+- do not assume `koinonia-production` contains all newer `main` work;
+- do not blindly merge `main` into `koinonia-production`;
+- do not merge `koinonia-marketing-readiness` wholesale into either branch;
+- production deployment requires explicit owner authorization.
+
+The marketing-readiness branch was created from the older production baseline and materially diverged from the later September commercial/site work on `main`.
 
 ---
 
-## Launch SEO Foundation Already Completed
+# Current Public-Site State
 
-- Core metadata
-- Per-page metadata
-- Canonical URLs
-- Sitemap
-- Robots file
-- Open Graph metadata
-- Twitter metadata
-- Social preview image
-- Web manifest
-- Favicons and icons
-- Local/service keyword refinement
+The Koinonia public website has already been launched and is hosted through Vercel.
 
----
+The current `main` branch contains a newer white-glove public commercial architecture than the old July launch state.
 
-## Deployment Risks / Watch Items
+Current public commercial products include:
 
-- Monorepo build path must be configured correctly
-- Prisma Client generation should run before web build
-- Dashboard and API routes may require database configuration
-- Production secrets should not be copied blindly from local env files
-- NEXT_PUBLIC_SITE_URL should match the final production domain
+- Transaction Management;
+- Hand Us the Listing;
+- Licensed Field Coverage;
+- Professional Open House;
+- Marketing Management;
+- Koinonia Partnership;
+- Custom Projects.
+
+Always use current commercial/readiness sources on `main` before modifying public copy.
 
 ---
 
-## Next Deployment Steps
+# Monorepo / Build Requirements
 
-1. Create or import the Vercel project from GitHub.
-2. Select repo KoinoniaTransactions/Reynalds-OS.
-3. Set root directory to apps/web.
-4. Set install command to cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @reynalds-os/database db:generate.
-5. Set build command to pnpm build.
-6. Add production environment variables.
-7. Deploy preview.
-8. Verify /, /services, /about, /contact, /dashboard, /sitemap.xml, /robots.txt, and /manifest.webmanifest.
-9. Connect production domain.
-10. Add Google Search Console.
-11. Add analytics.
-12. Review Google Business Profile.
+The project remains a pnpm monorepo.
 
----
+Relevant build facts:
 
-## Future Rule
+- app: `apps/web`
+- Prisma/database package: `packages/database`
+- generate Prisma Client before production web builds when required by the deployment environment
+- preserve the repository's established Next.js/Prisma monorepo configuration and do not remove workarounds/configuration without understanding why they exist.
 
-When launch resumes, do not reopen the Squarespace vs custom-site decision unless the user explicitly asks to reconsider.
+Historical verified pattern included:
 
-Recorded launch decision:
+1. `pnpm install --frozen-lockfile`
+2. generate Prisma Client
+3. run the web/monorepo build
 
-Launch the current custom Next.js Koinonia site using a Vercel-style deployment path.
+Use the current Vercel project configuration and current repository scripts as source of truth rather than copying old July commands blindly.
 
 ---
 
-## Public Contact Values
+# Environment / Secret Rules
 
-Launch public contact values are set in `apps/web/content/brand.ts`.
+Never commit production secrets.
 
-- Phone: `719-745-8497`
-- Text: `719-745-8497`
-- Email: `jeremiah@koinoniaadmin.com`
-- Website: `https://koinoniatransactions.com`
+Do not copy local `.env` files blindly into Vercel.
 
-The active SEO configuration file is `apps/web/config/seo.config.ts`.
+Add only environment variables required by the deployed features.
+
+Known marketing-launch variables introduced/proposed by the non-production readiness work include:
+
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+- `NEXT_PUBLIC_META_PIXEL_ID`
+- `NEXT_PUBLIC_TIKTOK_PIXEL_ID`
+
+These must not be populated with guessed values.
+
+Consultation/email delivery historically uses variables such as:
+
+- `RESEND_API_KEY`
+- `CONTACT_INTAKE_TO_EMAIL`
+- `CONTACT_INTAKE_FROM_EMAIL`
+
+Secrets remain outside Git.
 
 ---
 
-## Public Launch Verified
+# Search / SEO State
 
-The public Koinonia website launch was verified on 2026-07-27.
+Current SEO foundation includes canonical metadata, sitemap, robots, social metadata and public-route SEO configuration.
 
-### Production Domain
+At the latest owner checkpoint:
 
-- Primary domain: `https://www.koinoniatransactions.com`
-- Apex redirect: `https://koinoniatransactions.com` → `https://www.koinoniatransactions.com`
+- Google Search Console appeared correctly pointed;
+- the owner elected to leave the current sitemap alone;
+- the retired `/appointments` route has a permanent redirect to the current consultation path.
 
-### Vercel Deployment
+Do not create duplicate sitemap files unless a new technical reason is established.
 
-- Project: `reynalds-os-web`
-- Production branch: `main`
-- Launch commit: `ebb9fb8`
-- Launch commit message: `Finalize Koinonia launch contact values`
+---
 
-### Verified Services
+# Squarespace / DNS Historical Correction
 
-- Public pages load.
-- Scheduler route loads.
-- Real-domain scheduler form sends through Resend.
-- Email receipt confirmed at `jeremiah@koinoniaadmin.com`.
+Older versions of this file said:
 
-### DNS Management Note
+> Squarespace is still involved in the active DNS management path. Do not cancel or disconnect Squarespace...
 
-Squarespace is still involved in the active DNS management path. Do not cancel or disconnect Squarespace until all DNS records have been inventoried and intentionally migrated.
+That was true at the time it was written, but it is **historical and no longer authoritative**.
 
+Latest owner-reported state:
+
+- both Squarespace website subscriptions were found and canceled;
+- website hosting remains on Vercel;
+- Cloudflare migration/registrar work replaced the old Squarespace dependency path;
+- `koinoniaadmin.com` transfer/billing cleanup may still require final confirmation after the transfer email/process completes.
+
+Do not resurrect the old Squarespace dependency warning without fresh infrastructure verification.
+
+---
+
+# Google Workspace / Domain Billing Rule
+
+Google Workspace Business Standard is separate from old website hosting and is required for Koinonia business email unless the owner deliberately chooses another email platform.
+
+Do not cancel Google Workspace merely to eliminate a recurring Google charge.
+
+If a Google `Domain Registration` subscription for `koinoniaadmin.com` still exists, only unwind it after confirming the registrar transfer is complete and the domain is active at the intended registrar.
+
+---
+
+# Marketing Launch Preview State
+
+A separate non-production branch was used to prototype campaign-retention infrastructure:
+
+`koinonia-marketing-readiness`
+
+Checkpoint head:
+
+`a3bc944e7eb950a4251416d6726266153d0c890e`
+
+Verified Vercel preview deployment:
+
+- `dpl_DmuC9by5xSjVx8bwCg44uggRzFGj`
+- state: `READY`
+- target: preview / not production
+
+Prototype includes GA4, attribution, consent, Meta/TikTok pixel shells and a campaign landing-page concept.
+
+Because the prototype branch predates the current commercial/site architecture, create a fresh branch from current `main` and selectively port/reimplement rather than merging it wholesale.
+
+Primary handoff:
+
+`BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md`
+
+---
+
+# Production Promotion Checklist
+
+Before promoting new marketing instrumentation:
+
+1. integrate against current `main` on a fresh branch;
+2. build successfully;
+3. visually QA affected public routes;
+4. confirm authenticated/private routes do not load ad pixels;
+5. verify privacy controls/GPC behavior;
+6. confirm actual GA4/Meta/TikTok IDs;
+7. verify test page and lead events;
+8. verify CRM attribution persistence;
+9. verify email campaign authentication/compliance if email launch is included;
+10. show the owner the preview/results;
+11. obtain explicit production authorization;
+12. promote only the reviewed changes to the correct production path.
