@@ -28,7 +28,13 @@ Current business/application focus:
 
 Current immediate implementation focus:
 
-**Social/email/retargeting measurement and conversion infrastructure integrated safely against the current September Koinonia architecture.**
+**Finish and owner-approve the current September white-glove public website experience, then integrate social/email/retargeting measurement and conversion infrastructure safely against that approved architecture.**
+
+Persistent execution checklist:
+
+`BRAIN/KOINONIA_MASTER_LAUNCH_CHECKLIST.md`
+
+Whenever the owner asks for "the checklist", "the plan", "where are we", or "what is next", read and update that file.
 
 ---
 
@@ -72,26 +78,28 @@ Always:
 
 ## Phase 1 — Current Checkpoint
 
-1. `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md`
-2. `BRAIN/HANDOFF.md`
-3. `BRAIN/CURRENT_PRIORITIES.md`
-4. `CURRENT_STATE.md`
-5. `NEXT_ACTION.md`
+1. `BRAIN/KOINONIA_MASTER_LAUNCH_CHECKLIST.md`
+2. `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_COMMERCIAL_WEBSITE_UNFINISHED.md`
+3. `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md`
+4. `BRAIN/HANDOFF.md`
+5. `BRAIN/CURRENT_PRIORITIES.md`
+6. `CURRENT_STATE.md`
+7. `NEXT_ACTION.md`
 
 ## Phase 2 — Governance / Canonical Sources
 
-6. `BRAIN/REYNALDS_OS_CONSTITUTION.md`
-7. `BRAIN/CANONICAL_REGISTRY.md`
-8. `BRAIN/DEVELOPMENT_STANDARDS.md`
-9. `BRAIN/DECISION_LOG.md`
+8. `BRAIN/REYNALDS_OS_CONSTITUTION.md`
+9. `BRAIN/CANONICAL_REGISTRY.md`
+10. `BRAIN/DEVELOPMENT_STANDARDS.md`
+11. `BRAIN/DECISION_LOG.md`
 
 ## Phase 3 — Koinonia Marketing / Commercial Sources
 
-10. `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_MARKETING_TECHNICAL_READINESS_2026-09-05.md`
-11. `02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
-12. `02_Companies/Koinonia/04_Departments/Operations/KOINONIA_PARTNERSHIP_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
-13. `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md`
-14. `02_Companies/Koinonia/05_Business_Materials/social_paid_campaign_01_coverage.md`
+12. `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_MARKETING_TECHNICAL_READINESS_2026-09-05.md`
+13. `02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+14. `02_Companies/Koinonia/04_Departments/Operations/KOINONIA_PARTNERSHIP_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+15. `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md`
+16. `02_Companies/Koinonia/05_Business_Materials/social_paid_campaign_01_coverage.md`
 
 Read additional product/service/pricing objects as required by the task.
 
@@ -118,22 +126,26 @@ Never deploy production without explicit owner approval.
 # Before Implementing Anything
 
 1. Inspect current repository state.
-2. Confirm the governing canonical source.
-3. Confirm the correct branch.
-4. Search for an existing implementation.
-5. Compare current commercial claims to the proposed implementation.
-6. Prefer a preview/non-production path for risky changes.
-7. Validate build/runtime behavior.
-8. Document meaningful decisions.
-9. Request explicit owner approval before production promotion.
+2. Read the master launch checklist and identify the next unchecked active item.
+3. Confirm the governing canonical source.
+4. Confirm the correct branch.
+5. Search for an existing implementation.
+6. Compare current commercial claims to the proposed implementation.
+7. Prefer a preview/non-production path for risky changes.
+8. Validate build/runtime behavior.
+9. Update the master launch checklist for completed work.
+10. Document meaningful decisions.
+11. Request explicit owner approval before production promotion.
 
 ---
 
 # Current Mission
 
-Prepare Koinonia's current public commercial system for a controlled marketing launch where paid/social/email traffic can be measured, retained, retargeted and converted without compromising privacy, CRM attribution or production stability.
+First, complete and owner-approve the current white-glove public website experience.
 
-The immediate funnel is:
+Then prepare Koinonia's public commercial system for a controlled marketing launch where paid/social/email traffic can be measured, retained, retargeted and converted without compromising privacy, CRM attribution or production stability.
+
+The campaign funnel is:
 
 **campaign -> public website -> attribution -> intent -> lead -> Koinonia relationship -> follow-up -> retargeting/nurture**
 
@@ -145,6 +157,7 @@ Success is not merely adding pixels or producing more documentation.
 
 For the current phase, success means:
 
+- the public website presents the current white-glove commercial model clearly and has Jeremiah's explicit approval;
 - current commercial messaging remains accurate;
 - GA4 is proven with real events;
 - Meta/TikTok use verified IDs and test events;
@@ -162,6 +175,8 @@ For the current phase, success means:
 Inspect first.
 
 Recover second.
+
+Use the checklist.
 
 Integrate carefully.
 
