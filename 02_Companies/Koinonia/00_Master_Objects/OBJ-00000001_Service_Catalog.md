@@ -4,10 +4,10 @@ Class: Master Object
 Type: Service Catalog  
 Module: Koinonia  
 Status: Active  
-Version: 2.2  
+Version: 2.3  
 Owner: Koinonia  
 Memory Level: Foundational  
-Effective Date: 2026-09-03
+Effective Date: 2026-09-05
 
 ## Purpose
 
@@ -36,12 +36,12 @@ The public website may group these capabilities beneath simple client-facing umb
   Role: Buyer showings, professional open houses, inspection/appraisal/vendor access, and approved property field assignments under documented REAP/ministerial, access, brokerage, and compensation controls. Final walk-through representation, closing coverage, negotiation, and other brokerage-service duties remain gated.
 
 - **OBJ-00000017 — Marketing & Growth Service**  
-  Status: Pre-Launch / Operational Certification Pending  
-  Role: Managed Realtor/listing/database marketing execution and approved specialist coordination.
+  Status: Controlled Launch Approved  
+  Role: Managed Realtor/listing/database marketing execution and approved specialist coordination under documented advertising, account-access, approval, email, outside-cost, and results-claim controls.
 
 - **OBJ-00000018 — CRM & Business Operations Service**  
-  Status: Pre-Launch / Expanded Operational Certification Pending  
-  Role: CRM, follow-up, tasks, systems, vendors, reporting, workflow, and recurring business-operations support.
+  Status: Controlled Launch Approved  
+  Role: CRM, follow-up, tasks, systems, vendors, reporting, workflow, and recurring business-operations support under documented client-access, communication, capacity, confidentiality, and escalation controls.
 
 ## Client-Facing Capability Umbrellas
 
@@ -70,6 +70,14 @@ These umbrellas describe breadth; they are not a requirement to create a separat
 
 - Listing & Seller Support: `02_Companies/Koinonia/04_Departments/Operations/HAND_US_THE_LISTING_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
 - Licensed Field Coverage: `02_Companies/Koinonia/04_Departments/Operations/LICENSED_FIELD_COVERAGE_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+- Marketing & Growth / Marketing Management: `02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+- CRM & Business Operations / Koinonia Partnership: `02_Companies/Koinonia/04_Departments/Operations/KOINONIA_PARTNERSHIP_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+
+## Current Website Implementation Status
+
+The public commercial architecture has been implemented on the `main` branch as **unfinished preview work**. This catalog's controlled-launch statuses authorize the documented public claims under their controls; they do **not** constitute owner approval of the current website design or permission to promote the website to production.
+
+Production promotion remains a separate owner-review/release decision.
 
 ## Governance
 
@@ -80,6 +88,7 @@ These umbrellas describe breadth; they are not a requirement to create a separat
 5. Fulfillment method is not the product; Koinonia may perform approved work directly, through licensed coverage, or through managed specialists/providers as applicable.
 6. Koinonia must not represent third-party providers as employees/licensees when that is not true.
 7. Normal outside provider costs are governed by the active outside-expense pricing rule rather than embedded hidden micro-fees.
+8. Controlled-launch approval of a service does not bypass website preview, owner approval, QA, or production-release controls.
 
 ## Referenced By
 
