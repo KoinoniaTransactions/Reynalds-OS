@@ -24,17 +24,25 @@ Primary application:
 
 Current business/application focus:
 
-**Koinonia public commercial platform + marketing launch readiness**
+**Koinonia canonical capability recovery + commercial launch readiness**
 
 Current immediate implementation focus:
 
-**Finish and owner-approve the current September white-glove public website experience, then integrate social/email/retargeting measurement and conversion infrastructure safely against that approved architecture.**
+**Recover the strongest surviving Koinonia portal, transaction, referral, document, billing and marketing capabilities into one controlled reconciliation branch built from current September `main`, then resume final public-site and marketing launch work against that recovered baseline.**
+
+Canonical reconciliation branch:
+
+`integration/koinonia-canonical-reconciliation-20260905`
+
+Capability recovery ledger:
+
+`BRAIN/KOINONIA_CAPABILITY_RECOVERY_LEDGER_2026-09-05.md`
 
 Persistent execution checklist:
 
 `BRAIN/KOINONIA_MASTER_LAUNCH_CHECKLIST.md`
 
-Whenever the owner asks for "the checklist", "the plan", "where are we", or "what is next", read and update that file.
+Whenever the owner asks for "the checklist", "the plan", "where are we", or "what is next", read both the Capability Recovery Ledger and master launch checklist before answering.
 
 ---
 
@@ -59,6 +67,12 @@ Assume the repository contains more capability and newer decisions than any sing
 
 Never assume something does not exist until the repository has been searched.
 
+Important current recovery fact:
+
+**No single historical Koinonia branch contains the complete current platform.**
+
+`main` contains the newest September commercial/public-site truth, while substantial portal/transaction/referral/document/payment/marketing capabilities survive on parallel branches. The current reconciliation effort must recover those capabilities selectively rather than treating any one branch as a wholesale merge source.
+
 ---
 
 # Core Development Principles
@@ -71,37 +85,39 @@ Always:
 - Inspect before recommending.
 - Identify the canonical business source before changing claims/pricing.
 - Verify branch/deployment state before declaring something live.
+- Recover capability-level behavior, not stale branch-level assumptions.
 
 ---
 
 # Required Reading Order
 
-## Phase 1 — Current Checkpoint
+## Phase 1 — Current Recovery Checkpoint
 
-1. `BRAIN/KOINONIA_MASTER_LAUNCH_CHECKLIST.md`
-2. `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_COMMERCIAL_WEBSITE_UNFINISHED.md`
-3. `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md`
-4. `BRAIN/HANDOFF.md`
-5. `BRAIN/CURRENT_PRIORITIES.md`
-6. `CURRENT_STATE.md`
-7. `NEXT_ACTION.md`
+1. `BRAIN/KOINONIA_CAPABILITY_RECOVERY_LEDGER_2026-09-05.md`
+2. `BRAIN/KOINONIA_MASTER_LAUNCH_CHECKLIST.md`
+3. `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_COMMERCIAL_WEBSITE_UNFINISHED.md`
+4. `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md`
+5. `BRAIN/HANDOFF.md`
+6. `BRAIN/CURRENT_PRIORITIES.md`
+7. `CURRENT_STATE.md`
+8. `NEXT_ACTION.md`
 
 ## Phase 2 — Governance / Canonical Sources
 
-8. `BRAIN/REYNALDS_OS_CONSTITUTION.md`
-9. `BRAIN/CANONICAL_REGISTRY.md`
-10. `BRAIN/DEVELOPMENT_STANDARDS.md`
-11. `BRAIN/DECISION_LOG.md`
+9. `BRAIN/REYNALDS_OS_CONSTITUTION.md`
+10. `BRAIN/CANONICAL_REGISTRY.md`
+11. `BRAIN/DEVELOPMENT_STANDARDS.md`
+12. `BRAIN/DECISION_LOG.md`
 
 ## Phase 3 — Koinonia Marketing / Commercial Sources
 
-12. `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_MARKETING_TECHNICAL_READINESS_2026-09-05.md`
-13. `02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
-14. `02_Companies/Koinonia/04_Departments/Operations/KOINONIA_PARTNERSHIP_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
-15. `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md`
-16. `02_Companies/Koinonia/05_Business_Materials/social_paid_campaign_01_coverage.md`
+13. `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_MARKETING_TECHNICAL_READINESS_2026-09-05.md`
+14. `02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+15. `02_Companies/Koinonia/04_Departments/Operations/KOINONIA_PARTNERSHIP_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md`
+16. `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md`
+17. `02_Companies/Koinonia/05_Business_Materials/social_paid_campaign_01_coverage.md`
 
-Read additional product/service/pricing objects as required by the task.
+Read additional product/service/pricing objects and source-branch implementations as required by the task.
 
 ---
 
@@ -111,13 +127,25 @@ Do not treat these branches as interchangeable:
 
 - `main`
 - `koinonia-production`
+- `integration/koinonia-canonical-reconciliation-20260905`
+- `chatgpt/koinonia-transaction-intake-redesign`
+- `chatgpt/koinonia-consultation-system`
 - `koinonia-marketing-readiness`
+- `koinonia-paid-social-launch-readiness`
 
-The marketing-readiness branch was built from an older production baseline and diverged from the newer September commercial/site work on `main`.
+Current branch roles:
 
-For current marketing integration:
+- `main` — governing September commercial/public-site baseline.
+- `integration/koinonia-canonical-reconciliation-20260905` — active controlled recovery branch created from current `main`; this is where capability recovery work should proceed.
+- `koinonia-production` — separately controlled live-production lineage; contains some later production deltas but must not be merged wholesale.
+- `chatgpt/koinonia-transaction-intake-redesign` — richest preserved portal/transaction operating lineage and a major recovery source, not a wholesale merge source.
+- `chatgpt/koinonia-consultation-system` — parallel consultation workflow source requiring selective reconciliation.
+- `koinonia-marketing-readiness` — older marketing instrumentation source requiring selective porting.
+- `koinonia-paid-social-launch-readiness` — paid-social landing/attribution source requiring selective reconciliation.
 
-**create a fresh branch from current `main` and selectively port/reimplement the readiness functionality. Do not merge the old readiness branch wholesale.**
+For all recovery work:
+
+**use the Capability Recovery Ledger, compare the source implementation against current September business truth, and port only the smallest stable capability slice.**
 
 Never deploy production without explicit owner approval.
 
@@ -126,26 +154,32 @@ Never deploy production without explicit owner approval.
 # Before Implementing Anything
 
 1. Inspect current repository state.
-2. Read the master launch checklist and identify the next unchecked active item.
-3. Confirm the governing canonical source.
-4. Confirm the correct branch.
-5. Search for an existing implementation.
-6. Compare current commercial claims to the proposed implementation.
-7. Prefer a preview/non-production path for risky changes.
-8. Validate build/runtime behavior.
-9. Update the master launch checklist for completed work.
-10. Document meaningful decisions.
-11. Request explicit owner approval before production promotion.
+2. Read the Capability Recovery Ledger and master launch checklist.
+3. Identify the next unchecked active recovery item.
+4. Confirm the governing canonical business source.
+5. Confirm the correct source branch and reconciliation branch.
+6. Search for an existing implementation before creating anything.
+7. Compare historical code/claims/pricing to current commercial truth.
+8. Prefer capability-level selective recovery over wholesale branch merges.
+9. Prefer a preview/non-production path for risky changes.
+10. Validate build/runtime behavior after each stable slice.
+11. Update the recovery ledger/checklist for completed work.
+12. Document meaningful decisions.
+13. Request explicit owner approval before production promotion.
 
 ---
 
 # Current Mission
 
-First, complete and owner-approve the current white-glove public website experience.
+First, recover and reconcile the strongest surviving Koinonia operational platform capabilities onto the current September commercial baseline.
 
-Then prepare Koinonia's public commercial system for a controlled marketing launch where paid/social/email traffic can be measured, retained, retargeted and converted without compromising privacy, CRM attribution or production stability.
+The recovery order is broadly:
 
-The campaign funnel is:
+**portal/auth foundation -> transaction/client operations -> document workflow -> referrals -> billing/payments -> later production deltas -> marketing/paid-social -> consultation -> composite verification**
+
+After that recovered platform baseline is proven, complete and owner-approve the white-glove public website experience and controlled marketing launch.
+
+The eventual campaign funnel remains:
 
 **campaign -> public website -> attribution -> intent -> lead -> Koinonia relationship -> follow-up -> retargeting/nurture**
 
@@ -153,10 +187,19 @@ The campaign funnel is:
 
 # Definition of Success
 
-Success is not merely adding pixels or producing more documentation.
+Recovery success is not merely finding old code or creating more documentation.
 
-For the current phase, success means:
+A capability is recovered only when:
 
+- the intended behavior exists on the canonical reconciliation branch;
+- it is reconciled against current September commercial truth;
+- relevant build/tests pass;
+- privacy, permission, billing and human-review boundaries are preserved;
+- continuity documentation is updated.
+
+Launch success then means:
+
+- the recovered portal/transaction/referral/document foundation is stable;
 - the public website presents the current white-glove commercial model clearly and has Jeremiah's explicit approval;
 - current commercial messaging remains accurate;
 - GA4 is proven with real events;
@@ -176,7 +219,7 @@ Inspect first.
 
 Recover second.
 
-Use the checklist.
+Use the ledger and checklist.
 
 Integrate carefully.
 
