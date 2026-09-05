@@ -6,9 +6,9 @@ Last reconciled: 2026-09-05
 
 Koinonia public commercial site, business operations platform, and marketing-launch readiness inside Reynalds OS.
 
-## Current Public/Commercial State
+## Current Commercial State
 
-The Koinonia site is already launched and hosted through Vercel. The current `main` branch reflects the newer September white-glove commercial architecture and public-site redesign work.
+The Koinonia commercial model has been substantially reconciled and documented.
 
 Current controlled-launch products:
 
@@ -20,7 +20,42 @@ Current controlled-launch products:
 - Koinonia Partnership — $1,250/month.
 - Custom Project — quoted before work begins.
 
-Marketing Management and Koinonia Partnership both have controlled-launch readiness documentation on `main`.
+Standalone Contract & Document pricing remains gated and should not be publicly restored without the separate compensation/brokerage operating-model review.
+
+Current readiness:
+
+- Transaction Management — Production Certified.
+- Hand Us the Listing / Listing & Seller Support — Controlled Launch Approved.
+- Licensed Field Coverage — Controlled Launch Approved.
+- Marketing Management / Marketing & Growth — Controlled Launch Approved.
+- Koinonia Partnership / CRM & Business Operations — Controlled Launch Approved.
+
+## Website State — IMPORTANT
+
+The live Koinonia site is hosted through Vercel, but the **new September white-glove Homepage and Services & Pricing redesign on `main` is unfinished preview work and has not been owner-approved for production promotion**.
+
+Working files include:
+
+- `apps/web/content/services.ts`
+- `apps/web/components/site/PageAssemblies/KoinoniaServices.tsx`
+- `apps/web/content/home.ts`
+- `apps/web/components/site/PageAssemblies/KoinoniaHome.tsx`
+- `apps/web/config/seo.config.ts`
+
+The working Services & Pricing implementation replaces the legacy pricing/service presentation and includes current pricing plus full “what do I actually get?” detail sections.
+
+A passing Vercel preview/build is not equivalent to owner approval.
+
+## Important Branch State
+
+Current branch roles:
+
+- `main` — active working/non-production repository state containing the newer commercial architecture and unfinished website redesign.
+- `koinonia-production` — dedicated live-production branch. Do not update without explicit owner approval after review.
+- `develop` — stale legacy branch; not the current website review path.
+- `koinonia-marketing-readiness` — older non-production marketing-instrumentation prototype branch; do not merge wholesale.
+
+The live production domain may therefore continue to show the older production site until the approved redesign is promoted.
 
 ## Current Marketing Launch Work
 
@@ -38,25 +73,11 @@ A non-production branch named `koinonia-marketing-readiness` was created from th
 - paid-social `/coverage` landing page;
 - CRM preservation of Facebook, TikTok, Google and Microsoft paid click IDs.
 
-The branch head at checkpoint is:
-
-`a3bc944e7eb950a4251416d6726266153d0c890e`
-
-The corresponding Vercel preview deployment reached `READY`.
-
-## Important Branch State
-
-Current verified heads at the checkpoint:
-
-- `main`: `973f0dff568a87e0ddcce89ca340fe586709d187`
-- `koinonia-production`: `6644802cce54c4e295df7d98895b1493fc79a337`
-- `koinonia-marketing-readiness`: `a3bc944e7eb950a4251416d6726266153d0c890e`
-
-`main` and the marketing-readiness branch have materially diverged.
+The readiness branch and current `main` have materially diverged.
 
 **Do not merge the readiness branch wholesale.** Create a fresh branch from current `main` and selectively port/reimplement the desired marketing infrastructure.
 
-## Current External Gaps
+## Current External Marketing Gaps
 
 Before the marketing stack is launch-ready:
 
@@ -78,12 +99,33 @@ Before the marketing stack is launch-ready:
 - Google Workspace Business Standard remains needed for business email.
 - Final `koinoniaadmin.com` registrar/billing cleanup may still require confirmation after the Cloudflare transfer process completes.
 
-## Current Primary Handoff
+## Primary Handoffs
 
-Read:
+Commercial model + unfinished website implementation:
+
+`BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_COMMERCIAL_WEBSITE_UNFINISHED.md`
+
+Marketing / retargeting readiness:
 
 `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md`
 
-## Immediate Next Technical Step
+## Immediate Next Work
 
-Create a fresh marketing-integration branch from current `main`, selectively port the verified readiness work, then connect and test the real GA4/Meta/TikTok account identifiers in preview before any production deployment.
+For website work:
+
+1. inspect the current non-production Homepage and Services & Pricing preview;
+2. refine visual hierarchy, density, CTA behavior, mobile presentation, and final public copy as needed;
+3. validate build/routes and owner-facing experience;
+4. present the finished preview to Jeremiah;
+5. only after explicit approval, prepare production promotion to `koinonia-production`.
+
+For campaign infrastructure:
+
+1. create a fresh marketing-integration branch from current `main`;
+2. selectively port the verified readiness work;
+3. connect/test the real GA4/Meta/TikTok identifiers in preview;
+4. keep production deployment gated on explicit owner approval.
+
+## Current Website Launch Blocker
+
+The primary website blocker is **owner-approved visual/functional QA of the new commercial website implementation**, not missing product definition.
