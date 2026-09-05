@@ -24,6 +24,8 @@ Recover before reinventing.
 | Repository Architecture | docs/ARCHITECTURE.md | Active |
 | Decision Log | BRAIN/DECISION_LOG.md | Active |
 | Current Priorities | BRAIN/CURRENT_PRIORITIES.md | Active |
+| Current AI / Developer Handoff | BRAIN/HANDOFF.md | Active |
+| Koinonia Marketing Launch Handoff | BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md | Active Checkpoint |
 | Private Case Workspace Architecture | BRAIN/PRIVATE_CASE_WORKSPACES.md | Active |
 
 ---
@@ -36,6 +38,11 @@ Recover before reinventing.
 | Service Objects | 02_Companies/Koinonia/01_Services/ | Active |
 | Packages | 02_Companies/Koinonia/02_Packages/ | Active |
 | Pricing | 02_Companies/Koinonia/03_Pricing/ | Active |
+| Client-Facing Sales Architecture | 02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md | Active |
+| Marketing Management Launch Controls | 02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md | Active |
+| Koinonia Partnership Launch Controls | 02_Companies/Koinonia/04_Departments/Operations/KOINONIA_PARTNERSHIP_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md | Active |
+| Paid Social Campaign 01 | 02_Companies/Koinonia/05_Business_Materials/social_paid_campaign_01_coverage.md | Production Working Spec |
+| Marketing Technical Readiness | 02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_MARKETING_TECHNICAL_READINESS_2026-09-05.md | Active Checkpoint |
 
 ---
 
@@ -47,6 +54,7 @@ Recover before reinventing.
 | Production Index | 03_Knowledge/Website/PRODUCTION_INDEX.md | Active |
 | Page Specifications | docs/specifications/ | Active |
 | Component Catalog | 03_Knowledge/Website/component_catalog.md | Active |
+| Koinonia Deployment / Hosting Readiness | BRAIN/KOINONIA_DEPLOYMENT_READINESS.md | Active / Reconciled 2026-09-05 |
 
 ---
 
@@ -57,6 +65,7 @@ Recover before reinventing.
 | React Application | apps/web/ | Active |
 | Design System | packages/design-system/ | Active |
 | Database Schema | packages/database/prisma/schema.prisma | Active |
+| Marketing Instrumentation Prototype | branch `koinonia-marketing-readiness` | Reference / Do Not Merge Wholesale |
 
 ---
 
@@ -71,3 +80,5 @@ Recover before reinventing.
 ## Rule
 
 Always identify the canonical source before creating or modifying documentation, business rules, or application code.
+
+When a dated checkpoint conflicts with a newer approved canonical business/readiness document, the newer approved canonical source controls. Experimental branches are implementation references, not business-rule authority.
