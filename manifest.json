@@ -3,46 +3,61 @@
   "version": "11.3.1",
   "created": "2026-07-02",
   "baseline": "ROS Core v3.3 Architecture Baseline",
-  "current_change_id": "ROS-0086",
-  "status": "Recovery audit complete; latest website/contact work preserved but canonical Bible not yet declared",
-  "next_object": "OBJ-00000002 Transaction Management Service production expansion",
+  "current_change_id": "ROS-0087",
+  "status": "Koinonia commercial architecture reconciled; September Homepage and Services & Pricing redesign exists on main as unfinished preview-only work; production promotion requires explicit owner approval.",
+  "next_object": "Koinonia public website visual QA and marketing integration from current main",
   "object_count": 13,
-  "change_count": 23,
+  "change_count": 24,
   "portal": "ROS_Portal_v1_0.html",
   "project_model": "Portable repository structured for Git version control",
-  "next_step": "Create GitHub repository and run local validation",
+  "next_step": "Review and refine the non-production Homepage and Services & Pricing preview, validate desktop/mobile/CTA/routes, then obtain owner approval before any promotion to koinonia-production. Marketing-readiness work must be selectively integrated from a fresh branch based on current main.",
   "certified_objects": [
     "OBJ-00000002",
     "OBJ-00000003",
     "OBJ-00000004",
     "OBJ-00000005"
   ],
+  "controlled_launch_objects": [
+    "OBJ-00000015",
+    "OBJ-00000016",
+    "OBJ-00000017",
+    "OBJ-00000018",
+    "OBJ-00000020",
+    "OBJ-00000021",
+    "OBJ-00000022",
+    "OBJ-00000023"
+  ],
   "major_release": "Workflow-driven operations foundation",
   "supersedes": "Standalone static Dashboard/App Shell v7.2",
   "primary_application": "apps/web",
   "source_of_truth": "BRAIN/",
-  "current_state": "v11.2.1 contact configuration remains the safest working baseline; v11.3.0 Services & Pricing assembly is preserved as a recovery source snapshot pending integration review.",
+  "current_state": "Current main contains the reconciled Koinonia white-glove commercial model, current pricing, controlled-launch readiness artifacts, product-detail sales copy, and unfinished Homepage/Services/SEO implementation. koinonia-production remains the separate live-production path and must not be updated without explicit owner approval.",
   "name": "Reynalds OS",
-  "release": "Recovery Audit and Preservation Delta",
-  "date": "2026-07-04",
+  "release": "Unfinished Koinonia Commercial Website Continuity Checkpoint",
+  "date": "2026-09-05",
   "canonical_routes": [
     "/",
+    "/services",
+    "/about",
+    "/contact",
     "/koinonia",
     "/koinonia/services",
     "/koinonia/about",
     "/koinonia/contact"
   ],
-  "next_action": "Run local validation from recovered repository, then reconcile v11.3.0 Services & Pricing snapshot into the canonical app if needed.",
   "repository_first": true,
-  "canonical_status": "PRE_BIBLE_RECOVERY_BASELINE",
-  "preserved_snapshots": [
-    "v11.3.0 Services & Pricing assembly snapshot under RECOVERY_AUDIT/source_snapshots/v11_3_0_services_pricing"
+  "canonical_status": "ACTIVE_WORKING_REPOSITORY_PREVIEW_NOT_PRODUCTION_APPROVED",
+  "primary_handoffs": [
+    "BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_COMMERCIAL_WEBSITE_UNFINISHED.md",
+    "BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md"
   ],
-  "do_not_call_bible_until": [
-    "local install succeeds",
-    "build succeeds",
-    "routes verified",
-    "v11.3.0 services pricing snapshot reviewed",
-    "website/contact data verified"
+  "production_branch": "koinonia-production",
+  "working_branch": "main",
+  "do_not_promote_until": [
+    "current Homepage and Services & Pricing preview visually reviewed",
+    "desktop and mobile presentation verified",
+    "CTA and route behavior verified",
+    "build/typecheck/tests appropriate to the change pass",
+    "owner explicitly approves the reviewed website state"
   ]
 }
