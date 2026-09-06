@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { AuthProvider } from "../components/auth/AuthProvider";
 import { absoluteUrl, seoConfig } from "../config/seo.config";
 import "@reynalds-os/design-system/styles.css";
+import "../styles/client-portal-base.css";
+import "../styles/client-dashboard-polish.css";
+import "../styles/client-dashboard-interactions.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(seoConfig.siteUrl),
