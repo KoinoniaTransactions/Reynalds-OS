@@ -238,41 +238,52 @@ Separate business/application domains must not be mixed into Koinonia Transactio
 
 # 11. Reconciliation execution sequence
 
+## Current executable checkpoint — 2026-09-05
+
+- Canonical branch head: `30466485e74c7b66fdc7209b66d4e9a3f8fa399b`.
+- Green preview: Vercel deployment `dpl_G1xJq7pn5a7yh9JXQxfzEgpjnhNS` (`reynalds-os-7al7k6vmo-koinonia3.vercel.app`) reached `READY`.
+- Managed auth, client portal shell/dashboard, transaction search/filter, transaction-scoped document handoff, compact transaction workspace, and document-first `Start a File` are executable on the reconciliation branch.
+- Advanced document extraction/review code is restored: upload -> extraction proposal -> Realtor review -> explicit confirm/mismatch decision -> transaction/client/document classification -> deadline-obligation reconciliation -> initial package completion.
+- The Realtor is not asked to re-enter client/property/transaction facts the documents can provide; side/stage are requested only when document evidence cannot establish them.
+- Automatic extraction remains runtime-gated until preview R2/OpenAI configuration is verified and an end-to-end authenticated preview test passes.
+- Employee/staff document workspace, document approval/version/send-package workflow, full attention workflow, and inbound transaction email remain pending.
+- `main` and `koinonia-production` remain untouched by this recovery checkpoint.
+
 ## R0 — Recovery control foundation
 
 - [x] R0.1 — Repository-wide branch/capability audit completed.
 - [x] R0.2 — Fresh canonical reconciliation branch created from current `main`.
 - [x] R0.3 — Capability Recovery Ledger created.
-- [ ] R0.4 — Update `START_HERE.md` and master launch checklist to make this reconciliation checkpoint mandatory.
+- [ ] R0.4 — Update `START_HERE.md` and master launch checklist to make this reconciliation checkpoint mandatory. (`START_HERE.md` is updated; master checklist remains pending.)
 - [ ] R0.5 — Record the reconciliation branch in current-state/handoff docs.
 
 ## R1 — Portal foundation
 
-- [ ] R1.1 — Inventory exact portal/auth/permission files on advanced branch vs current main.
-- [ ] R1.2 — Restore portal shell and route foundation in smallest stable slice.
-- [ ] R1.3 — Restore authentication/sign-in/sign-out dependencies required by portal shell.
-- [ ] R1.4 — Restore workspace/role/permission checks.
-- [ ] R1.5 — Restore access-request/audit foundations.
-- [ ] R1.6 — Build/test before advancing.
+- [x] R1.1 — Inventory exact portal/auth/permission files on advanced branch vs current main.
+- [x] R1.2 — Restore portal shell and route foundation in smallest stable slice.
+- [x] R1.3 — Restore authentication/sign-in/sign-out dependencies required by portal shell.
+- [x] R1.4 — Restore workspace/role/permission checks.
+- [ ] R1.5 — Restore access-request/audit foundations. (Mutation audit foundations are present; access-request recovery remains pending.)
+- [x] R1.6 — Build/test before advancing. (Multiple green Vercel previews; latest checkpoint above.)
 
 ## R2 — Transaction and client operations
 
-- [ ] R2.1 — Restore client portal dashboard foundation.
-- [ ] R2.2 — Restore Buyer/Seller transaction-first intake.
-- [ ] R2.3 — Restore relationship/RosObject/timeline integration.
-- [ ] R2.4 — Restore idempotency and transaction search/filter behavior.
-- [ ] R2.5 — Restore attention/obligation workflow.
-- [ ] R2.6 — Build/test before advancing.
+- [x] R2.1 — Restore client portal dashboard foundation.
+- [x] R2.2 — Restore Buyer/Seller transaction-role intake, reconciled to the newer document-first Realtor UX.
+- [x] R2.3 — Restore relationship/RosObject/timeline integration.
+- [x] R2.4 — Restore idempotency and transaction search/filter behavior.
+- [ ] R2.5 — Restore attention/obligation workflow. (Extraction-backed deadline obligations are restored; full attention workflow remains pending.)
+- [x] R2.6 — Build/test before advancing.
 
 ## R3 — Document workflow
 
-- [ ] R3.1 — Restore protected upload/storage path.
-- [ ] R3.2 — Restore extraction proposal model.
-- [ ] R3.3 — Restore human review / Confirm & Build File gate.
+- [x] R3.1 — Restore protected upload/storage path.
+- [x] R3.2 — Restore extraction proposal model.
+- [x] R3.3 — Restore human review / Confirm & Build File gate.
 - [ ] R3.4 — Restore document status/approval/version replacement.
 - [ ] R3.5 — Restore document send packages.
-- [ ] R3.6 — Verify provider/config gating and cleanup behavior.
-- [ ] R3.7 — Build/test before advancing.
+- [ ] R3.6 — Verify provider/config gating and cleanup behavior. (Code gating/cleanup restored; live preview configuration and end-to-end extraction verification remain pending.)
+- [x] R3.7 — Build/test before advancing. (Compilation, type-check, static generation, and Vercel preview deployment pass; runtime extraction verification remains under R3.6.)
 
 ## R4 — Referral business
 
