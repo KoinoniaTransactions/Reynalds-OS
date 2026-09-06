@@ -118,7 +118,8 @@ function formatDate(value: Date) {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(value);
 }
 
-function formatBytes(value: number) {
+function formatBytes(value: number | null) {
+  if (value === null) return "Size unavailable";
   if (value < 1024) return `${value} B`;
   if (value < 1024 * 1024) return `${Math.round(value / 1024)} KB`;
   return `${(value / (1024 * 1024)).toFixed(1)} MB`;
