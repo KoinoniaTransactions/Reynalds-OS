@@ -5,7 +5,7 @@ import { assertPermission } from "../../../lib/auth";
 import { prisma } from "../../../lib/db";
 
 export async function GET(request: Request) {
-  const user = assertPermission("objects:view");
+  const user = await assertPermission("objects:view");
   const url = new URL(request.url);
   const status = url.searchParams.get("status");
   const level = url.searchParams.get("level");
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const user = assertPermission("objects:update");
+  const user = await assertPermission("objects:update");
   const body = await request.json();
 
   if (!body.title || !body.message || !body.level) {
