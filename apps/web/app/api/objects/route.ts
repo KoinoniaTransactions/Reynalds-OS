@@ -7,7 +7,7 @@ import type { Prisma } from "@reynalds-os/database";
 import { validateObjectCreate } from "../../../lib/validation";
 
 export async function GET(request: Request) {
-  const user = assertPermission("objects:view");
+  const user = await assertPermission("objects:view");
   const url = new URL(request.url);
   const objectType = url.searchParams.get("objectType");
   const health = url.searchParams.get("health");
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const user = assertPermission("objects:create");
+  const user = await assertPermission("objects:create");
   const input = validateObjectCreate(await request.json());
 
   const object = await prisma.rosObject.create({
