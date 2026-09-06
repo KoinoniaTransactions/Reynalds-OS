@@ -16,7 +16,7 @@ function decimalToNumber(value: unknown): number {
 }
 
 export async function GET() {
-  const user = assertPermission("objects:view");
+  const user = await assertPermission("objects:view");
 
   const [
     totalObjects,
