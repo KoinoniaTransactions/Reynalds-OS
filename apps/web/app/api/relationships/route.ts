@@ -5,7 +5,7 @@ import { assertPermission } from "../../../lib/auth";
 import { prisma } from "../../../lib/db";
 
 export async function POST(request: Request) {
-  assertPermission("objects:update");
+  await assertPermission("objects:update");
   const body = await request.json();
 
   if (!body.sourceObjectId || !body.targetObjectId || !body.relationshipType) {
