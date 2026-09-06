@@ -3,7 +3,6 @@ import { TransactionDocumentPackageIntake } from "../../../../components/client/
 import { Footer, Header } from "../../../../components/site";
 import { absoluteUrl } from "../../../../config/seo.config";
 import { requirePortalPermission } from "../../../../lib/portal-auth";
-import { isPortalDocumentR2UploadEnabled } from "../../../../lib/portal-document-r2";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +31,7 @@ export default async function NewClientTransactionPage() {
       </section>
       <section className="koinonia-section koinonia-client-new-file-body">
         <div className="koinonia-container">
-          <TransactionDocumentPackageIntake storageReady={isPortalDocumentR2UploadEnabled()} />
+          <TransactionDocumentPackageIntake />
         </div>
       </section>
       <Footer />
