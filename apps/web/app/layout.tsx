@@ -5,6 +5,7 @@ import "@reynalds-os/design-system/styles.css";
 import "../styles/client-portal-base.css";
 import "../styles/client-dashboard-polish.css";
 import "../styles/client-dashboard-interactions.css";
+import "../styles/client-workspace-recovery.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(seoConfig.siteUrl),
