@@ -6,6 +6,7 @@ import "../styles/client-portal-base.css";
 import "../styles/client-dashboard-polish.css";
 import "../styles/client-dashboard-interactions.css";
 import "../styles/client-workspace-recovery.css";
+import "../styles/employee-document-workspace.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(seoConfig.siteUrl),

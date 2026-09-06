@@ -1,0 +1,30 @@
+.koinonia-staff-documents { min-height: 100vh; background: #f7f3ec; color: #1f2430; }
+.koinonia-staff-documents-hero { padding: 3rem 0 1.5rem; }
+.koinonia-staff-documents-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(31,36,48,.14); }
+.koinonia-staff-documents-heading h1 { margin: .3rem 0 .45rem; font-size: clamp(2rem, 4vw, 3.25rem); letter-spacing: -.04em; }
+.koinonia-staff-documents-heading p { max-width: 760px; margin: 0; color: #64656a; }
+.koinonia-staff-documents-link { flex: 0 0 auto; color: #1f2430; text-decoration: none; font-weight: 700; border-bottom: 1px solid #c8a15a; padding-bottom: .15rem; }
+.koinonia-staff-documents-summary { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); border: 1px solid rgba(31,36,48,.12); border-radius: 14px; overflow: hidden; background: rgba(255,255,255,.66); margin-top: 1.25rem; }
+.koinonia-staff-documents-summary div { padding: 1rem 1.15rem; display: grid; gap: .2rem; border-right: 1px solid rgba(31,36,48,.1); }
+.koinonia-staff-documents-summary div:last-child { border-right: 0; }
+.koinonia-staff-documents-summary strong { font-size: 1.55rem; }
+.koinonia-staff-documents-summary span { font-size: .78rem; color: #6c6c70; }
+.koinonia-staff-documents-body { padding: 1rem 0 4rem; }
+.koinonia-staff-documents-bar { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: .85rem; }
+.koinonia-staff-documents-bar h2 { margin: 0 0 .25rem; font-size: 1.2rem; }
+.koinonia-staff-documents-bar p, .koinonia-staff-documents-bar > span { margin: 0; color: #727277; font-size: .82rem; }
+.koinonia-staff-document-table { border: 1px solid rgba(31,36,48,.12); border-radius: 14px; overflow: hidden; background: #fff; }
+.koinonia-staff-document-row { display: grid; grid-template-columns: minmax(220px,1.4fr) minmax(200px,1.1fr) minmax(130px,.65fr) minmax(120px,.55fr); gap: 1rem; align-items: center; min-height: 72px; padding: .8rem 1rem; border-top: 1px solid rgba(31,36,48,.09); }
+.koinonia-staff-document-row:first-child { border-top: 0; }
+.koinonia-staff-document-head { min-height: auto; background: #f2f0eb; color: #68696e; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.koinonia-staff-document-row > div { display: grid; gap: .2rem; min-width: 0; }
+.koinonia-staff-document-row strong { font-size: .86rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.koinonia-staff-document-row span, .koinonia-staff-document-row small { color: #717277; font-size: .76rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.koinonia-staff-document-primary small { color: #55575d; }
+.koinonia-staff-status { display: inline-flex !important; width: fit-content; padding: .25rem .5rem; border: 1px solid rgba(31,36,48,.14); border-radius: 999px; color: #33353a !important; background: #f7f5f0; font-weight: 700; }
+.koinonia-staff-status.muted { opacity: .62; }
+.koinonia-staff-documents-empty { padding: 3rem 1rem; text-align: center; border: 1px dashed rgba(31,36,48,.18); border-radius: 14px; background: rgba(255,255,255,.45); }
+.koinonia-staff-documents-empty h2 { margin: 0 0 .35rem; }
+.koinonia-staff-documents-empty p { margin: 0; color: #707176; }
+@media (max-width: 900px) { .koinonia-staff-documents-summary { grid-template-columns: repeat(2,minmax(0,1fr)); } .koinonia-staff-documents-summary div:nth-child(2) { border-right: 0; } .koinonia-staff-document-head { display: none; } .koinonia-staff-document-row { grid-template-columns: 1fr 1fr; align-items: start; } }
+@media (max-width: 620px) { .koinonia-staff-documents-heading { align-items: flex-start; flex-direction: column; } .koinonia-staff-documents-summary { grid-template-columns: 1fr; } .koinonia-staff-documents-summary div { border-right: 0; border-bottom: 1px solid rgba(31,36,48,.1); } .koinonia-staff-documents-summary div:last-child { border-bottom: 0; } .koinonia-staff-document-row { grid-template-columns: 1fr; } }
