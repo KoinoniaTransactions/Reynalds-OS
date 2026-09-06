@@ -1,0 +1,80 @@
+/* Scoped foundation for the recovered Realtor portal. Public Koinonia pages are intentionally untouched. */
+.koinonia-client-dashboard,
+.koinonia-client-documents,
+.koinonia-client-workspace-detail,
+.koinonia-client-new-transaction {
+  --portal-surface: #ffffff;
+  --portal-surface-soft: #fbf8f2;
+  --portal-text: #171717;
+  --portal-muted: #66625d;
+  --portal-gold-dark: #8f6223;
+  --portal-border: rgba(177, 124, 48, .22);
+  --portal-border-strong: rgba(177, 124, 48, .38);
+  min-height: 100vh;
+  color: var(--portal-text);
+  background: #f7f3ec;
+}
+
+.koinonia-client-dashboard *,
+.koinonia-client-documents *,
+.koinonia-client-workspace-detail *,
+.koinonia-client-new-transaction * { box-sizing: border-box; }
+
+.koinonia-client-dashboard .koinonia-section,
+.koinonia-client-documents .koinonia-section,
+.koinonia-client-workspace-detail .koinonia-section,
+.koinonia-client-new-transaction .koinonia-section { padding: 20px 0; }
+
+.koinonia-client-dashboard .koinonia-container,
+.koinonia-client-documents .koinonia-container,
+.koinonia-client-workspace-detail .koinonia-container,
+.koinonia-client-new-transaction .koinonia-container {
+  width: min(1120px, calc(100% - 36px));
+  margin: 0 auto;
+}
+
+.koinonia-client-dashboard .koinonia-button,
+.koinonia-client-documents .koinonia-button,
+.koinonia-client-workspace-detail .koinonia-button,
+.koinonia-client-new-transaction .koinonia-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 7px 11px;
+  border-radius: 8px;
+  border: 1px solid var(--portal-border);
+  color: var(--portal-text);
+  background: var(--portal-surface);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.koinonia-client-dashboard .koinonia-button.primary,
+.koinonia-client-documents .koinonia-button.primary,
+.koinonia-client-workspace-detail .koinonia-button.primary,
+.koinonia-client-new-transaction .koinonia-button.primary {
+  color: #fff;
+  background: #171717;
+  border-color: #171717;
+}
+
+.koinonia-client-transaction-kicker {
+  margin: 0;
+  color: var(--portal-gold-dark);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.koinonia-client-security-note {
+  margin: 12px 0 0;
+  padding: 8px 10px;
+  border: 1px solid var(--portal-border);
+  border-radius: 8px;
+  background: var(--portal-surface-soft);
+  color: var(--portal-muted);
+  font-size: 11px;
+}
