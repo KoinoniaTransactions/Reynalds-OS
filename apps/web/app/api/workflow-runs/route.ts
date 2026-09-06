@@ -5,7 +5,7 @@ import { assertPermission } from "../../../lib/auth";
 import { prisma } from "../../../lib/db";
 
 export async function GET(request: Request) {
-  assertPermission("objects:view");
+  await assertPermission("objects:view");
   const url = new URL(request.url);
   const objectId = url.searchParams.get("objectId");
 
