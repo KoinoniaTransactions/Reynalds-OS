@@ -1,0 +1,40 @@
+/* Compact Realtor document handoff and transaction workspace. */
+.koinonia-client-document-intake { padding-top: 24px !important; min-height: calc(100vh - 180px); }
+.koinonia-client-back-link { display:inline-block; margin-bottom:18px; color:var(--portal-muted); font-size:11px; font-weight:700; text-decoration:none; }
+.koinonia-client-document-heading { max-width:680px; margin-bottom:20px; }
+.koinonia-client-document-heading h1,.koinonia-client-workspace-title-row h1 { margin:4px 0 6px; font-size:clamp(25px,3.4vw,34px); line-height:1.06; letter-spacing:-.025em; }
+.koinonia-client-document-heading > p:last-child,.koinonia-client-workspace-title-row p { margin:0; color:var(--portal-muted); font-size:12px; line-height:1.5; }
+.koinonia-document-panel { max-width:620px; padding:16px; background:var(--portal-surface); border:1px solid var(--portal-border); border-radius:12px; }
+.koinonia-document-upload-form { display:grid; gap:12px; margin-top:12px; }
+.koinonia-document-upload-form label { display:grid; gap:5px; color:var(--portal-text); font-size:11px; font-weight:700; }
+.koinonia-document-upload-form label > span { display:block; }
+.koinonia-document-upload-form small { color:var(--portal-muted); font-size:10px; font-weight:500; }
+.koinonia-document-upload-form input,.koinonia-document-upload-form select,.koinonia-document-upload-form textarea { width:100%; min-height:36px; padding:8px 9px; border:1px solid var(--portal-border); border-radius:8px; background:#fff; color:var(--portal-text); font:inherit; font-size:12px; }
+.koinonia-document-upload-form input[type="file"] { min-height:0; padding:9px; background:var(--portal-surface-soft); }
+.koinonia-document-upload-form textarea { resize:vertical; }
+.koinonia-document-form-status { margin:0; font-size:11px; }
+.koinonia-document-form-status.success { color:#2f6849; }
+.koinonia-document-form-status.error { color:#8b352f; }
+
+.koinonia-client-workspace-hero { padding-top:24px !important; border-bottom:1px solid var(--portal-border); }
+.koinonia-client-workspace-title-row { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
+.koinonia-client-workspace-facts { display:flex; flex-wrap:wrap; gap:0; margin-top:18px; border-top:1px solid var(--portal-border); border-bottom:1px solid var(--portal-border); }
+.koinonia-client-workspace-facts > span { display:grid; gap:2px; min-width:150px; padding:9px 18px 9px 0; margin-right:18px; }
+.koinonia-client-workspace-facts small { color:var(--portal-muted); font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+.koinonia-client-workspace-facts strong { font-size:12px; }
+.koinonia-client-workspace-grid { display:grid; gap:22px; max-width:920px !important; }
+.koinonia-client-workspace-section { padding-bottom:18px; border-bottom:1px solid var(--portal-border); }
+.koinonia-client-workspace-section-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin-bottom:10px; }
+.koinonia-client-workspace-section-heading h2 { margin:2px 0 0; font-size:17px; }
+.koinonia-client-workspace-section-heading > a { color:var(--portal-muted); font-size:11px; font-weight:700; text-decoration:none; }
+.koinonia-client-workspace-next-action,.koinonia-client-workspace-empty { margin:0; max-width:720px; color:var(--portal-muted); font-size:12px; line-height:1.55; }
+.koinonia-client-workspace-document-list { border-top:1px solid var(--portal-border); }
+.koinonia-client-workspace-document-list article { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:9px 2px; border-bottom:1px solid var(--portal-border); }
+.koinonia-client-workspace-document-list article > div { display:grid; gap:2px; }
+.koinonia-client-workspace-document-list article > div:last-child { text-align:right; }
+.koinonia-client-workspace-document-list strong { font-size:11px; }
+.koinonia-client-workspace-document-list span { color:var(--portal-muted); font-size:10px; }
+.koinonia-client-workspace-details { padding:10px 0; }
+.koinonia-client-workspace-details summary { cursor:pointer; color:var(--portal-muted); font-size:11px; font-weight:700; }
+.koinonia-client-workspace-details p { max-width:700px; color:var(--portal-muted); font-size:11px; line-height:1.5; }
+@media(max-width:700px){.koinonia-client-workspace-title-row,.koinonia-client-workspace-section-heading{align-items:flex-start;flex-direction:column}.koinonia-client-workspace-document-list article{align-items:flex-start;flex-direction:column}.koinonia-client-workspace-document-list article>div:last-child{text-align:left}}
