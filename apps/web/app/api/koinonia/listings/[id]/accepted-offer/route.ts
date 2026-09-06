@@ -19,8 +19,8 @@ type Params = {
 };
 
 export async function POST(request: Request, { params }: Params) {
-  const user = assertPermission("objects:update");
-  assertPermission("objects:create");
+  const user = await assertPermission("objects:update");
+  await assertPermission("objects:create");
   const { id } = await params;
 
   try {
