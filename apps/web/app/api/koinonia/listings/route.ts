@@ -14,7 +14,7 @@ import {
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const user = assertPermission("objects:view");
+  const user = await assertPermission("objects:view");
 
   const listings = await prisma.rosObject.findMany({
     where: {
@@ -29,7 +29,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const user = assertPermission("objects:create");
+  const user = await assertPermission("objects:create");
 
   try {
     const input = validateListingIntake(await request.json());
