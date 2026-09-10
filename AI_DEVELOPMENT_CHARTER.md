@@ -57,6 +57,12 @@ Every approved sprint must produce:
 - Protect canonical components.
 - Website launch comes first.
 
+## Private Records Boundary
+
+The public repository is not a storage location for confidential legal, financial, family, medical, credential, or similarly sensitive records.
+
+For any task involving a private matter, read `BRAIN/PRIVATE_RECORDS_BOUNDARY.md` and keep the substantive private record, source files, revision lineage, and matter-specific continuity in the designated secure workspace. Git should contain only generic governance or architecture needed to preserve that boundary.
+
 ## Component Rule
 
 If a UI pattern appears more than twice, it should become a component.
@@ -81,3 +87,4 @@ Future chats must read:
 3. `PROJECT_MEMORY.md`
 4. `NEXT_ACTION.md`
 5. `ARCHITECT_HANDOFF.md`
+6. `BRAIN/PRIVATE_RECORDS_BOUNDARY.md` when a task involves private or sensitive records
