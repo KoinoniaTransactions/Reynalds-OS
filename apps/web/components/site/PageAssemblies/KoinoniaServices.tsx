@@ -1,6 +1,7 @@
 import { servicesContent } from "@/content/services";
 import { ServiceDetailDialog } from "../ServiceDetailDialog/ServiceDetailDialog";
 import { CTA, FAQ, Footer, Header, Hero, UniversalCard } from "../index";
+import styles from "./KoinoniaServices.module.css";
 
 export function KoinoniaServices() {
   return (
@@ -79,32 +80,40 @@ export function KoinoniaServices() {
           <div className="koinonia-grid three">
             {servicesContent.pricing.products.map((product) => {
               const detail = servicesContent.details.find((item) => item.id === product.id);
+              const outcome = detail?.headline ?? product.body;
+              const visibleItems = product.items.slice(0, 4);
 
               return (
-                <article key={product.id} className="koinonia-card koinonia-pricing-card">
+                <article
+                  key={product.id}
+                  id={product.id}
+                  className={`koinonia-card koinonia-pricing-card ${styles.pricingCard}`}
+                >
                   <div className="koinonia-price-badge">
                     <span className="koinonia-price-badge-label">{product.priceNote}</span>
                     <span className="koinonia-price-badge-value">{product.priceLabel}</span>
                   </div>
 
                   <h3>{product.title}</h3>
-                  <p>{product.body}</p>
+                  <p className={styles.outcome}>{outcome}</p>
 
-                  <ul>
-                    {product.items.map((item) => (
+                  <ul className={styles.inclusionList}>
+                    {visibleItems.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
 
                   {"secondaryPrice" in product && product.secondaryPrice ? (
-                    <p className="koinonia-copy"><strong>{product.secondaryPrice}</strong></p>
+                    <p className={`koinonia-copy ${styles.secondaryPrice}`}>
+                      <strong>{product.secondaryPrice}</strong>
+                    </p>
                   ) : null}
 
-                  <div className="koinonia-actions">
-                    {detail ? <ServiceDetailDialog detail={detail} /> : null}
+                  <div className={styles.actions}>
                     <a className="koinonia-button primary" href="/contact#schedule-consultation">
                       {product.ctaLabel}
                     </a>
+                    {detail ? <ServiceDetailDialog detail={detail} quietTrigger /> : null}
                   </div>
                 </article>
               );
