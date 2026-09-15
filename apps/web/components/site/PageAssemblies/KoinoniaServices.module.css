@@ -1,0 +1,42 @@
+.pricingCard {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+}
+
+.outcome {
+  margin: 14px 0 0;
+  color: #fff;
+  font-size: 17px;
+  line-height: 1.55;
+  font-weight: 700;
+}
+
+.inclusionList {
+  margin-top: 20px;
+}
+
+.secondaryPrice {
+  margin: 18px 0 0;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.actions :global(.koinonia-button.primary) {
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  .pricingCard {
+    min-height: 0;
+  }
+}
