@@ -24,7 +24,7 @@ The website customer experience must be completed and owner-approved before the 
 
 Current next item:
 
-**W4 — Clarify Homepage vs Services role and remove unnecessary duplication.**
+**W5 — Audit CTA, navigation, and route behavior.**
 
 ---
 
@@ -82,11 +82,11 @@ Acceptance criteria: the Services page feels like a premium white-glove sales ex
 
 ## W4 — Homepage vs Services role
 
-- [ ] W4.1 — Keep Homepage as the concise introduction to the white-glove model.
-- [ ] W4.2 — Keep deeper product explanation primarily on Services & Pricing.
-- [ ] W4.3 — Remove or tighten unnecessary duplication between Home and Services.
-- [ ] W4.4 — Confirm Homepage still preserves the approved hero/image treatment.
-- [ ] W4.5 — Verify Home pricing/support links point to the correct current Services interactions/sections.
+- [x] W4.1 — Keep Homepage as the concise introduction to the white-glove model.
+- [x] W4.2 — Keep deeper product explanation primarily on Services & Pricing.
+- [x] W4.3 — Remove or tighten unnecessary duplication between Home and Services.
+- [x] W4.4 — Confirm Homepage still preserves the approved hero/image treatment.
+- [x] W4.5 — Verify Home pricing/support links point to the correct current Services interactions/sections.
 
 Acceptance criteria: Home sells the concept quickly; Services explains the buying options in depth.
 
