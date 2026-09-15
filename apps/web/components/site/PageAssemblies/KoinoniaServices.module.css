@@ -1,3 +1,95 @@
+.breadthSection {
+  padding-top: clamp(44px, 5vw, 72px);
+  padding-bottom: clamp(44px, 5vw, 72px);
+}
+
+.narrowHeader {
+  max-width: 880px;
+  margin-bottom: 0;
+}
+
+.sectionHeaderLeft {
+  max-width: 760px;
+}
+
+.capabilitiesSection,
+.solutionsSection {
+  padding-top: clamp(64px, 7vw, 92px);
+  padding-bottom: clamp(64px, 7vw, 92px);
+}
+
+.capabilityGrid :global(.koinonia-card) {
+  box-shadow: none;
+  padding: 22px;
+}
+
+.capabilityGrid :global(.koinonia-card p) {
+  margin-bottom: 0;
+}
+
+.capabilityGrid :global(.koinonia-card ul) {
+  margin-top: 14px;
+}
+
+.differentiationSection {
+  padding-top: clamp(58px, 6vw, 80px);
+  padding-bottom: clamp(58px, 6vw, 80px);
+}
+
+.differentiationPanel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--ros-border);
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--ros-surface);
+  box-shadow: 0 16px 42px var(--ros-shadow);
+}
+
+.differentiationItem {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  padding: 26px;
+  border-bottom: 1px solid var(--ros-border);
+}
+
+.differentiationItem:nth-child(odd) {
+  border-right: 1px solid var(--ros-border);
+}
+
+.differentiationItem:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.proofIndex,
+.solutionIndex {
+  color: var(--ros-gold);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.differentiationItem h3,
+.solutionItem h3,
+.boundaryItem h3,
+.outsideCostsCallout h2 {
+  margin: 0;
+  font-family: var(--ros-font-display);
+}
+
+.differentiationItem h3 {
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.differentiationItem p {
+  margin: 8px 0 0;
+  color: var(--ros-muted);
+  line-height: 1.65;
+}
+
 .pricingCard {
   display: flex;
   flex-direction: column;
@@ -35,8 +127,214 @@
   width: 100%;
 }
 
+.comparisonSection {
+  padding-top: clamp(64px, 7vw, 92px);
+  padding-bottom: clamp(64px, 7vw, 92px);
+}
+
+.comparisonGrid {
+  align-items: stretch;
+}
+
+.comparisonCard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: clamp(24px, 3vw, 32px);
+}
+
+.partnershipCard {
+  border-color: rgba(184, 138, 68, 0.6);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.09);
+}
+
+.bestFor {
+  margin: 14px 0 2px;
+  font-size: 17px;
+  line-height: 1.55;
+  font-weight: 700;
+  color: var(--ros-text) !important;
+}
+
+.comparisonCard ul {
+  margin-top: 18px;
+}
+
+.solutionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid rgba(184, 138, 68, 0.35);
+  border-bottom: 1px solid rgba(184, 138, 68, 0.35);
+}
+
+.solutionItem {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  padding: 24px 18px 24px 0;
+}
+
+.solutionItem:nth-child(odd) {
+  padding-right: 28px;
+  border-right: 1px solid rgba(184, 138, 68, 0.35);
+}
+
+.solutionItem:nth-child(even) {
+  padding-left: 28px;
+}
+
+.solutionItem:nth-child(-n + 2) {
+  border-bottom: 1px solid rgba(184, 138, 68, 0.35);
+}
+
+.solutionItem h3 {
+  font-size: 23px;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.solutionItem p {
+  margin: 8px 0 0;
+  color: #d8d8d8;
+  line-height: 1.6;
+}
+
+.outsideCostsSection {
+  padding-top: clamp(42px, 5vw, 64px);
+  padding-bottom: clamp(42px, 5vw, 64px);
+}
+
+.outsideCostsCallout {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
+  gap: 18px 44px;
+  align-items: start;
+  padding: clamp(24px, 4vw, 38px);
+  border: 1px solid var(--ros-border);
+  border-radius: 24px;
+  background: #f0e7dc;
+}
+
+.outsideCostsCallout :global(.koinonia-eyebrow) {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.outsideCostsCallout h2 {
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.05;
+}
+
+.outsideCostsCallout p {
+  margin: 0;
+  color: var(--ros-muted);
+  line-height: 1.7;
+}
+
+.processSection {
+  padding-top: clamp(52px, 6vw, 78px);
+  padding-bottom: clamp(52px, 6vw, 78px);
+}
+
+.processGrid :global(.koinonia-card) {
+  box-shadow: none;
+  padding: 22px;
+}
+
+.boundariesSection {
+  padding-top: clamp(52px, 6vw, 78px);
+  padding-bottom: clamp(52px, 6vw, 78px);
+  border-top: 1px solid var(--ros-border);
+}
+
+.boundariesLayout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(36px, 6vw, 78px);
+  align-items: start;
+}
+
+.boundariesIntro {
+  position: sticky;
+  top: 110px;
+}
+
+.boundaryList {
+  border-top: 1px solid var(--ros-border);
+}
+
+.boundaryItem {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--ros-border);
+}
+
+.boundaryItem h3 {
+  font-size: 23px;
+  line-height: 1.15;
+}
+
+.boundaryItem p {
+  margin: 8px 0 0;
+  color: var(--ros-muted);
+  line-height: 1.65;
+}
+
 @media (max-width: 980px) {
   .pricingCard {
     min-height: 0;
+  }
+
+  .differentiationPanel,
+  .solutionGrid,
+  .outsideCostsCallout,
+  .boundariesLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .differentiationItem:nth-child(odd) {
+    border-right: 0;
+  }
+
+  .differentiationItem:nth-last-child(-n + 2) {
+    border-bottom: 1px solid var(--ros-border);
+  }
+
+  .differentiationItem:last-child {
+    border-bottom: 0;
+  }
+
+  .solutionItem,
+  .solutionItem:nth-child(odd),
+  .solutionItem:nth-child(even) {
+    padding: 22px 0;
+    border-right: 0;
+    border-bottom: 1px solid rgba(184, 138, 68, 0.35);
+  }
+
+  .solutionItem:last-child {
+    border-bottom: 0;
+  }
+
+  .outsideCostsCallout :global(.koinonia-eyebrow) {
+    grid-column: auto;
+  }
+
+  .boundariesIntro {
+    position: static;
+  }
+}
+
+@media (max-width: 620px) {
+  .differentiationItem,
+  .solutionItem {
+    gap: 12px;
+  }
+
+  .differentiationItem {
+    padding: 22px 20px;
+  }
+
+  .comparisonCard {
+    padding: 22px;
   }
 }
