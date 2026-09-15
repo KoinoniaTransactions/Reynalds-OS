@@ -24,7 +24,7 @@ The website customer experience must be completed and owner-approved before the 
 
 Current next item:
 
-**W3 — Refine Services page visual hierarchy and density.**
+**W4 — Clarify Homepage vs Services role and remove unnecessary duplication.**
 
 ---
 
@@ -69,14 +69,14 @@ Acceptance criteria: a Realtor can understand the buying options and approximate
 
 ## W3 — Services page visual hierarchy and density
 
-- [ ] W3.1 — Review five capability cards for clarity and density.
-- [ ] W3.2 — Refine white-glove differentiation section so it sells continuity/accountability without overexplaining.
-- [ ] W3.3 — Make Marketing Management vs Koinonia Partnership distinction obvious.
-- [ ] W3.4 — Review popular/common solution cards for redundancy and usefulness.
-- [ ] W3.5 — Keep outside-cost explanation clear but brief.
-- [ ] W3.6 — Keep professional/compliance boundaries present without letting them dominate the sales experience.
-- [ ] W3.7 — Review section spacing and page rhythm so the page feels premium/light rather than documentation-heavy.
-- [ ] W3.8 — Preserve the approved light/airy Koinonia visual system and existing hero direction unless Jeremiah explicitly reopens it.
+- [x] W3.1 — Review five capability cards for clarity and density.
+- [x] W3.2 — Refine white-glove differentiation section so it sells continuity/accountability without overexplaining.
+- [x] W3.3 — Make Marketing Management vs Koinonia Partnership distinction obvious.
+- [x] W3.4 — Review popular/common solution cards for redundancy and usefulness.
+- [x] W3.5 — Keep outside-cost explanation clear but brief.
+- [x] W3.6 — Keep professional/compliance boundaries present without letting them dominate the sales experience.
+- [x] W3.7 — Review section spacing and page rhythm so the page feels premium/light rather than documentation-heavy.
+- [x] W3.8 — Preserve the approved light/airy Koinonia visual system and existing hero direction unless Jeremiah explicitly reopens it.
 
 Acceptance criteria: the Services page feels like a premium white-glove sales experience rather than a long operating manual.
 
