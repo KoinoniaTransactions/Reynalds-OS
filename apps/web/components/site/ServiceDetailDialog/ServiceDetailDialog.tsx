@@ -9,11 +9,11 @@ export type ServiceDetail = {
   title: string;
   headline: string;
   body: string;
-  handUs: string[];
-  handles: string[];
-  included: string[];
-  separate: string[];
-  remains: string[];
+  handUs: readonly string[];
+  handles: readonly string[];
+  included: readonly string[];
+  separate: readonly string[];
+  remains: readonly string[];
   exampleTitle: string;
   exampleBody: string;
   ctaLabel: string;
