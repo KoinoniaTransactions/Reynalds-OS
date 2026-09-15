@@ -21,9 +21,10 @@ export type ServiceDetail = {
 
 type ServiceDetailDialogProps = {
   detail: ServiceDetail;
+  quietTrigger?: boolean;
 };
 
-export function ServiceDetailDialog({ detail }: ServiceDetailDialogProps) {
+export function ServiceDetailDialog({ detail, quietTrigger = false }: ServiceDetailDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const previousBodyOverflowRef = useRef("");
@@ -75,7 +76,11 @@ export function ServiceDetailDialog({ detail }: ServiceDetailDialogProps) {
       <button
         ref={triggerRef}
         type="button"
-        className={`koinonia-button secondary ${styles.trigger}`}
+        className={
+          quietTrigger
+            ? `${styles.trigger} ${styles.quietTrigger}`
+            : `koinonia-button secondary ${styles.trigger}`
+        }
         onClick={openDetails}
         aria-haspopup="dialog"
       >
