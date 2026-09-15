@@ -3,6 +3,22 @@
   font: inherit;
 }
 
+.quietTrigger {
+  appearance: none;
+  border: 0;
+  padding: 8px 2px;
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: rgba(184, 138, 68, 0.7);
+  text-underline-offset: 4px;
+}
+
+.quietTrigger:hover {
+  text-decoration-thickness: 2px;
+}
+
 .buttonReset {
   cursor: pointer;
   font: inherit;
