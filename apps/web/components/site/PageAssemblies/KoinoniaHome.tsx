@@ -52,98 +52,14 @@ export function KoinoniaHome() {
               eyebrow={`0${index + 1}`}
               title={service.title}
               body={service.body}
-              items={service.items}
+              items={service.items.slice(0, 2)}
             />
           ))}
         </div>
-      </Section>
 
-      <Section
-        className="koinonia-home-flagship"
-        align="center"
-        eyebrow={homeContent.flagship.eyebrow}
-        title={homeContent.flagship.title}
-        lead={homeContent.flagship.lead}
-      >
-        <article className="koinonia-card koinonia-pricing-card">
-          <div className="koinonia-price-badge">
-            <span className="koinonia-price-badge-label">Hand Us the Listing</span>
-            <span className="koinonia-price-badge-value">{homeContent.flagship.price}</span>
-          </div>
-          <div className="koinonia-actions">
-            <a className="koinonia-button primary" href={homeContent.flagship.ctaHref}>
-              {homeContent.flagship.ctaLabel}
-            </a>
-          </div>
-        </article>
-      </Section>
-
-      <Section
-        variant="band"
-        align="center"
-        eyebrow={homeContent.field.eyebrow}
-        title={homeContent.field.title}
-        lead={homeContent.field.lead}
-      >
-        <article className="koinonia-card koinonia-pricing-card">
-          <div className="koinonia-price-badge">
-            <span className="koinonia-price-badge-label">Licensed Field Coverage</span>
-            <span className="koinonia-price-badge-value">{homeContent.field.price}</span>
-          </div>
-          <div className="koinonia-actions">
-            <a className="koinonia-button primary" href={homeContent.field.ctaHref}>
-              {homeContent.field.ctaLabel}
-            </a>
-          </div>
-        </article>
-      </Section>
-
-      <Section
-        className="koinonia-home-recurring"
-        align="center"
-        eyebrow={homeContent.recurring.eyebrow}
-        title={homeContent.recurring.title}
-        lead={homeContent.recurring.lead}
-      >
-        <div className="koinonia-grid two">
-          {homeContent.recurring.cards.map((card) => (
-            <article key={card.title} className="koinonia-card koinonia-pricing-card">
-              <div className="koinonia-price-badge">
-                <span className="koinonia-price-badge-label">{card.title}</span>
-                <span className="koinonia-price-badge-value">{card.price}</span>
-              </div>
-              <p>{card.body}</p>
-            </article>
-          ))}
-        </div>
-        <div className="koinonia-actions" style={{ justifyContent: "center", marginTop: "1.5rem" }}>
-          <a className="koinonia-button secondary" href="/services#marketing-management">
-            Compare Monthly Support
-          </a>
-        </div>
-      </Section>
-
-      <Section
-        variant="band"
-        align="center"
-        eyebrow={homeContent.pricing.eyebrow}
-        title={homeContent.pricing.title}
-        lead={homeContent.pricing.lead}
-      >
-        <div className="koinonia-grid three">
-          {homeContent.pricing.items.map((item) => (
-            <article key={item.title} className="koinonia-card koinonia-pricing-card">
-              <div className="koinonia-price-badge">
-                <span className="koinonia-price-badge-label">{item.note}</span>
-                <span className="koinonia-price-badge-value">{item.price}</span>
-              </div>
-              <h3>{item.title}</h3>
-            </article>
-          ))}
-        </div>
-        <div className="koinonia-actions" style={{ justifyContent: "center", marginTop: "1.5rem" }}>
+        <div className="koinonia-actions" style={{ justifyContent: "center", marginTop: "1.75rem" }}>
           <a className="koinonia-button primary" href="/services#pricing">
-            See Everything Included
+            Explore Services & Pricing
           </a>
         </div>
       </Section>
