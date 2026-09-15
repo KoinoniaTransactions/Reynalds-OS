@@ -3,6 +3,10 @@ import { ServiceDetailDialog } from "../ServiceDetailDialog/ServiceDetailDialog"
 import { CTA, FAQ, Footer, Header, Hero, UniversalCard } from "../index";
 import styles from "./KoinoniaServices.module.css";
 
+function consultationHref(serviceId: string) {
+  return `/contact?service=${encodeURIComponent(serviceId)}#schedule-consultation`;
+}
+
 export function KoinoniaServices() {
   return (
     <main className="koinonia-site">
@@ -116,7 +120,7 @@ export function KoinoniaServices() {
                   ) : null}
 
                   <div className={styles.actions}>
-                    <a className="koinonia-button primary" href="/contact#schedule-consultation">
+                    <a className="koinonia-button primary" href={consultationHref(product.id)}>
                       {product.ctaLabel}
                     </a>
                     {detail ? <ServiceDetailDialog detail={detail} quietTrigger /> : null}
