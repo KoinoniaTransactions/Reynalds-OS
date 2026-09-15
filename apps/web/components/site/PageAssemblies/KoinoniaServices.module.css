@@ -5,11 +5,23 @@
 
 .narrowHeader {
   max-width: 880px;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
   margin-bottom: 0;
+  text-align: left !important;
 }
 
 .sectionHeaderLeft {
   max-width: 760px;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  text-align: left !important;
+}
+
+.narrowHeader :global(.koinonia-copy),
+.sectionHeaderLeft :global(.koinonia-copy) {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 .capabilitiesSection,
