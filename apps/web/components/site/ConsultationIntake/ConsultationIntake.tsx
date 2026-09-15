@@ -4,6 +4,7 @@ import type { ChangeEvent, FormEvent } from "react";
 import { useEffect, useId, useMemo, useState } from "react";
 
 type ConsultationOption = {
+  readonly id: string;
   readonly title: string;
   readonly body: string;
   readonly bestWhen: string;
@@ -81,8 +82,9 @@ export function ConsultationSchedulerButton({
 }: ConsultationSchedulerButtonProps) {
   const titleId = useId();
   const descriptionId = useId();
+  const defaultOption = options.find((option) => option.id === "not-sure-yet") ?? options[0];
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedTitle, setSelectedTitle] = useState(options[0]?.title ?? "");
+  const [selectedId, setSelectedId] = useState(defaultOption?.id ?? "");
   const [form, setForm] = useState<IntakeFormState>(initialFormState);
   const [status, setStatus] = useState<SubmissionState>({
     kind: "idle",
@@ -90,12 +92,20 @@ export function ConsultationSchedulerButton({
   });
 
   const selectedOption = useMemo(
-    () => options.find((option) => option.title === selectedTitle) ?? options[0],
-    [options, selectedTitle]
+    () => options.find((option) => option.id === selectedId) ?? defaultOption,
+    [defaultOption, options, selectedId]
   );
 
   const minimumDate = formatDateForInput(new Date());
   const isSubmitting = status.kind === "submitting";
+
+  useEffect(() => {
+    const requestedService = new URLSearchParams(window.location.search).get("service");
+
+    if (requestedService && options.some((option) => option.id === requestedService)) {
+      setSelectedId(requestedService);
+    }
+  }, [options]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -269,11 +279,11 @@ export function ConsultationSchedulerButton({
                 <label className="koinonia-form-full">
                   <span>{selectorLabel}</span>
                   <select
-                    value={selectedOption.title}
-                    onChange={(event) => setSelectedTitle(event.target.value)}
+                    value={selectedOption.id}
+                    onChange={(event) => setSelectedId(event.target.value)}
                   >
                     {options.map((option) => (
-                      <option key={option.title} value={option.title}>
+                      <option key={option.id} value={option.id}>
                         {option.title}
                       </option>
                     ))}
@@ -361,7 +371,7 @@ export function ConsultationSchedulerButton({
                     value={form.notes}
                     onChange={handleChange}
                     rows={5}
-                    placeholder="Share timing, transaction status, showing needs, document needs, or anything else that would help Koinonia prepare."
+                    placeholder="Share timing, transaction status, listing needs, field coverage, marketing, operations, or anything else that would help Koinonia prepare."
                   />
                 </label>
               </div>
