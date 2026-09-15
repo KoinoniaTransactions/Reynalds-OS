@@ -30,6 +30,7 @@ export function ServiceDetailDialog({ detail, quietTrigger = false }: ServiceDet
   const previousBodyOverflowRef = useRef("");
   const titleId = useId();
   const descriptionId = useId();
+  const consultationHref = `/contact?service=${encodeURIComponent(detail.id)}#schedule-consultation`;
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -178,7 +179,7 @@ export function ServiceDetailDialog({ detail, quietTrigger = false }: ServiceDet
           </div>
 
           <footer className={styles.footer}>
-            <a className="koinonia-button primary" href="/contact#schedule-consultation">
+            <a className="koinonia-button primary" href={consultationHref}>
               {detail.ctaLabel}
             </a>
             <button

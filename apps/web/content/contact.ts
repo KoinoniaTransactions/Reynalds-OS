@@ -38,13 +38,31 @@ export const contactContent = {
       "Choose the support type that fits your need before sending your consultation request.",
     cards: [
       {
-        title: "Transaction Support",
+        id: "transaction-management",
+        title: "Transaction Management",
         body: "For active or upcoming contract-to-close support.",
         bestWhen:
-          "Best when you already have a signed contract, accepted offer, or file that needs deadline and communication support.",
-        subject: "Koinonia Transaction Support Consultation Request"
+          "Best when you already have a signed contract, accepted offer, or file that needs deadline, document, and communication support.",
+        subject: "Koinonia Transaction Management Consultation Request"
       },
       {
+        id: "hand-us-the-listing",
+        title: "Hand Us the Listing",
+        body: "For operational support around preparing, launching, and managing a listing.",
+        bestWhen:
+          "Best when you have a listing to launch and want the normal coordination, listing-live workflow, base marketing, and accepted-offer handoff organized for you.",
+        subject: "Koinonia Hand Us the Listing Consultation Request"
+      },
+      {
+        id: "licensed-field-coverage",
+        title: "Licensed Field Coverage",
+        body: "For buyer showings, open houses, property access, and approved in-person assignments.",
+        bestWhen:
+          "Best when schedule, distance, or availability makes it difficult for you to be physically present for an approved property or client need.",
+        subject: "Koinonia Licensed Field Coverage Consultation Request"
+      },
+      {
+        id: "contract-document-support",
         title: "Contract & Document Support",
         body: "For offers, amendments, addenda, notices, or paperwork help.",
         bestWhen:
@@ -52,20 +70,31 @@ export const contactContent = {
         subject: "Koinonia Contract and Document Support Consultation Request"
       },
       {
-        title: "Licensed Showing Coverage",
-        body: "For scheduling conflicts, distance issues, or buyer showing needs.",
+        id: "marketing-management",
+        title: "Marketing Management",
+        body: "For recurring real-estate marketing that you want taken off your plate.",
         bestWhen:
-          "Best when you need a licensed agent to help with access, showing coverage, or buyer follow-up.",
-        subject: "Koinonia Licensed Showing Coverage Consultation Request"
+          "Best when you want recurring social, email/database marketing, listing and event integration, reviews, referrals, online presence, and reporting managed consistently.",
+        subject: "Koinonia Marketing Management Consultation Request"
       },
       {
-        title: "Monthly Operations Partnership",
-        body: "For recurring admin, CRM, follow-up, task cleanup, and backend business support.",
+        id: "koinonia-partnership",
+        title: "Koinonia Partnership",
+        body: "For marketing plus recurring CRM and business-operations support.",
         bestWhen:
-          "Best when you need ongoing operational help, not just one transaction or one document.",
-        subject: "Koinonia Monthly Operations Partnership Consultation Request"
+          "Best when you want one ongoing relationship to help manage both recurring marketing and an agreed layer of CRM, follow-up, task, vendor, workflow, and operations support.",
+        subject: "Koinonia Partnership Consultation Request"
       },
       {
+        id: "custom-projects",
+        title: "Custom Project",
+        body: "For a defined operational or marketing project that does not fit a standard service.",
+        bestWhen:
+          "Best when you have a specific outcome such as CRM cleanup, database reactivation, workflow/SOP development, campaign work, or another approved project.",
+        subject: "Koinonia Custom Project Consultation Request"
+      },
+      {
+        id: "not-sure-yet",
         title: "Not Sure Yet",
         body: "For Realtors who know they need help but are not sure where to start.",
         bestWhen:
@@ -82,9 +111,9 @@ export const contactContent = {
       "You do not need to know the perfect category before reaching out. These paths simply help start the conversation with the right context.",
     cards: [
       {
-        title: "Transaction Support",
+        title: "Transaction & Listing Support",
         body:
-          "For active contract-to-close files that need timeline setup, deadline tracking, document follow-up, communication support, or closing preparation."
+          "For active contract-to-close files or listings that need organized coordination, follow-through, launch support, or accepted-offer handoff."
       },
       {
         title: "Contract & Document Support",
@@ -92,14 +121,14 @@ export const contactContent = {
           "For offers, amendments, addenda, notices, or other document preparation support based on Realtor instructions."
       },
       {
-        title: "Licensed Showing Coverage",
+        title: "Licensed Field Coverage",
         body:
-          "For schedule conflicts, distance challenges, or licensed access needs when a showing still needs to be covered."
+          "For buyer showings, professional open houses, property access, or other approved licensed field assignments."
       },
       {
-        title: "Monthly Operations Partnership",
+        title: "Marketing & Business Operations",
         body:
-          "For ongoing real estate operations support, CRM organization, task tracking, client follow-up, workflow structure, and recurring business follow-through."
+          "For recurring marketing, CRM organization, follow-up, task tracking, workflow structure, and broader ongoing business support."
       }
     ]
   },
@@ -113,7 +142,7 @@ export const contactContent = {
       {
         title: "You choose the consultation need",
         body:
-          "Start with the type of support that best matches the transaction, document, showing, monthly operations, or general question."
+          "Start with the type of support that best matches the transaction, listing, document, field coverage, marketing, operations, project, or general question."
       },
       {
         title: "Koinonia clarifies the fit",
@@ -140,7 +169,7 @@ export const contactContent = {
       {
         question: "Can I ask about more than one service?",
         answer:
-          "Yes. Many Realtors need a mix of transaction support, contract and document support, licensed showing coverage, or monthly operations support. The first conversation can clarify what fits."
+          "Yes. Many Realtors need a mix of transaction, listing, document, field, marketing, or recurring business support. The first conversation can clarify what fits."
       },
       {
         question: "Is reaching out a commitment?",
@@ -148,9 +177,9 @@ export const contactContent = {
           "No. The first step is simply a conversation to understand your needs and determine whether Koinonia is the right support partner."
       },
       {
-        question: "Can I ask about monthly support even if I am not ready to choose a tier?",
+        question: "Can I ask about monthly support if I am not sure which option fits?",
         answer:
-          "Yes. Monthly support can begin with a conversation about what is currently slipping, what systems need structure, and what level of recurring support would be useful."
+          "Yes. The consultation can help distinguish Marketing Management from the broader Koinonia Partnership based on what you want taken off your plate."
       }
     ]
   }
