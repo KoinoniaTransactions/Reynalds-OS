@@ -1,6 +1,6 @@
 # Koinonia Master Launch Checklist
 
-Last reconciled: 2026-09-05
+Last reconciled: 2026-09-15
 Owner: Koinonia / Jeremiah
 Status: ACTIVE EXECUTION CHECKLIST
 
@@ -24,7 +24,7 @@ The website customer experience must be completed and owner-approved before the 
 
 Current next item:
 
-**W1 — Fix Services & Pricing information architecture and detailed-scope behavior.**
+**W3 — Refine Services page visual hierarchy and density.**
 
 ---
 
@@ -44,26 +44,26 @@ Current next item:
 
 ## W1 — Services & Pricing detail experience
 
-- [ ] W1.1 — Remove the current giant fully-expanded `What do I actually get?` wall from the normal page flow.
-- [ ] W1.2 — Preserve the current detailed product-scope content rather than rewriting the commercial model.
-- [ ] W1.3 — Replace fake `See everything included` anchor behavior with true reveal behavior on the same page.
-- [ ] W1.4 — Build/reuse one standard Koinonia detailed-scope interaction component.
-- [ ] W1.5 — Preferred UX: polished modal/dialog on desktop and near-full-screen sheet on mobile, unless implementation review reveals a materially better accessible pattern.
-- [ ] W1.6 — Ensure the detail experience supports long content cleanly, including internal scrolling where needed.
-- [ ] W1.7 — Ensure close button, Escape key, focus handling, keyboard access, and screen-reader semantics are correct.
-- [ ] W1.8 — Keep the parent Services page as lightweight/server-rendered as practical; isolate client interaction to the detail component rather than converting the entire page unnecessarily.
+- [x] W1.1 — Remove the current giant fully-expanded `What do I actually get?` wall from the normal page flow.
+- [x] W1.2 — Preserve the current detailed product-scope content rather than rewriting the commercial model.
+- [x] W1.3 — Replace fake `See everything included` anchor behavior with true reveal behavior on the same page.
+- [x] W1.4 — Build/reuse one standard Koinonia detailed-scope interaction component.
+- [x] W1.5 — Preferred UX: polished modal/dialog on desktop and near-full-screen sheet on mobile, unless implementation review reveals a materially better accessible pattern.
+- [x] W1.6 — Ensure the detail experience supports long content cleanly, including internal scrolling where needed.
+- [x] W1.7 — Ensure close button, Escape key, focus handling, keyboard access, and screen-reader semantics are correct.
+- [x] W1.8 — Keep the parent Services page as lightweight/server-rendered as practical; isolate client interaction to the detail component rather than converting the entire page unnecessarily.
 
 Acceptance criteria: the visitor can scan pricing quickly and open detailed scope for one product without being forced through every other product's detail content.
 
 ## W2 — Pricing-card hierarchy and scanability
 
-- [ ] W2.1 — Each commercial product card clearly shows product name.
-- [ ] W2.2 — Price and price basis are immediately visible.
-- [ ] W2.3 — One clear outcome/promise is visible without excessive text.
-- [ ] W2.4 — Keep only a short set of high-value inclusions visible on the card.
-- [ ] W2.5 — `See everything included` is visually secondary to the primary service CTA.
-- [ ] W2.6 — Pricing cards remain balanced and easy to compare on desktop and mobile.
-- [ ] W2.7 — Current approved pricing remains unchanged unless canonical business documentation changes.
+- [x] W2.1 — Each commercial product card clearly shows product name.
+- [x] W2.2 — Price and price basis are immediately visible.
+- [x] W2.3 — One clear outcome/promise is visible without excessive text.
+- [x] W2.4 — Keep only a short set of high-value inclusions visible on the card.
+- [x] W2.5 — `See everything included` is visually secondary to the primary service CTA.
+- [x] W2.6 — Pricing cards remain balanced and easy to compare on desktop and mobile.
+- [x] W2.7 — Current approved pricing remains unchanged unless canonical business documentation changes.
 
 Acceptance criteria: a Realtor can understand the buying options and approximate differences with a fast visual scan.
 
