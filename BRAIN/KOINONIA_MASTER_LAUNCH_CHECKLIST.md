@@ -24,7 +24,7 @@ The website customer experience must be completed and owner-approved before the 
 
 Current next item:
 
-**W5 — Audit CTA, navigation, and route behavior.**
+**W6 — Desktop and mobile visual QA.**
 
 ---
 
@@ -92,17 +92,17 @@ Acceptance criteria: Home sells the concept quickly; Services explains the buyin
 
 ## W5 — CTA, navigation, and route behavior
 
-- [ ] W5.1 — Audit `Tell Us What You Need` CTAs.
-- [ ] W5.2 — Audit Transaction Management CTA.
-- [ ] W5.3 — Audit Hand Us the Listing CTA.
-- [ ] W5.4 — Audit Licensed Field Coverage / Open House CTA paths.
-- [ ] W5.5 — Audit Marketing Management CTA.
-- [ ] W5.6 — Audit Koinonia Partnership CTA.
-- [ ] W5.7 — Audit Custom Project CTA.
-- [ ] W5.8 — Audit Header and Footer navigation.
-- [ ] W5.9 — Audit Contact / consultation scheduler behavior.
-- [ ] W5.10 — Confirm retired `/appointments` behavior redirects correctly and is not revived as a stale page.
-- [ ] W5.11 — Check all changed anchors/deep links after the Services detail UX changes.
+- [x] W5.1 — Audit `Tell Us What You Need` CTAs.
+- [x] W5.2 — Audit Transaction Management CTA.
+- [x] W5.3 — Audit Hand Us the Listing CTA.
+- [x] W5.4 — Audit Licensed Field Coverage / Open House CTA paths.
+- [x] W5.5 — Audit Marketing Management CTA.
+- [x] W5.6 — Audit Koinonia Partnership CTA.
+- [x] W5.7 — Audit Custom Project CTA.
+- [x] W5.8 — Audit Header and Footer navigation.
+- [x] W5.9 — Audit Contact / consultation scheduler behavior.
+- [x] W5.10 — Confirm retired `/appointments` behavior redirects correctly and is not revived as a stale page.
+- [x] W5.11 — Check all changed anchors/deep links after the Services detail UX changes.
 
 Acceptance criteria: every visible CTA lands in the intended current flow with no dead, stale, or misleading destinations.
 
