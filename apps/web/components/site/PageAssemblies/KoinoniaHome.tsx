@@ -1,5 +1,6 @@
 import { homeContent } from "@/content/home";
 import { CTA, Footer, Header, Hero, Section, UniversalCard } from "../index";
+import styles from "./KoinoniaHome.module.css";
 
 export function KoinoniaHome() {
   return (
@@ -45,7 +46,7 @@ export function KoinoniaHome() {
         title={homeContent.servicesIntro.title}
         lead={homeContent.servicesIntro.lead}
       >
-        <div className="koinonia-grid balanced-five">
+        <div className={styles.balancedFive}>
           {homeContent.services.map((service, index) => (
             <UniversalCard
               key={service.title}

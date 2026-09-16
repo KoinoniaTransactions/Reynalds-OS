@@ -1,86 +1,86 @@
 export const homeContent = {
   hero: {
-    eyebrow: "Real Estate Operations Support",
+    eyebrow: "REAL ESTATE OPERATIONS SUPPORT",
     title: "Real Estate Operations. Elevated.",
     lead:
-      "Koinonia gives Colorado Realtors a trusted operations partner for the work behind the client relationship—keeping transactions, contracts, licensed showings, professional open houses, and daily business details organized, responsive, and moving forward.",
-    primaryLabel: "Explore Services",
-    primaryHref: "/services",
-    secondaryLabel: "Contact Koinonia",
-    secondaryHref: "/contact"
+      "You focus on your clients. We'll keep the business running. Koinonia gives Colorado Realtors one white-glove support relationship for transactions, listings, licensed field coverage, marketing, CRM, and recurring business operations.",
+    primaryLabel: "Tell Us What You Need",
+    primaryHref: "/contact#schedule-consultation",
+    secondaryLabel: "See Services & Pricing",
+    secondaryHref: "/services#pricing"
   },
 
   positioning: {
-    eyebrow: "Behind-the-Scenes Support",
-    title: "Built for the work that keeps real estate moving.",
+    eyebrow: "ONE RELATIONSHIP. MORE OF YOUR BUSINESS COVERED.",
+    title: "More than transaction coordination.",
     lead:
-      "Realtors carry the client relationship, negotiations, deadlines, documents, appointments, marketing commitments, and follow-through. Koinonia helps organize the operational work behind the scenes so the business keeps moving with clarity and care.",
+      "Koinonia is built for the operational work that competes with Realtor time. Bring us the file, listing, showing conflict, marketing need, CRM mess, or recurring business task — and we help keep it moving through one support relationship.",
     highlights: [
       {
-        title: "Clearer files",
+        title: "Less provider juggling",
         body:
-          "Documents, deadlines, updates, and next steps stay organized instead of scattered across memory, inboxes, and separate systems."
+          "Stop rebuilding a support team every time the need changes. Koinonia connects more of the work through one relationship."
       },
       {
-        title: "Less operational drag",
+        title: "More continuity",
         body:
-          "Koinonia helps absorb the moving parts that compete for a Realtor’s time during active files and busy client seasons."
+          "Listing information can flow into marketing, accepted offers can flow into transactions, and follow-up can flow back into your CRM."
       },
       {
-        title: "Better client momentum",
+        title: "Clear accountability",
         body:
-          "When details are tracked and communication is supported, Realtors can stay focused on relationships and service."
+          "Koinonia owns the approved operational work while your professional judgment and client relationship remain with you."
       }
     ]
   },
 
   servicesIntro: {
-    eyebrow: "Services Built Around Realtor Operations",
-    title: "Support built around the way Realtors actually work.",
+    eyebrow: "WHAT KOINONIA CAN HANDLE",
+    title: "Five areas of support. One relationship.",
     lead:
-      "From active files to contract preparation, showing conflicts, professional open houses, and daily business organization, Koinonia provides calm, dependable support for the operational work that competes for a Realtor’s time."
+      "You do not have to know which service name fits before asking. Start with the work that needs handled and Koinonia helps determine the right path."
   },
 
   services: [
     {
-      title: "Transaction Management",
+      title: "Transactions & Contracts",
       body:
-        "For Realtors who need timelines, documents, communication, and deadlines organized from contract to close.",
-      items: ["Timeline coordination", "Deadline tracking", "Communication support"]
+        "Keep contract-to-close deadlines, documents, participants, and closing preparation moving with approved document workflow support where permitted.",
+      items: ["Transaction management", "Deadlines and documents", "Closing coordination"]
     },
     {
-      title: "Contract Preparation & Writing",
+      title: "Listing & Seller Support",
       body:
-        "For Realtors who need accurate, timely document support without losing focus on clients, negotiations, and next steps.",
-      items: ["Offer preparation", "Amendments and addenda", "Signature-ready files"]
+        "Hand off the operational work around getting a listing ready, getting it live, keeping it organized, and handing it into Transaction Management when an offer is accepted.",
+      items: ["Listing launch", "Vendor coordination", "Base listing marketing"]
     },
     {
-      title: "Licensed Showing Coverage",
+      title: "Licensed Field Coverage",
       body:
-        "For moments when your schedule is full, clients need access, and dependable licensed Realtor support matters.",
-      items: ["Licensed support", "Access coordination", "Showing feedback"]
+        "Keep approved property and client appointments covered when schedule, distance, or availability gets in the way.",
+      items: ["Buyer showings", "Professional open houses", "Property and vendor access"]
     },
     {
-      title: "Professional Open House Coverage",
+      title: "Marketing & Growth",
       body:
-        "For listing agents who want a prepared, promoted, professionally hosted open house without giving up a full block of their own weekend.",
-      items: ["Open house flyer", "Sign setup", "Digital promotion", "3-hour licensed hosting"]
+        "Keep your brand, listings, database, reviews, referrals, and recurring marketing visible without personally producing and publishing everything yourself.",
+      items: ["Social and content", "Email/database marketing", "Online presence"]
     },
     {
-      title: "Monthly Operations Partnership",
+      title: "CRM & Business Operations",
       body:
-        "For growing Realtors who need recurring structure, workflow support, and practical help keeping business details organized between transactions.",
-      items: ["Recurring support", "Workflow structure", "Business follow-through"]
+        "Create recurring structure around CRM, follow-up, tasks, vendors, workflows, and business administration so fewer details depend on you personally pushing every next step.",
+      items: ["CRM and pipeline", "Follow-up and tasks", "Systems and workflows"]
     }
   ],
 
   referralDiscovery: {
-    eyebrow: "A Different Capacity Problem",
+    eyebrow: "40% REFERRAL PARTNER OPTION",
     title: "Don't want to take the client at all?",
     lead:
-      "Sometimes the right answer is not more operational support. If a buyer or seller opportunity does not fit your current workload, timing, service area, readiness, or business priorities, a formal referral can preserve value without adding another client relationship to your calendar.",
+      "If a buyer or seller opportunity does not fit your workload, timing, service area, readiness, or business priorities, you may choose a formal referral instead of carrying the entire client relationship yourself.",
     body:
-      "Koinonia offers a separate 40% Referral Partner Option for qualifying referred business that successfully closes. It is a separate brokerage referral path, not a Koinonia Transactions operations service.",
+      "The separate Koinonia Referral Partner Option can pay a 40% referral fee on qualifying referred business that successfully closes, subject to the signed referral documents.",
     primaryLabel: "Explore the 40% Referral Option",
     primaryHref: "/referrals",
     secondaryLabel: "Keep the Client? View Services",
@@ -88,49 +88,105 @@ export const homeContent = {
   },
 
   fit: {
-    eyebrow: "Who It Helps",
+    eyebrow: "WHO IT HELPS",
     title: "For Realtors who need dependable support without adding complexity.",
     lead:
-      "Koinonia is designed for real estate professionals who want organized follow-through, practical communication support, and a steady operations partner behind the client-facing work.",
+      "Koinonia is built for real estate professionals who want more of the work behind their clients handled through one steady support relationship.",
     cards: [
       {
         title: "Busy solo agents",
         body:
-          "When your client load grows but you are not ready to build a full internal team, Koinonia helps create structure around the work that keeps slipping."
+          "When client work is growing but you are not ready to build a full internal team, Koinonia helps absorb the operational work that keeps falling back on you."
       },
       {
         title: "Growing Realtor teams",
         body:
-          "When multiple people, files, appointments, and tasks need coordination, Koinonia helps make the operational work more visible and repeatable."
+          "When multiple files, listings, appointments, marketing needs, and follow-up tasks need coordination, Koinonia helps make the work more visible and repeatable."
       },
       {
         title: "Client-focused Realtors",
         body:
-          "When you want to stay present with clients instead of buried in details or giving up valuable time blocks, Koinonia helps keep the behind-the-scenes work moving."
+          "When you want to stay present with clients instead of personally pushing every behind-the-scenes detail, Koinonia helps keep the business moving."
       }
     ]
   },
 
-  experience: {
-    eyebrow: "How It Works",
-    title: "Simple support. Clear process.",
+  flagship: {
+    eyebrow: "A DIFFERENT KIND OF LISTING SUPPORT",
+    title: "Win the listing. Then hand us the operational work behind it.",
     lead:
-      "The process is intentionally simple: clarify what support is needed, organize the work, and keep the next steps moving.",
+      "Hand Us the Listing gives Realtors a practical way to offload listing intake, vendor and media coordination, launch workflow, base listing marketing, active-listing administration, and accepted-offer handoff — while the Realtor keeps seller strategy, pricing, negotiation, and professional judgment.",
+    price: "$350 per standard listing",
+    ctaLabel: "See Hand Us the Listing",
+    ctaHref: "/services#hand-us-the-listing"
+  },
+
+  field: {
+    eyebrow: "WHEN YOU CAN'T PHYSICALLY BE THERE",
+    title: "Professional field coverage without giving up the client relationship.",
+    lead:
+      "Koinonia can cover approved buyer showings, professional open houses, inspection/appraisal/media access, and other approved property assignments while you remain the responsible Realtor.",
+    price: "From $75 per standard assignment · $200 standard open house",
+    ctaLabel: "See Licensed Field Coverage",
+    ctaHref: "/services#licensed-field-coverage"
+  },
+
+  recurring: {
+    eyebrow: "MARKETING + OPERATIONS",
+    title: "Need marketing handled — or more of the business behind it?",
+    lead:
+      "Marketing Management keeps your recurring marketing moving. Koinonia Partnership includes that marketing foundation and adds an agreed layer of CRM and business-operations support.",
     cards: [
       {
-        title: "Clarify",
+        title: "Marketing Management",
+        price: "$750/month",
         body:
-          "Start with a clear conversation about where support would make the biggest difference."
+          "For Realtors who want recurring social, email/database marketing, listing/event integration, reviews/referrals, online presence, and monthly marketing visibility taken off their plate."
       },
       {
-        title: "Coordinate",
+        title: "Koinonia Partnership",
+        price: "$1,250/month",
         body:
-          "Koinonia organizes the details, deadlines, documents, communication, scheduling, and next steps."
+          "For Realtors who want marketing plus recurring CRM, follow-up, task/calendar, vendor, workflow, and business-operations support through one ongoing relationship."
+      }
+    ]
+  },
+
+  pricing: {
+    eyebrow: "SIMPLE WAYS TO WORK WITH KOINONIA",
+    title: "Clear starting prices without a giant menu of micro-fees.",
+    lead:
+      "Koinonia prices the managed outcome, not every email, reminder, or routine coordination step.",
+    items: [
+      { title: "Transaction Management", price: "$450", note: "per successful closing" },
+      { title: "Hand Us the Listing", price: "$350", note: "per standard listing" },
+      { title: "Licensed Field Coverage", price: "From $75", note: "per standard assignment" },
+      { title: "Professional Open House", price: "$200", note: "per standard event" },
+      { title: "Marketing Management", price: "$750", note: "per month" },
+      { title: "Koinonia Partnership", price: "$1,250", note: "per month" }
+    ]
+  },
+
+  experience: {
+    eyebrow: "HOW IT WORKS",
+    title: "Start with the need. Koinonia helps organize the rest.",
+    lead:
+      "You do not have to diagnose which Koinonia service a task belongs to before reaching out.",
+    cards: [
+      {
+        title: "Tell us what needs handled",
+        body:
+          "Start with the transaction, listing, field need, marketing workload, CRM problem, recurring business task, or defined project."
       },
       {
-        title: "Keep Moving",
+        title: "We confirm the path and scope",
         body:
-          "You stay focused on clients while the operational work stays visible, structured, and moving forward."
+          "Koinonia identifies the right service, required access or approvals, outside costs if any, and what happens next."
+      },
+      {
+        title: "The work keeps moving",
+        body:
+          "You remain the Realtor while Koinonia coordinates and executes the approved operational work with clear visibility and escalation."
       }
     ]
   }

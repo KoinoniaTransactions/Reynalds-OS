@@ -1,36 +1,6 @@
 import { NextResponse } from "next/server";
-import type { Prisma } from "@reynalds-os/database";
-import { prisma } from "../../../../lib/db";
-import {
-  mapConsultationTypeToRelationshipIntent,
-  mergeKoinoniaRelationshipData,
-  normalizeKoinoniaRelationshipData,
-  preserveAdvancedLifecycle
-} from "../../../../lib/koinonia-relationship";
-import {
-  normalizeMarketingTouch,
-  type MarketingAttributionSubmission,
-  type MarketingTouch
-} from "../../../../lib/marketing-attribution";
 
 export const runtime = "nodejs";
-
-const koinoniaWorkspaceId = "wks_koinonia";
-const ownerEmail = "jeremiah@koinoniaadmin.com";
-
-type AttributionPayload = {
-  utmSource?: unknown;
-  utmMedium?: unknown;
-  utmCampaign?: unknown;
-  utmContent?: unknown;
-  fbclid?: unknown;
-  ttclid?: unknown;
-  referrer?: unknown;
-  version?: unknown;
-  firstTouch?: unknown;
-  latestTouch?: unknown;
-  conversionTouch?: unknown;
-};
 
 type ConsultationPayload = {
   consultationType?: unknown;
@@ -42,11 +12,10 @@ type ConsultationPayload = {
   preferredTime?: unknown;
   notes?: unknown;
   website?: unknown;
-  attribution?: unknown;
 };
 
 const recipientEmail =
-  process.env.CONTACT_INTAKE_TO_EMAIL || ownerEmail;
+  process.env.CONTACT_INTAKE_TO_EMAIL || "jeremiah@koinoniaadmin.com";
 
 const senderEmail =
   process.env.CONTACT_INTAKE_FROM_EMAIL ||
@@ -65,14 +34,6 @@ const allowedTimeWindows = new Set([
 
 function value(input: unknown) {
   return typeof input === "string" ? input.trim() : "";
-}
-
-function normalizeEmail(input: string) {
-  return input.trim().toLowerCase();
-}
-
-function normalizePhone(input: string) {
-  return input.replace(/\D/g, "");
 }
 
 function isValidEmail(input: string) {
@@ -95,102 +56,6 @@ function escapeHtml(input: string) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
-}
-
-function toPrismaJson(input: unknown): Prisma.InputJsonValue {
-  return JSON.parse(JSON.stringify(input)) as Prisma.InputJsonValue;
-}
-
-function legacyTouch(source: AttributionPayload): MarketingTouch {
-  return normalizeMarketingTouch({
-    utmSource: value(source.utmSource),
-    utmMedium: value(source.utmMedium),
-    utmCampaign: value(source.utmCampaign),
-    utmContent: value(source.utmContent),
-    fbclid: value(source.fbclid),
-    ttclid: value(source.ttclid),
-    referrer: value(source.referrer)
-  });
-}
-
-function normalizeAttribution(input: unknown): MarketingAttributionSubmission {
-  const source =
-    input && typeof input === "object" && !Array.isArray(input)
-      ? (input as AttributionPayload)
-      : {};
-
-  if (source.version === 2 && source.firstTouch && source.latestTouch) {
-    const firstTouch = normalizeMarketingTouch(source.firstTouch);
-    const latestTouch = normalizeMarketingTouch(source.latestTouch);
-
-    return {
-      version: 2,
-      firstTouch,
-      latestTouch,
-      conversionTouch: source.conversionTouch
-        ? normalizeMarketingTouch(source.conversionTouch)
-        : latestTouch
-    };
-  }
-
-  const touch = legacyTouch(source);
-
-  return {
-    version: 2,
-    firstTouch: touch,
-    latestTouch: touch,
-    conversionTouch: touch
-  };
-}
-
-function deriveAcquisition(touch: MarketingTouch) {
-  const sourceName = touch.utmSource.toLowerCase();
-  const medium = touch.utmMedium.toLowerCase();
-  const isInstagram = sourceName.includes("instagram");
-  const isFacebook = sourceName.includes("facebook") || sourceName.includes("meta");
-  const isTikTok = sourceName.includes("tiktok") || Boolean(touch.ttclid);
-  const isEmail = sourceName.includes("email") || medium.includes("email");
-  const isPaid =
-    medium.includes("paid") ||
-    medium.includes("cpc") ||
-    Boolean(touch.fbclid) ||
-    Boolean(touch.ttclid);
-
-  let source = "Website";
-  let firstTouchChannel = "Website";
-  let sourceDetail = "Public consultation scheduler";
-
-  if (isInstagram || isFacebook || isTikTok) {
-    source = "Social Media";
-    firstTouchChannel = isInstagram
-      ? "Instagram"
-      : isTikTok
-        ? "TikTok"
-        : "Facebook";
-    sourceDetail = `${firstTouchChannel}${isPaid ? " paid" : " organic"}`;
-  } else if (isEmail) {
-    source = "Email";
-    firstTouchChannel = "Email";
-    sourceDetail = touch.utmSource || "Email campaign";
-  } else if (touch.utmSource) {
-    sourceDetail = touch.utmSource;
-  } else if (touch.referrer) {
-    sourceDetail = `Referral from ${touch.referrer}`;
-  }
-
-  const detailParts = [
-    sourceDetail,
-    touch.utmMedium ? `medium=${touch.utmMedium}` : "",
-    touch.utmContent ? `content=${touch.utmContent}` : ""
-  ].filter(Boolean);
-
-  return {
-    source,
-    sourceDetail: detailParts.join(" · "),
-    firstTouchChannel,
-    campaign: touch.utmCampaign,
-    referrer: touch.referrer
-  };
 }
 
 function buildTextEmail({
@@ -279,176 +144,6 @@ function buildHtmlEmail({
   `;
 }
 
-async function persistConsultationRelationship({
-  consultationType,
-  name,
-  email,
-  phone,
-  preferredDate,
-  preferredTime,
-  notes,
-  attribution
-}: {
-  consultationType: string;
-  name: string;
-  email: string;
-  phone: string;
-  preferredDate: string;
-  preferredTime: string;
-  notes: string;
-  attribution: MarketingAttributionSubmission;
-}) {
-  const intent = mapConsultationTypeToRelationshipIntent(consultationType);
-  const acquisition = deriveAcquisition(attribution.firstTouch);
-  const relationships = await prisma.rosObject.findMany({
-    where: {
-      workspaceId: koinoniaWorkspaceId,
-      objectType: "Relationship",
-      archivedAt: null
-    },
-    orderBy: { updatedAt: "desc" }
-  });
-
-  const normalizedEmail = normalizeEmail(email);
-  const normalizedPhone = normalizePhone(phone);
-
-  const existing = relationships.find((relationship) => {
-    const profile = normalizeKoinoniaRelationshipData(relationship.data);
-    const relationshipEmail = normalizeEmail(profile.contact?.email ?? "");
-    const relationshipPhone = normalizePhone(profile.contact?.phone ?? "");
-
-    return (
-      (normalizedEmail && relationshipEmail === normalizedEmail) ||
-      (normalizedPhone && relationshipPhone === normalizedPhone)
-    );
-  });
-
-  const existingProfile = normalizeKoinoniaRelationshipData(existing?.data);
-  const submittedAt = new Date().toISOString();
-  const existingPath = existingProfile.diagnosis?.path || "Undetermined";
-  const profile = mergeKoinoniaRelationshipData(existing?.data, {
-    relationshipProfileVersion: 1,
-    contact: {
-      email,
-      phone
-    },
-    acquisition: {
-      source: existingProfile.acquisition?.source || acquisition.source,
-      sourceDetail:
-        existingProfile.acquisition?.sourceDetail || acquisition.sourceDetail,
-      firstTouchChannel:
-        existingProfile.acquisition?.firstTouchChannel || acquisition.firstTouchChannel,
-      campaign: existingProfile.acquisition?.campaign || acquisition.campaign,
-      material: existingProfile.acquisition?.material || "Website",
-      firstTouchDate:
-        existingProfile.acquisition?.firstTouchDate || submittedAt.slice(0, 10),
-      referrer: existingProfile.acquisition?.referrer || acquisition.referrer,
-      firstTouch:
-        existingProfile.acquisition?.firstTouch || attribution.firstTouch,
-      latestTouch: attribution.latestTouch,
-      conversionTouch: attribution.conversionTouch
-    },
-    problem: {
-      primaryPressure:
-        existingProfile.problem?.primaryPressure || intent.pressure,
-      exactLanguage: existingProfile.problem?.exactLanguage || notes
-    },
-    diagnosis: {
-      path: existingPath === "Undetermined" ? intent.path : existingPath,
-      requestedService: intent.service
-    },
-    consultationRequest: {
-      type: consultationType,
-      preferredDate,
-      preferredTime,
-      notes,
-      submittedAt
-    },
-    growth: {
-      lastMeaningfulInteraction: submittedAt
-    }
-  });
-
-  const nextAction = `Review consultation request for ${preferredDate} · ${preferredTime}`;
-  const owner = await prisma.user.findUnique({ where: { email: ownerEmail } });
-
-  return prisma.$transaction(async (tx) => {
-    const relationship = existing
-      ? await tx.rosObject.update({
-          where: { id: existing.id },
-          data: {
-            name,
-            status: preserveAdvancedLifecycle(existing.status, "Consultation"),
-            health: existing.health || "Healthy",
-            nextAction,
-            data: toPrismaJson(profile)
-          }
-        })
-      : await tx.rosObject.create({
-          data: {
-            workspaceId: koinoniaWorkspaceId,
-            objectType: "Relationship",
-            name,
-            status: "Consultation",
-            health: "Healthy",
-            nextAction,
-            data: toPrismaJson(profile)
-          }
-        });
-
-    await tx.timelineEvent.create({
-      data: {
-        workspaceId: koinoniaWorkspaceId,
-        objectId: relationship.id,
-        eventType: "consultation.requested",
-        summary: `Website consultation requested: ${consultationType} · ${preferredDate} · ${preferredTime}`,
-        newValue: toPrismaJson({
-          consultationType,
-          preferredDate,
-          preferredTime,
-          notes,
-          acquisition
-        })
-      }
-    });
-
-    const existingTask = await tx.task.findFirst({
-      where: {
-        workspaceId: koinoniaWorkspaceId,
-        relatedObjectId: relationship.id,
-        status: "Open",
-        title: nextAction
-      }
-    });
-
-    if (!existingTask) {
-      const task = await tx.task.create({
-        data: {
-          workspaceId: koinoniaWorkspaceId,
-          relatedObjectId: relationship.id,
-          ownerId: owner?.workspaceId === koinoniaWorkspaceId ? owner.id : undefined,
-          title: nextAction,
-          status: "Open",
-          priority: "Normal"
-        }
-      });
-
-      await tx.timelineEvent.create({
-        data: {
-          workspaceId: koinoniaWorkspaceId,
-          objectId: relationship.id,
-          actorId: owner?.workspaceId === koinoniaWorkspaceId ? owner.id : undefined,
-          eventType: "task.created",
-          summary: `Task created: ${task.title}`,
-          newValue: toPrismaJson(task)
-        }
-      });
-    }
-
-    return relationship;
-  });
-}
-
 export async function POST(request: Request) {
   let payload: ConsultationPayload;
 
@@ -477,7 +172,6 @@ export async function POST(request: Request) {
   const preferredDate = value(payload.preferredDate);
   const preferredTime = value(payload.preferredTime);
   const notes = value(payload.notes);
-  const attribution = normalizeAttribution(payload.attribution);
 
   if (
     !consultationType ||
@@ -515,39 +209,16 @@ export async function POST(request: Request) {
     );
   }
 
-  try {
-    await persistConsultationRelationship({
-      consultationType,
-      name,
-      email,
-      phone,
-      preferredDate,
-      preferredTime,
-      notes,
-      attribution
-    });
-  } catch (error) {
-    console.error("Koinonia consultation CRM write failed:", error);
-    return NextResponse.json(
-      {
-        error:
-          "The consultation request could not be saved. Please try again or contact Koinonia directly."
-      },
-      { status: 500 }
-    );
-  }
-
   const resendApiKey = process.env.RESEND_API_KEY;
 
   if (!resendApiKey) {
-    console.warn(
-      "Koinonia consultation saved to CRM, but RESEND_API_KEY is not configured."
+    return NextResponse.json(
+      {
+        error:
+          "Email delivery is not configured yet. Add RESEND_API_KEY before using the live consultation form."
+      },
+      { status: 503 }
     );
-    return NextResponse.json({
-      ok: true,
-      message:
-        "Your consultation request has been received. Koinonia will follow up with next steps."
-    });
   }
 
   const subject =
@@ -588,16 +259,16 @@ export async function POST(request: Request) {
 
   if (!response.ok) {
     const errorBody = await response.text();
-    console.error(
-      "Koinonia consultation saved to CRM, but notification email failed:",
-      errorBody
-    );
 
-    return NextResponse.json({
-      ok: true,
-      message:
-        "Your consultation request has been received. Koinonia will follow up with next steps."
-    });
+    console.error("Koinonia consultation email failed:", errorBody);
+
+    return NextResponse.json(
+      {
+        error:
+          "The consultation request could not be sent. Please try again or contact Koinonia directly."
+      },
+      { status: 502 }
+    );
   }
 
   return NextResponse.json({

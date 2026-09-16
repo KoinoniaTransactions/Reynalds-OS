@@ -4,7 +4,7 @@ export const brandContent = {
     legalName: "Koinonia Transactions",
     tagline: "Real estate operations support for Realtors.",
     description:
-      "Koinonia provides organized real estate transaction, contract, showing, and business support for Realtors."
+      "Koinonia provides white-glove real estate operations support for Colorado Realtors across transactions, listings, licensed field coverage, marketing, CRM, and recurring business operations."
   },
 
   contact: {
