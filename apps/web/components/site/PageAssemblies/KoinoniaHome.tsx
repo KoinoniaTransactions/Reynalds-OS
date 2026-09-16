@@ -1,23 +1,26 @@
 import { homeContent } from "@/content/home";
 import { CTA, Footer, Header, Hero, Section, UniversalCard } from "../index";
+import styles from "./KoinoniaHome.module.css";
 
 export function KoinoniaHome() {
   return (
     <main className="koinonia-site">
       <Header />
 
-      <Hero
-        eyebrow={homeContent.hero.eyebrow}
-        title={homeContent.hero.title}
-        lead={homeContent.hero.lead}
-        primaryLabel={homeContent.hero.primaryLabel}
-        primaryHref={homeContent.hero.primaryHref}
-        secondaryLabel={homeContent.hero.secondaryLabel}
-        secondaryHref={homeContent.hero.secondaryHref}
-        visualDesktopSrc="/assets/images/koinonia/home/home-hero-desktop.png"
-        visualMobileSrc="/assets/images/koinonia/home/home-hero-mobile.png"
-        variant="fullBleed"
-      />
+      <div className={styles.heroCompact}>
+        <Hero
+          eyebrow={homeContent.hero.eyebrow}
+          title={homeContent.hero.title}
+          lead={homeContent.hero.lead}
+          primaryLabel={homeContent.hero.primaryLabel}
+          primaryHref={homeContent.hero.primaryHref}
+          secondaryLabel={homeContent.hero.secondaryLabel}
+          secondaryHref={homeContent.hero.secondaryHref}
+          visualDesktopSrc="/assets/images/koinonia/home/home-hero-desktop.png"
+          visualMobileSrc="/assets/images/koinonia/home/home-hero-mobile.png"
+          variant="fullBleed"
+        />
+      </div>
 
       <Section
         className="koinonia-home-positioning"
