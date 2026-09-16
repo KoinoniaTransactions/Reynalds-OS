@@ -12,7 +12,7 @@ export const sharedContent = {
     companyName: "Koinonia",
     tagline: "Real estate operations support for Realtors.",
     description:
-      "Dependable transaction, contract, showing, and business operations support for Colorado real estate professionals.",
+      "White-glove real estate operations support for Colorado Realtors across transactions, listings, licensed field coverage, marketing, CRM, and recurring business operations.",
     navigationTitle: "Explore",
     contactTitle: "Start the Conversation",
     ctaLabel: "Schedule a Consultation",
@@ -37,7 +37,7 @@ export const sharedContent = {
     eyebrow: "Why Realtors Choose Koinonia",
     title: "A trusted operations partner behind the moving parts.",
     body:
-      "Koinonia helps Realtors stay focused on clients while reliable systems, clear communication, and organized support keep transactions, contracts, showings, and daily business details moving behind the scenes.",
+      "Koinonia helps Realtors stay focused on clients while reliable systems, clear communication, and organized support keep transactions, listings, field coverage, marketing, CRM, and recurring business operations moving behind the scenes.",
 
     pillars: [
       {
@@ -101,17 +101,17 @@ export const sharedContent = {
       {
         question: "Can I use only the services I need?",
         answer:
-          "Yes. Koinonia is designed around support levels and operational needs, not one-size-fits-all packages."
+          "Yes. Koinonia is designed around the operational outcome you need, whether that is one transaction, a listing, field coverage, recurring marketing, broader partnership support, or a defined custom project."
       },
       {
         question: "Will I still stay informed?",
         answer:
-          "Yes. The goal is not to remove you from the transaction; it is to keep you supported, informed, and focused on your clients."
+          "Yes. The goal is not to remove you from the client relationship; it is to keep you supported, informed, and focused on the work that requires your professional judgment."
       },
       {
         question: "How is billing handled?",
         answer:
-          "Koinonia supports both prepaid and pay-at-close models depending on the service level and agreement."
+          "Pricing depends on the service. Transaction Management is billed per successful closing; listing and field services are priced per assignment; recurring Marketing Management and Koinonia Partnership are monthly; and Custom Projects are quoted before work begins. Current pricing is shown on the Services page."
       }
     ]
   }

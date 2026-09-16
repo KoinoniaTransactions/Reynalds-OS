@@ -1,0 +1,61 @@
+/* Transaction intake choice affordances.
+   These controls already use semantic buttons and aria-pressed in the intake component.
+   This stylesheet makes that interactivity obvious and accessible. */
+
+button.koinonia-client-summary-card,
+button.koinonia-client-work-item {
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    background-color 140ms ease;
+}
+
+button.koinonia-client-summary-card:hover:not(:disabled),
+button.koinonia-client-work-item:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--portal-border-strong);
+  box-shadow: 0 14px 34px rgba(39, 31, 21, 0.09);
+}
+
+button.koinonia-client-summary-card:focus-visible,
+button.koinonia-client-work-item:focus-visible {
+  outline: 3px solid rgba(177, 124, 48, 0.34);
+  outline-offset: 3px;
+}
+
+button.koinonia-client-summary-card[aria-pressed="true"],
+button.koinonia-client-work-item[aria-pressed="true"] {
+  background: var(--portal-surface-gold);
+  border-color: var(--portal-gold);
+  box-shadow: 0 0 0 2px rgba(177, 124, 48, 0.12), 0 14px 34px rgba(39, 31, 21, 0.08);
+}
+
+button.koinonia-client-summary-card[aria-pressed="true"] > strong,
+button.koinonia-client-work-item[aria-pressed="true"] .koinonia-client-work-meta strong {
+  color: var(--portal-gold-dark);
+}
+
+button.koinonia-client-summary-card:disabled,
+button.koinonia-client-work-item:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button.koinonia-client-summary-card,
+  button.koinonia-client-work-item {
+    transition: none;
+  }
+
+  button.koinonia-client-summary-card:hover:not(:disabled),
+  button.koinonia-client-work-item:hover:not(:disabled) {
+    transform: none;
+  }
+}

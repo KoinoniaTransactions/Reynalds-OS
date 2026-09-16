@@ -1,397 +1,140 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "../../../config/seo.config";
-import { AccessRequestForm } from "../../../components/client/AccessRequestForm";
-import { ShowingRequestForm } from "../../../components/client/ShowingRequestForm";
+import { ClientTransactionQuickActions } from "../../../components/client/ClientTransactionQuickActions";
+import { ClientTransactionSearch } from "../../../components/client/ClientTransactionSearch";
 import { Footer, Header } from "../../../components/site";
 import { requirePortalPermission } from "../../../lib/portal-auth";
 import { prisma } from "../../../lib/db";
-import {
-  accessRequestObjectType,
-  getAccessRequestDetail,
-  getAccessRequestMetaLabels,
-  getHumanAccessRequestStatus
-} from "../../../lib/access-requests";
-import {
-  getHumanShowingStatus,
-  getShowingNoteLabels,
-  getShowingTimingLabel,
-  showingRequestObjectType
-} from "../../../lib/showing-requests";
-import {
-  buildPortalWorkSummaryCounts,
-  clientPortalWorkObjectTypes,
-  getPortalWorkDueLabel,
-  getPortalWorkItemTypeLabel
-} from "../../../lib/portal-work-items";
-import { getKoinoniaServiceTemplateForWork } from "../../../lib/koinonia-service-templates";
-import {
-  buildClientDocumentRequestsFromPlaybooks,
-  buildClientServiceCuesFromPlaybook,
-  getPortalPlaybookForWork
-} from "../../../lib/portal-playbook";
+import { clientTransactionObjectType } from "../../../lib/client-transactions";
+import { isResendInboundConfigured } from "../../../lib/resend-inbound-email";
+import { getTransactionInboundEmailAddress } from "../../../lib/transaction-inbound-email";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Client Dashboard Preview",
-  description:
-    "Preview of the Koinonia client dashboard for active, pending, waiting, and completed work.",
-  alternates: {
-    canonical: absoluteUrl("/client/dashboard")
-  },
-  robots: {
-    index: false,
-    follow: false
-  }
+  title: "Transactions | Koinonia",
+  description: "Your Koinonia transactions, attention items, documents, and closing progress.",
+  alternates: { canonical: absoluteUrl("/client/dashboard") },
+  robots: { index: false, follow: false }
 };
 
-type ClientSummaryCard = {
-  body: string;
-  label: string;
-  value: string;
-};
-
-type ClientWorkItem = {
-  detailHref?: string;
-  due: string;
+type DashboardFilter = "active" | "closing" | "closed";
+type DashboardTransaction = {
+  clientName: string;
+  closingDate: string | null;
+  health: string;
   id: string;
-  nextAction: string;
-  serviceCues: string[];
-  status: string;
-  title: string;
-  type: string;
-};
-
-type ClientWorkView = {
-  documentRequests: string[];
-  isLiveData: boolean;
-  items: ClientWorkItem[];
-  notice?: string;
-  summaryCards: ClientSummaryCard[];
-};
-
-const sampleSummaryCards: ClientSummaryCard[] = [
-  {
-    label: "Waiting on You",
-    value: "2",
-    body: "Items that need instructions, files, approval, or access."
-  },
-  {
-    label: "Active Work",
-    value: "3",
-    body: "Support currently in progress with Koinonia."
-  },
-  {
-    label: "Ready for Review",
-    value: "1",
-    body: "Drafts or next steps waiting for Realtor review."
-  },
-  {
-    label: "Completed",
-    value: "8",
-    body: "Recently completed work and closed-out support."
-  }
-];
-
-const sampleWorkItems: ClientWorkItem[] = [
-  {
-    id: "sample-buyer-offer",
-    title: "Buyer Offer Package",
-    type: "Contract & Document Support",
-    status: "Waiting on You",
-    nextAction: "Confirm offer instructions and preferred closing timeline.",
-    serviceCues: ["Documents", "Realtor instructions", "Approval before sending"],
-    due: "Today"
-  },
-  {
-    id: "sample-smith-close",
-    title: "Smith Contract-to-Close",
-    type: "Transaction Support",
-    status: "Active",
-    nextAction: "Koinonia is tracking inspection and earnest money deadlines.",
-    serviceCues: ["Documents", "Billing", "Executed contract"],
-    due: "Jul 31"
-  },
-  {
-    id: "sample-monthly-cleanup",
-    title: "Monthly Operations Cleanup",
-    type: "Monthly Operations Partnership",
-    status: "Active",
-    nextAction: "CRM follow-up groups are being organized for review.",
-    serviceCues: ["Monthly priorities", "Check-in cadence", "Billing"],
-    due: "This week"
-  },
-  {
-    id: "sample-northgate-showing",
-    title: "Northgate Showing Coverage",
-    type: "Licensed Showing Coverage",
-    status: "Completed",
-    nextAction: "Showing notes and feedback are available in the work history.",
-    serviceCues: ["Showings", "Access readiness confirmation", "Feedback request"],
-    due: "Complete"
-  }
-];
-
-type ShowingRequestItem = {
-  id: string;
-  nextAction: string;
-  notes: string[];
-  status: string;
-  timing: string;
-  title: string;
-};
-
-type ShowingRequestView = {
-  isLiveData: boolean;
-  notice?: string;
-  requests: ShowingRequestItem[];
-};
-
-type AccessRequestItem = {
-  detail: string;
-  id: string;
-  labels: string[];
-  platform: string;
+  inboundEmail: string | null;
+  name: string;
+  nextAction: string | null;
+  propertyAddress: string;
+  side: "Buyer" | "Seller";
   status: string;
 };
+type DashboardView = { attention: DashboardTransaction[]; notice?: string; transactions: DashboardTransaction[] };
+type PageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> };
 
-type AccessRequestView = {
-  isLiveData: boolean;
-  notice?: string;
-  requests: AccessRequestItem[];
-};
-
-const sampleShowingRequests: ShowingRequestItem[] = [
-  {
-    id: "sample-northgate-tour",
-    title: "Schedule Northgate Buyer Tour",
-    status: "Scheduling",
-    nextAction: "Koinonia is checking requested showing windows and buyer availability.",
-    timing: "Thu afternoon",
-    notes: ["Client contact authorized", "Friday morning is the backup window"]
-  },
-  {
-    id: "sample-west-ridge",
-    title: "West Ridge Showing Coverage",
-    status: "Needs Follow-up",
-    nextAction: "Access instructions and safety notes are needed before coverage can be confirmed.",
-    timing: "Same-day request",
-    notes: ["Rush review needed", "Access details pending"]
-  },
-  {
-    id: "sample-northgate-follow-up",
-    title: "Northgate Showing Follow-Up",
-    status: "Completed",
-    nextAction: "Showing notes were delivered. Follow-up remains open if the Realtor requests it.",
-    timing: "Complete",
-    notes: ["Buyer feedback delivered", "No immediate issue flagged"]
-  }
-];
-
-const sampleDocumentRequests = [
-  "Executed listing agreement",
-  "Seller property disclosure",
-  "Inspection objection instructions",
-  "Showing access notes for West Ridge"
-];
-
-const sampleAccessRequests: AccessRequestItem[] = [
-  {
-    id: "sample-transaction-platform",
-    platform: "Transaction platform",
-    status: "Waiting on Client",
-    detail: "Grant broker-approved transaction coordinator access or send an approved secure sharing link.",
-    labels: ["No password stored", "Smith Contract-to-Close"]
-  },
-  {
-    id: "sample-forms-workspace",
-    platform: "Forms workspace",
-    status: "Access Needed",
-    detail: "Koinonia needs delegated document-preparation access before drafting forms.",
-    labels: ["No password stored", "Buyer Offer Package"]
-  }
-];
-
-export default async function ClientDashboardPreviewPage() {
+export default async function ClientDashboardPage({ searchParams }: PageProps) {
   const actor = await requirePortalPermission("client-portal:view", "/client/dashboard");
-  const workItemView = await getClientWorkItemView(actor.workspaceId, actor.id);
-  const showingRequestView = await getClientShowingRequestView(actor.workspaceId, actor.id);
-  const accessRequestView = await getClientAccessRequestView(actor.workspaceId, actor.id);
+  const params = (await searchParams) ?? {};
+  const filter = getDashboardFilter(params.filter);
+  const search = getStringParam(params.q);
+  const view = await getDashboardView(actor.workspaceId, actor.id);
+  const visibleTransactions = filterTransactions(view.transactions, filter, search);
+  const activeCount = view.transactions.filter((transaction) => !isClosed(transaction)).length;
 
   return (
-    <main className="koinonia-site koinonia-client-dashboard">
+    <main className="koinonia-site koinonia-client-dashboard koinonia-client-dashboard-modern">
       <Header
         canAccessClientPortal={actor.permissions.includes("client-portal:view")}
         canAccessEmployeePortal={actor.permissions.includes("employee-portal:view")}
       />
 
-      <section className="koinonia-section koinonia-client-dashboard-hero">
+      <section className="koinonia-section koinonia-client-dashboard-hero koinonia-client-dashboard-hero-modern">
         <div className="koinonia-container">
-          <div className="koinonia-section-header">
-            <p className="koinonia-eyebrow">Dashboard Preview</p>
-
-            <h1 className="koinonia-title">
-              One place for active work, pending items, and completed support.
-            </h1>
-
-            <p className="koinonia-lead">
-              Current work, showing requests, access updates, documents, and
-              billing setup can use protected storage when production database
-              access is available. Document uploads also require private
-              storage and malware scanning before live files are accepted.
-            </p>
+          <div className="koinonia-client-dashboard-topline">
+            <div>
+              <p className="koinonia-client-transaction-kicker">Koinonia Transactions</p>
+              <h1 className="koinonia-client-dashboard-title">Your transactions</h1>
+              <p className="koinonia-client-dashboard-subtitle">
+                {activeCount ? `${activeCount} active ${activeCount === 1 ? "file" : "files"}. ` : ""}
+                Koinonia is managing the details and will surface only what actually needs you.
+              </p>
+            </div>
+            <a className="koinonia-button primary" href="/client/transactions/new">Start a file</a>
           </div>
 
-          <div className="koinonia-client-summary-grid">
-            {workItemView.summaryCards.map((card) => (
-              <article className="koinonia-client-summary-card" key={card.label}>
-                <span>{card.label}</span>
-                <strong>{card.value}</strong>
-                <p>{card.body}</p>
-              </article>
-            ))}
-          </div>
+          {view.notice ? <p className="koinonia-client-security-note">{view.notice}</p> : null}
+
+          {view.attention.length ? (
+            <section className="koinonia-client-attention-strip" aria-labelledby="needs-attention-title">
+              <div className="koinonia-client-attention-copy">
+                <span>{view.attention.length}</span>
+                <div>
+                  <strong id="needs-attention-title">Needs your attention</strong>
+                  <p>Only items Koinonia cannot move forward without are shown here.</p>
+                </div>
+              </div>
+              <div className="koinonia-client-attention-links">
+                {view.attention.slice(0, 3).map((transaction) => (
+                  <a href={`/client/work/${transaction.id}`} key={transaction.id}>
+                    <strong>{transaction.propertyAddress}</strong>
+                    <span>{transaction.nextAction ?? "Open file"}</span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ) : (
+            <div className="koinonia-client-calm-status">
+              <span aria-hidden="true">✓</span>
+              <p><strong>Nothing needs you right now.</strong> Koinonia has the active files moving.</p>
+            </div>
+          )}
         </div>
       </section>
 
-      <section className="koinonia-section">
+      <section className="koinonia-section koinonia-client-dashboard-body">
         <div className="koinonia-container">
-          <div className="koinonia-client-dashboard-layout">
-            <div className="koinonia-client-main-stack">
-              <section className="koinonia-client-work-panel" aria-labelledby="client-work-title">
-                <div className="koinonia-client-panel-heading">
-                  <p className="koinonia-eyebrow">Work</p>
-                  <h2 id="client-work-title">Current Support</h2>
-                </div>
+          <section className="koinonia-client-transaction-index" aria-labelledby="transactions-title">
+            <div className="koinonia-client-index-heading">
+              <div>
+                <h2 id="transactions-title">Files</h2>
+                <p>Property first. Client, status, and closing date stay visible without opening the file.</p>
+              </div>
 
-                <div className="koinonia-client-work-list">
-                  {workItemView.notice ? (
-                    <p className="koinonia-client-security-note">{workItemView.notice}</p>
-                  ) : null}
-
-                  {workItemView.items.map((item) => (
-                    <article className="koinonia-client-work-item" key={item.id}>
-                      <div>
-                        <span>{item.type}</span>
-                        <h3>{item.title}</h3>
-                        <p>{item.nextAction}</p>
-                        {item.serviceCues.length ? (
-                          <ul className="koinonia-client-showing-notes">
-                            {item.serviceCues.map((cue) => (
-                              <li key={cue}>{cue}</li>
-                            ))}
-                          </ul>
-                        ) : null}
-                        {item.detailHref ? (
-                          <a className="koinonia-document-link" href={item.detailHref}>
-                            Open Work
-                          </a>
-                        ) : null}
-                      </div>
-
-                      <div className="koinonia-client-work-meta">
-                        <strong>{item.status}</strong>
-                        <span>{item.due}</span>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
-
-              <section className="koinonia-client-work-panel" aria-labelledby="client-showings-title">
-                <div className="koinonia-client-panel-heading">
-                  <p className="koinonia-eyebrow">Showings</p>
-                  <h2 id="client-showings-title">Showing Requests</h2>
-                </div>
-
-                <div className="koinonia-client-work-list">
-                  {showingRequestView.notice ? (
-                    <p className="koinonia-client-security-note">{showingRequestView.notice}</p>
-                  ) : null}
-
-                  {showingRequestView.requests.map((request) => (
-                    <article className="koinonia-client-work-item" key={request.id}>
-                      <div>
-                        <span>Request Showing Coverage</span>
-                        <h3>{request.title}</h3>
-                        <p>{request.nextAction}</p>
-                        <ul className="koinonia-client-showing-notes">
-                          {request.notes.map((note) => (
-                            <li key={note}>{note}</li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div className="koinonia-client-work-meta">
-                        <strong>{request.status}</strong>
-                        <span>{request.timing}</span>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
+              <ClientTransactionSearch
+                transactions={view.transactions.map((transaction) => ({
+                  id: transaction.id,
+                  propertyAddress: transaction.propertyAddress,
+                  clientName: transaction.clientName,
+                  status: transaction.status,
+                  side: transaction.side
+                }))}
+                initialQuery={search}
+                filter={filter}
+              />
             </div>
 
-            <aside className="koinonia-client-side-panel" aria-label="Client requests">
-              <ShowingRequestForm storageReady={showingRequestView.isLiveData} />
+            <div className="koinonia-client-dashboard-toolbar koinonia-client-dashboard-toolbar-modern">
+              <nav className="koinonia-client-dashboard-filters" aria-label="Transaction filters">
+                <FilterLink active={filter === "active"} filter="active" label="Active" search={search} />
+                <FilterLink active={filter === "closing"} filter="closing" label="Closing soon" search={search} />
+                <FilterLink active={filter === "closed"} filter="closed" label="Closed" search={search} />
+              </nav>
+              {search ? <a className="koinonia-client-clear-search" href={`/client/dashboard?filter=${filter}`}>Clear search</a> : null}
+            </div>
 
-              <section className="koinonia-client-request-card">
-                <p className="koinonia-eyebrow">Documents Needed</p>
-                <ul>
-                  {workItemView.documentRequests.map((request) => (
-                    <li key={request}>{request}</li>
-                  ))}
-                </ul>
-                <a className="koinonia-document-link" href="/client/documents">
-                  Open Document Center
-                </a>
-              </section>
-
-              <AccessRequestForm storageReady={accessRequestView.isLiveData} />
-
-              <section className="koinonia-client-request-card">
-                <p className="koinonia-eyebrow">Access Needed</p>
-                <div className="koinonia-client-access-list">
-                  {accessRequestView.notice ? (
-                    <p className="koinonia-client-security-note">{accessRequestView.notice}</p>
-                  ) : null}
-
-                  {accessRequestView.requests.map((request) => (
-                    <article key={request.id}>
-                      <span>{request.status}</span>
-                      <strong>{request.platform}</strong>
-                      <p>{request.detail}</p>
-                      <ul className="koinonia-client-showing-notes">
-                        {request.labels.map((label) => (
-                          <li key={label}>{label}</li>
-                        ))}
-                      </ul>
-                    </article>
-                  ))}
+            <div className="koinonia-client-transaction-list">
+              {visibleTransactions.length ? (
+                visibleTransactions.map((transaction) => <TransactionRow key={transaction.id} transaction={transaction} />)
+              ) : (
+                <div className="koinonia-client-empty-state">
+                  <strong>{search ? "No matching files" : "No files in this view"}</strong>
+                  <p>{search ? "Try another property address or client name." : "When a file belongs here, it will appear automatically."}</p>
                 </div>
-              </section>
-
-              <section className="koinonia-client-request-card">
-                <p className="koinonia-eyebrow">Billing</p>
-                <p>
-                  Payment method setup, prepaid invoices, and pay-at-closing
-                  billing status should live on the customer file.
-                </p>
-                <a className="koinonia-billing-link" href="/client/billing">
-                  Open Billing Center
-                </a>
-              </section>
-
-              <section className="koinonia-client-request-card koinonia-client-boundary-card">
-                <p className="koinonia-eyebrow">Security Boundary</p>
-                <p>
-                  Do not paste passwords into the portal. Access should be
-                  granted through approved delegated permissions or an approved
-                  encrypted sharing workflow.
-                </p>
-              </section>
-            </aside>
-          </div>
+              )}
+            </div>
+          </section>
         </div>
       </section>
 
@@ -400,265 +143,107 @@ export default async function ClientDashboardPreviewPage() {
   );
 }
 
-async function getClientWorkItemView(
-  workspaceId: string,
-  userId: string
-): Promise<ClientWorkView> {
-  try {
-    const workObjects = await prisma.rosObject.findMany({
-      where: {
-        workspaceId,
-        objectType: { in: [...clientPortalWorkObjectTypes] },
-        archivedAt: null,
-        OR: [{ clientUserId: userId }, { ownerId: userId }]
-      },
-      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-      take: 20
-    });
-    const workPlaybooks = workObjects.map((object) => {
-      const template = getKoinoniaServiceTemplateForWork({
-        data: object.data,
-        name: object.name,
-        objectType: object.objectType
-      });
-      const due = getPortalWorkDueLabel(object.data);
-      const playbook = getPortalPlaybookForWork({
-        data: object.data,
-        name: object.name,
-        objectType: object.objectType
-      });
-
-      return {
-        due,
-        object,
-        playbook,
-        template
-      };
-    });
-
-    const items = workPlaybooks.map(({ due, object, playbook, template }) => {
-      return {
-        id: object.id,
-        title: object.name,
-        type: template?.publicServiceTitle ?? getPortalWorkItemTypeLabel(object.objectType),
-        status: object.status,
-        nextAction: object.nextAction ?? template?.staffNextAction ?? "Koinonia will update this work item as it moves.",
-        due,
-        detailHref: `/client/work/${object.id}`,
-        serviceCues: playbook
-          ? buildClientServiceCuesFromPlaybook(playbook, {
-              clientPortalSections: template?.clientPortalSections
-            })
-          : []
-      };
-    });
-
-    return {
-      documentRequests: withEmptyDashboardDocumentRequests(
-        buildClientDocumentRequestsFromPlaybooks(
-          workPlaybooks.map(({ due, object, playbook }) => ({
-            due,
-            playbook,
-            transaction: object.name
-          }))
-        ).map((request) => request.title)
-      ),
-      isLiveData: true,
-      items: withEmptyClientWorkItems(items),
-      summaryCards: buildClientSummaryCards(items)
-    };
-  } catch (error) {
-    if (!isDatabaseUnavailableError(error)) {
-      throw error;
-    }
-
-    return {
-      documentRequests: sampleDocumentRequests,
-      isLiveData: false,
-      items: sampleWorkItems,
-      notice:
-        "Current work storage is not reachable in this preview, so sample support items are shown.",
-      summaryCards: sampleSummaryCards
-    };
-  }
-}
-
-function buildClientSummaryCards(items: ClientWorkItem[]): ClientSummaryCard[] {
-  const counts = buildPortalWorkSummaryCounts(items);
-
-  return [
-    {
-      label: "Waiting on You",
-      value: String(counts.waiting),
-      body: "Items that need instructions, files, approval, or access."
-    },
-    {
-      label: "Active Work",
-      value: String(counts.active),
-      body: "Support currently in progress with Koinonia."
-    },
-    {
-      label: "Ready for Review",
-      value: String(counts.review),
-      body: "Drafts or next steps waiting for Realtor review."
-    },
-    {
-      label: "Completed",
-      value: String(counts.completed),
-      body: "Recently completed work and closed-out support."
-    }
-  ];
-}
-
-function withEmptyDashboardDocumentRequests(requests: string[]): string[] {
-  if (requests.length > 0) {
-    return requests.slice(0, 4);
-  }
-
-  return ["No active document requests yet"];
-}
-
-function withEmptyClientWorkItems(items: ClientWorkItem[]): ClientWorkItem[] {
-  if (items.length > 0) {
-    return items;
-  }
-
-  return [
-    {
-      id: "empty-client-work-items",
-      title: "No active portal work yet",
-      type: "Portal Work",
-      status: "Ready",
-      nextAction: "New transaction, document, showing, access, and billing work will appear here.",
-      serviceCues: ["Service package", "Documents", "Billing"],
-      due: "No active item"
-    }
-  ];
-}
-
-async function getClientAccessRequestView(
-  workspaceId: string,
-  userId: string
-): Promise<AccessRequestView> {
-  try {
-    const accessRequests = await prisma.rosObject.findMany({
-      where: {
-        workspaceId,
-        objectType: accessRequestObjectType,
-        archivedAt: null,
-        OR: [{ clientUserId: userId }, { ownerId: userId }]
-      },
-      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-      take: 12
-    });
-
-    return {
-      isLiveData: true,
-      requests: withEmptyAccessRequests(
-        accessRequests.map((request) => ({
-          id: request.id,
-          platform: request.name.replace(/^Access Request - /, ""),
-          status: getHumanAccessRequestStatus(request.status),
-          detail: getAccessRequestDetail(request.data),
-          labels: getAccessRequestMetaLabels(request.data)
-        }))
-      )
-    };
-  } catch (error) {
-    if (!isDatabaseUnavailableError(error)) {
-      throw error;
-    }
-
-    return {
-      isLiveData: false,
-      notice:
-        "Access request storage is not reachable in this preview, so sample requests are shown.",
-      requests: sampleAccessRequests
-    };
-  }
-}
-
-async function getClientShowingRequestView(
-  workspaceId: string,
-  userId: string
-): Promise<ShowingRequestView> {
-  try {
-    const showingRequests = await prisma.rosObject.findMany({
-      where: {
-        workspaceId,
-        objectType: showingRequestObjectType,
-        archivedAt: null,
-        OR: [{ clientUserId: userId }, { ownerId: userId }]
-      },
-      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-      take: 12
-    });
-
-    return {
-      isLiveData: true,
-      requests: withEmptyShowingRequests(
-        showingRequests.map((request) => ({
-          id: request.id,
-          title: request.name,
-          status: getHumanShowingStatus(request.status),
-          nextAction: request.nextAction ?? "Koinonia will review the showing request.",
-          timing: getShowingTimingLabel(request.data),
-          notes: getShowingNoteLabels(request.data)
-        }))
-      )
-    };
-  } catch (error) {
-    if (!isDatabaseUnavailableError(error)) {
-      throw error;
-    }
-
-    return {
-      isLiveData: false,
-      notice:
-        "Showing request storage is not reachable in this preview, so sample requests are shown.",
-      requests: sampleShowingRequests
-    };
-  }
-}
-
-function withEmptyShowingRequests(requests: ShowingRequestItem[]): ShowingRequestItem[] {
-  if (requests.length > 0) {
-    return requests;
-  }
-
-  return [
-    {
-      id: "empty-showing-requests",
-      title: "No showing requests yet",
-      status: "Ready",
-      nextAction: "Submit a showing request when a client needs scheduling or licensed coverage.",
-      timing: "No active request",
-      notes: ["Request form ready", "No access secrets in notes"]
-    }
-  ];
-}
-
-function withEmptyAccessRequests(requests: AccessRequestItem[]): AccessRequestItem[] {
-  if (requests.length > 0) {
-    return requests;
-  }
-
-  return [
-    {
-      id: "empty-access-requests",
-      platform: "No access requests yet",
-      status: "Ready",
-      detail: "Use the access update form when Koinonia needs delegated access or status confirmation.",
-      labels: ["No password stored", "Delegated access only"]
-    }
-  ];
-}
-
-function isDatabaseUnavailableError(error: unknown): boolean {
+function TransactionRow({ transaction }: { transaction: DashboardTransaction }) {
+  const needsYou = needsAttention(transaction);
   return (
-    error instanceof Error &&
-    (error.name === "PrismaClientInitializationError" ||
-      error.message.includes("Can't reach database server") ||
-      error.message.includes("ECONNREFUSED"))
+    <article className="koinonia-client-transaction-row">
+      <a className="koinonia-client-transaction-row-link" href={`/client/work/${transaction.id}`}>
+        <div className="koinonia-client-transaction-row-main">
+          <div className="koinonia-client-transaction-row-title">
+            <h3>{transaction.propertyAddress}</h3>
+            {needsYou ? <span className="is-attention">Needs you</span> : <span>{transaction.side}</span>}
+          </div>
+          <p>{transaction.clientName}</p>
+        </div>
+        <div className="koinonia-client-transaction-row-status">
+          <strong>{humanizeStatus(transaction.status)}</strong>
+          <span>{transaction.closingDate ? `Closing ${formatDate(transaction.closingDate)}` : "Closing date pending"}</span>
+        </div>
+      </a>
+      <ClientTransactionQuickActions inboundEmail={transaction.inboundEmail} transactionId={transaction.id} />
+    </article>
   );
+}
+
+function FilterLink({ active, filter, label, search }: { active: boolean; filter: DashboardFilter; label: string; search: string }) {
+  const query = new URLSearchParams({ filter });
+  if (search) query.set("q", search);
+  return <a className={`koinonia-client-dashboard-filter${active ? " is-active" : ""}`} href={`/client/dashboard?${query.toString()}`} aria-current={active ? "page" : undefined}>{label}</a>;
+}
+
+async function getDashboardView(workspaceId: string, userId: string): Promise<DashboardView> {
+  try {
+    const objects = await prisma.rosObject.findMany({
+      where: { workspaceId, objectType: clientTransactionObjectType, archivedAt: null, OR: [{ clientUserId: userId }, { ownerId: userId }] },
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      take: 100
+    });
+    const inboundReady = isResendInboundConfigured() && isPortalInboundDomainConfigured();
+    const transactions = objects.map((object) => {
+      const data = asRecord(object.data) ?? {};
+      const extraction = asRecord(data.extraction);
+      const proposal = asRecord(extraction?.proposal);
+      const confirmed = asRecord(data.confirmedExtraction);
+      const side = data.side === "seller" ? "Seller" : "Buyer";
+      const clientName = firstString(confirmed?.clientName, data.clientName, formatClientNames(confirmed?.clientNames), formatClientNames(proposal?.clientNames));
+      const propertyAddress = firstString(confirmed?.propertyAddress, data.propertyAddress, proposal?.propertyAddress, stripTransactionSuffix(object.name));
+      const closingDate = firstString(confirmed?.closingDate, data.closingDate, proposal?.closingDate);
+      return {
+        clientName: clientName || "Client details pending",
+        closingDate: closingDate || null,
+        health: object.health,
+        id: object.id,
+        inboundEmail: inboundReady ? getTransactionInboundEmailAddress(object.id) : null,
+        name: object.name,
+        nextAction: object.nextAction,
+        propertyAddress: propertyAddress || object.name,
+        side,
+        status: object.status
+      } satisfies DashboardTransaction;
+    });
+    return { attention: transactions.filter(needsAttention), transactions };
+  } catch (error) {
+    if (error instanceof Error && (error.name === "PrismaClientInitializationError" || error.message.includes("Can't reach database server") || error.message.includes("ECONNREFUSED"))) {
+      return { attention: [], transactions: [], notice: "Your transaction list is temporarily unavailable. Koinonia can still accept a new file." };
+    }
+    throw error;
+  }
+}
+
+function isPortalInboundDomainConfigured(): boolean {
+  return Boolean(process.env.KOINONIA_TRANSACTION_INBOUND_DOMAIN?.trim());
+}
+
+function filterTransactions(transactions: DashboardTransaction[], filter: DashboardFilter, search: string): DashboardTransaction[] {
+  const normalizedSearch = search.trim().toLocaleLowerCase("en-US");
+  return transactions.filter((transaction) => {
+    if (normalizedSearch) {
+      const haystack = `${transaction.name} ${transaction.clientName} ${transaction.propertyAddress}`.toLocaleLowerCase("en-US");
+      if (!haystack.includes(normalizedSearch)) return false;
+    }
+    if (filter === "closed") return isClosed(transaction);
+    if (filter === "closing") return !isClosed(transaction) && isClosingSoon(transaction.closingDate);
+    return !isClosed(transaction);
+  });
+}
+
+function needsAttention(transaction: DashboardTransaction): boolean {
+  const status = transaction.status.toLocaleLowerCase("en-US");
+  return transaction.health === "Attention" || status.includes("waiting") || status.includes("needs") || status.includes("review") || status.includes("wrong document");
+}
+function isClosed(transaction: DashboardTransaction): boolean { const status = transaction.status.toLocaleLowerCase("en-US"); return status.includes("closed") || status.includes("complete"); }
+function isClosingSoon(value: string | null): boolean { if (!value) return false; const closing = new Date(value); if (Number.isNaN(closing.getTime())) return false; const difference = closing.getTime() - Date.now(); return difference >= 0 && difference <= 14 * 24 * 60 * 60 * 1000; }
+function getDashboardFilter(value: string | string[] | undefined): DashboardFilter { const normalized = Array.isArray(value) ? value[0] : value; return normalized === "closing" || normalized === "closed" ? normalized : "active"; }
+function getStringParam(value: string | string[] | undefined): string { const normalized = Array.isArray(value) ? value[0] : value; return typeof normalized === "string" ? normalized.trim() : ""; }
+function asRecord(value: unknown): Record<string, unknown> | null { return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null; }
+function firstString(...values: unknown[]): string { for (const value of values) if (typeof value === "string" && value.trim()) return value.trim(); return ""; }
+function formatClientNames(value: unknown): string { return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && Boolean(item.trim())).join(" & ") : ""; }
+function stripTransactionSuffix(value: string): string { return value.replace(/\s+—\s+(Buyer|Seller)$/i, "").trim(); }
+function formatDate(value: string): string { const date = new Date(value); return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date); }
+function humanizeStatus(value: string): string {
+  const normalized = value.toLocaleLowerCase("en-US");
+  if (normalized.includes("closed") || normalized.includes("complete")) return "Closed";
+  if (normalized.includes("processing") || normalized.includes("intake")) return "Koinonia is setting it up";
+  if (normalized.includes("waiting") || normalized.includes("needs") || normalized.includes("review")) return "In progress";
+  return value;
 }

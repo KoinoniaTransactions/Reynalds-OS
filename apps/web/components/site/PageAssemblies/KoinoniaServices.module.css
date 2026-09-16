@@ -1,0 +1,78 @@
+.balancedFive {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.balancedFive > * {
+  grid-column: span 2;
+}
+
+.balancedFive > *:nth-child(4) {
+  grid-column: 2 / span 2;
+}
+
+.balancedFive > *:nth-child(5) {
+  grid-column: 4 / span 2;
+}
+
+.pricingCard {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+}
+
+.outcome {
+  margin: 14px 0 0;
+  color: #fff;
+  font-size: 17px;
+  line-height: 1.55;
+  font-weight: 700;
+}
+
+.inclusionList {
+  margin-top: 20px;
+}
+
+.secondaryPrice {
+  margin: 18px 0 0;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.actions :global(.koinonia-button.primary) {
+  width: 100%;
+}
+
+.bestFor {
+  margin: 14px 0 2px;
+  font-size: 17px;
+  line-height: 1.55;
+  font-weight: 700;
+  color: var(--ros-text) !important;
+}
+
+@media (max-width: 980px) {
+  .balancedFive {
+    grid-template-columns: 1fr;
+  }
+
+  .balancedFive > *,
+  .balancedFive > *:nth-child(4),
+  .balancedFive > *:nth-child(5) {
+    grid-column: auto;
+  }
+
+  .pricingCard {
+    min-height: 0;
+  }
+}

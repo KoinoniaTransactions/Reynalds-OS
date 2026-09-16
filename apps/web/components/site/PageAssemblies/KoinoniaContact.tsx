@@ -1,4 +1,5 @@
 import { contactContent } from "@/content/contact";
+import { referralsContent } from "@/content/referrals";
 import { CTA, ContactActions, FAQ, Footer, Header, Hero, UniversalCard } from "../index";
 import { contactConfig } from "../../../config/contact.config";
 import { ConsultationSchedulerButton } from "../ConsultationIntake/ConsultationIntake";
@@ -78,7 +79,7 @@ export function KoinoniaContact() {
             <p className="koinonia-copy">{contactContent.supportOptions.lead}</p>
           </div>
 
-          <div className="koinonia-grid balanced-five">
+          <div className="koinonia-grid four">
             {contactContent.supportOptions.cards.map((card) => (
               <UniversalCard key={card.title} title={card.title} body={card.body} />
             ))}
@@ -89,13 +90,17 @@ export function KoinoniaContact() {
       <section className="koinonia-section koinonia-contact-referrals">
         <div className="koinonia-container">
           <div className="koinonia-cta">
-            <div className="koinonia-eyebrow">{contactContent.referralDiscovery.eyebrow}</div>
-            <h2 className="koinonia-heading">{contactContent.referralDiscovery.title}</h2>
-            <p className="koinonia-copy">{contactContent.referralDiscovery.lead}</p>
-            <p className="koinonia-copy">{contactContent.referralDiscovery.body}</p>
+            <div className="koinonia-eyebrow">{referralsContent.hero.eyebrow}</div>
+            <h2 className="koinonia-heading">Don't want to take the client at all?</h2>
+            <p className="koinonia-copy">
+              The Referral Partner Option is a separate path when you would rather hand off the client relationship itself instead of keeping the client and using operations support.
+            </p>
+            <p className="koinonia-copy">
+              Qualifying referred business can earn a 40% referral fee when the referred transaction successfully closes, subject to the signed referral documents.
+            </p>
             <div className="koinonia-actions" style={{ justifyContent: "center" }}>
-              <a className="koinonia-button primary" href={contactContent.referralDiscovery.href}>
-                {contactContent.referralDiscovery.label}
+              <a className="koinonia-button primary" href="/referrals">
+                Explore the 40% Referral Option
               </a>
             </div>
           </div>
@@ -123,11 +128,7 @@ export function KoinoniaContact() {
         </div>
       </section>
 
-      <FAQ
-        eyebrow={contactContent.faq.eyebrow}
-        title={contactContent.faq.title}
-        items={contactContent.faq.items}
-      />
+      <FAQ eyebrow={contactContent.faq.eyebrow} title={contactContent.faq.title} items={contactContent.faq.items} />
 
       <CTA />
       <Footer />

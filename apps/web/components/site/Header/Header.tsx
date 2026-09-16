@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { brandContent } from "@/content/brand";
-import { GoogleAnalytics } from "../GoogleAnalytics/GoogleAnalytics";
 
 const publicNavigationItems = [
   {
@@ -121,16 +120,11 @@ export function Header({
 
   return (
     <header className={`koinonia-header${isMenuOpen ? " menu-open" : ""}`}>
-      {!isPortalPage ? <GoogleAnalytics /> : null}
       <div className="koinonia-header-inner">
         <a
           className="koinonia-header-brand"
           href={isPortalPage ? navigationItems[0].href : brandContent.navigation.home}
-          aria-label={
-            isPortalPage
-              ? "Koinonia portal dashboard"
-              : "Koinonia home"
-          }
+          aria-label={isPortalPage ? "Koinonia portal dashboard" : "Koinonia home"}
           onClick={closeMenu}
         >
           <span className="koinonia-header-mark" aria-hidden="true">
@@ -152,11 +146,7 @@ export function Header({
         <button
           className="koinonia-header-menu-button"
           type="button"
-          aria-label={
-            isMenuOpen
-              ? "Close Koinonia navigation"
-              : "Open Koinonia navigation"
-          }
+          aria-label={isMenuOpen ? "Close Koinonia navigation" : "Open Koinonia navigation"}
           aria-expanded={isMenuOpen}
           aria-controls="koinonia-header-menu"
           onClick={() => setIsMenuOpen((current) => !current)}
@@ -172,18 +162,11 @@ export function Header({
         >
           <nav
             className="koinonia-header-nav"
-            aria-label={
-              isPortalPage
-                ? "Koinonia portal navigation"
-                : "Koinonia website navigation"
-            }
+            aria-label={isPortalPage ? "Koinonia portal navigation" : "Koinonia website navigation"}
           >
             {navigationItems.map((item) => (
               <a key={item.href} href={item.href} onClick={closeMenu}>
-                <span className="koinonia-header-nav-label">
-                  {item.label}
-                </span>
-
+                <span className="koinonia-header-nav-label">{item.label}</span>
                 <span className="koinonia-header-nav-description">
                   {item.description}
                 </span>
@@ -192,10 +175,7 @@ export function Header({
 
             {portalSwitch ? (
               <a href={portalSwitch.href} onClick={closeMenu}>
-                <span className="koinonia-header-nav-label">
-                  {portalSwitch.label}
-                </span>
-
+                <span className="koinonia-header-nav-label">{portalSwitch.label}</span>
                 <span className="koinonia-header-nav-description">
                   {portalSwitch.description}
                 </span>
@@ -211,7 +191,6 @@ export function Header({
                 onClick={closeMenu}
               >
                 <span>Sign Out</span>
-
                 <span className="koinonia-header-cta-detail">
                   End this secure portal session
                 </span>
@@ -224,7 +203,6 @@ export function Header({
               onClick={closeMenu}
             >
               <span>{brandContent.cta.primaryLabel}</span>
-
               <span className="koinonia-header-cta-detail">
                 Start with a clear next step
               </span>

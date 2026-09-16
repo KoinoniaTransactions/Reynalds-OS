@@ -1,5 +1,12 @@
+import { referralsContent } from "@/content/referrals";
 import { servicesContent } from "@/content/services";
+import { ServiceDetailDialog } from "../ServiceDetailDialog/ServiceDetailDialog";
 import { CTA, FAQ, Footer, Header, Hero, UniversalCard } from "../index";
+import styles from "./KoinoniaServices.module.css";
+
+function consultationHref(serviceId: string) {
+  return `/contact?service=${encodeURIComponent(serviceId)}#schedule-consultation`;
+}
 
 export function KoinoniaServices() {
   return (
@@ -19,16 +26,26 @@ export function KoinoniaServices() {
         variant="fullBleed"
       />
 
-      <section className="koinonia-section koinonia-services-core">
+      <section className="koinonia-section">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.categories.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.categories.title}</h2>
-            <p className="koinonia-copy">{servicesContent.categories.lead}</p>
+            <div className="koinonia-eyebrow">{servicesContent.breadth.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.breadth.title}</h2>
+            <p className="koinonia-copy">{servicesContent.breadth.lead}</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section koinonia-band">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">{servicesContent.capabilities.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.capabilities.title}</h2>
+            <p className="koinonia-copy">{servicesContent.capabilities.lead}</p>
           </div>
 
-          <div className="koinonia-grid balanced-five">
-            {servicesContent.services.map((service, index) => (
+          <div className={styles.balancedFive}>
+            {servicesContent.capabilities.items.map((service, index) => (
               <UniversalCard
                 key={service.title}
                 eyebrow={`0${index + 1}`}
@@ -41,79 +58,116 @@ export function KoinoniaServices() {
         </div>
       </section>
 
+      <section className="koinonia-section">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">{servicesContent.differentiation.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.differentiation.title}</h2>
+            <p className="koinonia-copy">{servicesContent.differentiation.lead}</p>
+          </div>
+
+          <div className="koinonia-grid two">
+            {servicesContent.differentiation.items.map((item, index) => (
+              <UniversalCard
+                key={item.title}
+                eyebrow={`0${index + 1}`}
+                title={item.title}
+                body={item.body}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="koinonia-section koinonia-services-referrals">
         <div className="koinonia-container">
           <div className="koinonia-cta">
-            <div className="koinonia-eyebrow">{servicesContent.referralDiscovery.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.referralDiscovery.title}</h2>
-            <p className="koinonia-copy">{servicesContent.referralDiscovery.lead}</p>
+            <div className="koinonia-eyebrow">{referralsContent.hero.eyebrow}</div>
+            <h2 className="koinonia-heading">Don't want to keep the client relationship?</h2>
+            <p className="koinonia-copy">
+              Koinonia's services are for Realtors who want to keep the client and hand off operational work. The separate Referral Partner Option is for the different situation where you would rather make a documented client referral.
+            </p>
             <div className="koinonia-actions" style={{ justifyContent: "center" }}>
-              <a className="koinonia-button primary" href={servicesContent.referralDiscovery.primaryHref}>
-                {servicesContent.referralDiscovery.primaryLabel}
+              <a className="koinonia-button primary" href="/referrals">
+                Explore the 40% Referral Option
               </a>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="koinonia-section koinonia-band koinonia-services-open-house">
+      <section id="pricing" className="koinonia-section koinonia-band">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.openHouse.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.openHouse.title}</h2>
-            <p className="koinonia-copy">{servicesContent.openHouse.lead}</p>
+            <div className="koinonia-eyebrow">{servicesContent.pricing.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.pricing.title}</h2>
+            <p className="koinonia-copy">{servicesContent.pricing.lead}</p>
           </div>
 
-          <div className="koinonia-grid two">
-            <article className="koinonia-card">
-              <h3>What professional coverage includes</h3>
-              <ul>
-                {servicesContent.openHouse.included.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </article>
+          <div className="koinonia-grid three">
+            {servicesContent.pricing.products.map((product) => {
+              const detail = servicesContent.details.find((item) => item.id === product.id);
+              const outcome = detail?.headline ?? product.body;
+              const visibleItems = product.items.slice(0, 4);
 
-            <article className="koinonia-card koinonia-pricing-card">
-              <div className="koinonia-price-badge">
-                <span className="koinonia-price-badge-label">Standalone</span>
-                <span className="koinonia-price-badge-value">{servicesContent.openHouse.standalonePrice}</span>
-              </div>
-              <h3>Professional Open House</h3>
-              <p>{servicesContent.openHouse.standaloneLabel}</p>
+              return (
+                <article
+                  key={product.id}
+                  id={product.id}
+                  className={`koinonia-card koinonia-pricing-card ${styles.pricingCard}`}
+                >
+                  <div className="koinonia-price-badge">
+                    <span className="koinonia-price-badge-label">{product.priceNote}</span>
+                    <span className="koinonia-price-badge-value">{product.priceLabel}</span>
+                  </div>
 
-              <div className="koinonia-price-badge">
-                <span className="koinonia-price-badge-label">Additional event</span>
-                <span className="koinonia-price-badge-value">{servicesContent.openHouse.additionalPrice}</span>
-              </div>
-              <p>{servicesContent.openHouse.additionalLabel}</p>
-              <p>{servicesContent.openHouse.packageNote}</p>
-            </article>
+                  <h3>{product.title}</h3>
+                  <p className={styles.outcome}>{outcome}</p>
+
+                  <ul className={styles.inclusionList}>
+                    {visibleItems.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+
+                  {"secondaryPrice" in product && product.secondaryPrice ? (
+                    <p className={`koinonia-copy ${styles.secondaryPrice}`}>
+                      <strong>{product.secondaryPrice}</strong>
+                    </p>
+                  ) : null}
+
+                  <div className={styles.actions}>
+                    <a className="koinonia-button primary" href={consultationHref(product.id)}>
+                      {product.ctaLabel}
+                    </a>
+                    {detail ? <ServiceDetailDialog detail={detail} quietTrigger /> : null}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      <section id="monthly-support" className="koinonia-section koinonia-services-support">
+      <section className="koinonia-section">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.monthlySupport.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.monthlySupport.title}</h2>
-            <p className="koinonia-copy">{servicesContent.monthlySupport.lead}</p>
+            <div className="koinonia-eyebrow">{servicesContent.comparison.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.comparison.title}</h2>
+            <p className="koinonia-copy">{servicesContent.comparison.lead}</p>
           </div>
 
-          <div className="koinonia-grid three">
-            {servicesContent.monthlySupport.tiers.map((tier) => (
-              <article key={tier.title} className="koinonia-card koinonia-pricing-card">
+          <div className="koinonia-grid two">
+            {servicesContent.comparison.columns.map((column) => (
+              <article key={column.title} className="koinonia-card koinonia-pricing-card">
                 <div className="koinonia-price-badge">
                   <span className="koinonia-price-badge-label">Monthly</span>
-                  <span className="koinonia-price-badge-value">{tier.price}</span>
+                  <span className="koinonia-price-badge-value">{column.price}</span>
                 </div>
-
-                <h3>{tier.title}</h3>
-                <p>{tier.body}</p>
-
+                <h3>{column.title}</h3>
+                <p className={styles.bestFor}>{column.bestFor}</p>
                 <ul>
-                  {tier.items.map((item) => (
+                  {column.items.map((item) => (
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
@@ -123,63 +177,33 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section className="koinonia-section koinonia-services-pricing">
+      <section className="koinonia-section koinonia-band">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.pricingSnapshot.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.pricingSnapshot.title}</h2>
-            <p className="koinonia-copy">{servicesContent.pricingSnapshot.lead}</p>
+            <div className="koinonia-eyebrow">{servicesContent.popularSolutions.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.popularSolutions.title}</h2>
+            <p className="koinonia-copy">{servicesContent.popularSolutions.lead}</p>
           </div>
 
-          <div className="koinonia-grid balanced-five">
-            {servicesContent.pricingSnapshot.prices.map((price) => (
-              <article key={price.title} className="koinonia-card koinonia-pricing-card">
-                <div className="koinonia-price-badge">
-                  <span className="koinonia-price-badge-label">Starting at</span>
-                  <span className="koinonia-price-badge-value">{price.price}</span>
-                </div>
-
-                <h3>{price.title}</h3>
-                <p>{price.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="koinonia-section koinonia-services-scope">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.scopeNotes.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.scopeNotes.title}</h2>
-            <p className="koinonia-copy">{servicesContent.scopeNotes.lead}</p>
-          </div>
-
-          <div className="koinonia-grid balanced-five">
-            {servicesContent.scopeNotes.notes.map((note) => (
-              <UniversalCard key={note.title} title={note.title} body={note.body} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="koinonia-section koinonia-band koinonia-services-fit">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.fit.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.fit.title}</h2>
-            <p className="koinonia-copy">{servicesContent.fit.lead}</p>
-          </div>
-
-          <div className="koinonia-grid balanced-five">
-            {servicesContent.fit.cards.map((card, index) => (
+          <div className="koinonia-grid two">
+            {servicesContent.popularSolutions.items.map((item, index) => (
               <UniversalCard
-                key={card.title}
+                key={item.title}
                 eyebrow={`0${index + 1}`}
-                title={card.title}
-                body={card.body}
+                title={item.title}
+                body={item.body}
               />
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">{servicesContent.outsideCosts.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.outsideCosts.title}</h2>
+            <p className="koinonia-copy">{servicesContent.outsideCosts.lead}</p>
           </div>
         </div>
       </section>
@@ -214,8 +238,8 @@ export function KoinoniaServices() {
           </div>
 
           <div className="koinonia-grid three">
-            {servicesContent.boundaries.cards.map((card) => (
-              <UniversalCard key={card.title} title={card.title} body={card.body} />
+            {servicesContent.boundaries.items.map((item) => (
+              <UniversalCard key={item.title} title={item.title} body={item.body} />
             ))}
           </div>
         </div>

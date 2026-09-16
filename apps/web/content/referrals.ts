@@ -86,31 +86,11 @@ export const referralsContent = {
     lead:
       "The referral relationship is documented before the client is transferred. Once accepted, Jeremiah takes responsibility for serving and nurturing the referred consumer, whether the opportunity is ready now or requires a longer path toward a transaction.",
     steps: [
-      {
-        title: "You introduce the opportunity",
-        body:
-          "Share the buyer or seller opportunity and enough context to determine whether the referral is a fit."
-      },
-      {
-        title: "We confirm the referral",
-        body:
-          "If the opportunity is accepted, the formal referral documents and complete terms are provided before the client handoff occurs."
-      },
-      {
-        title: "I work the client from where they are",
-        body:
-          "If the client is ready, the relationship can move into active buyer or seller representation. If the client needs time, the focus can remain on appropriate follow-up, education, preparation, and connection to relevant professional resources until they are ready."
-      },
-      {
-        title: "You receive milestone visibility",
-        body:
-          "You can receive appropriate status updates so you know the referred opportunity is being actively cared for without receiving confidential client information that should remain protected."
-      },
-      {
-        title: "A successful closing earns the referral fee",
-        body:
-          "When qualifying referred business successfully closes, the agreed 40% referral fee is processed according to the signed referral documents."
-      }
+      { title: "You introduce the opportunity", body: "Share the buyer or seller opportunity and enough context to determine whether the referral is a fit." },
+      { title: "We confirm the referral", body: "If the opportunity is accepted, the formal referral documents and complete terms are provided before the client handoff occurs." },
+      { title: "I work the client from where they are", body: "If the client is ready, the relationship can move into active buyer or seller representation. If the client needs time, the focus can remain on appropriate follow-up, education, preparation, and connection to relevant professional resources until they are ready." },
+      { title: "You receive milestone visibility", body: "You can receive appropriate status updates so you know the referred opportunity is being actively cared for without receiving confidential client information that should remain protected." },
+      { title: "A successful closing earns the referral fee", body: "When qualifying referred business successfully closes, the agreed 40% referral fee is processed according to the signed referral documents." }
     ]
   },
 
@@ -120,36 +100,12 @@ export const referralsContent = {
     lead:
       "The referral option is designed for legitimate capacity, timing, readiness, and fit situations—not as a replacement for operational support when you still want to own the client relationship.",
     cards: [
-      {
-        title: "Too much active client load",
-        body:
-          "You have a real opportunity, but personally taking on another buyer or seller would reduce the service you can give your current clients."
-      },
-      {
-        title: "Future buyer or seller",
-        body:
-          "The client is legitimate but may be several months away from purchasing or selling and needs consistent follow-up before becoming transaction-ready."
-      },
-      {
-        title: "Financing preparation",
-        body:
-          "The buyer is not yet approved or needs additional time and guidance from appropriate lending resources before they can realistically purchase."
-      },
-      {
-        title: "Location or service-area mismatch",
-        body:
-          "The opportunity is outside the area or type of work you want to personally prioritize, but you still want the client connected with dependable representation."
-      },
-      {
-        title: "Schedule or life capacity",
-        body:
-          "Vacation, family commitments, another business priority, or a busy season makes a clean referral more responsible than trying to stretch further."
-      },
-      {
-        title: "Simply not the right fit",
-        body:
-          "You would rather refer the opportunity than force a client relationship that does not fit how you want to run your business."
-      }
+      { title: "Too much active client load", body: "You have a real opportunity, but personally taking on another buyer or seller would reduce the service you can give your current clients." },
+      { title: "Future buyer or seller", body: "The client is legitimate but may be several months away from purchasing or selling and needs consistent follow-up before becoming transaction-ready." },
+      { title: "Financing preparation", body: "The buyer is not yet approved or needs additional time and guidance from appropriate lending resources before they can realistically purchase." },
+      { title: "Location or service-area mismatch", body: "The opportunity is outside the area or type of work you want to personally prioritize, but you still want the client connected with dependable representation." },
+      { title: "Schedule or life capacity", body: "Vacation, family commitments, another business priority, or a busy season makes a clean referral more responsible than trying to stretch further." },
+      { title: "Simply not the right fit", body: "You would rather refer the opportunity than force a client relationship that does not fit how you want to run your business." }
     ]
   },
 
@@ -188,21 +144,9 @@ export const referralsContent = {
     lead:
       "A Koinonia Transactions relationship remains an operations-support relationship. A referral happens only when the Realtor intentionally chooses the referral path and completes the appropriate referral documents.",
     cards: [
-      {
-        title: "Support means support",
-        body:
-          "Using Koinonia for transaction, document, showing, open house, or recurring operations work does not authorize solicitation or conversion of that Realtor's client relationship."
-      },
-      {
-        title: "Referral requires a deliberate handoff",
-        body:
-          "The referral option begins only after the Realtor chooses to refer the opportunity and the formal referral terms are accepted."
-      },
-      {
-        title: "The details come before the handoff",
-        body:
-          "The complete referral documents identify the receiving brokerage relationship, compensation terms, covered opportunity, and other required details before the client is transferred."
-      }
+      { title: "Support means support", body: "Using Koinonia for transaction, document, showing, open house, or recurring operations work does not authorize solicitation or conversion of that Realtor's client relationship." },
+      { title: "Referral requires a deliberate handoff", body: "The referral option begins only after the Realtor chooses to refer the opportunity and the formal referral terms are accepted." },
+      { title: "The details come before the handoff", body: "The complete referral documents identify the receiving brokerage relationship, compensation terms, covered opportunity, and other required details before the client is transferred." }
     ]
   },
 
@@ -210,36 +154,12 @@ export const referralsContent = {
     eyebrow: "Referral Questions",
     title: "Know whether the referral path fits before making the introduction.",
     items: [
-      {
-        question: "Why would I refer a client instead of keeping 100%?",
-        answer:
-          "If you have the time, desire, and business fit to serve the client well, you may prefer to keep the relationship. The referral option is for opportunities you are unlikely to work consistently yourself because of workload, timing, financing readiness, geography, fit, or the amount of nurture required."
-      },
-      {
-        question: "Can I refer someone who is not ready to buy or sell yet?",
-        answer:
-          "Potentially, yes. A legitimate future buyer or seller may still be a good referral even when their timeline is longer. The fit depends on the client's situation, willingness to engage, and whether there is a reasonable path toward a future transaction."
-      },
-      {
-        question: "What if the buyer is not approved yet?",
-        answer:
-          "That does not automatically disqualify the opportunity. When appropriate, the buyer can be connected with lending professionals who can explain qualification requirements and possible steps toward future readiness. No financing outcome or approval timeline is guaranteed."
-      },
-      {
-        question: "Do I receive 40% if the client never closes?",
-        answer:
-          "No. The referral fee is earned on qualifying referred business that successfully closes, subject to the signed referral documents."
-      },
-      {
-        question: "Will I know what is happening with the referral?",
-        answer:
-          "Yes. Appropriate milestone updates can be provided while confidential client information and negotiation details remain protected."
-      },
-      {
-        question: "What if I want to keep the client but just need help?",
-        answer:
-          "Then the referral option is probably not the right starting point. Koinonia's operational services are designed to help you keep the client relationship while defined work is supported behind you."
-      }
+      { question: "Why would I refer a client instead of keeping 100%?", answer: "If you have the time, desire, and business fit to serve the client well, you may prefer to keep the relationship. The referral option is for opportunities you are unlikely to work consistently yourself because of workload, timing, financing readiness, geography, fit, or the amount of nurture required." },
+      { question: "Can I refer someone who is not ready to buy or sell yet?", answer: "Potentially, yes. A legitimate future buyer or seller may still be a good referral even when their timeline is longer. The fit depends on the client's situation, willingness to engage, and whether there is a reasonable path toward a future transaction." },
+      { question: "What if the buyer is not approved yet?", answer: "That does not automatically disqualify the opportunity. When appropriate, the buyer can be connected with lending professionals who can explain qualification requirements and possible steps toward future readiness. No financing outcome or approval timeline is guaranteed." },
+      { question: "Do I receive 40% if the client never closes?", answer: "No. The referral fee is earned on qualifying referred business that successfully closes, subject to the signed referral documents." },
+      { question: "Will I know what is happening with the referral?", answer: "Yes. Appropriate milestone updates can be provided while confidential client information and negotiation details remain protected." },
+      { question: "What if I want to keep the client but just need help?", answer: "Then the referral option is probably not the right starting point. Koinonia's operational services are designed to help you keep the client relationship while defined work is supported behind you." }
     ]
   }
 } as const;
