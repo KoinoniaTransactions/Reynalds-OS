@@ -2,6 +2,15 @@
 
 import type { ChangeEvent, FormEvent } from "react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { trackGoogleAnalyticsEvent } from "@/lib/google-analytics";
+import {
+  buildMarketingAttributionSubmission,
+  createMarketingTouch,
+  legacyMarketingAttributionStorageKey,
+  marketingAttributionStorageKey,
+  migrateLegacyMarketingAttribution,
+  normalizeMarketingAttributionState
+} from "@/lib/marketing-attribution";
 
 type ConsultationOption = {
   readonly id: string;
@@ -69,6 +78,29 @@ function isWeekendDate(value: string) {
   const day = date.getDay();
 
   return day === 0 || day === 6;
+}
+
+function readSubmissionAttribution() {
+  const current = createMarketingTouch({
+    search: window.location.search,
+    referrer: document.referrer ?? "",
+    landingPage: window.location.href,
+    capturedAt: new Date().toISOString()
+  });
+
+  try {
+    const stored = normalizeMarketingAttributionState(
+      JSON.parse(window.localStorage.getItem(marketingAttributionStorageKey) ?? "null")
+    );
+    const migrated = stored ?? migrateLegacyMarketingAttribution(
+      JSON.parse(window.sessionStorage.getItem(legacyMarketingAttributionStorageKey) ?? "null"),
+      current
+    );
+
+    return buildMarketingAttributionSubmission(migrated, current);
+  } catch {
+    return buildMarketingAttributionSubmission(null, current);
+  }
 }
 
 export function ConsultationSchedulerButton({
@@ -182,6 +214,22 @@ export function ConsultationSchedulerButton({
     }));
   }
 
+  function openModal() {
+    setIsOpen(true);
+    setStatus({ kind: "idle", message: "" });
+    trackGoogleAnalyticsEvent("consultation_scheduler_open", {
+      service_type: selectedOption.title
+    });
+  }
+
+  function selectConsultationType(value: string) {
+    setSelectedId(value);
+    const option = options.find((candidate) => candidate.id === value);
+    trackGoogleAnalyticsEvent("consultation_type_select", {
+      service_type: option?.title ?? value
+    });
+  }
+
   function closeModal() {
     if (isSubmitting) return;
 
@@ -216,6 +264,7 @@ export function ConsultationSchedulerButton({
           consultationSubject: selectedOption.subject,
           preferredDate: form.requestedDate,
           preferredTime: form.requestedTime,
+          attribution: readSubmissionAttribution(),
           ...form
         })
       });
@@ -236,6 +285,11 @@ export function ConsultationSchedulerButton({
           typeof data.message === "string"
             ? data.message
             : "Your consultation request has been sent. Koinonia will follow up with next steps."
+      });
+
+      trackGoogleAnalyticsEvent("generate_lead", {
+        method: "consultation_form",
+        service_type: selectedOption.title
       });
 
       setForm(initialFormState);
@@ -264,10 +318,7 @@ export function ConsultationSchedulerButton({
           ref={triggerRef}
           className="koinonia-button primary"
           type="button"
-          onClick={() => {
-            setIsOpen(true);
-            setStatus({ kind: "idle", message: "" });
-          }}
+          onClick={openModal}
         >
           {buttonLabel}
         </button>
@@ -324,7 +375,7 @@ export function ConsultationSchedulerButton({
                   <span>{selectorLabel}</span>
                   <select
                     value={selectedOption.id}
-                    onChange={(event) => setSelectedId(event.target.value)}
+                    onChange={(event) => selectConsultationType(event.target.value)}
                   >
                     {options.map((option) => (
                       <option key={option.id} value={option.id}>
