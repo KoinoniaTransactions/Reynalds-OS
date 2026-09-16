@@ -20,11 +20,11 @@ Update the checkboxes as work is completed. Do not mark an item complete because
 
 # Current execution order
 
-The website customer experience must be completed and owner-approved before the marketing-integration work is treated as launch-ready. This avoids instrumenting a page structure that is still being changed.
+The website customer experience has been completed, owner-approved, and promoted to production. Marketing instrumentation and campaign work now proceed as a separate controlled phase.
 
 Current next item:
 
-**W9 — Website production promotion preparation.**
+**M1 — Fresh marketing integration branch.**
 
 ---
 
@@ -139,19 +139,19 @@ Acceptance criteria: a clean preview exists that accurately represents the candi
 - [x] W8.2 — Requested visual/content/functional corrections completed.
 - [x] W8.3 — Jeremiah explicitly approves the public website experience for production preparation.
 
-**OWNER GATE satisfied 2026-09-16. Production preparation is authorized; production promotion still follows the controlled W9 process below.**
+**OWNER GATE satisfied 2026-09-16.**
 
 ## W9 — Website production promotion
 
-- [ ] W9.1 — Prepare controlled production promotion from the approved website state.
-- [ ] W9.2 — Promote only the reviewed/approved state to `koinonia-production`.
-- [ ] W9.3 — Verify actual production domain reflects the approved release.
-- [ ] W9.4 — Verify primary routes and retired-route redirects in production.
-- [ ] W9.5 — Record production release checkpoint in repo documentation.
+- [x] W9.1 — Prepare controlled production promotion from the approved website state.
+- [x] W9.2 — Promote only the reviewed/approved state to `koinonia-production`.
+- [x] W9.3 — Verify actual production domain reflects the approved release.
+- [x] W9.4 — Verify primary routes and retired-route redirects in production.
+- [x] W9.5 — Record production release checkpoint in repo documentation.
 
-Production continuity decision: preserve the existing Portal/client/employee behavior during the public website release. Build the production candidate from `koinonia-production` and selectively forward-port only the owner-approved public website surface from `main`; do not merge the diverged branches wholesale and do not reintroduce pre-marketing public analytics as a side effect.
+Production release completed 2026-09-16 at `koinonia-production` commit `f6c821111ff17a602eee92db01998a0c52bf62f0`, Vercel deployment `dpl_F5sqbQzSDmvK15x97dbAjF5GkWUv`. The release deliberately reconciled the owner-approved public website with the recovered September transaction-first Realtor Portal while preserving production auth/internal infrastructure and the Prisma/Vercel bundling safeguard. Release verification and deferred activation notes are recorded in `BRAIN/KOINONIA_PRODUCTION_RELEASE_2026-09-16.md`.
 
-Acceptance criteria: the public domain, not merely GitHub or a Vercel preview, shows the owner-approved website while existing production portal behavior remains intact.
+Acceptance criteria: satisfied. The production domain shows the owner-approved website, the Portal routes are present and no longer exhibit the prior Prisma runtime failure, and the retired `/appointments` path resolves to the current Contact / consultation experience.
 
 ---
 
