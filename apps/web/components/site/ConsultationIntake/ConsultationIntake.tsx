@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChangeEvent, FormEvent } from "react";
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 type ConsultationOption = {
   readonly id: string;
@@ -82,6 +82,8 @@ export function ConsultationSchedulerButton({
 }: ConsultationSchedulerButtonProps) {
   const titleId = useId();
   const descriptionId = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLElement>(null);
   const defaultOption = options.find((option) => option.id === "not-sure-yet") ?? options[0];
   const [isOpen, setIsOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(defaultOption?.id ?? "");
@@ -110,18 +112,58 @@ export function ConsultationSchedulerButton({
   useEffect(() => {
     if (!isOpen) return;
 
+    const modal = modalRef.current;
+
+    if (!modal) return;
+
+    const modalElement = modal as HTMLElement;
+    const focusableSelector =
+      'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+    function getFocusableElements() {
+      return Array.from(modalElement.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+        (element) => !element.hasAttribute("aria-hidden")
+      );
+    }
+
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setIsOpen(false);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusableElements = getFocusableElements();
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+
+      if (!first || !last) {
+        event.preventDefault();
+        return;
+      }
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     }
 
     document.body.classList.add("koinonia-modal-open");
     window.addEventListener("keydown", handleKeyDown);
 
+    requestAnimationFrame(() => {
+      const closeButton = modalElement.querySelector<HTMLElement>(".koinonia-modal-close");
+      (closeButton ?? getFocusableElements()[0])?.focus();
+    });
+
     return () => {
       document.body.classList.remove("koinonia-modal-open");
       window.removeEventListener("keydown", handleKeyDown);
+      triggerRef.current?.focus();
     };
   }, [isOpen]);
 
@@ -219,6 +261,7 @@ export function ConsultationSchedulerButton({
         </div>
 
         <button
+          ref={triggerRef}
           className="koinonia-button primary"
           type="button"
           onClick={() => {
@@ -240,6 +283,7 @@ export function ConsultationSchedulerButton({
           />
 
           <section
+            ref={modalRef}
             className="koinonia-consultation-modal"
             role="dialog"
             aria-modal="true"

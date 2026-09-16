@@ -24,7 +24,7 @@ The website customer experience must be completed and owner-approved before the 
 
 Current next item:
 
-**W7 — Technical website QA.**
+**W8 — OWNER GATE: website approval.**
 
 ---
 
@@ -121,15 +121,15 @@ Acceptance criteria: the approved commercial experience works cleanly at represe
 
 ## W7 — Technical website QA
 
-- [ ] W7.1 — Typecheck passes.
-- [ ] W7.2 — Production build passes.
-- [ ] W7.3 — Relevant tests pass.
-- [ ] W7.4 — Public routes load correctly.
-- [ ] W7.5 — SEO metadata reflects current white-glove commercial architecture.
-- [ ] W7.6 — Accessibility review of interactive components and key page structure.
-- [ ] W7.7 — Dead-link / route-link review.
-- [ ] W7.8 — Contact/consultation submission behavior verified.
-- [ ] W7.9 — Non-production Vercel preview generated from the reviewed website state.
+- [x] W7.1 — Typecheck passes.
+- [x] W7.2 — Production build passes.
+- [x] W7.3 — Relevant tests pass.
+- [x] W7.4 — Public routes load correctly.
+- [x] W7.5 — SEO metadata reflects current white-glove commercial architecture.
+- [x] W7.6 — Accessibility review of interactive components and key page structure.
+- [x] W7.7 — Dead-link / route-link review.
+- [x] W7.8 — Contact/consultation submission behavior verified.
+- [x] W7.9 — Non-production Vercel preview generated from the reviewed website state.
 
 Acceptance criteria: a clean preview exists that accurately represents the candidate website release and passes technical validation.
 
@@ -148,6 +148,8 @@ Acceptance criteria: a clean preview exists that accurately represents the candi
 - [ ] W9.3 — Verify actual production domain reflects the approved release.
 - [ ] W9.4 — Verify primary routes and retired-route redirects in production.
 - [ ] W9.5 — Record production release checkpoint in repo documentation.
+
+Production continuity note: the current live `koinonia-production` branch still contains an existing Portal entry and client/employee portal behavior that are not present in the public-site candidate on `main`. Before W9 promotion, explicitly decide whether that live portal behavior will be carried forward or intentionally retired; do not erase it accidentally as a side effect of the public website release.
 
 Acceptance criteria: the public domain, not merely GitHub or a Vercel preview, shows the owner-approved website.
 
@@ -183,7 +185,7 @@ Acceptance criteria: marketing work begins from the current website architecture
 - [ ] M2.16 — CRM/Koinonia Relationship persistence of attribution and click IDs.
 - [ ] M2.17 — Privacy preference controls.
 - [ ] M2.18 — Global Privacy Control behavior.
-- [ ] M2.19 — Keep advertising tracking off authenticated client/staff routes.
+- [ ] M2.19 — Keep advertising tracking off authenticated client/staff areas.
 - [ ] M2.20 — Attribution persistence tests pass.
 
 Acceptance criteria: campaign source data survives from anonymous visit through accepted lead and CRM relationship record.
