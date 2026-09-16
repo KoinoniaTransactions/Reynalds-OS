@@ -116,11 +116,12 @@ export function ConsultationSchedulerButton({
 
     if (!modal) return;
 
+    const modalElement = modal as HTMLElement;
     const focusableSelector =
       'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
     function getFocusableElements() {
-      return Array.from(modal.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+      return Array.from(modalElement.querySelectorAll<HTMLElement>(focusableSelector)).filter(
         (element) => !element.hasAttribute("aria-hidden")
       );
     }
@@ -155,7 +156,7 @@ export function ConsultationSchedulerButton({
     window.addEventListener("keydown", handleKeyDown);
 
     requestAnimationFrame(() => {
-      const closeButton = modal.querySelector<HTMLElement>(".koinonia-modal-close");
+      const closeButton = modalElement.querySelector<HTMLElement>(".koinonia-modal-close");
       (closeButton ?? getFocusableElements()[0])?.focus();
     });
 
