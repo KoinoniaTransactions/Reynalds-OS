@@ -26,9 +26,9 @@ export function KoinoniaServices() {
         variant="fullBleed"
       />
 
-      <section className={`koinonia-section ${styles.breadthSection}`}>
+      <section className="koinonia-section">
         <div className="koinonia-container">
-          <div className={`koinonia-section-header ${styles.narrowHeader}`}>
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">{servicesContent.breadth.eyebrow}</div>
             <h2 className="koinonia-heading">{servicesContent.breadth.title}</h2>
             <p className="koinonia-copy">{servicesContent.breadth.lead}</p>
@@ -36,45 +36,44 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section className={`koinonia-section koinonia-band ${styles.capabilitiesSection}`}>
+      <section className="koinonia-section koinonia-band">
         <div className="koinonia-container">
-          <div className={`koinonia-section-header ${styles.sectionHeaderLeft}`}>
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">{servicesContent.capabilities.eyebrow}</div>
             <h2 className="koinonia-heading">{servicesContent.capabilities.title}</h2>
             <p className="koinonia-copy">{servicesContent.capabilities.lead}</p>
           </div>
 
-          <div className={`koinonia-grid three ${styles.capabilityGrid}`}>
+          <div className={styles.balancedFive}>
             {servicesContent.capabilities.items.map((service, index) => (
               <UniversalCard
                 key={service.title}
                 eyebrow={`0${index + 1}`}
                 title={service.title}
                 body={service.body}
-                items={service.items.slice(0, 3)}
+                items={service.items}
               />
             ))}
           </div>
         </div>
       </section>
 
-      <section className={`koinonia-section ${styles.differentiationSection}`}>
+      <section className="koinonia-section">
         <div className="koinonia-container">
-          <div className={`koinonia-section-header ${styles.sectionHeaderLeft}`}>
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">{servicesContent.differentiation.eyebrow}</div>
             <h2 className="koinonia-heading">{servicesContent.differentiation.title}</h2>
             <p className="koinonia-copy">{servicesContent.differentiation.lead}</p>
           </div>
 
-          <div className={styles.differentiationPanel}>
+          <div className="koinonia-grid two">
             {servicesContent.differentiation.items.map((item, index) => (
-              <div key={item.title} className={styles.differentiationItem}>
-                <span className={styles.proofIndex}>0{index + 1}</span>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </div>
-              </div>
+              <UniversalCard
+                key={item.title}
+                eyebrow={`0${index + 1}`}
+                title={item.title}
+                body={item.body}
+              />
             ))}
           </div>
         </div>
@@ -150,82 +149,74 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section className={`koinonia-section ${styles.comparisonSection}`}>
+      <section className="koinonia-section">
         <div className="koinonia-container">
-          <div className={`koinonia-section-header ${styles.sectionHeaderLeft}`}>
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">{servicesContent.comparison.eyebrow}</div>
             <h2 className="koinonia-heading">{servicesContent.comparison.title}</h2>
             <p className="koinonia-copy">{servicesContent.comparison.lead}</p>
           </div>
 
-          <div className={`koinonia-grid two ${styles.comparisonGrid}`}>
-            {servicesContent.comparison.columns.map((column) => {
-              const isPartnership = column.title === "Koinonia Partnership";
-
-              return (
-                <article
-                  key={column.title}
-                  className={`koinonia-card ${styles.comparisonCard} ${isPartnership ? styles.partnershipCard : ""}`}
-                >
-                  <div className="koinonia-price-badge">
-                    <span className="koinonia-price-badge-label">Monthly</span>
-                    <span className="koinonia-price-badge-value">{column.price}</span>
-                  </div>
-                  <h3>{column.title}</h3>
-                  <p className={styles.bestFor}>{column.bestFor}</p>
-                  <ul>
-                    {column.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className={`koinonia-section koinonia-band ${styles.solutionsSection}`}>
-        <div className="koinonia-container">
-          <div className={`koinonia-section-header ${styles.sectionHeaderLeft}`}>
-            <div className="koinonia-eyebrow">{servicesContent.popularSolutions.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.popularSolutions.title}</h2>
-            <p className="koinonia-copy">{servicesContent.popularSolutions.lead}</p>
-          </div>
-
-          <div className={styles.solutionGrid}>
-            {servicesContent.popularSolutions.items.map((item, index) => (
-              <article key={item.title} className={styles.solutionItem}>
-                <span className={styles.solutionIndex}>0{index + 1}</span>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
+          <div className="koinonia-grid two">
+            {servicesContent.comparison.columns.map((column) => (
+              <article key={column.title} className="koinonia-card koinonia-pricing-card">
+                <div className="koinonia-price-badge">
+                  <span className="koinonia-price-badge-label">Monthly</span>
+                  <span className="koinonia-price-badge-value">{column.price}</span>
                 </div>
+                <h3>{column.title}</h3>
+                <p className={styles.bestFor}>{column.bestFor}</p>
+                <ul>
+                  {column.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className={`koinonia-section ${styles.outsideCostsSection}`}>
+      <section className="koinonia-section koinonia-band">
         <div className="koinonia-container">
-          <div className={styles.outsideCostsCallout}>
-            <div className="koinonia-eyebrow">{servicesContent.outsideCosts.eyebrow}</div>
-            <h2>{servicesContent.outsideCosts.title}</h2>
-            <p>{servicesContent.outsideCosts.lead}</p>
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">{servicesContent.popularSolutions.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.popularSolutions.title}</h2>
+            <p className="koinonia-copy">{servicesContent.popularSolutions.lead}</p>
+          </div>
+
+          <div className="koinonia-grid two">
+            {servicesContent.popularSolutions.items.map((item, index) => (
+              <UniversalCard
+                key={item.title}
+                eyebrow={`0${index + 1}`}
+                title={item.title}
+                body={item.body}
+              />
+            ))}
           </div>
         </div>
       </section>
 
-      <section className={`koinonia-section ${styles.processSection}`}>
+      <section className="koinonia-section">
         <div className="koinonia-container">
-          <div className={`koinonia-section-header ${styles.sectionHeaderLeft}`}>
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">{servicesContent.outsideCosts.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.outsideCosts.title}</h2>
+            <p className="koinonia-copy">{servicesContent.outsideCosts.lead}</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section koinonia-services-process">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">{servicesContent.process.eyebrow}</div>
             <h2 className="koinonia-heading">{servicesContent.process.title}</h2>
             <p className="koinonia-copy">{servicesContent.process.lead}</p>
           </div>
 
-          <div className={`koinonia-grid four ${styles.processGrid}`}>
+          <div className="koinonia-grid four">
             {servicesContent.process.steps.map((step, index) => (
               <UniversalCard
                 key={step.title}
@@ -238,23 +229,18 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section className={`koinonia-section ${styles.boundariesSection}`}>
+      <section className="koinonia-section koinonia-band koinonia-services-boundaries">
         <div className="koinonia-container">
-          <div className={styles.boundariesLayout}>
-            <div className={styles.boundariesIntro}>
-              <div className="koinonia-eyebrow">{servicesContent.boundaries.eyebrow}</div>
-              <h2 className="koinonia-heading">{servicesContent.boundaries.title}</h2>
-              <p className="koinonia-copy">{servicesContent.boundaries.lead}</p>
-            </div>
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">{servicesContent.boundaries.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.boundaries.title}</h2>
+            <p className="koinonia-copy">{servicesContent.boundaries.lead}</p>
+          </div>
 
-            <div className={styles.boundaryList}>
-              {servicesContent.boundaries.items.map((item) => (
-                <div key={item.title} className={styles.boundaryItem}>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </div>
-              ))}
-            </div>
+          <div className="koinonia-grid three">
+            {servicesContent.boundaries.items.map((item) => (
+              <UniversalCard key={item.title} title={item.title} body={item.body} />
+            ))}
           </div>
         </div>
       </section>
