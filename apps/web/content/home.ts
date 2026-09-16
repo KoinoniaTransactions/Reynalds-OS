@@ -1,9 +1,9 @@
 export const homeContent = {
   hero: {
-    eyebrow: "REAL ESTATE OPERATIONS. ELEVATED.",
-    title: "You focus on your clients. We'll keep the business running.",
+    eyebrow: "REAL ESTATE OPERATIONS SUPPORT",
+    title: "Real Estate Operations. Elevated.",
     lead:
-      "Koinonia gives Colorado Realtors one white-glove support relationship for the work behind the client experience — transactions, listings, licensed field coverage, marketing, CRM, and recurring business operations.",
+      "You focus on your clients. We'll keep the business running. Koinonia gives Colorado Realtors one white-glove support relationship for transactions, listings, licensed field coverage, marketing, CRM, and recurring business operations.",
     primaryLabel: "Tell Us What You Need",
     primaryHref: "/contact#schedule-consultation",
     secondaryLabel: "See Services & Pricing",
@@ -73,6 +73,19 @@ export const homeContent = {
       items: ["CRM and pipeline", "Follow-up and tasks", "Systems and workflows"]
     }
   ],
+
+  referralDiscovery: {
+    eyebrow: "40% REFERRAL PARTNER OPTION",
+    title: "Don't want to take the client at all?",
+    lead:
+      "For an eligible Colorado real estate prospect that is not the right fit for your business, you may refer the client to a Koinonia receiving brokerage and receive a 40% referral fee when the referred transaction successfully closes, subject to the applicable referral agreement.",
+    body:
+      "Koinonia Transactions helps keep your business moving. The Referral Partner Option is a separate path when you would rather hand off the client relationship itself.",
+    primaryLabel: "Ask About the 40% Referral Option",
+    primaryHref: "/contact#schedule-consultation",
+    secondaryLabel: "Keep Exploring Operations Support",
+    secondaryHref: "/services"
+  },
 
   flagship: {
     eyebrow: "A DIFFERENT KIND OF LISTING SUPPORT",
