@@ -24,7 +24,7 @@ The website customer experience must be completed and owner-approved before the 
 
 Current next item:
 
-**W8 — OWNER GATE: website approval.**
+**W9 — Website production promotion preparation.**
 
 ---
 
@@ -135,11 +135,11 @@ Acceptance criteria: a clean preview exists that accurately represents the candi
 
 ## W8 — OWNER GATE: website approval
 
-- [ ] W8.1 — Jeremiah reviews the final non-production Homepage and Services & Pricing preview.
-- [ ] W8.2 — Requested visual/content/functional corrections completed.
-- [ ] W8.3 — Jeremiah explicitly approves the public website experience for production preparation.
+- [x] W8.1 — Jeremiah reviews the final non-production Homepage and Services & Pricing preview.
+- [x] W8.2 — Requested visual/content/functional corrections completed.
+- [x] W8.3 — Jeremiah explicitly approves the public website experience for production preparation.
 
-**OWNER GATE: Do not promote the redesign to `koinonia-production` before W8.3 is checked.**
+**OWNER GATE satisfied 2026-09-16. Production preparation is authorized; production promotion still follows the controlled W9 process below.**
 
 ## W9 — Website production promotion
 
@@ -149,9 +149,9 @@ Acceptance criteria: a clean preview exists that accurately represents the candi
 - [ ] W9.4 — Verify primary routes and retired-route redirects in production.
 - [ ] W9.5 — Record production release checkpoint in repo documentation.
 
-Production continuity note: the current live `koinonia-production` branch still contains an existing Portal entry and client/employee portal behavior that are not present in the public-site candidate on `main`. Before W9 promotion, explicitly decide whether that live portal behavior will be carried forward or intentionally retired; do not erase it accidentally as a side effect of the public website release.
+Production continuity decision: preserve the existing Portal/client/employee behavior during the public website release. Build the production candidate from `koinonia-production` and selectively forward-port only the owner-approved public website surface from `main`; do not merge the diverged branches wholesale and do not reintroduce pre-marketing public analytics as a side effect.
 
-Acceptance criteria: the public domain, not merely GitHub or a Vercel preview, shows the owner-approved website.
+Acceptance criteria: the public domain, not merely GitHub or a Vercel preview, shows the owner-approved website while existing production portal behavior remains intact.
 
 ---
 
