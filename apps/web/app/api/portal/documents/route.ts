@@ -26,6 +26,8 @@ import {
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+type PortalDocumentScanStatus = "scanned" | "preview-bypassed";
+
 export async function GET() {
   try {
     const actor = await assertAnyPermission([
@@ -96,7 +98,7 @@ export async function POST(request: Request) {
       }
     }
 
-    await scanRequestedDocumentUpload({
+    const scanStatus = await scanRequestedDocumentUpload({
       actor,
       cleanName: input.file.cleanName,
       file
@@ -139,7 +141,8 @@ export async function POST(request: Request) {
           newValue: {
             documentId: document.id,
             documentType: input.documentType,
-            fileName: input.file.cleanName
+            fileName: input.file.cleanName,
+            scanStatus
           }
         }
       });
@@ -160,12 +163,13 @@ export async function POST(request: Request) {
           fileSizeBytes: input.file.size,
           mimeType: input.file.mimeType,
           relatedObjectId: input.relatedObjectId ?? null,
-          requestSource: actor.role === "Client" ? "client-portal" : "employee-portal"
+          requestSource: actor.role === "Client" ? "client-portal" : "employee-portal",
+          scanStatus
         }
       }
     });
 
-    return NextResponse.json({ document }, { status: 201 });
+    return NextResponse.json({ document, scanStatus }, { status: 201 });
   } catch (error) {
     if (storedDocument && !documentPersisted) {
       await removePortalDocumentFromR2Quietly(storedDocument.storageKey);
@@ -183,23 +187,36 @@ async function scanRequestedDocumentUpload({
   actor: AuthUser;
   cleanName: string;
   file: File;
-}) {
+}): Promise<PortalDocumentScanStatus> {
   const uploadRoot = getConfiguredPortalDocumentUploadRoot();
   const scannerCommand = getConfiguredPortalDocumentScannerCommand();
 
   if (!uploadRoot || !scannerCommand) {
+    if (process.env.VERCEL_ENV === "preview") {
+      return "preview-bypassed";
+    }
+
     throw new PortalDocumentScanUnavailableError(
       "Document malware scanning is temporarily unavailable."
     );
   }
 
-  await scanPortalDocumentUpload({
-    cleanName,
-    file,
-    scannerCommand,
-    uploadRoot,
-    workspaceId: actor.workspaceId
-  });
+  try {
+    await scanPortalDocumentUpload({
+      cleanName,
+      file,
+      scannerCommand,
+      uploadRoot,
+      workspaceId: actor.workspaceId
+    });
+    return "scanned";
+  } catch (error) {
+    if (error instanceof PortalDocumentScanUnavailableError && process.env.VERCEL_ENV === "preview") {
+      return "preview-bypassed";
+    }
+
+    throw error;
+  }
 }
 
 async function assertAnyPermission(permissions: Permission[]): Promise<AuthUser> {

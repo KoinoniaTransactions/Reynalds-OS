@@ -27,15 +27,16 @@ export async function PATCH(request: Request, { params }: Params) {
       where: {
         id,
         workspaceId: actor.workspaceId,
-        ownerId: actor.id,
         archivedAt: null,
+        removedAt: null,
+        lifecycleState: "active",
         accessLevel: {
           in: [...clientVisibleDocumentAccessLevels]
         }
       }
     });
 
-    if (!document) {
+    if (!document || !(await canClientAccessDocument(actor.id, actor.workspaceId, document))) {
       return NextResponse.json({ error: "Document not found." }, { status: 404 });
     }
 
@@ -43,6 +44,13 @@ export async function PATCH(request: Request, { params }: Params) {
       return NextResponse.json(
         { error: "Document is not ready for client approval." },
         { status: 400 }
+      );
+    }
+
+    if (document.supersededByDocumentId) {
+      return NextResponse.json(
+        { error: "A newer version of this document is already current." },
+        { status: 409 }
       );
     }
 
@@ -74,13 +82,14 @@ export async function PATCH(request: Request, { params }: Params) {
           objectId: document.relatedObjectId,
           actorId: actor.id,
           eventType: "portal_document.client_response.recorded",
-          summary: `Client response recorded: ${document.documentType} is ${nextStatus}`,
+          summary: `Realtor response recorded: ${document.documentType} is ${nextStatus}`,
           previousValue,
           newValue: {
             action: input.action,
             documentId: updatedDocument.id,
             documentType: updatedDocument.documentType,
             hasClientNote: Boolean(input.notes),
+            versionNumber: updatedDocument.versionNumber,
             ...newValue
           }
         }
@@ -95,7 +104,7 @@ export async function PATCH(request: Request, { params }: Params) {
         action: "portal.document.client_response.recorded",
         subjectType: "Document",
         subjectId: updatedDocument.id,
-        summary: `Client response recorded: ${updatedDocument.documentType} is ${nextStatus}`,
+        summary: `Realtor response recorded: ${updatedDocument.documentType} is ${nextStatus}`,
         metadata: {
           approvalAction: input.action,
           documentType: updatedDocument.documentType,
@@ -103,7 +112,8 @@ export async function PATCH(request: Request, { params }: Params) {
           hasClientNote: Boolean(input.notes),
           previousStatus: document.status,
           requestedAction: updatedDocument.requestedAction,
-          status: updatedDocument.status
+          status: updatedDocument.status,
+          versionNumber: updatedDocument.versionNumber
         }
       }
     });
@@ -120,6 +130,27 @@ export async function PATCH(request: Request, { params }: Params) {
   }
 }
 
+async function canClientAccessDocument(
+  userId: string,
+  workspaceId: string,
+  document: { ownerId: string | null; relatedObjectId: string | null }
+): Promise<boolean> {
+  if (document.ownerId === userId) return true;
+  if (!document.relatedObjectId) return false;
+
+  const relatedTransaction = await prisma.rosObject.findFirst({
+    where: {
+      id: document.relatedObjectId,
+      workspaceId,
+      archivedAt: null,
+      OR: [{ clientUserId: userId }, { ownerId: userId }]
+    },
+    select: { id: true }
+  });
+
+  return Boolean(relatedTransaction);
+}
+
 function getApprovalStatus(
   action: PortalDocumentClientApprovalAction
 ): Extract<PortalDocumentWorkflowStatus, "Approved" | "Revision Requested"> {
@@ -129,11 +160,11 @@ function getApprovalStatus(
 function getApprovalRequestedAction(action: PortalDocumentClientApprovalAction): string {
   return action === "approve"
     ? "Koinonia can continue the next approved document step."
-    : "Review the client revision request before sending this document.";
+    : "Koinonia staff should revise this document from the Realtor's feedback.";
 }
 
 function getApprovalNoteLabel(action: PortalDocumentClientApprovalAction): string {
-  return action === "approve" ? "Client approval note" : "Client revision request";
+  return action === "approve" ? "Realtor approval note" : "Realtor revision request";
 }
 
 function appendDocumentNote(
