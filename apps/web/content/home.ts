@@ -1,9 +1,9 @@
 export const homeContent = {
   hero: {
-    eyebrow: "REAL ESTATE OPERATIONS. ELEVATED.",
-    title: "You focus on your clients. We'll keep the business running.",
+    eyebrow: "REAL ESTATE OPERATIONS SUPPORT",
+    title: "Real Estate Operations. Elevated.",
     lead:
-      "Koinonia gives Colorado Realtors one white-glove support relationship for the work behind the client experience — transactions, listings, licensed field coverage, marketing, CRM, and recurring business operations.",
+      "You focus on your clients. We'll keep the business running. Koinonia gives Colorado Realtors one white-glove support relationship for transactions, listings, licensed field coverage, marketing, CRM, and recurring business operations.",
     primaryLabel: "Tell Us What You Need",
     primaryHref: "/contact#schedule-consultation",
     secondaryLabel: "See Services & Pricing",
@@ -73,6 +73,43 @@ export const homeContent = {
       items: ["CRM and pipeline", "Follow-up and tasks", "Systems and workflows"]
     }
   ],
+
+  referralDiscovery: {
+    eyebrow: "40% REFERRAL PARTNER OPTION",
+    title: "Don't want to take the client at all?",
+    lead:
+      "If a buyer or seller opportunity does not fit your workload, timing, service area, readiness, or business priorities, you may choose a formal referral instead of carrying the entire client relationship yourself.",
+    body:
+      "The separate Koinonia Referral Partner Option can pay a 40% referral fee on qualifying referred business that successfully closes, subject to the signed referral documents.",
+    primaryLabel: "Explore the 40% Referral Option",
+    primaryHref: "/referrals",
+    secondaryLabel: "Keep the Client? View Services",
+    secondaryHref: "/services"
+  },
+
+  fit: {
+    eyebrow: "WHO IT HELPS",
+    title: "For Realtors who need dependable support without adding complexity.",
+    lead:
+      "Koinonia is built for real estate professionals who want more of the work behind their clients handled through one steady support relationship.",
+    cards: [
+      {
+        title: "Busy solo agents",
+        body:
+          "When client work is growing but you are not ready to build a full internal team, Koinonia helps absorb the operational work that keeps falling back on you."
+      },
+      {
+        title: "Growing Realtor teams",
+        body:
+          "When multiple files, listings, appointments, marketing needs, and follow-up tasks need coordination, Koinonia helps make the work more visible and repeatable."
+      },
+      {
+        title: "Client-focused Realtors",
+        body:
+          "When you want to stay present with clients instead of personally pushing every behind-the-scenes detail, Koinonia helps keep the business moving."
+      }
+    ]
+  },
 
   flagship: {
     eyebrow: "A DIFFERENT KIND OF LISTING SUPPORT",
