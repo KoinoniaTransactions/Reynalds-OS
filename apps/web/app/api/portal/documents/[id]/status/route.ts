@@ -45,62 +45,108 @@ export async function PATCH(request: Request, { params }: Params) {
       return NextResponse.json({ error: "Document not found." }, { status: 404 });
     }
 
+    if (document.supersededByDocumentId || document.lifecycleState === "superseded") {
+      return NextResponse.json(
+        { error: "Update the current document version instead of a superseded version." },
+        { status: 409 }
+      );
+    }
+
     const previousValue = {
       notes: document.notes,
       requestedAction: document.requestedAction,
       status: document.status
     };
-    const updatedDocument = await prisma.document.update({
-      where: { id: document.id },
-      data: {
-        notes: input.notes ?? document.notes,
-        requestedAction: input.requestedAction ?? document.requestedAction,
-        status: input.status
-      }
-    });
-    const newValue = {
-      notes: updatedDocument.notes,
-      requestedAction: updatedDocument.requestedAction,
-      status: updatedDocument.status
-    };
 
-    if (document.relatedObjectId) {
-      await prisma.timelineEvent.create({
+    const updatedDocument = await prisma.$transaction(async (tx) => {
+      const updated = await tx.document.update({
+        where: { id: document.id },
+        data: {
+          notes: input.notes ?? document.notes,
+          requestedAction: input.requestedAction ?? document.requestedAction,
+          status: input.status
+        }
+      });
+
+      if (document.relatedObjectId) {
+        await tx.timelineEvent.create({
+          data: {
+            workspaceId: actor.workspaceId,
+            objectId: document.relatedObjectId,
+            actorId: actor.id,
+            eventType: "portal_document.status.updated",
+            summary: `Document status updated: ${document.documentType} is ${input.status}`,
+            previousValue,
+            newValue: {
+              documentId: updated.id,
+              documentType: updated.documentType,
+              notes: updated.notes,
+              requestedAction: updated.requestedAction,
+              status: updated.status,
+              versionNumber: updated.versionNumber
+            }
+          }
+        });
+      }
+
+      if (
+        input.status === "Ready for Client Review" &&
+        document.status !== "Ready for Client Review" &&
+        document.relatedObjectId
+      ) {
+        const transaction = await tx.rosObject.findFirst({
+          where: {
+            id: document.relatedObjectId,
+            workspaceId: actor.workspaceId,
+            archivedAt: null
+          },
+          select: {
+            id: true,
+            clientUserId: true,
+            ownerId: true,
+            name: true
+          }
+        });
+        const realtorUserId = transaction?.clientUserId ?? transaction?.ownerId ?? null;
+
+        if (transaction && realtorUserId) {
+          await tx.notification.create({
+            data: {
+              workspaceId: actor.workspaceId,
+              userId: realtorUserId,
+              relatedObjectId: transaction.id,
+              level: "info",
+              title: "Document ready for review",
+              message: `${document.documentType} is ready for a quick accuracy review. Koinonia will handle the next step after you respond.`,
+              status: "unread"
+            }
+          });
+        }
+      }
+
+      await tx.auditEvent.create({
         data: {
           workspaceId: actor.workspaceId,
-          objectId: document.relatedObjectId,
           actorId: actor.id,
-          eventType: "portal_document.status.updated",
-          summary: `Document status updated: ${document.documentType} is ${input.status}`,
-          previousValue,
-          newValue: {
-            documentId: updatedDocument.id,
-            documentType: updatedDocument.documentType,
-            ...newValue
+          actorEmail: actor.email,
+          action: "portal.document.status.updated",
+          subjectType: "Document",
+          subjectId: updated.id,
+          summary: `Document status updated: ${updated.documentType} is ${input.status}`,
+          metadata: {
+            documentType: updated.documentType,
+            fileName: updated.fileName,
+            hasUpdateNote: Boolean(input.notes),
+            previousRequestedAction: document.requestedAction ?? null,
+            previousStatus: document.status,
+            requestedAction: updated.requestedAction ?? null,
+            status: updated.status,
+            versionNumber: updated.versionNumber
           }
         }
       });
-    }
 
-    await prisma.auditEvent.create({
-      data: {
-        workspaceId: actor.workspaceId,
-        actorId: actor.id,
-        actorEmail: actor.email,
-        action: "portal.document.status.updated",
-        subjectType: "Document",
-        subjectId: updatedDocument.id,
-        summary: `Document status updated: ${updatedDocument.documentType} is ${input.status}`,
-        metadata: {
-          documentType: updatedDocument.documentType,
-          fileName: updatedDocument.fileName,
-          hasUpdateNote: Boolean(input.notes),
-          previousRequestedAction: document.requestedAction ?? null,
-          previousStatus: document.status,
-          requestedAction: updatedDocument.requestedAction ?? null,
-          status: updatedDocument.status
-        }
-      }
+      return updated;
     });
 
     return NextResponse.json({ document: updatedDocument });
