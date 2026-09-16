@@ -19,18 +19,26 @@ import {
   type KoinoniaMarketingEvent
 } from "@/lib/google-analytics";
 
-const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "";
+const configuredMetaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "";
+const verifiedPreviewMetaPixelId = "4341788166086497";
 const tikTokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID ?? "";
-const validMetaPixelId = /^\d+$/.test(metaPixelId);
 const validTikTokPixelId = /^[A-Z0-9]+$/i.test(tikTokPixelId);
+
+function resolveMetaPixelId(hostname: string | null) {
+  if (configuredMetaPixelId) return configuredMetaPixelId;
+  if (hostname?.endsWith(".vercel.app")) return verifiedPreviewMetaPixelId;
+  return "";
+}
 
 export function AdvertisingPixels() {
   const pathname = usePathname();
   const [choice, setChoice] = useState<MarketingConsentChoice | null>(null);
   const [metaReady, setMetaReady] = useState(false);
   const [tikTokReady, setTikTokReady] = useState(false);
+  const [hostname, setHostname] = useState<string | null>(null);
 
   useEffect(() => {
+    setHostname(window.location.hostname);
     setChoice(readMarketingConsentChoice());
 
     function handleConsent(event: Event) {
@@ -44,6 +52,9 @@ export function AdvertisingPixels() {
     window.addEventListener(marketingConsentEventName, handleConsent);
     return () => window.removeEventListener(marketingConsentEventName, handleConsent);
   }, []);
+
+  const metaPixelId = resolveMetaPixelId(hostname);
+  const validMetaPixelId = /^\d+$/.test(metaPixelId);
 
   useEffect(() => {
     function handleMarketingEvent(event: Event) {
