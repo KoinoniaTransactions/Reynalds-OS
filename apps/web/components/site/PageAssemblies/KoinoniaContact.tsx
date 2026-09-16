@@ -1,4 +1,5 @@
 import { contactContent } from "@/content/contact";
+import { referralsContent } from "@/content/referrals";
 import { CTA, ContactActions, FAQ, Footer, Header, Hero, UniversalCard } from "../index";
 import { contactConfig } from "../../../config/contact.config";
 import { ConsultationSchedulerButton } from "../ConsultationIntake/ConsultationIntake";
@@ -24,17 +25,9 @@ export function KoinoniaContact() {
       <section className="koinonia-section koinonia-contact-reach">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">
-              {contactContent.reachOut.eyebrow}
-            </div>
-
-            <h2 className="koinonia-heading">
-              {contactContent.reachOut.title}
-            </h2>
-
-            <p className="koinonia-copy">
-              {contactContent.reachOut.lead}
-            </p>
+            <div className="koinonia-eyebrow">{contactContent.reachOut.eyebrow}</div>
+            <h2 className="koinonia-heading">{contactContent.reachOut.title}</h2>
+            <p className="koinonia-copy">{contactContent.reachOut.lead}</p>
           </div>
 
           <ContactActions />
@@ -48,7 +41,6 @@ export function KoinoniaContact() {
 
             <article className="koinonia-contact-helpful">
               <h3>{contactContent.reachOut.noteTitle}</h3>
-
               <ul>
                 {contactContent.reachOut.noteItems.map((item) => (
                   <li key={item}>{item}</li>
@@ -59,23 +51,12 @@ export function KoinoniaContact() {
         </div>
       </section>
 
-      <section
-        className="koinonia-section koinonia-contact-schedule"
-        id="schedule-consultation"
-      >
+      <section className="koinonia-section koinonia-contact-schedule" id="schedule-consultation">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">
-              {contactContent.scheduleConsultation.eyebrow}
-            </div>
-
-            <h2 className="koinonia-heading">
-              {contactContent.scheduleConsultation.title}
-            </h2>
-
-            <p className="koinonia-copy">
-              {contactContent.scheduleConsultation.lead}
-            </p>
+            <div className="koinonia-eyebrow">{contactContent.scheduleConsultation.eyebrow}</div>
+            <h2 className="koinonia-heading">{contactContent.scheduleConsultation.title}</h2>
+            <p className="koinonia-copy">{contactContent.scheduleConsultation.lead}</p>
           </div>
 
           <ConsultationSchedulerButton
@@ -87,34 +68,41 @@ export function KoinoniaContact() {
             selectorHelper={contactContent.scheduleConsultation.selectorHelper}
             buttonLabel={contactContent.scheduleConsultation.buttonLabel}
           />
-
         </div>
       </section>
 
       <section className="koinonia-section koinonia-contact-support">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">
-              {contactContent.supportOptions.eyebrow}
-            </div>
-
-            <h2 className="koinonia-heading">
-              {contactContent.supportOptions.title}
-            </h2>
-
-            <p className="koinonia-copy">
-              {contactContent.supportOptions.lead}
-            </p>
+            <div className="koinonia-eyebrow">{contactContent.supportOptions.eyebrow}</div>
+            <h2 className="koinonia-heading">{contactContent.supportOptions.title}</h2>
+            <p className="koinonia-copy">{contactContent.supportOptions.lead}</p>
           </div>
 
           <div className="koinonia-grid four">
             {contactContent.supportOptions.cards.map((card) => (
-              <UniversalCard
-                key={card.title}
-                title={card.title}
-                body={card.body}
-              />
+              <UniversalCard key={card.title} title={card.title} body={card.body} />
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section koinonia-contact-referrals">
+        <div className="koinonia-container">
+          <div className="koinonia-cta">
+            <div className="koinonia-eyebrow">{referralsContent.hero.eyebrow}</div>
+            <h2 className="koinonia-heading">Don't want to take the client at all?</h2>
+            <p className="koinonia-copy">
+              The Referral Partner Option is a separate path when you would rather hand off the client relationship itself instead of keeping the client and using operations support.
+            </p>
+            <p className="koinonia-copy">
+              Qualifying referred business can earn a 40% referral fee when the referred transaction successfully closes, subject to the signed referral documents.
+            </p>
+            <div className="koinonia-actions" style={{ justifyContent: "center" }}>
+              <a className="koinonia-button primary" href="/referrals">
+                Explore the 40% Referral Option
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -122,17 +110,9 @@ export function KoinoniaContact() {
       <section className="koinonia-section koinonia-band koinonia-contact-next">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">
-              {contactContent.nextSteps.eyebrow}
-            </div>
-
-            <h2 className="koinonia-heading">
-              {contactContent.nextSteps.title}
-            </h2>
-
-            <p className="koinonia-copy">
-              {contactContent.nextSteps.lead}
-            </p>
+            <div className="koinonia-eyebrow">{contactContent.nextSteps.eyebrow}</div>
+            <h2 className="koinonia-heading">{contactContent.nextSteps.title}</h2>
+            <p className="koinonia-copy">{contactContent.nextSteps.lead}</p>
           </div>
 
           <div className="koinonia-grid three">
@@ -148,11 +128,7 @@ export function KoinoniaContact() {
         </div>
       </section>
 
-      <FAQ
-        eyebrow={contactContent.faq.eyebrow}
-        title={contactContent.faq.title}
-        items={contactContent.faq.items}
-      />
+      <FAQ eyebrow={contactContent.faq.eyebrow} title={contactContent.faq.title} items={contactContent.faq.items} />
 
       <CTA />
       <Footer />

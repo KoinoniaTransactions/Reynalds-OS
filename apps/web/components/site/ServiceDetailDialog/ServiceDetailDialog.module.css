@@ -67,7 +67,7 @@
   letter-spacing: -0.02em;
 }
 
-.headline {
+.dialog .headline {
   max-width: 760px;
   margin: 12px 0 0;
   color: var(--ros-muted);
@@ -107,6 +107,10 @@
   margin-top: 0;
 }
 
+.dialog .scrollArea > :global(.koinonia-copy) {
+  color: var(--ros-muted);
+}
+
 .detailGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -133,8 +137,8 @@
   padding-left: 19px;
 }
 
-.detailSection li,
-.detailSection p {
+.dialog .detailSection li,
+.dialog .detailSection p {
   color: var(--ros-muted);
   line-height: 1.62;
 }

@@ -1,6 +1,6 @@
 # Koinonia Master Launch Checklist
 
-Last reconciled: 2026-09-15
+Last reconciled: 2026-09-16
 Owner: Koinonia / Jeremiah
 Status: ACTIVE EXECUTION CHECKLIST
 
@@ -24,7 +24,7 @@ The website customer experience must be completed and owner-approved before the 
 
 Current next item:
 
-**W6 — Desktop and mobile visual QA.**
+**W7 — Technical website QA.**
 
 ---
 
@@ -108,14 +108,14 @@ Acceptance criteria: every visible CTA lands in the intended current flow with n
 
 ## W6 — Desktop and mobile visual QA
 
-- [ ] W6.1 — Desktop Services visual QA.
-- [ ] W6.2 — Mobile Services visual QA.
-- [ ] W6.3 — Desktop Homepage visual QA.
-- [ ] W6.4 — Mobile Homepage visual QA.
-- [ ] W6.5 — Detail modal/sheet desktop QA.
-- [ ] W6.6 — Detail modal/sheet mobile QA.
-- [ ] W6.7 — Verify typography, spacing, card heights, price visibility, buttons, and scroll behavior.
-- [ ] W6.8 — Verify no text clipping, overflow, awkward whitespace, or unusable long-content states.
+- [x] W6.1 — Desktop Services visual QA.
+- [x] W6.2 — Mobile Services visual QA.
+- [x] W6.3 — Desktop Homepage visual QA.
+- [x] W6.4 — Mobile Homepage visual QA.
+- [x] W6.5 — Detail modal/sheet desktop QA.
+- [x] W6.6 — Detail modal/sheet mobile QA.
+- [x] W6.7 — Verify typography, spacing, card heights, price visibility, buttons, and scroll behavior.
+- [x] W6.8 — Verify no text clipping, overflow, awkward whitespace, or unusable long-content states.
 
 Acceptance criteria: the approved commercial experience works cleanly at representative desktop and mobile widths.
 
