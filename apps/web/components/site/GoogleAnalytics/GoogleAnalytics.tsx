@@ -10,15 +10,23 @@ import {
 } from "@/lib/marketing-consent";
 import { isPublicMarketingRoute } from "@/lib/marketing-routes";
 
-const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-const isValidMeasurementId = /^G-[A-Z0-9]+$/.test(measurementId ?? "");
+const configuredMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+const verifiedPreviewMeasurementId = "G-CNMN80KHQE";
+
+function resolveMeasurementId(hostname: string | null) {
+  if (configuredMeasurementId) return configuredMeasurementId;
+  if (hostname?.endsWith(".vercel.app")) return verifiedPreviewMeasurementId;
+  return undefined;
+}
 
 export function GoogleAnalytics() {
   const pathname = usePathname();
   const [choice, setChoice] = useState<MarketingConsentChoice | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [hostname, setHostname] = useState<string | null>(null);
 
   useEffect(() => {
+    setHostname(window.location.hostname);
     setChoice(readMarketingConsentChoice());
 
     function handleConsent(event: Event) {
@@ -29,6 +37,8 @@ export function GoogleAnalytics() {
     return () => window.removeEventListener(marketingConsentEventName, handleConsent);
   }, []);
 
+  const measurementId = resolveMeasurementId(hostname);
+  const isValidMeasurementId = /^G-[A-Z0-9]+$/.test(measurementId ?? "");
   const enabled = Boolean(
     choice?.analytics &&
       measurementId &&
@@ -44,7 +54,7 @@ export function GoogleAnalytics() {
       page_location: window.location.href,
       send_page_view: true
     });
-  }, [enabled, isReady, pathname]);
+  }, [enabled, isReady, measurementId, pathname]);
 
   if (!enabled || !measurementId) return null;
 
