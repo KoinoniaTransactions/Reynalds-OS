@@ -159,8 +159,13 @@ export type RelationshipMarketingTouch = {
   utmMedium?: string;
   utmCampaign?: string;
   utmContent?: string;
+  utmTerm?: string;
   fbclid?: string;
   ttclid?: string;
+  gclid?: string;
+  gbraid?: string;
+  wbraid?: string;
+  msclkid?: string;
   referrer?: string;
   landingPage?: string;
   capturedAt?: string;
@@ -198,8 +203,13 @@ function normalizeRelationshipMarketingTouch(
     utmMedium: text(source.utmMedium),
     utmCampaign: text(source.utmCampaign),
     utmContent: text(source.utmContent),
+    utmTerm: text(source.utmTerm),
     fbclid: text(source.fbclid),
     ttclid: text(source.ttclid),
+    gclid: text(source.gclid),
+    gbraid: text(source.gbraid),
+    wbraid: text(source.wbraid),
+    msclkid: text(source.msclkid),
     referrer: text(source.referrer),
     landingPage: text(source.landingPage),
     capturedAt: text(source.capturedAt)
@@ -259,10 +269,8 @@ export function normalizeKoinoniaRelationshipData(
 
   return {
     ...source,
-    relationshipProfileVersion:
-      numberValue(source.relationshipProfileVersion) ?? 1,
+    relationshipProfileVersion: numberValue(source.relationshipProfileVersion),
     contact: {
-      ...contact,
       email: text(contact.email),
       phone: text(contact.phone),
       role: text(contact.role),
@@ -270,7 +278,6 @@ export function normalizeKoinoniaRelationshipData(
       market: text(contact.market)
     },
     acquisition: {
-      ...acquisition,
       source: text(acquisition.source),
       sourceDetail: text(acquisition.sourceDetail),
       firstTouchChannel: text(acquisition.firstTouchChannel),
@@ -283,7 +290,6 @@ export function normalizeKoinoniaRelationshipData(
       conversionTouch: normalizeRelationshipMarketingTouch(acquisition.conversionTouch)
     },
     problem: {
-      ...problem,
       primaryPressure: text(problem.primaryPressure),
       secondaryPressure: text(problem.secondaryPressure),
       exactLanguage: text(problem.exactLanguage),
@@ -294,16 +300,14 @@ export function normalizeKoinoniaRelationshipData(
       desiredOutcome: text(problem.desiredOutcome)
     },
     diagnosis: {
-      ...diagnosis,
-      path: text(diagnosis.path) || "Undetermined",
+      path: text(diagnosis.path),
       requestedService: text(diagnosis.requestedService),
       recommendedService: text(diagnosis.recommendedService),
       rationale: text(diagnosis.rationale),
-      consultationCompleted: booleanValue(diagnosis.consultationCompleted) ?? false,
+      consultationCompleted: booleanValue(diagnosis.consultationCompleted),
       consultationDate: text(diagnosis.consultationDate)
     },
     consultationRequest: {
-      ...consultationRequest,
       type: text(consultationRequest.type),
       preferredDate: text(consultationRequest.preferredDate),
       preferredTime: text(consultationRequest.preferredTime),
@@ -311,7 +315,6 @@ export function normalizeKoinoniaRelationshipData(
       submittedAt: text(consultationRequest.submittedAt)
     },
     engagement: {
-      ...engagement,
       firstPaidService: text(engagement.firstPaidService),
       firstEngagementDate: text(engagement.firstEngagementDate),
       firstEngagementRevenue: numberValue(engagement.firstEngagementRevenue),
@@ -319,19 +322,17 @@ export function normalizeKoinoniaRelationshipData(
       successfulCompletion: booleanValue(engagement.successfulCompletion)
     },
     growth: {
-      ...growth,
-      repeatEngagementCount: numberValue(growth.repeatEngagementCount) ?? 0,
-      cumulativeRevenue: numberValue(growth.cumulativeRevenue) ?? 0,
-      crossServiceAdoption: booleanValue(growth.crossServiceAdoption) ?? false,
-      brokerageIntroductions: numberValue(growth.brokerageIntroductions) ?? 0,
-      professionalReferrals: numberValue(growth.professionalReferrals) ?? 0,
+      repeatEngagementCount: numberValue(growth.repeatEngagementCount),
+      cumulativeRevenue: numberValue(growth.cumulativeRevenue),
+      crossServiceAdoption: booleanValue(growth.crossServiceAdoption),
+      brokerageIntroductions: numberValue(growth.brokerageIntroductions),
+      professionalReferrals: numberValue(growth.professionalReferrals),
       testimonialStatus: text(growth.testimonialStatus),
       advocateStatus: text(growth.advocateStatus),
       lastMeaningfulInteraction: text(growth.lastMeaningfulInteraction),
       nextNurtureDate: text(growth.nextNurtureDate)
     },
     learning: {
-      ...learning,
       interactions: normalizeLearningInteractions(learning.interactions)
     }
   };
@@ -339,255 +340,117 @@ export function normalizeKoinoniaRelationshipData(
 
 export function mergeKoinoniaRelationshipData(
   existing: unknown,
-  patch: KoinoniaRelationshipData
+  incoming: KoinoniaRelationshipData
 ): KoinoniaRelationshipData {
   const current = normalizeKoinoniaRelationshipData(existing);
 
-  return normalizeKoinoniaRelationshipData({
+  return {
     ...current,
-    ...patch,
-    contact: { ...current.contact, ...patch.contact },
-    acquisition: { ...current.acquisition, ...patch.acquisition },
-    problem: { ...current.problem, ...patch.problem },
-    diagnosis: { ...current.diagnosis, ...patch.diagnosis },
+    ...incoming,
+    contact: {
+      ...current.contact,
+      ...incoming.contact
+    },
+    acquisition: {
+      ...current.acquisition,
+      ...incoming.acquisition
+    },
+    problem: {
+      ...current.problem,
+      ...incoming.problem
+    },
+    diagnosis: {
+      ...current.diagnosis,
+      ...incoming.diagnosis
+    },
     consultationRequest: {
       ...current.consultationRequest,
-      ...patch.consultationRequest
+      ...incoming.consultationRequest
     },
-    engagement: { ...current.engagement, ...patch.engagement },
-    growth: { ...current.growth, ...patch.growth },
-    learning: { ...current.learning, ...patch.learning }
-  });
+    engagement: {
+      ...current.engagement,
+      ...incoming.engagement
+    },
+    growth: {
+      ...current.growth,
+      ...incoming.growth
+    },
+    learning: {
+      ...current.learning,
+      ...incoming.learning
+    }
+  };
 }
 
-export function mapConsultationTypeToRelationshipIntent(
-  consultationType: string
-): { pressure: string; service: string; path: string } {
+export function preserveAdvancedLifecycle(
+  existingStatus: string | null | undefined,
+  proposedStatus: string
+) {
+  const existingIndex = relationshipLifecycleStages.indexOf(
+    (existingStatus ?? "") as (typeof relationshipLifecycleStages)[number]
+  );
+  const proposedIndex = relationshipLifecycleStages.indexOf(
+    proposedStatus as (typeof relationshipLifecycleStages)[number]
+  );
+
+  if (existingIndex > proposedIndex) return existingStatus as string;
+  return proposedStatus;
+}
+
+export function mapConsultationTypeToRelationshipIntent(consultationType: string) {
   const normalized = consultationType.toLowerCase();
 
   if (normalized.includes("transaction")) {
     return {
       pressure: "Transaction/File Capacity",
-      service: "Transaction Support / Contract-to-Close Coordination",
-      path: "Keep Client"
+      path: "Keep Client",
+      service: "Transaction Support / Contract-to-Close Coordination"
     };
   }
 
   if (normalized.includes("contract") || normalized.includes("document")) {
     return {
       pressure: "Contract/Document Workload",
-      service: "Contract & Document Support",
-      path: "Keep Client"
+      path: "Keep Client",
+      service: "Contract & Document Support"
     };
   }
 
-  if (normalized.includes("showing")) {
+  if (normalized.includes("showing") || normalized.includes("field")) {
     return {
       pressure: "Showing/Schedule Conflict",
-      service: "Licensed Showing Coverage",
-      path: "Keep Client"
+      path: "Keep Client",
+      service: "Licensed Showing Coverage"
     };
   }
 
   if (normalized.includes("open house")) {
     return {
       pressure: "Open House/Listing Capacity",
-      service: "Professional Open House Coverage",
-      path: "Keep Client"
+      path: "Keep Client",
+      service: "Professional Open House Coverage"
     };
   }
 
-  if (normalized.includes("monthly") || normalized.includes("operations")) {
+  if (normalized.includes("marketing") || normalized.includes("partnership") || normalized.includes("crm")) {
     return {
       pressure: "CRM/Follow-Up/Business Organization",
-      service: "Monthly Operations Partnership",
-      path: "Keep Client"
+      path: "Keep Client",
+      service: "Monthly Operations Partnership"
     };
   }
 
   if (normalized.includes("referral")) {
     return {
       pressure: "Referral/No-Capacity Client Opportunity",
-      service: "40% Referral Partner Option",
-      path: "Refer Client"
+      path: "Refer Client",
+      service: "40% Referral Partner Option"
     };
   }
 
   return {
     pressure: "Unclear/Other",
-    service: consultationType || "Not Sure Yet",
-    path: "Undetermined"
+    path: "Undetermined",
+    service: "Not Sure Yet"
   };
-}
-
-function lifecycleRank(status: string): number {
-  const exactIndex = relationshipLifecycleStages.indexOf(
-    status as (typeof relationshipLifecycleStages)[number]
-  );
-
-  if (exactIndex !== -1) return exactIndex;
-
-  const legacyStatusRanks: Record<string, number> = {
-    Open: 2,
-    Active: 6,
-    "Active Client": 6,
-    Complete: 8,
-    Closed: 8
-  };
-
-  return legacyStatusRanks[status] ?? -1;
-}
-
-export function preserveAdvancedLifecycle(
-  currentStatus: string,
-  proposedStatus: string
-): string {
-  const currentRank = lifecycleRank(currentStatus);
-  const proposedRank = lifecycleRank(proposedStatus);
-
-  if (currentRank === -1) return proposedStatus;
-  if (proposedRank === -1) return currentStatus;
-
-  return currentRank >= proposedRank ? currentStatus : proposedStatus;
-}
-
-function containsAny(value: string, terms: string[]): boolean {
-  return terms.some((term) => value.includes(term));
-}
-
-function serviceForPressure(pressure: string): string {
-  const serviceMap: Record<string, string> = {
-    "Transaction/File Capacity": "Transaction Support / Contract-to-Close Coordination",
-    "Contract/Document Workload": "Contract & Document Support",
-    "Showing/Schedule Conflict": "Licensed Showing Coverage",
-    "Open House/Listing Capacity": "Professional Open House Coverage",
-    "CRM/Follow-Up/Business Organization": "Monthly Operations Partnership",
-    "Referral/No-Capacity Client Opportunity": "40% Referral Partner Option"
-  };
-
-  return serviceMap[pressure] ?? "";
-}
-
-function extractBrokerage(note: string): string {
-  const match = note.match(
-    /\b(?:from|with|at)\s+([A-Z][A-Za-z0-9&.' -]{1,50}?(?:Realty|Properties|Group|Team|Brokerage|Real Estate))\b/
-  );
-
-  return match?.[1]?.trim() ?? "";
-}
-
-export function suggestRelationshipQuickCapture(
-  note: string
-): RelationshipQuickCaptureSuggestion {
-  const raw = note.trim();
-  const normalized = raw.toLowerCase();
-  const suggestion: RelationshipQuickCaptureSuggestion = {};
-
-  if (!raw) return suggestion;
-
-  const brokerage = extractBrokerage(raw);
-  if (brokerage) suggestion.brokerage = brokerage;
-
-  if (containsAny(normalized, ["brokerage meeting", "office meeting", "sales meeting", "team meeting"])) {
-    suggestion.source = "Brokerage Meeting";
-  } else if (containsAny(normalized, ["networking", "realtor event", "association event", "conference"])) {
-    suggestion.source = "Realtor Networking/Event";
-  } else if (containsAny(normalized, ["introduced me", "introduced by", "direct introduction"])) {
-    suggestion.source = "Direct Introduction";
-  } else if (containsAny(normalized, ["lender", "title company", "title rep"])) {
-    suggestion.source = "Lender/Title Partner";
-  } else if (containsAny(normalized, ["website", "site form", "web form"])) {
-    suggestion.source = "Website";
-  } else if (containsAny(normalized, ["instagram", "facebook", "linkedin", "social media"])) {
-    suggestion.source = "Social Media";
-  } else if (containsAny(normalized, ["emailed", "email thread", "email reply"])) {
-    suggestion.source = "Email";
-  } else if (containsAny(normalized, ["met at an open house", "open house visitor", "open house interaction"])) {
-    suggestion.source = "Open House Interaction";
-  }
-
-  if (containsAny(normalized, ["tri-fold", "trifold", "brochure"])) {
-    suggestion.material = "Tri-Fold Brochure";
-  } else if (normalized.includes("service guide")) {
-    suggestion.material = "Service Guide";
-  } else if (normalized.includes("pricing insert")) {
-    suggestion.material = "Pricing Insert";
-  } else if (normalized.includes("introduction sheet")) {
-    suggestion.material = "Brokerage Introduction Sheet";
-  } else if (containsAny(normalized, ["digital packet", "introduction packet"])) {
-    suggestion.material = "Digital Introduction Packet";
-  } else if (normalized.includes("business card")) {
-    suggestion.material = "Business Card";
-  } else if (normalized.includes("website")) {
-    suggestion.material = "Website";
-  }
-
-  if (
-    containsAny(normalized, [
-      "refer the client",
-      "refer this client",
-      "referral fee",
-      "40% referral",
-      "can't take the client",
-      "cannot take the client",
-      "don't want to take",
-      "doesn't want to take",
-      "no room to take"
-    ])
-  ) {
-    suggestion.primaryPressure = "Referral/No-Capacity Client Opportunity";
-  } else if (containsAny(normalized, ["open house", "weekend hosting", "saturdays", "saturday", "sundays", "sunday"])) {
-    suggestion.primaryPressure = "Open House/Listing Capacity";
-  } else if (containsAny(normalized, ["showing", "showings", "property access", "schedule conflict"])) {
-    suggestion.primaryPressure = "Showing/Schedule Conflict";
-  } else if (containsAny(normalized, ["offer", "amendment", "addendum", "contract writing", "document prep", "paperwork"])) {
-    suggestion.primaryPressure = "Contract/Document Workload";
-  } else if (containsAny(normalized, ["under contract", "transaction", "closing", "deadline", "contract-to-close", "file coordination"])) {
-    suggestion.primaryPressure = "Transaction/File Capacity";
-  } else if (containsAny(normalized, ["crm", "follow-up", "follow up", "pipeline", "business organization", "task cleanup", "backend"])) {
-    suggestion.primaryPressure = "CRM/Follow-Up/Business Organization";
-  } else if (containsAny(normalized, ["team operations", "brokerage operations", "office operations"])) {
-    suggestion.primaryPressure = "Brokerage/Team Operations";
-  }
-
-  if (suggestion.primaryPressure) {
-    const service = serviceForPressure(suggestion.primaryPressure);
-    if (service) suggestion.recommendedService = service;
-    suggestion.path = suggestion.primaryPressure === "Referral/No-Capacity Client Opportunity"
-      ? "Refer Client"
-      : "Keep Client";
-
-    if (
-      service &&
-      containsAny(normalized, ["wants", "want to", "asked for", "needs", "need to", "try one", "try a", "interested in"])
-    ) {
-      suggestion.requestedService = service;
-    }
-  }
-
-  if (containsAny(normalized, ["testimonial", "referred another", "sent me another", "advocate"])) {
-    suggestion.lifecycle = "Advocate";
-  } else if (containsAny(normalized, ["closed", "successful closing", "completed delivery", "completed service"])) {
-    suggestion.lifecycle = "Successful Delivery";
-  } else if (containsAny(normalized, ["started service", "active engagement", "work has started", "engagement began"])) {
-    suggestion.lifecycle = "Active Engagement";
-  } else if (containsAny(normalized, ["proposal", "quote sent", "pricing sent"])) {
-    suggestion.lifecycle = "Proposal";
-  } else if (containsAny(normalized, ["consultation", "consult", "meeting scheduled", "call scheduled"])) {
-    suggestion.lifecycle = "Consultation";
-  } else if (containsAny(normalized, ["wants to try", "interested", "wants more information", "send more information"])) {
-    suggestion.lifecycle = "Interest";
-  }
-
-  if (suggestion.primaryPressure === "Open House/Listing Capacity" && normalized.includes("next month")) {
-    suggestion.nextAction = "Follow up about open house coverage next month";
-  } else if (containsAny(normalized, ["schedule a consultation", "schedule consultation", "book a consultation"])) {
-    suggestion.nextAction = "Schedule consultation";
-  } else if (containsAny(normalized, ["send the service guide", "send service guide"])) {
-    suggestion.nextAction = "Send Service Guide";
-  } else if (containsAny(normalized, ["follow up", "follow-up", "circle back", "check back"])) {
-    suggestion.nextAction = "Follow up on this relationship";
-  }
-
-  return suggestion;
 }
