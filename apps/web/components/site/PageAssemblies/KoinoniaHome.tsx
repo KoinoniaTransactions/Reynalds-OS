@@ -67,6 +67,34 @@ export function KoinoniaHome() {
         </div>
       </Section>
 
+      <section className={`koinonia-section ${styles.referralCallout}`}>
+        <div className="koinonia-container">
+          <div className={styles.referralPanel}>
+            <div>
+              <div className="koinonia-eyebrow">{homeContent.referralDiscovery.eyebrow}</div>
+              <h2 className={styles.referralTitle}>{homeContent.referralDiscovery.title}</h2>
+              <p className={styles.referralLead}>{homeContent.referralDiscovery.lead}</p>
+              <p className={styles.referralBody}>{homeContent.referralDiscovery.body}</p>
+            </div>
+
+            <div className={`koinonia-actions ${styles.referralActions}`}>
+              <a
+                className="koinonia-button primary"
+                href={homeContent.referralDiscovery.primaryHref}
+              >
+                {homeContent.referralDiscovery.primaryLabel}
+              </a>
+              <a
+                className="koinonia-button secondary"
+                href={homeContent.referralDiscovery.secondaryHref}
+              >
+                {homeContent.referralDiscovery.secondaryLabel}
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <Section
         className="koinonia-home-process"
         align="center"
