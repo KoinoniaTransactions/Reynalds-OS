@@ -4,7 +4,7 @@ import styles from "./KoinoniaHome.module.css";
 
 export function KoinoniaHome() {
   return (
-    <main className="koinonia-site">
+    <main className={`koinonia-site ${styles.homeCalm}`}>
       <Header />
 
       <div className={styles.heroCompact}>
