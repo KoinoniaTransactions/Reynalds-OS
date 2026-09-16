@@ -26,6 +26,12 @@ export const seoConfig = {
         "Explore Koinonia pricing and what is included in Transaction Management, Hand Us the Listing, Licensed Field Coverage, Marketing Management, and Koinonia Partnership for Colorado Realtors."
     },
     {
+      path: "/referrals",
+      title: "40% Referral Partner Option",
+      description:
+        "Learn about the Koinonia 40% Referral Partner Option for licensed real estate professionals who would rather refer a buyer or seller opportunity than personally carry the client relationship."
+    },
+    {
       path: "/about",
       title: "About Koinonia",
       description:
@@ -35,7 +41,7 @@ export const seoConfig = {
       path: "/contact",
       title: "Contact Koinonia",
       description:
-        "Tell Koinonia what you need handled — transactions, listings, field coverage, marketing, CRM, or recurring real estate business operations support in Colorado."
+        "Tell Koinonia what you need handled — transactions, listings, field coverage, marketing, CRM, recurring business operations, or the separate Referral Partner Option in Colorado."
     }
   ]
 } as const;
