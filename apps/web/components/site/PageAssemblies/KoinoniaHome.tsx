@@ -39,7 +39,6 @@ export function KoinoniaHome() {
       </Section>
 
       <Section
-        className="koinonia-home-services"
         variant="band"
         align="center"
         eyebrow={homeContent.servicesIntro.eyebrow}
@@ -56,12 +55,6 @@ export function KoinoniaHome() {
               items={service.items}
             />
           ))}
-        </div>
-
-        <div className="koinonia-actions" style={{ justifyContent: "center", marginTop: "1.75rem" }}>
-          <a className="koinonia-button primary" href="/services#pricing">
-            Explore Services & Pricing
-          </a>
         </div>
       </Section>
 
