@@ -1,7 +1,7 @@
 # Koinonia Marketing Integration Audit — 2026-09-16
 
 Owner: Koinonia / Jeremiah
-Status: M1 COMPLETE — selective marketing integration may proceed on this branch only
+Status: M4 META PREVIEW PROOF COMPLETE — production activation remains gated
 Branch: `koinonia-marketing-integration-2026-09-16`
 
 ## Baseline decision
@@ -81,4 +81,54 @@ Production already contains an earlier attribution foundation:
 - M1.2 No wholesale readiness merge: COMPLETE.
 - M1.3 Legacy readiness implementation compared against current application: COMPLETE.
 
-Next execution slice: M2 — selectively port/reimplement measurement, attribution, consent, and CRM persistence against the current production baseline.
+## M2 implementation result
+
+M2 is implemented and validated on this branch:
+
+- public marketing-route boundaries are explicit;
+- authenticated/private routes remain excluded;
+- consent choices gate analytics and advertising scripts;
+- Global Privacy Control forces advertising tracking off;
+- first-touch, latest-touch, and conversion-touch attribution are preserved;
+- supported UTM and advertising click IDs persist through consultation intake into CRM;
+- `generate_lead` fires only after the consultation API accepts the request; and
+- the consultation CRM relationship, timeline event, and follow-up task are created before the API returns success.
+
+## M3 GA4 proof state
+
+The verified GA4 property is `Koinonia Transactions Website` (account `552251206`) with measurement ID `G-CNMN80KHQE`.
+
+The ID remains available only through the preview fallback on `*.vercel.app`; this branch does not activate GA4 on the production hostname. Preview runtime and focused tests proved the accepted consultation path, but M3.4-M3.6 remain open until GA4 reporting visibly confirms the preview `page_view`, `generate_lead`, and separation of micro-events from leads.
+
+## M4 Meta asset and preview proof
+
+Verified Meta assets:
+
+- Business portfolio: `Koinonia Transactions`
+- Dedicated ad account: `Koinonia Transactions` (`1378958464415174`)
+- Dataset/Pixel: `Koinonia Transactions Website` (`4341788166086497`)
+- Connected asset: the dedicated Koinonia ad account above
+- Conversions API: intentionally deferred
+
+The verified Pixel ID is wired only for `*.vercel.app` preview hosts when no configured environment value is present. Production remains off unless a later owner-approved production environment configuration activates it.
+
+Preview verification completed on 2026-09-17:
+
+1. With `Essential only`, no Meta scripts loaded.
+2. With `Allow analytics & ads`, Meta loaded Pixel `4341788166086497` and recorded `PageView`.
+3. A controlled consultation request returned HTTP 200 from `/api/koinonia/consultation` at 2026-09-17T13:44:23Z.
+4. Meta Events Manager subsequently showed both `PageView` and `Lead` as Active, with one event each, from the preview website.
+
+Operator evidence was captured in:
+
+- `Screenshot 2026-09-17 at 8.17.19 AM.png` — Meta Overview filtered to September 17, 2026.
+- `Screenshot 2026-09-17 at 8.17.29 AM.png` — Meta Overview showing Active `PageView` and Active `Lead`, one event each.
+
+No corrective tracking-code change was required after proof; Meta's Overview feed populated after its normal processing delay.
+
+## Current gates and next work
+
+- Do not merge PR #36 yet.
+- Do not activate GA4, Meta, or TikTok tracking on production before the M10 owner gate.
+- Do not enable Windsor write actions or create paid campaigns.
+- Next execution slice: finish outstanding GA4 reporting proof, then begin M5 TikTok account/Pixel identification and preview-only validation.
