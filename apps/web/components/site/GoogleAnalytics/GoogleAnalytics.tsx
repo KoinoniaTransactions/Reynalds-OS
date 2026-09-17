@@ -49,10 +49,9 @@ export function GoogleAnalytics() {
   useEffect(() => {
     if (!enabled || !isReady || !measurementId || !pathname || typeof window.gtag !== "function") return;
 
-    window.gtag("config", measurementId, {
+    window.gtag("event", "page_view", {
       page_path: `${pathname}${window.location.search}`,
-      page_location: window.location.href,
-      send_page_view: true
+      page_location: window.location.href
     });
   }, [enabled, isReady, measurementId, pathname]);
 
