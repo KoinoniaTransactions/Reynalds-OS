@@ -35,7 +35,7 @@ export function trackAdvertisingLead(serviceType: string) {
     content_category: "consultation"
   });
 
-  window.ttq?.track?.("Lead", {
+  window.ttq?.track?.("SubmitForm", {
     description: serviceType
   });
 }
