@@ -224,6 +224,31 @@ Stage 1 organic-profile verification advanced:
 - The profile Website field is not yet available; treat the tracked TikTok profile destination as pending until Business Registration review finishes and/or TikTok exposes the Website field.
 - TikTok organic profile setup is therefore PARTIALLY COMPLETE / VERIFICATION PENDING, not blocked by missing company formation or missing EIN documentation.
 
+
+## Facebook organic profile verification — 2026-09-18
+
+Operator screenshot confirms the live Koinonia Facebook Page at `facebook.com/KoinoniaTransactions`.
+
+Verified from the visible Page header:
+
+- Page name: `Koinonia Transactions`.
+- Public handle/path uses `KoinoniaTransactions`.
+- Approved circled-K profile image is in use.
+- Public category displays `Real Estate`.
+- A `Contact us` Page action button is present.
+- The Page intro identifies Koinonia as real estate operations support for Colorado Realtors.
+
+Still requires manual verification before Facebook Stage 1 profile setup is complete:
+
+- exact destination behind the `Contact us` button;
+- tracked Facebook website-field URL;
+- public email and phone;
+- Instagram professional account connection;
+- message/comment notification ownership;
+- whether the intro/About copy should be normalized to the current approved profile specification.
+
+The current cover image remains a branded Koinonia cover but uses older service/positioning copy; do not treat cover creative as a blocker unless owner chooses to refresh it.
+
 ## Current gates and next work
 
 - Do not merge PR #36 yet.
