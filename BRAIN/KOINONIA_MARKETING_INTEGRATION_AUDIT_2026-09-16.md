@@ -249,6 +249,36 @@ Still requires manual verification before Facebook Stage 1 profile setup is comp
 
 The current cover image remains a branded Koinonia cover but uses older service/positioning copy; do not treat cover creative as a blocker unless owner chooses to refresh it.
 
+
+## LinkedIn company presence added — 2026-09-18
+
+The owner reversed the earlier decision to exclude LinkedIn and created a Koinonia Transactions Company Page. LinkedIn is now an approved company-presence, credibility, professional-network, and selective organic-content channel. This does not authorize LinkedIn paid media.
+
+Operator screenshots of the live member view confirm:
+
+- Page: `Koinonia Transactions` at `linkedin.com/company/koinonia-transactions`.
+- Approved circled-K profile image is in use.
+- Branded cover image is present.
+- Industry displays `Real Estate`.
+- Location displays `Parker, Colorado`.
+- Company-size band currently displays `2-10 employees`; owner should confirm this band is factually appropriate.
+- Website currently displays `https://www.koinoniatransactions.com`.
+- Public phone is present.
+- Current tagline: `More than transaction coordination—licensed coverage and business support for Colorado real estate professionals.`
+- About/Overview text is populated and generally aligned with Koinonia, but it reflects an older service model.
+- LinkedIn Services is enabled, with Remote availability, Contact for pricing, Real Estate / Real Estate Marketing categories, and a native `Request services` control.
+- No Koinonia organic posts are visible yet in the member-view Posts tab.
+
+Required LinkedIn-specific cleanup:
+
+1. move tagline/About/Services language to the current five-area public capability model used by the website;
+2. replace the plain website field with the tracked LinkedIn organic-profile URL;
+3. configure a tracked website/contact CTA where the Page admin interface permits;
+4. confirm Super Admin settings and inbound message/request ownership;
+5. confirm the `2-10 employees` size band is accurate.
+
+Do not reopen completed Facebook/Instagram/TikTok setup simply because LinkedIn was added. LinkedIn is an incremental channel addition to the existing marketing system.
+
 ## Current gates and next work
 
 - Do not merge PR #36 yet.
