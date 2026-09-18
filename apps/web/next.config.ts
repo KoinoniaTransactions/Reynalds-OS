@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         source: "/appointments",
         destination: "/contact#schedule-consultation",
         permanent: true
+      },
+      {
+        source: "/linkedin",
+        destination:
+          "/contact?utm_source=linkedin&utm_medium=organic_social&utm_campaign=evergreen_profile&utm_content=linkedin_company_website#schedule-consultation",
+        permanent: false
       }
     ];
   },

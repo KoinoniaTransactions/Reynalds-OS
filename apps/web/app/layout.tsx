@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { absoluteUrl, seoConfig } from "../config/seo.config";
 import { AuthProvider } from "../components/auth/AuthProvider";
+import { AdvertisingPixels } from "../components/site/AdvertisingPixels/AdvertisingPixels";
+import { GoogleAnalytics } from "../components/site/GoogleAnalytics/GoogleAnalytics";
 import { MarketingAttribution } from "../components/site/MarketingAttribution/MarketingAttribution";
+import { MarketingPrivacyControls } from "../components/site/MarketingPrivacyControls/MarketingPrivacyControls";
 import "@reynalds-os/design-system/styles.css";
 import "../styles/koinonia-layout.css";
+import "../styles/marketing-privacy.css";
 import "../styles/transaction-intake-controls.css";
 import "../styles/client-dashboard-polish.css";
 import "../styles/client-workspace-polish.css";
@@ -65,7 +69,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        <GoogleAnalytics />
+        <AdvertisingPixels />
         <MarketingAttribution />
+        <MarketingPrivacyControls />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
