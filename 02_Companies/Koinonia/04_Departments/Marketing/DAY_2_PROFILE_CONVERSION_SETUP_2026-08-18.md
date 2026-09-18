@@ -6,7 +6,7 @@ Launch Day: August 18, 2026
 
 ## Purpose
 
-Standardize how Koinonia Transactions appears on Facebook, Instagram, and TikTok and make every profile send interested Realtors into one clear, attributable conversion path.
+Standardize how Koinonia Transactions appears on Facebook, Instagram, TikTok, and LinkedIn and make every profile send interested Realtors into one clear, attributable conversion path.
 
 Core rule:
 
@@ -16,7 +16,7 @@ Do not add a Linktree-style menu during the initial launch. Koinonia already has
 
 ## Shared Brand Setup
 
-Use on all three channels:
+Use across active social channels:
 
 - Display name: **Koinonia Transactions**
 - Profile image: approved circled-K mark
@@ -24,7 +24,7 @@ Use on all three channels:
 - Primary promise: **You focus on your clients. We'll keep the business running behind you.**
 - Primary conversion destination: Koinonia consultation/contact page
 
-Do not use LinkedIn references, icons, or profile links.
+LinkedIn is now an approved Koinonia company-presence and selective organic channel by owner decision as of 2026-09-18.
 
 ## Primary Tracked Profile Links
 
@@ -43,6 +43,14 @@ Do not use LinkedIn references, icons, or profile links.
 ### TikTok website link
 
 `https://www.koinoniatransactions.com/contact?utm_source=tiktok&utm_medium=organic_social&utm_campaign=evergreen_profile&utm_content=tiktok_bio#schedule-consultation`
+
+### LinkedIn Company Page website field
+
+`https://www.koinoniatransactions.com/?utm_source=linkedin&utm_medium=organic_social&utm_campaign=evergreen_profile&utm_content=linkedin_company_website`
+
+### LinkedIn Company Page CTA / consultation destination
+
+`https://www.koinoniatransactions.com/contact?utm_source=linkedin&utm_medium=organic_social&utm_campaign=evergreen_profile&utm_content=linkedin_company_cta#schedule-consultation`
 
 Use these exact links after the launch-readiness attribution changes are live and verified.
 
@@ -330,6 +338,93 @@ Do not pin based only on views if another video is creating more qualified DMs o
 
 ---
 
+---
+
+# LinkedIn Company Page Setup
+
+## Role in the channel mix
+
+LinkedIn is now included as a professional credibility, company-presence, referral-network, brokerage/team, and selective organic-content channel. It is not automatically a separate paid-media channel and does not require a unique daily posting quota.
+
+## Profile
+
+### Page name
+
+**Koinonia Transactions**
+
+### Public Page URL
+
+Current confirmed Page path:
+
+**linkedin.com/company/koinonia-transactions**
+
+### Tagline
+
+Use current positioning rather than the older transaction-coordination-only framing:
+
+**Real estate operations support for Colorado Realtors — transactions, listings, field coverage, marketing, CRM, and business operations.**
+
+### About / Overview
+
+Use:
+
+**Koinonia Transactions helps Colorado Realtors hand off more of the work behind their clients. From transaction and listing operations to licensed field coverage, marketing, CRM, and recurring business support, Koinonia provides one connected support relationship so agents can protect their time and keep the business moving.**
+
+**Start with the work that needs handled. Koinonia can support a single transaction, listing, field assignment, marketing need, custom project, or an ongoing operations partnership.**
+
+**Serving real estate professionals throughout Colorado.**
+
+### Website field
+
+Use the tracked LinkedIn Company Page website link above.
+
+### Primary CTA
+
+Preferred CTA when available:
+
+**Visit website** or **Contact us**
+
+Use the tracked LinkedIn Company Page consultation destination above.
+
+### Company details
+
+- Industry: **Real Estate**
+- Headquarters/location: **Parker, Colorado** unless later changed as a public operating location
+- Company size: confirm the selected LinkedIn size band is factually appropriate before changing it
+- Profile image: approved circled-K mark
+- Cover: current branded Koinonia cover is acceptable; future refresh may align it to current website positioning
+
+## Services tab
+
+Do not describe Koinonia only as transaction coordination plus showing coverage. Current public capability structure should reflect:
+
+- Transactions & Contracts
+- Listing & Seller Support
+- Licensed Field Coverage
+- Marketing & Growth
+- CRM & Business Operations
+
+The LinkedIn Services description should remain outcome-focused and should not introduce service promises that differ from the live website.
+
+LinkedIn-native **Request services** may remain available, but treat any resulting message/request as an inbound lead that must be manually captured into Koinonia's Relationship/CRM process until an automated LinkedIn lead connector exists.
+
+## LinkedIn Manual Setup Checklist
+
+1. Confirm Super Admin access.
+2. Confirm Page name and public URL.
+3. Keep approved circled-K profile image.
+4. Update tagline to current positioning.
+5. Update About/Overview to current five-area service model.
+6. Replace the untracked website field with the tracked LinkedIn Company Page website URL.
+7. Configure a website/contact CTA to the tracked consultation destination when available.
+8. Review Services copy against the current website capability model.
+9. Confirm company size band is factually appropriate.
+10. Confirm Page messaging/notifications are monitored by the inbound owner.
+11. Do not activate LinkedIn paid ads merely because the Page exists.
+12. Repurpose selected organic content where useful rather than creating a separate volume requirement at launch.
+
+---
+
 # UTM Standard for Organic Social
 
 Use lowercase values.
@@ -339,6 +434,7 @@ Use lowercase values.
 - `facebook`
 - `instagram`
 - `tiktok`
+- `linkedin`
 
 ## Medium
 
@@ -365,6 +461,8 @@ Examples:
 - `instagram_bio`
 - `instagram_story_s3`
 - `tiktok_bio`
+- `linkedin_company_website`
+- `linkedin_company_cta`
 - `s1_more_opportunity`
 - `s4_open_house`
 
@@ -436,7 +534,7 @@ The website launch-readiness implementation preserves the first attributable sou
 For a new Relationship record, the intended result is conceptually:
 
 - Source: Social Media
-- Source detail: Instagram / Facebook / TikTok + medium/content
+- Source detail: Instagram / Facebook / TikTok / LinkedIn + medium/content
 - First-touch channel: platform name
 - Campaign: UTM campaign
 - Referrer: source page/site when available
@@ -495,6 +593,24 @@ Jeremiah should mark each item after checking the live account.
 - [ ] DM/comment notifications confirmed
 - [ ] Business Center / Ads Manager access noted for Phase 2
 
+## LinkedIn
+
+- [x] Company Page created
+- [x] Page name confirmed
+- [x] Public Page URL confirmed
+- [x] Circled-K profile image set
+- [x] Industry shown as Real Estate
+- [x] Public website present
+- [x] Public phone present
+- [ ] Super Admin view/settings confirmed
+- [ ] Tagline normalized to current positioning
+- [ ] About/Overview normalized to current five-area model
+- [ ] Tracked LinkedIn website URL set
+- [ ] Tracked LinkedIn CTA set where available
+- [ ] Services description normalized to current service model
+- [ ] Company size band reviewed for accuracy
+- [ ] Message/request ownership confirmed
+
 ## Website
 
 Do not mark these complete until an approved release puts the launch-readiness changes live:
@@ -511,7 +627,7 @@ No production deployment is authorized by this setup document.
 
 Day 2 is complete when:
 
-1. all three social profiles use consistent Koinonia positioning
+1. Facebook, Instagram, TikTok, and LinkedIn use consistent Koinonia positioning
 2. each primary profile CTA points to the correct tracked destination
 3. Facebook and Instagram are connected correctly in Meta
 4. TikTok is confirmed as the Koinonia Business Account
