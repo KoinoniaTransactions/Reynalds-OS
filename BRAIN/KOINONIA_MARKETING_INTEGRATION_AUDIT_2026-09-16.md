@@ -271,11 +271,13 @@ Operator screenshots of the live member view confirm:
 
 Required LinkedIn-specific cleanup:
 
-1. move tagline/About/Services language to the current five-area public capability model used by the website;
-2. replace the plain website field with the tracked LinkedIn organic-profile URL;
-3. configure a tracked website/contact CTA where the Page admin interface permits;
-4. confirm Super Admin settings and inbound message/request ownership;
-5. confirm the `2-10 employees` size band is accurate.
+1. Tagline updated to current broader Koinonia positioning — COMPLETE.
+2. About/Overview updated to current five-area public capability model — COMPLETE.
+3. Services language still needs review against the current website capability model.
+4. Replace the plain website field with the tracked LinkedIn organic-profile URL.
+5. Configure a tracked website/contact CTA where the Page admin interface permits.
+6. Confirm Super Admin settings and inbound message/request ownership.
+7. Confirm the `2-10 employees` size band is accurate.
 
 Do not reopen completed Facebook/Instagram/TikTok setup simply because LinkedIn was added. LinkedIn is an incremental channel addition to the existing marketing system.
 
