@@ -274,7 +274,7 @@ Required LinkedIn-specific cleanup:
 1. Tagline updated to current broader Koinonia positioning — COMPLETE.
 2. About/Overview updated to current five-area public capability model — COMPLETE.
 3. Services language still needs review against the current website capability model.
-4. Replace the plain website field with the tracked LinkedIn organic-profile URL.
+4. Tracked LinkedIn organic-profile website URL — COMPLETE (operator screenshot confirms tracked URL is live).
 5. Configure a tracked website/contact CTA where the Page admin interface permits.
 6. Confirm Super Admin settings and inbound message/request ownership.
 7. Confirm the `2-10 employees` size band is accurate.
