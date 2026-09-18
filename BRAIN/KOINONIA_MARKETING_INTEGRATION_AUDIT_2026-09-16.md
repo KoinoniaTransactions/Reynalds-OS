@@ -207,6 +207,23 @@ Operator evidence:
 
 TikTok Overview still displayed `Status: Not ready for campaign` and had not yet visually advanced the `Browser events received` setup step when checked only minutes after the test. Treat this as platform-status/UI propagation still pending; do not claim campaign readiness yet.
 
+
+## TikTok organic profile / business verification update — 2026-09-18
+
+Stage 1 organic-profile verification advanced:
+
+- Public TikTok account confirmed as `Koinonia Transactions` with username `@koinoniatransactions`.
+- Approved circled-K profile image is in use.
+- Approved TikTok bio is now in use: `Operations support for Colorado Realtors. Need help carrying the operation? ↓`
+- TikTok Business Suite is available on the account, but one Business Suite surface still labels the account `Personal account` despite the owner having switched the profile to Business Account on 2026-09-17.
+- The mobile Verify flow produced `Something went wrong` when re-entered.
+- The existing Business Registration record was then located and is already `Pending / Under Review`.
+- That pending registration shows the Koinonia company website, legal business name `KOINONIA TRANSACTIONS LLC`, and an IRS EIN assignment document uploaded as company certification.
+- Do not submit a duplicate verification application or toggle the account back and forth between Personal and Business while this registration is pending.
+- Do not store or repeat the EIN itself in repository documentation.
+- The profile Website field is not yet available; treat the tracked TikTok profile destination as pending until Business Registration review finishes and/or TikTok exposes the Website field.
+- TikTok organic profile setup is therefore PARTIALLY COMPLETE / VERIFICATION PENDING, not blocked by missing company formation or missing EIN documentation.
+
 ## Current gates and next work
 
 - Do not merge PR #36 yet.
