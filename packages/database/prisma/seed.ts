@@ -2,7 +2,33 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+async function ensureSeedTimelineEvent(input: {
+  workspaceId: string;
+  objectId: string;
+  actorId?: string | null;
+  eventType: string;
+  summary: string;
+}) {
+  const existing = await prisma.timelineEvent.findFirst({
+    where: {
+      workspaceId: input.workspaceId,
+      objectId: input.objectId,
+      eventType: input.eventType,
+      summary: input.summary
+    }
+  });
+
+  if (!existing) {
+    await prisma.timelineEvent.create({ data: input });
+  }
+}
+
 async function main() {
+  const seedMode = process.env.REYNALDS_SEED_MODE ?? "all";
+  const rbOnly = seedMode === "rb-only";
+  let koinoniaWorkspaceId: string | null = null;
+
+  if (!rbOnly) {
   const workspace = await prisma.workspace.upsert({
     where: { id: "wks_koinonia" },
     update: {},
@@ -91,6 +117,8 @@ async function main() {
     });
   }
 
+    koinoniaWorkspaceId = workspace.id;
+  }
 
   const rbWorkspace = await prisma.workspace.upsert({
     where: { id: "wks_reynalds_brothers" },
@@ -2992,25 +3020,23 @@ async function main() {
     });
   }
 
-  await prisma.timelineEvent.create({
-    data: {
-      workspaceId: rbWorkspace.id,
-      objectId: "rb_wi_acc_1540",
-      actorId: "usr_owner",
-      eventType: "seed.created",
-      summary: "Seed data created for Reynalds Brothers Work Item engine."
-    }
+  await ensureSeedTimelineEvent({
+    workspaceId: rbWorkspace.id,
+    objectId: "rb_wi_acc_1540",
+    actorId: "usr_owner",
+    eventType: "seed.created",
+    summary: "Seed data created for Reynalds Brothers Work Item engine."
   });
 
-  await prisma.timelineEvent.create({
-    data: {
-      workspaceId: workspace.id,
+  if (koinoniaWorkspaceId) {
+    await ensureSeedTimelineEvent({
+      workspaceId: koinoniaWorkspaceId,
       objectId: "obj_txn_smith",
       actorId: "usr_owner",
       eventType: "seed.created",
       summary: "Seed data created for Smith Transaction."
-    }
-  });
+    });
+  }
 }
 
 main()
