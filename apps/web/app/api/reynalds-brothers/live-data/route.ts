@@ -5,47 +5,55 @@ export const dynamic = "force-dynamic";
 import { prisma } from "../../../../lib/db";
 
 const RB_WORKSPACE_ID = "wks_reynalds_brothers";
+const HISTORICAL_INDEXED_MESSAGE_COUNT = 1600;
 
-const snapshotStatus = {
-  source: "Gmail",
-  label: "WalMart Tanks",
-  mailboxPath: "wmtanks@reynaldsbrothers.com",
-  indexedMessageCount: 1600,
-  hasMoreIndexedMessages: true,
-  filedCommunications: 83,
-  reviewQueueItems: 16,
-  workItemCount: 66,
-  storeCount: 63,
-  liveStatus: "partial-live-snapshot",
-  nextStep: "Finish Gmail pagination and background import before trial launch.",
-  hostingStatus: "Sites private trial deployed at https://reynalds-brothers-os-trial.koinoniaadmi-1192.chatgpt.site"
-};
+function jsonArrayLength(value: unknown): number {
+  return Array.isArray(value) ? value.length : 0;
+}
 
 export async function GET() {
   try {
-    const workItems = await prisma.rosObject.findMany({
-      where: {
-        workspaceId: RB_WORKSPACE_ID,
-        objectType: "rb.work_item",
-        archivedAt: null
-      },
-      select: {
-        id: true,
-        data: true
-      }
-    });
+    const [workItems, firstClassCommunicationCount, openReviewCount, checkpoint] = await Promise.all([
+      prisma.rosObject.findMany({
+        where: {
+          workspaceId: RB_WORKSPACE_ID,
+          objectType: "rb.work_item",
+          archivedAt: null
+        },
+        select: {
+          id: true,
+          data: true
+        }
+      }),
+      prisma.communication.count({
+        where: { workspaceId: RB_WORKSPACE_ID }
+      }),
+      prisma.communicationReviewItem.count({
+        where: {
+          workspaceId: RB_WORKSPACE_ID,
+          status: "open"
+        }
+      }),
+      prisma.importCheckpoint.findFirst({
+        where: {
+          workspaceId: RB_WORKSPACE_ID,
+          source: "gmail"
+        },
+        orderBy: { updatedAt: "desc" }
+      })
+    ]);
 
-    let filedCommunications = 0;
-    let reviewQueueItems = 0;
+    let legacyFiledCommunications = 0;
+    let legacyReviewQueueItems = 0;
     const storeNumbers = new Set<string>();
 
     for (const item of workItems) {
       const data = item.data as Record<string, unknown> | null;
-      const communications = Array.isArray(data?.communications) ? data.communications : [];
-      const reviewQueue = Array.isArray(data?.reviewQueue) ? data.reviewQueue : [];
-
-      filedCommunications += communications.length;
-      reviewQueueItems += reviewQueue.length;
+      legacyFiledCommunications += Math.max(
+        jsonArrayLength(data?.communicationLog),
+        jsonArrayLength(data?.communications)
+      );
+      legacyReviewQueueItems += jsonArrayLength(data?.reviewQueue);
 
       if (typeof data?.storeNumber === "string" && data.storeNumber.trim()) {
         storeNumbers.add(data.storeNumber);
@@ -53,17 +61,45 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      ...snapshotStatus,
-      filedCommunications,
-      reviewQueueItems,
+      dataMode: "database",
+      protectedHosting: "vercel-authentication",
       workItemCount: workItems.length,
       storeCount: storeNumbers.size,
-      dataMode: "database"
+      communicationStorage: {
+        legacyWorkItemJson: legacyFiledCommunications,
+        firstClassRows: firstClassCommunicationCount
+      },
+      reviewQueue: {
+        legacyWorkItemJson: legacyReviewQueueItems,
+        firstClassOpenRows: openReviewCount
+      },
+      gmail: {
+        liveSync: false,
+        mailbox: "wmtanks@reynaldsbrothers.com",
+        label: "WalMart Tanks",
+        historicalIndexedMessageCount: HISTORICAL_INDEXED_MESSAGE_COUNT,
+        checkpoint: checkpoint
+          ? {
+              status: checkpoint.status,
+              cursorPresent: Boolean(checkpoint.cursor),
+              lastSyncedAt: checkpoint.lastSyncedAt
+            }
+          : null,
+        note: "Historical Gmail evidence is present, but live Gmail synchronization is not implemented in Phase 1."
+      }
     });
-  } catch {
+  } catch (error) {
     return NextResponse.json({
-      ...snapshotStatus,
-      dataMode: "snapshot-fallback"
+      dataMode: "snapshot-fallback",
+      protectedHosting: "vercel-authentication",
+      warning: error instanceof Error ? error.message : "Database unavailable.",
+      gmail: {
+        liveSync: false,
+        mailbox: "wmtanks@reynaldsbrothers.com",
+        label: "WalMart Tanks",
+        historicalIndexedMessageCount: HISTORICAL_INDEXED_MESSAGE_COUNT,
+        note: "Historical snapshot only; no live Gmail synchronization."
+      }
     });
   }
 }
