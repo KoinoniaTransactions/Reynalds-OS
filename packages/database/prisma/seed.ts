@@ -28,6 +28,29 @@ async function main() {
   const rbOnly = seedMode === "rb-only";
   let koinoniaWorkspaceId: string | null = null;
 
+  if (rbOnly) {
+    const foreignWorkspaces = await prisma.workspace.findMany({
+      where: {
+        id: { not: "wks_reynalds_brothers" }
+      },
+      select: {
+        id: true,
+        name: true,
+        type: true
+      }
+    });
+
+    if (foreignWorkspaces.length > 0) {
+      const workspaceNames = foreignWorkspaces
+        .map((workspace) => `${workspace.name} (${workspace.id})`)
+        .join(", ");
+
+      throw new Error(
+        `RB-only seed refused to run because this database already contains non-Reynalds-Brothers workspaces: ${workspaceNames}`
+      );
+    }
+  }
+
   if (!rbOnly) {
   const workspace = await prisma.workspace.upsert({
     where: { id: "wks_koinonia" },
