@@ -7,7 +7,6 @@ import {
   mergeCommunicationHistory
 } from "../../../../lib/reynalds-brothers-communications";
 import {
-  REYNALDS_BROTHERS_COMMUNICATION_TYPE,
   REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL,
   classifyEmailForWorkItem,
   getDefaultWorkItemDataForClassification,
@@ -16,8 +15,6 @@ import {
 import {
   REYNALDS_BROTHERS_WORKSPACE_ID,
   REYNALDS_BROTHERS_WORK_ITEM_TYPE,
-  addCommunicationToWorkItemData,
-  reynaldsBrothersFallbackWorkItems,
   type ReynaldsBrothersWorkItem,
   type ReynaldsBrothersWorkItemData
 } from "../../../../lib/reynalds-brothers-work-items";
@@ -35,7 +32,7 @@ function getPermissionErrorResponse(error: unknown): NextResponse | null {
   return null;
 }
 
-type EmailIntakeAction = "analyze_only" | "file_to_existing" | "create_work_item";
+type EmailIntakeAction = "analyze_only" | "file_to_existing" | "create_work_item" | "queue_for_review";
 
 type EmailIntakeRequest = {
   action?: EmailIntakeAction;
@@ -132,22 +129,48 @@ export async function POST(request: Request) {
     const action = payload.action ?? "analyze_only";
     const email = validateEmailIntake(payload.email);
     const databaseWorkItems = await getDatabaseWorkItems();
-    const workItems = databaseWorkItems.length > 0 ? databaseWorkItems : reynaldsBrothersFallbackWorkItems;
-    const classification = classifyEmailForWorkItem(email, workItems);
+    const classification = classifyEmailForWorkItem(email, databaseWorkItems);
 
     if (action === "analyze_only") {
       return NextResponse.json({ classification });
     }
 
+    const externalMessageId = email.providerMessageId ?? `manual:${crypto.randomUUID()}`;
+    const sourceLabel = email.sourceLabel ?? REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL;
+    const confidenceScore = classification.confidence === "high" ? 100 : classification.confidence === "medium" ? 70 : 30;
+    const sentAt = email.receivedAt ? new Date(email.receivedAt) : null;
+
+    const existingCommunication = await prisma.communication.findUnique({
+      where: {
+        workspaceId_source_externalMessageId: {
+          workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
+          source: "gmail",
+          externalMessageId
+        }
+      },
+      include: {
+        attachments: true,
+        reviewItem: true
+      }
+    });
+
+    if (existingCommunication && action !== "queue_for_review") {
+      return NextResponse.json({
+        communicationId: existingCommunication.id,
+        workItemId: existingCommunication.workItemId,
+        classification,
+        duplicate: true
+      });
+    }
+
     const targetWorkItemId = payload.workItemId ?? classification.matchedWorkItemId;
     let workItemId = targetWorkItemId;
     let workItemName = classification.matchedWorkItemName;
-    let workItemData: ReynaldsBrothersWorkItemData = {};
 
     if (action === "create_work_item") {
       const defaultWorkItemData: ReynaldsBrothersWorkItemData = {
         ...getDefaultWorkItemDataForClassification(classification),
-        sourceReferenceId: email.providerMessageId,
+        sourceReferenceId: externalMessageId,
         intakeReasons: classification.reasons
       };
       const workItem = await prisma.rosObject.create({
@@ -165,7 +188,106 @@ export async function POST(request: Request) {
 
       workItemId = workItem.id;
       workItemName = workItem.name;
-      workItemData = defaultWorkItemData;
+    }
+
+    if (action === "file_to_existing" && !workItemId) {
+      return NextResponse.json({
+        error: "A Work Item must be selected before this email can be filed."
+      }, { status: 400 });
+    }
+
+    const shouldQueueForReview = action === "queue_for_review"
+      || (!workItemId && classification.action === "needs_review");
+
+    const communication = existingCommunication ?? await prisma.communication.create({
+      data: {
+        workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
+        source: "gmail",
+        externalMessageId,
+        externalThreadId: email.providerThreadId,
+        workItemId: shouldQueueForReview ? null : workItemId,
+        subject: email.subject,
+        sender: email.from,
+        recipients: email.to ? [email.to] : [],
+        sentAt: sentAt && !Number.isNaN(sentAt.getTime()) ? sentAt : null,
+        snippet: email.snippet,
+        bodyText: email.body,
+        sourceUrl: email.sourceUrl,
+        status: shouldQueueForReview ? "review" : "filed",
+        matchConfidence: confidenceScore,
+        matchEvidence: {
+          confidence: classification.confidence,
+          action: classification.action,
+          reasons: classification.reasons
+        },
+        identifiers: {
+          storeNumbers: classification.extractedStoreNumbers ?? [],
+          suggestedStoreNumber: classification.suggestedStoreNumber ?? null
+        },
+        location: classification.suggestedLocation
+          ? {
+              display: classification.suggestedLocation,
+              city: classification.suggestedCity ?? null,
+              state: classification.suggestedState ?? null
+            }
+          : undefined,
+        rawMetadata: {
+          channel: "email",
+          direction: "inbound",
+          sourceLabel,
+          humanResponseStatus: shouldQueueForReview ? "Needs Review" : "Needs Response",
+          filedBy: user.name
+        }
+      }
+    });
+
+    if (!existingCommunication && (email.attachments ?? []).length > 0) {
+      await prisma.communicationAttachment.createMany({
+        data: (email.attachments ?? []).map((fileName, index) => ({
+          communicationId: communication.id,
+          externalAttachmentId: `${externalMessageId}:${index + 1}`,
+          fileName
+        })),
+        skipDuplicates: true
+      });
+    }
+
+    if (shouldQueueForReview) {
+      const reviewItem = await prisma.communicationReviewItem.upsert({
+        where: {
+          communicationId: communication.id
+        },
+        update: {
+          category: classification.multiStoreFlag ? "multi_store" : "unmatched",
+          reason: classification.reasons.join(" "),
+          status: "open",
+          confidence: confidenceScore,
+          evidence: {
+            classification,
+            sourceLabel
+          }
+        },
+        create: {
+          workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
+          communicationId: communication.id,
+          suggestedWorkItemId: classification.matchedWorkItemId,
+          category: classification.multiStoreFlag ? "multi_store" : "unmatched",
+          reason: classification.reasons.join(" "),
+          status: "open",
+          confidence: confidenceScore,
+          evidence: {
+            classification,
+            sourceLabel
+          }
+        }
+      });
+
+      return NextResponse.json({
+        communicationId: communication.id,
+        reviewItemId: reviewItem.id,
+        classification,
+        queuedForReview: true
+      }, { status: existingCommunication ? 200 : 201 });
     }
 
     if (!workItemId) {
@@ -174,100 +296,72 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
-    if (action !== "create_work_item") {
-      const existingWorkItem = await prisma.rosObject.findUnique({
-        where: { id: workItemId }
-      });
-
-      workItemName = existingWorkItem?.name ?? workItemName;
-      workItemData = toWorkItemData(existingWorkItem?.data ?? null) ?? {};
-    }
-
-    const now = new Date().toISOString();
-    const sourceLabel = email.sourceLabel ?? REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL;
-    const communication = await prisma.rosObject.create({
+    await prisma.communication.update({
+      where: { id: communication.id },
       data: {
-        workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
-        objectType: REYNALDS_BROTHERS_COMMUNICATION_TYPE,
-        name: email.subject,
-        status: "Filed",
-        health: "Healthy",
-        ownerId: user.id,
-        nextAction: classification.suggestedNextAction,
-        data: {
+        workItemId,
+        status: "filed",
+        rawMetadata: {
           channel: "email",
-          providerMessageId: email.providerMessageId,
-          from: email.from,
-          to: email.to,
-          receivedAt: email.receivedAt,
-          snippet: email.snippet,
-          body: email.body,
+          direction: "inbound",
           sourceLabel,
-          attachments: email.attachments ?? [],
           humanResponseStatus: "Needs Response",
-          classification
-        } as Prisma.InputJsonValue
-      }
-    });
-
-    await prisma.objectRelationship.create({
-      data: {
-        sourceObjectId: communication.id,
-        targetObjectId: workItemId,
-        relationshipType: "filed_under"
-      }
-    });
-
-    const communicationEntry = {
-      id: communication.id,
-      channel: "email",
-      direction: "inbound",
-      sourceLabel,
-      subject: email.subject,
-      from: email.from,
-      to: email.to,
-      occurredAt: email.receivedAt ?? now,
-      snippet: email.snippet,
-      body: email.body,
-      providerMessageId: email.providerMessageId,
-      communicationObjectId: communication.id,
-      attachments: email.attachments ?? [],
-      classificationConfidence: classification.confidence,
-      matchedBy: classification.reasons,
-      humanResponseStatus: "Needs Response",
-      filedBy: user.name,
-      filedAt: now
-    };
-    const nextWorkItemData = addCommunicationToWorkItemData(workItemData, communicationEntry);
-
-    await prisma.rosObject.update({
-      where: { id: workItemId },
-      data: {
-        data: nextWorkItemData as Prisma.InputJsonValue
-      }
-    });
-
-    await prisma.timelineEvent.create({
-      data: {
-        workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
-        objectId: workItemId,
-        actorId: user.id,
-        eventType: "rb.email.filed",
-        summary: `Email filed under ${workItemName ?? "Reynalds Brothers Work Item"}: ${email.subject}`,
-        newValue: {
-          communicationId: communication.id,
-          providerMessageId: email.providerMessageId,
-          sourceLabel,
-          communicationEntry,
-          classification
+          filedBy: user.name
         }
       }
     });
 
+    const existingReview = await prisma.communicationReviewItem.findUnique({
+      where: { communicationId: communication.id }
+    });
+
+    if (existingReview && existingReview.status === "open") {
+      await prisma.communicationReviewItem.update({
+        where: { id: existingReview.id },
+        data: {
+          suggestedWorkItemId: workItemId,
+          status: "resolved",
+          resolvedById: user.id,
+          resolvedAt: new Date()
+        }
+      });
+    }
+
+    const timelineEvent = await prisma.timelineEvent.findFirst({
+      where: {
+        workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
+        objectId: workItemId,
+        eventType: "rb.email.filed",
+        newValue: {
+          path: ["communicationId"],
+          equals: communication.id
+        }
+      }
+    });
+
+    if (!timelineEvent) {
+      await prisma.timelineEvent.create({
+        data: {
+          workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
+          objectId: workItemId,
+          actorId: user.id,
+          eventType: "rb.email.filed",
+          summary: `Email filed under ${workItemName ?? "Reynalds Brothers Work Item"}: ${email.subject}`,
+          newValue: {
+            communicationId: communication.id,
+            providerMessageId: externalMessageId,
+            sourceLabel,
+            classification
+          }
+        }
+      });
+    }
+
     return NextResponse.json({
       communicationId: communication.id,
       workItemId,
-      classification
+      classification,
+      duplicate: Boolean(existingCommunication)
     }, { status: action === "create_work_item" ? 201 : 200 });
   } catch (error) {
     const authErrorResponse = getPermissionErrorResponse(error);
