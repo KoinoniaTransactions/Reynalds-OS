@@ -6,6 +6,7 @@ import {
   getBillingPassoffSummary,
   getChecklistProgress,
   getCommunicationSummary,
+  getCompatibleCommunicationLog,
   getActivationPhaseForJobType,
   getOpenChecklistItems,
   getPhaseTrackForJobType,
@@ -112,6 +113,39 @@ describe("Reynalds Brothers work item engine", () => {
     expect(withInboundEmail.communicationNeedsResponse).toBe(true);
     expect(withDocumentedAction.lastCommunicationSubject).toBe("Called store about UCO delivery");
     expect(getWorkItemAlerts(item)).toContain("1 communication need human response documentation.");
+  });
+
+  it("renders historical seed communications through the current communication summary", () => {
+    const legacyData = {
+      storeNumber: "6958",
+      communications: [
+        {
+          gmailId: "19faf007bfe01e01",
+          threadId: "19faf007bfe01e01",
+          subject: "Re: store: WM 6958 ACC UCO Work Completion",
+          sender: "Jotform via Walmart Paperwork",
+          sentAt: "2026-07-29T13:51:08-04:00",
+          matchConfidence: "high",
+          displayUrl: "https://mail.google.com/mail/#all/19faf007bfe01e01",
+          attachmentNames: ["6958-Completed-level-2-triage-on-all-tanks.pdf"]
+        }
+      ]
+    };
+    const communications = getCompatibleCommunicationLog(legacyData);
+    const summary = getCommunicationSummary({
+      id: "legacy_6958",
+      objectType: REYNALDS_BROTHERS_WORK_ITEM_TYPE,
+      name: "WM 6958",
+      status: "Completion Review",
+      health: "Healthy",
+      data: legacyData
+    });
+
+    expect(communications).toHaveLength(1);
+    expect(communications[0].providerMessageId).toBe("19faf007bfe01e01");
+    expect(communications[0].attachments).toEqual(["6958-Completed-level-2-triage-on-all-tanks.pdf"]);
+    expect(summary.total).toBe(1);
+    expect(summary.lastCommunication?.subject).toContain("WM 6958");
   });
 
   it("keeps completed jobs clear unless a new communication needs response", () => {
