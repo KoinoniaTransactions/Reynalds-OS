@@ -3,6 +3,10 @@ import type { Prisma } from "@reynalds-os/database";
 import { assertPermission } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/db";
 import {
+  databaseCommunicationToEntry,
+  mergeCommunicationHistory
+} from "../../../../lib/reynalds-brothers-communications";
+import {
   REYNALDS_BROTHERS_WORKSPACE_ID,
   REYNALDS_BROTHERS_WORK_ITEM_TYPE,
   getWorkItemMetrics,
@@ -97,18 +101,34 @@ export async function GET() {
         objectType: REYNALDS_BROTHERS_WORK_ITEM_TYPE,
         archivedAt: null
       },
+      include: {
+        communications: {
+          include: {
+            attachments: true
+          },
+          orderBy: [
+            { sentAt: "desc" },
+            { createdAt: "desc" }
+          ]
+        }
+      },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }]
     });
 
-    const databaseWorkItems: ReynaldsBrothersWorkItem[] = objects.map((object) => normalizeWorkItemStatus({
-      id: object.id,
-      objectType: object.objectType,
-      name: object.name,
-      status: object.status,
-      health: object.health,
-      nextAction: object.nextAction,
-      data: toWorkItemData(object.data)
-    }));
+    const databaseWorkItems: ReynaldsBrothersWorkItem[] = objects.map((object) => {
+      const data = toWorkItemData(object.data) ?? {};
+      const databaseCommunications = object.communications.map(databaseCommunicationToEntry);
+
+      return normalizeWorkItemStatus({
+        id: object.id,
+        objectType: object.objectType,
+        name: object.name,
+        status: object.status,
+        health: object.health,
+        nextAction: object.nextAction,
+        data: mergeCommunicationHistory(data, databaseCommunications)
+      });
+    });
     return NextResponse.json({
       source: "database",
       metrics: getWorkItemMetrics(databaseWorkItems),
