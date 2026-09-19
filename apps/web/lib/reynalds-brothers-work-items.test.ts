@@ -7,6 +7,9 @@ import {
   getChecklistProgress,
   getCommunicationSummary,
   getCompatibleCommunicationLog,
+  getDailyAttentionQueues,
+  getSchedulingBlockerReasons,
+  isFollowUpOverdue,
   getActivationPhaseForJobType,
   getOpenChecklistItems,
   getPhaseTrackForJobType,
@@ -37,6 +40,102 @@ describe("Reynalds Brothers work item engine", () => {
     expect(metrics.redFlags).toBeGreaterThan(0);
     expect(metrics.missingCrew).toBe(3);
     expect(metrics.missingDocumentation).toBe(3);
+  });
+
+  it("builds the daily attention queues from operational fields", () => {
+    const items = [
+      {
+        ...reynaldsBrothersFallbackWorkItems[0],
+        nextAction: "",
+        data: {
+          ...(reynaldsBrothersFallbackWorkItems[0].data ?? {}),
+          priority: "High",
+          officeOwner: "Jeremiah Reynalds",
+          followUpDueDate: "2026-09-17",
+          blockerStatus: "Blocked",
+          blockerReason: "Waiting on permit authority"
+        }
+      },
+      {
+        ...reynaldsBrothersFallbackWorkItems[1],
+        status: "Needs Approval",
+        data: {
+          ...(reynaldsBrothersFallbackWorkItems[1].data ?? {}),
+          approvalStatus: "Needs Approval",
+          followUpDueDate: "2026-09-20"
+        }
+      }
+    ];
+
+    const queues = getDailyAttentionQueues(items, new Date("2026-09-18T12:00:00-06:00"));
+
+    expect(queues.find((queue) => queue.key === "approval")?.workItems).toHaveLength(1);
+    expect(queues.find((queue) => queue.key === "overdue")?.workItems.map((item) => item.name)).toContain(items[0].name);
+    expect(queues.find((queue) => queue.key === "next-action")?.workItems.map((item) => item.name)).toContain(items[0].name);
+    expect(queues.find((queue) => queue.key === "blockers")?.workItems.map((item) => item.name)).toContain(items[0].name);
+  });
+
+  it("detects overdue follow-ups only for active jobs with YYYY-MM-DD dates", () => {
+    const item = {
+      ...reynaldsBrothersFallbackWorkItems[0],
+      data: {
+        ...(reynaldsBrothersFallbackWorkItems[0].data ?? {}),
+        followUpDueDate: "2026-09-17"
+      }
+    };
+
+    expect(isFollowUpOverdue(item, new Date("2026-09-18T08:00:00-06:00"))).toBe(true);
+    expect(isFollowUpOverdue({
+      ...item,
+      data: {
+        ...(item.data ?? {}),
+        followUpDueDate: "2026-09-18"
+      }
+    }, new Date("2026-09-18T08:00:00-06:00"))).toBe(false);
+  });
+
+  it("explains scheduling blockers from PO, permit, tank, oil, and explicit blocker state", () => {
+    const item = {
+      ...reynaldsBrothersFallbackWorkItems[0],
+      data: {
+        ...(reynaldsBrothersFallbackWorkItems[0].data ?? {}),
+        blockerStatus: "Blocked",
+        blockerReason: "Waiting on landlord signature"
+      }
+    };
+
+    const reasons = getSchedulingBlockerReasons(item);
+
+    expect(reasons).toContain("PO missing");
+    expect(reasons).toContain("Permits incomplete");
+    expect(reasons).toContain("Tank package not ready");
+    expect(reasons).toContain("Oil removal not coordinated");
+    expect(reasons).toContain("Blocked: Waiting on landlord signature");
+  });
+
+  it("preserves legacy Gmail history when a new communication is added", () => {
+    const legacyData = {
+      storeNumber: "6958",
+      communications: [
+        {
+          gmailId: "legacy_message_1",
+          subject: "Historical message",
+          sender: "walmart@example.com",
+          sentAt: "2026-07-01T12:00:00Z"
+        }
+      ]
+    };
+
+    const next = addCommunicationToWorkItemData(legacyData, {
+      id: "manual_1",
+      channel: "phone",
+      direction: "outbound",
+      subject: "Called store",
+      humanResponseStatus: "Documented"
+    });
+
+    expect(next.communicationLog?.map((entry) => entry.id)).toContain("legacy_message_1");
+    expect(next.communicationLog?.map((entry) => entry.id)).toContain("manual_1");
   });
 
   it("groups approved active work into route batches", () => {
