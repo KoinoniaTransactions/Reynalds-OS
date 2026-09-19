@@ -3,9 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./ReynaldsBrothersOperationsSystem.module.css";
 import {
-  type ReynaldsBrothersEmailClassification,
-  type ReynaldsBrothersEmailCandidate,
-  reynaldsBrothersFallbackEmails
+  type ReynaldsBrothersEmailCandidate
 } from "../../lib/reynalds-brothers-email-intake";
 import {
   REYNALDS_BROTHERS_WORK_ITEM_TYPE,
@@ -2106,7 +2104,7 @@ export function ReynaldsBrothersOperationsSystem() {
           {emailActionMessage ? <p className="rb-action-message">{emailActionMessage}</p> : null}
 
           <div className="rb-email-grid">
-            {(emailCandidates.length > 0 ? emailCandidates : getPreviewEmailCandidates()).map((email) => (
+            {emailCandidates.map((email) => (
               <article className="rb-email-card" key={email.id}>
                 <div className="rb-email-card-heading">
                   <span className={`rb-email-action ${email.classification.action}`}>
@@ -2161,6 +2159,9 @@ export function ReynaldsBrothersOperationsSystem() {
                 </div>
               </article>
             ))}
+            {emailCandidates.length === 0 ? (
+              <p className="rb-empty">No live Gmail queue is connected yet. Paste an email above for manual analysis, or wait for the Gmail integration phase.</p>
+            ) : null}
           </div>
         </section>
 
@@ -2223,19 +2224,6 @@ function formatCommunicationTime(value?: string | null): string {
     hour: "numeric",
     minute: "2-digit"
   });
-}
-
-function getPreviewEmailCandidates(): ReynaldsBrothersEmailCandidate[] {
-  return reynaldsBrothersFallbackEmails.map((email, index) => ({
-    ...email,
-    id: email.providerMessageId ?? `email_preview_${index}`,
-    classification: {
-      action: "needs_review",
-      confidence: "low",
-      suggestedNextAction: "Connect email intake to review filing recommendation.",
-      reasons: ["Preview queue shown until authenticated email intake is available."]
-    } satisfies ReynaldsBrothersEmailClassification
-  }));
 }
 
 function getServiceLineFromJobType(jobType: string): string {
