@@ -82,12 +82,13 @@ async function getDatabaseWorkItems() {
 export async function GET() {
   try {
     await assertPermission("objects:view");
-    const databaseWorkItems = await getDatabaseWorkItems();
-    const workItems = databaseWorkItems.length > 0 ? databaseWorkItems : reynaldsBrothersFallbackWorkItems;
+    await getDatabaseWorkItems();
 
     return NextResponse.json({
-      source: databaseWorkItems.length > 0 ? "database" : "fallback",
-      candidates: buildEmailCandidates(reynaldsBrothersFallbackEmails, workItems)
+      source: "database",
+      liveSync: false,
+      candidates: [],
+      note: "Live Gmail synchronization is not enabled yet. Use manual email analysis until the Gmail integration phase."
     });
   } catch (error) {
     const authErrorResponse = getPermissionErrorResponse(error);
@@ -95,8 +96,9 @@ export async function GET() {
 
     return NextResponse.json({
       source: "fallback",
+      liveSync: false,
       warning: error instanceof Error ? error.message : "Database unavailable.",
-      candidates: buildEmailCandidates(reynaldsBrothersFallbackEmails, reynaldsBrothersFallbackWorkItems)
+      candidates: []
     });
   }
 }
