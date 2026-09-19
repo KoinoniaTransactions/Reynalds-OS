@@ -15,6 +15,7 @@ import {
   getBillingPassoffSummary,
   getChecklistProgress,
   getCommunicationSummary,
+  getCompatibleCommunicationLog,
   getDailyAttentionQueues,
   getFieldProofSummary,
   getPhaseProgress,
@@ -1466,7 +1467,7 @@ export function ReynaldsBrothersOperationsSystem() {
                     </div>
                     <p>{selectedCommunicationSummary.nextAction}</p>
                     <div className="rb-communication-list">
-                      {(selectedData.communicationLog ?? []).slice(0, 6).map((communication) => (
+                      {getCompatibleCommunicationLog(selectedData).slice(0, 6).map((communication) => (
                         <article className="rb-communication-card" key={communication.id}>
                           <div>
                             <span>{communication.sourceLabel ?? "wmtanks"}</span>
@@ -1481,7 +1482,7 @@ export function ReynaldsBrothersOperationsSystem() {
                           {communication.humanResponseBy ? <small>Documented by {communication.humanResponseBy}</small> : null}
                         </article>
                       ))}
-                      {(selectedData.communicationLog ?? []).length === 0 ? (
+                      {getCompatibleCommunicationLog(selectedData).length === 0 ? (
                         <p>No communications filed under this job yet.</p>
                       ) : null}
                     </div>
