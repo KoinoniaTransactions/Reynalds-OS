@@ -3,6 +3,10 @@ import type { Prisma } from "@reynalds-os/database";
 import { assertPermission } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/db";
 import {
+  databaseCommunicationToEntry,
+  mergeCommunicationHistory
+} from "../../../../lib/reynalds-brothers-communications";
+import {
   REYNALDS_BROTHERS_COMMUNICATION_TYPE,
   REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL,
   classifyEmailForWorkItem,
@@ -71,10 +75,30 @@ async function getDatabaseWorkItems() {
       objectType: REYNALDS_BROTHERS_WORK_ITEM_TYPE,
       archivedAt: null
     },
+    include: {
+      communications: {
+        include: {
+          attachments: true
+        },
+        orderBy: [
+          { sentAt: "desc" },
+          { createdAt: "desc" }
+        ]
+      }
+    },
     orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }]
   });
 
-  return objects.map(toWorkItem);
+  return objects.map((object) => {
+    const workItem = toWorkItem(object);
+    return {
+      ...workItem,
+      data: mergeCommunicationHistory(
+        workItem.data ?? {},
+        object.communications.map(databaseCommunicationToEntry)
+      )
+    };
+  });
 }
 
 export async function GET() {
