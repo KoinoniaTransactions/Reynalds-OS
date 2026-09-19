@@ -3035,7 +3035,7 @@ async function main() {
   for (const object of rbObjects) {
     await prisma.rosObject.upsert({
       where: { id: object.id },
-      update: object,
+      update: rbOnly ? {} : object,
       create: {
         ...object,
         workspaceId: rbWorkspace.id
