@@ -780,7 +780,7 @@ export function ReynaldsBrothersOperationsSystem() {
 
   async function processEmailCandidate(
     email: ReynaldsBrothersEmailCandidate,
-    action: "create_work_item" | "file_to_existing"
+    action: "create_work_item" | "file_to_existing" | "queue_for_review"
   ) {
     setError("");
     setEmailActionMessage("");
@@ -813,9 +813,13 @@ export function ReynaldsBrothersOperationsSystem() {
       await loadWorkItems();
       await loadEmailCandidates();
       if (payload.workItemId) setSelectedId(payload.workItemId);
-      setEmailActionMessage(action === "create_work_item"
-        ? "Email-created job added to Needs Approval and the email was filed to its timeline."
-        : "Email filed to the matched job timeline.");
+      setEmailActionMessage(
+        action === "create_work_item"
+          ? "Email-created job added to Needs Approval and the email was filed to the job."
+          : action === "queue_for_review"
+            ? "Email saved to the unresolved communication review queue."
+            : "Email filed to the matched job."
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Email action could not be completed.");
     } finally {
@@ -2154,13 +2158,20 @@ export function ReynaldsBrothersOperationsSystem() {
                     </button>
                   ) : null}
                   {email.classification.action === "needs_review" ? (
-                    <span className="rb-review-note">Unmatched queue</span>
+                    <button
+                      className="rb-secondary-button"
+                      disabled={emailActionPendingId === email.id}
+                      onClick={() => void processEmailCandidate(email, "queue_for_review")}
+                      type="button"
+                    >
+                      {emailActionPendingId === email.id ? "Queuing..." : "Queue for Review"}
+                    </button>
                   ) : null}
                 </div>
               </article>
             ))}
             {emailCandidates.length === 0 ? (
-              <p className="rb-empty">No live Gmail queue is connected yet. Paste an email above for manual analysis, or wait for the Gmail integration phase.</p>
+              <p className="rb-empty">Review queue is clear. Paste an email above for manual analysis; automatic Gmail sync is the next connection step.</p>
             ) : null}
           </div>
         </section>
