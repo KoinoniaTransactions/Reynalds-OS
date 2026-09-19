@@ -15,9 +15,11 @@ import {
   getBillingPassoffSummary,
   getChecklistProgress,
   getCommunicationSummary,
+  getDailyAttentionQueues,
   getFieldProofSummary,
   getPhaseProgress,
   getRouteBatches,
+  getSchedulingBlockerReasons,
   getTankInventorySummary,
   getPhaseTrackForJobType,
   getWorkItemData,
@@ -37,6 +39,8 @@ import {
   reynaldsBrothersJobTypes,
   reynaldsBrothersLucernexStatuses,
   reynaldsBrothersOfficeUsers,
+  reynaldsBrothersPriorities,
+  reynaldsBrothersBlockerStatuses,
   type ReynaldsBrothersCommunicationEntry,
   type ReynaldsBrothersWorkItemData,
   type ReynaldsBrothersWorkItemCreateInput,
@@ -98,6 +102,13 @@ const defaultCreateForm = {
   state: "",
   siteName: "",
   workType: "",
+  priority: "Normal",
+  officeOwner: "",
+  dateReceived: "",
+  followUpDueDate: "",
+  scheduledDate: "",
+  blockerStatus: "Clear",
+  blockerReason: "",
   nextAction: ""
 };
 
@@ -136,6 +147,14 @@ export function ReynaldsBrothersOperationsSystem() {
   const [statusUpdate, setStatusUpdate] = useState("Planning");
   const [healthUpdate, setHealthUpdate] = useState("Healthy");
   const [nextActionUpdate, setNextActionUpdate] = useState("");
+  const [priorityUpdate, setPriorityUpdate] = useState("Normal");
+  const [officeOwnerUpdate, setOfficeOwnerUpdate] = useState("");
+  const [dateReceivedUpdate, setDateReceivedUpdate] = useState("");
+  const [followUpDueDateUpdate, setFollowUpDueDateUpdate] = useState("");
+  const [scheduledDateUpdate, setScheduledDateUpdate] = useState("");
+  const [blockerStatusUpdate, setBlockerStatusUpdate] = useState("Clear");
+  const [blockerReasonUpdate, setBlockerReasonUpdate] = useState("");
+  const [quickActionPending, setQuickActionPending] = useState(false);
   const [crewLeadUpdate, setCrewLeadUpdate] = useState("");
   const [invoiceStatusUpdate, setInvoiceStatusUpdate] = useState("Not Ready");
   const [billingApprovalStatusUpdate, setBillingApprovalStatusUpdate] = useState("Not Started");
@@ -184,11 +203,18 @@ export function ReynaldsBrothersOperationsSystem() {
       const response = await fetch("/api/reynalds-brothers/work-items");
       if (!response.ok) throw new Error("Failed to load Reynalds Brothers work items.");
       const payload = (await response.json()) as ApiPayload;
-      const loaded = (payload.workItems?.length ? payload.workItems : reynaldsBrothersFallbackWorkItems).map(normalizeWorkItemStatus);
-      const trialItems = loadStoredTrialWorkItems();
-      const nextItems = mergeWorkItemLists(loaded, trialItems);
+      const liveDatabase = payload.source === "database";
+      const loaded = (
+        liveDatabase
+          ? payload.workItems ?? []
+          : payload.workItems?.length
+            ? payload.workItems
+            : reynaldsBrothersFallbackWorkItems
+      ).map(normalizeWorkItemStatus);
+      const trialItems = liveDatabase ? [] : loadStoredTrialWorkItems();
+      const nextItems = trialItems.length > 0 ? mergeWorkItemLists(loaded, trialItems) : loaded;
       setWorkItems(nextItems);
-      setSource(trialItems.length > 0 ? "trial" : payload.source ?? "fallback");
+      setSource(liveDatabase ? "database" : trialItems.length > 0 ? "trial" : payload.source ?? "fallback");
       setSelectedId((current) => (nextItems.some((item) => item.id === current) ? current : nextItems[0]?.id ?? ""));
       if (payload.warning) setError(payload.warning);
     } catch (err) {
@@ -231,6 +257,7 @@ export function ReynaldsBrothersOperationsSystem() {
   }, [search, workItems]);
 
   const metrics = getWorkItemMetrics(filtered);
+  const attentionQueues = getDailyAttentionQueues(filtered);
   const routeBatches = getRouteBatches(filtered);
   const selected = filtered.find((item) => item.id === selectedId) ?? filtered[0] ?? workItems[0];
   const selectedData = selected ? getWorkItemData(selected) : {};
@@ -246,6 +273,13 @@ export function ReynaldsBrothersOperationsSystem() {
     setStatusUpdate(selected.status);
     setHealthUpdate(selected.health);
     setNextActionUpdate(selected.nextAction ?? "");
+    setPriorityUpdate(selectedData.priority ?? "Normal");
+    setOfficeOwnerUpdate(selectedData.officeOwner ?? "");
+    setDateReceivedUpdate(selectedData.dateReceived ?? "");
+    setFollowUpDueDateUpdate(selectedData.followUpDueDate ?? "");
+    setScheduledDateUpdate(selectedData.scheduledDate ?? "");
+    setBlockerStatusUpdate(selectedData.blockerStatus ?? "Clear");
+    setBlockerReasonUpdate(selectedData.blockerReason ?? "");
     setCrewLeadUpdate(selectedData.crewLead ?? "");
     setInvoiceStatusUpdate(selectedData.invoiceStatus ?? "Not Ready");
     setBillingApprovalStatusUpdate(selectedData.billingApprovalStatus ?? "Not Started");
@@ -293,6 +327,13 @@ export function ReynaldsBrothersOperationsSystem() {
     selectedData.managerName,
     selectedData.managerTitle,
     selectedData.oilRemovalStatus,
+    selectedData.priority,
+    selectedData.officeOwner,
+    selectedData.dateReceived,
+    selectedData.followUpDueDate,
+    selectedData.scheduledDate,
+    selectedData.blockerStatus,
+    selectedData.blockerReason,
     selectedData.permitApprovedDate,
     selectedData.permitStatus,
     selectedData.permitSubmittedDate,
@@ -329,6 +370,13 @@ export function ReynaldsBrothersOperationsSystem() {
         workType: createForm.workType,
         phase: "Needs Approval",
         phaseTrack: getPhaseTrackForJobType(createForm.jobType),
+        priority: createForm.priority,
+        officeOwner: createForm.officeOwner || null,
+        dateReceived: createForm.dateReceived || null,
+        followUpDueDate: createForm.followUpDueDate || null,
+        scheduledDate: createForm.scheduledDate || null,
+        blockerStatus: createForm.blockerStatus,
+        blockerReason: createForm.blockerReason || null,
         checklistCompleted: [],
         poStatus: createForm.jobType === "Pressure Washing" ? "Not Required Yet" : "Missing",
         lucernexStatus: "Not Started",
@@ -363,10 +411,7 @@ export function ReynaldsBrothersOperationsSystem() {
       await loadWorkItems();
       if (payload.workItem?.id) setSelectedId(payload.workItem.id);
     } catch (err) {
-      const created = createLocalTrialWorkItem(input);
-      saveLocalWorkItem(created);
-      setCreateForm(defaultCreateForm);
-      setTrialImportMessage("Live database create was unavailable, so this job was added in local trial mode.");
+      setError(err instanceof Error ? err.message : "Work Item could not be created in the live database.");
     }
   }
 
@@ -468,6 +513,13 @@ export function ReynaldsBrothersOperationsSystem() {
     const nextData = {
       ...selectedData,
       phase: statusUpdate,
+      priority: priorityUpdate,
+      officeOwner: officeOwnerUpdate,
+      dateReceived: dateReceivedUpdate,
+      followUpDueDate: followUpDueDateUpdate,
+      scheduledDate: scheduledDateUpdate,
+      blockerStatus: blockerStatusUpdate,
+      blockerReason: blockerReasonUpdate,
       crewLead: crewLeadUpdate,
       invoiceStatus: invoiceStatusUpdate,
       billingApprovalStatus: billingApprovalStatusUpdate,
@@ -530,6 +582,52 @@ export function ReynaldsBrothersOperationsSystem() {
       if (payload.workItem?.id) setSelectedId(payload.workItem.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Work Item could not be updated.");
+    }
+  }
+
+  async function saveOperationalControls(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!selected) return;
+
+    setError("");
+    setQuickActionPending(true);
+
+    const nextData = {
+      ...selectedData,
+      priority: priorityUpdate,
+      officeOwner: officeOwnerUpdate,
+      dateReceived: dateReceivedUpdate,
+      followUpDueDate: followUpDueDateUpdate,
+      scheduledDate: scheduledDateUpdate,
+      blockerStatus: blockerStatusUpdate,
+      blockerReason: blockerReasonUpdate
+    };
+
+    if (source !== "database") {
+      setError("Operational quick actions are disabled outside the live Reynalds Brothers database.");
+      setQuickActionPending(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/reynalds-brothers/work-items/${selected.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nextAction: nextActionUpdate,
+          data: nextData
+        })
+      });
+
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Operational controls could not be saved.");
+
+      await loadWorkItems();
+      if (payload.workItem?.id) setSelectedId(payload.workItem.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Operational controls could not be saved.");
+    } finally {
+      setQuickActionPending(false);
     }
   }
 
