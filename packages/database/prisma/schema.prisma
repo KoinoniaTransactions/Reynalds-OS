@@ -24,6 +24,7 @@ model Workspace {
   communications       Communication[]
   communicationReviews CommunicationReviewItem[]
   importCheckpoints    ImportCheckpoint[]
+  gmailConnections     GmailConnection[]
 }
 
 model User {
@@ -194,6 +195,24 @@ model Payment {
   status      String
   receivedAt  DateTime?
   createdAt   DateTime  @default(now())
+}
+
+model GmailConnection {
+  id                    String   @id @default(cuid())
+  workspaceId           String
+  accountEmail          String
+  encryptedRefreshToken String
+  scopes                Json?
+  status                String   @default("active")
+  lastConnectedAt       DateTime @default(now())
+  metadata              Json?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@unique([workspaceId, accountEmail])
+  @@index([workspaceId, status])
 }
 
 model Communication {
