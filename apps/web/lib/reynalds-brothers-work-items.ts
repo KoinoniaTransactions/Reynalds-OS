@@ -84,6 +84,8 @@ export type ReynaldsBrothersWorkItemData = {
   dataQualityStatus?: string | null;
   spreadsheetFields?: Record<string, string>;
   communicationLog?: ReynaldsBrothersCommunicationEntry[];
+  // Canonical seed history used this legacy field before communicationLog was introduced.
+  communications?: unknown[];
   lastCommunicationAt?: string | null;
   lastCommunicationSubject?: string | null;
   communicationNeedsResponse?: boolean;
@@ -646,7 +648,7 @@ export function getWorkItemMetrics(items: ReynaldsBrothersWorkItem[]): ReynaldsB
 }
 
 export function getCommunicationSummary(item: ReynaldsBrothersWorkItem): ReynaldsBrothersCommunicationSummary {
-  const communications = getWorkItemData(item).communicationLog ?? [];
+  const communications = getCompatibleCommunicationLog(getWorkItemData(item));
   const needsResponse = communications.filter(communicationNeedsHumanReview).length;
   const documented = communications.filter(communicationHasHumanDocumentation).length;
   const lastCommunication = [...communications].sort(compareCommunicationsDescending)[0];
@@ -658,6 +660,39 @@ export function getCommunicationSummary(item: ReynaldsBrothersWorkItem): Reynald
     lastCommunication,
     nextAction: getCommunicationNextAction(communications.length, needsResponse)
   };
+}
+
+export function getCompatibleCommunicationLog(
+  data: ReynaldsBrothersWorkItemData
+): ReynaldsBrothersCommunicationEntry[] {
+  if (Array.isArray(data.communicationLog) && data.communicationLog.length > 0) {
+    return data.communicationLog;
+  }
+
+  if (!Array.isArray(data.communications)) return [];
+
+  return data.communications
+    .filter((entry): entry is Record<string, unknown> => Boolean(entry) && typeof entry === "object" && !Array.isArray(entry))
+    .map((entry, index) => normalizeCommunicationEntry({
+      id: getOptionalString(entry.id) ?? getOptionalString(entry.gmailId) ?? `comm_legacy_${index + 1}`,
+      channel: "email",
+      direction: "inbound",
+      sourceLabel: "wmtanks",
+      subject: getOptionalString(entry.subject) ?? "Historical Gmail communication",
+      from: getOptionalString(entry.sender) ?? getOptionalString(entry.from),
+      to: getOptionalString(entry.to),
+      occurredAt: getOptionalString(entry.sentAt) ?? getOptionalString(entry.occurredAt),
+      snippet: getOptionalString(entry.snippet),
+      body: getOptionalString(entry.body),
+      summary: getOptionalString(entry.summary),
+      providerMessageId: getOptionalString(entry.gmailId) ?? getOptionalString(entry.providerMessageId),
+      attachments: getStringList(entry.attachmentNames ?? entry.attachments),
+      classificationConfidence: getOptionalString(entry.matchConfidence) ?? getOptionalString(entry.classificationConfidence),
+      matchedBy: getStringList(entry.matchedBy),
+      humanResponseStatus: getOptionalString(entry.humanResponseStatus),
+      filedAt: getOptionalString(entry.filedAt)
+    }))
+    .sort(compareCommunicationsDescending);
 }
 
 export function addCommunicationToWorkItemData(

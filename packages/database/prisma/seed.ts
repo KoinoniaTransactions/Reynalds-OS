@@ -2,7 +2,56 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+async function ensureSeedTimelineEvent(input: {
+  workspaceId: string;
+  objectId: string;
+  actorId?: string | null;
+  eventType: string;
+  summary: string;
+}) {
+  const existing = await prisma.timelineEvent.findFirst({
+    where: {
+      workspaceId: input.workspaceId,
+      objectId: input.objectId,
+      eventType: input.eventType,
+      summary: input.summary
+    }
+  });
+
+  if (!existing) {
+    await prisma.timelineEvent.create({ data: input });
+  }
+}
+
 async function main() {
+  const seedMode = process.env.REYNALDS_SEED_MODE ?? "all";
+  const rbOnly = seedMode === "rb-only";
+  let koinoniaWorkspaceId: string | null = null;
+
+  if (rbOnly) {
+    const foreignWorkspaces = await prisma.workspace.findMany({
+      where: {
+        id: { not: "wks_reynalds_brothers" }
+      },
+      select: {
+        id: true,
+        name: true,
+        type: true
+      }
+    });
+
+    if (foreignWorkspaces.length > 0) {
+      const workspaceNames = foreignWorkspaces
+        .map((workspace) => `${workspace.name} (${workspace.id})`)
+        .join(", ");
+
+      throw new Error(
+        `RB-only seed refused to run because this database already contains non-Reynalds-Brothers workspaces: ${workspaceNames}`
+      );
+    }
+  }
+
+  if (!rbOnly) {
   const workspace = await prisma.workspace.upsert({
     where: { id: "wks_koinonia" },
     update: {},
@@ -91,6 +140,8 @@ async function main() {
     });
   }
 
+    koinoniaWorkspaceId = workspace.id;
+  }
 
   const rbWorkspace = await prisma.workspace.upsert({
     where: { id: "wks_reynalds_brothers" },
@@ -2984,7 +3035,7 @@ async function main() {
   for (const object of rbObjects) {
     await prisma.rosObject.upsert({
       where: { id: object.id },
-      update: object,
+      update: rbOnly ? {} : object,
       create: {
         ...object,
         workspaceId: rbWorkspace.id
@@ -2992,25 +3043,55 @@ async function main() {
     });
   }
 
-  await prisma.timelineEvent.create({
-    data: {
-      workspaceId: rbWorkspace.id,
-      objectId: "rb_wi_acc_1540",
-      actorId: "usr_owner",
-      eventType: "seed.created",
-      summary: "Seed data created for Reynalds Brothers Work Item engine."
-    }
+  await ensureSeedTimelineEvent({
+    workspaceId: rbWorkspace.id,
+    objectId: "rb_wi_acc_1540",
+    actorId: "usr_owner",
+    eventType: "seed.created",
+    summary: "Seed data created for Reynalds Brothers Work Item engine."
   });
 
-  await prisma.timelineEvent.create({
-    data: {
-      workspaceId: workspace.id,
+  if (koinoniaWorkspaceId) {
+    await ensureSeedTimelineEvent({
+      workspaceId: koinoniaWorkspaceId,
       objectId: "obj_txn_smith",
       actorId: "usr_owner",
       eventType: "seed.created",
       summary: "Seed data created for Smith Transaction."
+    });
+  }
+
+  if (rbOnly) {
+    const expectedRbIds = rbObjects.map((object) => object.id);
+    const seededRbObjectCount = await prisma.rosObject.count({
+      where: {
+        workspaceId: rbWorkspace.id,
+        id: { in: expectedRbIds }
+      }
+    });
+
+    const foreignWorkspaceCount = await prisma.workspace.count({
+      where: {
+        id: { not: rbWorkspace.id }
+      }
+    });
+
+    if (seededRbObjectCount !== expectedRbIds.length) {
+      throw new Error(
+        `RB-only seed verification failed: expected ${expectedRbIds.length} canonical RB objects, found ${seededRbObjectCount}.`
+      );
     }
-  });
+
+    if (foreignWorkspaceCount !== 0) {
+      throw new Error(
+        `RB-only seed verification failed: found ${foreignWorkspaceCount} non-Reynalds-Brothers workspace(s).`
+      );
+    }
+
+    console.log(
+      `RB-only seed verified: ${seededRbObjectCount} canonical RB objects, 0 foreign workspaces.`
+    );
+  }
 }
 
 main()

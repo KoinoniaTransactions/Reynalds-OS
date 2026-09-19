@@ -109,13 +109,10 @@ export async function GET() {
       nextAction: object.nextAction,
       data: toWorkItemData(object.data)
     }));
-    const fallbackWorkItems = reynaldsBrothersFallbackWorkItems.map(normalizeWorkItemStatus);
-    const workItems = databaseWorkItems.length > 0 ? databaseWorkItems : fallbackWorkItems;
-
     return NextResponse.json({
-      source: databaseWorkItems.length > 0 ? "database" : "fallback",
-      metrics: getWorkItemMetrics(workItems),
-      workItems
+      source: "database",
+      metrics: getWorkItemMetrics(databaseWorkItems),
+      workItems: databaseWorkItems
     });
   } catch (error) {
     const permissionErrorResponse = getPermissionErrorResponse(error);
