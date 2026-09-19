@@ -513,3 +513,11 @@
   font-size: 12px;
   line-height: 1.45;
 }
+
+
+@media (max-width: 1180px) {
+  .brandScope :global(.rb-attention-grid),
+  .brandScope :global(.rb-operational-grid) {
+    grid-template-columns: 1fr;
+  }
+}
