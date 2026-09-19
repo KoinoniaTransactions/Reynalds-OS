@@ -5,10 +5,8 @@ import { prisma } from "../../../../lib/db";
 import {
   REYNALDS_BROTHERS_COMMUNICATION_TYPE,
   REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL,
-  buildEmailCandidates,
   classifyEmailForWorkItem,
   getDefaultWorkItemDataForClassification,
-  reynaldsBrothersFallbackEmails,
   validateEmailIntake
 } from "../../../../lib/reynalds-brothers-email-intake";
 import {
