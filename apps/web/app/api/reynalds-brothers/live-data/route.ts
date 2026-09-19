@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import { prisma } from "../../../../lib/db";
 
 const RB_WORKSPACE_ID = "wks_reynalds_brothers";
+// This endpoint is intentionally scoped to the dedicated Reynalds Brothers preview database.
 const HISTORICAL_INDEXED_MESSAGE_COUNT = 1600;
 
 function jsonArrayLength(value: unknown): number {
