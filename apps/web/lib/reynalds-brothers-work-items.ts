@@ -43,6 +43,13 @@ export type ReynaldsBrothersWorkItemData = {
   siteName?: string | null;
   phase?: string | null;
   phaseTrack?: string[];
+  priority?: string | null;
+  officeOwner?: string | null;
+  dateReceived?: string | null;
+  followUpDueDate?: string | null;
+  scheduledDate?: string | null;
+  blockerStatus?: string | null;
+  blockerReason?: string | null;
   crewLead?: string | null;
   crewMembers?: string[];
   equipmentRequired?: string[];
@@ -116,6 +123,13 @@ export type ReynaldsBrothersWorkItem = {
   health: string;
   nextAction?: string | null;
   data?: ReynaldsBrothersWorkItemData | null;
+};
+
+export type ReynaldsBrothersAttentionQueue = {
+  key: "approval" | "communications" | "overdue" | "next-action" | "scheduling" | "blockers" | "billing";
+  title: string;
+  description: string;
+  workItems: ReynaldsBrothersWorkItem[];
 };
 
 export type ReynaldsBrothersMetrics = {
@@ -210,6 +224,20 @@ export const reynaldsBrothersOfficeUsers = [
   "Shay Reynalds",
   "John Nestor",
   "Darren Fielder"
+];
+
+export const reynaldsBrothersPriorities = [
+  "Critical",
+  "High",
+  "Normal",
+  "Low"
+];
+
+export const reynaldsBrothersBlockerStatuses = [
+  "Clear",
+  "Waiting",
+  "Blocked",
+  "Needs Decision"
 ];
 
 export const reynaldsBrothersJobTypes = [
@@ -702,7 +730,7 @@ export function addCommunicationToWorkItemData(
   const normalizedCommunication = normalizeCommunicationEntry(communication);
   const communicationLog = [
     normalizedCommunication,
-    ...(data.communicationLog ?? []).filter((entry) => entry.id !== normalizedCommunication.id)
+    ...getCompatibleCommunicationLog(data).filter((entry) => entry.id !== normalizedCommunication.id)
   ].sort(compareCommunicationsDescending);
   const needsResponse = communicationLog.some(communicationNeedsHumanReview);
 
@@ -764,6 +792,170 @@ function getCommunicationNextAction(total: number, needsResponse: number): strin
   if (needsResponse > 0) return `${needsResponse} communication${needsResponse === 1 ? "" : "s"} need office response documentation.`;
 
   return "Communication file is current.";
+}
+
+export function isFollowUpOverdue(item: ReynaldsBrothersWorkItem, now = new Date()): boolean {
+  if (isCompletedWorkItem(item)) return false;
+
+  const dueDate = String(getWorkItemData(item).followUpDueDate ?? "").trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) return false;
+
+  return dueDate < getLocalDateKey(now);
+}
+
+export function getDailyAttentionQueues(
+  items: ReynaldsBrothersWorkItem[],
+  now = new Date()
+): ReynaldsBrothersAttentionQueue[] {
+  const active = items.filter((item) => !isCompletedWorkItem(item));
+  const needsApproval = active.filter((item) => getWorkItemLane(item) === "Needs Approval");
+  const communicationNeedsResponse = active.filter((item) => getCommunicationSummary(item).needsResponse > 0);
+  const overdueFollowUps = active.filter((item) => isFollowUpOverdue(item, now));
+  const missingNextAction = active.filter((item) => !String(item.nextAction ?? "").trim());
+  const schedulingBlockers = active.filter((item) => {
+    const data = getWorkItemData(item);
+    const explicitBlocker = ["blocked", "waiting", "needs decision"].includes(String(data.blockerStatus ?? "").trim().toLowerCase());
+
+    return getWorkItemLane(item) === "Scheduling" && (explicitBlocker || getSchedulingBlockerReasons(item).length > 0);
+  });
+  const readinessBlockers = active.filter((item) => {
+    const data = getWorkItemData(item);
+    const explicitBlocker = ["blocked", "waiting", "needs decision"].includes(String(data.blockerStatus ?? "").trim().toLowerCase());
+
+    return explicitBlocker || getSchedulingBlockerReasons(item).length > 0;
+  });
+  const billingReview = items.filter((item) => {
+    const data = getWorkItemData(item);
+    const billingApproval = String(data.billingApprovalStatus ?? "");
+
+    return getWorkItemLane(item) === "Billing"
+      || isInvoiceReadyStatus(data.invoiceStatus)
+      || billingApproval.startsWith("Needs ");
+  });
+
+  return [
+    {
+      key: "approval",
+      title: "Needs Approval",
+      description: "New or held jobs that cannot become active until a human approves them.",
+      workItems: sortOperationalWorkItems(needsApproval)
+    },
+    {
+      key: "communications",
+      title: "Needs Response",
+      description: "Filed communications that still need an office response or documented action.",
+      workItems: sortOperationalWorkItems(communicationNeedsResponse)
+    },
+    {
+      key: "overdue",
+      title: "Overdue Follow-ups",
+      description: "Active jobs whose follow-up date is before today.",
+      workItems: sortOperationalWorkItems(overdueFollowUps)
+    },
+    {
+      key: "next-action",
+      title: "No Next Action",
+      description: "Active jobs with no clear next action recorded.",
+      workItems: sortOperationalWorkItems(missingNextAction)
+    },
+    {
+      key: "scheduling",
+      title: "Scheduling Blockers",
+      description: "Jobs in scheduling that still have operational blockers to clear.",
+      workItems: sortOperationalWorkItems(schedulingBlockers)
+    },
+    {
+      key: "blockers",
+      title: "PO / Permit / Tank Blockers",
+      description: "Active jobs blocked by PO, permits, tanks, oil removal, or an explicit office blocker.",
+      workItems: sortOperationalWorkItems(readinessBlockers)
+    },
+    {
+      key: "billing",
+      title: "Billing Review",
+      description: "Jobs ready for invoicing or moving through Shay → Jeremiah → Darren → Josh.",
+      workItems: sortOperationalWorkItems(billingReview)
+    }
+  ];
+}
+
+export function getSchedulingBlockerReasons(item: ReynaldsBrothersWorkItem): string[] {
+  if (isCompletedWorkItem(item)) return [];
+
+  const data = getWorkItemData(item);
+  const jobType = String(data.jobType ?? data.workType ?? data.serviceLine ?? "");
+  const completed = new Set(data.checklistCompleted ?? []);
+  const reasons: string[] = [];
+
+  if (data.poStatus === "Missing") reasons.push("PO missing");
+
+  if (
+    data.permitStatus
+    && !["Approved", "Not required", "Not Required"].includes(data.permitStatus)
+    && !hasAnyCompleted(completed, ["acc_permits_approved", "uco_permits_approved"])
+  ) {
+    reasons.push("Permits incomplete");
+  }
+
+  if ((jobType.includes("ACC") || jobType.includes("UCO")) && !getTankInventorySummary(item).readyForScheduling) {
+    reasons.push("Tank package not ready");
+  }
+
+  if (
+    (jobType.includes("ACC") || jobType.includes("UCO"))
+    && !["coordinated", "confirmed"].includes(String(data.oilRemovalStatus ?? "").trim().toLowerCase())
+    && !hasAnyCompleted(completed, ["acc_oil_removal_coordinated", "uco_oil_removal_coordinated"])
+  ) {
+    reasons.push("Oil removal not coordinated");
+  }
+
+  if (jobType.includes("Pressure Washing") && !data.vacTruckCompany && !completed.has("pw_vac_truck_secured")) {
+    reasons.push("Vac truck not secured");
+  }
+
+  if (jobType.includes("Pressure Washing") && !data.disposalFacility && !completed.has("pw_disposal_facility")) {
+    reasons.push("Disposal facility not secured");
+  }
+
+  if (String(data.blockerStatus ?? "").trim().toLowerCase() === "blocked") {
+    reasons.push(data.blockerReason ? `Blocked: ${data.blockerReason}` : "Explicit blocker");
+  }
+
+  return [...new Set(reasons)];
+}
+
+function sortOperationalWorkItems(items: ReynaldsBrothersWorkItem[]): ReynaldsBrothersWorkItem[] {
+  return [...items].sort((first, second) => {
+    const firstData = getWorkItemData(first);
+    const secondData = getWorkItemData(second);
+    const firstDue = String(firstData.followUpDueDate ?? "9999-12-31");
+    const secondDue = String(secondData.followUpDueDate ?? "9999-12-31");
+
+    if (firstDue !== secondDue) return firstDue.localeCompare(secondDue);
+
+    const priorityDifference = getPriorityWeight(secondData.priority) - getPriorityWeight(firstData.priority);
+    if (priorityDifference !== 0) return priorityDifference;
+
+    return first.name.localeCompare(second.name);
+  });
+}
+
+function getPriorityWeight(priority: unknown): number {
+  const normalized = String(priority ?? "Normal").trim().toLowerCase();
+
+  if (normalized === "critical") return 4;
+  if (normalized === "high") return 3;
+  if (normalized === "low") return 1;
+
+  return 2;
+}
+
+function getLocalDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 export function getRouteBatches(items: ReynaldsBrothersWorkItem[]): ReynaldsBrothersRouteBatch[] {
@@ -1062,6 +1254,9 @@ export function getWorkItemAlerts(item: ReynaldsBrothersWorkItem): string[] {
   const completed = new Set(data.checklistCompleted ?? []);
 
   if (data.approvalStatus === "Needs Approval") alerts.push("Human approval required before this job becomes active.");
+  if (String(data.blockerStatus ?? "").toLowerCase() === "blocked") {
+    alerts.push(data.blockerReason ? `Blocked: ${data.blockerReason}` : "Work Item is explicitly blocked.");
+  }
   if (data.poStatus === "Missing") alerts.push("PO missing; alert all office staff after 5 business days.");
   if (data.permitStatus && !["Approved", "Not required", "Not Required"].includes(data.permitStatus)) alerts.push("Permit process is not complete.");
   if ((jobType.includes("ACC") || jobType.includes("UCO")) && !["coordinated", "confirmed"].includes(String(data.oilRemovalStatus ?? "").trim().toLowerCase()) && !hasAnyCompleted(completed, ["acc_oil_removal_coordinated", "uco_oil_removal_coordinated"])) {
@@ -1471,6 +1666,13 @@ function getWorkItemPayloadData(value: Record<string, unknown>): ReynaldsBrother
     siteName: getOptionalString(sourceData.siteName),
     phase: getOptionalString(sourceData.phase),
     phaseTrack: getStringList(sourceData.phaseTrack),
+    priority: getOptionalString(sourceData.priority),
+    officeOwner: getOptionalString(sourceData.officeOwner),
+    dateReceived: getOptionalString(sourceData.dateReceived),
+    followUpDueDate: getOptionalString(sourceData.followUpDueDate),
+    scheduledDate: getOptionalString(sourceData.scheduledDate),
+    blockerStatus: getOptionalString(sourceData.blockerStatus),
+    blockerReason: getOptionalString(sourceData.blockerReason),
     crewLead: getOptionalString(sourceData.crewLead),
     crewMembers: getStringList(sourceData.crewMembers),
     equipmentRequired: getStringList(sourceData.equipmentRequired),

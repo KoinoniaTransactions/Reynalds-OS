@@ -3,9 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./ReynaldsBrothersOperationsSystem.module.css";
 import {
-  type ReynaldsBrothersEmailClassification,
-  type ReynaldsBrothersEmailCandidate,
-  reynaldsBrothersFallbackEmails
+  type ReynaldsBrothersEmailCandidate
 } from "../../lib/reynalds-brothers-email-intake";
 import {
   REYNALDS_BROTHERS_WORK_ITEM_TYPE,
@@ -15,9 +13,12 @@ import {
   getBillingPassoffSummary,
   getChecklistProgress,
   getCommunicationSummary,
+  getCompatibleCommunicationLog,
+  getDailyAttentionQueues,
   getFieldProofSummary,
   getPhaseProgress,
   getRouteBatches,
+  getSchedulingBlockerReasons,
   getTankInventorySummary,
   getPhaseTrackForJobType,
   getWorkItemData,
@@ -37,6 +38,8 @@ import {
   reynaldsBrothersJobTypes,
   reynaldsBrothersLucernexStatuses,
   reynaldsBrothersOfficeUsers,
+  reynaldsBrothersPriorities,
+  reynaldsBrothersBlockerStatuses,
   type ReynaldsBrothersCommunicationEntry,
   type ReynaldsBrothersWorkItemData,
   type ReynaldsBrothersWorkItemCreateInput,
@@ -98,6 +101,13 @@ const defaultCreateForm = {
   state: "",
   siteName: "",
   workType: "",
+  priority: "Normal",
+  officeOwner: "",
+  dateReceived: "",
+  followUpDueDate: "",
+  scheduledDate: "",
+  blockerStatus: "Clear",
+  blockerReason: "",
   nextAction: ""
 };
 
@@ -136,6 +146,14 @@ export function ReynaldsBrothersOperationsSystem() {
   const [statusUpdate, setStatusUpdate] = useState("Planning");
   const [healthUpdate, setHealthUpdate] = useState("Healthy");
   const [nextActionUpdate, setNextActionUpdate] = useState("");
+  const [priorityUpdate, setPriorityUpdate] = useState("Normal");
+  const [officeOwnerUpdate, setOfficeOwnerUpdate] = useState("");
+  const [dateReceivedUpdate, setDateReceivedUpdate] = useState("");
+  const [followUpDueDateUpdate, setFollowUpDueDateUpdate] = useState("");
+  const [scheduledDateUpdate, setScheduledDateUpdate] = useState("");
+  const [blockerStatusUpdate, setBlockerStatusUpdate] = useState("Clear");
+  const [blockerReasonUpdate, setBlockerReasonUpdate] = useState("");
+  const [quickActionPending, setQuickActionPending] = useState(false);
   const [crewLeadUpdate, setCrewLeadUpdate] = useState("");
   const [invoiceStatusUpdate, setInvoiceStatusUpdate] = useState("Not Ready");
   const [billingApprovalStatusUpdate, setBillingApprovalStatusUpdate] = useState("Not Started");
@@ -184,11 +202,18 @@ export function ReynaldsBrothersOperationsSystem() {
       const response = await fetch("/api/reynalds-brothers/work-items");
       if (!response.ok) throw new Error("Failed to load Reynalds Brothers work items.");
       const payload = (await response.json()) as ApiPayload;
-      const loaded = (payload.workItems?.length ? payload.workItems : reynaldsBrothersFallbackWorkItems).map(normalizeWorkItemStatus);
-      const trialItems = loadStoredTrialWorkItems();
-      const nextItems = mergeWorkItemLists(loaded, trialItems);
+      const liveDatabase = payload.source === "database";
+      const loaded = (
+        liveDatabase
+          ? payload.workItems ?? []
+          : payload.workItems?.length
+            ? payload.workItems
+            : reynaldsBrothersFallbackWorkItems
+      ).map(normalizeWorkItemStatus);
+      const trialItems = liveDatabase ? [] : loadStoredTrialWorkItems();
+      const nextItems = trialItems.length > 0 ? mergeWorkItemLists(loaded, trialItems) : loaded;
       setWorkItems(nextItems);
-      setSource(trialItems.length > 0 ? "trial" : payload.source ?? "fallback");
+      setSource(liveDatabase ? "database" : trialItems.length > 0 ? "trial" : payload.source ?? "fallback");
       setSelectedId((current) => (nextItems.some((item) => item.id === current) ? current : nextItems[0]?.id ?? ""));
       if (payload.warning) setError(payload.warning);
     } catch (err) {
@@ -231,6 +256,7 @@ export function ReynaldsBrothersOperationsSystem() {
   }, [search, workItems]);
 
   const metrics = getWorkItemMetrics(filtered);
+  const attentionQueues = getDailyAttentionQueues(filtered);
   const routeBatches = getRouteBatches(filtered);
   const selected = filtered.find((item) => item.id === selectedId) ?? filtered[0] ?? workItems[0];
   const selectedData = selected ? getWorkItemData(selected) : {};
@@ -246,6 +272,13 @@ export function ReynaldsBrothersOperationsSystem() {
     setStatusUpdate(selected.status);
     setHealthUpdate(selected.health);
     setNextActionUpdate(selected.nextAction ?? "");
+    setPriorityUpdate(selectedData.priority ?? "Normal");
+    setOfficeOwnerUpdate(selectedData.officeOwner ?? "");
+    setDateReceivedUpdate(selectedData.dateReceived ?? "");
+    setFollowUpDueDateUpdate(selectedData.followUpDueDate ?? "");
+    setScheduledDateUpdate(selectedData.scheduledDate ?? "");
+    setBlockerStatusUpdate(selectedData.blockerStatus ?? "Clear");
+    setBlockerReasonUpdate(selectedData.blockerReason ?? "");
     setCrewLeadUpdate(selectedData.crewLead ?? "");
     setInvoiceStatusUpdate(selectedData.invoiceStatus ?? "Not Ready");
     setBillingApprovalStatusUpdate(selectedData.billingApprovalStatus ?? "Not Started");
@@ -293,6 +326,13 @@ export function ReynaldsBrothersOperationsSystem() {
     selectedData.managerName,
     selectedData.managerTitle,
     selectedData.oilRemovalStatus,
+    selectedData.priority,
+    selectedData.officeOwner,
+    selectedData.dateReceived,
+    selectedData.followUpDueDate,
+    selectedData.scheduledDate,
+    selectedData.blockerStatus,
+    selectedData.blockerReason,
     selectedData.permitApprovedDate,
     selectedData.permitStatus,
     selectedData.permitSubmittedDate,
@@ -329,6 +369,13 @@ export function ReynaldsBrothersOperationsSystem() {
         workType: createForm.workType,
         phase: "Needs Approval",
         phaseTrack: getPhaseTrackForJobType(createForm.jobType),
+        priority: createForm.priority,
+        officeOwner: createForm.officeOwner || null,
+        dateReceived: createForm.dateReceived || null,
+        followUpDueDate: createForm.followUpDueDate || null,
+        scheduledDate: createForm.scheduledDate || null,
+        blockerStatus: createForm.blockerStatus,
+        blockerReason: createForm.blockerReason || null,
         checklistCompleted: [],
         poStatus: createForm.jobType === "Pressure Washing" ? "Not Required Yet" : "Missing",
         lucernexStatus: "Not Started",
@@ -363,10 +410,7 @@ export function ReynaldsBrothersOperationsSystem() {
       await loadWorkItems();
       if (payload.workItem?.id) setSelectedId(payload.workItem.id);
     } catch (err) {
-      const created = createLocalTrialWorkItem(input);
-      saveLocalWorkItem(created);
-      setCreateForm(defaultCreateForm);
-      setTrialImportMessage("Live database create was unavailable, so this job was added in local trial mode.");
+      setError(err instanceof Error ? err.message : "Work Item could not be created in the live database.");
     }
   }
 
@@ -468,6 +512,13 @@ export function ReynaldsBrothersOperationsSystem() {
     const nextData = {
       ...selectedData,
       phase: statusUpdate,
+      priority: priorityUpdate,
+      officeOwner: officeOwnerUpdate,
+      dateReceived: dateReceivedUpdate,
+      followUpDueDate: followUpDueDateUpdate,
+      scheduledDate: scheduledDateUpdate,
+      blockerStatus: blockerStatusUpdate,
+      blockerReason: blockerReasonUpdate,
       crewLead: crewLeadUpdate,
       invoiceStatus: invoiceStatusUpdate,
       billingApprovalStatus: billingApprovalStatusUpdate,
@@ -530,6 +581,52 @@ export function ReynaldsBrothersOperationsSystem() {
       if (payload.workItem?.id) setSelectedId(payload.workItem.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Work Item could not be updated.");
+    }
+  }
+
+  async function saveOperationalControls(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!selected) return;
+
+    setError("");
+    setQuickActionPending(true);
+
+    const nextData = {
+      ...selectedData,
+      priority: priorityUpdate,
+      officeOwner: officeOwnerUpdate,
+      dateReceived: dateReceivedUpdate,
+      followUpDueDate: followUpDueDateUpdate,
+      scheduledDate: scheduledDateUpdate,
+      blockerStatus: blockerStatusUpdate,
+      blockerReason: blockerReasonUpdate
+    };
+
+    if (source !== "database") {
+      setError("Operational quick actions are disabled outside the live Reynalds Brothers database.");
+      setQuickActionPending(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/reynalds-brothers/work-items/${selected.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nextAction: nextActionUpdate,
+          data: nextData
+        })
+      });
+
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Operational controls could not be saved.");
+
+      await loadWorkItems();
+      if (payload.workItem?.id) setSelectedId(payload.workItem.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Operational controls could not be saved.");
+    } finally {
+      setQuickActionPending(false);
     }
   }
 
@@ -822,6 +919,7 @@ export function ReynaldsBrothersOperationsSystem() {
         <nav>
           <a href="/">Reynalds OS</a>
           <a href="/reynalds-brothers" className="active">RB Board</a>
+          <a href="/reynalds-brothers#rb-daily-command">Daily Command</a>
           <a href="/reynalds-brothers#rb-intake">Intake</a>
           <a href="/reynalds-brothers#rb-routing">Routing</a>
           <a href="/reynalds-brothers#rb-board">Work Board</a>
@@ -915,6 +1013,31 @@ export function ReynaldsBrothersOperationsSystem() {
               onChange={(event) => setCreateForm((current) => ({ ...current, workType: event.target.value }))}
               placeholder="Work type"
             />
+            <select
+              value={createForm.priority}
+              onChange={(event) => setCreateForm((current) => ({ ...current, priority: event.target.value }))}
+            >
+              {reynaldsBrothersPriorities.map((option) => <option key={option} value={option}>{option} Priority</option>)}
+            </select>
+            <select
+              value={createForm.officeOwner}
+              onChange={(event) => setCreateForm((current) => ({ ...current, officeOwner: event.target.value }))}
+            >
+              <option value="">Office owner TBD</option>
+              {reynaldsBrothersOfficeUsers.map((option) => <option key={option} value={option}>{option}</option>)}
+            </select>
+            <input
+              type="date"
+              value={createForm.dateReceived}
+              onChange={(event) => setCreateForm((current) => ({ ...current, dateReceived: event.target.value }))}
+              aria-label="Date received"
+            />
+            <input
+              type="date"
+              value={createForm.followUpDueDate}
+              onChange={(event) => setCreateForm((current) => ({ ...current, followUpDueDate: event.target.value }))}
+              aria-label="Follow-up due date"
+            />
             <input
               required
               value={createForm.nextAction}
@@ -928,7 +1051,7 @@ export function ReynaldsBrothersOperationsSystem() {
         <section className="rb-section rb-trial-import">
           <div className="rb-section-heading">
             <div>
-              <div className="ros-eyebrow">First trial data</div>
+              <div className="ros-eyebrow">Spreadsheet intake</div>
               <h2>Paste spreadsheet rows</h2>
             </div>
             <div className="rb-trial-import-actions">
@@ -1000,7 +1123,7 @@ export function ReynaldsBrothersOperationsSystem() {
             onClick={() => void createTrialImportRecords()}
             disabled={trialImportPending || trialImportPreview.records.length === 0}
           >
-            {trialImportPending ? "Creating..." : "Create Trial Jobs"}
+            {trialImportPending ? "Creating..." : "Create Imported Jobs"}
           </button>
           {trialImportMessage ? <p className="rb-success-note">{trialImportMessage}</p> : null}
         </section>
@@ -1036,6 +1159,50 @@ export function ReynaldsBrothersOperationsSystem() {
             <strong>{metrics.invoiceReady}</strong>
             <p>waiting for approval pass-off</p>
           </article>
+        </section>
+
+        <section className="rb-section rb-daily-command" id="rb-daily-command">
+          <div className="rb-section-heading">
+            <div>
+              <div className="ros-eyebrow">Daily command center</div>
+              <h2>What needs attention now</h2>
+            </div>
+            <span className={source === "database" ? "rb-ready-pill" : "rb-blocked-pill"}>
+              {source === "database" ? "Live database" : "Fallback / trial mode"}
+            </span>
+          </div>
+          <div className="rb-attention-grid">
+            {attentionQueues.map((queue) => (
+              <article className="rb-attention-card" key={queue.key}>
+                <div className="rb-attention-card-heading">
+                  <span>{queue.title}</span>
+                  <strong>{queue.workItems.length}</strong>
+                </div>
+                <p>{queue.description}</p>
+                <div className="rb-attention-list">
+                  {queue.workItems.slice(0, 4).map((item) => {
+                    const data = getWorkItemData(item);
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          document.getElementById("rb-board")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }}
+                      >
+                        <strong>{item.name}</strong>
+                        <small>
+                          {data.officeOwner ?? "Owner TBD"} · {data.priority ?? "Normal"} · {data.followUpDueDate ? "Due " + data.followUpDueDate : "No due date"}
+                        </small>
+                      </button>
+                    );
+                  })}
+                  {queue.workItems.length === 0 ? <span className="rb-empty">Clear</span> : null}
+                </div>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="rb-section rb-route-planner" id="rb-routing">
@@ -1101,6 +1268,11 @@ export function ReynaldsBrothersOperationsSystem() {
                           <span className="rb-service">{data.serviceLine ?? "Service"}</span>
                           <strong>{item.name}</strong>
                           <small>{getWorkItemLocation(item)}</small>
+                          <div className="rb-card-meta">
+                            <span>{data.priority ?? "Normal"}</span>
+                            <span>{data.officeOwner ?? "Owner TBD"}</span>
+                            {data.followUpDueDate ? <span>Due {data.followUpDueDate}</span> : null}
+                          </div>
                           <span className={`rb-health ${item.health.toLowerCase()}`}>{item.health}</span>
                           <div className="rb-progress" aria-label={`Phase progress ${progress.percent}%`}>
                             <span style={{ width: `${progress.percent}%` }} />
@@ -1149,6 +1321,69 @@ export function ReynaldsBrothersOperationsSystem() {
                   </section>
                 ) : null}
 
+                <form className="rb-operational-controls" onSubmit={saveOperationalControls}>
+                  <div className="rb-section-heading">
+                    <div>
+                      <div className="ros-eyebrow">Quick controls</div>
+                      <h3>Owner, priority, next action, due date, blocker</h3>
+                    </div>
+                    <span className={source === "database" ? "rb-ready-pill" : "rb-blocked-pill"}>
+                      {source === "database" ? "Live" : "Read only"}
+                    </span>
+                  </div>
+                  <div className="rb-operational-grid">
+                    <label>
+                      Priority
+                      <select value={priorityUpdate} onChange={(event) => setPriorityUpdate(event.target.value)}>
+                        {reynaldsBrothersPriorities.map((option) => <option key={option} value={option}>{option}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      Office Owner
+                      <select value={officeOwnerUpdate} onChange={(event) => setOfficeOwnerUpdate(event.target.value)}>
+                        <option value="">Unassigned</option>
+                        {reynaldsBrothersOfficeUsers.map((option) => <option key={option} value={option}>{option}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      Follow-up Due
+                      <input type="date" value={followUpDueDateUpdate} onChange={(event) => setFollowUpDueDateUpdate(event.target.value)} />
+                    </label>
+                    <label>
+                      Scheduled Date
+                      <input type="date" value={scheduledDateUpdate} onChange={(event) => setScheduledDateUpdate(event.target.value)} />
+                    </label>
+                    <label>
+                      Blocker Status
+                      <select value={blockerStatusUpdate} onChange={(event) => setBlockerStatusUpdate(event.target.value)}>
+                        {reynaldsBrothersBlockerStatuses.map((option) => <option key={option} value={option}>{option}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      Date Received
+                      <input type="date" value={dateReceivedUpdate} onChange={(event) => setDateReceivedUpdate(event.target.value)} />
+                    </label>
+                    <label className="rb-wide-field">
+                      Next Action
+                      <textarea value={nextActionUpdate} onChange={(event) => setNextActionUpdate(event.target.value)} />
+                    </label>
+                    <label className="rb-wide-field">
+                      Blocker Reason
+                      <textarea value={blockerReasonUpdate} onChange={(event) => setBlockerReasonUpdate(event.target.value)} placeholder="Why is this blocked or waiting?" />
+                    </label>
+                  </div>
+                  {selected ? (
+                    <p className="rb-operational-note">
+                      {getSchedulingBlockerReasons(selected).length > 0
+                        ? "Scheduling blockers: " + getSchedulingBlockerReasons(selected).join("; ")
+                        : "No current scheduling blockers detected."}
+                    </p>
+                  ) : null}
+                  <button type="submit" disabled={quickActionPending || source !== "database"}>
+                    {quickActionPending ? "Saving..." : "Save Operational Update"}
+                  </button>
+                </form>
+
                 <dl className="rb-detail-grid">
                   <div>
                     <dt>Approval</dt>
@@ -1157,6 +1392,22 @@ export function ReynaldsBrothersOperationsSystem() {
                   <div>
                     <dt>Approved By</dt>
                     <dd>{selectedData.approvedBy ?? "Not recorded"}</dd>
+                  </div>
+                  <div>
+                    <dt>Priority</dt>
+                    <dd>{selectedData.priority ?? "Normal"}</dd>
+                  </div>
+                  <div>
+                    <dt>Office Owner</dt>
+                    <dd>{selectedData.officeOwner ?? "Unassigned"}</dd>
+                  </div>
+                  <div>
+                    <dt>Follow-up Due</dt>
+                    <dd>{selectedData.followUpDueDate ?? "Not set"}</dd>
+                  </div>
+                  <div>
+                    <dt>Blocker</dt>
+                    <dd>{selectedData.blockerStatus ?? "Clear"}{selectedData.blockerReason ? " — " + selectedData.blockerReason : ""}</dd>
                   </div>
                   <div>
                     <dt>Customer</dt>
@@ -1214,7 +1465,7 @@ export function ReynaldsBrothersOperationsSystem() {
                     </div>
                     <p>{selectedCommunicationSummary.nextAction}</p>
                     <div className="rb-communication-list">
-                      {(selectedData.communicationLog ?? []).slice(0, 6).map((communication) => (
+                      {getCompatibleCommunicationLog(selectedData).slice(0, 6).map((communication) => (
                         <article className="rb-communication-card" key={communication.id}>
                           <div>
                             <span>{communication.sourceLabel ?? "wmtanks"}</span>
@@ -1229,7 +1480,7 @@ export function ReynaldsBrothersOperationsSystem() {
                           {communication.humanResponseBy ? <small>Documented by {communication.humanResponseBy}</small> : null}
                         </article>
                       ))}
-                      {(selectedData.communicationLog ?? []).length === 0 ? (
+                      {getCompatibleCommunicationLog(selectedData).length === 0 ? (
                         <p>No communications filed under this job yet.</p>
                       ) : null}
                     </div>
@@ -1605,6 +1856,44 @@ export function ReynaldsBrothersOperationsSystem() {
                     <input value={crewLeadUpdate} onChange={(event) => setCrewLeadUpdate(event.target.value)} />
                   </label>
                   <div className="rb-form-section-heading">
+                    <span>Daily operations</span>
+                  </div>
+                  <label>
+                    Priority
+                    <select value={priorityUpdate} onChange={(event) => setPriorityUpdate(event.target.value)}>
+                      {reynaldsBrothersPriorities.map((option) => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                  </label>
+                  <label>
+                    Office Owner
+                    <select value={officeOwnerUpdate} onChange={(event) => setOfficeOwnerUpdate(event.target.value)}>
+                      <option value="">Unassigned</option>
+                      {reynaldsBrothersOfficeUsers.map((option) => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                  </label>
+                  <label>
+                    Date Received
+                    <input type="date" value={dateReceivedUpdate} onChange={(event) => setDateReceivedUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Follow-up Due
+                    <input type="date" value={followUpDueDateUpdate} onChange={(event) => setFollowUpDueDateUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Scheduled Date
+                    <input type="date" value={scheduledDateUpdate} onChange={(event) => setScheduledDateUpdate(event.target.value)} />
+                  </label>
+                  <label>
+                    Blocker Status
+                    <select value={blockerStatusUpdate} onChange={(event) => setBlockerStatusUpdate(event.target.value)}>
+                      {reynaldsBrothersBlockerStatuses.map((option) => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                  </label>
+                  <label className="rb-wide-field">
+                    Blocker Reason
+                    <textarea value={blockerReasonUpdate} onChange={(event) => setBlockerReasonUpdate(event.target.value)} />
+                  </label>
+                  <div className="rb-form-section-heading">
                     <span>Lucernex, PO, permits</span>
                   </div>
                   <label>
@@ -1815,7 +2104,7 @@ export function ReynaldsBrothersOperationsSystem() {
           {emailActionMessage ? <p className="rb-action-message">{emailActionMessage}</p> : null}
 
           <div className="rb-email-grid">
-            {(emailCandidates.length > 0 ? emailCandidates : getPreviewEmailCandidates()).map((email) => (
+            {emailCandidates.map((email) => (
               <article className="rb-email-card" key={email.id}>
                 <div className="rb-email-card-heading">
                   <span className={`rb-email-action ${email.classification.action}`}>
@@ -1870,6 +2159,9 @@ export function ReynaldsBrothersOperationsSystem() {
                 </div>
               </article>
             ))}
+            {emailCandidates.length === 0 ? (
+              <p className="rb-empty">No live Gmail queue is connected yet. Paste an email above for manual analysis, or wait for the Gmail integration phase.</p>
+            ) : null}
           </div>
         </section>
 
@@ -1932,19 +2224,6 @@ function formatCommunicationTime(value?: string | null): string {
     hour: "numeric",
     minute: "2-digit"
   });
-}
-
-function getPreviewEmailCandidates(): ReynaldsBrothersEmailCandidate[] {
-  return reynaldsBrothersFallbackEmails.map((email, index) => ({
-    ...email,
-    id: email.providerMessageId ?? `email_preview_${index}`,
-    classification: {
-      action: "needs_review",
-      confidence: "low",
-      suggestedNextAction: "Connect email intake to review filing recommendation.",
-      reasons: ["Preview queue shown until authenticated email intake is available."]
-    } satisfies ReynaldsBrothersEmailClassification
-  }));
 }
 
 function getServiceLineFromJobType(jobType: string): string {
