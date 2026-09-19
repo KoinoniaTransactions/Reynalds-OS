@@ -91,6 +91,22 @@ type EmailApiPayload = {
   warning?: string;
 };
 
+type GmailStatusPayload = {
+  connected?: boolean;
+  accountEmail?: string;
+  label?: string;
+  lastConnectedAt?: string | null;
+  lastSyncedAt?: string | null;
+  syncStatus?: string;
+  syncMetadata?: Record<string, unknown> | null;
+  requiredEnvironment?: {
+    googleClientId?: boolean;
+    googleClientSecret?: boolean;
+    encryptionSecret?: boolean;
+  };
+  error?: string;
+};
+
 const defaultCreateForm = {
   name: "",
   serviceLine: "",
@@ -189,6 +205,8 @@ export function ReynaldsBrothersOperationsSystem() {
   const [manualEmailBody, setManualEmailBody] = useState("");
   const [emailActionPendingId, setEmailActionPendingId] = useState("");
   const [emailActionMessage, setEmailActionMessage] = useState("");
+  const [gmailStatus, setGmailStatus] = useState<GmailStatusPayload>({});
+  const [gmailSyncPending, setGmailSyncPending] = useState(false);
   const [communicationForm, setCommunicationForm] = useState(defaultCommunicationForm);
   const [approvalActionPending, setApprovalActionPending] = useState("");
   const [trialImportText, setTrialImportText] = useState("");
@@ -230,6 +248,7 @@ export function ReynaldsBrothersOperationsSystem() {
   useEffect(() => {
     void loadWorkItems();
     void loadEmailCandidates();
+    void loadGmailStatus();
   }, []);
 
   async function loadEmailCandidates() {
@@ -242,6 +261,47 @@ export function ReynaldsBrothersOperationsSystem() {
       setEmailCandidates([]);
     }
   }
+
+  async function loadGmailStatus() {
+    try {
+      const response = await fetch("/api/reynalds-brothers/gmail/status");
+      const payload = (await response.json()) as GmailStatusPayload;
+      setGmailStatus(payload);
+    } catch {
+      setGmailStatus({ connected: false });
+    }
+  }
+
+  async function syncGmailNow() {
+    setError("");
+    setEmailActionMessage("");
+    setGmailSyncPending(true);
+
+    try {
+      const response = await fetch("/api/reynalds-brothers/gmail/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ limit: 50 })
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Gmail synchronization failed.");
+
+      const result = payload.result ?? {};
+      setEmailActionMessage(
+        "Gmail sync complete: "
+        + String(result.imported ?? 0) + " imported, "
+        + String(result.filed ?? 0) + " filed, "
+        + String(result.review ?? 0) + " sent to review, "
+        + String(result.duplicates ?? 0) + " already known."
+      );
+      await Promise.all([loadEmailCandidates(), loadWorkItems(), loadGmailStatus()]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Gmail synchronization failed.");
+    } finally {
+      setGmailSyncPending(false);
+    }
+  }
+
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -2074,9 +2134,36 @@ export function ReynaldsBrothersOperationsSystem() {
               <div className="ros-eyebrow">Email intake</div>
               <h2>File communication under the right job</h2>
             </div>
-            <button className="rb-secondary-button" onClick={() => void loadEmailCandidates()} type="button">
-              Refresh Email Queue
-            </button>
+            <div className="rb-email-actions">
+              <button className="rb-secondary-button" onClick={() => void loadEmailCandidates()} type="button">
+                Refresh Review Queue
+              </button>
+              {gmailStatus.connected ? (
+                <button
+                  className="rb-secondary-button"
+                  onClick={() => void syncGmailNow()}
+                  disabled={gmailSyncPending}
+                  type="button"
+                >
+                  {gmailSyncPending ? "Syncing..." : "Sync WalMart Tanks"}
+                </button>
+              ) : (
+                <a className="ros-button-link" href="/api/reynalds-brothers/gmail/connect">
+                  Connect Gmail
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div className="rb-gmail-status">
+            <span className={gmailStatus.connected ? "rb-ready-pill" : "rb-blocked-pill"}>
+              {gmailStatus.connected ? "Gmail connected" : "Gmail not connected"}
+            </span>
+            <span>{gmailStatus.accountEmail ?? "Reynalds Brothers Google account"}</span>
+            <span>Label: {gmailStatus.label ?? "WalMart Tanks"}</span>
+            <span>
+              Last sync: {gmailStatus.lastSyncedAt ? formatCommunicationTime(gmailStatus.lastSyncedAt) : "not yet"}
+            </span>
           </div>
 
           <p className="ros-subtitle">
