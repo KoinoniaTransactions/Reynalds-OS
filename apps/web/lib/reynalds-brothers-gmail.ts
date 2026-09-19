@@ -18,7 +18,7 @@ const GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 const GMAIL_API = "https://gmail.googleapis.com/gmail/v1";
 const GMAIL_SCOPE = "https://www.googleapis.com/auth/gmail.readonly";
-const EXPECTED_ACCOUNT = "wmtanks@reynaldsbrothers.com";
+const EXPECTED_ACCOUNT = process.env.RB_GMAIL_EXPECTED_ACCOUNT ?? "jeremiah@reynaldsbrothers.com";
 
 function requireEnv(name: string): string {
   const value = process.env[name];
