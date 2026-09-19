@@ -14,6 +14,8 @@ export const REYNALDS_BROTHERS_GMAIL_LABEL_NAME = "WalMart Tanks";
 
 export type ReynaldsBrothersEmailInput = {
   providerMessageId?: string;
+  providerThreadId?: string;
+  sourceUrl?: string;
   from: string;
   to?: string;
   subject: string;
@@ -212,6 +214,8 @@ export function validateEmailIntake(input: unknown): ReynaldsBrothersEmailInput 
 
   return {
     providerMessageId: getOptionalString(value.providerMessageId),
+    providerThreadId: getOptionalString(value.providerThreadId),
+    sourceUrl: getOptionalString(value.sourceUrl),
     from: getRequiredString(value.from, "from"),
     to: getOptionalString(value.to),
     subject: getRequiredString(value.subject, "subject"),
