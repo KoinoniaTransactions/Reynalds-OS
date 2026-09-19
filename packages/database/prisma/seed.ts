@@ -3060,6 +3060,38 @@ async function main() {
       summary: "Seed data created for Smith Transaction."
     });
   }
+
+  if (rbOnly) {
+    const expectedRbIds = rbObjects.map((object) => object.id);
+    const seededRbObjectCount = await prisma.rosObject.count({
+      where: {
+        workspaceId: rbWorkspace.id,
+        id: { in: expectedRbIds }
+      }
+    });
+
+    const foreignWorkspaceCount = await prisma.workspace.count({
+      where: {
+        id: { not: rbWorkspace.id }
+      }
+    });
+
+    if (seededRbObjectCount !== expectedRbIds.length) {
+      throw new Error(
+        `RB-only seed verification failed: expected ${expectedRbIds.length} canonical RB objects, found ${seededRbObjectCount}.`
+      );
+    }
+
+    if (foreignWorkspaceCount !== 0) {
+      throw new Error(
+        `RB-only seed verification failed: found ${foreignWorkspaceCount} non-Reynalds-Brothers workspace(s).`
+      );
+    }
+
+    console.log(
+      `RB-only seed verified: ${seededRbObjectCount} canonical RB objects, 0 foreign workspaces.`
+    );
+  }
 }
 
 main()
