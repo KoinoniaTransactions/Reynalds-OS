@@ -101,13 +101,106 @@ async function getDatabaseWorkItems() {
 export async function GET() {
   try {
     await assertPermission("objects:view");
-    await getDatabaseWorkItems();
+
+    const reviewItems = await prisma.communicationReviewItem.findMany({
+      where: {
+        workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
+        status: "open"
+      },
+      include: {
+        communication: {
+          include: {
+            attachments: true
+          }
+        },
+        suggestedWorkItem: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: "desc"
+      },
+      take: 100
+    });
+
+    const candidates = reviewItems.map((item) => {
+      const evidence = item.evidence && !Array.isArray(item.evidence) && typeof item.evidence === "object"
+        ? item.evidence as Record<string, unknown>
+        : {};
+      const storedClassification = evidence.classification
+        && !Array.isArray(evidence.classification)
+        && typeof evidence.classification === "object"
+        ? evidence.classification as Record<string, unknown>
+        : {};
+      const communication = item.communication;
+
+      return {
+        id: communication.externalMessageId,
+        providerMessageId: communication.externalMessageId,
+        providerThreadId: communication.externalThreadId ?? undefined,
+        sourceUrl: communication.sourceUrl ?? undefined,
+        from: communication.sender,
+        to: Array.isArray(communication.recipients)
+          ? communication.recipients.filter((value): value is string => typeof value === "string").join(", ")
+          : undefined,
+        subject: communication.subject,
+        receivedAt: communication.sentAt?.toISOString(),
+        snippet: communication.snippet ?? undefined,
+        body: communication.bodyText ?? undefined,
+        sourceLabel: "wmtanks",
+        attachments: communication.attachments.map((attachment) => attachment.fileName),
+        classification: {
+          action: "needs_review",
+          confidence: storedClassification.confidence === "high" || storedClassification.confidence === "medium"
+            ? storedClassification.confidence
+            : "low",
+          matchedWorkItemId: item.suggestedWorkItem?.id,
+          matchedWorkItemName: item.suggestedWorkItem?.name,
+          suggestedWorkItemName: typeof storedClassification.suggestedWorkItemName === "string"
+            ? storedClassification.suggestedWorkItemName
+            : undefined,
+          suggestedServiceLine: typeof storedClassification.suggestedServiceLine === "string"
+            ? storedClassification.suggestedServiceLine
+            : undefined,
+          suggestedCustomer: typeof storedClassification.suggestedCustomer === "string"
+            ? storedClassification.suggestedCustomer
+            : undefined,
+          suggestedLocation: typeof storedClassification.suggestedLocation === "string"
+            ? storedClassification.suggestedLocation
+            : undefined,
+          suggestedCity: typeof storedClassification.suggestedCity === "string"
+            ? storedClassification.suggestedCity
+            : undefined,
+          suggestedState: typeof storedClassification.suggestedState === "string"
+            ? storedClassification.suggestedState
+            : undefined,
+          suggestedStoreNumber: typeof storedClassification.suggestedStoreNumber === "string"
+            ? storedClassification.suggestedStoreNumber
+            : undefined,
+          suggestedNextAction: typeof storedClassification.suggestedNextAction === "string"
+            ? storedClassification.suggestedNextAction
+            : "Review this email and choose the correct Reynalds Brothers Work Item.",
+          requiresApproval: true,
+          multiStoreFlag: item.category === "multi_store",
+          extractedStoreNumbers: Array.isArray(storedClassification.extractedStoreNumbers)
+            ? storedClassification.extractedStoreNumbers.filter((value): value is string => typeof value === "string")
+            : [],
+          reasons: typeof item.reason === "string" && item.reason
+            ? [item.reason]
+            : ["Email requires human review before filing."]
+        }
+      };
+    });
 
     return NextResponse.json({
       source: "database",
       liveSync: false,
-      candidates: [],
-      note: "Live Gmail synchronization is not enabled yet. Use manual email analysis until the Gmail integration phase."
+      candidates,
+      reviewCount: candidates.length,
+      note: "Review queue is live. Automatic Gmail synchronization is not enabled yet."
     });
   } catch (error) {
     const authErrorResponse = getPermissionErrorResponse(error);
