@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    await assertPermission("objects:update");
+    const user = await assertPermission("objects:update");
 
     let limit = 50;
     try {
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       // Empty body is valid; keep the default.
     }
 
-    const result = await syncWalMartTanksGmail(limit);
+    const result = await syncWalMartTanksGmail(limit, user.id, user.name);
     return NextResponse.json({ success: true, result });
   } catch (error) {
     return NextResponse.json({
