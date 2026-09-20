@@ -33,6 +33,7 @@ export type ReynaldsBrothersEmailClassification = {
   matchedWorkItemName?: string;
   suggestedWorkItemName?: string;
   suggestedServiceLine?: string;
+  suggestedWorkType?: string;
   suggestedCustomer?: string;
   suggestedLocation?: string;
   suggestedCity?: string;
@@ -102,18 +103,20 @@ export function classifyEmailForWorkItem(
   const storeNumbers = findStoreNumbers(text);
   const workOrderNumber = findWorkOrderNumber(text);
   const serviceLine = inferServiceLine(text);
+  const workType = inferWorkType(text, serviceLine);
   const customer = inferCustomer(text, email.from);
   const location = findCityState(text);
   const matched = findMatchingWorkItem(text, workItems, storeNumber, workOrderNumber);
 
   if (storeNumbers.length > 1 && looksLikeNewWork(text)) {
-    const suggestedName = buildSuggestedWorkItemName(email, serviceLine, customer, storeNumber);
+    const suggestedName = buildSuggestedWorkItemName(email, serviceLine, workType, customer, storeNumber);
 
     return {
       action: "create_work_item",
       confidence: "medium",
       suggestedWorkItemName: suggestedName,
       suggestedServiceLine: serviceLine,
+      suggestedWorkType: workType,
       suggestedCustomer: customer,
       suggestedLocation: buildSuggestedLocation(storeNumber, location),
       suggestedCity: location?.city,
@@ -137,6 +140,7 @@ export function classifyEmailForWorkItem(
       matchedWorkItemId: matched.id,
       matchedWorkItemName: matched.name,
       suggestedServiceLine: getWorkItemData(matched).serviceLine ?? serviceLine,
+      suggestedWorkType: getWorkItemData(matched).workType ?? getWorkItemData(matched).jobType ?? workType,
       suggestedCustomer: getWorkItemData(matched).customer ?? customer,
       suggestedLocation: getWorkItemLocation(matched),
       suggestedStoreNumber: storeNumber,
@@ -152,13 +156,14 @@ export function classifyEmailForWorkItem(
   }
 
   if (looksLikeNewWork(text)) {
-    const suggestedName = buildSuggestedWorkItemName(email, serviceLine, customer, storeNumber);
+    const suggestedName = buildSuggestedWorkItemName(email, serviceLine, workType, customer, storeNumber);
 
     return {
       action: "create_work_item",
       confidence: serviceLine || storeNumber ? "medium" : "low",
       suggestedWorkItemName: suggestedName,
       suggestedServiceLine: serviceLine,
+      suggestedWorkType: workType,
       suggestedCustomer: customer,
       suggestedLocation: buildSuggestedLocation(storeNumber, location),
       suggestedCity: location?.city,
@@ -181,6 +186,7 @@ export function classifyEmailForWorkItem(
     action: "needs_review",
     confidence: "low",
     suggestedServiceLine: serviceLine,
+    suggestedWorkType: workType,
     suggestedCustomer: customer,
     suggestedStoreNumber: storeNumber,
     suggestedNextAction: "Review email and choose a Work Item before filing.",
@@ -249,15 +255,47 @@ function findMatchingWorkItem(
   storeNumber?: string,
   workOrderNumber?: string
 ): ReynaldsBrothersWorkItem | undefined {
-  return workItems.find((workItem) => {
+  if (workOrderNumber) {
+    const workOrderMatches = workItems.filter((workItem) =>
+      normalizeText(getWorkItemData(workItem).workOrderNumber ?? "") === workOrderNumber
+    );
+    if (workOrderMatches.length === 1) return workOrderMatches[0];
+  }
+
+  if (storeNumber) {
+    const storeMatches = workItems.filter((workItem) =>
+      normalizeText(getWorkItemData(workItem).storeNumber ?? "") === storeNumber
+    );
+
+    if (storeMatches.length === 1) return storeMatches[0];
+
+    if (storeMatches.length > 1) {
+      const languageMatches = storeMatches.filter((workItem) => {
+        const data = getWorkItemData(workItem);
+        const descriptors = [
+          data.workOrderNumber,
+          data.workType,
+          data.jobType,
+          data.siteName
+        ]
+          .map((value) => normalizeText(String(value ?? "")))
+          .filter((value) => value.length >= 4);
+
+        return descriptors.some((descriptor) => text.includes(descriptor));
+      });
+
+      if (languageMatches.length === 1) return languageMatches[0];
+      return undefined;
+    }
+  }
+
+  const languageMatches = workItems.filter((workItem) => {
     const data = getWorkItemData(workItem);
-    const haystack = normalizeText(`${workItem.name} ${data.storeNumber ?? ""} ${data.workOrderNumber ?? ""} ${data.siteName ?? ""}`);
-
-    if (workOrderNumber && normalizeText(data.workOrderNumber ?? "") === workOrderNumber) return true;
-    if (storeNumber && normalizeText(data.storeNumber ?? "") === storeNumber) return true;
-
-    return text.includes(haystack) && haystack.length > 10;
+    const haystack = normalizeText(`${workItem.name} ${data.workOrderNumber ?? ""} ${data.siteName ?? ""}`);
+    return haystack.length > 10 && text.includes(haystack);
   });
+
+  return languageMatches.length === 1 ? languageMatches[0] : undefined;
 }
 
 function looksLikeNewWork(text: string): boolean {
@@ -284,14 +322,34 @@ function looksLikeNewWork(text: string): boolean {
 }
 
 function inferServiceLine(text: string): string | undefined {
-  if (text.includes("acc") || text.includes("level 1") || text.includes("level 2")) return "ACC";
   if (text.includes("uco") || text.includes("used cooking oil")) return "UCO";
   if (text.includes("pressure wash") || text.includes("lower bay")) return "Pressure Washing";
+  if (text.includes("acc") || text.includes("level 1") || text.includes("level 2") || text.includes("tank triage")) return "ACC";
   if (text.includes("backflow")) return "Backflow";
   if (text.includes("grease interceptor")) return "Grease Interceptor";
   if (text.includes("zurn") || text.includes("alarm")) return "Zurn";
   if (text.includes("plumbing")) return "Plumbing";
   return undefined;
+}
+
+function inferWorkType(text: string, serviceLine?: string): string | undefined {
+  if (text.includes("work completion")) {
+    if (text.includes("acc") && text.includes("uco")) return "ACC UCO Work Completion";
+    if (serviceLine === "UCO") return "UCO Work Completion";
+    if (serviceLine === "ACC") return "ACC Work Completion";
+    return "Work Completion";
+  }
+
+  if (text.includes("tank triage") || text.includes("level 2")) return "ACC Level 2 Triage";
+  if (text.includes("level 1")) return "ACC Level 1 Triage";
+  if (text.includes("tank replacement") || text.includes("replacement request")) {
+    if (serviceLine === "UCO") return "UCO Tank Replacement";
+    if (serviceLine === "ACC") return "ACC Tank Replacement";
+  }
+  if (serviceLine === "Pressure Washing") return "Pressure Washing";
+  if (serviceLine === "UCO") return "UCO Tank Replacement";
+  if (serviceLine === "ACC") return "ACC Level 1 Triage";
+  return serviceLine;
 }
 
 function inferCustomer(text: string, from: string): string | undefined {
@@ -311,30 +369,38 @@ function findStoreNumbers(text: string): string[] {
 }
 
 function findWorkOrderNumber(text: string): string | undefined {
-  const match = text.match(/\b(?:rb-wo|wo|work order)\s*-?\s*([a-z0-9-]+)/);
-  return match?.[0] ? normalizeText(match[0]) : undefined;
+  const explicit = text.match(/\b(?:rb-wo|wo|work order|tracking number)\s*[:#-]?\s*([a-z0-9-]{5,})/);
+  if (explicit?.[1]) return normalizeText(explicit[1]);
+
+  const lxRetail = text.match(/\b(\d{3,5}\.\d{3,5})\b/);
+  if (lxRetail?.[1]) return lxRetail[1];
+
+  const piped = text.match(/\|\s*(\d{7,12})\s*\|/);
+  return piped?.[1];
 }
 
 function buildSuggestedWorkItemName(
   email: ReynaldsBrothersEmailInput,
   serviceLine?: string,
+  suggestedWorkType?: string,
   customer?: string,
   storeNumber?: string
 ): string {
   const location = findCityState(normalizeText(`${email.subject} ${email.snippet ?? ""} ${email.body ?? ""}`));
-  const workType = getWorkTypeName(serviceLine);
+  const workType = suggestedWorkType ?? getWorkTypeName(serviceLine);
 
   if (customer === "Walmart" && storeNumber && location) return `WM-${storeNumber} ${location.city}, ${stateName(location.state)} - ${workType}`;
-  if (customer === "Walmart" && storeNumber && serviceLine) return `WM-${storeNumber} - ${workType}`;
-  if (customer && storeNumber && serviceLine) return `${customer} ${storeNumber} - ${workType}`;
-  if (customer && serviceLine) return `${customer} - ${serviceLine}`;
-  if (serviceLine) return `${serviceLine} - ${email.subject}`;
+  if (customer === "Walmart" && storeNumber && workType) return `WM-${storeNumber} - ${workType}`;
+  if (customer && storeNumber && workType) return `${customer} ${storeNumber} - ${workType}`;
+  if (customer && workType) return `${customer} - ${workType}`;
+  if (workType) return `${workType} - ${email.subject}`;
   return email.subject;
 }
 
 export function getDefaultWorkItemDataForClassification(classification: ReynaldsBrothersEmailClassification) {
   const serviceLine = classification.suggestedServiceLine;
-  const jobType = getWorkTypeName(serviceLine);
+  const jobType = getWorkflowJobType(classification.suggestedWorkType, serviceLine);
+  const workType = classification.suggestedWorkType ?? jobType;
   const phaseTrack = serviceLine === "UCO"
     ? ucoPhaseTrack
     : serviceLine === "Pressure Washing"
@@ -351,7 +417,7 @@ export function getDefaultWorkItemDataForClassification(classification: Reynalds
     city: classification.suggestedCity,
     state: classification.suggestedState,
     siteName: classification.suggestedLocation,
-    workType: jobType,
+    workType,
     phase: "Needs Approval",
     phaseTrack,
     poStatus: serviceLine === "Pressure Washing" ? "Not Required Yet" : "Missing",
@@ -375,18 +441,38 @@ function getWorkTypeName(serviceLine?: string): string {
   return serviceLine ?? "Work Item";
 }
 
+function getWorkflowJobType(suggestedWorkType?: string, serviceLine?: string): string {
+  if (suggestedWorkType === "ACC Level 2 Triage") return suggestedWorkType;
+  if (suggestedWorkType === "ACC Level 1 Triage") return suggestedWorkType;
+  if (suggestedWorkType === "ACC Tank Replacement") return suggestedWorkType;
+  if (suggestedWorkType === "UCO Tank Replacement") return suggestedWorkType;
+  if (suggestedWorkType === "Pressure Washing") return suggestedWorkType;
+  return getWorkTypeName(serviceLine);
+}
+
 function findCityState(text: string): { city: string; state: string } | undefined {
-  const match = text.match(/\bin\s+([a-z][a-z\s.'-]{2,40}),?\s+([a-z]{2})\b/)
-    ?? text.match(/location id:\s*\d+\s*\|\s*([a-z][a-z\s.'-]{2,40})\s*\|\s*([a-z]{2})\b/)
-    ?? text.match(/city\/state\s+([a-z][a-z\s.'-]{2,40}),?\s+([a-z]{2}|[a-z\s]{4,24})\b/)
-    ?? text.match(/wm\s+\d{3,5}\s+([a-z][a-z\s.'-]{2,40})\s+state:\s+([a-z\s]{2,24})\b/);
+  const patterns = [
+    /location id:\s*\d+\s*\|\s*([a-z][a-z\s.'-]{2,40})\s*\|\s*([a-z]{2})\b/,
+    /city\/state\s*[:\-]?\s*([a-z][a-z\s.'-]{2,40}?),?\s+([a-z]{2}|[a-z\s]{4,24})(?=\s+(?:store\/club|store|completion|start|date|tech|$))/,
+    /wm\s+\d{3,5}\s+([a-z][a-z\s.'-]{2,40}?)\s+state:\s+([a-z\s]{2,24}?)(?=,|\s+(?:auto|acc|uco|tank|$))/,
+    /\b(?:city|location)\s*[:\-]\s*([a-z][a-z\s.'-]{2,40}?)\s+(?:state\s*[:\-]\s*)?([a-z]{2})\b/,
+    /\b(?:in|at)\s+([a-z][a-z\s.'-]{2,40}?),\s*([a-z]{2})\b/
+  ];
 
-  if (!match) return undefined;
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (!match) continue;
 
-  return {
-    city: titleCase(match[1].trim()),
-    state: normalizeState(match[2])
-  };
+    const state = normalizeState(match[2]);
+    if (!isValidState(state)) continue;
+
+    return {
+      city: titleCase(match[1].trim()),
+      state
+    };
+  }
+
+  return undefined;
 }
 
 function buildSuggestedLocation(storeNumber?: string, location?: { city: string; state: string }) {
@@ -416,11 +502,32 @@ function stateName(state: string): string {
 }
 
 function normalizeState(state: string): string {
-  const value = state.trim();
+  const value = state.trim().toLowerCase().replace(/\s+/g, " ");
+  const stateNames: Record<string, string> = {
+    alabama: "AL", alaska: "AK", arizona: "AZ", arkansas: "AR", california: "CA",
+    colorado: "CO", connecticut: "CT", delaware: "DE", florida: "FL", georgia: "GA",
+    hawaii: "HI", idaho: "ID", illinois: "IL", indiana: "IN", iowa: "IA",
+    kansas: "KS", kentucky: "KY", louisiana: "LA", maine: "ME", maryland: "MD",
+    massachusetts: "MA", michigan: "MI", minnesota: "MN", mississippi: "MS", missouri: "MO",
+    montana: "MT", nebraska: "NE", nevada: "NV", "new hampshire": "NH", "new jersey": "NJ",
+    "new mexico": "NM", "new york": "NY", "north carolina": "NC", "north dakota": "ND", ohio: "OH",
+    oklahoma: "OK", oregon: "OR", pennsylvania: "PA", "rhode island": "RI", "south carolina": "SC",
+    "south dakota": "SD", tennessee: "TN", texas: "TX", utah: "UT", vermont: "VT",
+    virginia: "VA", washington: "WA", "west virginia": "WV", wisconsin: "WI", wyoming: "WY",
+    "district of columbia": "DC"
+  };
 
-  if (value.length <= 2) return value.toUpperCase();
+  if (stateNames[value]) return stateNames[value];
+  if (value.length === 2) return value.toUpperCase();
+  return titleCase(value);
+}
 
-  return titleCase(value.toLowerCase());
+function isValidState(state: string): boolean {
+  return new Set([
+    "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA",
+    "ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK",
+    "OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","DC"
+  ]).has(state);
 }
 
 function titleCase(value: string): string {

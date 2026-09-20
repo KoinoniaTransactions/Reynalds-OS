@@ -76,6 +76,43 @@ describe("Reynalds Brothers email intake", () => {
     expect(result.suggestedNextAction).toContain("completion proof");
   });
 
+  it("prefers structured City/State over unrelated body prose", () => {
+    const result = classifyEmailForWorkItem({
+      from: "\"Jotform via WalMart Tanks Program\" <wmtanks@reynaldsbrothers.com>",
+      subject: "Re: store: WM 943 09-19-2026 jackson.wright@reynaldsbrothers.com ACC Walmart ACC UCO Work Completion",
+      body: "Walmart ACC UCO Work Completion Tech Email jackson.wright@reynaldsbrothers.com City/State Casselberry FL Store/Club 943 Start Date 09-18-2026 Completion Date 09-19-2026. Work completed in a manner that minimized disruption to operations."
+    }, []);
+
+    expect(result.action).toBe("create_work_item");
+    expect(result.suggestedStoreNumber).toBe("943");
+    expect(result.suggestedCity).toBe("Casselberry");
+    expect(result.suggestedState).toBe("FL");
+    expect(result.suggestedWorkType).toBe("ACC UCO Work Completion");
+    expect(result.suggestedWorkItemName).toBe("WM-943 Casselberry, Florida - ACC UCO Work Completion");
+  });
+
+  it("matches exact work order values without retaining the WO prefix", () => {
+    const workItem = {
+      ...reynaldsBrothersFallbackWorkItems[0],
+      id: "rb_work_order_match",
+      name: "WM-3347 Winter Haven ServiceChannel",
+      data: {
+        ...(reynaldsBrothersFallbackWorkItems[0].data ?? {}),
+        storeNumber: "3347",
+        workOrderNumber: "349228841"
+      }
+    };
+
+    const result = classifyEmailForWorkItem({
+      from: "ServiceChannel 349228841@wonote.servicechannel.net",
+      subject: "New Note | Location ID: 3347 | WINTER HAVEN | FL | P3-ONSITE W/I 3 DAYS | 349228841 | WALMART STORES, INC",
+      body: "Work Order 349228841 has a new note."
+    }, [workItem]);
+
+    expect(result.action).toBe("link_to_work_item");
+    expect(result.matchedWorkItemId).toBe("rb_work_order_match");
+  });
+
   it("recognizes Frontline tracking emails by Walmart PO store number", () => {
     const result = classifyEmailForWorkItem({
       from: "Orders clerk@frontlineii.com",
