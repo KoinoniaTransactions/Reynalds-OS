@@ -67,7 +67,13 @@ export async function GET(request: NextRequest) {
     response.cookies.delete("rb_gmail_oauth_state");
     return response;
   } catch (error) {
-    const message = encodeURIComponent(error instanceof Error ? error.message : "Gmail connection failed.");
+    const safeMessage = error instanceof Error ? error.message : "Gmail connection failed.";
+    console.error("[RB Gmail OAuth callback]", {
+      message: safeMessage,
+      name: error instanceof Error ? error.name : "UnknownError"
+    });
+
+    const message = encodeURIComponent(safeMessage);
     const response = NextResponse.redirect(new URL(`/reynalds-brothers?gmail=error&message=${message}#rb-email-intake`, request.url));
     response.cookies.delete("rb_gmail_oauth_state");
     return response;
