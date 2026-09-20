@@ -4,6 +4,8 @@ import {
   REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL,
   REYNALDS_BROTHERS_GMAIL_LABEL_NAME,
   classifyEmailForWorkItem,
+  getDefaultWorkItemDataForClassification,
+  type ReynaldsBrothersEmailClassification,
   type ReynaldsBrothersEmailInput
 } from "./reynalds-brothers-email-intake";
 import {
@@ -254,7 +256,138 @@ async function getWorkItems(): Promise<ReynaldsBrothersWorkItem[]> {
   }));
 }
 
-export async function syncWalMartTanksGmail(limit = 50) {
+function confidenceScore(classification: ReynaldsBrothersEmailClassification): number {
+  return classification.confidence === "high" ? 100 : classification.confidence === "medium" ? 70 : 30;
+}
+
+function communicationClassificationData(classification: ReynaldsBrothersEmailClassification) {
+  return {
+    matchConfidence: confidenceScore(classification),
+    matchEvidence: {
+      confidence: classification.confidence,
+      action: classification.action,
+      reasons: classification.reasons
+    },
+    identifiers: {
+      storeNumbers: classification.extractedStoreNumbers ?? [],
+      suggestedStoreNumber: classification.suggestedStoreNumber ?? null
+    },
+    location: classification.suggestedLocation
+      ? {
+          display: classification.suggestedLocation,
+          city: classification.suggestedCity ?? null,
+          state: classification.suggestedState ?? null
+        }
+      : undefined
+  };
+}
+
+async function createApprovalWorkItem(
+  classification: ReynaldsBrothersEmailClassification,
+  email: ReynaldsBrothersEmailInput,
+  actorId: string
+): Promise<ReynaldsBrothersWorkItem> {
+  const data: ReynaldsBrothersWorkItemData = {
+    ...getDefaultWorkItemDataForClassification(classification),
+    sourceSystem: "gmail:wmtanks",
+    sourceReferenceId: email.providerMessageId,
+    dateReceived: email.receivedAt,
+    intakeReasons: classification.reasons
+  };
+
+  const object = await prisma.rosObject.create({
+    data: {
+      workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
+      objectType: REYNALDS_BROTHERS_WORK_ITEM_TYPE,
+      name: classification.suggestedWorkItemName ?? email.subject,
+      status: "Needs Approval",
+      health: "Watch",
+      nextAction: classification.suggestedNextAction,
+      ownerId: actorId,
+      data: data as Prisma.InputJsonValue
+    }
+  });
+
+  await prisma.timelineEvent.create({
+    data: {
+      workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
+      objectId: object.id,
+      actorId,
+      eventType: "rb.work_item.created_from_gmail",
+      summary: `Needs Approval Work Item created from WMTanks email: ${object.name}`,
+      newValue: {
+        providerMessageId: email.providerMessageId ?? null,
+        classification
+      }
+    }
+  });
+
+  return {
+    id: object.id,
+    objectType: object.objectType,
+    name: object.name,
+    status: object.status,
+    health: object.health,
+    nextAction: object.nextAction,
+    data: toWorkItemData(object.data)
+  };
+}
+
+function canAutoCreateApprovalJob(classification: ReynaldsBrothersEmailClassification): boolean {
+  return classification.action === "create_work_item"
+    && !classification.multiStoreFlag
+    && Boolean(classification.suggestedStoreNumber)
+    && classification.confidence !== "low";
+}
+
+async function fileCommunication(
+  communicationId: string,
+  workItemId: string,
+  classification: ReynaldsBrothersEmailClassification,
+  actorId: string,
+  actorName?: string
+) {
+  await prisma.communication.update({
+    where: { id: communicationId },
+    data: {
+      workItemId,
+      status: "filed",
+      ...communicationClassificationData(classification),
+      rawMetadata: {
+        channel: "email",
+        direction: "inbound",
+        sourceLabel: REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL,
+        humanResponseStatus: "Needs Response",
+        filedBy: actorName ?? "Reynalds Brothers OS"
+      }
+    }
+  });
+
+  const reviewItem = await prisma.communicationReviewItem.findUnique({
+    where: { communicationId }
+  });
+
+  if (reviewItem?.status === "open") {
+    await prisma.communicationReviewItem.update({
+      where: { id: reviewItem.id },
+      data: {
+        suggestedWorkItemId: workItemId,
+        status: "resolved",
+        resolvedById: actorId,
+        resolvedAt: new Date(),
+        confidence: confidenceScore(classification),
+        reason: classification.reasons.join(" "),
+        evidence: {
+          classification,
+          sourceLabel: REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL
+        }
+      }
+    });
+  }
+}
+
+
+export async function syncWalMartTanksGmail(limit = 50, actorId: string, actorName?: string) {
   const connection = await prisma.gmailConnection.findFirst({
     where: {
       workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
@@ -274,6 +407,7 @@ export async function syncWalMartTanksGmail(limit = 50) {
   let filed = 0;
   let review = 0;
   let duplicates = 0;
+  let created = 0;
 
   for (const messageId of messageIds.reverse()) {
     const existing = await prisma.communication.findUnique({
@@ -306,8 +440,18 @@ export async function syncWalMartTanksGmail(limit = 50) {
       attachments: message.attachments.map((attachment) => attachment.fileName)
     };
     const classification = classifyEmailForWorkItem(email, workItems);
-    const confidenceScore = classification.confidence === "high" ? 100 : classification.confidence === "medium" ? 70 : 30;
-    const shouldFile = classification.action === "link_to_work_item" && Boolean(classification.matchedWorkItemId);
+    let targetWorkItemId = classification.action === "link_to_work_item"
+      ? classification.matchedWorkItemId
+      : undefined;
+
+    if (!targetWorkItemId && canAutoCreateApprovalJob(classification)) {
+      const createdWorkItem = await createApprovalWorkItem(classification, email, actorId);
+      workItems.push(createdWorkItem);
+      targetWorkItemId = createdWorkItem.id;
+      created += 1;
+    }
+
+    const shouldFile = Boolean(targetWorkItemId);
 
     const communication = await prisma.communication.create({
       data: {
@@ -315,7 +459,7 @@ export async function syncWalMartTanksGmail(limit = 50) {
         source: "gmail",
         externalMessageId: message.id,
         externalThreadId: message.threadId,
-        workItemId: shouldFile ? classification.matchedWorkItemId : null,
+        workItemId: targetWorkItemId ?? null,
         subject: message.subject,
         sender: message.from,
         recipients: message.to ? [message.to] : [],
@@ -325,28 +469,13 @@ export async function syncWalMartTanksGmail(limit = 50) {
         bodyHtml: message.bodyHtml,
         sourceUrl: email.sourceUrl,
         status: shouldFile ? "filed" : "review",
-        matchConfidence: confidenceScore,
-        matchEvidence: {
-          confidence: classification.confidence,
-          action: classification.action,
-          reasons: classification.reasons
-        },
-        identifiers: {
-          storeNumbers: classification.extractedStoreNumbers ?? [],
-          suggestedStoreNumber: classification.suggestedStoreNumber ?? null
-        },
-        location: classification.suggestedLocation
-          ? {
-              display: classification.suggestedLocation,
-              city: classification.suggestedCity ?? null,
-              state: classification.suggestedState ?? null
-            }
-          : undefined,
+        ...communicationClassificationData(classification),
         rawMetadata: {
           channel: "email",
           direction: "inbound",
           sourceLabel: REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL,
-          humanResponseStatus: shouldFile ? "Needs Response" : "Needs Review"
+          humanResponseStatus: shouldFile ? "Needs Response" : "Needs Review",
+          filedBy: shouldFile ? actorName ?? "Reynalds Brothers OS" : undefined
         }
       }
     });
@@ -364,7 +493,7 @@ export async function syncWalMartTanksGmail(limit = 50) {
       });
     }
 
-    if (shouldFile && classification.matchedWorkItemId) {
+    if (shouldFile && targetWorkItemId) {
       filed += 1;
     } else {
       await prisma.communicationReviewItem.create({
@@ -379,7 +508,7 @@ export async function syncWalMartTanksGmail(limit = 50) {
               : "unmatched",
           reason: classification.reasons.join(" "),
           status: "open",
-          confidence: confidenceScore,
+          confidence: confidenceScore(classification),
           evidence: {
             classification,
             sourceLabel: REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL
@@ -404,7 +533,7 @@ export async function syncWalMartTanksGmail(limit = 50) {
     update: {
       lastSyncedAt: new Date(),
       status: "ok",
-      metadata: { imported, filed, review, duplicates, limit }
+      metadata: { imported, filed, review, duplicates, created, limit }
     },
     create: {
       workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
@@ -413,11 +542,113 @@ export async function syncWalMartTanksGmail(limit = 50) {
       label: REYNALDS_BROTHERS_GMAIL_LABEL_NAME,
       lastSyncedAt: new Date(),
       status: "ok",
-      metadata: { imported, filed, review, duplicates, limit }
+      metadata: { imported, filed, review, duplicates, created, limit }
     }
   });
 
-  return { imported, filed, review, duplicates, scanned: messageIds.length };
+  return { imported, filed, review, duplicates, created, scanned: messageIds.length };
+}
+
+export async function reprocessWalMartTanksReviewQueue(
+  actorId: string,
+  actorName?: string,
+  limit = 100
+) {
+  const reviewItems = await prisma.communicationReviewItem.findMany({
+    where: {
+      workspaceId: REYNALDS_BROTHERS_WORKSPACE_ID,
+      status: "open",
+      communication: {
+        source: "gmail"
+      }
+    },
+    include: {
+      communication: true
+    },
+    orderBy: { createdAt: "asc" },
+    take: Math.max(1, Math.min(250, limit))
+  });
+
+  const workItems = await getWorkItems();
+  let filed = 0;
+  let created = 0;
+  let stillReview = 0;
+
+  for (const reviewItem of reviewItems) {
+    const communication = reviewItem.communication;
+    const email: ReynaldsBrothersEmailInput = {
+      providerMessageId: communication.externalMessageId,
+      providerThreadId: communication.externalThreadId ?? undefined,
+      sourceUrl: communication.sourceUrl ?? undefined,
+      from: communication.sender,
+      to: Array.isArray(communication.recipients)
+        ? communication.recipients.filter((value): value is string => typeof value === "string").join(", ")
+        : undefined,
+      subject: communication.subject,
+      receivedAt: communication.sentAt?.toISOString(),
+      snippet: communication.snippet ?? undefined,
+      body: communication.bodyText ?? undefined,
+      sourceLabel: REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL
+    };
+
+    const classification = classifyEmailForWorkItem(email, workItems);
+    let targetWorkItemId = classification.action === "link_to_work_item"
+      ? classification.matchedWorkItemId
+      : undefined;
+
+    if (!targetWorkItemId && canAutoCreateApprovalJob(classification)) {
+      const createdWorkItem = await createApprovalWorkItem(classification, email, actorId);
+      workItems.push(createdWorkItem);
+      targetWorkItemId = createdWorkItem.id;
+      created += 1;
+    }
+
+    if (targetWorkItemId) {
+      await fileCommunication(communication.id, targetWorkItemId, classification, actorId, actorName);
+      filed += 1;
+      continue;
+    }
+
+    await prisma.communication.update({
+      where: { id: communication.id },
+      data: {
+        status: "review",
+        ...communicationClassificationData(classification),
+        rawMetadata: {
+          channel: "email",
+          direction: "inbound",
+          sourceLabel: REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL,
+          humanResponseStatus: "Needs Review"
+        }
+      }
+    });
+
+    await prisma.communicationReviewItem.update({
+      where: { id: reviewItem.id },
+      data: {
+        suggestedWorkItemId: classification.matchedWorkItemId ?? null,
+        category: classification.multiStoreFlag
+          ? "multi_store"
+          : classification.action === "create_work_item"
+            ? "new_work"
+            : "unmatched",
+        reason: classification.reasons.join(" "),
+        confidence: confidenceScore(classification),
+        evidence: {
+          classification,
+          sourceLabel: REYNALDS_BROTHERS_EMAIL_SOURCE_LABEL
+        }
+      }
+    });
+    stillReview += 1;
+  }
+
+  return {
+    scanned: reviewItems.length,
+    filed,
+    created,
+    stillReview
+  };
 }
 
 export const RB_GMAIL_EXPECTED_ACCOUNT = EXPECTED_ACCOUNT;
