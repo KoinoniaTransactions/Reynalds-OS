@@ -207,6 +207,7 @@ export function ReynaldsBrothersOperationsSystem() {
   const [emailActionMessage, setEmailActionMessage] = useState("");
   const [gmailStatus, setGmailStatus] = useState<GmailStatusPayload>({});
   const [gmailSyncPending, setGmailSyncPending] = useState(false);
+  const [gmailReprocessPending, setGmailReprocessPending] = useState(false);
   const [communicationForm, setCommunicationForm] = useState(defaultCommunicationForm);
   const [approvalActionPending, setApprovalActionPending] = useState("");
   const [trialImportText, setTrialImportText] = useState("");
@@ -292,6 +293,7 @@ export function ReynaldsBrothersOperationsSystem() {
         + String(result.imported ?? 0) + " imported, "
         + String(result.filed ?? 0) + " filed, "
         + String(result.review ?? 0) + " sent to review, "
+        + String(result.created ?? 0) + " Needs Approval jobs created, "
         + String(result.duplicates ?? 0) + " already known."
       );
       await Promise.all([loadEmailCandidates(), loadWorkItems(), loadGmailStatus()]);
@@ -299,6 +301,36 @@ export function ReynaldsBrothersOperationsSystem() {
       setError(err instanceof Error ? err.message : "Gmail synchronization failed.");
     } finally {
       setGmailSyncPending(false);
+    }
+  }
+
+  async function reprocessGmailReview() {
+    setError("");
+    setEmailActionMessage("");
+    setGmailReprocessPending(true);
+
+    try {
+      const response = await fetch("/api/reynalds-brothers/gmail/reprocess", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ limit: 100 })
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Gmail review reprocessing failed.");
+
+      const result = payload.result ?? {};
+      setEmailActionMessage(
+        "Review reprocess complete: "
+        + String(result.scanned ?? 0) + " checked, "
+        + String(result.filed ?? 0) + " filed, "
+        + String(result.created ?? 0) + " Needs Approval jobs created, "
+        + String(result.stillReview ?? 0) + " still need review."
+      );
+      await Promise.all([loadEmailCandidates(), loadWorkItems(), loadGmailStatus()]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Gmail review reprocessing failed.");
+    } finally {
+      setGmailReprocessPending(false);
     }
   }
 
@@ -2139,14 +2171,24 @@ export function ReynaldsBrothersOperationsSystem() {
                 Refresh Review Queue
               </button>
               {gmailStatus.connected ? (
-                <button
-                  className="rb-secondary-button"
-                  onClick={() => void syncGmailNow()}
-                  disabled={gmailSyncPending}
-                  type="button"
-                >
-                  {gmailSyncPending ? "Syncing..." : "Sync WalMart Tanks"}
-                </button>
+                <>
+                  <button
+                    className="rb-secondary-button"
+                    onClick={() => void reprocessGmailReview()}
+                    disabled={gmailReprocessPending || gmailSyncPending || emailCandidates.length === 0}
+                    type="button"
+                  >
+                    {gmailReprocessPending ? "Reprocessing..." : "Reprocess Review Queue"}
+                  </button>
+                  <button
+                    className="rb-secondary-button"
+                    onClick={() => void syncGmailNow()}
+                    disabled={gmailSyncPending || gmailReprocessPending}
+                    type="button"
+                  >
+                    {gmailSyncPending ? "Syncing..." : "Sync WalMart Tanks"}
+                  </button>
+                </>
               ) : (
                 <a className="ros-button-link" href="/api/reynalds-brothers/gmail/connect">
                   Connect Gmail
