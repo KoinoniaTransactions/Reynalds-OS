@@ -197,10 +197,10 @@ export async function GET() {
 
     return NextResponse.json({
       source: "database",
-      liveSync: false,
+      liveSync: true,
       candidates,
       reviewCount: candidates.length,
-      note: "Review queue is live. Automatic Gmail synchronization is not enabled yet."
+      note: "Review queue is live. Connected Gmail messages can be synchronized and safely reprocessed after classifier updates."
     });
   } catch (error) {
     const authErrorResponse = getPermissionErrorResponse(error);
