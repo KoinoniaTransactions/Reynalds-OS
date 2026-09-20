@@ -14,7 +14,7 @@ import {
 } from "./reynalds-brothers-work-items";
 import type { Prisma } from "@reynalds-os/database";
 
-// OAuth credentials are injected through the dedicated RB Vercel Preview environment.
+// OAuth credentials are injected through the dedicated Reynalds Brothers Vercel Preview environment.
 const GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 const GMAIL_API = "https://gmail.googleapis.com/gmail/v1";
