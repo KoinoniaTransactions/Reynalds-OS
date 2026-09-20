@@ -22,9 +22,17 @@ const GMAIL_SCOPE = "https://www.googleapis.com/auth/gmail.readonly";
 const EXPECTED_ACCOUNT = process.env.RB_GMAIL_EXPECTED_ACCOUNT ?? "jeremiah@reynaldsbrothers.com";
 
 function requireEnv(name: string): string {
-  const value = process.env[name];
+  const value = process.env[name]?.trim();
   if (!value) throw new Error(`${name} is not configured.`);
   return value;
+}
+
+function getGoogleClientId(): string {
+  const clientId = requireEnv("GOOGLE_CLIENT_ID");
+  if (!/^[A-Za-z0-9._-]+\.apps\.googleusercontent\.com$/.test(clientId)) {
+    throw new Error("GOOGLE_CLIENT_ID is malformed. Re-copy the Web application Client ID from Google Cloud.");
+  }
+  return clientId;
 }
 
 function getEncryptionKey(): Buffer {
@@ -63,7 +71,7 @@ export function getGoogleOauthRedirectUri(requestUrl: string): string {
 
 export function buildGoogleAuthorizationUrl(requestUrl: string, state: string): string {
   const params = new URLSearchParams({
-    client_id: requireEnv("GOOGLE_CLIENT_ID"),
+    client_id: getGoogleClientId(),
     redirect_uri: getGoogleOauthRedirectUri(requestUrl),
     response_type: "code",
     scope: GMAIL_SCOPE,
@@ -82,7 +90,7 @@ export async function exchangeCodeForTokens(code: string, requestUrl: string) {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      client_id: requireEnv("GOOGLE_CLIENT_ID"),
+      client_id: getGoogleClientId(),
       client_secret: requireEnv("GOOGLE_CLIENT_SECRET"),
       code,
       grant_type: "authorization_code",
