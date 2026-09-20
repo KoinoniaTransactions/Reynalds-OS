@@ -163,6 +163,7 @@ export function classifyEmailForWorkItem(
       confidence: serviceLine || storeNumber ? "medium" : "low",
       suggestedWorkItemName: suggestedName,
       suggestedServiceLine: serviceLine,
+      suggestedWorkType: workType,
       suggestedCustomer: customer,
       suggestedLocation: buildSuggestedLocation(storeNumber, location),
       suggestedCity: location?.city,
