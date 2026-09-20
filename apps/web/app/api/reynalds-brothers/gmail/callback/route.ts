@@ -68,6 +68,7 @@ export async function GET(request: NextRequest) {
     return response;
   } catch (error) {
     const safeMessage = error instanceof Error ? error.message : "Gmail connection failed.";
+    // Keep callback diagnostics secret-safe: log the error name/message, never OAuth codes or tokens.
     console.error("[RB Gmail OAuth callback]", {
       message: safeMessage,
       name: error instanceof Error ? error.name : "UnknownError"
