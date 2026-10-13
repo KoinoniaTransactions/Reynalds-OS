@@ -561,6 +561,17 @@ export async function POST(request: Request) {
     );
   }
 
+  // Never send real consultation notifications from Vercel non-production deployments.
+  // CRM persistence remains unchanged; preview database isolation must be verified separately.
+  if (process.env.VERCEL_ENV !== "production" && process.env.VERCEL === "1") {
+    console.info("Koinonia consultation notification suppressed in Vercel non-production.");
+    return NextResponse.json({
+      ok: true,
+      message:
+        "Your consultation request has been received. Koinonia will follow up with next steps."
+    });
+  }
+
   const resendApiKey = process.env.RESEND_API_KEY;
 
   if (!resendApiKey) {
