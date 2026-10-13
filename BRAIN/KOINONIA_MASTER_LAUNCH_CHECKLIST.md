@@ -241,6 +241,30 @@ Acceptance criteria: GA4 is proven with real observed events, not merely present
 
 **Evidence boundary:** Separate controlled preview tests proved GA4 `generate_lead`, Meta `Lead`, and TikTok `SubmitForm`/Lead. They do NOT yet prove one single tagged test traveled through all required UTM/click-ID, CRM relationship, follow-up, and cross-platform steps. Therefore M6 remains unchecked pending a unified acceptance record.
 
+### M6 evidence review — 2026-10-13 (read-only audit of September evidence)
+
+| Item | September evidence | Acceptance status |
+| --- | --- | --- |
+| M6.1 tagged landing | Preview test URLs exist; no recorded complete tagged URL -> accepted lead trace | OPEN |
+| M6.2 first touch | Unit tests prove first-touch stability; no inspected live preview CRM row | OPEN |
+| M6.3 page event | GA4 Realtime page_view=9 on September 17; not tied to one identified tagged lead | OPEN |
+| M6.4 high-intent | GA4 reported scheduler-open and consultation-type events; cross-test identity not established | OPEN |
+| M6.5 submission | Separate controlled consultations submitted for Meta/TikTok tests | OPEN for unified M6 test (individual action proven) |
+| M6.6 accepted API | HTTP 200 confirmed in Vercel logs for September 17 Meta/TikTok tests | OPEN for unified M6 test (individual action proven) |
+| M6.7 Relationship | Consultation route source writes Relationship; test mocks prisma; no independent preview DB read | OPEN |
+| M6.8 touch fields | marketing-attribution and API unit tests validate first/latest/conversion touch | OPEN without saved preview row |
+| M6.9 click IDs | Unit tests cover fbclid, ttclid, gclid, gbraid, wbraid, msclkid; no preview CRM verification | OPEN |
+| M6.10 follow-up | Route source uses a database transaction for Relationship, consultation timeline and follow-up task; no independent preview DB read | OPEN |
+| M6.11 GA4 lead | GA4 reported one generate_lead in preview | OPEN for unified M6 trace (platform proof already satisfied M3) |
+| M6.12 Meta lead | Meta Events Manager reported active Lead after accepted preview consultation | OPEN for unified M6 trace (platform proof already satisfied M4) |
+| M6.13 TikTok lead | TikTok Test Events received browser SubmitForm, code Lead, after accepted preview consultation | OPEN for unified M6 trace (platform proof already satisfied M5) |
+| M6.14 converter exclusions | Audiences/exclusions not yet configured/verified | OPEN |
+
+**Specific next controlled action (preview only, no deployment):** Check whether the September test consultation's Relationship/timeline/task can be inspected in an existing isolated preview database without exposing personal information. If not, plan a single *new* tagged preview-only submission using unmistakably test-only identity and notes, recording campaign URL, event time, API receipt, anonymized stored Relationship first/latest/conversion touch and click IDs, follow-up task/timeline, and GA4/Meta/TikTok test receipts. Verify the preview database is isolated from production, the test will not send a real customer email, and any test records can be cleaned up **before** submitting. Do not send another test until that isolation is confirmed. Audience/exclusion acceptance remains independently gated. No production activation, merge, or publish.
+
+Source pointers: `BRAIN/KOINONIA_MARKETING_INTEGRATION_AUDIT_2026-09-16.md`; `apps/web/lib/marketing-attribution.test.ts`; `apps/web/app/api/koinonia/consultation/route.test.ts`; `apps/web/app/api/koinonia/consultation/route.ts`; draft PR #36.
+
+
 - [ ] M6.1 — Open controlled tagged campaign URL.
 - [ ] M6.2 — Verify first-touch attribution stored.
 - [ ] M6.3 — Verify landing/page event.
