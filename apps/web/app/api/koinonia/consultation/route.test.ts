@@ -35,6 +35,8 @@ vi.mock("../../../../lib/db", () => ({
 import { POST } from "./route";
 
 const originalResendApiKey = process.env.RESEND_API_KEY;
+const originalVercel = process.env.VERCEL;
+const originalVercelEnv = process.env.VERCEL_ENV;
 
 function consultationRequest(payload: Record<string, unknown>) {
   return new Request("http://localhost/api/koinonia/consultation", {
@@ -49,6 +51,8 @@ function consultationRequest(payload: Record<string, unknown>) {
 describe("Koinonia consultation intake", () => {
   beforeEach(() => {
     process.env.RESEND_API_KEY = "test-resend-key";
+    delete process.env.VERCEL;
+    delete process.env.VERCEL_ENV;
 
     databaseMocks.prisma.rosObject.findMany.mockResolvedValue([]);
     databaseMocks.prisma.user.findUnique.mockResolvedValue(null);
@@ -82,6 +86,11 @@ describe("Koinonia consultation intake", () => {
       process.env.RESEND_API_KEY = originalResendApiKey;
     }
 
+    if (originalVercel === undefined) delete process.env.VERCEL;
+    else process.env.VERCEL = originalVercel;
+    if (originalVercelEnv === undefined) delete process.env.VERCEL_ENV;
+    else process.env.VERCEL_ENV = originalVercelEnv;
+
     vi.clearAllMocks();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
@@ -100,6 +109,48 @@ describe("Koinonia consultation intake", () => {
       error: "Please complete all required fields."
     });
     expect(databaseMocks.prisma.rosObject.findMany).not.toHaveBeenCalled();
+  });
+
+  it("suppresses notification delivery on Vercel preview after CRM persistence", async () => {
+    process.env.VERCEL = "1";
+    process.env.VERCEL_ENV = "preview";
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await POST(
+      consultationRequest({
+        consultationType: "Marketing Management",
+        name: "Preview QA",
+        email: "preview-qa@example.com",
+        phone: "719-555-0100",
+        preferredDate: "2026-09-17",
+        preferredTime: "10:00 AM – 11:00 AM",
+        notes: "Preview suppression test."
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(databaseMocks.tx.rosObject.create).toHaveBeenCalledTimes(1);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("suppresses notification delivery on Vercel development after CRM persistence", async () => {
+    process.env.VERCEL = "1";
+    process.env.VERCEL_ENV = "development";
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const response = await POST(
+      consultationRequest({
+        consultationType: "Marketing Management",
+        name: "Development QA",
+        email: "dev-qa@example.com",
+        phone: "719-555-0100",
+        preferredDate: "2026-09-17",
+        preferredTime: "10:00 AM – 11:00 AM",
+        notes: "Development suppression test."
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("accepts a valid weekday request, persists attribution, and sends through Resend", async () => {
