@@ -313,6 +313,8 @@ Source pointers: `BRAIN/KOINONIA_MARKETING_INTEGRATION_AUDIT_2026-09-16.md`; `ap
 Acceptance criteria: one controlled test proves the entire campaign -> site -> lead -> CRM -> measurement path.
 
 ## M7 — Email campaign launch readiness
+**2026-10-14 M7 reconciliation (existing decisions preserved):** Source: `02_Companies/Koinonia/04_Departments/Marketing/EMAIL_MARKETING_OPERATIONS_PLAYBOOK.md`. Build-stage rules are already defined: four distinct email modes (personal, warm follow-up, permission-based nurture, transactional); consent/source qualification and suppression categories; one-to-one initial sequence Day 0/4/10/21 only after approval; nurture cadence roughly 1-2 useful messages/month; commercial footer/unsubscribe rules; identifiable sender/domain strategy; manual first-50 learning and reply priority; UTM format `utm_source=email`, mode-specific `utm_medium`, stable campaign ID and content identifier. **M7.10 naming/UTM convention is defined and accepted.** These are operational decisions, NOT evidence that SPF/DKIM/DMARC, selected campaign platform, footer/address, real suppressions, or actual sender identities are technically verified. DNS record inspection was not established in this session; M7.1-M7.9 and M7.11 remain unchecked until evidence-specific checks. Do not redo the email playbook, send campaigns, enroll recipients, or upload contact lists. All outbound launch/publish gates remain closed pending explicit owner approval.
+
 
 - [ ] M7.1 — Verify SPF.
 - [ ] M7.2 — Verify DKIM.
@@ -323,7 +325,7 @@ Acceptance criteria: one controlled test proves the entire campaign -> site -> l
 - [ ] M7.7 — Verify working unsubscribe/opt-out.
 - [ ] M7.8 — Verify suppression of opted-out recipients.
 - [ ] M7.9 — Review list source/permission quality.
-- [ ] M7.10 — Define consistent campaign UTM convention.
+- [x] M7.10 — Define consistent campaign UTM convention.
 - [ ] M7.11 — Define safe initial sending-volume/reputation plan.
 
 Acceptance criteria: outbound email can be sent without bypassing authentication, unsubscribe, suppression, or basic list-quality controls.
