@@ -237,6 +237,16 @@ Acceptance criteria: GA4 is proven with real observed events, not merely present
 - [ ] M5.9 — Configure converter exclusion where practical.
 - [ ] M5.10 — Decide later whether TikTok Events API is warranted; if added with browser events, implement deduplication.
 
+### Preview database safety verification — 2026-10-14
+
+- Vercel Neon Native Integration is attached to `reynalds-os-web` for Production and Preview. Its **Create Database Branch for Deployment: Preview** setting was enabled by the owner; Production remains unchecked.
+- A fresh **Preview-only** Vercel deployment `dpl_Gs8d8suqqPZJ3cdxx7AeeyxZV6vZ` of existing marketing commit `36ebb6822932fd60de92f05780236d35f9701987` reached READY at `reynalds-os-akw026u1j-koinonia3.vercel.app`.
+- The Neon console screenshot dated 2026-10-14 09:12 local shows the resulting branch `preview/koinonia-marketing-integration-2026-09-16` (project `neon-coral-flower`, `lucky-voice-55289048`), **created by Vercel** at 2026-10-14 09:06:08, **parent `main`**, one database and one compute; production `main` remains separately listed.
+- The newly deployed Preview CRM loaded existing Relationship records read-only. This is compatible with copying data when branching from `main`; seeing those records is **not** evidence of a shared live connection.
+- Preview/Development consultation notification suppression was implemented in `8ffaa2c` and covered by tests in `36ebb68`; CI for `36ebb68` succeeded. Production email behavior was not changed.
+- **Evidence boundary:** Branch creation and Preview health are confirmed, but the runtime application's resolved database branch identifier has **not** been independently read from the deployed function. Treat isolation as strongly supported by the Vercel-created branch and deployment timing, not as conclusively proven by runtime connection metadata. No write-level isolation test was executed.
+- Do not restart prior environment setup or create another branch manually. Do not submit another consultation until the last connection/migration/notification safeguards are accepted and the owner authorizes the single controlled test. This verification is infrastructure progress, not M6 unified acceptance and not approval for production publishing.
+
 ## M6 — End-to-end tagged campaign acceptance test
 
 **Evidence boundary:** Separate controlled preview tests proved GA4 `generate_lead`, Meta `Lead`, and TikTok `SubmitForm`/Lead. They do NOT yet prove one single tagged test traveled through all required UTM/click-ID, CRM relationship, follow-up, and cross-platform steps. Therefore M6 remains unchecked pending a unified acceptance record.
