@@ -313,14 +313,16 @@ Source pointers: `BRAIN/KOINONIA_MARKETING_INTEGRATION_AUDIT_2026-09-16.md`; `ap
 Acceptance criteria: one controlled test proves the entire campaign -> site -> lead -> CRM -> measurement path.
 
 ## M7 — Email campaign launch readiness
+**2026-10-14 Google Workspace authentication evidence:** Owner's Gmail Show Original screenshot for a diagnostic message sent from jeremiah@koinoniatransactions.com to the owner's Gmail address showed SPF PASS, DKIM PASS (d=koinoniatransactions.com), DMARC PASS, and delivery in 14 seconds. M7.1-M7.3 are complete for the Workspace sender only. Resend sending and marketing campaign compliance are not yet verified. No customer-facing campaign was sent.
+
 **Owner-confirmed email domain boundary (2026-10-14):** `koinoniatransactions.com` is the ONLY customer-facing Koinonia email domain (outreach, relationship/service correspondence, and any approved marketing sends). `koinoniaadmin.com` is reserved for INTERNAL ADMINISTRATION AND BILLING, not customer-facing sending. Do not propose or configure customer-facing campaigns from the admin domain. M7 authentication, sender identity and deliverability review should focus on `koinoniatransactions.com` and its actual Google Workspace sender/alias configuration; review `koinoniaadmin.com` only if needed to explain shared Workspace technical dependencies. This owner decision supersedes earlier general domain alternatives. DNS records and send-as behavior remain unverified.
 
 **2026-10-14 M7 reconciliation (existing decisions preserved):** Source: `02_Companies/Koinonia/04_Departments/Marketing/EMAIL_MARKETING_OPERATIONS_PLAYBOOK.md`. Build-stage rules are already defined: four distinct email modes (personal, warm follow-up, permission-based nurture, transactional); consent/source qualification and suppression categories; one-to-one initial sequence Day 0/4/10/21 only after approval; nurture cadence roughly 1-2 useful messages/month; commercial footer/unsubscribe rules; identifiable sender/domain strategy; manual first-50 learning and reply priority; UTM format `utm_source=email`, mode-specific `utm_medium`, stable campaign ID and content identifier. **M7.10 naming/UTM convention is defined and accepted.** These are operational decisions, NOT evidence that SPF/DKIM/DMARC, selected campaign platform, footer/address, real suppressions, or actual sender identities are technically verified. DNS record inspection was not established in this session; M7.1-M7.9 and M7.11 remain unchecked until evidence-specific checks. Do not redo the email playbook, send campaigns, enroll recipients, or upload contact lists. All outbound launch/publish gates remain closed pending explicit owner approval.
 
 
-- [ ] M7.1 — Verify SPF.
-- [ ] M7.2 — Verify DKIM.
-- [ ] M7.3 — Verify DMARC.
+- [x] M7.1 — Verify SPF.
+- [x] M7.2 — Verify DKIM.
+- [x] M7.3 — Verify DMARC.
 - [ ] M7.4 — Confirm sending-domain/reputation strategy.
 - [ ] M7.5 — Verify accurate From/Reply-To identity.
 - [ ] M7.6 — Verify physical postal address requirement in campaign messages.
