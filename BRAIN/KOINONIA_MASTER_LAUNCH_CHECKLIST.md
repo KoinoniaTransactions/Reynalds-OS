@@ -251,6 +251,10 @@ Acceptance criteria: GA4 is proven with real observed events, not merely present
 
 The authenticated diagnostic on Preview commit `ec87434` returned Neon branch ID `br-cool-cloud-afmcgqot`, matching the branch ID displayed in Neon for `preview/koinonia-marketing-integration-2026-09-16`. The executing Preview is therefore confirmed to use its separate child branch. No database write was made. Preview notification suppression CI passed. The diagnostic is temporary and must be removed. A full tagged M6 lead conversion is still pending approval; marketing production promotion remains gated.
 
+### October 14 tagged Preview consultation evidence
+
+Owner confirmed the isolated Preview CRM Relationship `Koinonia M6 QA` displays the expected UTM source `m6qa`, medium `test`, campaign `koinonia_m6_20261014`, and content `controlled_preview`. The screenshot independently showed the saved Consultation Relationship, latest consultation request, and generated next-action follow-up. This establishes tagged visit-to-CRM UTM persistence for this controlled test. Owner's confirmation of the attribution fields is recorded; the individual expanded field screenshot was not captured in this session. Do not claim advertising click-ID proof (the tagged URL contained none), cross-platform event correlation, converter exclusions, or timeline-event inspection from these results. No further test submission is needed for UTM persistence.
+
 ## M6 — End-to-end tagged campaign acceptance test
 
 **Evidence boundary:** Separate controlled preview tests proved GA4 `generate_lead`, Meta `Lead`, and TikTok `SubmitForm`/Lead. They do NOT yet prove one single tagged test traveled through all required UTM/click-ID, CRM relationship, follow-up, and cross-platform steps. Therefore M6 remains unchecked pending a unified acceptance record.
