@@ -247,6 +247,10 @@ Acceptance criteria: GA4 is proven with real observed events, not merely present
 - **Evidence boundary:** Branch creation and Preview health are confirmed, but the runtime application's resolved database branch identifier has **not** been independently read from the deployed function. Treat isolation as strongly supported by the Vercel-created branch and deployment timing, not as conclusively proven by runtime connection metadata. No write-level isolation test was executed.
 - Do not restart prior environment setup or create another branch manually. Do not submit another consultation until the last connection/migration/notification safeguards are accepted and the owner authorizes the single controlled test. This verification is infrastructure progress, not M6 unified acceptance and not approval for production publishing.
 
+### Runtime database verification (2026-10-14)
+
+The authenticated diagnostic on Preview commit `ec87434` returned Neon branch ID `br-cool-cloud-afmcgqot`, matching the branch ID displayed in Neon for `preview/koinonia-marketing-integration-2026-09-16`. The executing Preview is therefore confirmed to use its separate child branch. No database write was made. Preview notification suppression CI passed. The diagnostic is temporary and must be removed. A full tagged M6 lead conversion is still pending approval; marketing production promotion remains gated.
+
 ## M6 — End-to-end tagged campaign acceptance test
 
 **Evidence boundary:** Separate controlled preview tests proved GA4 `generate_lead`, Meta `Lead`, and TikTok `SubmitForm`/Lead. They do NOT yet prove one single tagged test traveled through all required UTM/click-ID, CRM relationship, follow-up, and cross-platform steps. Therefore M6 remains unchecked pending a unified acceptance record.
