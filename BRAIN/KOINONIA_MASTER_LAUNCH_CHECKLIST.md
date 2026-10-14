@@ -313,6 +313,8 @@ Source pointers: `BRAIN/KOINONIA_MARKETING_INTEGRATION_AUDIT_2026-09-16.md`; `ap
 Acceptance criteria: one controlled test proves the entire campaign -> site -> lead -> CRM -> measurement path.
 
 ## M7 — Email campaign launch readiness
+**2026-10-14 unsubscribe persistence confirmed:** Owner refreshed Resend's internal test-contact page and confirmed `Unsubscribed` persisted. Manual global opt-out persistence verified; actual broadcast unsubscribe link, sending exclusion, topic unsubscribe, and CRM sync remain untested. M7.7/M7.8 remain open. No marketing send authorized.
+
 **2026-10-14 Resend manual unsubscribe verification:** Owner reports that after turning off `Subscribed` and saving on the single internal test contact, Resend now displays `Unsubscribed`. This verifies manual contact-status modification without deletion, but NOT unsubscribe-link operation, campaign send exclusion, or CRM opt-out synchronization. M7.7 and M7.8 remain open; no emails sent.
 
 **2026-10-14 Resend one-contact test:** Owner manually added only their own personal Gmail address in Resend Audience. Newly created contact is shown `Subscribed` at contact level, with `No topics` and `No segments`. This proves manual addition defaults to general Subscribed and does NOT establish marketing-topic opt-in. Guard against importing/enrolling CRM leads automatically; maintain separate explicit marketing permission and topic enrollment. No broadcasts or email tests sent. M7.7-M7.9 remain open pending actual unsubscribe and suppression checks.
