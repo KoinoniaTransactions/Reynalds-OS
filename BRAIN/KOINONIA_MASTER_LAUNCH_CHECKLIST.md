@@ -313,6 +313,8 @@ Source pointers: `BRAIN/KOINONIA_MARKETING_INTEGRATION_AUDIT_2026-09-16.md`; `ap
 Acceptance criteria: one controlled test proves the entire campaign -> site -> lead -> CRM -> measurement path.
 
 ## M7 — Email campaign launch readiness
+**2026-10-14 Gmail sender identity confirmation:** Owner screenshot of Gmail Settings > Accounts confirms `jeremiah@koinoniatransactions.com` set as DEFAULT Send mail as and `Reply from the same address the message was sent to` selected. `jeremiah@koinoniaadmin.com` remains available for internal/billing but is no longer default. This verifies Gmail one-to-one From/reply settings for M7.5; sender identities for any eventual bulk campaign provider remain subject to its own QA before activation.
+
 **2026-10-14 M7.4/M7.5 infrastructure review:** Existing approved email playbook preserves one-to-one, warm, nurture, and transactional email as separate modes. Workspace sender `jeremiah@koinoniatransactions.com` was demonstrably used in the SPF/DKIM/DMARC PASS diagnostic; sender display name Jeremiah Reynalds was visible. Customer-facing domain is exclusively `koinoniatransactions.com`, admin domain internal/billing. Cloudflare already has Resend/SES records and repo contains inbound Resend webhook code; this is **not** proof of an operational Resend outbound campaign sender. M7.4 remains open pending explicit documented sender/provider separation and outbound reputation approach. M7.5 remains open until actual Reply-To and campaign From identity are confirmed. No new provider selection, DNS edits, mailing, or platform activation.
 
 **2026-10-14 Google Workspace authentication evidence:** Owner's Gmail Show Original screenshot for a diagnostic message sent from jeremiah@koinoniatransactions.com to the owner's Gmail address showed SPF PASS, DKIM PASS (d=koinoniatransactions.com), DMARC PASS, and delivery in 14 seconds. M7.1-M7.3 are complete for the Workspace sender only. Resend sending and marketing campaign compliance are not yet verified. No customer-facing campaign was sent.
@@ -326,7 +328,7 @@ Acceptance criteria: one controlled test proves the entire campaign -> site -> l
 - [x] M7.2 — Verify DKIM.
 - [x] M7.3 — Verify DMARC.
 - [ ] M7.4 — Confirm sending-domain/reputation strategy.
-- [ ] M7.5 — Verify accurate From/Reply-To identity.
+- [x] M7.5 — Verify accurate From/Reply-To identity.
 - [ ] M7.6 — Verify physical postal address requirement in campaign messages.
 - [ ] M7.7 — Verify working unsubscribe/opt-out.
 - [ ] M7.8 — Verify suppression of opted-out recipients.
