@@ -257,6 +257,8 @@ Owner confirmed the isolated Preview CRM Relationship `Koinonia M6 QA` displays 
 
 ## M6 — End-to-end tagged campaign acceptance test
 
+**2026-10-14 controlled Preview update:** Owner confirmed the `Koinonia M6 QA` Relationship's expected tagged campaign fields were present and confirmed `consultation.requested` and `task.created` timeline entries passed. Screenshot also showed the saved consultation, generated follow-up and Profile; the form showed an accepted confirmation. M6.1, M6.2, M6.5–M6.8 and M6.10 are accepted for this test. The earlier September-only evidence table below is retained as historical context, not current status. M6.3–M6.4, M6.9 (no click ID was supplied), M6.11–M6.14 remain open without same-test receipts. Do not submit another consultation merely to repeat proven CRM tests.
+
 **Evidence boundary:** Separate controlled preview tests proved GA4 `generate_lead`, Meta `Lead`, and TikTok `SubmitForm`/Lead. They do NOT yet prove one single tagged test traveled through all required UTM/click-ID, CRM relationship, follow-up, and cross-platform steps. Therefore M6 remains unchecked pending a unified acceptance record.
 
 ### M6 evidence review — 2026-10-13 (read-only audit of September evidence)
@@ -283,16 +285,16 @@ Owner confirmed the isolated Preview CRM Relationship `Koinonia M6 QA` displays 
 Source pointers: `BRAIN/KOINONIA_MARKETING_INTEGRATION_AUDIT_2026-09-16.md`; `apps/web/lib/marketing-attribution.test.ts`; `apps/web/app/api/koinonia/consultation/route.test.ts`; `apps/web/app/api/koinonia/consultation/route.ts`; draft PR #36.
 
 
-- [ ] M6.1 — Open controlled tagged campaign URL.
-- [ ] M6.2 — Verify first-touch attribution stored.
+- [x] M6.1 — Open controlled tagged campaign URL.
+- [x] M6.2 — Verify first-touch attribution stored.
 - [ ] M6.3 — Verify landing/page event.
 - [ ] M6.4 — Trigger and verify a high-intent event.
-- [ ] M6.5 — Submit a real test consultation.
-- [ ] M6.6 — Verify backend accepted the lead.
-- [ ] M6.7 — Verify Koinonia Relationship record created/updated.
-- [ ] M6.8 — Verify first/latest/conversion-touch fields.
+- [x] M6.5 — Submit a real test consultation.
+- [x] M6.6 — Verify backend accepted the lead.
+- [x] M6.7 — Verify Koinonia Relationship record created/updated.
+- [x] M6.8 — Verify first/latest/conversion-touch fields.
 - [ ] M6.9 — Verify supplied click IDs survive where applicable.
-- [ ] M6.10 — Verify follow-up task/timeline behavior.
+- [x] M6.10 — Verify follow-up task/timeline behavior.
 - [ ] M6.11 — Verify GA4 `generate_lead`.
 - [ ] M6.12 — Verify Meta `Lead`.
 - [ ] M6.13 — Verify TikTok `Lead`.
