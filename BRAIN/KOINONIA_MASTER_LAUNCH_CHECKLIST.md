@@ -313,6 +313,8 @@ Source pointers: `BRAIN/KOINONIA_MARKETING_INTEGRATION_AUDIT_2026-09-16.md`; `ap
 Acceptance criteria: one controlled test proves the entire campaign -> site -> lead -> CRM -> measurement path.
 
 ## M7 — Email campaign launch readiness
+**2026-10-14 Resend marketing baseline:** Owner confirmed Broadcasts has no campaigns, Resend Audience shows 0 contacts / 0 subscribers / 0 unsubscribers, and Suppressions shows none. This is an empty initial state, not evidence of functioning unsubscribe or suppression controls. M7.7, M7.8 and M7.9 remain open. No imports, sends, or enrollments authorized.
+
 **2026-10-14 Resend production delivery verified:** Owner inspected Resend Emails > Sending and one existing production consultation notification detail. The message, `Koinonia Custom Project Consultation Request`, was sent 2026-10-13 at 3:11 PM, from `Koinonia <noreply@koinoniatransactions.com>` to internal `jeremiah@koinoniaadmin.com`, using Resend API `POST /emails`; delivery event shows Delivered. This proves existing transactional notification sender and delivery, without generating another test or contacting a customer. It does not verify Resend mass marketing, unsubscribe/suppression, or sending-volume reputation planning. M7.4 remains open for marketing-side strategy.
 
 **2026-10-14 Resend deployment check:** The expected email configuration variable names are present in Vercel for Production and Preview. Their values and runtime validity were not checked. No delivery evidence was obtained, so M7.4 remains open. No settings were changed.
