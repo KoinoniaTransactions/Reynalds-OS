@@ -256,6 +256,8 @@ The authenticated diagnostic on Preview commit `ec87434` returned Neon branch ID
 Owner confirmed the isolated Preview CRM Relationship `Koinonia M6 QA` displays the expected UTM source `m6qa`, medium `test`, campaign `koinonia_m6_20261014`, and content `controlled_preview`. The screenshot independently showed the saved Consultation Relationship, latest consultation request, and generated next-action follow-up. This establishes tagged visit-to-CRM UTM persistence for this controlled test. Owner's confirmation of the attribution fields is recorded; the individual expanded field screenshot was not captured in this session. Do not claim advertising click-ID proof (the tagged URL contained none), cross-platform event correlation, converter exclusions, or timeline-event inspection from these results. No further test submission is needed for UTM persistence.
 
 ## M6 — End-to-end tagged campaign acceptance test
+**GA4 October 14 Preview evidence:** Owner screenshots from GA4 Realtime ~09:40-09:41 Mountain show page_view=2, session_start=2, user_engagement=2, consultation_scheduler_open=1, consultation_type_selected=1, first_visit=1, form_start=1, and generate_lead=1. This coincides with the single accepted Koinonia M6 QA consultation and satisfies M6.3, M6.4, M6.11 for the controlled test. Do not repeat GA4 conversion tests. Meta and TikTok same-test receipts and converter exclusions remain open.
+
 
 **2026-10-14 controlled Preview update:** Owner confirmed the `Koinonia M6 QA` Relationship's expected tagged campaign fields were present and confirmed `consultation.requested` and `task.created` timeline entries passed. Screenshot also showed the saved consultation, generated follow-up and Profile; the form showed an accepted confirmation. M6.1, M6.2, M6.5–M6.8 and M6.10 are accepted for this test. The earlier September-only evidence table below is retained as historical context, not current status. M6.3–M6.4, M6.9 (no click ID was supplied), M6.11–M6.14 remain open without same-test receipts. Do not submit another consultation merely to repeat proven CRM tests.
 
@@ -287,15 +289,15 @@ Source pointers: `BRAIN/KOINONIA_MARKETING_INTEGRATION_AUDIT_2026-09-16.md`; `ap
 
 - [x] M6.1 — Open controlled tagged campaign URL.
 - [x] M6.2 — Verify first-touch attribution stored.
-- [ ] M6.3 — Verify landing/page event.
-- [ ] M6.4 — Trigger and verify a high-intent event.
+- [x] M6.3 — Verify landing/page event.
+- [x] M6.4 — Trigger and verify a high-intent event.
 - [x] M6.5 — Submit a real test consultation.
 - [x] M6.6 — Verify backend accepted the lead.
 - [x] M6.7 — Verify Koinonia Relationship record created/updated.
 - [x] M6.8 — Verify first/latest/conversion-touch fields.
 - [ ] M6.9 — Verify supplied click IDs survive where applicable.
 - [x] M6.10 — Verify follow-up task/timeline behavior.
-- [ ] M6.11 — Verify GA4 `generate_lead`.
+- [x] M6.11 — Verify GA4 `generate_lead`.
 - [ ] M6.12 — Verify Meta `Lead`.
 - [ ] M6.13 — Verify TikTok `Lead`.
 - [ ] M6.14 — Verify converter-exclusion eligibility/behavior as designed.
