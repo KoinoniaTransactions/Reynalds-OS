@@ -10,7 +10,7 @@ import { POST } from "./route";
  */
 const url = process.env.RESEND_WEBHOOK_TEST_DATABASE_URL;
 const enabled = process.env.RUN_RESEND_WEBHOOK_DB_INTEGRATION === "true" &&
-  Boolean(url && /(?:^|[/?])[^/?]*resend_webhook_test(?:[?&]|$)/.test(url));
+  Boolean(url && process.env.DATABASE_URL === url && /\/resend_webhook_test(?:\?|$)/.test(url));
 const suite = enabled ? describe : describe.skip;
 const prisma = enabled ? new PrismaClient({ datasources: { db: { url } } }) : null;
 const secretBytes = Buffer.from("isolated-resend-webhook-test-secret");
@@ -31,7 +31,6 @@ suite("isolated Resend webhook PostgreSQL integration", () => {
 
   beforeAll(async () => {
     if (!prisma || !url) throw new Error("Isolated test DB missing");
-    process.env.DATABASE_URL = url;
     process.env.KOINONIA_RESEND_CONTACT_WEBHOOK_ENABLED = "true";
     process.env.KOINONIA_RESEND_WEBHOOK_WORKSPACE_ID = workspaceId;
     process.env.RESEND_CONTACT_WEBHOOK_SECRET = secret;
@@ -80,8 +79,8 @@ suite("isolated Resend webhook PostgreSQL integration", () => {
 
   it("applies once, ignores duplicate, and rejects a mismatched address", async () => {
     if (!prisma) throw new Error("DB missing");
-    // Route module reads the app Prisma singleton, which must be backed by this
-    // disposable DATABASE_URL at process startup. Never run in a mixed test process.
+    // This opt-in suite requires DATABASE_URL to equal the disposable test URL
+    // before Vitest imports the route and initializes the app Prisma singleton.
     const first = await POST(request("msg-integration-one"));
     expect(first.status).toBe(200);
     expect((await first.json()).outcome).toBe("unsubscribed");
