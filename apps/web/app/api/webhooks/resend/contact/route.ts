@@ -94,7 +94,10 @@ export async function POST(request: Request) {
   } catch (error) {
     // The event ledger's unique index is an atomic duplicate guard.
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return NextResponse.json({ accepted: true, duplicate: true });
+      const prior = await prisma.resendContactWebhookEvent.findUnique({ where: { svixId } });
+      if (prior && prior.workspaceId === workspaceId && prior.resendContactId === incoming.contactId && prior.email === incoming.email) {
+        return NextResponse.json({ accepted: true, duplicate: true });
+      }
     }
     // Serialization conflicts (P2034) roll back the event ledger and CRM mutation together.
     // Return a retriable failure; Resend may safely redeliver the same signed event.
