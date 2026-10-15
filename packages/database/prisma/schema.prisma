@@ -291,11 +291,8 @@ model AuditEvent {
   @@index([subjectType, subjectId])
 }
 
-/**
- * Dedicated webhook event ledger. Unique Svix delivery ID prevents duplicate
- * processing; all CRM mutations must occur in the same database transaction.
- * This table is not a subscriber directory and must never initiate sends.
- */
+/// Dedicated webhook event ledger; unique Svix delivery ID blocks duplicate delivery.
+/// CRM mutations must happen in the same transaction; never initiates sends.
 model ResendContactWebhookEvent {
   id              String   @id @default(cuid())
   svixId          String   @unique
