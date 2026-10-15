@@ -26,6 +26,8 @@ const oldEnv = {
 suite("isolated Resend webhook PostgreSQL integration", () => {
   const workspaceId = "resend-webhook-integration-ws";
   const relationshipId = "resend-webhook-integration-contact";
+  const otherWorkspaceId = "resend-webhook-other-workspace";
+  const otherRelationshipId = "resend-webhook-other-contact";
   const contactId = "resend-contact-integration";
   const email = "only-qa@example.invalid";
 
@@ -37,6 +39,7 @@ suite("isolated Resend webhook PostgreSQL integration", () => {
     await prisma.workspace.create({
       data: { id: workspaceId, name: "Resend disposable integration", type: "test" }
     });
+    await prisma.workspace.create({ data: { id: otherWorkspaceId, name: "Unrelated workspace", type: "test" } });
     await prisma.rosObject.create({
       data: {
         id: relationshipId, workspaceId, objectType: "Contact", name: "QA Subscriber",
@@ -47,14 +50,19 @@ suite("isolated Resend webhook PostgreSQL integration", () => {
         }
       }
     });
+    await prisma.rosObject.create({ data: {
+      id: otherRelationshipId, workspaceId: otherWorkspaceId,
+      objectType: "Contact", name: "Unrelated identical email", status: "Lead", health: "Healthy",
+      data: { contact: { email }, emailMarketing: { resendContactId: contactId, status: "eligible" } }
+    } });
   });
 
   afterAll(async () => {
     if (prisma) {
       await prisma.resendContactWebhookEvent.deleteMany({ where: { workspaceId } });
       await prisma.timelineEvent.deleteMany({ where: { workspaceId } });
-      await prisma.rosObject.deleteMany({ where: { workspaceId } });
-      await prisma.workspace.deleteMany({ where: { id: workspaceId } });
+      await prisma.rosObject.deleteMany({ where: { workspaceId: { in: [workspaceId, otherWorkspaceId] } } });
+      await prisma.workspace.deleteMany({ where: { id: { in: [workspaceId, otherWorkspaceId] } } });
       await prisma.$disconnect();
     }
     for (const [key, value] of Object.entries(oldEnv)) {
@@ -93,4 +101,28 @@ suite("isolated Resend webhook PostgreSQL integration", () => {
     expect(await prisma.resendContactWebhookEvent.count({ where: { workspaceId } })).toBe(2);
     expect(await prisma.timelineEvent.count({ where: { workspaceId, eventType: "marketing.unsubscribed" } })).toBe(1);
   });
+  it("never changes an identical email and contact ID in a different workspace", async () => {
+    if (!prisma) throw new Error("DB missing");
+    const unrelated = await prisma.rosObject.findUniqueOrThrow({ where: { id: otherRelationshipId } });
+    expect((unrelated.data as { emailMarketing: { status: string } }).emailMarketing.status).toBe("eligible");
+    expect(await prisma.timelineEvent.count({ where: { workspaceId: otherWorkspaceId } })).toBe(0);
+  });
+
+  it("handles simultaneous delivery of the same signed event without duplicate CRM updates", async () => {
+    if (!prisma) throw new Error("DB missing");
+    const responses = await Promise.all([
+      POST(request("msg-integration-concurrent")),
+      POST(request("msg-integration-concurrent"))
+    ]);
+    // A serialization retry is acceptable; a successful delivery must be durable.
+    expect(responses.some((response) => response.status === 200)).toBe(true);
+    expect(responses.every((response) => response.status === 200 || response.status === 500)).toBe(true);
+    expect(await prisma.resendContactWebhookEvent.count({
+      where: { svixId: "msg-integration-concurrent" }
+    })).toBe(1);
+    expect(await prisma.timelineEvent.count({
+      where: { workspaceId, eventType: "marketing.unsubscribed" }
+    })).toBe(2);
+  });
+
 });
