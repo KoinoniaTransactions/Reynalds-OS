@@ -59,7 +59,7 @@ export function parseResendGlobalUnsubscribe(value: unknown): ResendGlobalUnsubs
   if (typeof event.created_at !== "string" || !Number.isFinite(Date.parse(event.created_at))) return null;
   if (typeof data.id !== "string" || !data.id.trim() || typeof data.email !== "string") return null;
   const email = data.email.trim().toLowerCase();
-  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return null;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
   return {
     type: "contact.updated",
     createdAt: event.created_at,
