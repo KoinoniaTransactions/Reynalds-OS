@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@reynalds-os/database";
 import { prisma } from "../../../../../lib/db";
 import { normalizeKoinoniaRelationshipData } from "../../../../../lib/koinonia-relationship";
 import { applyGlobalMarketingUnsubscribe, selectLinkedMarketingRelationship } from "../../../../../lib/resend-contact-matching";
