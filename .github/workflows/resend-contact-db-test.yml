@@ -1,0 +1,46 @@
+name: Koinonia Resend Disposable DB Test
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/app/api/webhooks/resend/contact/**"
+      - "apps/web/lib/resend-contact-**"
+      - "packages/database/prisma/**"
+      - ".github/workflows/resend-contact-db-test.yml"
+  workflow_dispatch:
+
+jobs:
+  resend-contact-db-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: resend_webhook_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d resend_webhook_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/resend_webhook_test
+      RESEND_WEBHOOK_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/resend_webhook_test
+      RUN_RESEND_WEBHOOK_DB_INTEGRATION: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @reynalds-os/database db:generate
+      - run: pnpm --filter @reynalds-os/database exec prisma migrate deploy
+      - run: pnpm --filter @reynalds-os/web exec vitest run app/api/webhooks/resend/contact/route.db-integration.test.ts
