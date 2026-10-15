@@ -148,6 +148,14 @@ export type KoinoniaRelationshipData = {
     lastMeaningfulInteraction?: string;
     nextNurtureDate?: string;
   };
+  emailMarketing?: {
+    status?: "unknown" | "eligible" | "unsubscribed" | "do_not_contact";
+    permissionSource?: string;
+    permissionRecordedAt?: string;
+    optedOutAt?: string;
+    optOutSource?: string;
+    resendContactId?: string;
+  };
   learning?: {
     interactions?: RelationshipLearningInteraction[];
   };
@@ -266,6 +274,7 @@ export function normalizeKoinoniaRelationshipData(
   const engagement = record(source.engagement);
   const growth = record(source.growth);
   const learning = record(source.learning);
+  const emailMarketing = record(source.emailMarketing);
 
   return {
     ...source,
@@ -340,6 +349,18 @@ export function normalizeKoinoniaRelationshipData(
       lastMeaningfulInteraction: text(growth.lastMeaningfulInteraction),
       nextNurtureDate: text(growth.nextNurtureDate)
     },
+    emailMarketing: {
+      ...emailMarketing,
+      status: emailMarketing.status === "eligible" ||
+        emailMarketing.status === "unsubscribed" ||
+        emailMarketing.status === "do_not_contact"
+          ? emailMarketing.status : "unknown",
+      permissionSource: text(emailMarketing.permissionSource),
+      permissionRecordedAt: text(emailMarketing.permissionRecordedAt),
+      optedOutAt: text(emailMarketing.optedOutAt),
+      optOutSource: text(emailMarketing.optOutSource),
+      resendContactId: text(emailMarketing.resendContactId)
+    },
     learning: {
       ...learning,
       interactions: normalizeLearningInteractions(learning.interactions)
@@ -366,7 +387,8 @@ export function mergeKoinoniaRelationshipData(
     },
     engagement: { ...current.engagement, ...patch.engagement },
     growth: { ...current.growth, ...patch.growth },
-    learning: { ...current.learning, ...patch.learning }
+    learning: { ...current.learning, ...patch.learning },
+    emailMarketing: { ...current.emailMarketing, ...patch.emailMarketing }
   });
 }
 
