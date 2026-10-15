@@ -490,6 +490,52 @@ export function CrmMvp() {
                   </div>
                 ) : null}
 
+                <section className="ros-panel" aria-label="Marketing attribution" style={{ marginBottom: 14 }}>
+                  <h3>Marketing Attribution (read-only)</h3>
+                  <p>Saved tracking data for this relationship. No changes are made here.</p>
+                  {(["firstTouch", "latestTouch", "conversionTouch"] as const).map((touchKey) => {
+                    const touch = selectedProfile?.acquisition?.[touchKey];
+                    const labels = {
+                      firstTouch: "First touch",
+                      latestTouch: "Latest touch",
+                      conversionTouch: "Conversion touch"
+                    };
+                    const fields = [
+                      ["Source", touch?.utmSource],
+                      ["Medium", touch?.utmMedium],
+                      ["Campaign", touch?.utmCampaign],
+                      ["Content", touch?.utmContent],
+                      ["Term", touch?.utmTerm],
+                      ["Referrer", touch?.referrer]
+                    ] as const;
+                    const clickIds = [
+                      ["Facebook click ID", touch?.fbclid],
+                      ["TikTok click ID", touch?.ttclid],
+                      ["Google click ID", touch?.gclid],
+                      ["Google GBRAID", touch?.gbraid],
+                      ["Google WBRAID", touch?.wbraid],
+                      ["Microsoft click ID", touch?.msclkid]
+                    ] as const;
+                    const hasData = [...fields, ...clickIds].some(([, fieldValue]) => Boolean(fieldValue));
+
+                    return (
+                      <details key={touchKey}>
+                        <summary>{labels[touchKey]} · {hasData ? "Tracking data available" : "No tracking values recorded"}</summary>
+                        {hasData ? (
+                          <dl>
+                            {fields.filter(([, fieldValue]) => Boolean(fieldValue)).map(([label, fieldValue]) => (
+                              <div key={label}><dt><strong>{label}</strong></dt><dd>{fieldValue}</dd></div>
+                            ))}
+                            {clickIds.filter(([, fieldValue]) => Boolean(fieldValue)).map(([label, fieldValue]) => (
+                              <div key={label}><dt><strong>{label}</strong></dt><dd>Captured · ending {String(fieldValue).slice(-8)}</dd></div>
+                            ))}
+                          </dl>
+                        ) : <p>No UTM or click ID values were stored for this touch.</p>}
+                      </details>
+                    );
+                  })}
+                </section>
+
                 <form className="ros-form" onSubmit={updateRelationship}>
                   <RelationshipFormFields form={editForm} setForm={setEditForm} />
                   <button disabled={isSaving}>{isSaving ? "Saving..." : "Save Relationship"}</button>

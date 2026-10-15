@@ -6,8 +6,13 @@ export type MarketingTouch = {
   utmMedium: string;
   utmCampaign: string;
   utmContent: string;
+  utmTerm: string;
   fbclid: string;
   ttclid: string;
+  gclid: string;
+  gbraid: string;
+  wbraid: string;
+  msclkid: string;
   referrer: string;
   landingPage: string;
   capturedAt: string;
@@ -28,8 +33,13 @@ const emptyTouch: MarketingTouch = {
   utmMedium: "",
   utmCampaign: "",
   utmContent: "",
+  utmTerm: "",
   fbclid: "",
   ttclid: "",
+  gclid: "",
+  gbraid: "",
+  wbraid: "",
+  msclkid: "",
   referrer: "",
   landingPage: "",
   capturedAt: ""
@@ -59,8 +69,13 @@ export function normalizeMarketingTouch(input: unknown): MarketingTouch {
     utmMedium: text(source.utmMedium),
     utmCampaign: text(source.utmCampaign),
     utmContent: text(source.utmContent),
+    utmTerm: text(source.utmTerm),
     fbclid: text(source.fbclid),
     ttclid: text(source.ttclid),
+    gclid: text(source.gclid),
+    gbraid: text(source.gbraid),
+    wbraid: text(source.wbraid),
+    msclkid: text(source.msclkid),
     referrer: text(source.referrer),
     landingPage: text(source.landingPage),
     capturedAt: text(source.capturedAt)
@@ -73,8 +88,13 @@ export function hasMarketingSignal(touch: MarketingTouch): boolean {
       touch.utmMedium ||
       touch.utmCampaign ||
       touch.utmContent ||
+      touch.utmTerm ||
       touch.fbclid ||
       touch.ttclid ||
+      touch.gclid ||
+      touch.gbraid ||
+      touch.wbraid ||
+      touch.msclkid ||
       touch.referrer
   );
 }
@@ -97,8 +117,13 @@ export function createMarketingTouch({
     utmMedium: params.get("utm_medium") ?? "",
     utmCampaign: params.get("utm_campaign") ?? "",
     utmContent: params.get("utm_content") ?? "",
+    utmTerm: params.get("utm_term") ?? "",
     fbclid: params.get("fbclid") ?? "",
     ttclid: params.get("ttclid") ?? "",
+    gclid: params.get("gclid") ?? "",
+    gbraid: params.get("gbraid") ?? "",
+    wbraid: params.get("wbraid") ?? "",
+    msclkid: params.get("msclkid") ?? "",
     referrer: externalReferrer(referrer, landingPage),
     landingPage,
     capturedAt
