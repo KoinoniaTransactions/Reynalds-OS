@@ -314,6 +314,19 @@ Acceptance criteria: one controlled test proves the entire campaign -> site -> l
 
 ## M7 — Email campaign launch readiness
 
+### 2026-10-15 — LIVE RESEND-TO-CRM GLOBAL UNSUBSCRIBE PREVIEW QA: PASS
+
+**Scope:** Owner-authorized test using existing internal QA contact only, isolated Neon `neon-coral-flower` branch `preview/koinonia-marketing-integration-2026-09-16` (`br-cool-cloud-afmcgqot`), database `neondb`, workspace `wks_koinonia`. Separate Vercel project `koinonia-resend-webhook-preview`, Preview-only secrets and database URL, tested standalone CRM receiver source `0.0.2`; stable alias `https://koinonia-resend-webhook-preview-koinonia3.vercel.app/api/webhooks/resend/contact` was explicitly assigned to verified deployment `dpl_5FywFju9kDQdBpvkEQn2etLwnKWL`. Distinct Resend `contact.updated` endpoint `https://resend.com/webhooks/95c91a57-2ee0-43ac-b5e1-95581a8e12bd` enabled after test corrections. No customer marketing send or production application/database deployment.
+
+**Evidence observed in Resend UI and isolated Neon SQL Editor:**
+- Real signed `contact.updated` payload contained internal QA contact `f6a8cde9-b7e9-4dd2-a1fe-f8e193db8c85`, email `jeremiahreynalds@gmail.com`, and `data.unsubscribed: true`. Signature rejection smoke test: unsigned POST returned HTTP 401. The contact remained globally unsubscribed throughout.
+- Successful signed replay returned HTTP **200** `{\"accepted\":true,\"outcome\":\"unsubscribed\"}`; isolated Preview `ResendContactWebhookEvent` ledger row outcome `unsubscribed` linked CRM `RosObject` relationship; `emailMarketing.status=unsubscribed`, `optOutSource=resend`, and `optedOutAt` recorded.
+- Preview CRM `TimelineEvent` logged exactly one `marketing.unsubscribed` with matching Resend contact ID and source; replay of the same event returned HTTP **200** `{\"accepted\":true,\"duplicate\":true}`. Follow-up read-only SQL confirmed `webhook_events=1` and `audit_entries=1` after replay.
+- Runtime read-only DB connection diagnostic returned HTTP 200 and `db_ok=true, workspace_ok=true, event_table_ok=true, crm_table_ok=true`; connection endpoint was restricted in standalone handler to the approved Neon branch's host. Production `main` was not used for writes.
+
+**Still OPEN:** Actual recipient-facing unsubscribe link and topic-only preference behavior, marketing suppression/export proof through a real authorized send (none sent), automated Resend contact provisioning for new CRM relationships, broader external contact coverage, and production launch/merge approval. Original checklist entries below are historical snapshots (including earlier “disabled/not registered” states) and must not be mistaken for today's Preview state. This QA validates the isolated global unsubscribe webhook path only; **do not mark all M7.7–M7.9 complete** or publish/send without express owner approval.
+
+
 ### M7 Resend unsubscribe preview activation gate — 2026-10-15
 
 **Current evidence:** CI and isolated PostgreSQL webhook integration passed for commit `4b54f59`. Vercel project `reynalds-os-web` presently has `DATABASE_URL` and `DATABASE_URL_UNPOOLED` configured for BOTH production and preview, and `RESEND_API_KEY` for both; listed settings alone do not prove preview data isolation. New `RESEND_CONTACT_WEBHOOK_SECRET`, `KOINONIA_RESEND_WEBHOOK_WORKSPACE_ID`, and `KOINONIA_RESEND_CONTACT_WEBHOOK_ENABLED` are not present in the environment-variable list. This inspection did NOT decrypt DB credentials.
