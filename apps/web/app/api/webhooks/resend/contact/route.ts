@@ -88,7 +88,7 @@ export async function POST(request: Request) {
         }
       });
       return "unsubscribed";
-    });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 
     return NextResponse.json({ accepted: true, outcome });
   } catch (error) {
@@ -96,6 +96,8 @@ export async function POST(request: Request) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       return NextResponse.json({ accepted: true, duplicate: true });
     }
+    // Serialization conflicts (P2034) roll back the event ledger and CRM mutation together.
+    // Return a retriable failure; Resend may safely redeliver the same signed event.
     console.error("Resend contact webhook processing failed", error);
     return NextResponse.json({ error: "Processing failed." }, { status: 500 });
   }
