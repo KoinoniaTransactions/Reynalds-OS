@@ -115,4 +115,14 @@ describe("Koinonia relationship profile", () => {
     expect(result.learning?.interactions).toHaveLength(1);
     expect(result.learning?.interactions?.[0]?.note).toBe("Met at the office meeting.");
   });
+  it("keeps email marketing unknown by default and preserves opt-out on unrelated updates", () => {
+    const initial = normalizeKoinoniaRelationshipData({ contact: { email: "qa@example.com" } });
+    expect(initial.emailMarketing?.status).toBe("unknown");
+    const unsubscribed = mergeKoinoniaRelationshipData(initial, {
+      emailMarketing: { status: "unsubscribed", optedOutAt: "2026-10-15T19:00:00Z", optOutSource: "resend" }
+    });
+    const updated = mergeKoinoniaRelationshipData(unsubscribed, { contact: { role: "Realtor" } });
+    expect(updated.emailMarketing).toMatchObject({ status: "unsubscribed", optOutSource: "resend" });
+  });
+
 });
