@@ -12,6 +12,31 @@ Its purpose is to establish the correct mindset and direct you to the canonical 
 
 ---
 
+# 2026-09-05 Current Handoff Map — Read Before Choosing a Workstream
+
+Multiple AI workstreams are active in parallel. **Do not assume one handoff replaces the others.** A new AI should discover the current project state from this file and then read the relevant handoffs before changing code.
+
+Read these current continuity sources:
+
+1. `BRAIN/HANDOFF.md` — central reconciled Koinonia / repository handoff. This is the cross-workstream overview.
+2. `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md` — social/email/retargeting, attribution, analytics and marketing-launch readiness.
+3. `BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_COMMERCIAL_WEBSITE_UNFINISHED.md` — current commercial model, product/pricing decisions and unfinished public website implementation.
+4. `BRAIN/KOINONIA_PORTAL_HANDOFF_2026-09-05.md` — Realtor portal, document intelligence/review, transaction obligations, quick actions and transaction-specific inbound email work.
+
+Also read the current branch-specific `CURRENT_STATE.md`, `NEXT_ACTION.md`, `BRAIN/CURRENT_PRIORITIES.md`, and `BRAIN/CANONICAL_REGISTRY.md` before implementation.
+
+## Parallel-work safety rule
+
+- Preserve every current handoff.
+- Reconcile; do not erase.
+- Do not blindly merge `main`, `koinonia-production`, `koinonia-marketing-readiness`, or `chatgpt/koinonia-transaction-intake-redesign` into one another.
+- Verify the branch and deployment that actually govern the requested task.
+- Never deploy production without explicit owner authorization.
+
+Some of these handoffs may have been authored on different active branches. If a referenced handoff is not present on the branch you opened, **inspect the current repository branches / recent commits rather than concluding it does not exist or recreating it from memory.**
+
+---
+
 # Repository Identity
 
 Repository:
