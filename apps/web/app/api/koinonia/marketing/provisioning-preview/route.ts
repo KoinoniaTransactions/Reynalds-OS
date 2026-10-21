@@ -29,6 +29,10 @@ export async function GET() {
   }
 
   const user = await assertPermission("objects:view");
+  // Report access is more sensitive than general CRM viewing.
+  if (user.role !== "Owner" && user.role !== "Admin") {
+    return NextResponse.json({ error: "Marketing administrator access required." }, { status: 403 });
+  }
   if (user.workspaceId !== "wks_koinonia") {
     return NextResponse.json({ error: "Wrong workspace." }, { status: 403 });
   }
