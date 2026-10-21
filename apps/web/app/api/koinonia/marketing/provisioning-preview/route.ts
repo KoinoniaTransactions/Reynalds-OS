@@ -29,7 +29,18 @@ export async function GET() {
     return NextResponse.json({ error: "Approved Preview database required." }, { status: 503 });
   }
 
-  const user = await assertPermission("objects:view");
+  let user: Awaited<ReturnType<typeof assertPermission>>;
+  try {
+    user = await assertPermission("objects:view");
+  } catch (error) {
+    // Clerk can reject an unauthenticated request. Return a safe HTTP status
+    // instead of leaking an uncaught server exception as HTTP 500.
+    const status = typeof error === "object" && error !== null && "status" in error
+      ? (error as { status?: unknown }).status : undefined;
+    if (status === 401) return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+    if (status === 403) return NextResponse.json({ error: "Access denied." }, { status: 403 });
+    throw error;
+  }
   const access = checkMarketingPreviewAccess(user.role, user.workspaceId);
   if (!access.allowed) {
     return NextResponse.json({ error: access.error }, { status: 403 });
