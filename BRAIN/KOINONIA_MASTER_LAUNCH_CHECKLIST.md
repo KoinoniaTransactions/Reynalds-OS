@@ -314,6 +314,17 @@ Acceptance criteria: one controlled test proves the entire campaign -> site -> l
 
 ## M7 — Email campaign launch readiness
 
+### 2026-10-21 — MARKETING PROVISIONING READ-ONLY PREVIEW ACCEPTANCE: PASS
+
+**Deployment:** `reynalds-os-67wdlmji3-koinonia3.vercel.app`, marketing integration branch commit `64ad5bef`, isolated Koinonia Preview route `/api/koinonia/marketing/provisioning-preview`. Reviewed application CI and disposable Resend database workflow successful on this commit. The branch-scoped `KOINONIA_MARKETING_PROVISIONING_PREVIEW_ENABLED=true` flag was added in Vercel Preview only, not Production.
+
+**Owner browser acceptance evidence:** With the feature disabled, route returned `{"error":"Preview report disabled."}`. With Preview flag enabled, unauthenticated request initially threw an application HTTP 500 caused by uncaught Clerk `AuthenticationRequiredError`; fixed in commit `64ad5bef`, after which user observed `{"error":"Authentication required."}`. On authenticated Koinonia CRM session, endpoint returned `mode:"dry_run"`, `providerStatus:"unknown"`, `evaluated:5`, five rows `eligible:false` and `action:"skip"`. This demonstrates enabled route and approved database-host gate plus authenticated role/workspace gate succeeded **in this browser test**, without creating or modifying any Resend contacts. The report's exact Neon branch identity was not separately queried; the endpoint checks the hardcoded approved host allowlist.
+
+**Guardrails:** `Owner`/`Admin` only, `wks_koinonia` only, `AUTH_PROVIDER=clerk`, `VERCEL_ENV=preview`, explicit branch-specific feature flag, approved Neon Preview host, `Cache-Control:no-store`, read-only list limit 100. Provider state remains deliberately `unknown` and fails closed; an `eligible` CRM flag alone does not approve provisioning. No customer import, contact creation, email send, automation activation, topic change, production merge, or production DB write occurred.
+
+**Next design gate — NOT IMPLEMENTED:** Build a separate Preview-only, dry-run identity/provisioning reconciliation using a server-side Resend provider lookup, source/permission validation, stable CRM-to-Resend ID matching, ambiguity fail-closed, and provider unsubscribed/bounce/complaint suppression handling. Provider status cannot be considered `verified_clear` merely because the Resend API returns 200 or a contact exists. Do not add contacts, auto-subscribe, re-enroll, or send before distinct owner-approved implementation and test. Topic-level permission and actual unsubscribe-link behavior remain open. M7.7–M7.9 are not fully complete.
+
+
 ### 2026-10-15 — LIVE RESEND-TO-CRM GLOBAL UNSUBSCRIBE PREVIEW QA: PASS
 
 **Scope:** Owner-authorized test using existing internal QA contact only, isolated Neon `neon-coral-flower` branch `preview/koinonia-marketing-integration-2026-09-16` (`br-cool-cloud-afmcgqot`), database `neondb`, workspace `wks_koinonia`. Separate Vercel project `koinonia-resend-webhook-preview`, Preview-only secrets and database URL, tested standalone CRM receiver source `0.0.2`; stable alias `https://koinonia-resend-webhook-preview-koinonia3.vercel.app/api/webhooks/resend/contact` was explicitly assigned to verified deployment `dpl_5FywFju9kDQdBpvkEQn2etLwnKWL`. Distinct Resend `contact.updated` endpoint `https://resend.com/webhooks/95c91a57-2ee0-43ac-b5e1-95581a8e12bd` enabled after test corrections. No customer marketing send or production application/database deployment.
