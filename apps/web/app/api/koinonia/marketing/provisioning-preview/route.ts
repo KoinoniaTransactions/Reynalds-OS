@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { assertPermission, getAuthProvider } from "../../../../../lib/auth";
 import { prisma } from "../../../../../lib/db";
 import { previewKoinoniaMarketingProvisioning } from "../../../../../lib/koinonia-marketing-eligibility";
+import { checkMarketingPreviewAccess } from "../../../../../lib/koinonia-marketing-preview-access";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -29,12 +30,9 @@ export async function GET() {
   }
 
   const user = await assertPermission("objects:view");
-  // Report access is more sensitive than general CRM viewing.
-  if (user.role !== "Owner" && user.role !== "Admin") {
-    return NextResponse.json({ error: "Marketing administrator access required." }, { status: 403 });
-  }
-  if (user.workspaceId !== "wks_koinonia") {
-    return NextResponse.json({ error: "Wrong workspace." }, { status: 403 });
+  const access = checkMarketingPreviewAccess(user.role, user.workspaceId);
+  if (!access.allowed) {
+    return NextResponse.json({ error: access.error }, { status: 403 });
   }
   const relationships = await prisma.rosObject.findMany({
     where: { workspaceId: user.workspaceId, objectType: "Relationship", archivedAt: null },
