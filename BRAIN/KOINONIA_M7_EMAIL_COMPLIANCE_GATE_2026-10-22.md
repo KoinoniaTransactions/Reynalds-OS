@@ -41,3 +41,21 @@ Sources:
 **Recommended final template approach:** use the native Resend Broadcast unsubscribe placeholder/footer, along with the approved draft postal mailing address. The isolated code footer preview validates an HTTPS unsubscribe URL but is **not** a verified Resend Broadcast template and must not be wired into live sending by itself.
 
 **Still unverified:** this account's actual Resend sending-domain verification status, live subscriber-facing link, exact template placement, complete provider suppression coverage in the send path and final sending approval. Do not mark M7.4 or M7.6–M7.9 complete based on documentation alone.
+
+## 2026-10-22 — Consolidated final acceptance runbook (NOT EXECUTED)
+
+Latest exact-topic consent-audit implementation and test commit `33aab1bd0b016f267f6c9956335647c143348ad2`: app CI and disposable Resend DB workflow **SUCCESS**. This only verifies code/test behavior.
+
+**Verified via owner's Resend screenshots:** sending domain `koinoniatransactions.com` = Verified; a draft Broadcast has From `updates@koinoniatransactions.com`, Reply-To `jeremiah@koinoniatransactions.com`, designated physical mailing footer and visible unsubscribe link. QA audience = 1 contact / 0 subscribers / 1 globally unsubscribed; draft review = 0 matching recipients and Send disabled; marketing topic exists, public, defaults to **Opt-out** (keep; this is the non-automatic-subscription default). No direct user-facing unsubscribe click has been tested.
+
+**Single isolated acceptance session, only after explicit owner approval of an actual test send and recipient:**
+
+1. Obtain a distinct owner-controlled **test recipient** with genuine, documented topic-specific opt-in; do not reset or re-subscribe the globally unsubscribed webhook QA contact. Keep all actual customers excluded.
+2. In a test-only draft/segment, confirm From, Reply-To, actual footer, true explanation of why this recipient receives the message, correct Resend topic, and a harmless subject. Verify recipient count is **exactly one** and only that approved address; stop on any discrepancy.
+3. Before the send, take read-only snapshots of CRM permission, provider unsubscribe, topic state and Resend suppression status. If any unknown, opt-out, suppression, or mismatch exists, **do not send**.
+4. After separate owner approval to send that **one** test message, verify delivered recipient-specific unsubscribe link and visible postal footer. Invoke unsubscribe from the recipient perspective; inspect provider state and corresponding CRM event/audit record, allowing for delivery delay.
+5. Confirm the opted-out recipient becomes ineligible for subsequent marketing; use preview/read-only selection, not a second actual send. Verify topic-only vs global unsubscribe semantics independently and safely. Check no duplicate/replay audit writes.
+6. Exercise bounce/complaint/manual suppression and provider-unavailable cases in isolated test fixtures or provider sandbox if available (no deliberate real complaints or bounces). Fail closed on ambiguity or stale status.
+7. Record screenshots/evidence, verify recipient limit, and leave all automations, broadcasts, customer enrollment and production integration **disabled**. Review safe initial volume policy and approve separately before a real launch.
+
+**No test send or contact mutation authorized by this runbook.** M7.7–M7.9 are still open. M7.11 ramp plan is still awaiting explicit owner approval.
