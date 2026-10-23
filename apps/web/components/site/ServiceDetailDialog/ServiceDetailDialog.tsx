@@ -87,8 +87,9 @@ export function ServiceDetailDialog({ detail, quietTrigger = false, cardTrigger 
         }
         onClick={openDetails}
         aria-haspopup="dialog"
+        aria-label={cardTrigger ? `View details for ${detail.title}` : undefined}
       >
-        {cardTrigger ? <span className={styles.visuallyHidden}>{`View full details for ${detail.title}`}</span> : "See everything included"}
+        {cardTrigger ? <span className={styles.cardDetailsLabel} aria-hidden="true">Details <span aria-hidden="true">→</span></span> : "See everything included"}
       </button>
 
       <dialog
