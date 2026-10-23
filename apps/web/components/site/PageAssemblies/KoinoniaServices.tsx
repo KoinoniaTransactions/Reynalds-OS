@@ -102,30 +102,6 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section className="koinonia-section">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.comparison.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.comparison.title}</h2>
-            <p className="koinonia-copy">{servicesContent.comparison.lead}</p>
-          </div>
-          <div className="koinonia-grid two">
-            {servicesContent.comparison.columns.map((column, index) => (
-              <div key={column.title} className="koinonia-card">
-                <h3>{column.title}</h3>
-                <p className={styles.bestFor}>{column.bestFor}</p>
-                <p className="koinonia-copy">{index === 0
-                  ? "Your recurring marketing—from planning and publishing to email and reporting."
-                  : "Everything in Marketing Management, plus CRM, follow-up, and business operations."}</p>
-                <a className="koinonia-button secondary" href={index === 0 ? "#marketing-management" : "#koinonia-partnership"}>
-                  View {column.title} details
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="koinonia-section koinonia-band">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
