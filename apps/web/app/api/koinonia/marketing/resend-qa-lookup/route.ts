@@ -52,7 +52,7 @@ export async function GET() {
     take: 2
   });
   if (records.length !== 1) {
-    return NextResponse.json({ mode: "qa_read_only", matched: false, reason: "relationship_not_unique" },
+    return NextResponse.json({ mode: "qa_read_only", matched: false, identityMatched: false, marketingEligible: false, enrollmentApproved: false, reason: "relationship_not_unique" },
       { headers: { "Cache-Control": "no-store" } });
   }
   const record = records[0];
@@ -61,7 +61,7 @@ export async function GET() {
   const contact = profile.contact && typeof profile.contact === "object" && !Array.isArray(profile.contact)
     ? profile.contact as Record<string, unknown> : {};
   if (typeof contact.email !== "string" || contact.email.trim().toLowerCase() !== qaEmail) {
-    return NextResponse.json({ mode: "qa_read_only", matched: false, reason: "qa_email_mismatch" },
+    return NextResponse.json({ mode: "qa_read_only", matched: false, identityMatched: false, marketingEligible: false, enrollmentApproved: false, reason: "qa_email_mismatch" },
       { headers: { "Cache-Control": "no-store" } });
   }
 
@@ -71,6 +71,9 @@ export async function GET() {
     mode: "qa_read_only",
     providerState: provider.state,
     matched: result.matched,
+    identityMatched: result.identityMatched,
+    marketingEligible: result.marketingEligible,
+    providerUnsubscribed: result.providerUnsubscribed,
     enrollmentApproved: false,
     reasons: result.reasons,
     contactIdMatches: provider.state === "found" ? provider.id === qaContactId : false

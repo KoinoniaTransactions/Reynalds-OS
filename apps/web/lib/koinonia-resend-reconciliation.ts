@@ -13,14 +13,15 @@ export function reconcileKoinoniaResendContact(
   const profile = normalizeKoinoniaRelationshipData(rawData);
   const linkedId = profile.emailMarketing?.resendContactId?.trim() || "";
   const email = profile.contact?.email?.trim().toLowerCase() || "";
-  const reasons: string[] = [];
+  const identityReasons: string[] = [];
+  const providerReasons: string[] = [];
 
-  if (!linkedId) reasons.push("unlinked_identity");
-  if (provider.state !== "found") reasons.push("provider_" + provider.state);
+  if (!linkedId) identityReasons.push("unlinked_identity");
+  if (provider.state !== "found") identityReasons.push("provider_" + provider.state);
   if (provider.state === "found") {
-    if (linkedId !== provider.id) reasons.push("contact_id_mismatch");
-    if (email !== provider.email.trim().toLowerCase()) reasons.push("email_mismatch");
-    if (provider.unsubscribed) reasons.push("provider_unsubscribed");
+    if (linkedId !== provider.id) identityReasons.push("contact_id_mismatch");
+    if (email !== provider.email.trim().toLowerCase()) identityReasons.push("email_mismatch");
+    if (provider.unsubscribed) providerReasons.push("provider_unsubscribed");
   }
 
   // Provider 'found and subscribed' is not comprehensive proof of bounce,
@@ -28,8 +29,12 @@ export function reconcileKoinoniaResendContact(
   const eligibility = previewKoinoniaMarketingProvisioning(rawData, "unknown");
   return {
     action: "manual_review" as const,
-    matched: reasons.length === 0,
-    reasons: [...eligibility.reasons, ...reasons],
+    identityMatched: identityReasons.length === 0,
+    marketingEligible: false,
+    providerUnsubscribed: provider.state === "found" ? provider.unsubscribed : null,
+    // Retain the legacy field for existing consumers; now it means identity only.
+    matched: identityReasons.length === 0,
+    reasons: [...eligibility.reasons, ...identityReasons, ...providerReasons],
     email: eligibility.email,
     enrollmentApproved: false
   };
