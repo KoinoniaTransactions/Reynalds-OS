@@ -5,6 +5,7 @@ import { checkMarketingPreviewAccess } from "../../../../../lib/koinonia-marketi
 import { getResendContactSnapshotById } from "../../../../../lib/koinonia-resend-contact-lookup";
 import { reconcileKoinoniaResendContact } from "../../../../../lib/koinonia-resend-reconciliation";
 import { getResendSuppressionSnapshot } from "../../../../../lib/koinonia-resend-suppression";
+import { evaluateKoinoniaProviderDecision } from "../../../../../lib/koinonia-marketing-provider-decision";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -70,6 +71,7 @@ export async function GET() {
   const result = reconcileKoinoniaResendContact(record.data, provider);
   // A GET-only provider check; unknown provider results always deny enrollment.
   const suppression = await getResendSuppressionSnapshot(qaEmail, key);
+  const decision = evaluateKoinoniaProviderDecision(record.data, provider, suppression);
   return NextResponse.json({
     mode: "qa_read_only",
     providerState: provider.state,
@@ -77,10 +79,11 @@ export async function GET() {
     suppressionOrigin: suppression.state === "suppressed" ? suppression.origin : null,
     matched: result.matched,
     identityMatched: result.identityMatched,
-    marketingEligible: result.marketingEligible,
+    marketingEligible: decision.marketingEligible,
+    eligibilityDecision: decision.action,
     providerUnsubscribed: result.providerUnsubscribed,
     enrollmentApproved: false,
-    reasons: [...result.reasons, ...(suppression.state === "suppressed" ? ["provider_suppressed"] : suppression.state === "unavailable" ? ["suppression_unverified"] : [])],
+    reasons: decision.reasons,
     contactIdMatches: provider.state === "found" ? provider.id === qaContactId : false
   }, { headers: { "Cache-Control": "no-store" } });
 }
