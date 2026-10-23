@@ -5,7 +5,7 @@ const contact = {state:"found" as const,id:"qa-id",email:"QA@Example.com",unsubs
 const clear = {state:"not_found" as const};
 describe("combined provider policy (pure and fail closed)", () => {
   it("never approves enrollment even when identity, CRM and suppression lookup clear", () => {
-    expect(evaluate(profile,contact,clear)).toMatchObject({identityMatched:true,marketingEligible:false,enrollmentApproved:false,reasons:["provider_unverified","topic_permission_unverified"]});
+    expect(evaluate(profile,contact,clear)).toMatchObject({identityMatched:true,marketingEligible:false,enrollmentApproved:false,reasons:["provider_unverified","topic_permission_unverified","provider_topic_unverified"]});
   });
   it("does not confuse missing suppression with global unsubscribe", () => {
     const d=evaluate(profile,{...contact,unsubscribed:true},clear);
