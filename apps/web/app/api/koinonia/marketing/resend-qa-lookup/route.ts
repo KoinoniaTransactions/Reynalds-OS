@@ -8,6 +8,7 @@ import { getResendSuppressionSnapshot } from "../../../../../lib/koinonia-resend
 import { evaluateKoinoniaProviderDecision } from "../../../../../lib/koinonia-marketing-provider-decision";
 import { getResendContactTopicsSnapshot } from "../../../../../lib/koinonia-resend-topic-lookup";
 import { evaluateTopicConsent } from "../../../../../lib/koinonia-marketing-topic-policy";
+import { auditKoinoniaMarketingConsent } from "../../../../../lib/koinonia-marketing-consent-audit";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -69,6 +70,7 @@ export async function GET() {
       { headers: { "Cache-Control": "no-store" } });
   }
 
+  const consentAudit = auditKoinoniaMarketingConsent(record.data);
   const provider = await getResendContactSnapshotById(qaContactId, key);
   const result = reconcileKoinoniaResendContact(record.data, provider);
   // A GET-only provider check; unknown provider results always deny enrollment.
@@ -89,6 +91,8 @@ export async function GET() {
   );
   return NextResponse.json({
     mode: "qa_read_only",
+    consentAuditComplete: consentAudit.permissionEvidenceComplete,
+    consentAuditReasons: consentAudit.reasons,
     providerState: provider.state,
     suppressionState: suppression.state,
     suppressionOrigin: suppression.state === "suppressed" ? suppression.origin : null,
