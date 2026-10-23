@@ -314,6 +314,11 @@ Acceptance criteria: one controlled test proves the entire campaign -> site -> l
 
 ## M7 — Email campaign launch readiness
 
+### 2026-10-22 — Draft postal address supplied (M7.6 still OPEN)
+
+Owner provided `14101 Scarlet Sage`; prior project address record indicates `Koinonia Transactions LLC, 14101 Scarlet Sage St, Parker, CO 80134`. Record as a **draft marketing footer mailing address** for review, not confirmation of a compliant rendered template. No email send or production rollout authorized. The M7.6 checkbox stays unchecked until real campaign footer validation.
+
+
 ### 2026-10-22 — LIVE RESEND TOPIC + CRM PERMISSION COMPARISON: PASS (ONE-CONTACT PREVIEW QA)
 
 **Evidence:** On authenticated, branch-isolated Preview built from marketing branch commit `c3fd07fa5c12ae3b8ef230c12405a0c22c282434`, the owner observed `mode:qa_read_only`, `providerState:found`, `identityMatched:true`, `contactIdMatches:true`, `suppressionState:not_found`, `topicLookupState:found`, `topicCount:1`, `topicLookupIncomplete:false`, and an explicit `opt_in` for the QA Resend topic. Exact-topic comparison returned `resendTopicOptedIn:true`, `crmTopicConsentVerified:false`, `topicPermissionMatched:false`, `providerUnsubscribed:true`, `marketingEligible:false`, `eligibilityDecision:manual_review`, `enrollmentApproved:false`. Both application CI and disposable Resend database checks passed on that commit; the Preview-only deployment was explicitly created from that commit after automatic Git deployment did not appear.
