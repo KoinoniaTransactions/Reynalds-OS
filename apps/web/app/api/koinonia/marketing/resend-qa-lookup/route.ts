@@ -7,6 +7,7 @@ import { reconcileKoinoniaResendContact } from "../../../../../lib/koinonia-rese
 import { getResendSuppressionSnapshot } from "../../../../../lib/koinonia-resend-suppression";
 import { evaluateKoinoniaProviderDecision } from "../../../../../lib/koinonia-marketing-provider-decision";
 import { getResendContactTopicsSnapshot } from "../../../../../lib/koinonia-resend-topic-lookup";
+import { evaluateTopicConsent } from "../../../../../lib/koinonia-marketing-topic-policy";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -74,6 +75,18 @@ export async function GET() {
   const suppression = await getResendSuppressionSnapshot(qaEmail, key);
   const decision = evaluateKoinoniaProviderDecision(record.data, provider, suppression);
   const topics = await getResendContactTopicsSnapshot(qaContactId, key);
+  const qaTopicId = "b19acea4-8f2e-44b8-bd20-478f89b4ec20";
+  const crmTopicConsent = evaluateTopicConsent(
+  (profile.emailMarketing as { topicConsents?: unknown } | undefined)?.topicConsents,
+  qaTopicId
+);
+  const resendTopicOptedIn =
+  topics.state === "found" &&
+  !topics.hasMore &&
+  topics.topics.filter(t => t.id === qaTopicId).length === 1 &&
+  topics.topics.some(
+    t => t.id === qaTopicId && t.subscription === "opt_in"
+  );
   return NextResponse.json({
     mode: "qa_read_only",
     providerState: provider.state,
@@ -83,6 +96,11 @@ export async function GET() {
     topicCount: topics.state === "found" ? topics.count : null,
     topicLookupIncomplete: topics.state === "found" ? topics.hasMore : true,
     topicSubscriptions: topics.state === "found" ? topics.topics : null,
+    qaTopicId,
+crmTopicConsentVerified: crmTopicConsent.verified,
+resendTopicOptedIn,
+topicPermissionMatched:
+  crmTopicConsent.verified && resendTopicOptedIn,
     matched: result.matched,
     identityMatched: result.identityMatched,
     marketingEligible: decision.marketingEligible,
