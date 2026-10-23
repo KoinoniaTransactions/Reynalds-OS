@@ -1,4 +1,5 @@
 import { normalizeKoinoniaRelationshipData } from "./koinonia-relationship";
+import { evaluateTopicConsent } from "./koinonia-marketing-topic-policy";
 
 /** Consent quality audit only. No writes, provider requests or send authorization. */
 export function auditKoinoniaMarketingConsent(rawData: unknown) {
@@ -18,8 +19,9 @@ export function auditKoinoniaMarketingConsent(rawData: unknown) {
     reasons.push("permission_date_invalid");
   if (m?.optedOutAt?.trim() || m?.optOutSource?.trim() || m?.status === "unsubscribed" || m?.status === "do_not_contact")
     reasons.push("prior_opt_out");
-  if (!Array.isArray(m?.topicConsents) || m.topicConsents.length === 0)
-    reasons.push("topic_permission_unverified");
+  const topic = evaluateTopicConsent(m?.topicConsents, "b19acea4-8f2e-44b8-bd20-478f89b4ec20");
+  if (!topic.verified) reasons.push(topic.reason);
+  // Evidence completeness is a local review signal, not provider verification or send approval.
   return { email, permissionEvidenceComplete: reasons.length === 0, action: "manual_review" as const,
     enrollmentApproved: false as const, reasons: [...new Set(reasons)] };
 }
