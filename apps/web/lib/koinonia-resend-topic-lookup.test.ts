@@ -5,7 +5,7 @@ const response = (payload: unknown, status=200) => vi.fn(async () => new Respons
 describe("Resend contact topics (GET only)", () => {
   it("reads subscription summaries without reporting permission granted", async () => {
     const mock=response({object:"list",has_more:false,data:[{id:"topic-1",subscription:"opt_in"},{id:"topic-2",subscription:"opt_out"}]});
-    expect(await get(id,"re_test",mock as unknown as typeof fetch)).toEqual({state:"found",count:2,hasMore:false,optedIn:1,optedOut:1});
+    expect(await get(id,"re_test",mock as unknown as typeof fetch)).toEqual({state:"found",count:2,hasMore:false,optedIn:1,optedOut:1,topics:[{id:"topic-1",subscription:"opt_in"},{id:"topic-2",subscription:"opt_out"}]});
     expect(mock.mock.calls[0][0]).toBe("https://api.resend.com/contacts/"+id+"/topics");
     expect((mock.mock.calls[0] as unknown[])[1]).toMatchObject({method:"GET",cache:"no-store"});
   });
@@ -13,6 +13,28 @@ describe("Resend contact topics (GET only)", () => {
     expect(await get(id,"re_test",response({object:"list",has_more:true,data:[]}) as unknown as typeof fetch))
       .toMatchObject({state:"found",hasMore:true,optedIn:0});
   });
+  it("returns only topic IDs and subscription statuses", async () => {
+  const mock = response({
+    object: "list",
+    has_more: false,
+    data: [
+      {
+        id: "topic-1",
+        subscription: "opt_out",
+        name: "Private topic label"
+      }
+    ]
+  });
+
+  const result = await get(id, "re_test", mock as unknown as typeof fetch);
+
+  expect(result.state).toBe("found");
+  if (result.state === "found") {
+    expect(result.topics).toEqual([
+      { id: "topic-1", subscription: "opt_out" }
+    ]);
+  }
+});
   it("rejects unexpected subscription state and duplicate topic ids", async () => {
     for(const data of [[{id:"x",subscription:"unknown"}],[{id:"x",subscription:"opt_in"},{id:"x",subscription:"opt_out"}]]) {
       expect((await get(id,"re_test",response({object:"list",has_more:false,data}) as unknown as typeof fetch)).state).toBe("unavailable");
