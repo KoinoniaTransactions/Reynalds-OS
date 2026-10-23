@@ -569,3 +569,5 @@ Deferred items are not launch blockers unless specifically promoted into the act
 - [ ] OWNER GATE: no automatic SMS sending, outreach activation or marketing publication authorized by this feature.
 
 Preview HTTP acceptance note (2026-10-23): external HTTP inspection attempted for /go/K031, /go/K060, and /go/garbage on the exact READY preview host. The unauthenticated viewer could not access the deployment (likely deployment protection); this is NOT an HTTP redirect test pass. Use authenticated Vercel CLI `vercel curl` against the exact preview URL or appropriate protected-browser credentials. Keep production promotion and SMS changes gated.
+
+2026-10-23 protected-preview HTTP follow-up: authenticated Vercel web fetch returned final HTTP 200 homepage for both `/go/K031` and `/go/K060`; `/go/garbage` returned HTTP 404 with `cache-control: no-store`. Fetch follows redirects and does not expose the intermediate 307 `Location` response; therefore exact location/UTM content and GA4 attribution are NOT independently confirmed. Do not promote to production based solely on final 200 results.
