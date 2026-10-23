@@ -314,6 +314,16 @@ Acceptance criteria: one controlled test proves the entire campaign -> site -> l
 
 ## M7 — Email campaign launch readiness
 
+### 2026-10-22 — LIVE RESEND TOPIC + CRM PERMISSION COMPARISON: PASS (ONE-CONTACT PREVIEW QA)
+
+**Evidence:** On authenticated, branch-isolated Preview built from marketing branch commit `c3fd07fa5c12ae3b8ef230c12405a0c22c282434`, the owner observed `mode:qa_read_only`, `providerState:found`, `identityMatched:true`, `contactIdMatches:true`, `suppressionState:not_found`, `topicLookupState:found`, `topicCount:1`, `topicLookupIncomplete:false`, and an explicit `opt_in` for the QA Resend topic. Exact-topic comparison returned `resendTopicOptedIn:true`, `crmTopicConsentVerified:false`, `topicPermissionMatched:false`, `providerUnsubscribed:true`, `marketingEligible:false`, `eligibilityDecision:manual_review`, `enrollmentApproved:false`. Both application CI and disposable Resend database checks passed on that commit; the Preview-only deployment was explicitly created from that commit after automatic Git deployment did not appear.
+
+**Interpretation:** Resend topic opt-in does NOT constitute CRM consent and NEVER overrides global unsubscribe. This confirms only the one internal QA contact's read-only identity/topic comparison. No permission was fabricated, no marketing send/contact update/topic update/customer provisioning, and no production promotion.
+
+**Still OPEN:** Define genuine topic-consent capture and audit provenance, verify full unsubscribe recipient experience and send-path suppression under separately approved testing, verify compliant mailing address, sending domain/reputation and ramp plan, list permission quality, and broader acceptance. Historical M7.7–M7.9 checkboxes remain unchecked. `provider_topic_unverified` in the combined eligibility reasons is intentionally fail-closed pending full provider-to-CRM permission integration; the QA display's independent comparison must not be mistaken for enrollment approval.
+
+
+
 ### 2026-10-22 — Resend suppression capability audit (research only)
 
 Resend documents team-wide suppression records, distinct from contact global unsubscribe status. Suppression `origin` includes `bounce`, `complaint`, or `manual`; suppression lookup/list API exists, and `suppression.added` / `suppression.removed` webhooks provide change notifications. Existing `email.suppressed` relates to attempted sends and does not replace pre-enrollment lookup. Source: https://resend.com/changelog/suppression-list-support (published 2026-07-28). The suppression list is shared across the Resend team/domains.
