@@ -192,3 +192,34 @@
     flex: 1 1 100%;
   }
 }
+
+/* Transparent, keyboard-focusable action spanning its pricing card. */
+.cardTrigger {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.cardTrigger:hover {
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
