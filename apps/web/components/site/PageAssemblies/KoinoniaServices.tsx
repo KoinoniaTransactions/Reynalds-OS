@@ -100,28 +100,6 @@ export function KoinoniaServices() {
       <section className="koinonia-section koinonia-band">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.capabilities.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.capabilities.title}</h2>
-            <p className="koinonia-copy">{servicesContent.capabilities.lead}</p>
-          </div>
-
-          <div className={styles.balancedFive}>
-            {servicesContent.capabilities.items.map((service, index) => (
-              <UniversalCard
-                key={service.title}
-                eyebrow={`0${index + 1}`}
-                title={service.title}
-                body={service.body}
-                items={service.items}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="koinonia-section koinonia-band">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">NOT SURE WHERE TO START?</div>
             <h2 className="koinonia-heading">Start with the situation, not another product.</h2>
             <p className="koinonia-copy">These examples use the services above, rather than adding separate packages.</p>
