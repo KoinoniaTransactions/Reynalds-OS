@@ -13,7 +13,7 @@ State: NOT APPROVED FOR SENDING; NO PRODUCTION ACTIVATION
 ## Open acceptance gates
 1. **Sender reputation:** confirm Resend outbound marketing domain, DNS/authentication, and isolation from Google Workspace correspondence. Workspace SPF/DKIM/DMARC PASS alone does not prove Resend outbound readiness.
 2. **Identity:** verify From and Reply-To under the approved customer-facing domain, including reply handling.
-3. **Postal address:** obtain and approve an accurate physical postal mailing address (or qualifying compliant alternative); verify actual placement in commercial campaign templates. Do not invent a business address.
+3. **Postal address:** owner-supplied draft footer address: `Koinonia Transactions LLC, 14101 Scarlet Sage St, Parker, CO 80134`. Verify its exact formatting and eligibility for commercial mailing requirements, then verify placement in actual commercial campaign templates. This is not yet live-template acceptance.
 4. **Unsubscribe:** test actual recipient-facing preference/unsubscribe links and one-click requirements where applicable using an explicitly authorized isolated test send. The previously verified Resend contact webhook is not a substitute.
 5. **Suppression:** prove the actual outbound selection/send path excludes global unsubscribes, topic opt-outs, complaint/bounce/manual suppressions, ambiguous contacts, invalid consent, and unavailable provider checks; execute isolated tests before any customer send.
 6. **List evidence:** accept only well-supported permission provenance; purchased, scraped, inferred, or imported lists require additional review and do not automatically qualify for nurture.
@@ -24,3 +24,6 @@ State: NOT APPROVED FOR SENDING; NO PRODUCTION ACTIVATION
 Pure `evaluateKoinoniaSendReadiness` performs checklist evaluation but ALWAYS returns `sendingEnabled:false`, `enrollmentApproved:false`, and `action:manual_review`. Passing booleans are not evidence of actual deliverability or legal compliance. No send route, CRM mutation, Resend mutation, configuration changes, or production promotion included.
 
 M7.4, M7.6–M7.9, and M7.11 remain open until evidenced owner acceptance.
+
+## 2026-10-22 owner address decision
+The owner designated the address above for the marketing email footer. It is recorded as a **draft mailing identity only**, not a live email template or permission to send. Keep M7.6 open until template rendering and compliance review are complete.
