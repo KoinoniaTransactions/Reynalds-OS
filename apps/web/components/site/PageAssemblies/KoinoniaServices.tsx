@@ -32,66 +32,6 @@ export function KoinoniaServices() {
         </div>
       </section>
 
-      <section className="koinonia-section koinonia-band">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.capabilities.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.capabilities.title}</h2>
-            <p className="koinonia-copy">{servicesContent.capabilities.lead}</p>
-          </div>
-
-          <div className={styles.balancedFive}>
-            {servicesContent.capabilities.items.map((service, index) => (
-              <UniversalCard
-                key={service.title}
-                eyebrow={`0${index + 1}`}
-                title={service.title}
-                body={service.body}
-                items={service.items}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="koinonia-section">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.differentiation.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.differentiation.title}</h2>
-            <p className="koinonia-copy">{servicesContent.differentiation.lead}</p>
-          </div>
-
-          <div className="koinonia-grid two">
-            {servicesContent.differentiation.items.map((item, index) => (
-              <UniversalCard
-                key={item.title}
-                eyebrow={`0${index + 1}`}
-                title={item.title}
-                body={item.body}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="koinonia-section koinonia-services-referrals">
-        <div className="koinonia-container">
-          <div className="koinonia-cta">
-            <div className="koinonia-eyebrow">{referralsContent.hero.eyebrow}</div>
-            <h2 className="koinonia-heading">Don't want to keep the client relationship?</h2>
-            <p className="koinonia-copy">
-              Koinonia's services are for Realtors who want to keep the client and hand off operational work. The separate Referral Partner Option is for the different situation where you would rather make a documented client referral.
-            </p>
-            <div className="koinonia-actions" style={{ justifyContent: "center" }}>
-              <a className="koinonia-button primary" href="/referrals">
-                Explore the 40% Referral Option
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section id="pricing" className="koinonia-section koinonia-band">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
@@ -140,6 +80,28 @@ export function KoinoniaServices() {
         </div>
       </section>
 
+      <section className="koinonia-section koinonia-band">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">{servicesContent.capabilities.eyebrow}</div>
+            <h2 className="koinonia-heading">{servicesContent.capabilities.title}</h2>
+            <p className="koinonia-copy">{servicesContent.capabilities.lead}</p>
+          </div>
+
+          <div className={styles.balancedFive}>
+            {servicesContent.capabilities.items.map((service, index) => (
+              <UniversalCard
+                key={service.title}
+                eyebrow={`0${index + 1}`}
+                title={service.title}
+                body={service.body}
+                items={service.items}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="koinonia-section">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
@@ -147,22 +109,18 @@ export function KoinoniaServices() {
             <h2 className="koinonia-heading">{servicesContent.comparison.title}</h2>
             <p className="koinonia-copy">{servicesContent.comparison.lead}</p>
           </div>
-
           <div className="koinonia-grid two">
-            {servicesContent.comparison.columns.map((column) => (
-              <article key={column.title} className="koinonia-card koinonia-pricing-card">
-                <div className="koinonia-price-badge">
-                  <span className="koinonia-price-badge-label">Monthly</span>
-                  <span className="koinonia-price-badge-value">{column.price}</span>
-                </div>
+            {servicesContent.comparison.columns.map((column, index) => (
+              <div key={column.title} className="koinonia-card">
                 <h3>{column.title}</h3>
                 <p className={styles.bestFor}>{column.bestFor}</p>
-                <ul>
-                  {column.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </article>
+                <p className="koinonia-copy">{index === 0
+                  ? "Your recurring marketing—from planning and publishing to email and reporting."
+                  : "Everything in Marketing Management, plus CRM, follow-up, and business operations."}</p>
+                <a className="koinonia-button secondary" href={index === 0 ? "#marketing-management" : "#koinonia-partnership"}>
+                  View {column.title} details
+                </a>
+              </div>
             ))}
           </div>
         </div>
@@ -171,20 +129,21 @@ export function KoinoniaServices() {
       <section className="koinonia-section koinonia-band">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">{servicesContent.popularSolutions.eyebrow}</div>
-            <h2 className="koinonia-heading">{servicesContent.popularSolutions.title}</h2>
-            <p className="koinonia-copy">{servicesContent.popularSolutions.lead}</p>
+            <div className="koinonia-eyebrow">NOT SURE WHERE TO START?</div>
+            <h2 className="koinonia-heading">Start with the situation, not another product.</h2>
+            <p className="koinonia-copy">These examples use the services above, rather than adding separate packages.</p>
           </div>
-
           <div className="koinonia-grid two">
-            {servicesContent.popularSolutions.items.map((item, index) => (
-              <UniversalCard
-                key={item.title}
-                eyebrow={`0${index + 1}`}
-                title={item.title}
-                body={item.body}
-              />
-            ))}
+            <article className="koinonia-card">
+              <h3>Vacation, overlap, or a showing conflict?</h3>
+              <p>Keep a showing or approved property appointment covered when you cannot be there.</p>
+              <a className="koinonia-button secondary" href="#licensed-field-coverage">Explore Licensed Field Coverage</a>
+            </article>
+            <article className="koinonia-card">
+              <h3>Past clients and follow-up getting lost?</h3>
+              <p>Bring structure to nurture, referrals, database outreach, and the CRM tasks behind them.</p>
+              <a className="koinonia-button secondary" href="#koinonia-partnership">Explore Koinonia Partnership</a>
+            </article>
           </div>
         </div>
       </section>
