@@ -33,3 +33,5 @@ yarn-error.log*
 # Prisma
 packages/database/prisma/dev.db
 packages/database/prisma/dev.db-journal
+.vercel
+.env*

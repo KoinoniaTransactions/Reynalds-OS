@@ -95,6 +95,21 @@ describe("Koinonia marketing attribution", () => {
     expect(submission.conversionTouch).toEqual(conversion);
   });
 
+  it("captures UTM term and supported advertising click IDs", () => {
+    const campaignTouch = touch(
+      "?utm_source=google&utm_medium=cpc&utm_campaign=coverage&utm_content=showing_conflict&utm_term=colorado_realtor&gclid=g-123&gbraid=gb-123&wbraid=wb-123&msclkid=ms-123&fbclid=fb-123&ttclid=tt-123",
+      "2026-09-16T10:00:00.000Z"
+    );
+
+    expect(campaignTouch.utmTerm).toBe("colorado_realtor");
+    expect(campaignTouch.gclid).toBe("g-123");
+    expect(campaignTouch.gbraid).toBe("gb-123");
+    expect(campaignTouch.wbraid).toBe("wb-123");
+    expect(campaignTouch.msclkid).toBe("ms-123");
+    expect(campaignTouch.fbclid).toBe("fb-123");
+    expect(campaignTouch.ttclid).toBe("tt-123");
+  });
+
   it("migrates the legacy session attribution into first and latest touch", () => {
     const fallback = touch("", "2026-09-01T10:00:00.000Z");
     const migrated = migrateLegacyMarketingAttribution(

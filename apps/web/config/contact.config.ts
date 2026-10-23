@@ -1,7 +1,7 @@
 export const contactConfig = {
   businessName: "Koinonia Transactions",
   displayName: "Koinonia",
-  email: "jeremiah@koinoniaadmin.com",
+  email: "jeremiah@koinoniatransactions.com",
   phone: {
     display: "(719) 745-8497",
     href: "tel:+17197458497",
@@ -24,8 +24,9 @@ export const contactConfig = {
 
 export const socialConfig = {
   instagram: "",
-  facebook: "",
-  tiktok: ""
+  facebook: "https://www.facebook.com/KoinoniaTransactions",
+  tiktok: "https://www.tiktok.com/@koinoniatransactions",
+  linkedin: "https://www.linkedin.com/company/koinonia-transactions/"
 } as const;
 
 export function mailto(subject?: string) {

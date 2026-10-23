@@ -24,7 +24,7 @@ Koinonia
 
 Current Development Phase:
 
-Production Website Completion
+Approved public website released 2026-09-16; controlled marketing integration in preview, production marketing activation gated. Verify the current branch and release before any work.
 
 ---
 
@@ -75,12 +75,16 @@ Conversation history is not.
 
 ---
 
-## Phase 2 — Understand Current Development
+## Phase 2 — Establish CURRENT authority before reading historical snapshots
 
-4. BRAIN/CURRENT_PRIORITIES.md
-5. BRAIN/SESSION_HANDOFF.md
-6. BRAIN/DEVELOPMENT_STANDARDS.md
-7. BRAIN/DECISION_LOG.md
+4. BRAIN/KOINONIA_MASTER_LAUNCH_CHECKLIST.md — governing current milestone status and owner gates on marketing integration branch.
+5. Approved production public content at `koinonia-production` commit `f6c821111ff17a602eee92db01998a0c52bf62f0`: `apps/web/content/{brand,home,services,about,contact,referrals}.ts`; current approved service and price presentation.
+6. 02_Companies/Koinonia/04_Departments/Marketing/MARKETING_ACTIVATION_READINESS_PLAN.md — binding publishing/outreach/paid activation gates and newer LinkedIn decision.
+7. BRAIN/KOINONIA_MARKETING_INTEGRATION_AUDIT_2026-09-16.md — evidence for preview tests, not production approval.
+8. BRAIN/KOINONIA_PORTAL_HANDOFF_2026-09-05.md — portal workstream history; compare with approved implementation.
+9. BRAIN/DEVELOPMENT_STANDARDS.md and BRAIN/DECISION_LOG.md.
+
+`BRAIN/CURRENT_PRIORITIES.md`, `BRAIN/SESSION_HANDOFF.md`, `CURRENT_STATE.md`, `PROJECT_MEMORY.md`, `NEXT_ACTION.md`, older service objects, prices and website specs are historical where they contradict these later approved sources. Read them for provenance, not as an instruction to return to a prelaunch state. The current approved public Transaction Management fee is $450 per successful closing, not historical $389/$599 proposals. Current monthly products are Marketing Management $750 and Koinonia Partnership $1,250, not historical $299/$599/$999 tiers. Five current capability areas and the separate 40% referral option govern public messaging. Never ask the owner to repeat settled decisions unless evidence of a genuine later change exists.
 
 ---
 
@@ -117,9 +121,9 @@ This workflow is mandatory throughout the project.
 
 # Current Mission
 
-Complete the Koinonia production website.
+The approved Koinonia public website was released to production on 2026-09-16 (W1-W9 complete). The current separate workstream is staged marketing readiness, with M6-M11 gated as documented; do not confuse preview proof, a passing build, or a draft PR with approval to publish or promote to production.
 
-Platform work should only occur when it directly accelerates website completion or resolves a verified architectural issue.
+Protect the approved website, commercial model, portal/auth safeguards, and documented governance. Confirm actual current production release before claiming any later status. Marketing content, outreach, and paid campaigns must not go live without explicit owner approval.
 
 ---
 
@@ -164,3 +168,4 @@ Build third.
 **Historical where conflicting:** `CURRENT_STATE.md`, `PROJECT_MEMORY.md`, `NEXT_ACTION.md`, `BRAIN/PROJECT_STATE.md`, `BRAIN/CURRENT_PRIORITIES.md`, older website recovery/specification materials, service/pricing objects and older marketing handoffs. Earlier $389/$599 transaction pricing, $299/$599/$999 monthly tiers, four-category service snapshots, the initial LinkedIn exclusion, fixed-date marketing calendar and prelaunch website status must NOT replace approved September decisions. Preserve historical documents for provenance; do not ask the owner to reconfirm settled choices because an old file disagrees.
 
 **New session procedure:** first identify the actual branch and latest approved deployment, inspect the approved production commercial content, read the current marketing-branch checklist and activation gate, then inspect relevant implementation before proposing any new work. Never equate a ready preview, passing build or draft PR with approval to publish or deploy. No marketing publishing, outbound sends, paid spend, new test submissions or production promotion without applicable explicit owner authorization. When later owner-approved changes occur, update these existing entry points and the relevant governing sources together; do not create competing 'master truth' documents.
+

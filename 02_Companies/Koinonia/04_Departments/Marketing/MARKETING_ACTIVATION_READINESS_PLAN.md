@@ -64,13 +64,14 @@ The five Koinonia Transactions service lanes remain primary.
 
 The 40% Referral Partner Option remains a separate choice and is not a sixth service.
 
-LinkedIn remains excluded.
+LinkedIn is now included by owner decision as a Koinonia company-presence, professional credibility, and selective organic-content channel. This change reverses the earlier owner choice to exclude LinkedIn. It does not by itself authorize LinkedIn paid media or create a separate mandatory publishing quota.
 
-Approved active-channel family remains:
+Approved active-channel family now includes:
 
 - Facebook
 - Instagram
 - TikTok
+- LinkedIn
 - website
 - email
 - direct Realtor relationship development
@@ -616,7 +617,7 @@ That means:
 
 1. reconcile and release only the launch-critical website changes to production
 2. verify the live conversion path and attribution
-3. configure Facebook / Instagram / TikTok public profiles
+3. configure Facebook / Instagram / TikTok / LinkedIn public profiles
 4. verify tracking links
 5. confirm who owns inbound leads
 

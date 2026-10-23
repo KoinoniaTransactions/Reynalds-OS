@@ -1,3 +1,5 @@
+import { contactConfig, socialConfig } from "../config/contact.config";
+
 export const brandContent = {
   company: {
     name: "Koinonia",
@@ -10,15 +12,15 @@ export const brandContent = {
   contact: {
     phone: "719-745-8497",
     sms: "719-745-8497",
-    email: "jeremiah@koinoniaadmin.com",
+    email: contactConfig.email,
     website: "https://koinoniatransactions.com"
   },
 
   social: {
-    facebook: "",
-    instagram: "",
-    tiktok: "",
-    linkedin: ""
+    facebook: socialConfig.facebook,
+    instagram: socialConfig.instagram,
+    tiktok: socialConfig.tiktok,
+    linkedin: socialConfig.linkedin
   },
 
   navigation: {

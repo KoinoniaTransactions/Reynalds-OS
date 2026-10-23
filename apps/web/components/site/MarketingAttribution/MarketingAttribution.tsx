@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import {
   createMarketingTouch,
@@ -9,9 +10,14 @@ import {
   normalizeMarketingAttributionState,
   updateMarketingAttribution
 } from "@/lib/marketing-attribution";
+import { isPublicMarketingRoute } from "@/lib/marketing-routes";
 
 export function MarketingAttribution() {
+  const pathname = usePathname();
+
   useEffect(() => {
+    if (!isPublicMarketingRoute(pathname)) return;
+
     const current = createMarketingTouch({
       search: window.location.search,
       referrer: document.referrer ?? "",
@@ -40,7 +46,7 @@ export function MarketingAttribution() {
     } catch {
       // Attribution must never block the public site or consultation flow.
     }
-  }, []);
+  }, [pathname]);
 
   return null;
 }

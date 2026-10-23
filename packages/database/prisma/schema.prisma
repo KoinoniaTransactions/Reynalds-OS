@@ -22,6 +22,7 @@ model Workspace {
   events            TimelineEvent[]
   portalInvitations PortalInvitation[]
   auditEvents       AuditEvent[]
+  resendContactWebhookEvents ResendContactWebhookEvent[]
 }
 
 model User {
@@ -288,4 +289,24 @@ model AuditEvent {
   @@index([workspaceId, createdAt])
   @@index([actorId, createdAt])
   @@index([subjectType, subjectId])
+}
+
+/// Dedicated webhook event ledger; unique Svix delivery ID blocks duplicate delivery.
+/// CRM mutations must happen in the same transaction; never initiates sends.
+model ResendContactWebhookEvent {
+  id              String   @id @default(cuid())
+  svixId          String   @unique
+  workspaceId     String
+  eventType       String
+  resendContactId String
+  email           String
+  createdAt       DateTime @default(now())
+  eventOccurredAt DateTime
+  relationshipId  String?
+  outcome         String
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@index([workspaceId, resendContactId])
+  @@index([workspaceId, createdAt])
 }
