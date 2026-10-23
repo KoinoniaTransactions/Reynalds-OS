@@ -314,6 +314,17 @@ Acceptance criteria: one controlled test proves the entire campaign -> site -> l
 
 ## M7 — Email campaign launch readiness
 
+### 2026-10-22 — LIVE READ-ONLY RESEND QA IDENTITY RECONCILIATION: PASS
+
+**Owner browser evidence:** Authenticated Koinonia Preview on commit `8f7201c31dc4065259c274e08a4e389a15a158a9`, endpoint `/api/koinonia/marketing/resend-qa-lookup` returned `mode:"qa_read_only"`, `providerState:"found"`, `identityMatched:true`, `contactIdMatches:true`, `providerUnsubscribed:true`, `marketingEligible:false`, `enrollmentApproved:false`. The response also preserved `matched:true` as an identity-only legacy alias and reported `not_eligible`, missing permission evidence, historical opt-out, unknown full-provider suppression state, and `provider_unsubscribed`.
+
+**Scope:** Only explicitly linked internal QA Resend contact, authenticated Koinonia Owner/Admin, isolated Preview database hostname allowlist, branch-scoped `KOINONIA_RESEND_QA_LOOKUP_ENABLED=true`, and GET-only Resend provider fetch. A separate unrestricted Preview variable was removed before correct branch-scoped redeployment. No contact creation/update, topic change, import, email delivery, production modification, or enrollment authorized.
+
+**Interpretation:** Identity and suppression are separate decisions. A true identity match does not confer marketing permission. Resend `unsubscribed:true` is confirmed for this one QA contact; `provider_unverified` remains intentional because full bounce/complaint/topic suppression has not been established. This is **one-contact read-only acceptance**, not production provisioning.
+
+**OPEN:** Design and verify provider suppression coverage (global opt-out, bounce, complaint), topic preference semantics, actual unsubscribe-link flow with separately authorized test mail, consent evidence capture, contact provisioning and identity mapping for other contacts, and broader security/QA before any customer sends. M7.7–M7.9 remain open until owner approval.
+
+
 ### 2026-10-21 — MARKETING PROVISIONING READ-ONLY PREVIEW ACCEPTANCE: PASS
 
 **Deployment:** `reynalds-os-67wdlmji3-koinonia3.vercel.app`, marketing integration branch commit `64ad5bef`, isolated Koinonia Preview route `/api/koinonia/marketing/provisioning-preview`. Reviewed application CI and disposable Resend database workflow successful on this commit. The branch-scoped `KOINONIA_MARKETING_PROVISIONING_PREVIEW_ENABLED=true` flag was added in Vercel Preview only, not Production.
