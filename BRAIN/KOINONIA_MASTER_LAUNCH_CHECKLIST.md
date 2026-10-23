@@ -314,6 +314,19 @@ Acceptance criteria: one controlled test proves the entire campaign -> site -> l
 
 ## M7 — Email campaign launch readiness
 
+### 2026-10-22 — RESEND DASHBOARD CONFIGURATION REVIEW (OWNER SCREENSHOTS)
+
+- Resend sending domain `koinoniatransactions.com` displayed **Verified / ready to send** in Domains, region `us-east-1`; Forge disabled (optional). This confirms provider domain status only, not campaign authorization.
+- Existing **Untitled** Broadcast remains **Draft**, with From `Koinonia Transactions <updates@koinoniatransactions.com>`, Reply-To `jeremiah@koinoniatransactions.com`, internal-only QA segment, and topic `Koinonia Updates & Realtor Resources`.
+- Draft visually includes unsubscribe link and postal mailing footer for Koinonia Transactions LLC, 14101 Scarlet Sage, Parker, CO 80134. The draft's claim that recipients opted in via the website requires review before any real send; actual recipient-specific unsubscribe link was NOT clicked/tested.
+- Broadcast Review: missing subject; **zero matching recipients** for current segment/topic; Slide to send disabled. Audience: one contact, zero subscribers, one global unsubscriber. This is consistent with the existing unsubscribed internal QA contact being excluded, **not** proof of all complaint/bounce send-path suppression cases.
+- Resend Audience Topics: one public topic, `Koinonia Updates & Realtor Resources`, **Default: Opt-out**, and unsubscribe preferences page preview. IMPORTANT: default Opt-out is not proof of affirmative marketing permission. Recommend changing to explicit opt-in default after separately assessing impact; **do not change provider settings or existing contact status without authorization**.
+- M7.4 domain verification subcheck and draft footer presence have direct owner UI evidence; **M7.4 sender/reputation strategy and M7.6 live template/content acceptance, M7.7 recipient-link behavior, M7.8 broader suppression and M7.9 consent quality remain open**. No emails sent, subscriptions changed, or production promotion performed as part of review.
+
+**Fastest next gate:** Resolve consent-source rules and opt-in-default policy, then conduct one separately authorized isolated recipient-facing unsubscribe and send-path check. Do not manufacture test consent or re-subscribe the globally unsubscribed QA contact.
+
+
+
 ### 2026-10-22 — Draft postal address supplied (M7.6 still OPEN)
 
 Owner provided `14101 Scarlet Sage`; prior project address record indicates `Koinonia Transactions LLC, 14101 Scarlet Sage St, Parker, CO 80134`. Record as a **draft marketing footer mailing address** for review, not confirmation of a compliant rendered template. No email send or production rollout authorized. The M7.6 checkbox stays unchecked until real campaign footer validation.
