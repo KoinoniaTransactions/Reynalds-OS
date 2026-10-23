@@ -63,7 +63,7 @@ export function Footer() {
             </a>
           </div>
 
-          <nav aria-label="Koinonia social media" className="koinonia-footer-social">
+          <nav aria-label="Koinonia social media" className="koinonia-footer-social" style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: 12 }}>
             {socialLinks.map((link) => (
               <a
                 key={link.label}
