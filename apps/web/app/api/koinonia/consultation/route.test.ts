@@ -235,7 +235,7 @@ describe("Koinonia consultation intake", () => {
     expect(emailPayload.subject).toBe(
       "Koinonia Consultation Request — Marketing Management"
     );
-    expect(emailPayload.to).toEqual(["jeremiah@koinoniaadmin.com"]);
+    expect(emailPayload.to).toEqual(["jeremiah@koinoniatransactions.com"]);
     expect(emailPayload.text).toContain("Consultation Type: Marketing Management");
     expect(emailPayload.text).toContain("Name: Koinonia QA");
   });
