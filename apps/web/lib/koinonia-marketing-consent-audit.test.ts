@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { auditKoinoniaMarketingConsent as audit } from "./koinonia-marketing-consent-audit";
-const base = {contact:{email:"qa@example.com"},emailMarketing:{status:"eligible",permissionSource:"explicit form",permissionRecordedAt:"2026-10-15T12:00:00Z",topicConsents:[{topicId:"qa",consent:"opted_in"}]}};
+const base = {contact:{email:"qa@example.com"},emailMarketing:{status:"eligible",permissionSource:"explicit form",permissionRecordedAt:"2026-10-15T12:00:00Z",topicConsents:[{topicId:"b19acea4-8f2e-44b8-bd20-478f89b4ec20",consent:"opted_in",permissionSource:"explicit form",permissionRecordedAt:"2026-10-15T12:00:00Z"}]}};
 describe("marketing list consent audit — default deny", () => {
   it("never authorizes enrollment even with complete local evidence",()=>expect(audit(base)).toMatchObject({permissionEvidenceComplete:true,enrollmentApproved:false,action:"manual_review"}));
   it.each(["purchased","scraped","import","inferred"])("flags %s as unverified list source",source=>expect(audit({...base,emailMarketing:{...base.emailMarketing,permissionSource:source}}).reasons).toContain("permission_source_needs_review"));
@@ -8,6 +8,12 @@ describe("marketing list consent audit — default deny", () => {
   it("rejects missing topic evidence and permission date",()=>{
     expect(audit({...base,emailMarketing:{...base.emailMarketing,topicConsents:[]}}).reasons).toContain("topic_permission_unverified");
     expect(audit({...base,emailMarketing:{...base.emailMarketing,permissionRecordedAt:"future"}}).reasons).toContain("permission_date_invalid");
+  });
+  it("rejects a different topic, topic opt-out, or missing topic provenance",()=>{
+    const consent=base.emailMarketing.topicConsents[0];
+    for(const changed of [{...consent,topicId:"other"},{...consent,consent:"opted_out"},{...consent,permissionSource:""}]) {
+      expect(audit({...base,emailMarketing:{...base.emailMarketing,topicConsents:[changed]}}).reasons).toContain("topic_permission_unverified");
+    }
   });
   it("does not mutate the CRM payload",()=>{const before=JSON.stringify(base);audit(base);expect(JSON.stringify(base)).toBe(before)});
 });
