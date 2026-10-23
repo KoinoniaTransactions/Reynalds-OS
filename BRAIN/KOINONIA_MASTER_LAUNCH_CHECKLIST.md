@@ -314,6 +314,14 @@ Acceptance criteria: one controlled test proves the entire campaign -> site -> l
 
 ## M7 — Email campaign launch readiness
 
+### 2026-10-22 — LIVE BROADCAST DELIVERY + UNSUBSCRIBE PROVIDER ACTIVITY: PASS
+
+**Owner-supplied Resend screenshots:** The separately authorized one-recipient Broadcast to `reynaldsparentingplan@gmail.com` completed. The recipient's Resend activity shows, in order: contact creation, assignment to `Koinonia M7 Single Email Test`, explicit `Koinonia Updates & Realtor Resources` topic opt-in, **Delivered** for the test Broadcast, and **Unsubscribed — clicked from Untitled**. The contact's current main status shows **Unsubscribed**. The Resend Audience screen shows two contacts, **0 subscribers**, **2 unsubscribers** (the original QA contact remains unsubscribed).
+
+**Accepted:** Actual broadcast delivered, email-based unsubscribe link used, and provider recorded an unsubscribe with a timestamp/activity entry. This satisfies the *Resend recipient-facing link* test component of M7.7. **Not yet accepted:** Whether provider's event represents global vs topic-only status via an independent topic snapshot, signed webhook/CRM synchronization for this new Resend contact (no confirmed CRM identity linkage), and all-path complaint/bounce/manual suppression in outbound sending. Do not mark entirety of M7.7–M7.9 complete from this one test. No second email, subscription alteration, campaign or production promotion authorized.
+
+
+
 ### 2026-10-22 — OWNER AUTHORIZED SINGLE-RECIPIENT BROADCAST AND UNSUBSCRIBE ACTION
 
 Owner authorized **one** isolated real Resend Broadcast to owner-controlled `reynaldsparentingplan@gmail.com` (distinct from the globally unsubscribed original QA contact). Screenshots established a separate `Koinonia M7 Single Email Test` segment, one subscribed test recipient assigned to `Koinonia Updates & Realtor Resources`, correct From/Reply-To, subject `Koinonia M7 — Unsubscribe Verification Test`, one-time internal test copy, unsubscribe link, and Koinonia mailing footer. Resend Review displayed **1 total recipient, 0 global unsubscribes, 0 topic unsubscribes**. The owner executed Slide to Send and provided a Resend success screenshot stating **Your email was sent**. Owner subsequently reported **receiving the test email and unsubscribing via the email link**.
