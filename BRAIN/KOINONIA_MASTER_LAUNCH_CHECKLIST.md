@@ -555,3 +555,15 @@ Deferred items are not launch blockers unless specifically promoted into the act
 8. Keep advertising tracking off authenticated client/staff areas.
 9. `generate_lead` means a successful accepted lead submission, not a button click or other micro-event.
 10. Update this checklist after each completed work slice so it remains the persistent execution record.
+
+## Campaign 2 branded SMS links — 2026-10-23 (PREVIEW IMPLEMENTATION; NOT LIVE)
+
+- [x] Feature branch created from current marketing integration branch; no production deployment.
+- [x] Implemented allowlisted `/go/K031` through `/go/K060` branded redirects to existing UTM campaign fields; invalid codes 404.
+- [x] Added mapping unit tests and canonical feature document `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_BRANDED_SMS_LINKS_2026-10-23.md`.
+- [ ] CI / Vercel preview build and tests must pass (not yet observed).
+- [ ] Independently verify redirect response, GA4 after consent, 404 handling and consultation attribution in preview.
+- [ ] OWNER GATE: explicit approval for merge and production deployment.
+- [ ] Verify production domain `/go/K031` through `/go/K060` resolve correctly.
+- [ ] Only then replace campaign tracker copy-ready long links with branded production URLs; review SMS permission, DNC and source/contact verification for every recipient before hand-send.
+- [ ] OWNER GATE: no automatic SMS sending, outreach activation or marketing publication authorized by this feature.
