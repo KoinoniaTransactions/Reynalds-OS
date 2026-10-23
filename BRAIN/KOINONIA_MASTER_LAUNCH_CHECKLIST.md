@@ -555,3 +555,19 @@ Deferred items are not launch blockers unless specifically promoted into the act
 8. Keep advertising tracking off authenticated client/staff areas.
 9. `generate_lead` means a successful accepted lead submission, not a button click or other micro-event.
 10. Update this checklist after each completed work slice so it remains the persistent execution record.
+
+## Campaign 2 branded SMS links — 2026-10-23 (PREVIEW IMPLEMENTATION; NOT LIVE)
+
+- [x] Feature branch created from current marketing integration branch; no production deployment.
+- [x] Implemented allowlisted `/go/K031` through `/go/K060` branded redirects to existing UTM campaign fields; invalid codes 404.
+- [x] Added mapping unit tests and canonical feature document `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_BRANDED_SMS_LINKS_2026-10-23.md`.
+- [x] CI / Vercel preview build and tests pass: GitHub Actions run #548 (39991979328), Vercel READY deployment dpl_2c1JTG1KzPn2tXS9Q7tH1X7syYie for commit 2977a6b on 2026-10-23.
+- [ ] Independently verify redirect response, GA4 after consent, 404 handling and consultation attribution in preview.
+- [ ] OWNER GATE: explicit approval for merge and production deployment.
+- [ ] Verify production domain `/go/K031` through `/go/K060` resolve correctly.
+- [ ] Only then replace campaign tracker copy-ready long links with branded production URLs; review SMS permission, DNC and source/contact verification for every recipient before hand-send.
+- [ ] OWNER GATE: no automatic SMS sending, outreach activation or marketing publication authorized by this feature.
+
+Preview HTTP acceptance note (2026-10-23): external HTTP inspection attempted for /go/K031, /go/K060, and /go/garbage on the exact READY preview host. The unauthenticated viewer could not access the deployment (likely deployment protection); this is NOT an HTTP redirect test pass. Use authenticated Vercel CLI `vercel curl` against the exact preview URL or appropriate protected-browser credentials. Keep production promotion and SMS changes gated.
+
+2026-10-23 protected-preview HTTP follow-up: authenticated Vercel web fetch returned final HTTP 200 homepage for both `/go/K031` and `/go/K060`; `/go/garbage` returned HTTP 404 with `cache-control: no-store`. Fetch follows redirects and does not expose the intermediate 307 `Location` response; therefore exact location/UTM content and GA4 attribution are NOT independently confirmed. Do not promote to production based solely on final 200 results.
