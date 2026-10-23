@@ -1,6 +1,6 @@
 /** Read-only topic snapshot; never authorizes enrollment or implies consent. */
 export type ContactTopicsSnapshot =
-  | { state: "found"; count: number; hasMore: boolean; optedIn: number; optedOut: number }
+  | { state: "found"; count: number; hasMore: boolean; optedIn: number; optedOut: number; topics: { id: string; subscription: "opt_in" | "opt_out" }[] }
   | { state: "unavailable" };
 
 export async function getResendContactTopicsSnapshot(
@@ -23,6 +23,7 @@ export async function getResendContactTopicsSnapshot(
       return { state: "unavailable" };
     let optedIn = 0, optedOut = 0;
     const ids = new Set<string>();
+    const topics: { id: string; subscription: "opt_in" | "opt_out" }[] = [];
     for (const raw of data.data) {
       if (!raw || typeof raw !== "object" || Array.isArray(raw)) return { state: "unavailable" };
       const item = raw as Record<string, unknown>;
@@ -30,9 +31,10 @@ export async function getResendContactTopicsSnapshot(
           (item.subscription !== "opt_in" && item.subscription !== "opt_out"))
         return { state: "unavailable" };
       ids.add(item.id);
+      topics.push({ id: item.id, subscription: item.subscription });
       if (item.subscription === "opt_in") optedIn++; else optedOut++;
     }
     // Pagination or a missing specific verified topic prevents positive membership inference.
-    return { state: "found", count: ids.size, hasMore: data.has_more, optedIn, optedOut };
+    return { state: "found", count: ids.size, hasMore: data.has_more, optedIn, optedOut, topics };
   } catch { return { state: "unavailable" }; }
 }
