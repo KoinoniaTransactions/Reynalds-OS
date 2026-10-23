@@ -314,6 +314,15 @@ Acceptance criteria: one controlled test proves the entire campaign -> site -> l
 
 ## M7 — Email campaign launch readiness
 
+### 2026-10-22 — Resend suppression capability audit (research only)
+
+Resend documents team-wide suppression records, distinct from contact global unsubscribe status. Suppression `origin` includes `bounce`, `complaint`, or `manual`; suppression lookup/list API exists, and `suppression.added` / `suppression.removed` webhooks provide change notifications. Existing `email.suppressed` relates to attempted sends and does not replace pre-enrollment lookup. Source: https://resend.com/changelog/suppression-list-support (published 2026-07-28). The suppression list is shared across the Resend team/domains.
+
+**Design gate (NOT YET IMPLEMENTED):** Before marketing provisioning, run an independently verified, read-only suppression lookup by normalized email, in addition to Resend contact ID/email validation and CRM documented permission. Any active suppression, provider error, ambiguity, stale result, or missing consent => no enrollment. Preserve monotonic `unsubscribed`/`do_not_contact` flags. `suppression.removed` must not auto-restore CRM eligibility or clear unsubscribe. Record suppression origin and observed time for QA/audit without storing provider API secrets. Verify exact suppression API response schema and 404 semantics in isolated tests before enabling lookups. Topic-specific permissions and actual link behavior remain open.
+
+**No Resend configuration, contact, suppression, webhook subscription, sending, production merge, or database mutation authorized or performed in this audit.**
+
+
 ### 2026-10-22 — LIVE READ-ONLY RESEND QA IDENTITY RECONCILIATION: PASS
 
 **Owner browser evidence:** Authenticated Koinonia Preview on commit `8f7201c31dc4065259c274e08a4e389a15a158a9`, endpoint `/api/koinonia/marketing/resend-qa-lookup` returned `mode:"qa_read_only"`, `providerState:"found"`, `identityMatched:true`, `contactIdMatches:true`, `providerUnsubscribed:true`, `marketingEligible:false`, `enrollmentApproved:false`. The response also preserved `matched:true` as an identity-only legacy alias and reported `not_eligible`, missing permission evidence, historical opt-out, unknown full-provider suppression state, and `provider_unsubscribed`.
