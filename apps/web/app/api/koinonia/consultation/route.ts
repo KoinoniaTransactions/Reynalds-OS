@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { contactConfig } from "../../../../config/contact.config";
 import type { Prisma } from "@reynalds-os/database";
 import { prisma } from "../../../../lib/db";
 import {
@@ -50,7 +51,7 @@ type ConsultationPayload = {
   attribution?: unknown;
 };
 
-const recipientEmail = process.env.CONTACT_INTAKE_TO_EMAIL || ownerEmail;
+const recipientEmail = process.env.CONTACT_INTAKE_TO_EMAIL || contactConfig.email;
 const senderEmail =
   process.env.CONTACT_INTAKE_FROM_EMAIL ||
   "Koinonia <noreply@koinoniatransactions.com>";
