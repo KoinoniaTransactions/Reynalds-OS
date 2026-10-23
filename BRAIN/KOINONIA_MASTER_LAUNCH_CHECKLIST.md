@@ -314,6 +314,14 @@ Acceptance criteria: one controlled test proves the entire campaign -> site -> l
 
 ## M7 — Email campaign launch readiness
 
+### 2026-10-22 — OWNER AUTHORIZED SINGLE-RECIPIENT BROADCAST AND UNSUBSCRIBE ACTION
+
+Owner authorized **one** isolated real Resend Broadcast to owner-controlled `reynaldsparentingplan@gmail.com` (distinct from the globally unsubscribed original QA contact). Screenshots established a separate `Koinonia M7 Single Email Test` segment, one subscribed test recipient assigned to `Koinonia Updates & Realtor Resources`, correct From/Reply-To, subject `Koinonia M7 — Unsubscribe Verification Test`, one-time internal test copy, unsubscribe link, and Koinonia mailing footer. Resend Review displayed **1 total recipient, 0 global unsubscribes, 0 topic unsubscribes**. The owner executed Slide to Send and provided a Resend success screenshot stating **Your email was sent**. Owner subsequently reported **receiving the test email and unsubscribing via the email link**.
+
+**Verified by owner account:** broadcast send confirmation; receipt of one test message; recipient-side unsubscribe action. **Still to verify directly:** whether the resulting Resend state is global unsubscribe or topic opt-out, whether the standalone signed provider-to-Preview CRM webhook records the change for this newly created contact (not assumed linked), and whether read-only recipient selection excludes it after opt-out. Do not label M7.7–M7.9 fully complete until provider status and other send-path checks are evidenced. The prior globally unsubscribed QA contact was not resubscribed. No additional email, campaign, automation, customer enrollment or production rollout authorized.
+
+
+
 ### 2026-10-22 — RESEND DASHBOARD CONFIGURATION REVIEW (OWNER SCREENSHOTS)
 
 - Resend sending domain `koinoniatransactions.com` displayed **Verified / ready to send** in Domains, region `us-east-1`; Forge disabled (optional). This confirms provider domain status only, not campaign authorization.
