@@ -155,6 +155,7 @@ export type KoinoniaRelationshipData = {
     optedOutAt?: string;
     optOutSource?: string;
     resendContactId?: string;
+    topicConsents?: unknown;
   };
   learning?: {
     interactions?: RelationshipLearningInteraction[];
