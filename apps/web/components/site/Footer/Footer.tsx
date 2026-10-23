@@ -1,8 +1,14 @@
 import { sharedContent } from "@/content/shared";
-import { contactConfig, mailto } from "../../../config/contact.config";
+import { contactConfig, mailto, socialConfig } from "../../../config/contact.config";
 
 export function Footer() {
   const footer = sharedContent.footer;
+  const socialLinks = [
+    { label: "Facebook", href: socialConfig.facebook },
+    { label: "Instagram", href: socialConfig.instagram },
+    { label: "TikTok", href: socialConfig.tiktok },
+    { label: "LinkedIn", href: socialConfig.linkedin }
+  ].filter((link) => Boolean(link.href));
 
   return (
     <footer className="koinonia-footer">
@@ -56,6 +62,14 @@ export function Footer() {
               Text
             </a>
           </div>
+
+          <nav aria-label="Koinonia social media" className="koinonia-footer-social">
+            {socialLinks.map((link) => (
+              <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">
+                {link.label}
+              </a>
+            ))}
+          </nav>
 
           <a
             className="koinonia-footer-cta"
