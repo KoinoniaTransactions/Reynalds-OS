@@ -80,6 +80,23 @@ export function KoinoniaServices() {
         </div>
       </section>
 
+      <section className="koinonia-section koinonia-services-referrals">
+        <div className="koinonia-container">
+          <div className="koinonia-cta">
+            <div className="koinonia-eyebrow">{referralsContent.hero.eyebrow}</div>
+            <h2 className="koinonia-heading">Don't want to keep the client relationship?</h2>
+            <p className="koinonia-copy">
+              Koinonia's services are for Realtors who want to keep the client and hand off operational work. The separate Referral Partner Option is for the different situation where you would rather make a documented client referral.
+            </p>
+            <div className="koinonia-actions" style={{ justifyContent: "center" }}>
+              <a className="koinonia-button primary" href="/referrals">
+                Explore the 40% Referral Option
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="koinonia-section koinonia-band">
         <div className="koinonia-container">
           <div className="koinonia-section-header center">
