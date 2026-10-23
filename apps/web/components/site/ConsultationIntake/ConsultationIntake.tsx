@@ -132,6 +132,7 @@ export function ConsultationSchedulerButton({
 
   const minimumDate = formatDateForInput(new Date());
   const isSubmitting = status.kind === "submitting";
+  const hasWeekendDate = isWeekendDate(form.requestedDate);
 
   useEffect(() => {
     const requestedService = new URLSearchParams(window.location.search).get("service");
@@ -212,6 +213,10 @@ export function ConsultationSchedulerButton({
       ...current,
       [name]: value
     }));
+
+    if (name === "requestedDate" && status.kind === "error") {
+      setStatus({ kind: "idle", message: "" });
+    }
   }
 
   function openModal() {
@@ -240,7 +245,7 @@ export function ConsultationSchedulerButton({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (isWeekendDate(form.requestedDate)) {
+    if (hasWeekendDate) {
       setStatus({
         kind: "error",
         message: "Please choose a Monday–Friday consultation date."
@@ -438,7 +443,14 @@ export function ConsultationSchedulerButton({
                     min={minimumDate}
                     value={form.requestedDate}
                     onChange={handleChange}
+                    aria-invalid={hasWeekendDate}
+                    aria-describedby={hasWeekendDate ? "consultation-weekend-error" : undefined}
                   />
+                  {hasWeekendDate ? (
+                    <span id="consultation-weekend-error" role="alert">
+                      Please choose a Monday–Friday consultation date.
+                    </span>
+                  ) : null}
                 </label>
 
                 <label>
@@ -494,7 +506,7 @@ export function ConsultationSchedulerButton({
                 <button
                   className="koinonia-button primary"
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || hasWeekendDate}
                 >
                   {isSubmitting ? "Sending..." : "Send Consultation Request"}
                 </button>
