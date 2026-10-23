@@ -25,7 +25,7 @@ export function evaluateKoinoniaProviderDecision(
   // Even a verified clear provider and CRM permission are not proof of topic
   // consent or complete provider suppression coverage; intentionally fail closed.
   reasons.push(...crm.reasons);
-  const topic = evaluateTopicConsent(profile.emailMarketing?.topicConsents, "koinonia_marketing");
+  const topic = evaluateTopicConsent(profile.emailMarketing?.topicConsents, "b19acea4-8f2e-44b8-bd20-478f89b4ec20");
   if (!topic.verified) reasons.push(topic.reason);
   // Local consent alone never verifies the corresponding Resend topic membership.
   reasons.push("provider_topic_unverified");
