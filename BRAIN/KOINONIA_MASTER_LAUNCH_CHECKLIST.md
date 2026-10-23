@@ -561,9 +561,11 @@ Deferred items are not launch blockers unless specifically promoted into the act
 - [x] Feature branch created from current marketing integration branch; no production deployment.
 - [x] Implemented allowlisted `/go/K031` through `/go/K060` branded redirects to existing UTM campaign fields; invalid codes 404.
 - [x] Added mapping unit tests and canonical feature document `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_BRANDED_SMS_LINKS_2026-10-23.md`.
-- [ ] CI / Vercel preview build and tests must pass (not yet observed).
+- [x] CI / Vercel preview build and tests pass: GitHub Actions run #548 (39991979328), Vercel READY deployment dpl_2c1JTG1KzPn2tXS9Q7tH1X7syYie for commit 2977a6b on 2026-10-23.
 - [ ] Independently verify redirect response, GA4 after consent, 404 handling and consultation attribution in preview.
 - [ ] OWNER GATE: explicit approval for merge and production deployment.
 - [ ] Verify production domain `/go/K031` through `/go/K060` resolve correctly.
 - [ ] Only then replace campaign tracker copy-ready long links with branded production URLs; review SMS permission, DNC and source/contact verification for every recipient before hand-send.
 - [ ] OWNER GATE: no automatic SMS sending, outreach activation or marketing publication authorized by this feature.
+
+Preview HTTP acceptance note (2026-10-23): external HTTP inspection attempted for /go/K031, /go/K060, and /go/garbage on the exact READY preview host. The unauthenticated viewer could not access the deployment (likely deployment protection); this is NOT an HTTP redirect test pass. Use authenticated Vercel CLI `vercel curl` against the exact preview URL or appropriate protected-browser credentials. Keep production promotion and SMS changes gated.
