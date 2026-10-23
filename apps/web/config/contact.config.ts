@@ -23,7 +23,7 @@ export const contactConfig = {
 } as const;
 
 export const socialConfig = {
-  instagram: "https://www.instagram.com/koinoniatransactions/",
+  instagram: "",
   facebook: "https://www.facebook.com/KoinoniaTransactions",
   tiktok: "https://www.tiktok.com/@koinoniatransactions",
   linkedin: "https://www.linkedin.com/company/koinonia-transactions/"
