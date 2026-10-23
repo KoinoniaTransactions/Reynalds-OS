@@ -2,6 +2,7 @@ import { evaluateKoinoniaMarketingEligibility } from "./koinonia-marketing-eligi
 import type { ResendContactSnapshot } from "./koinonia-resend-reconciliation";
 import type { SuppressionCheck } from "./koinonia-resend-suppression";
 import { normalizeKoinoniaRelationshipData } from "./koinonia-relationship";
+import { evaluateTopicConsent } from "./koinonia-marketing-topic-policy";
 
 /** Pure combined provider/CRM gate. Read-only; never authorizes enrollment. */
 export function evaluateKoinoniaProviderDecision(
@@ -24,7 +25,10 @@ export function evaluateKoinoniaProviderDecision(
   // Even a verified clear provider and CRM permission are not proof of topic
   // consent or complete provider suppression coverage; intentionally fail closed.
   reasons.push(...crm.reasons);
-  if (!reasons.includes("topic_permission_unverified")) reasons.push("topic_permission_unverified");
+  const topic = evaluateTopicConsent(profile.emailMarketing?.topicConsents, "koinonia_marketing");
+  if (!topic.verified) reasons.push(topic.reason);
+  // Local consent alone never verifies the corresponding Resend topic membership.
+  reasons.push("provider_topic_unverified");
   return {
     identityMatched: contact.state === "found" && !!linkedId &&
       contact.id === linkedId && contact.email.trim().toLowerCase() === email,
