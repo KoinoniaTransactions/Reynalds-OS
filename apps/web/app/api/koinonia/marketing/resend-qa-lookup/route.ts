@@ -82,6 +82,7 @@ export async function GET() {
     topicLookupState: topics.state,
     topicCount: topics.state === "found" ? topics.count : null,
     topicLookupIncomplete: topics.state === "found" ? topics.hasMore : true,
+    topicSubscriptions: topics.state === "found" ? topics.topics : null,
     matched: result.matched,
     identityMatched: result.identityMatched,
     marketingEligible: decision.marketingEligible,
