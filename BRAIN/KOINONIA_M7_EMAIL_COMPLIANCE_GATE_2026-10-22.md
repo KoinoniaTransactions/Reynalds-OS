@@ -27,3 +27,17 @@ M7.4, M7.6–M7.9, and M7.11 remain open until evidenced owner acceptance.
 
 ## 2026-10-22 owner address decision
 The owner designated the address above for the marketing email footer. It is recorded as a **draft mailing identity only**, not a live email template or permission to send. Keep M7.6 open until template rendering and compliance review are complete.
+
+## 2026-10-22 provider capability verified — no live Resend account inspection
+
+Resend documents that Broadcasts support the `{{{RESEND_UNSUBSCRIBE_URL}}}` recipient-specific placeholder and a built-in unsubscribe footer. Resend also states that global unsubscribed contacts are skipped even when a Topic is opted-in, and Broadcasts can apply a Topic. This lets Koinonia **reuse Resend's native unsubscribe handling** instead of building a parallel unsubscribe service.
+
+Sources:
+- https://resend.com/blog/send-marketing-emails-with-resend-broadcasts
+- https://resend.com/blog/unsubscribe-topics
+- https://resend.com/blog/manage-subscribers-using-resend-audiences
+- https://resend.com/changelog/domain-verification-events
+
+**Recommended final template approach:** use the native Resend Broadcast unsubscribe placeholder/footer, along with the approved draft postal mailing address. The isolated code footer preview validates an HTTPS unsubscribe URL but is **not** a verified Resend Broadcast template and must not be wired into live sending by itself.
+
+**Still unverified:** this account's actual Resend sending-domain verification status, live subscriber-facing link, exact template placement, complete provider suppression coverage in the send path and final sending approval. Do not mark M7.4 or M7.6–M7.9 complete based on documentation alone.
