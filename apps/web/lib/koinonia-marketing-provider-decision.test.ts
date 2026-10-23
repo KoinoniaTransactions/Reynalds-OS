@@ -22,6 +22,25 @@ describe("combined provider policy (pure and fail closed)", () => {
     expect(evaluate(profile,{state:"unavailable"},clear).identityMatched).toBe(false);
     expect(evaluate(profile,{...contact,id:"wrong"},clear).reasons).toContain("contact_id_mismatch");
   });
+  it("keeps approval disabled with valid exact-topic permission and clear provider", () => {
+    const p={...profile,emailMarketing:{...profile.emailMarketing,topicConsents:[{
+      topicId:"b19acea4-8f2e-44b8-bd20-478f89b4ec20",
+      consent:"opted_in",permissionSource:"test consent",permissionRecordedAt:"2026-10-22T12:00:00Z"
+    }]}};
+    const d=evaluate(p,contact,clear);
+    expect(d.reasons).not.toContain("topic_permission_unverified");
+    expect(d.reasons).toContain("provider_topic_unverified");
+    expect(d).toMatchObject({marketingEligible:false,enrollmentApproved:false});
+  });
+  it.each(["bounce","complaint","manual"] as const)("fails closed on %s even with valid exact-topic permission", origin => {
+    const p={...profile,emailMarketing:{...profile.emailMarketing,topicConsents:[{
+      topicId:"b19acea4-8f2e-44b8-bd20-478f89b4ec20",consent:"opted_in",
+      permissionSource:"explicit test",permissionRecordedAt:"2026-10-22T12:00:00Z"
+    }]}};
+    const d=evaluate(p,contact,{state:"suppressed",origin,observedAt:"2026-10-22T12:00:00Z"});
+    expect(d.reasons).toContain("provider_suppressed");
+    expect(d.enrollmentApproved).toBe(false);
+  });
   it("preserves historical CRM opt out even if status reads eligible", () => {
     const p={...profile,emailMarketing:{...profile.emailMarketing,optedOutAt:"2026-10-20T12:00:00Z"}};
     expect(evaluate(p,contact,clear).reasons).toContain("prior_opt_out");
