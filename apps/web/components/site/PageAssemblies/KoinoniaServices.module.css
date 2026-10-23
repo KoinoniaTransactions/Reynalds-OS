@@ -17,6 +17,8 @@
 }
 
 .pricingCard {
+  position: relative;
+  padding-bottom: 90px;
   display: flex;
   flex-direction: column;
   align-items: stretch;

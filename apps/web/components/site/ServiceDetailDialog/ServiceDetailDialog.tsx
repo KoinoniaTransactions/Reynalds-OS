@@ -22,9 +22,10 @@ export type ServiceDetail = {
 type ServiceDetailDialogProps = {
   detail: ServiceDetail;
   quietTrigger?: boolean;
+  cardTrigger?: boolean;
 };
 
-export function ServiceDetailDialog({ detail, quietTrigger = false }: ServiceDetailDialogProps) {
+export function ServiceDetailDialog({ detail, quietTrigger = false, cardTrigger = false }: ServiceDetailDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const previousBodyOverflowRef = useRef("");
@@ -78,14 +79,17 @@ export function ServiceDetailDialog({ detail, quietTrigger = false }: ServiceDet
         ref={triggerRef}
         type="button"
         className={
-          quietTrigger
-            ? `${styles.trigger} ${styles.quietTrigger}`
-            : `koinonia-button secondary ${styles.trigger}`
+          cardTrigger
+            ? `${styles.trigger} ${styles.cardTrigger}`
+            : quietTrigger
+              ? `${styles.trigger} ${styles.quietTrigger}`
+              : `koinonia-button secondary ${styles.trigger}`
         }
         onClick={openDetails}
         aria-haspopup="dialog"
+        aria-label={cardTrigger ? `View details for ${detail.title}` : undefined}
       >
-        See everything included
+        {cardTrigger ? <span className={styles.cardDetailsLabel} aria-hidden="true">Details <span aria-hidden="true">→</span></span> : "See everything included"}
       </button>
 
       <dialog
