@@ -50,6 +50,7 @@ export async function POST(request: Request, { params }: Context) {
       if (variant.revision !== revision) return "conflict" as const;
       const change = transitions[action];
       if (change && (variant.status !== change.from || !canTransitionSocialVariant(change.from, change.to))) return "invalid_state" as const;
+      if (action === "approve" && variant.scheduledAt) return "invalid_state" as const;
       if (action === "plan" && variant.status !== "approved") return "invalid_state" as const;
       if (action === "clear_plan" && !["approved","draft"].includes(variant.status)) return "invalid_state" as const;
       if (action === "approve" && post!.createdById === actor.id) return "self_approval" as const;
