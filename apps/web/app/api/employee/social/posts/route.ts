@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { assertPermission, getAuthProvider } from "../../../../lib/auth";
-import { getAuthErrorResponse } from "../../../../lib/api-auth";
-import { prisma } from "../../../../lib/db";
+import { assertPermission, getAuthProvider } from "../../../../../lib/auth";
+import { getAuthErrorResponse } from "../../../../../lib/api-auth";
+import { prisma } from "../../../../../lib/db";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
