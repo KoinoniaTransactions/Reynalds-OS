@@ -20,7 +20,7 @@ export async function GET() {
     const actor = await requireStaff();
     const posts = await prisma.socialPost.findMany({
       where: { workspaceId: actor.workspaceId },
-      include: { variants: { select: { id: true, platform: true, caption: true, status: true } } },
+      include: { variants: { select: { id: true, platform: true, caption: true, status: true, revision: true } } },
       orderBy: { createdAt: "desc" }, take: 50
     });
     return NextResponse.json({ posts }, { headers: { "Cache-Control": "no-store" } });
