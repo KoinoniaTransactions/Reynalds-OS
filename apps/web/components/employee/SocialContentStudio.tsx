@@ -80,6 +80,18 @@ export function SocialContentStudio() {
           <h1 className="koinonia-heading">Social Content Studio</h1>
           <p className="koinonia-copy">Write and save platform-specific drafts. Review and proposed calendar dates are available. Automatic publishing is disabled.</p>
           <p><Link href="/employee/dashboard">← Employee dashboard</Link></p>
+          <section className="koinonia-card" aria-labelledby="social-calendar-title">
+            <h2 id="social-calendar-title">Planned content calendar</h2>
+            <p>Proposed dates only. No posts will be automatically published.</p>
+            {items.flatMap(item => item.variants.filter(variant => Boolean(variant.scheduledAt)).map(variant => ({
+              key: variant.id, title: item.title, platform: variant.platform, when: variant.scheduledAt!, status: variant.status
+            }))).sort((a, b) => a.when.localeCompare(b.when)).map(event => (
+              <div key={event.key}>
+                <strong>{new Date(event.when).toLocaleString()}</strong>
+                <span> — {event.platform}: {event.title} ({event.status})</span>
+              </div>
+            ))}
+          </section>
           <div className="koinonia-grid two">
             <section className="koinonia-card">
               <h2>{editing ? "Edit draft" : "Create draft"}</h2>
