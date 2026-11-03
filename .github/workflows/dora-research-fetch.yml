@@ -8,17 +8,26 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Determine roster categories and sample
+      - name: Collect Front Range active broker research sample
         run: |
           python - <<'PY'
-          import urllib.request,urllib.parse,json
-          base='https://data.colorado.gov/resource/4zse-6bnw.json'
-          for params in [
-            {'$select':'licensetype,licensestatus,count(*) as n','$group':'licensetype,licensestatus','$order':'n DESC','$limit':'15'},
-            {'$where':"licensestatus='Active' AND licensetype='Real Estate Broker' AND upper(city)='PARKER'",'$select':'firstname,lastname,city,licensetype,licensestatus,licensenumber,verifylicense,licenseexpirationdate','$limit':'3'}
-          ]:
-            u=base+'?'+urllib.parse.urlencode(params)
-            print('DORA_QUERY:',u)
-            with urllib.request.urlopen(u,timeout=60) as resp:
-              print('DORA_RESULT:',json.dumps(json.load(resp),separators=(',',':')))
+          import json,urllib.parse,urllib.request,time
+          cities=['PARKER','CASTLE ROCK','CENTENNIAL','LONE TREE','HIGHLANDS RANCH','CASTLE PINES','FRANKTOWN','ELIZABETH','LITTLETON','ENGLEWOOD','GREENWOOD VILLAGE','AURORA','DENVER','LAKEWOOD','GOLDEN','WHEAT RIDGE','ARVADA','WESTMINSTER','THORNTON','NORTHGLENN','BROOMFIELD','BOULDER','LOUISVILLE','LAFAYETTE','SUPERIOR','ERIE','MONUMENT','COLORADO SPRINGS','FOUNTAIN','PALMER LAKE','COMMERCE CITY','BRIGHTON','BLACK FOREST','FALCON','MANITOU SPRINGS','SHERIDAN','CHERRY HILLS VILLAGE','FEDERAL HEIGHTS']
+          where="licensestatus='Active' AND licensetype like '%Real Estate Broker%' AND upper(city) in ("+','.join("'"+s+"'" for s in cities)+")"
+          params={'$select':'firstname,lastname,city,licensetype,licensenumber,verifylicense','$where':where,'$limit':'2500','$order':'lastname ASC'}
+          url='https://data.colorado.gov/resource/4zse-6bnw.json?'+urllib.parse.urlencode(params)
+          req=urllib.request.Request(url,headers={'User-Agent':'Koinonia Research/1.0'})
+          with urllib.request.urlopen(req,timeout=90) as response:
+            raw=json.load(response)
+          print('DORA_TOTAL_FETCHED',len(raw))
+          output=[]
+          for r in raw:
+            first=(r.get('firstname') or '').strip()
+            last=(r.get('lastname') or '').strip()
+            city=(r.get('city') or '').strip()
+            if not first or not last or not city: continue
+            output.append([first,last,city,r.get('licensetype',''),r.get('licensenumber',''),r.get('verifylicense','')])
+          print('DORA_USABLE',len(output))
+          for i in range(0,len(output),80):
+            print('DORA_BATCH:'+json.dumps(output[i:i+80],separators=(',',':'),ensure_ascii=True))
           PY
