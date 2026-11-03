@@ -60,3 +60,14 @@ Reason: Improves consistency, reduces duplicate code, and accelerates launch.
 Decision: Website launch work takes priority over future Reynalds OS expansion unless an architectural improvement directly accelerates the website.
 
 Reason: Prevents feature creep and keeps Koinonia moving toward publication.
+
+
+## D-011 — Koinonia Properties Dual-Service Positioning and Local Discovery (2026-11-03)
+
+Decision: **Koinonia Properties is a full-service real estate business equally committed to residential sales and property management; property management is the initial Google Maps/local Business Profile discovery priority.** Residential sales and management share one Properties public brand and should receive equally prominent website pathways and independently measured acquisition funnels. Koinonia Transactions remains separately marketed to Realtors and real estate teams. Two LLCs (existing Transactions LLC and proposed Properties LLC) are the preferred structural direction, not proof that Properties LLC has been formed or licensed.
+
+Reason: Serve the distinct Realtor B2B and consumer/investor markets without diluting either; prioritize property-management local-service discovery while preserving full residential brokerage positioning.
+
+Canonical detail: `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_POSITIONING_AND_LOCAL_DISCOVERY_2026-11-03.md`.
+
+Limits: No legal filing, brokerage authority, Google profile/category alteration, website change, marketing activation, or deployment approved by this documentation decision. Two Google profiles at one hidden home-office address remain subject to independent eligibility and verification; no guarantee of approval.
