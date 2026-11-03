@@ -17,7 +17,10 @@ jobs:
             url=base+"/go/"+code
             try:
               req=urllib.request.Request(url,method="GET",headers={"User-Agent":"Koinonia Link QA"})
-              opener=urllib.request.build_opener(urllib.request.HTTPHandler())
+              class NoRedirect(urllib.request.HTTPRedirectHandler):
+                def redirect_request(self, req, fp, code, msg, headers, newurl):
+                  return None
+              opener=urllib.request.build_opener(NoRedirect())
               res=opener.open(req, timeout=25)
             except urllib.error.HTTPError as e:
               res=e
@@ -25,4 +28,7 @@ jobs:
               print(code,"NETWORK_ERROR",type(e).__name__,str(e)[:200])
               continue
             print(code,"HTTP",res.status,"Location",res.headers.get("Location",""),"Content-Type",res.headers.get("Content-Type",""))
+            expected=307 if code in ["K031","K060","K061","K062","K064","K137"] else 404
+            if res.status != expected: raise RuntimeError(f"{code}: expected {expected}, got {res.status}")
+            if expected == 307 and "utm_content=K-" not in res.headers.get("Location",""): raise RuntimeError(f"{code}: wrong tracking redirect")
           PY
