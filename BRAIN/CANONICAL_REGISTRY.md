@@ -101,3 +101,14 @@ When a dated checkpoint conflicts with a newer approved canonical business/readi
 **Historical where conflicting:** `CURRENT_STATE.md`, `PROJECT_MEMORY.md`, `NEXT_ACTION.md`, `BRAIN/PROJECT_STATE.md`, `BRAIN/CURRENT_PRIORITIES.md`, older website recovery/specification materials, service/pricing objects and older marketing handoffs. Earlier $389/$599 transaction pricing, $299/$599/$999 monthly tiers, four-category service snapshots, the initial LinkedIn exclusion, fixed-date marketing calendar and prelaunch website status must NOT replace approved September decisions. Preserve historical documents for provenance; do not ask the owner to reconfirm settled choices because an old file disagrees.
 
 **New session procedure:** first identify the actual branch and latest approved deployment, inspect the approved production commercial content, read the current marketing-branch checklist and activation gate, then inspect relevant implementation before proposing any new work. Never equate a ready preview, passing build or draft PR with approval to publish or deploy. No marketing publishing, outbound sends, paid spend, new test submissions or production promotion without applicable explicit owner authorization. When later owner-approved changes occur, update these existing entry points and the relevant governing sources together; do not create competing 'master truth' documents.
+
+
+---
+
+## Koinonia Properties — New Controlling Strategy Decision (2026-11-03)
+
+| Subject | Canonical Source | Status |
+|---------|------------------|--------|
+| Koinonia Properties equal residential-sales / property-management positioning, relationship to Transactions, initial property-management Google Maps priority, implementation gates | `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_POSITIONING_AND_LOCAL_DISCOVERY_2026-11-03.md` | Owner-approved strategy; execution not authorized |
+
+This newer decision governs **future Properties company-wide positioning** and supersedes historical management-only assumptions for planning. The historical Properties specification, service object and accepted implementation on `integration/koinonia-properties-web-20260812` remain evidence of what was previously built, not authority to treat new sales pages or brokerage licensing as implemented. The property-management service object still governs management-specific scope and prohibits unapproved pricing, policy, service area or private portal claims. The existing Transactions production commercial authority and marketing activation restrictions above are unchanged.
