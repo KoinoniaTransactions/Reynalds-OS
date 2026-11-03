@@ -200,3 +200,18 @@ Deploy only with authorization.
 **Historical where conflicting:** `CURRENT_STATE.md`, `PROJECT_MEMORY.md`, `NEXT_ACTION.md`, `BRAIN/PROJECT_STATE.md`, `BRAIN/CURRENT_PRIORITIES.md`, older website recovery/specification materials, service/pricing objects and older marketing handoffs. Earlier $389/$599 transaction pricing, $299/$599/$999 monthly tiers, four-category service snapshots, the initial LinkedIn exclusion, fixed-date marketing calendar and prelaunch website status must NOT replace approved September decisions. Preserve historical documents for provenance; do not ask the owner to reconfirm settled choices because an old file disagrees.
 
 **New session procedure:** first identify the actual branch and latest approved deployment, inspect the approved production commercial content, read the current marketing-branch checklist and activation gate, then inspect relevant implementation before proposing any new work. Never equate a ready preview, passing build or draft PR with approval to publish or deploy. No marketing publishing, outbound sends, paid spend, new test submissions or production promotion without applicable explicit owner authorization. When later owner-approved changes occur, update these existing entry points and the relevant governing sources together; do not create competing 'master truth' documents.
+
+
+---
+
+## KOINONIA PROPERTIES POSITIONING APPROVAL — 2026-11-03
+
+Owner-approved strategic decision: **Koinonia Properties will be a full-service real estate company with residential sales and property management equally prominent, while property management is the initial Google Maps / Google Business Profile local-discovery priority.** Koinonia Transactions retains its independent Realtor-support identity and marketing. Preferred legal direction is two LLCs: existing Koinonia Transactions LLC and a **proposed, not-yet-verified-as-formed/licensed** Koinonia Properties LLC.
+
+Read the controlling decision before making Properties business, marketing, SEO, Google Profile, or site recommendations:
+
+`02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_POSITIONING_AND_LOCAL_DISCOVERY_2026-11-03.md`
+
+Historical Properties site/code/specification are on `integration/koinonia-properties-web-20260812`; recover its Properties-specific `START_HERE.md`, `BRAIN/PRODUCT_BOUNDARIES.md`, `BRAIN/APPLICATION_CATALOG.md`, `BRAIN/KOINONIA_PROPERTIES_DEV_STATE.md`, management service object, and `apps/properties-web/` before proposing implementation. Do not mistake old management-only page design for authority to make the whole brand management-only.
+
+**Scope gate:** This approval covers documentation of positioning only. It does not approve entity filings, brokerage licensing changes, a second Google Business Profile, Google category changes, advertising, site edits, or production deployment. The Transactions approved commercial/marketing precedence above is unchanged. Do not create a competing strategy master; update this decision and its governing implementation sources together when future work is separately approved.
