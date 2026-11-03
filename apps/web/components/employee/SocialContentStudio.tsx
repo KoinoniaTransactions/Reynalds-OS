@@ -19,6 +19,7 @@ export function SocialContentStudio() {
   const [query, setQuery] = useState("");
   const [planned, setPlanned] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
+  const [ownerApprovalAcknowledged, setOwnerApprovalAcknowledged] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ message: string; error: boolean } | null>(null);
   const [connections, setConnections] = useState<{ platform: string; displayName: string; status: string; expiresAt: string | null }[]>([]);
 
@@ -91,7 +92,7 @@ export function SocialContentStudio() {
       if (name === "plan" && !date) throw new Error("Choose a proposed date first.");
       const response = await fetch("/api/employee/social/posts/" + encodeURIComponent(post.id) + "/workflow", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ variantId: variant.id, revision: variant.revision, action: name,
+        body: JSON.stringify({ variantId: variant.id, revision: variant.revision, action: name, ownerSelfApprovalAcknowledged: name === "approve" && ownerApprovalAcknowledged[variant.id] === true,
           scheduledAt: name === "plan" ? new Date(date).toISOString() : undefined })
       });
       const data = await response.json();
@@ -116,6 +117,7 @@ export function SocialContentStudio() {
           <button type="button" disabled={busy} className={styles.secondary} onClick={() => action(post, variant, "submit")}>Submit for review</button>
         </>}
         {variant.status === "in_review" && <>
+          <label className={styles.choice} style={{ width: "100%" }}><input type="checkbox" checked={ownerApprovalAcknowledged[variant.id] === true} onChange={e => setOwnerApprovalAcknowledged(current => ({...current,[variant.id]:e.target.checked}))} />I approve this version as owner, including my own content</label>
           <button type="button" disabled={busy} className={styles.secondary} onClick={() => action(post, variant, "approve")}>Approve</button>
           <button type="button" disabled={busy} className={styles.secondary} onClick={() => action(post, variant, "request_changes")}>Request changes</button>
         </>}
@@ -191,7 +193,7 @@ export function SocialContentStudio() {
           </article>) : <div className={styles.empty}>{items.length ? "No matching content." : "No drafts yet. Create your first content item."}</div>}</div>
       </section>
     </div>}
-    {page === "review" && <section className={styles.panel}><h2>Approval queue</h2><p className={styles.meta}>Owners or admins may review submitted content. Content creators cannot approve their own work.</p>
+    {page === "review" && <section className={styles.panel}><h2>Approval queue</h2><p className={styles.meta}>Owners may explicitly approve their own work with acknowledgment. Admins can approve other creators’ submissions, but not their own.</p>
       <div className={styles.items}>{items.flatMap(post => post.variants.filter(v => ["in_review", "changes_requested"].includes(v.status)).map(v =>
         <article className={styles.post} key={v.id}><h3>{post.title}</h3>{variantCard(post,v)}</article>
       )).length ? items.flatMap(post => post.variants.filter(v => ["in_review", "changes_requested"].includes(v.status)).map(v =>
