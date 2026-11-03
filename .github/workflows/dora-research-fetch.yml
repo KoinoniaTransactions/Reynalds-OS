@@ -1,0 +1,17 @@
+name: DORA roster check
+on:
+  push:
+    branches: [research/dora-front-range-roster-2026-11-03]
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check public DORA API
+        run: |
+          python - <<'PY'
+          import urllib.request
+          url='https://data.colorado.gov/resource/4zse-6bnw.json?%24limit=3'
+          print(urllib.request.urlopen(url, timeout=25).read().decode()[:6000])
+          PY
