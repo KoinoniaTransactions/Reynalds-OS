@@ -8,10 +8,17 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Check public DORA API
+      - name: Determine roster categories and sample
         run: |
           python - <<'PY'
-          import urllib.request
-          url='https://data.colorado.gov/resource/4zse-6bnw.json?%24limit=3'
-          print(urllib.request.urlopen(url, timeout=25).read().decode()[:6000])
+          import urllib.request,urllib.parse,json
+          base='https://data.colorado.gov/resource/4zse-6bnw.json'
+          for params in [
+            {'$select':'licensetype,licensestatus,count(*) as n','$group':'licensetype,licensestatus','$order':'n DESC','$limit':'15'},
+            {'$where':"licensestatus='Active' AND licensetype='Real Estate Broker' AND upper(city)='PARKER'",'$select':'firstname,lastname,city,licensetype,licensestatus,licensenumber,verifylicense,licenseexpirationdate','$limit':'3'}
+          ]:
+            u=base+'?'+urllib.parse.urlencode(params)
+            print('DORA_QUERY:',u)
+            with urllib.request.urlopen(u,timeout=60) as resp:
+              print('DORA_RESULT:',json.dumps(json.load(resp),separators=(',',':')))
           PY
