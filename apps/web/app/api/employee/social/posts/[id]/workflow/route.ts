@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { assertPermission, getAuthProvider } from "../../../../../../../lib/auth";
 import { getAuthErrorResponse } from "../../../../../../../lib/api-auth";
 import { prisma } from "../../../../../../../lib/db";
+import { mayApproveSocialVariant } from "../../../../../../../lib/social-approval-policy";
 import { canTransitionSocialVariant, type SocialVariantStatus } from "../../../../../../../lib/social-publishing-state";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,7 @@ export async function POST(request: Request, { params }: Context) {
     const variantId = typeof input.variantId === "string" ? input.variantId : "";
     const action = input.action as Action;
     const revision = input.revision;
+    const ownerSelfApprovalAcknowledged = input.ownerSelfApprovalAcknowledged === true;
     if (!variantId || !Number.isSafeInteger(revision) || (revision as number) < 1 || !["submit","approve","request_changes","return_to_draft","plan","clear_plan"].includes(action)) {
       return NextResponse.json({ error: "Invalid workflow action" }, { status: 400 });
     }
@@ -53,7 +55,7 @@ export async function POST(request: Request, { params }: Context) {
       if (action === "approve" && variant.scheduledAt) return "invalid_state" as const;
       if (action === "plan" && variant.status !== "approved") return "invalid_state" as const;
       if (action === "clear_plan" && !["approved","draft"].includes(variant.status)) return "invalid_state" as const;
-      if (action === "approve" && post!.createdById === actor.id) return "self_approval" as const;
+      if (action === "approve" && !mayApproveSocialVariant({ actorRole: actor.role, actorId: actor.id, creatorId: post!.createdById, ownerSelfApprovalAcknowledged })) return "self_approval" as const;
       const condition = change ? { status: change.from } : { status: variant.status };
       const written = await tx.socialPostVariant.updateMany({
         where: { id: variant.id, revision: revision as number, ...condition },
@@ -68,9 +70,9 @@ export async function POST(request: Request, { params }: Context) {
       }
       await tx.auditEvent.create({ data: {
         workspaceId: actor.workspaceId, actorId: actor.id,
-        action: "social.workflow." + action, subjectType: "SocialPostVariant", subjectId: variant.id,
+        action: action === "approve" && post!.createdById === actor.id ? "social.workflow.owner_self_approved" : "social.workflow." + action, subjectType: "SocialPostVariant", subjectId: variant.id,
         summary: "Social content workflow: " + action,
-        metadata: { postId: id, revision, plannedTime: scheduledAt?.toISOString() ?? null }
+        metadata: { postId: id, revision, plannedTime: scheduledAt?.toISOString() ?? null, ownerSelfApproval: action === "approve" && post!.createdById === actor.id, acknowledgment: action === "approve" && post!.createdById === actor.id ? "I approve this version as owner" : null }
       } });
       return "ok" as const;
     });
