@@ -4,6 +4,12 @@ import { absoluteUrl } from "../../../config/seo.config";
 
 const audiencePaths = [
   {
+    title: "Buy or Sell a Home",
+    body: "Explore the next chapter in homeownership. Whether you are preparing to sell or looking for a place to call home, begin with a conversation about your goals and timing.",
+    actionLabel: "Explore Real Estate",
+    actionHref: "/real-estate"
+  },
+  {
     title: "Own a Rental Property",
     body:
       "Whether you own one rental property or are building an investment portfolio, start with the property itself. Explore management services, understand how Koinonia approaches the work, and request a rental analysis when you are ready to talk through the next step.",
@@ -220,13 +226,13 @@ export function KoinoniaProperties() {
 
       <Hero
         visualVariant="properties"
-        eyebrow="Rental Property Management"
-        title="Property Management. Elevated."
-        lead="Koinonia Properties brings clear communication, steady systems, and responsible care to rental property management—helping owners keep leasing, residents, maintenance, communication, and the day-to-day work around the property organized and moving forward."
-        primaryLabel="Request Rental Analysis"
-        primaryHref="/rental-analysis"
-        secondaryLabel="View Available Homes"
-        secondaryHref="/rentals"
+        eyebrow="Residential Real Estate & Property Management"
+        title="Your Property. Your Priorities. Our Partnership."
+        lead="Whether you are buying, selling, or looking for thoughtful management of a rental home, Koinonia Properties brings clear guidance, personal accessibility, and dependable follow-through to the decisions that matter."
+        primaryLabel="Buy or Sell a Home"
+        primaryHref="/real-estate"
+        secondaryLabel="Explore Property Management"
+        secondaryHref="/owners"
         visualDesktopSrc="/assets/images/properties/heroes/home-hero.webp"
         visualAlt="Bright, well-cared-for residential interior with a property management workspace for Koinonia Properties"
       />
@@ -236,13 +242,13 @@ export function KoinoniaProperties() {
           <div className="koinonia-section-header">
             <div className="koinonia-eyebrow">Start Here</div>
             <h2 className="koinonia-heading">
-              Find the right next step for your property, your home, or your residency.
+              Find the right next step for buying, selling, managing, or renting a home.
             </h2>
             <p className="koinonia-copy">
-              Koinonia Properties serves different people at different stages of the rental experience. Start with the path that fits what you need today.
+              Koinonia Properties supports residential real estate and rental property management. Choose the path that fits your needs today.
             </p>
           </div>
-          <div className="koinonia-grid three properties-audience-grid">
+          <div className="koinonia-grid four properties-audience-grid">
             {audiencePaths.map((path) => (
               <UniversalCard
                 key={path.title}
@@ -261,10 +267,10 @@ export function KoinoniaProperties() {
           <div className="koinonia-section-header center">
             <div className="koinonia-eyebrow">The Koinonia Approach</div>
             <h2 className="koinonia-heading">
-              Organized management. Clear communication. Responsible care.
+              Thoughtful guidance. Clear communication. Responsible care.
             </h2>
             <p className="koinonia-copy">
-              Property management involves more than collecting rent or responding when something breaks. It is ongoing coordination between the property, the owner, residents, vendors, leasing activity, maintenance needs, records, and next steps. Koinonia brings structure to that work so responsibilities stay clearer, communication stays more consistent, and the property receives thoughtful attention throughout the management relationship.
+              Buying or selling a home and managing a rental property are different decisions, but each deserves honest advice, clear responsibilities, and follow-through. Koinonia brings a practical, relationship-first approach to residential real estate and property management, keeping important details moving and the people involved informed.
             </p>
           </div>
           <div className="koinonia-grid three">
@@ -276,6 +282,20 @@ export function KoinoniaProperties() {
                 body={item.body}
               />
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="koinonia-section" id="residential-real-estate">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header center">
+            <div className="koinonia-eyebrow">Residential Real Estate</div>
+            <h2 className="koinonia-heading">Buying or selling a home deserves a clear plan and a partner who follows through.</h2>
+            <p className="koinonia-copy">Whether you are beginning a search, planning a move, or preparing a property for sale, we start by understanding your goals, timing, and priorities.</p>
+          </div>
+          <div className="koinonia-grid two">
+            <UniversalCard title="Buying a Home" body="Talk through the search, your priorities, and the steps ahead without pressure to move before you are ready." actionLabel="Explore Buying" actionHref="/real-estate#buy" />
+            <UniversalCard title="Selling a Home" body="Start with your goals, timing, property preparation, and a thoughtful strategy for the sale." actionLabel="Explore Selling" actionHref="/real-estate#sell" />
           </div>
         </div>
       </section>
