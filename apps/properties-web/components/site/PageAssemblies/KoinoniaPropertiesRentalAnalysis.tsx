@@ -13,7 +13,7 @@ const analysisSteps = [
   },
   {
     title: "Management Fit",
-    body: "Match the property to leasing-only, full-service management, or portfolio management support.",
+    body: "Explore how Managed for You and Managed With You differ in maintenance responsibilities and owner involvement.",
     items: ["Owner goals", "Service level", "Next operating step"]
   }
 ];
@@ -24,7 +24,7 @@ const intakeFields = [
   "Current rent or target rent, if known",
   "Vacancy date or current lease status",
   "Known maintenance or inspection concerns",
-  "Whether the owner wants leasing-only or full-service management"
+  "Whether the owner prefers Managed for You or Managed With You"
 ];
 
 export function KoinoniaPropertiesRentalAnalysis() {
@@ -35,7 +35,7 @@ export function KoinoniaPropertiesRentalAnalysis() {
         visualVariant="properties"
         eyebrow="Rental Analysis"
         title="Start with a clearer view of the rental property."
-        lead="A rental analysis gives owners a practical first step before choosing a management plan."
+        lead="Tell us about your rental property and goals. We can discuss its rental potential and an appropriate management plan. Online instant rent estimates are not yet available."
         primaryLabel="Request Rental Analysis"
         primaryHref="#rental-inquiry"
         secondaryLabel="Owner Services"
@@ -48,9 +48,9 @@ export function KoinoniaPropertiesRentalAnalysis() {
         <div className="koinonia-container">
           <div className="koinonia-section-header">
             <div className="koinonia-eyebrow">Owner Intake</div>
-            <h2 className="koinonia-heading">Keep the first form short, then collect details in follow-up.</h2>
+            <h2 className="koinonia-heading">Start with the essentials. We'll take it from there.</h2>
             <p className="koinonia-copy">
-              A few property details help Koinonia Properties understand the rental and prepare for a useful first conversation.
+              Share the property's current situation so our conversation can focus on what matters to you.
             </p>
           </div>
           <div className="koinonia-grid three">
