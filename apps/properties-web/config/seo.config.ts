@@ -37,16 +37,21 @@ export const seoConfig = {
   businessName: "Koinonia Properties",
   locale: "en_US",
   defaultTitle:
-    "Rental Property Management | Koinonia Properties",
+    "Residential Real Estate & Property Management | Koinonia Properties",
   defaultDescription:
-    "Koinonia Properties provides organized rental property management with leasing support, maintenance coordination, owner communication, and responsible care.",
+    "Explore residential buying and selling alongside rental property management with Koinonia Properties.",
   publicRoutes: [
     {
       path: "/",
       title:
-        "Rental Property Management | Koinonia Properties",
+        "Residential Real Estate & Property Management | Koinonia Properties",
       description:
-        "Koinonia Properties provides organized rental property management with leasing support, maintenance coordination, owner communication, and responsible care."
+        "Explore buying, selling, and rental property management with Koinonia Properties, focused on clear guidance and thoughtful follow-through."
+    },
+    {
+      path: "/real-estate",
+      title: "Buy or Sell a Home | Koinonia Properties",
+      description: "Explore residential home buying and selling with Koinonia Properties. Discuss your goals, timing, and next steps."
     },
     {
       path: "/owners",

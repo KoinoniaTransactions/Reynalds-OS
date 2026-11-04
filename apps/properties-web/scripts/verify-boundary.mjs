@@ -56,6 +56,7 @@ function assertExactSet(
 
 const expectedRoutes = [
   "/",
+  "/real-estate",
   "/owners",
   "/tenants",
   "/rentals",
@@ -73,6 +74,7 @@ const expectedRoutes = [
 
 const expectedAssemblies = [
   "KoinoniaProperties.tsx",
+  "KoinoniaPropertiesRealEstate.tsx",
   "KoinoniaPropertiesOwners.tsx",
   "KoinoniaPropertiesTenants.tsx",
   "KoinoniaPropertiesRentals.tsx",
@@ -114,7 +116,7 @@ for (const route of expectedRoutes) {
 }
 
 pass(
-  "all 14 standalone route pages exist with matching metadata paths"
+  "all 15 standalone route pages exist with matching metadata paths"
 );
 
 const seoSource =
@@ -133,7 +135,7 @@ assertExactSet(
 );
 
 pass(
-  "SEO registry contains only the 14 standalone Properties routes"
+  "SEO registry contains only the 15 standalone Properties routes"
 );
 
 const assemblyDir =
@@ -155,7 +157,7 @@ assertExactSet(
 );
 
 pass(
-  "all 14 Koinonia Properties page assemblies are isolated"
+  "all 15 Koinonia Properties page assemblies are isolated"
 );
 
 function walk(directory) {

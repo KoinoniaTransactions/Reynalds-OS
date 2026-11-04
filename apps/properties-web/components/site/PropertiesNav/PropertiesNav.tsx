@@ -2,6 +2,12 @@
 
 import { useEffect, useState } from "react";
 
+const realEstateLinks = [
+  { label: "Buying a Home", href: "/real-estate#buy" },
+  { label: "Selling a Home", href: "/real-estate#sell" },
+  { label: "Real Estate Overview", href: "/real-estate" }
+] as const;
+
 const ownerLinks = [
   { label: "Owner Services", href: "/owners" },
   { label: "Rental Analysis", href: "/rental-analysis", emphasis: true },
@@ -24,7 +30,7 @@ const residentLinks = [
   { label: "Contact Support", href: "/contact" }
 ] as const;
 
-type NavGroupLabel = "Owners" | "Find a Home" | "Residents";
+type NavGroupLabel = "Real Estate" | "Owners" | "Find a Home" | "Residents";
 
 type NavGroupProps = {
   label: NavGroupLabel;
@@ -134,7 +140,7 @@ export function PropertiesNav() {
 
         <span className="koinonia-header-brand-text">
           <strong>Koinonia Properties</strong>
-          <span>Property Management</span>
+          <span>Real Estate & Property Management</span>
         </span>
       </a>
 
@@ -160,6 +166,13 @@ export function PropertiesNav() {
         className={`koinonia-property-nav-links${mobileOpen ? " is-open" : ""}`}
         id="koinonia-property-navigation-menu"
       >
+        <NavGroup
+          label="Real Estate"
+          links={realEstateLinks}
+          isOpen={openGroup === "Real Estate"}
+          onToggle={() => toggleGroup("Real Estate")}
+          onNavigate={closeNavigation}
+        />
         <NavGroup
           label="Owners"
           links={ownerLinks}
