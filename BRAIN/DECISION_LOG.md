@@ -71,3 +71,14 @@ Reason: Serve the distinct Realtor B2B and consumer/investor markets without dil
 Canonical detail: `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_POSITIONING_AND_LOCAL_DISCOVERY_2026-11-03.md`.
 
 Limits: No legal filing, brokerage authority, Google profile/category alteration, website change, marketing activation, or deployment approved by this documentation decision. Two Google profiles at one hidden home-office address remain subject to independent eligibility and verification; no guarantee of approval.
+
+
+## D-012 — Koinonia Properties Property Management Pricing and Maintenance Choices (2026-11-04)
+
+Decision: Owner selected two rental management plans (10% fully managed maintenance; 8% owner-involved maintenance, with percentage basis provisionally rent collected), a **10% markup on Koinonia-coordinated contractor work under BOTH plans**, 50% of one month's rent for successful tenant placement, $199 completed lease renewal, intended $35 per-applicant screening charge subject to actual-cost/portable-report law, $99 midpoint visual inspection and $99 additional requested inspection, no owner setup or monthly vacancy fee. Routine repair threshold $250; owner nonurgent response expectation 24 hours; qualified owner-selected vendors/approved minor self-repair allowed; emergency and habitability authority preserved. No placement fee for unsuccessful rounds of marketing/showings; no complimentary replacement placement after tenant departure. Exact definitions, applicant fees and collection require compliance checks.
+
+Additional planned features: instant third-party-data-backed rental valuation, and an authenticated Owner Maintenance Center with verified contractors, genuine preferred pricing, owner participation controls and repair history. Neither feature is live or approved for production implementation.
+
+Reason: Offer owners transparent economics, meaningful choice over maintenance involvement, and immediate rental valuation while sustaining the work performed by Koinonia.
+
+Canonical commercial detail: `02_Companies/Koinonia/03_Pricing/KOINONIA_PROPERTIES_MANAGEMENT_LEASING_FEES_2026-11-04.md`. Positioning relationship: D-011. No website, API, Google Profile, brokerage filings or public pricing changes are authorized by this record.
