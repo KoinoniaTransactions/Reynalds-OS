@@ -215,3 +215,14 @@ Read the controlling decision before making Properties business, marketing, SEO,
 Historical Properties site/code/specification are on `integration/koinonia-properties-web-20260812`; recover its Properties-specific `START_HERE.md`, `BRAIN/PRODUCT_BOUNDARIES.md`, `BRAIN/APPLICATION_CATALOG.md`, `BRAIN/KOINONIA_PROPERTIES_DEV_STATE.md`, management service object, and `apps/properties-web/` before proposing implementation. Do not mistake old management-only page design for authority to make the whole brand management-only.
 
 **Scope gate:** This approval covers documentation of positioning only. It does not approve entity filings, brokerage licensing changes, a second Google Business Profile, Google category changes, advertising, site edits, or production deployment. The Transactions approved commercial/marketing precedence above is unchanged. Do not create a competing strategy master; update this decision and its governing implementation sources together when future work is separately approved.
+
+
+---
+
+## KOINONIA PROPERTIES MANAGEMENT PRICING AND OPERATIONS — 2026-11-04
+
+Owner-approved commercial fees, maintenance plan rules, inspection policy, tenant-placement success-fee rules, and future rental valuation / Owner Maintenance Center requirements are recorded in:
+
+`02_Companies/Koinonia/03_Pricing/KOINONIA_PROPERTIES_MANAGEMENT_LEASING_FEES_2026-11-04.md`
+
+Read that record together with the 2026-11-03 full-service Properties positioning decision above. The new pricing decision covers Properties **only**, not Transactions. It is **not** approval to publish prices, bill clients, create contracts, alter existing website/code, connect API providers, or deploy a portal. Forming/licensing the brokerage, screening/application-fee compliance and agreement terms remain gated. Historical Properties service scope/specification is preserved on `integration/koinonia-properties-web-20260812` for later reconciliation.
