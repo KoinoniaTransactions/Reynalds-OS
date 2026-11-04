@@ -112,3 +112,14 @@ When a dated checkpoint conflicts with a newer approved canonical business/readi
 | Koinonia Properties equal residential-sales / property-management positioning, relationship to Transactions, initial property-management Google Maps priority, implementation gates | `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_POSITIONING_AND_LOCAL_DISCOVERY_2026-11-03.md` | Owner-approved strategy; execution not authorized |
 
 This newer decision governs **future Properties company-wide positioning** and supersedes historical management-only assumptions for planning. The historical Properties specification, service object and accepted implementation on `integration/koinonia-properties-web-20260812` remain evidence of what was previously built, not authority to treat new sales pages or brokerage licensing as implemented. The property-management service object still governs management-specific scope and prohibits unapproved pricing, policy, service area or private portal claims. The existing Transactions production commercial authority and marketing activation restrictions above are unchanged.
+
+
+---
+
+## Koinonia Properties — Management Commercial Authority (2026-11-04)
+
+| Subject | Canonical Source | Status |
+| --- | --- | --- |
+| Owner-approved property management 8%/10% plans, 10% vendor markup, leasing/renewal/application/inspection charges, maintenance authority, placement timing, planned instant rental valuations and owner maintenance tools | `02_Companies/Koinonia/03_Pricing/KOINONIA_PROPERTIES_MANAGEMENT_LEASING_FEES_2026-11-04.md` | Approved decision record; legal, operational, public-site and implementation gates remain |
+
+This record governs **Properties management commercial decisions**, not Transactions public pricing. The historical Properties management service object on `integration/koinonia-properties-web-20260812` continues to define management *scope* until a deliberate reconciled implementation. The 2026-11-03 company-wide Properties positioning authority remains unchanged.
