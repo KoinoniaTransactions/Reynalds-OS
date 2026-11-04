@@ -1,4 +1,5 @@
 import { mailto } from "../../../config/contact.config";
+import { PropertiesLeadForm } from "./PropertiesLeadForm";
 
 type InquiryKind =
   | "owner"
@@ -30,7 +31,7 @@ const inquiryContent: Record<InquiryKind, {
       "Property address and property type",
       "Vacant, occupied, or upcoming vacancy",
       "Current rent or target rent, if known",
-      "Leasing-only, full-service, or unsure"
+      "Managed for You (10%), Managed With You (8%), or unsure"
     ],
     caution: "Please do not email bank information, payment credentials, government identification numbers, or other sensitive account data."
   },
@@ -114,20 +115,18 @@ export function PropertiesInquiry({
             <p className="koinonia-copy">
               {content.body}
             </p>
-            <div className="koinonia-actions">
-              <a
-                className="koinonia-button primary"
-                href={mailto(content.subject)}
-              >
-                {content.primaryLabel}
-              </a>
-              <a
-                className="koinonia-button secondary"
-                href="/standards"
-              >
-                View Standards
-              </a>
-            </div>
+            {kind === "owner" || kind === "rental" ? (
+              <PropertiesLeadForm kind={kind} />
+            ) : (
+              <div className="koinonia-actions">
+                <a className="koinonia-button primary" href={mailto(content.subject)}>
+                  {content.primaryLabel}
+                </a>
+                <a className="koinonia-button secondary" href="/standards">
+                  View Standards
+                </a>
+              </div>
+            )}
           </div>
 
           <div className="koinonia-inquiry-card">
