@@ -90,7 +90,9 @@ export async function GET(request: Request, context: Context) {
     const result = await s3.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
     if (!result.Body) return NextResponse.json({ error: "Missing media" }, { status: 404 });
     const bytes = await result.Body.transformToByteArray();
-    return new NextResponse(bytes, { headers: { "Content-Type": result.ContentType ?? "application/octet-stream", "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" } });
+    const body = new Uint8Array(bytes.length);
+    body.set(bytes);
+    return new NextResponse(body.buffer, { headers: { "Content-Type": result.ContentType ?? "application/octet-stream", "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" } });
   } catch (error) {
     const auth = getAuthErrorResponse(error);
     if (auth) return auth;
