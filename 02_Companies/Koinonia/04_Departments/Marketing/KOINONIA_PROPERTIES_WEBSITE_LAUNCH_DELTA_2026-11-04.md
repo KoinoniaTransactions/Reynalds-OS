@@ -42,3 +42,12 @@ Historical branch `integration/koinonia-properties-web-20260812`, not `main`: `a
 
 ## Explicit exclusions
 No site rebuild, no abandonment of accepted design, no branch wholesale merge, no live deployment, no entity/licensing filing, no paid marketing and no custom portal implementation authorized by this document.
+
+
+## Production deployment discovery — 2026-11-04 (read-only verification)
+
+Vercel project `koinonia-properties` (`prj_iKGoW1dEYSfwLIlhthH1FwFhk5es`, team `koinonia3`) shows production deployment `dpl_r5cRLk6K9FMwQDwWYiguKGCLL7Ey` **READY** with URL `koinonia-properties-2gmmznt27-koinonia3.vercel.app`. Both `koinoniaproperties.com` and `www.koinoniaproperties.com` are attached and verified project domains. Deployment source type is `redeploy` and lacks Git commit/branch metadata; do **not** claim that its exact originating SHA has been identified.
+
+Vercel deployment source file-tree inspection confirms `src/apps/properties-web/` is present, including `app/page.tsx`, `components/site/PageAssemblies/KoinoniaProperties.tsx`, `config/contact.config.ts`, and app `package.json`. Retrieved deployed contact config exactly displays `jeremiah@koinoniaadmin.com`, `(719) 745-8497`, and `Colorado property management inquiries`, matching the historical source. A deployed homepage source retrieval showed the same management-only audience-path opening text as the historical branch, but the Vercel response was truncated; exact complete commit or code-tree equivalence is still **unverified**.
+
+**Refined next technical step:** Use the deployment file manifest and targeted file comparisons to determine any differences with historical branch before code edits. Preserve visual/page code; prepare only surgical changes to existing site. Verify live HTTP content and individual route rendering separately, as READY/verified domain does not establish route and inquiry health. Do not deploy or alter domain settings during discovery.
