@@ -5,16 +5,21 @@ Status: **Working operating design for owner review, not an approved public serv
 Scope: Koinonia Properties property-management division. Both the 8% owner-involved and 10% full-service plans receive the same communication and integrity standards.  
 Related controlling sources: `03_Knowledge/Brand/koinonia_brand_core.md`; `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_POSITIONING_AND_LOCAL_DISCOVERY_2026-11-03.md`; `02_Companies/Koinonia/03_Pricing/KOINONIA_PROPERTIES_MANAGEMENT_LEASING_FEES_2026-11-04.md`.
 
-## 1. Leadership philosophy versus external claim
+## 1. Customer experience and positioning — revised direction
 
-**Internal belief: communication shows respect.** This is a management design principle **not a slogan we must quote to customers**. Owners should experience respect through useful responsiveness, honest explanations, clear choices, proactively shared developments and dependable follow-through.
+**Internal leadership belief: communication shows respect.** Do not quote that statement to customers as a slogan. The test is whether owners *experience* timely attention, truthful communication and proactive follow-through without needing to chase a manager.
 
-Candidate customer-facing framing (not approved for publication):
-- `You Shouldn't Have to Chase Your Property Manager.`
-- `Your Property. Your Priorities. Our Partnership.`
-- A proposed `60-Minute Communication Commitment` with prominent qualifying language: meaningful responses to owner **SMS/text messages during defined business hours**. Not a general 60-minute promise for all contact channels. Do not market this as live until proven.
+**Primary division-wide message (proposed; not approved for publication):** `Your Property. Your Priorities. Our Partnership.`
 
-**Operating rule:** A fast first reply is NOT task completion. Work stays open until fulfilled, explicitly canceled with rationale, or handed over with an accepting owner, due date and ongoing visibility.
+**Primary communication-focused acquisition message (proposed):** `You Shouldn't Have to Ask for an Update.` Alternative campaign line: `You Shouldn't Have to Chase Your Property Manager.` This is an aspiration and must not become an absolute guarantee that every circumstance will generate an update; validate claims against actual workflows.
+
+**Supporting customer benefit:** `Property management that keeps you in the know.` We want customers to understand that Koinonia is accessible during published business hours across normal contact channels, takes ownership of requests, and communicates significant developments without being chased. Do **not** highlight dedicated phone staff as an unusual selling point: reliable phone access is a basic professional expectation, not a headline differentiation.
+
+**60-minute text response standard:** preserve as a proposed **internal operational target and secondary proof point** for owner SMS during defined business hours, **not** the lead brand promise. No wording should imply that *all* calls, emails and portal messages receive a one-hour response. Establish reliable phone handling as part of the regular service experience; avoid building acquisition messaging around the technical channel or stopwatch.
+
+**Core customer expectation:** (a) I can reach Koinonia, (b) I will be told about important developments, (c) I understand the decision and cost, (d) someone will follow through, (e) I won't need to repeat myself. Send high-signal updates, not a flood of messages. An activity timeline is an internal accountability tool and a customer-visible resource, not an end in itself.
+
+**Operating rule:** A fast first reply is NOT task completion. Work stays open until fulfilled, explicitly canceled with rationale, or handed over to an accepting owner with a due date and continuing visibility.
 
 ## 2. Specific proposed communication standard (pilot targets, not guarantees)
 
@@ -96,11 +101,11 @@ Pilot design proposal:
 - Track staff minutes per ticket and per management plan, software/SMS costs, uncovered hours, and vendor follow-through cost. Do not rely on the 10% markup to obscure unprofitable operations.
 - Document that 8% / 10% management levels do not change service responsiveness; owner participation changes only agreed eligible maintenance duties.
 
-Candidate marketing copy (for later approval only): **"You shouldn't have to chase your property manager. Text Koinonia during published business hours and we'll respond within 60 minutes with a meaningful update or next step."** Show coverage hours and exclusions immediately alongside the claim.
+Proposed marketing hierarchy (for separate later approval): **"Your Property. Your Priorities. Our Partnership."** Lead a communication campaign with **"You Shouldn't Have to Ask for an Update."** and supporting copy about accessible, proactive service and documented follow-through. Keep the 60-minute SMS response commitment as a clearly qualified secondary service detail only after measured validation and publication review.
 
 ## 7. Product requirements and sequencing
 
-**Required before a communication promise:** staffing roster/backup, shared SMS inbox, monitored clocks, ticket owner and due tasks, emergency escalation, clear contact authority, real transaction audit trail, issue-close discipline, basic monthly owner reporting.
+**Required before claiming proactive communication or a response-time promise:** staffing roster/backup, accessible business-hours phone service, shared SMS inbox, monitored clocks, ticket owner and due tasks, emergency escalation, clear contact authority, real transaction audit trail, issue-close discipline, basic monthly owner reporting.
 
 **Version 1.1 enhancements:** authenticated owner activity timeline, reliable vendor status integration, intelligent notification preferences, repair options and cost-context view, contractor directory if verified.
 
