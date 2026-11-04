@@ -5,7 +5,7 @@ import styles from "./SocialContentStudio.module.css";
 
 const platformNames = ["facebook", "instagram", "tiktok", "linkedin"] as const;
 type Platform = (typeof platformNames)[number];
-type Variant = { id: string; platform: string; caption: string; status: string; revision: number; scheduledAt: string | null };
+type Variant = { id: string; platform: string; caption: string; status: string; revision: number; scheduledAt: string | null; media?: unknown };
 type Draft = { id: string; title: string; status: string; campaignKey: string | null; createdAt: string; variants: Variant[] };
 type Page = "drafts" | "review" | "calendar" | "accounts";
 
@@ -103,6 +103,24 @@ export function SocialContentStudio() {
       setFeedback({ message: e instanceof Error ? e.message : "Review action failed", error: true });
     } finally { setBusy(false); }
   }
+  async function uploadImage(post: Draft, variant: Variant, file?: File) {
+    if (!file) return;
+    setBusy(true); setFeedback(null);
+    try {
+      if (!["image/png", "image/jpeg", "image/webp"].includes(file.type) || file.size > 3 * 1024 * 1024) throw new Error("Choose a JPG, PNG or WebP under 3 MB.");
+      const form = new FormData();
+      form.append("variantId", variant.id);
+      form.append("revision", String(variant.revision));
+      form.append("file", file);
+      const response = await fetch("/api/employee/social/posts/" + encodeURIComponent(post.id) + "/media", { method: "POST", body: form });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Upload failed");
+      await refresh();
+      setFeedback({ message: "Image saved to Preview; previous approval invalidated.", error: false });
+    } catch (error) {
+      setFeedback({ message: error instanceof Error ? error.message : "Upload failed", error: true });
+    } finally { setBusy(false); }
+  }
   function variantCard(post: Draft, variant: Variant) {
     return <div key={variant.id} className={styles.variant}>
       <div className={styles.posthead}>
@@ -110,6 +128,10 @@ export function SocialContentStudio() {
         <span className={styles.pill}>{variant.status.replaceAll("_", " ")}</span>
       </div>
       <p>{variant.caption}</p>
+      {Array.isArray(variant.media) && <p className={styles.meta}>{variant.media.length} images attached</p>}
+      {variant.status === "draft" && <label className={styles.choice}>Add image (Preview only, max 3 MB)
+        <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e => { void uploadImage(post, variant, e.target.files?.[0]); e.target.value = ""; }} />
+      </label>}
       <p className={styles.meta}>Revision {variant.revision}{variant.scheduledAt ? " · Proposed: " + new Date(variant.scheduledAt).toLocaleString() : ""}</p>
       <div className={styles.actions}>
         {variant.status === "draft" && <>
@@ -179,7 +201,7 @@ export function SocialContentStudio() {
             <button disabled={busy || !platforms.length} type="submit" className={styles.primary}>{busy ? "Saving..." : editing ? "Save edits" : "Save drafts"}</button>
             {editing && <button type="button" className={styles.secondary} onClick={resetEditor}>Cancel edit</button>}
           </div>
-          <p className={styles.meta}>Media uploads will be enabled after secure storage validation. No files are uploaded in this version.</p>
+          <p className={styles.meta}>Save a draft first, then attach images to an individual platform version. Preview uploads require a separate storage feature flag. Video uploads are not enabled.</p>
         </form>
       </section>
       <section className={styles.panel}>
