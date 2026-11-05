@@ -85,6 +85,21 @@ export function SocialContentStudio() {
       setFeedback({ message: error instanceof Error ? error.message : "Unable to configure storage", error: true });
     } finally { setBusy(false); }
   }
+  async function checkPrivateStorage() {
+    if (!window.confirm("Run a private test upload to Koinonia R2? The test file is deleted after verification. No social content will be published.")) return;
+    setBusy(true); setFeedback(null);
+    try {
+      const response = await fetch("/api/employee/social/storage-check", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: "run_private_multipart_probe" })
+      });
+      const data = await response.json();
+      if (!response.ok || data.verified !== true) throw new Error(data.error ?? "Storage integration check failed");
+      setFeedback({ message: "R2 multipart upload, Preview browser CORS and cleanup verified. No public posts created.", error: false });
+    } catch (error) {
+      setFeedback({ message: error instanceof Error ? error.message : "Storage integration check failed", error: true });
+    } finally { setBusy(false); }
+  }
   useEffect(() => { void refresh(); void refreshStorageCors(); }, []);
 
   const filtered = useMemo(() => items.filter(item =>
@@ -468,6 +483,7 @@ export function SocialContentStudio() {
           <p className={styles.meta}>{storageCors?.configured ? "Preview browser access configured" : "Preview browser access not configured"} · {storageCors?.origin ?? "Checking..."}</p>
           {storageCors?.canConfigure && !storageCors.configured && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void configureStorageCors()}>Enable Preview browser uploads</button>}
           <button type="button" className={styles.secondary} disabled={busy} onClick={() => void refreshStorageCors()}>Recheck storage</button>
+          {storageCors?.canConfigure && <button type="button" className={styles.secondary} disabled={busy || !storageCors.configured} onClick={() => void checkPrivateStorage()}>Verify R2 upload, CORS and cleanup</button>}
         </>}
       </div>
       <p className={styles.meta}>Read-only connection status. No OAuth credentials or posting permissions are configured through this screen.</p>
