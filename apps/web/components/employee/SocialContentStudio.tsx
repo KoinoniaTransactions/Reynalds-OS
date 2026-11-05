@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import styles from "./SocialContentStudio.module.css";
 
@@ -21,6 +21,7 @@ export function SocialContentStudio() {
   const [planned, setPlanned] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [uploadPercent, setUploadPercent] = useState<Record<string, number>>({});
+  const videoAbortRef = useRef<AbortController | null>(null);
   const [ownerApprovalAcknowledged, setOwnerApprovalAcknowledged] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ message: string; error: boolean } | null>(null);
   const [connections, setConnections] = useState<{ platform: string; displayName: string; status: string; expiresAt: string | null }[]>([]);
@@ -131,6 +132,8 @@ export function SocialContentStudio() {
     const videoFile = file;
     setBusy(true); setFeedback(null);
     let authToken: string | null = null;
+    const abort = new AbortController();
+    videoAbortRef.current = abort;
     const endpoint = "/api/employee/social/posts/" + encodeURIComponent(post.id) + "/video";
     try {
       const begin = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" },
@@ -153,7 +156,7 @@ export function SocialContentStudio() {
           let etag = "";
           for (let attempt = 0; attempt < 3; attempt++) {
             try {
-              const response = await fetch(url, { method: "PUT", body: chunk, cache: "no-store" });
+              const response = await fetch(url, { method: "PUT", body: chunk, cache: "no-store", signal: abort.signal });
               if (response.ok) {
                 etag = response.headers.get("ETag") ?? "";
                 if (!etag) throw new Error("R2 CORS must expose the ETag header");
@@ -167,7 +170,7 @@ export function SocialContentStudio() {
               }
               if (attempt === 2) throw new Error("R2 rejected video part " + entry.number + " (" + response.status + ")");
             } catch (error) {
-              if (attempt === 2) throw error;
+              if (abort.signal.aborted || attempt === 2) throw error;
             }
           }
           if (!etag) throw new Error("Video part " + entry.number + " did not return an ETag");
@@ -175,7 +178,8 @@ export function SocialContentStudio() {
           setUploadPercent(current => ({ ...current, [variant.id]: Math.round(uploaded.length / urls.length * 100) }));
         }
       }
-      await Promise.all(Array.from({ length: Math.min(4, urls.length) }, () => worker()));
+      try { await Promise.all(Array.from({ length: Math.min(4, urls.length) }, () => worker())); }
+      catch (error) { abort.abort(); throw error; }
       uploaded.sort((a, b) => a.number - b.number);
       const done = await fetch(endpoint, { method: "PATCH", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: authToken, parts: uploaded, name: file.name }) });
@@ -185,9 +189,11 @@ export function SocialContentStudio() {
       await refresh();
       setFeedback({ message: "Video attached to this draft. Previous approvals are invalidated.", error: false });
     } catch (error) {
+      abort.abort();
       if (authToken) await fetch(endpoint, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: authToken }) }).catch(() => {});
       setFeedback({ message: error instanceof Error ? error.message : "Video upload failed", error: true });
     } finally {
+      videoAbortRef.current = null;
       setBusy(false);
       setUploadPercent(current => { const copy = { ...current }; delete copy[variant.id]; return copy; });
     }
@@ -233,7 +239,7 @@ export function SocialContentStudio() {
       {["draft", "changes_requested"].includes(variant.status) && !(variant.media ?? []).some(m => m.type.startsWith("video/")) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>Add video (MP4 or WebM, up to 512 MiB)
         <input type="file" accept="video/mp4,video/webm" disabled={busy} onChange={e => { void uploadVideo(post, variant, e.target.files?.[0]); e.target.value = ""; }} />
       </label>}
-      {typeof uploadPercent[variant.id] === "number" && <p className={styles.meta} role="status">Uploading video: {uploadPercent[variant.id]}%</p>}
+      {typeof uploadPercent[variant.id] === "number" && <div role="status" className={styles.meta}>Uploading video: {uploadPercent[variant.id]}% <button type="button" className={styles.secondary} onClick={() => videoAbortRef.current?.abort()}>Cancel upload</button></div>}
       <p className={styles.meta}>Revision {variant.revision}{variant.scheduledAt ? " · Proposed: " + new Date(variant.scheduledAt).toLocaleString() : ""}</p>
       <div className={styles.actions}>
         {variant.status === "draft" && <>
