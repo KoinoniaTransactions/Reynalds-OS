@@ -50,6 +50,16 @@ export async function GET(request: NextRequest) {
     tokenUrl.searchParams.set("code", code);
     const issued = await metaJson<{ access_token?: string; expires_in?: number }>(tokenUrl);
     if (!issued.access_token || issued.access_token.length > 8192) throw new Error("Meta authorization had no valid access token");
+    const inspectUrl = new URL("https://graph.facebook.com/" + META_GRAPH_VERSION + "/debug_token");
+    inspectUrl.searchParams.set("input_token", issued.access_token);
+    inspectUrl.searchParams.set("access_token", process.env.META_APP_ID! + "|" + process.env.META_APP_SECRET!);
+    const inspected = await metaJson<{ data?: { is_valid?: boolean; app_id?: string; scopes?: string[]; expires_at?: number } }>(inspectUrl);
+    if (!inspected.data?.is_valid || String(inspected.data.app_id) !== process.env.META_APP_ID) {
+      throw new Error("Meta token validation failed");
+    }
+    const grantedScopes = inspected.data.scopes ?? [];
+    const pageReady = ["pages_show_list","pages_manage_posts","pages_read_engagement"].every(p => grantedScopes.includes(p));
+    const instagramReady = grantedScopes.includes("instagram_content_publish") && grantedScopes.includes("instagram_basic");
 
     const pagesUrl = new URL("https://graph.facebook.com/" + META_GRAPH_VERSION + "/me/accounts");
     pagesUrl.searchParams.set("fields", "id,name,access_token,instagram_business_account{id,username}");
@@ -58,17 +68,18 @@ export async function GET(request: NextRequest) {
     const pagesResponse = await metaJson<{ data?: PageRecord[] }>(pagesUrl);
     const pages = (pagesResponse.data ?? []).filter(p => p.id && p.name);
     if (!pages.length) return returnToStudio("unavailable", request);
-    const expiry = typeof issued.expires_in === "number" && issued.expires_in > 0 ?
+    const expiry = inspected.data.expires_at && inspected.data.expires_at > 0 ?
+      new Date(inspected.data.expires_at * 1000) : typeof issued.expires_in === "number" && issued.expires_in > 0 ?
       new Date(Date.now() + issued.expires_in * 1000) : null;
     const now = new Date();
     for (const page of pages) {
       const pageId = page.id!;
       const connection = await prisma.socialChannelConnection.upsert({
         where: { workspaceId_platform_providerAccountId: { workspaceId: actor.workspaceId, platform: "facebook", providerAccountId: pageId } },
-        update: { status: "connected", displayName: page.name!, connectedAt: now, expiresAt: expiry,
-          scopes: ["pages_show_list","pages_read_engagement","pages_manage_posts"] },
+        update: { status: pageReady ? "connected" : "needs_permission", displayName: page.name!, connectedAt: now, expiresAt: expiry,
+          scopes: grantedScopes },
         create: { workspaceId: actor.workspaceId, platform: "facebook", providerAccountId: pageId, displayName: page.name!,
-          status: "connected", connectedAt: now, expiresAt: expiry, scopes: ["pages_show_list","pages_read_engagement","pages_manage_posts"] }
+          status: pageReady ? "connected" : "needs_permission", connectedAt: now, expiresAt: expiry, scopes: grantedScopes }
       });
       await prisma.socialConnectionVault.upsert({
         where: { connectionId: connection.id },
@@ -80,11 +91,11 @@ export async function GET(request: NextRequest) {
       if (instagram?.id) {
         const ig = await prisma.socialChannelConnection.upsert({
           where: { workspaceId_platform_providerAccountId: { workspaceId: actor.workspaceId, platform: "instagram", providerAccountId: instagram.id } },
-          update: { status: "connected", displayName: instagram.username ?? "Instagram " + instagram.id, connectedAt: now, expiresAt: expiry,
-            scopes: ["instagram_basic","instagram_content_publish"] },
+          update: { status: instagramReady ? "connected" : "needs_permission", displayName: instagram.username ?? "Instagram " + instagram.id, connectedAt: now, expiresAt: expiry,
+            scopes: grantedScopes },
           create: { workspaceId: actor.workspaceId, platform: "instagram", providerAccountId: instagram.id,
-            displayName: instagram.username ?? "Instagram " + instagram.id, status: "connected", connectedAt: now, expiresAt: expiry,
-            scopes: ["instagram_basic","instagram_content_publish"] }
+            displayName: instagram.username ?? "Instagram " + instagram.id, status: instagramReady ? "connected" : "needs_permission", connectedAt: now, expiresAt: expiry,
+            scopes: grantedScopes }
         });
         await prisma.socialConnectionVault.upsert({
           where: { connectionId: ig.id },
