@@ -35,7 +35,22 @@ export function PropertiesLeadForm({ kind }: { kind: InquiryKind }) {
   const challengeId = useRef<string | null>(null);
 
   useEffect(() => {
+    if (!available) return;
+    // A single shared Turnstile script serves every form on a page.
+    // Rendering each widget independently avoids a missing challenge when
+    // both buyer and seller forms mount on /real-estate.
+    const renderWhenReady = () => {
+      const client = getTurnstile();
+      const container = challengeContainer.current;
+      const sitekey = process.env.NEXT_PUBLIC_PROPERTIES_TURNSTILE_SITE_KEY;
+      if (client && container && sitekey && !challengeId.current) {
+        challengeId.current = client.render(container, { sitekey, theme: "auto" }) ?? null;
+      }
+    };
+    renderWhenReady();
+    const timer = window.setInterval(renderWhenReady, 500);
     return () => {
+      window.clearInterval(timer);
       if (challengeId.current) {
         getTurnstile()?.remove(challengeId.current);
         challengeId.current = null;
