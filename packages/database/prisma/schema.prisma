@@ -330,6 +330,7 @@ model SocialChannelConnection {
 
   workspace Workspace @relation(fields: [workspaceId], references: [id])
   variants  SocialPostVariant[]
+  vault      SocialConnectionVault?
 
   @@unique([workspaceId, platform, providerAccountId])
   @@index([workspaceId, status])
@@ -342,6 +343,7 @@ model SocialConnectionVault {
   encodedData    String   @db.Text
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  connection     SocialChannelConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
 
   @@index([workspaceId])
 }
