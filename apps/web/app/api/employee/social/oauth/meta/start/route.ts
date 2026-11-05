@@ -1,16 +1,18 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { assertPermission, getAuthProvider } from "../../../../../../../lib/auth";
 import { getAuthErrorResponse } from "../../../../../../../lib/api-auth";
 import { prisma } from "../../../../../../../lib/db";
-import { buildMetaLoginUrl, metaOAuthConfigured, newMetaOAuthState, nonceHash, META_OAUTH_COOKIE } from "../../../../../../../lib/social-meta-oauth";
+import { buildMetaLoginUrl, metaCallbackUrl, metaOAuthConfigured, newMetaOAuthState, nonceHash, META_OAUTH_COOKIE } from "../../../../../../../lib/social-meta-oauth";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-export async function POST() {
+export async function POST(request: Request) {
   try {
     if (getAuthProvider() !== "clerk" || !metaOAuthConfigured()) {
       return NextResponse.json({ error: "Managed login or Meta developer configuration is missing" }, { status: 503 });
+    }
+    if (new URL(request.url).origin !== new URL(metaCallbackUrl()).origin) {
+      return NextResponse.json({ error: "Meta callback must use the same registered origin as the Content Studio" }, { status: 503 });
     }
     const actor = await assertPermission("employee-portal:view");
     if (actor.role !== "Owner") return NextResponse.json({ error: "Owner approval required to connect social accounts" }, { status: 403 });
