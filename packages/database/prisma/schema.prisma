@@ -23,6 +23,8 @@ model Workspace {
   portalInvitations PortalInvitation[]
   auditEvents       AuditEvent[]
   resendContactWebhookEvents ResendContactWebhookEvent[]
+  socialPosts       SocialPost[]
+  socialConnections SocialChannelConnection[]
 }
 
 model User {
@@ -309,4 +311,140 @@ model ResendContactWebhookEvent {
 
   @@index([workspaceId, resendContactId])
   @@index([workspaceId, createdAt])
+}
+
+ 
+/// Non-secret account metadata. OAuth credentials must live in a separately encrypted secret store.
+model SocialChannelConnection {
+  id                String   @id @default(cuid())
+  workspaceId       String
+  platform          String
+  providerAccountId String
+  displayName       String
+  status            String   @default("disconnected")
+  scopes            Json?
+  connectedAt       DateTime?
+  expiresAt         DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  variants  SocialPostVariant[]
+  vault      SocialConnectionVault?
+
+  @@unique([workspaceId, platform, providerAccountId])
+  @@index([workspaceId, status])
+}
+
+model SocialConnectionVault {
+  id             String   @id @default(cuid())
+  workspaceId    String
+  connectionId   String   @unique
+  encodedData    String   @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  connection     SocialChannelConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+}
+
+model SocialAuthorization {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  actorId      String
+  platform     String
+  nonceHash    String   @unique
+  payload      String?  @db.Text
+  status       String   @default("pending")
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@index([workspaceId, platform])
+  @@index([expiresAt])
+}
+
+model SocialPost {
+  id          String   @id @default(cuid())
+  workspaceId String
+  title       String
+  campaignKey String?
+  createdById String
+  status      String   @default("draft")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  variants  SocialPostVariant[]
+
+  @@index([workspaceId, createdAt])
+}
+
+model SocialPostVariant {
+  id           String   @id @default(cuid())
+  postId       String
+  connectionId String?
+  platform     String
+  caption      String
+  media        Json?
+  revision     Int      @default(1)
+  status       String   @default("draft")
+  scheduledAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  post       SocialPost                 @relation(fields: [postId], references: [id], onDelete: Cascade)
+  connection SocialChannelConnection?   @relation(fields: [connectionId], references: [id])
+  approvals  SocialApproval[]
+  jobs       SocialPublishJob[]
+
+  @@index([postId, platform])
+  @@index([connectionId, status])
+}
+
+model SocialApproval {
+  id           String   @id @default(cuid())
+  variantId    String
+  revision     Int
+  approvedById String
+  approvedAt   DateTime @default(now())
+  revokedAt    DateTime?
+
+  variant SocialPostVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([variantId, revision])
+}
+
+model SocialPublishJob {
+  id             String   @id @default(cuid())
+  variantId      String
+  revision       Int
+  status         String   @default("scheduled")
+  scheduledAt    DateTime
+  idempotencyKey String   @unique
+  externalPostId String?
+  lockedUntil    DateTime?
+  attemptsCount  Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  variant  SocialPostVariant    @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  attempts SocialPublishAttempt[]
+
+  @@index([status, scheduledAt])
+  @@index([variantId, revision])
+}
+
+model SocialPublishAttempt {
+  id           String   @id @default(cuid())
+  jobId        String
+  attempt      Int
+  status       String
+  providerCode String?
+  errorMessage String?
+  externalId   String?
+  createdAt    DateTime @default(now())
+
+  job SocialPublishJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, attempt])
 }
