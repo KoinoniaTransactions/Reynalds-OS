@@ -26,9 +26,22 @@ export function SocialContentStudio() {
   const [ownerApprovalAcknowledged, setOwnerApprovalAcknowledged] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ message: string; error: boolean } | null>(null);
   const [connections, setConnections] = useState<{ platform: string; displayName: string; status: string; expiresAt: string | null }[]>([]);
-  const [providerReadiness, setProviderReadiness] = useState<{platform:string;label:string;configured:boolean;missingSettings:string[];portal:string;capabilities:string[]}[]>([]);
+  const [providerReadiness, setProviderReadiness] = useState<{platform:string;label:string;configured:boolean;connectEnabled?:boolean;missingSettings:string[];portal:string;capabilities:string[]}[]>([]);
   const [storageCors, setStorageCors] = useState<{ configured: boolean; canConfigure: boolean; canVerify?: boolean; origin: string; error?: string } | null>(null);
 
+  async function connectMeta() {
+    if (!window.confirm("Authorize Koinonia Social Engine to access the Facebook Pages and Instagram accounts you select in Meta? This does not enable publishing.")) return;
+    setBusy(true); setFeedback(null);
+    try {
+      const response = await fetch("/api/employee/social/oauth/meta/start", { method: "POST", cache: "no-store" });
+      const data = await response.json();
+      if (!response.ok || typeof data.authorizationUrl !== "string") throw new Error(data.error ?? "Unable to start Meta login");
+      window.location.assign(data.authorizationUrl);
+    } catch(error) {
+      setFeedback({ message: error instanceof Error ? error.message : "Unable to start Meta login", error: true });
+      setBusy(false);
+    }
+  }
   async function refresh() {
     try {
       const [postResponse, accountResponse] = await Promise.all([
@@ -90,7 +103,16 @@ export function SocialContentStudio() {
       setFeedback({ message: error instanceof Error ? error.message : "Storage integration check failed", error: true });
     } finally { setBusy(false); }
   }
-  useEffect(() => { void refresh(); void refreshStorageCors(); }, []);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const meta = params.get("meta");
+    if (params.get("tab") === "accounts" || meta) setPage("accounts");
+    if (meta === "connected") setFeedback({ message: "Meta account authorization completed. Connected assets are shown below. Publishing is still disabled.", error: false });
+    if (meta === "denied") setFeedback({ message: "Meta authorization was declined; no connection was created.", error: true });
+    if (meta === "invalid") setFeedback({ message: "Meta authorization expired or failed security checks. Please start again.", error: true });
+    if (meta === "unavailable") setFeedback({ message: "Meta could not verify the selected business assets. Check the Meta app and Page permissions.", error: true });
+    void refresh(); void refreshStorageCors();
+  }, []);
 
   const filtered = useMemo(() => items.filter(item =>
     (item.title + " " + item.variants.map(v => v.caption + " " + v.platform).join(" ")).toLowerCase().includes(query.toLowerCase())
@@ -461,13 +483,13 @@ export function SocialContentStudio() {
           {storageCors?.canVerify && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void checkPrivateStorage()}>Verify R2 upload, CORS and cleanup</button>}
         </>}
       </div>
-      <p className={styles.meta}>Read-only connection status. No OAuth credentials or posting permissions are configured through this screen.</p>
+      <p className={styles.meta}>Account authorization is available only to the Koinonia owner. Connecting an account never enables automatic publishing.</p>
       <div className={styles.items}>{platformNames.map(p => {
         const entries = connections.filter(c => c.platform === p);
         const readiness = providerReadiness.find(item => item.platform === p);
         return <div key={p} className={styles.post}><div className={styles.posthead}>
           <strong style={{ textTransform: "capitalize" }}>{p}</strong><span className={styles.pill}>{entries.length ? entries[0].status : "Not connected"}</span>
-        </div>{entries.map(c => <p className={styles.meta} key={c.displayName}>{c.displayName}{c.expiresAt ? " · Expires " + new Date(c.expiresAt).toLocaleDateString() : ""}</p>)} {readiness && <div style={{ marginTop: 12 }}><p className={styles.meta}>{readiness.configured ? "Developer app settings detected; OAuth authorization still needs implementation." : "Developer app configuration is required before connection."}</p> {!readiness.configured && <p className={styles.meta}>Missing settings: {readiness.missingSettings.join(", ")}</p>} <p className={styles.meta}>Capabilities: {readiness.capabilities.join(" · ")}</p> <a href={readiness.portal} target="_blank" rel="noopener noreferrer">Open {readiness.label} developer portal</a></div>}</div>;
+        </div>{entries.map(c => <p className={styles.meta} key={c.displayName}>{c.displayName}{c.expiresAt ? " · Expires " + new Date(c.expiresAt).toLocaleDateString() : ""}</p>)} {readiness && <div style={{ marginTop: 12 }}><p className={styles.meta}>{readiness.configured ? "Developer app and secure Meta connection are configured. You can authorize the business assets." : "Developer app configuration is required before connection."}</p> {!readiness.configured && <p className={styles.meta}>Missing settings: {readiness.missingSettings.join(", ")}</p>} <p className={styles.meta}>Capabilities: {readiness.capabilities.join(" · ")}</p> <a href={readiness.portal} target="_blank" rel="noopener noreferrer">Open {readiness.label} developer portal</a> {readiness.connectEnabled && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void connectMeta()}>Connect with Meta</button>}</div>}</div>;
       })}</div>
     </section>}
   </main>;
