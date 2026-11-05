@@ -20,6 +20,7 @@ export function SocialContentStudio() {
   const [query, setQuery] = useState("");
   const [planned, setPlanned] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
+  const [uploadPercent, setUploadPercent] = useState<Record<string, number>>({});
   const [ownerApprovalAcknowledged, setOwnerApprovalAcknowledged] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ message: string; error: boolean } | null>(null);
   const [connections, setConnections] = useState<{ platform: string; displayName: string; status: string; expiresAt: string | null }[]>([]);
@@ -122,6 +123,74 @@ export function SocialContentStudio() {
       setFeedback({ message: error instanceof Error ? error.message : "Upload failed", error: true });
     } finally { setBusy(false); }
   }
+  async function uploadVideo(post: Draft, variant: Variant, file?: File) {
+    if (!file) return;
+    if (!["video/mp4", "video/webm"].includes(file.type) || file.size > 512 * 1024 * 1024) {
+      setFeedback({ message: "Select an MP4 or WebM video under 512 MiB.", error: true }); return;
+    }
+    setBusy(true); setFeedback(null);
+    let authToken: string | null = null;
+    const endpoint = "/api/employee/social/posts/" + encodeURIComponent(post.id) + "/video";
+    try {
+      const begin = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ variantId: variant.id, revision: variant.revision, size: file.size, type: file.type, name: file.name }) });
+      const session = await begin.json();
+      if (!begin.ok) throw new Error(session.error ?? "Unable to prepare video upload");
+      authToken = session.token;
+      const partSize: number = session.partSize;
+      const urls: { number: number; url: string }[] = session.parts;
+      if (!authToken || !Number.isInteger(partSize) || !Array.isArray(urls) || urls.length === 0) throw new Error("Invalid upload session");
+      const uploaded: { number: number; etag: string }[] = [];
+      let next = 0;
+      async function worker() {
+        while (next < urls.length) {
+          const entry = urls[next++];
+          if (!entry) return;
+          const start = (entry.number - 1) * partSize;
+          const chunk = file.slice(start, Math.min(file.size, start + partSize), "");
+          let url = entry.url;
+          let etag = "";
+          for (let attempt = 0; attempt < 3; attempt++) {
+            try {
+              const response = await fetch(url, { method: "PUT", body: chunk, cache: "no-store" });
+              if (response.ok) {
+                etag = response.headers.get("ETag") ?? "";
+                if (!etag) throw new Error("R2 CORS must expose the ETag header");
+                break;
+              }
+              if (response.status === 403) {
+                const renewed = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ token: authToken, parts: [entry.number] }) });
+                const data = await renewed.json();
+                if (renewed.ok && data.parts?.[0]?.url) url = data.parts[0].url;
+              }
+              if (attempt === 2) throw new Error("R2 rejected video part " + entry.number + " (" + response.status + ")");
+            } catch (error) {
+              if (attempt === 2) throw error;
+            }
+          }
+          if (!etag) throw new Error("Video part " + entry.number + " did not return an ETag");
+          uploaded.push({ number: entry.number, etag });
+          setUploadPercent(current => ({ ...current, [variant.id]: Math.round(uploaded.length / urls.length * 100) }));
+        }
+      }
+      await Promise.all(Array.from({ length: Math.min(4, urls.length) }, () => worker()));
+      uploaded.sort((a, b) => a.number - b.number);
+      const done = await fetch(endpoint, { method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: authToken, parts: uploaded, name: file.name }) });
+      const data = await done.json();
+      if (!done.ok) throw new Error(data.error ?? "Video could not be verified");
+      authToken = null;
+      await refresh();
+      setFeedback({ message: "Video attached to this draft. Previous approvals are invalidated.", error: false });
+    } catch (error) {
+      if (authToken) await fetch(endpoint, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: authToken }) }).catch(() => {});
+      setFeedback({ message: error instanceof Error ? error.message : "Video upload failed", error: true });
+    } finally {
+      setBusy(false);
+      setUploadPercent(current => { const copy = { ...current }; delete copy[variant.id]; return copy; });
+    }
+  }
   async function removeImage(post: Draft, variant: Variant, media: Media) {
     if (!window.confirm("Remove this image from the " + variant.platform + " draft?")) return;
     setBusy(true); setFeedback(null);
@@ -150,15 +219,20 @@ export function SocialContentStudio() {
       {Array.isArray(variant.media) && variant.media.length > 0 && <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 12 }}>
         {variant.media.map(image => <div key={image.key} style={{ maxWidth: 118 }}>
           {/* Media can only be fetched through our authenticated workspace-specific endpoint. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imageUrl(post, variant, image)} alt={image.name || "Draft media"} loading="lazy" style={{ width: 112, height: 90, objectFit: "cover", borderRadius: 8, border: "1px solid #ddd" }}/>
+          {image.type.startsWith("video/") ? <video src={imageUrl(post, variant, image)} controls preload="metadata" style={{ width: 170, maxWidth: "100%", borderRadius: 8 }} /> :
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={imageUrl(post, variant, image)} alt={image.name || "Draft media"} loading="lazy" style={{ width: 112, height: 90, objectFit: "cover", borderRadius: 8, border: "1px solid #ddd" }}/>} 
           <p className={styles.meta} style={{ overflowWrap: "anywhere" }}>{image.name}</p>
-          {["draft", "changes_requested"].includes(variant.status) && <button type="button" className={styles.secondary} disabled={busy} onClick={() => removeImage(post, variant, image)}>Remove image</button>}
+          {["draft", "changes_requested"].includes(variant.status) && <button type="button" className={styles.secondary} disabled={busy} onClick={() => removeImage(post, variant, image)}>Remove media</button>}
         </div>)}
       </div>}
       {["draft", "changes_requested"].includes(variant.status) && (!Array.isArray(variant.media) || variant.media.length < 4) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>Add image (JPG, PNG or WebP, max 3 MB)
         <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e => { void uploadImage(post, variant, e.target.files?.[0]); e.target.value = ""; }} />
+      </label>
+      {["draft", "changes_requested"].includes(variant.status) && !(variant.media ?? []).some(m => m.type.startsWith("video/")) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>Add video (MP4 or WebM, up to 512 MiB)
+        <input type="file" accept="video/mp4,video/webm" disabled={busy} onChange={e => { void uploadVideo(post, variant, e.target.files?.[0]); e.target.value = ""; }} />
       </label>}
+      {typeof uploadPercent[variant.id] === "number" && <p className={styles.meta} role="status">Uploading video: {uploadPercent[variant.id]}%</p>}}
       <p className={styles.meta}>Revision {variant.revision}{variant.scheduledAt ? " · Proposed: " + new Date(variant.scheduledAt).toLocaleString() : ""}</p>
       <div className={styles.actions}>
         {variant.status === "draft" && <>
@@ -230,7 +304,7 @@ export function SocialContentStudio() {
             <button disabled={busy || !platforms.length} type="submit" className={styles.primary}>{busy ? "Saving..." : editing ? "Save edits" : "Save drafts"}</button>
             {editing && <button type="button" className={styles.secondary} onClick={resetEditor}>Cancel edit</button>}
           </div>
-          <p className={styles.meta}>Save a draft first, then attach images to an individual platform version. Preview uploads require a separate storage feature flag. Video uploads are not enabled.</p>
+          <p className={styles.meta}>Save a draft first, then attach images or videos to an individual platform version. Media changes invalidate prior approvals.</p>
         </form>
       </section>
       <section className={styles.panel}>
