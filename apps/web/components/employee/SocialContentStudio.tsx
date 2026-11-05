@@ -128,6 +128,7 @@ export function SocialContentStudio() {
     if (!["video/mp4", "video/webm"].includes(file.type) || file.size > 512 * 1024 * 1024) {
       setFeedback({ message: "Select an MP4 or WebM video under 512 MiB.", error: true }); return;
     }
+    const videoFile = file;
     setBusy(true); setFeedback(null);
     let authToken: string | null = null;
     const endpoint = "/api/employee/social/posts/" + encodeURIComponent(post.id) + "/video";
@@ -147,7 +148,7 @@ export function SocialContentStudio() {
           const entry = urls[next++];
           if (!entry) return;
           const start = (entry.number - 1) * partSize;
-          const chunk = file.slice(start, Math.min(file.size, start + partSize), "");
+          const chunk = videoFile.slice(start, Math.min(videoFile.size, start + partSize), "");
           let url = entry.url;
           let etag = "";
           for (let attempt = 0; attempt < 3; attempt++) {
