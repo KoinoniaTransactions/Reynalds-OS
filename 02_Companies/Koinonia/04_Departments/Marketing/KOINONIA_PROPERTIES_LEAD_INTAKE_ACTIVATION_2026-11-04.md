@@ -35,3 +35,17 @@ The requested instant rent range is a separate product capability requiring lice
 ## Review gates
 
 Build, source checks and protected preview deployment are technical gates only. They do not demonstrate end-to-end delivery without real environment configuration and an authorized test inbox. Production/marketing activation needs separate explicit approval.
+
+
+## Google Workspace identity decision — owner approval, 2026-11-04
+
+Owner confirmed Koinonia already uses one existing Google Workspace for Koinonia Admin and Koinonia Transactions and wants Koinonia Properties public mail at the Properties domain. **Recommended**: add `koinoniaproperties.com` as a secondary domain in that existing Workspace, then create recipient aliases/Groups as appropriate rather than creating a new Workspace tenant. Proposed public identities pending Workspace setup and routing tests:
+
+- `hello@koinoniaproperties.com` — general.
+- `management@koinoniaproperties.com` — owner prospects.
+- `realestate@koinoniaproperties.com` — buyers and sellers.
+- `notifications@koinoniaproperties.com` — automated from address; must be verified with Resend before first send.
+
+**Provider/admin access not established by GitHub, Vercel, Gmail mailbox or Drive connectors.** Workspace Admin and Cloudflare zone changes have NOT been made. Do not claim these mailboxes or aliases already exist. Do not add records to unrelated Admin/Transactions DNS zones. DNS sequence for Properties: verify domain ownership in Google Admin, add provider-issued Google MX to Properties only, set SPF, Google DKIM and DMARC, and verify incoming/outgoing test mail. Preserve web A/CNAME and active Vercel domains. For automated Resend mail, register/verify Properties sending domain using provider-issued records without replacing Google MX, then configure a Properties-scoped API key and sender/recipient in Vercel. Cloudflare Turnstile key/hostname and end-to-end test are independent requirements; activation flags stay off until all are verified. Proposed alias names are an initial operating plan and require final owner approval before public posting.
+
+Official references: https://support.google.com/a/answer/7502379 ; https://developers.cloudflare.com/dns/manage-dns-records/how-to/set-up-google-workspace/ ; https://resend.com/docs/dashboard/domains/introduction
