@@ -24,3 +24,4 @@ CREATE TABLE "SocialAuthorization" (
 CREATE UNIQUE INDEX "SocialAuthorization_nonceHash_key" ON "SocialAuthorization"("nonceHash");
 CREATE INDEX "SocialAuthorization_workspaceId_platform_idx" ON "SocialAuthorization"("workspaceId","platform");
 CREATE INDEX "SocialAuthorization_expiresAt_idx" ON "SocialAuthorization"("expiresAt");
+ALTER TABLE "SocialConnectionVault" ADD CONSTRAINT "SocialConnectionVault_connectionId_fkey" FOREIGN KEY ("connectionId") REFERENCES "SocialChannelConnection"("id") ON DELETE CASCADE ON UPDATE CASCADE;
