@@ -1,5 +1,5 @@
 import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
-import { AbortMultipartUploadCommand, CompleteMultipartUploadCommand, CreateMultipartUploadCommand, DeleteObjectCommand, GetObjectCommand, HeadObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { AbortMultipartUploadCommand, CompleteMultipartUploadCommand, CreateMultipartUploadCommand, DeleteObjectCommand, GetObjectCommand, HeadObjectCommand, ListPartsCommand, S3Client } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { assertPermission, getAuthProvider } from "../../../../../../../lib/auth";
 import { getAuthErrorResponse } from "../../../../../../../lib/api-auth";
@@ -80,6 +80,24 @@ export async function POST(request: Request, { params }: Context) {
     const renewal = typeof body.token === "string" ? verifyToken(body.token, c.secretAccessKey) : null;
     if (renewal) {
       if (!scoped(renewal, actor, id) || !await draft(actor.workspaceId, id, renewal.variantId, renewal.revision)) return NextResponse.json({ error: "Upload no longer authorized" }, { status: 409 });
+      if (body.resume === true) {
+        const uploaded: { number: number; etag: string }[] = [];
+        let cursor: number | undefined;
+        do {
+          const found = await c.client.send(new ListPartsCommand({
+            Bucket: c.bucket, Key: renewal.key, UploadId: renewal.uploadId, PartNumberMarker: cursor
+          }));
+          for (const part of found.Parts ?? []) {
+            if (part.PartNumber && part.ETag && part.PartNumber >= 1 && part.PartNumber <= renewal.partCount) {
+              uploaded.push({ number: part.PartNumber, etag: part.ETag });
+            }
+          }
+          cursor = found.IsTruncated ? found.NextPartNumberMarker : undefined;
+          if (found.IsTruncated && !cursor) throw new Error("Unable to paginate uploaded parts");
+        } while (cursor);
+        const pending = Array.from({ length: renewal.partCount }, (_, i) => i + 1).filter(n => !uploaded.some(p => p.number === n));
+        return NextResponse.json({ uploaded, parts: signParts(renewal, c, pending), partSize: CHUNK, size: renewal.size, type: renewal.type, revision: renewal.revision }, { headers: { "Cache-Control": "no-store" } });
+      }
       const requested = Array.isArray(body.parts) ? body.parts : [];
       if (requested.length < 1 || requested.length > renewal.partCount || !requested.every(n => Number.isSafeInteger(n) && n >= 1 && n <= renewal.partCount)) return NextResponse.json({ error: "Invalid part numbers" }, { status: 400 });
       return NextResponse.json({ parts: signParts(renewal, c, requested as number[]) }, { headers: { "Cache-Control": "no-store" } });
