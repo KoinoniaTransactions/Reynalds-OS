@@ -26,6 +26,7 @@ export function SocialContentStudio() {
   const [ownerApprovalAcknowledged, setOwnerApprovalAcknowledged] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ message: string; error: boolean } | null>(null);
   const [connections, setConnections] = useState<{ platform: string; displayName: string; status: string; expiresAt: string | null }[]>([]);
+  const [providerReadiness, setProviderReadiness] = useState<{platform:string;label:string;configured:boolean;missingSettings:string[];portal:string;capabilities:string[]}[]>([]);
   const [storageCors, setStorageCors] = useState<{ configured: boolean; canConfigure: boolean; canVerify?: boolean; origin: string; error?: string } | null>(null);
 
   async function refresh() {
@@ -58,6 +59,8 @@ export function SocialContentStudio() {
         const accountData = await accountResponse.json();
         setConnections(accountData.channels ?? []);
       }
+      const status = await fetch("/api/employee/social/providers", { cache: "no-store" });
+      if (status.ok) { const data = await status.json(); setProviderReadiness(data.providers ?? []); }
     } catch (e) {
       setFeedback({ message: e instanceof Error ? e.message : "Unable to load Content Studio", error: true });
     }
@@ -461,9 +464,10 @@ export function SocialContentStudio() {
       <p className={styles.meta}>Read-only connection status. No OAuth credentials or posting permissions are configured through this screen.</p>
       <div className={styles.items}>{platformNames.map(p => {
         const entries = connections.filter(c => c.platform === p);
+        const readiness = providerReadiness.find(item => item.platform === p);
         return <div key={p} className={styles.post}><div className={styles.posthead}>
           <strong style={{ textTransform: "capitalize" }}>{p}</strong><span className={styles.pill}>{entries.length ? entries[0].status : "Not connected"}</span>
-        </div>{entries.map(c => <p className={styles.meta} key={c.displayName}>{c.displayName}{c.expiresAt ? " · Expires " + new Date(c.expiresAt).toLocaleDateString() : ""}</p>)}</div>;
+        </div>{entries.map(c => <p className={styles.meta} key={c.displayName}>{c.displayName}{c.expiresAt ? " · Expires " + new Date(c.expiresAt).toLocaleDateString() : ""}</p>)} {readiness && <div style={{ marginTop: 12 }}><p className={styles.meta}>{readiness.configured ? "Developer app settings detected; OAuth authorization still needs implementation." : "Developer app configuration is required before connection."}</p> {!readiness.configured && <p className={styles.meta}>Missing settings: {readiness.missingSettings.join(", ")}</p>} <p className={styles.meta}>Capabilities: {readiness.capabilities.join(" · ")}</p> <a href={readiness.portal} target="_blank" rel="noopener noreferrer">Open {readiness.label} developer portal</a></div>}</div>;
       })}</div>
     </section>}
   </main>;
