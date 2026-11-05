@@ -55,7 +55,7 @@ export function SocialContentStudio() {
     setEditing(null); setTitle(""); setCaption(""); setPlatforms(["facebook"]);
   }
   function beginEdit(post: Draft, variant: Variant) {
-    if (variant.status !== "draft" || post.status !== "draft") return;
+    if (!["draft", "changes_requested"].includes(variant.status) || post.status !== "draft") return;
     setEditing({ postId: post.id, variantId: variant.id, revision: variant.revision, platform: variant.platform as Platform });
     setTitle(post.title); setCaption(variant.caption); setPlatforms([variant.platform as Platform]);
     setPage("drafts"); window.scrollTo({ top: 0, behavior: "smooth" });
@@ -153,10 +153,10 @@ export function SocialContentStudio() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={imageUrl(post, variant, image)} alt={image.name || "Draft media"} loading="lazy" style={{ width: 112, height: 90, objectFit: "cover", borderRadius: 8, border: "1px solid #ddd" }}/>
           <p className={styles.meta} style={{ overflowWrap: "anywhere" }}>{image.name}</p>
-          {variant.status === "draft" && <button type="button" className={styles.secondary} disabled={busy} onClick={() => removeImage(post, variant, image)}>Remove image</button>}
+          {["draft", "changes_requested"].includes(variant.status) && <button type="button" className={styles.secondary} disabled={busy} onClick={() => removeImage(post, variant, image)}>Remove image</button>}
         </div>)}
       </div>}
-      {variant.status === "draft" && (!Array.isArray(variant.media) || variant.media.length < 4) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>Add image (JPG, PNG or WebP, max 3 MB)
+      {["draft", "changes_requested"].includes(variant.status) && (!Array.isArray(variant.media) || variant.media.length < 4) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>Add image (JPG, PNG or WebP, max 3 MB)
         <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e => { void uploadImage(post, variant, e.target.files?.[0]); e.target.value = ""; }} />
       </label>}
       <p className={styles.meta}>Revision {variant.revision}{variant.scheduledAt ? " · Proposed: " + new Date(variant.scheduledAt).toLocaleString() : ""}</p>
@@ -170,8 +170,10 @@ export function SocialContentStudio() {
           <button type="button" disabled={busy} className={styles.secondary} onClick={() => action(post, variant, "approve")}>Approve</button>
           <button type="button" disabled={busy} className={styles.secondary} onClick={() => action(post, variant, "request_changes")}>Request changes</button>
         </>}
-        {variant.status === "changes_requested" &&
-          <button type="button" disabled={busy} className={styles.secondary} onClick={() => action(post, variant, "return_to_draft")}>Return to draft</button>}
+        {variant.status === "changes_requested" && <>
+          <button type="button" disabled={busy} className={styles.secondary} onClick={() => beginEdit(post, variant)}>Edit requested changes</button>
+          <button type="button" disabled={busy} className={styles.secondary} onClick={() => action(post, variant, "return_to_draft")}>Return to draft</button>
+        </>}
       </div>
       {variant.status === "approved" && <div>
         <label className={styles.field} htmlFor={"date-" + variant.id}>Proposed publishing date (planning only)</label>
