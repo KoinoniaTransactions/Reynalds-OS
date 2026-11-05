@@ -265,20 +265,6 @@ export function SocialContentStudio() {
               await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
             }
           }
-          if (!etag) throw new Error("R2 must expose the ETag header through CORS");
-                break;
-              }
-              if (response.status === 403) {
-                const renewal = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ token, parts: [entry.number] }), signal: abort.signal });
-                const data = await renewal.json();
-                if (renewal.ok && data.parts?.[0]?.url) url = data.parts[0].url;
-              }
-              if (attempt === 2) throw new Error("Storage rejected part " + entry.number + " (" + response.status + ")");
-            } catch (error) {
-              if (abort.signal.aborted || attempt === 2) throw error;
-            }
-          }
           if (!etag) throw new Error("Missing storage receipt for video part " + entry.number);
           uploaded.push({ number: entry.number, etag });
           setUploadPercent(current => ({ ...current, [variant.id]: Math.round(uploaded.length / totalParts * 100) }));
