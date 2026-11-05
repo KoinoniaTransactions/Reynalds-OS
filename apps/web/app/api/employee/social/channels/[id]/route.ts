@@ -18,7 +18,7 @@ export async function DELETE(request: Request, { params }: Context) {
     if (!current) return NextResponse.json({ error: "Social account not found" }, { status: 404 });
     await prisma.$transaction(async tx => {
       await tx.socialConnectionVault.deleteMany({ where: { connectionId: id, workspaceId: actor.workspaceId } });
-      await tx.socialChannelConnection.update({ where: { id }, data: { status: "disconnected", scopes: null, expiresAt: null } });
+      await tx.socialChannelConnection.update({ where: { id }, data: { status: "disconnected", expiresAt: null } });
       await tx.auditEvent.create({ data: { workspaceId: actor.workspaceId, actorId: actor.id,
         action: "social.oauth.local_disconnected", subjectType: "SocialChannelConnection", subjectId: id,
         summary: "Encrypted social authorization removed from Koinonia. Provider-side authorization must be revoked separately.",
