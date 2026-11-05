@@ -25,6 +25,7 @@ export function presignR2Object(input: {
   contentType?: string;
   expiresSeconds?: number;
   now?: Date;
+  operationQuery?: Record<string, string>;
 }): string {
   const expiresSeconds = input.expiresSeconds ?? 300;
   if (!Number.isSafeInteger(expiresSeconds) || expiresSeconds < 1 || expiresSeconds > 900) throw new Error("Invalid URL lifetime");
@@ -44,6 +45,10 @@ export function presignR2Object(input: {
     "X-Amz-SignedHeaders": signedHeaders,
     "X-Amz-Content-Sha256": "UNSIGNED-PAYLOAD"
   };
+  for (const [queryKey, queryValue] of Object.entries(input.operationQuery ?? {})) {
+    if (!["partNumber", "uploadId"].includes(queryKey) || !queryValue) throw new Error("Unsupported upload operation");
+    params[queryKey] = queryValue;
+  }
   const query = canonicalQuery(params);
   const canonical = [input.method, path, query, headers, signedHeaders, "UNSIGNED-PAYLOAD"].join("\n");
   const stringToSign = ["AWS4-HMAC-SHA256", date, scope, sha256(canonical)].join("\n");
