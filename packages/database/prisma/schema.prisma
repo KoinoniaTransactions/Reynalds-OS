@@ -335,6 +335,21 @@ model SocialChannelConnection {
   @@index([workspaceId, status])
 }
 
+model SocialAuthorization {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  actorId      String
+  platform     String
+  nonceHash    String   @unique
+  payload      String?  @db.Text
+  status       String   @default("pending")
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@index([workspaceId, platform])
+  @@index([expiresAt])
+}
+
 model SocialPost {
   id          String   @id @default(cuid())
   workspaceId String
