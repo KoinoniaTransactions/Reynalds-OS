@@ -228,11 +228,11 @@ export function SocialContentStudio() {
       </div>}
       {["draft", "changes_requested"].includes(variant.status) && (!Array.isArray(variant.media) || variant.media.length < 4) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>Add image (JPG, PNG or WebP, max 3 MB)
         <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e => { void uploadImage(post, variant, e.target.files?.[0]); e.target.value = ""; }} />
-      </label>
+      </label>}
       {["draft", "changes_requested"].includes(variant.status) && !(variant.media ?? []).some(m => m.type.startsWith("video/")) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>Add video (MP4 or WebM, up to 512 MiB)
         <input type="file" accept="video/mp4,video/webm" disabled={busy} onChange={e => { void uploadVideo(post, variant, e.target.files?.[0]); e.target.value = ""; }} />
       </label>}
-      {typeof uploadPercent[variant.id] === "number" && <p className={styles.meta} role="status">Uploading video: {uploadPercent[variant.id]}%</p>}}
+      {typeof uploadPercent[variant.id] === "number" && <p className={styles.meta} role="status">Uploading video: {uploadPercent[variant.id]}%</p>}
       <p className={styles.meta}>Revision {variant.revision}{variant.scheduledAt ? " · Proposed: " + new Date(variant.scheduledAt).toLocaleString() : ""}</p>
       <div className={styles.actions}>
         {variant.status === "draft" && <>
