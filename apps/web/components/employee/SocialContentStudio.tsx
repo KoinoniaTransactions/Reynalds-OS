@@ -5,7 +5,8 @@ import styles from "./SocialContentStudio.module.css";
 
 const platformNames = ["facebook", "instagram", "tiktok", "linkedin"] as const;
 type Platform = (typeof platformNames)[number];
-type Variant = { id: string; platform: string; caption: string; status: string; revision: number; scheduledAt: string | null; media?: unknown };
+type Media = { key: string; type: string; size: number; name: string };
+type Variant = { id: string; platform: string; caption: string; status: string; revision: number; scheduledAt: string | null; media?: Media[] | null };
 type Draft = { id: string; title: string; status: string; campaignKey: string | null; createdAt: string; variants: Variant[] };
 type Page = "drafts" | "review" | "calendar" | "accounts";
 
@@ -121,6 +122,24 @@ export function SocialContentStudio() {
       setFeedback({ message: error instanceof Error ? error.message : "Upload failed", error: true });
     } finally { setBusy(false); }
   }
+  async function removeImage(post: Draft, variant: Variant, media: Media) {
+    if (!window.confirm("Remove this image from the " + variant.platform + " draft?")) return;
+    setBusy(true); setFeedback(null);
+    try {
+      const response = await fetch("/api/employee/social/posts/" + encodeURIComponent(post.id) + "/media", {
+        method: "DELETE", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ variantId: variant.id, revision: variant.revision, key: media.key })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Unable to remove image");
+      await refresh();
+      setFeedback({ message: data.storageCleanupPending ? "Attachment removed; storage cleanup has been flagged for follow-up." : "Image removed from this draft. Revision updated.", error: Boolean(data.storageCleanupPending) });
+    } catch (error) { setFeedback({ message: error instanceof Error ? error.message : "Unable to remove image", error: true }); }
+    finally { setBusy(false); }
+  }
+  function imageUrl(post: Draft, variant: Variant, media: Media) {
+    return "/api/employee/social/posts/" + encodeURIComponent(post.id) + "/media?variantId=" + encodeURIComponent(variant.id) + "&key=" + encodeURIComponent(media.key);
+  }
   function variantCard(post: Draft, variant: Variant) {
     return <div key={variant.id} className={styles.variant}>
       <div className={styles.posthead}>
@@ -128,8 +147,16 @@ export function SocialContentStudio() {
         <span className={styles.pill}>{variant.status.replaceAll("_", " ")}</span>
       </div>
       <p>{variant.caption}</p>
-      {Array.isArray(variant.media) && <p className={styles.meta}>{variant.media.length} images attached</p>}
-      {variant.status === "draft" && <label className={styles.choice}>Add image (Preview only, max 3 MB)
+      {Array.isArray(variant.media) && variant.media.length > 0 && <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 12 }}>
+        {variant.media.map(image => <div key={image.key} style={{ maxWidth: 118 }}>
+          {/* Media can only be fetched through our authenticated workspace-specific endpoint. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={imageUrl(post, variant, image)} alt={image.name || "Draft media"} loading="lazy" style={{ width: 112, height: 90, objectFit: "cover", borderRadius: 8, border: "1px solid #ddd" }}/>
+          <p className={styles.meta} style={{ overflowWrap: "anywhere" }}>{image.name}</p>
+          {variant.status === "draft" && <button type="button" className={styles.secondary} disabled={busy} onClick={() => removeImage(post, variant, image)}>Remove image</button>}
+        </div>)}
+      </div>}
+      {variant.status === "draft" && (!Array.isArray(variant.media) || variant.media.length < 4) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>Add image (JPG, PNG or WebP, max 3 MB)
         <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e => { void uploadImage(post, variant, e.target.files?.[0]); e.target.value = ""; }} />
       </label>}
       <p className={styles.meta}>Revision {variant.revision}{variant.scheduledAt ? " · Proposed: " + new Date(variant.scheduledAt).toLocaleString() : ""}</p>
