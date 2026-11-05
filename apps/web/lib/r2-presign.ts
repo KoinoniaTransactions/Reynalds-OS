@@ -10,7 +10,7 @@ function encode(value: string) {
   return encodeURIComponent(value).replace(/[!'()*]/g, char => "%" + char.charCodeAt(0).toString(16).toUpperCase());
 }
 function canonicalQuery(params: Record<string, string>) {
-  return Object.entries(params).sort(([a], [b]) => a.localeCompare(b, "en")).map(([key, value]) => encode(key) + "=" + encode(value)).join("&");
+  return Object.entries(params).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0).map(([key, value]) => encode(key) + "=" + encode(value)).join("&");
 }
 /** Standard SigV4 query authorization for a single R2 object and operation.
  * Never sign arbitrary user-provided bucket or object paths. Callers must construct private scoped keys.
