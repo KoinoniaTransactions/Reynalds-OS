@@ -89,7 +89,7 @@ export async function POST(request: Request, { params }: Context) {
     const size = body.size;
     const type = body.type;
     const name = typeof body.name === "string" ? body.name.slice(0, 120) : "";
-    if (!Number.isSafeInteger(revision) || (revision as number) < 1 || !Number.isSafeInteger(size) || (size as number) < 1 || (size as number) > MAX_BYTES || !["video/mp4", "video/webm"].includes(type) || !name) return NextResponse.json({ error: "Only MP4 or WebM video, maximum 512 MiB" }, { status: 400 });
+    if (!Number.isSafeInteger(revision) || (revision as number) < 1 || !Number.isSafeInteger(size) || (size as number) < 1 || (size as number) > MAX_BYTES || !(typeof type === "string" && ["video/mp4", "video/webm"].includes(type)) || !name) return NextResponse.json({ error: "Only MP4 or WebM video, maximum 512 MiB" }, { status: 400 });
     const variant = await draft(actor.workspaceId, id, variantId, revision as number);
     if (!variant) return NextResponse.json({ error: "Draft changed; refresh" }, { status: 409 });
     if (socialMediaImages(variant.media).some(file => file.type.startsWith("video/"))) return NextResponse.json({ error: "Only one video per platform version" }, { status: 409 });
