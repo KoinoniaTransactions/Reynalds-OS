@@ -25,10 +25,23 @@ export function SocialContentStudio() {
   const videoAbortRef = useRef<AbortController | null>(null);
   const [ownerApprovalAcknowledged, setOwnerApprovalAcknowledged] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ message: string; error: boolean } | null>(null);
-  const [connections, setConnections] = useState<{ platform: string; displayName: string; status: string; expiresAt: string | null }[]>([]);
+  const [connections, setConnections] = useState<{ id: string; platform: string; displayName: string; status: string; expiresAt: string | null }[]>([]);
   const [providerReadiness, setProviderReadiness] = useState<{platform:string;label:string;configured:boolean;connectEnabled?:boolean;missingSettings:string[];portal:string;capabilities:string[]}[]>([]);
   const [storageCors, setStorageCors] = useState<{ configured: boolean; canConfigure: boolean; canVerify?: boolean; origin: string; error?: string } | null>(null);
 
+  async function disconnectAccount(id: string, name: string) {
+    if (!window.confirm("Disconnect " + name + " from Koinonia? Stored credentials will be permanently removed. To revoke the original Meta grant, also remove it in Meta Business Integrations.")) return;
+    setBusy(true); setFeedback(null);
+    try {
+      const response = await fetch("/api/employee/social/channels/" + encodeURIComponent(id), { method: "DELETE" });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? "Disconnect failed");
+      await refresh();
+      setFeedback({ message: "Account disconnected locally; encrypted credentials removed. Revoke external authorization separately in Meta if needed.", error: false });
+    } catch(error) {
+      setFeedback({ message: error instanceof Error ? error.message : "Disconnect failed", error: true });
+    } finally { setBusy(false); }
+  }
   async function connectMeta() {
     if (!window.confirm("Authorize Koinonia Social Engine to access the Facebook Pages and Instagram accounts you select in Meta? This does not enable publishing.")) return;
     setBusy(true); setFeedback(null);
@@ -489,7 +502,7 @@ export function SocialContentStudio() {
         const readiness = providerReadiness.find(item => item.platform === p);
         return <div key={p} className={styles.post}><div className={styles.posthead}>
           <strong style={{ textTransform: "capitalize" }}>{p}</strong><span className={styles.pill}>{entries.length ? entries[0].status : "Not connected"}</span>
-        </div>{entries.map(c => <p className={styles.meta} key={c.displayName}>{c.displayName}{c.expiresAt ? " · Expires " + new Date(c.expiresAt).toLocaleDateString() : ""}</p>)} {readiness && <div style={{ marginTop: 12 }}><p className={styles.meta}>{readiness.configured ? "Developer app and secure Meta connection are configured. You can authorize the business assets." : "Developer app configuration is required before connection."}</p> {!readiness.configured && <p className={styles.meta}>Missing settings: {readiness.missingSettings.join(", ")}</p>} <p className={styles.meta}>Capabilities: {readiness.capabilities.join(" · ")}</p> <a href={readiness.portal} target="_blank" rel="noopener noreferrer">Open {readiness.label} developer portal</a> {readiness.connectEnabled && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void connectMeta()}>Connect with Meta</button>}</div>}</div>;
+        </div>{entries.map(c => <div key={c.id}><p className={styles.meta}>{c.displayName}{c.expiresAt ? " · Expires " + new Date(c.expiresAt).toLocaleDateString() : ""}</p>{c.status !== "disconnected" && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void disconnectAccount(c.id, c.displayName)}>Disconnect account</button>}</div>)} {readiness && <div style={{ marginTop: 12 }}><p className={styles.meta}>{readiness.configured ? "Developer app and secure Meta connection are configured. You can authorize the business assets." : "Developer app configuration is required before connection."}</p> {!readiness.configured && <p className={styles.meta}>Missing settings: {readiness.missingSettings.join(", ")}</p>} <p className={styles.meta}>Capabilities: {readiness.capabilities.join(" · ")}</p> <a href={readiness.portal} target="_blank" rel="noopener noreferrer">Open {readiness.label} developer portal</a> {readiness.connectEnabled && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void connectMeta()}>Connect with Meta</button>}</div>}</div>;
       })}</div>
     </section>}
   </main>;
