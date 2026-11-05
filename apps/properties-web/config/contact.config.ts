@@ -1,7 +1,7 @@
 export const contactConfig = {
   businessName: "Koinonia Properties",
   displayName: "Koinonia Properties",
-  email: "jeremiah@koinoniaadmin.com",
+  email: "hello@koinoniaproperties.com",
   phone: {
     display: "(719) 745-8497",
     href: "tel:+17197458497"
