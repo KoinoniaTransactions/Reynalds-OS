@@ -80,13 +80,13 @@ export function SocialContentStudio() {
       const result = await response.json();
       if (!response.ok || result.configured !== true) throw new Error(result.error ?? "Unable to configure Preview CORS");
       await refreshStorageCors();
-      setFeedback({ message: "Preview browser upload origin configured. Existing bucket rules were preserved.", error: false });
+      await checkPrivateStorage(true);
     } catch (error) {
       setFeedback({ message: error instanceof Error ? error.message : "Unable to configure storage", error: true });
     } finally { setBusy(false); }
   }
-  async function checkPrivateStorage() {
-    if (!window.confirm("Run a private test upload to Koinonia R2? The test file is deleted after verification. No social content will be published.")) return;
+  async function checkPrivateStorage(skipConfirm = false) {
+    if (!skipConfirm && !window.confirm("Run a private test upload to Koinonia R2? The test file is deleted after verification. No social content will be published.")) return;
     setBusy(true); setFeedback(null);
     try {
       const response = await fetch("/api/employee/social/storage-check", {
@@ -467,7 +467,7 @@ export function SocialContentStudio() {
         <p className={styles.meta}>Browser uploads require a restricted R2 CORS rule for this stable development-branch URL. Existing bucket rules will be preserved.</p>
         {storageCors?.error ? <p className={styles.meta}>{storageCors.error}</p> : <>
           <p className={styles.meta}>{storageCors?.configured ? "Preview browser access configured" : "Preview browser access not configured"} · {storageCors?.origin ?? "Checking..."}</p>
-          {storageCors?.canConfigure && !storageCors.configured && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void configureStorageCors()}>Enable Preview browser uploads</button>}
+          {storageCors?.canConfigure && !storageCors.configured && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void configureStorageCors()}>Configure and verify Preview uploads</button>}
           <button type="button" className={styles.secondary} disabled={busy} onClick={() => void refreshStorageCors()}>Recheck storage</button>
           {storageCors?.canConfigure && <button type="button" className={styles.secondary} disabled={busy || !storageCors.configured} onClick={() => void checkPrivateStorage()}>Verify R2 upload, CORS and cleanup</button>}
         </>}
