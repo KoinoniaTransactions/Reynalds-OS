@@ -150,73 +150,103 @@ export function SocialContentStudio() {
   }
   async function uploadVideo(post: Draft, variant: Variant, file?: File) {
     if (!file) return;
-    if (!["video/mp4", "video/webm"].includes(file.type) || file.size > 512 * 1024 * 1024) {
-      setFeedback({ message: "Select an MP4 or WebM video under 512 MiB.", error: true }); return;
+    if (!["video/mp4", "video/webm"].includes(file.type) || file.size < 1 || file.size > 512 * 1024 * 1024) {
+      setFeedback({ message: "Select an MP4 or WebM video up to 512 MiB.", error: true }); return;
     }
-    const videoFile = file;
     setBusy(true); setFeedback(null);
-    let authToken: string | null = null;
     const abort = new AbortController();
     videoAbortRef.current = abort;
     const endpoint = "/api/employee/social/posts/" + encodeURIComponent(post.id) + "/video";
+    const storageKey = "koinonia-video-upload:" + post.id + ":" + variant.id;
+    const fingerprint = [file.name, file.size, file.type, file.lastModified, variant.revision].join("|");
+    let token: string | null = null;
+    let completed = false;
+    let canceled = false;
     try {
-      const begin = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ variantId: variant.id, revision: variant.revision, size: file.size, type: file.type, name: file.name }) });
-      const session = await begin.json();
-      if (!begin.ok) throw new Error(session.error ?? "Unable to prepare video upload");
-      authToken = session.token;
-      const partSize: number = session.partSize;
-      const urls: { number: number; url: string }[] = session.parts;
-      if (!authToken || !Number.isInteger(partSize) || !Array.isArray(urls) || urls.length === 0) throw new Error("Invalid upload session");
-      const uploaded: { number: number; etag: string }[] = [];
+      const stored = localStorage.getItem(storageKey);
+      let recovered: { token: string; fingerprint: string } | null = null;
+      if (stored) {
+        try { recovered = JSON.parse(stored); } catch { localStorage.removeItem(storageKey); }
+      }
+      let session: { token?: string; partSize: number; parts: { number: number; url: string }[]; uploaded?: { number: number; etag: string }[] };
+      if (recovered?.fingerprint === fingerprint && typeof recovered.token === "string") {
+        const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: recovered.token, resume: true }), signal: abort.signal });
+        if (response.ok) {
+          session = await response.json();
+          token = recovered.token;
+        } else {
+          localStorage.removeItem(storageKey);
+          recovered = null;
+        }
+      }
+      if (!token) {
+        const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ variantId: variant.id, revision: variant.revision, size: file.size, type: file.type, name: file.name }), signal: abort.signal });
+        session = await response.json();
+        if (!response.ok) throw new Error((session as { error?: string }).error ?? "Unable to prepare video upload");
+        token = session.token ?? null;
+        if (!token) throw new Error("Missing secure upload authorization");
+        localStorage.setItem(storageKey, JSON.stringify({ token, fingerprint }));
+      }
+      const partSize = session!.partSize;
+      const urls = session!.parts;
+      const uploaded = [...(session!.uploaded ?? [])];
+      const totalParts = Math.ceil(file.size / partSize);
+      if (!Number.isInteger(partSize) || partSize < 5 * 1024 * 1024 || !Array.isArray(urls) || totalParts < 1 ||
+          urls.length + uploaded.length !== totalParts) throw new Error("Invalid upload session; retry with a fresh draft");
       let next = 0;
+      setUploadPercent(current => ({ ...current, [variant.id]: Math.round(uploaded.length / totalParts * 100) }));
       async function worker() {
-        while (next < urls.length) {
+        while (next < urls.length && !abort.signal.aborted) {
           const entry = urls[next++];
           if (!entry) return;
           const start = (entry.number - 1) * partSize;
-          const chunk = videoFile.slice(start, Math.min(videoFile.size, start + partSize), "");
+          const chunk = file!.slice(start, Math.min(file!.size, start + partSize));
           let url = entry.url;
           let etag = "";
           for (let attempt = 0; attempt < 3; attempt++) {
+            if (abort.signal.aborted) throw new Error("Upload paused");
             try {
               const response = await fetch(url, { method: "PUT", body: chunk, cache: "no-store", signal: abort.signal });
               if (response.ok) {
                 etag = response.headers.get("ETag") ?? "";
-                if (!etag) throw new Error("R2 CORS must expose the ETag header");
+                if (!etag) throw new Error("R2 must expose the ETag header through CORS");
                 break;
               }
               if (response.status === 403) {
-                const renewed = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ token: authToken, parts: [entry.number] }) });
-                const data = await renewed.json();
-                if (renewed.ok && data.parts?.[0]?.url) url = data.parts[0].url;
+                const renewal = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ token, parts: [entry.number] }), signal: abort.signal });
+                const data = await renewal.json();
+                if (renewal.ok && data.parts?.[0]?.url) url = data.parts[0].url;
               }
-              if (attempt === 2) throw new Error("R2 rejected video part " + entry.number + " (" + response.status + ")");
+              if (attempt === 2) throw new Error("Storage rejected part " + entry.number + " (" + response.status + ")");
             } catch (error) {
               if (abort.signal.aborted || attempt === 2) throw error;
             }
           }
-          if (!etag) throw new Error("Video part " + entry.number + " did not return an ETag");
+          if (!etag) throw new Error("Missing storage receipt for video part " + entry.number);
           uploaded.push({ number: entry.number, etag });
-          setUploadPercent(current => ({ ...current, [variant.id]: Math.round(uploaded.length / urls.length * 100) }));
+          setUploadPercent(current => ({ ...current, [variant.id]: Math.round(uploaded.length / totalParts * 100) }));
         }
       }
       try { await Promise.all(Array.from({ length: Math.min(4, urls.length) }, () => worker())); }
       catch (error) { abort.abort(); throw error; }
+      if (abort.signal.aborted) throw new Error("Upload paused");
       uploaded.sort((a, b) => a.number - b.number);
-      const done = await fetch(endpoint, { method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: authToken, parts: uploaded, name: file.name }) });
-      const data = await done.json();
-      if (!done.ok) throw new Error(data.error ?? "Video could not be verified");
-      authToken = null;
+      const response = await fetch(endpoint, { method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, parts: uploaded, name: file.name }) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? "Unable to verify completed video");
+      completed = true;
+      localStorage.removeItem(storageKey);
       await refresh();
-      setFeedback({ message: "Video attached to this draft. Previous approvals are invalidated.", error: false });
+      setFeedback({ message: "Video uploaded and attached. Draft revision updated; previous approvals invalidated.", error: false });
     } catch (error) {
-      abort.abort();
-      if (authToken) await fetch(endpoint, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: authToken }) }).catch(() => {});
-      setFeedback({ message: error instanceof Error ? error.message : "Video upload failed", error: true });
+      canceled = abort.signal.aborted;
+      setFeedback({ message: canceled ? "Upload paused. Select the same local file to resume the transferred parts." :
+        (error instanceof Error ? error.message : "Video upload failed") + ". Select the same file to resume.", error: !canceled });
     } finally {
+      if (completed) localStorage.removeItem(storageKey);
       videoAbortRef.current = null;
       setBusy(false);
       setUploadPercent(current => { const copy = { ...current }; delete copy[variant.id]; return copy; });
@@ -263,7 +293,7 @@ export function SocialContentStudio() {
       {["draft", "changes_requested"].includes(variant.status) && !(variant.media ?? []).some(m => m.type.startsWith("video/")) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>Add video (MP4 or WebM, up to 512 MiB)
         <input type="file" accept="video/mp4,video/webm" disabled={busy} onChange={e => { void uploadVideo(post, variant, e.target.files?.[0]); e.target.value = ""; }} />
       </label>}
-      {typeof uploadPercent[variant.id] === "number" && <div role="status" className={styles.meta}>Uploading video: {uploadPercent[variant.id]}% <button type="button" className={styles.secondary} onClick={() => videoAbortRef.current?.abort()}>Cancel upload</button></div>}
+      {typeof uploadPercent[variant.id] === "number" && <div role="status" className={styles.meta}>Uploading video: {uploadPercent[variant.id]}% <button type="button" className={styles.secondary} onClick={() => videoAbortRef.current?.abort()}>Pause upload</button></div>}
       <p className={styles.meta}>Revision {variant.revision}{variant.scheduledAt ? " · Proposed: " + new Date(variant.scheduledAt).toLocaleString() : ""}</p>
       <div className={styles.actions}>
         {variant.status === "draft" && <>
