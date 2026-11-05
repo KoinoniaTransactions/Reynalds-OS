@@ -26,7 +26,7 @@ export function SocialContentStudio() {
   const [ownerApprovalAcknowledged, setOwnerApprovalAcknowledged] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ message: string; error: boolean } | null>(null);
   const [connections, setConnections] = useState<{ platform: string; displayName: string; status: string; expiresAt: string | null }[]>([]);
-  const [storageCors, setStorageCors] = useState<{ configured: boolean; canConfigure: boolean; origin: string; error?: string } | null>(null);
+  const [storageCors, setStorageCors] = useState<{ configured: boolean; canConfigure: boolean; canVerify?: boolean; origin: string; error?: string } | null>(null);
 
   async function refresh() {
     try {
@@ -71,19 +71,6 @@ export function SocialContentStudio() {
     } catch (error) {
       setStorageCors({ configured: false, canConfigure: false, origin: "", error: error instanceof Error ? error.message : "Storage verification unavailable" });
     }
-  }
-  async function configureStorageCors() {
-    if (!window.confirm("Allow this Preview branch to upload to Koinonia's private R2 bucket? Existing CORS rules will be retained. This does not publish content or expose the bucket publicly.")) return;
-    setBusy(true); setFeedback(null);
-    try {
-      const response = await fetch("/api/employee/social/storage-cors", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirm: "add_preview_origin_only" }) });
-      const result = await response.json();
-      if (!response.ok || result.configured !== true) throw new Error(result.error ?? "Unable to configure Preview CORS");
-      await refreshStorageCors();
-      await checkPrivateStorage(true);
-    } catch (error) {
-      setFeedback({ message: error instanceof Error ? error.message : "Unable to configure storage", error: true });
-    } finally { setBusy(false); }
   }
   async function checkPrivateStorage(skipConfirm = false) {
     if (!skipConfirm && !window.confirm("Run a private test upload to Koinonia R2? The test file is deleted after verification. No social content will be published.")) return;
@@ -464,12 +451,11 @@ export function SocialContentStudio() {
     {page === "accounts" && <section className={styles.panel}><h2>Social accounts</h2>
       <div className={styles.post} style={{ marginBottom: 18 }}>
         <h3>Private media storage</h3>
-        <p className={styles.meta}>Browser uploads require a restricted R2 CORS rule for this stable development-branch URL. Existing bucket rules will be preserved.</p>
+        <p className={styles.meta}>The restricted browser-access rule is managed in Cloudflare. Verification uses an R2 preflight without requesting bucket-administrator permissions.</p>
         {storageCors?.error ? <p className={styles.meta}>{storageCors.error}</p> : <>
           <p className={styles.meta}>{storageCors?.configured ? "Preview browser access configured" : "Preview browser access not configured"} · {storageCors?.origin ?? "Checking..."}</p>
-          {storageCors?.canConfigure && !storageCors.configured && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void configureStorageCors()}>Configure and verify Preview uploads</button>}
           <button type="button" className={styles.secondary} disabled={busy} onClick={() => void refreshStorageCors()}>Recheck storage</button>
-          {storageCors?.canConfigure && <button type="button" className={styles.secondary} disabled={busy || !storageCors.configured} onClick={() => void checkPrivateStorage()}>Verify R2 upload, CORS and cleanup</button>}
+          {storageCors?.canVerify && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void checkPrivateStorage()}>Verify R2 upload, CORS and cleanup</button>}
         </>}
       </div>
       <p className={styles.meta}>Read-only connection status. No OAuth credentials or posting permissions are configured through this screen.</p>
