@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { assertPermission, getAuthProvider } from "../../../../../../../lib/auth";
 import { getAuthErrorResponse } from "../../../../../../../lib/api-auth";
 import { prisma } from "../../../../../../../lib/db";
+import { presignR2Object } from "../../../../../../../lib/r2-presign";
 import { imageMimeFromBytes, SOCIAL_IMAGE_MAX_BYTES, SOCIAL_IMAGE_MAX_COUNT, socialImageExtension, socialMediaImages, socialMediaPrefix } from "../../../../../../../lib/social-media";
 
 export const runtime = "nodejs";
@@ -99,6 +100,16 @@ export async function GET(request: Request, { params }: Context) {
     const key = paramsIn.get("key") ?? "";
     const { variant } = await lookup(actor.workspaceId, id, variantId);
     if (!socialMediaImages(variant?.media).some(m => m.key === key) || !key.startsWith(socialMediaPrefix(actor.workspaceId, variantId))) return NextResponse.json({ error: "Media not found" }, { status: 404 });
+    const entry = socialMediaImages(variant?.media).find(m => m.key === key);
+    if (entry?.type.startsWith("video/")) {
+      const accountId = process.env.R2_ACCOUNT_ID;
+      const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+      const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+      const bucket = process.env.R2_BUCKET_NAME;
+      if (!accountId || !accessKeyId || !secretAccessKey || !bucket) throw new Error("Storage unavailable");
+      const url = presignR2Object({ accountId, accessKeyId, secretAccessKey, bucket, key, method: "GET", expiresSeconds: 120 });
+      return NextResponse.redirect(url, { status: 302, headers: { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" } });
+    }
     const { bucket, s3 } = storage();
     const object = await s3.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
     if (!object.Body) return NextResponse.json({ error: "Media not found" }, { status: 404 });
