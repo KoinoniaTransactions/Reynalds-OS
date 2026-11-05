@@ -335,18 +335,6 @@ model SocialChannelConnection {
   @@index([workspaceId, status])
 }
 
-model SocialOAuthState {
-  stateHash   String   @id
-  workspaceId String
-  actorId     String
-  platform    String
-  expiresAt   DateTime
-  createdAt   DateTime @default(now())
-
-  @@index([expiresAt])
-  @@index([workspaceId, platform])
-}
-
 model SocialPost {
   id          String   @id @default(cuid())
   workspaceId String
