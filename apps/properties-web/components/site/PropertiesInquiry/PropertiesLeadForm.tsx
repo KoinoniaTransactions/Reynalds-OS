@@ -1,10 +1,20 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { mailto } from "../../../config/contact.config";
 
 type InquiryKind = "owner" | "rental" | "buyer" | "seller" | "general";
+
+type TurnstileClient = {
+  render: (container: HTMLElement, config: { sitekey: string; theme: "auto" }) => string | undefined;
+  reset: (widgetId: string) => void;
+  remove: (widgetId: string) => void;
+};
+
+function getTurnstile(): TurnstileClient | undefined {
+  return (window as Window & { turnstile?: TurnstileClient }).turnstile;
+}
 
 const labels: Record<InquiryKind, string> = {
   owner: "Property management inquiry",
@@ -21,6 +31,26 @@ const available =
 export function PropertiesLeadForm({ kind }: { kind: InquiryKind }) {
   const [state, setState] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [response, setResponse] = useState("");
+  const challengeContainer = useRef<HTMLDivElement>(null);
+  const challengeId = useRef<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (challengeId.current) {
+        getTurnstile()?.remove(challengeId.current);
+        challengeId.current = null;
+      }
+    };
+  }, []);
+
+  function renderChallenge() {
+    const client = getTurnstile();
+    const container = challengeContainer.current;
+    const sitekey = process.env.NEXT_PUBLIC_PROPERTIES_TURNSTILE_SITE_KEY;
+    if (client && container && sitekey && !challengeId.current) {
+      challengeId.current = client.render(container, { sitekey, theme: "auto" }) ?? null;
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -28,6 +58,11 @@ export function PropertiesLeadForm({ kind }: { kind: InquiryKind }) {
     const form = event.currentTarget;
     const fields = new FormData(form);
     const turnstileToken = String(fields.get("cf-turnstile-response") ?? "");
+    if (!turnstileToken) {
+      setState("error");
+      setResponse("Please complete the verification step.");
+      return;
+    }
     setState("sending");
     setResponse("");
     try {
@@ -53,7 +88,8 @@ export function PropertiesLeadForm({ kind }: { kind: InquiryKind }) {
     } catch (error) {
       setState("error");
       setResponse(error instanceof Error ? error.message : "Please contact us directly.");
-      // The existing verification widget may need to be reset by reloading the page.
+      // Turnstile tokens expire and can only be verified once.
+      if (challengeId.current) getTurnstile()?.reset(challengeId.current);
     }
   }
 
@@ -72,7 +108,8 @@ export function PropertiesLeadForm({ kind }: { kind: InquiryKind }) {
   return (
     <div className="properties-lead-form">
       <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+        onReady={renderChallenge}
         strategy="afterInteractive"
       />
       <h3>{labels[kind]}</h3>
@@ -108,10 +145,7 @@ export function PropertiesLeadForm({ kind }: { kind: InquiryKind }) {
           <div className="properties-lead-trap" aria-hidden="true">
             <label>Website <input name="website" autoComplete="off" tabIndex={-1} /></label>
           </div>
-          <div
-            className="cf-turnstile"
-            data-sitekey={process.env.NEXT_PUBLIC_PROPERTIES_TURNSTILE_SITE_KEY}
-          />
+          <div ref={challengeContainer} />
           <p className="properties-lead-privacy">We use this information to respond to your inquiry. Please don't include payment details, identification numbers, or sensitive account information.</p>
           <button className="koinonia-button primary" type="submit" disabled={state === "sending"}>
             {state === "sending" ? "Submitting..." : "Send Inquiry"}
