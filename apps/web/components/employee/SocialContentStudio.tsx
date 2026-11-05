@@ -21,6 +21,7 @@ export function SocialContentStudio() {
   const [planned, setPlanned] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [uploadPercent, setUploadPercent] = useState<Record<string, number>>({});
+  const [pendingVideo, setPendingVideo] = useState<Record<string, { name: string; savedAt: number }>>({});
   const videoAbortRef = useRef<AbortController | null>(null);
   const [ownerApprovalAcknowledged, setOwnerApprovalAcknowledged] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ message: string; error: boolean } | null>(null);
@@ -36,6 +37,23 @@ export function SocialContentStudio() {
       const postsData = await postResponse.json();
       if (!postResponse.ok) throw new Error(postsData.error ?? "Unable to load drafts");
       setItems(postsData.posts ?? []);
+      const unfinished: Record<string, { name: string; savedAt: number }> = {};
+      for (const post of (postsData.posts ?? []) as Draft[]) {
+        for (const variant of post.variants) {
+          const key = "koinonia-video-upload:" + post.id + ":" + variant.id;
+          const raw = localStorage.getItem(key);
+          if (!raw) continue;
+          try {
+            const data = JSON.parse(raw);
+            if (typeof data.token === "string" && typeof data.name === "string" && typeof data.savedAt === "number" && Date.now() - data.savedAt < 2 * 3600000) {
+              unfinished[variant.id] = { name: data.name, savedAt: data.savedAt };
+            } else {
+              localStorage.removeItem(key);
+            }
+          } catch { localStorage.removeItem(key); }
+        }
+      }
+      setPendingVideo(unfinished);
       if (accountResponse.ok) {
         const accountData = await accountResponse.json();
         setConnections(accountData.channels ?? []);
@@ -186,7 +204,8 @@ export function SocialContentStudio() {
         if (!response.ok) throw new Error((session as { error?: string }).error ?? "Unable to prepare video upload");
         token = session.token ?? null;
         if (!token) throw new Error("Missing secure upload authorization");
-        localStorage.setItem(storageKey, JSON.stringify({ token, fingerprint }));
+        localStorage.setItem(storageKey, JSON.stringify({ token, fingerprint, name: file.name, savedAt: Date.now() }));
+        setPendingVideo(current => ({ ...current, [variant.id]: { name: file.name, savedAt: Date.now() } }));
       }
       const partSize = session!.partSize;
       const urls = session!.parts;
@@ -239,6 +258,7 @@ export function SocialContentStudio() {
       if (!response.ok) throw new Error(result.error ?? "Unable to verify completed video");
       completed = true;
       localStorage.removeItem(storageKey);
+      setPendingVideo(current => { const next = { ...current }; delete next[variant.id]; return next; });
       await refresh();
       setFeedback({ message: "Video uploaded and attached. Draft revision updated; previous approvals invalidated.", error: false });
     } catch (error) {
@@ -251,6 +271,29 @@ export function SocialContentStudio() {
       setBusy(false);
       setUploadPercent(current => { const copy = { ...current }; delete copy[variant.id]; return copy; });
     }
+  }
+  async function discardPendingVideo(post: Draft, variant: Variant) {
+    const key = "koinonia-video-upload:" + post.id + ":" + variant.id;
+    const raw = localStorage.getItem(key);
+    if (!raw) return;
+    if (!window.confirm("Discard unfinished video upload? The stored video chunks will be removed from R2.")) return;
+    setBusy(true); setFeedback(null);
+    try {
+      const saved = JSON.parse(raw);
+      const response = await fetch("/api/employee/social/posts/" + encodeURIComponent(post.id) + "/video", {
+        method: "DELETE", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: saved.token })
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error ?? "Unable to discard unfinished upload");
+      }
+      localStorage.removeItem(key);
+      setPendingVideo(current => { const next = { ...current }; delete next[variant.id]; return next; });
+      setFeedback({ message: "Unfinished video upload discarded from R2.", error: false });
+    } catch (error) {
+      setFeedback({ message: error instanceof Error ? error.message : "Unable to discard upload", error: true });
+    } finally { setBusy(false); }
   }
   async function removeImage(post: Draft, variant: Variant, media: Media) {
     if (!window.confirm("Remove this image from the " + variant.platform + " draft?")) return;
@@ -290,10 +333,14 @@ export function SocialContentStudio() {
       {["draft", "changes_requested"].includes(variant.status) && (!Array.isArray(variant.media) || variant.media.length < 4) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>Add image (JPG, PNG or WebP, max 3 MB)
         <input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e => { void uploadImage(post, variant, e.target.files?.[0]); e.target.value = ""; }} />
       </label>}
-      {["draft", "changes_requested"].includes(variant.status) && !(variant.media ?? []).some(m => m.type.startsWith("video/")) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>Add video (MP4 or WebM, up to 512 MiB)
+      {["draft", "changes_requested"].includes(variant.status) && !(variant.media ?? []).some(m => m.type.startsWith("video/")) && <label className={styles.choice} style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "start" }}>{pendingVideo[variant.id] ? "Resume paused video: " + pendingVideo[variant.id].name : "Add video (MP4 or WebM, up to 512 MiB)"}
         <input type="file" accept="video/mp4,video/webm" disabled={busy} onChange={e => { void uploadVideo(post, variant, e.target.files?.[0]); e.target.value = ""; }} />
       </label>}
       {typeof uploadPercent[variant.id] === "number" && <div role="status" className={styles.meta}>Uploading video: {uploadPercent[variant.id]}% <button type="button" className={styles.secondary} onClick={() => videoAbortRef.current?.abort()}>Pause upload</button></div>}
+      {pendingVideo[variant.id] && typeof uploadPercent[variant.id] !== "number" && <div className={styles.notice} style={{ margin: "10px 0" }}>
+        Unfinished upload: {pendingVideo[variant.id].name}. Select the same file above to resume, or
+        <button type="button" disabled={busy} className={styles.secondary} onClick={() => void discardPendingVideo(post, variant)}>Discard upload</button>
+      </div>}
       <p className={styles.meta}>Revision {variant.revision}{variant.scheduledAt ? " · Proposed: " + new Date(variant.scheduledAt).toLocaleString() : ""}</p>
       <div className={styles.actions}>
         {variant.status === "draft" && <>
