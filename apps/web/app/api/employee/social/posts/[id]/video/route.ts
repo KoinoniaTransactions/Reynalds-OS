@@ -82,7 +82,7 @@ export async function POST(request: Request, { params }: Context) {
       if (!scoped(renewal, actor, id) || !await draft(actor.workspaceId, id, renewal.variantId, renewal.revision)) return NextResponse.json({ error: "Upload no longer authorized" }, { status: 409 });
       if (body.resume === true) {
         const uploaded: { number: number; etag: string }[] = [];
-        let cursor: number | undefined;
+        let cursor: string | undefined;
         do {
           const found = await c.client.send(new ListPartsCommand({
             Bucket: c.bucket, Key: renewal.key, UploadId: renewal.uploadId, PartNumberMarker: cursor
