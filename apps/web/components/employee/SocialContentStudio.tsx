@@ -25,6 +25,7 @@ export function SocialContentStudio() {
   const [ownerApprovalAcknowledged, setOwnerApprovalAcknowledged] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ message: string; error: boolean } | null>(null);
   const [connections, setConnections] = useState<{ platform: string; displayName: string; status: string; expiresAt: string | null }[]>([]);
+  const [storageCors, setStorageCors] = useState<{ configured: boolean; canConfigure: boolean; origin: string; error?: string } | null>(null);
 
   async function refresh() {
     try {
@@ -43,7 +44,30 @@ export function SocialContentStudio() {
       setFeedback({ message: e instanceof Error ? e.message : "Unable to load Content Studio", error: true });
     }
   }
-  useEffect(() => { void refresh(); }, []);
+  async function refreshStorageCors() {
+    try {
+      const response = await fetch("/api/employee/social/storage-cors", { cache: "no-store" });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? "Storage verification unavailable");
+      setStorageCors(result);
+    } catch (error) {
+      setStorageCors({ configured: false, canConfigure: false, origin: "", error: error instanceof Error ? error.message : "Storage verification unavailable" });
+    }
+  }
+  async function configureStorageCors() {
+    if (!window.confirm("Allow this Preview branch to upload to Koinonia's private R2 bucket? Existing CORS rules will be retained. This does not publish content or expose the bucket publicly.")) return;
+    setBusy(true); setFeedback(null);
+    try {
+      const response = await fetch("/api/employee/social/storage-cors", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirm: "add_preview_origin_only" }) });
+      const result = await response.json();
+      if (!response.ok || result.configured !== true) throw new Error(result.error ?? "Unable to configure Preview CORS");
+      await refreshStorageCors();
+      setFeedback({ message: "Preview browser upload origin configured. Existing bucket rules were preserved.", error: false });
+    } catch (error) {
+      setFeedback({ message: error instanceof Error ? error.message : "Unable to configure storage", error: true });
+    } finally { setBusy(false); }
+  }
+  useEffect(() => { void refresh(); void refreshStorageCors(); }, []);
 
   const filtered = useMemo(() => items.filter(item =>
     (item.title + " " + item.variants.map(v => v.caption + " " + v.platform).join(" ")).toLowerCase().includes(query.toLowerCase())
@@ -339,6 +363,15 @@ export function SocialContentStudio() {
       ) : <div className={styles.empty}>Approved content with proposed dates will appear here.</div>}</div>
     </section>}
     {page === "accounts" && <section className={styles.panel}><h2>Social accounts</h2>
+      <div className={styles.post} style={{ marginBottom: 18 }}>
+        <h3>Private media storage</h3>
+        <p className={styles.meta}>Browser uploads require a restricted R2 CORS rule for this stable development-branch URL. Existing bucket rules will be preserved.</p>
+        {storageCors?.error ? <p className={styles.meta}>{storageCors.error}</p> : <>
+          <p className={styles.meta}>{storageCors?.configured ? "Preview browser access configured" : "Preview browser access not configured"} · {storageCors?.origin ?? "Checking..."}</p>
+          {storageCors?.canConfigure && !storageCors.configured && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void configureStorageCors()}>Enable Preview browser uploads</button>}
+          <button type="button" className={styles.secondary} disabled={busy} onClick={() => void refreshStorageCors()}>Recheck storage</button>
+        </>}
+      </div>
       <p className={styles.meta}>Read-only connection status. No OAuth credentials or posting permissions are configured through this screen.</p>
       <div className={styles.items}>{platformNames.map(p => {
         const entries = connections.filter(c => c.platform === p);
