@@ -223,13 +223,34 @@ export function SocialContentStudio() {
           const chunk = file!.slice(start, Math.min(file!.size, start + partSize));
           let url = entry.url;
           let etag = "";
-          for (let attempt = 0; attempt < 3; attempt++) {
+          for (let attempt = 0; attempt < 4; attempt++) {
             if (abort.signal.aborted) throw new Error("Upload paused");
             try {
               const response = await fetch(url, { method: "PUT", body: chunk, cache: "no-store", signal: abort.signal });
               if (response.ok) {
                 etag = response.headers.get("ETag") ?? "";
                 if (!etag) throw new Error("R2 must expose the ETag header through CORS");
+                break;
+              }
+              if (response.status !== 403 && response.status !== 429 && response.status < 500) {
+                throw new Error("Storage rejected part " + entry.number + " (" + response.status + ")");
+              }
+            } catch (error) {
+              if (abort.signal.aborted || (error instanceof Error && error.message.startsWith("Storage rejected part"))) throw error;
+              if (attempt === 3) throw error;
+            }
+            // R2 may omit CORS headers on expired signatures. Re-sign after *any* failed
+            // attempt, including an opaque browser network error; never reuse a stale URL.
+            if (attempt < 3) {
+              const renewed = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token, parts: [entry.number] }), signal: abort.signal });
+              const data = await renewed.json();
+              if (!renewed.ok || !data.parts?.[0]?.url) throw new Error(data.error ?? "Unable to renew video part authorization");
+              url = data.parts[0].url;
+              await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
+            }
+          }
+          if (!etag) throw new Error("R2 must expose the ETag header through CORS");
                 break;
               }
               if (response.status === 403) {
@@ -248,7 +269,7 @@ export function SocialContentStudio() {
           setUploadPercent(current => ({ ...current, [variant.id]: Math.round(uploaded.length / totalParts * 100) }));
         }
       }
-      try { await Promise.all(Array.from({ length: Math.min(4, urls.length) }, () => worker())); }
+      try { await Promise.all(Array.from({ length: Math.min(2, urls.length) }, () => worker())); }
       catch (error) { abort.abort(); throw error; }
       if (abort.signal.aborted) throw new Error("Upload paused");
       uploaded.sort((a, b) => a.number - b.number);
