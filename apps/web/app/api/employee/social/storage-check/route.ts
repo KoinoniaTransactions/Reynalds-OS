@@ -67,6 +67,7 @@ export async function POST(request: Request) {
     const parts: { PartNumber: number; ETag: string }[] = [];
     for (const [index, buffer] of [Buffer.alloc(5 * 1024 * 1024, 1), Buffer.from("r2-check-last-part", "utf8")].entries()) {
       const partNumber = index + 1;
+      if (partNumber > 1) await new Promise(resolve => setTimeout(resolve, 1200));
       const response = await fetch(signature(partNumber), {
         method: "PUT", headers: { Origin: origin }, body: buffer, cache: "no-store"
       });
