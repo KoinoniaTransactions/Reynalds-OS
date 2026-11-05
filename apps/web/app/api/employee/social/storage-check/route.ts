@@ -72,7 +72,9 @@ export async function POST(request: Request) {
       });
       if (!response.ok) throw new Error("Signed multipart upload part " + partNumber + " failed with HTTP " + response.status);
       const etag = response.headers.get("etag");
-      if (!etag) throw new Error("ETag was not visible to browser-origin uploads");
+      const allow = response.headers.get("access-control-allow-origin");
+      const exposed = (response.headers.get("access-control-expose-headers") ?? "").toLowerCase().split(",").map(v => v.trim());
+      if (!etag || allow !== origin || !exposed.includes("etag")) throw new Error("Browser-origin uploads did not expose ETag correctly");
       parts.push({ PartNumber: partNumber, ETag: etag });
     }
     await c.s3.send(new CompleteMultipartUploadCommand({
@@ -82,6 +84,8 @@ export async function POST(request: Request) {
     const head = await c.s3.send(new HeadObjectCommand({ Bucket: c.bucket, Key: key }));
     const expected = 5 * 1024 * 1024 + Buffer.byteLength("r2-check-last-part", "utf8");
     if (head.ContentLength !== expected) throw new Error("Stored video test object size did not match uploaded parts");
+    await c.s3.send(new DeleteObjectCommand({ Bucket: c.bucket, Key: key }));
+    cleanup = null;
     await prisma.auditEvent.create({ data: {
       workspaceId: actor.workspaceId, actorId: actor.id, action: "social.storage.multipart_probe_passed",
       subjectType: "R2Bucket", subjectId: "social-preview",
