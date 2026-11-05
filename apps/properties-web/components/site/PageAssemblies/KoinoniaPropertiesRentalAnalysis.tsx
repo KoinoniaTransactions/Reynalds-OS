@@ -1,3 +1,4 @@
+import { RentalEstimateTool } from "../RentalEstimateTool";
 import { Footer, Hero, PropertiesInquiry, PropertiesNav, PropertiesSeoContent, UniversalCard } from "../index";
 
 const analysisSteps = [
@@ -35,14 +36,24 @@ export function KoinoniaPropertiesRentalAnalysis() {
         visualVariant="properties"
         eyebrow="Rental Analysis"
         title="Start with a clearer view of the rental property."
-        lead="Tell us about your rental property and goals. We can discuss its rental potential and an appropriate management plan. Online instant rent estimates are not yet available."
-        primaryLabel="Request Rental Analysis"
-        primaryHref="#rental-inquiry"
+        lead="Enter a property address for an instant rental market estimate, nearby comparisons, and an overview of Koinonia Properties management options."
+        primaryLabel="Get Rental Estimate"
+        primaryHref="#instant-rent-estimate"
         secondaryLabel="Owner Services"
         secondaryHref="/owners"
       />
 
       <PropertiesSeoContent variant="rental-analysis" />
+      <section className="koinonia-section" id="instant-rent-estimate">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header">
+            <div className="koinonia-eyebrow">Instant Rental Estimate</div>
+            <h2 className="koinonia-heading">What could your property rent for?</h2>
+            <p className="koinonia-copy">Start with an address. View a data-backed market estimate before deciding whether to request personalized assistance.</p>
+          </div>
+          <RentalEstimateTool />
+        </div>
+      </section>
 
       <section className="koinonia-section">
         <div className="koinonia-container">
