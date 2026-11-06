@@ -123,3 +123,10 @@ This newer decision governs **future Properties company-wide positioning** and s
 | Owner-approved property management 8%/10% plans, 10% vendor markup, leasing/renewal/application/inspection charges, maintenance authority, placement timing, planned instant rental valuations and owner maintenance tools | `02_Companies/Koinonia/03_Pricing/KOINONIA_PROPERTIES_MANAGEMENT_LEASING_FEES_2026-11-04.md` | Approved decision record; legal, operational, public-site and implementation gates remain |
 
 This record governs **Properties management commercial decisions**, not Transactions public pricing. The historical Properties management service object on `integration/koinonia-properties-web-20260812` continues to define management *scope* until a deliberate reconciled implementation. The 2026-11-03 company-wide Properties positioning authority remains unchanged.
+
+
+---
+
+## Koinonia Realty — Successor Naming Decision (2026-11-06)
+
+The controlling Properties positioning source, `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_POSITIONING_AND_LOCAL_DISCOVERY_2026-11-03.md`, section 11, records the owner-selected direction to use **Koinonia Realty LLC** as the proposed single brokerage/consumer-facing name, with **Residential Real Estate** and **Property Management** as equal divisions, and to avoid **Koinonia Properties** as a separate public trade name. This overrides only the earlier proposed Properties LLC/public-name and Realty-domain-option assumptions. It preserves historical Properties assets and distinct Transactions operations. Official name/rights clearance, firm qualification, account setup, publication, and deployment are not yet complete or authorized.
