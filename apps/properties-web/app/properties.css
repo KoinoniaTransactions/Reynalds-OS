@@ -848,3 +848,37 @@
     padding-block: 26px 30px;
   }
 }
+
+
+/* Inquiry capture uses the existing Koinonia typography and button system. */
+.properties-lead-form {
+  margin-top: 20px;
+  padding: clamp(20px, 3vw, 30px);
+  background: #faf7f1;
+  border: 1px solid rgba(113, 83, 49, 0.19);
+  border-radius: 14px;
+}
+.properties-lead-form h3 { margin: 0 0 18px; font-size: clamp(20px, 2vw, 25px); }
+.properties-lead-form form { display: grid; gap: 15px; }
+.properties-lead-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+.properties-lead-form label { display: grid; gap: 7px; font-weight: 650; font-size: 14px; }
+.properties-lead-form input,
+.properties-lead-form textarea {
+  width: 100%; min-width: 0; padding: 12px 13px;
+  border: 1px solid rgba(87, 70, 48, .34); border-radius: 8px;
+  background: white; color: #27221c; font: inherit; font-weight: 400;
+}
+.properties-lead-form input:focus-visible,
+.properties-lead-form textarea:focus-visible {
+  outline: 2px solid #8e662f; outline-offset: 2px;
+}
+.properties-lead-form textarea { resize: vertical; }
+.properties-lead-form button[disabled] { opacity: .7; cursor: wait; }
+.properties-lead-form .properties-lead-privacy { font-size: 12px; line-height: 1.5; margin: 0; }
+.properties-lead-form .properties-lead-error { color: #8b2525; font-size: 14px; }
+.properties-lead-form .properties-lead-notice { color: #305d3c; }
+.properties-lead-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+@media (max-width: 640px) {
+  .properties-lead-row { grid-template-columns: 1fr; }
+  .properties-lead-form { padding: 18px; }
+}

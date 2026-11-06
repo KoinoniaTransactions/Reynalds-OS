@@ -1,5 +1,5 @@
 import { Footer, Hero, PropertiesNav, UniversalCard } from "../index";
-import { mailto } from "../../../config/contact.config";
+import { PropertiesLeadForm } from "../PropertiesInquiry/PropertiesLeadForm";
 
 const buyerSteps = [
   {
@@ -62,11 +62,7 @@ export function KoinoniaPropertiesRealEstate() {
               <UniversalCard key={step.title} eyebrow={`0${index + 1}`} title={step.title} body={step.body} />
             ))}
           </div>
-          <div className="koinonia-actions">
-            <a className="koinonia-button primary" href={mailto("Koinonia Properties - Buying a Home Inquiry")}>
-              Discuss Buying a Home
-            </a>
-          </div>
+          <div id="buyer-inquiry"><PropertiesLeadForm kind="buyer" /></div>
         </div>
       </section>
 
@@ -85,11 +81,7 @@ export function KoinoniaPropertiesRealEstate() {
               <UniversalCard key={step.title} eyebrow={`0${index + 1}`} title={step.title} body={step.body} />
             ))}
           </div>
-          <div className="koinonia-actions">
-            <a className="koinonia-button primary" href={mailto("Koinonia Properties - Selling a Home Inquiry")}>
-              Discuss Selling a Home
-            </a>
-          </div>
+          <div id="seller-inquiry"><PropertiesLeadForm kind="seller" /></div>
         </div>
       </section>
 

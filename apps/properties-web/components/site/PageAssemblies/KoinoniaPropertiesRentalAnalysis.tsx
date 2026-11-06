@@ -1,3 +1,4 @@
+import { RentalEstimateTool } from "../RentalEstimateTool";
 import { Footer, Hero, PropertiesInquiry, PropertiesNav, PropertiesSeoContent, UniversalCard } from "../index";
 
 const analysisSteps = [
@@ -13,7 +14,7 @@ const analysisSteps = [
   },
   {
     title: "Management Fit",
-    body: "Match the property to leasing-only, full-service management, or portfolio management support.",
+    body: "Explore how Managed for You and Managed With You differ in maintenance responsibilities and owner involvement.",
     items: ["Owner goals", "Service level", "Next operating step"]
   }
 ];
@@ -24,7 +25,7 @@ const intakeFields = [
   "Current rent or target rent, if known",
   "Vacancy date or current lease status",
   "Known maintenance or inspection concerns",
-  "Whether the owner wants leasing-only or full-service management"
+  "Whether the owner prefers Managed for You or Managed With You"
 ];
 
 export function KoinoniaPropertiesRentalAnalysis() {
@@ -35,22 +36,32 @@ export function KoinoniaPropertiesRentalAnalysis() {
         visualVariant="properties"
         eyebrow="Rental Analysis"
         title="Start with a clearer view of the rental property."
-        lead="A rental analysis gives owners a practical first step before choosing a management plan."
-        primaryLabel="Request Rental Analysis"
-        primaryHref="#rental-inquiry"
+        lead="Enter a property address for an instant rental market estimate, nearby comparisons, and an overview of Koinonia Properties management options."
+        primaryLabel="Get Rental Estimate"
+        primaryHref="#instant-rent-estimate"
         secondaryLabel="Owner Services"
         secondaryHref="/owners"
       />
 
       <PropertiesSeoContent variant="rental-analysis" />
+      <section className="koinonia-section" id="instant-rent-estimate">
+        <div className="koinonia-container">
+          <div className="koinonia-section-header">
+            <div className="koinonia-eyebrow">Instant Rental Estimate</div>
+            <h2 className="koinonia-heading">What could your property rent for?</h2>
+            <p className="koinonia-copy">Start with an address. View a data-backed market estimate before deciding whether to request personalized assistance.</p>
+          </div>
+          <RentalEstimateTool />
+        </div>
+      </section>
 
       <section className="koinonia-section">
         <div className="koinonia-container">
           <div className="koinonia-section-header">
             <div className="koinonia-eyebrow">Owner Intake</div>
-            <h2 className="koinonia-heading">Keep the first form short, then collect details in follow-up.</h2>
+            <h2 className="koinonia-heading">Start with the essentials. We'll take it from there.</h2>
             <p className="koinonia-copy">
-              A few property details help Koinonia Properties understand the rental and prepare for a useful first conversation.
+              Share the property's current situation so our conversation can focus on what matters to you.
             </p>
           </div>
           <div className="koinonia-grid three">
