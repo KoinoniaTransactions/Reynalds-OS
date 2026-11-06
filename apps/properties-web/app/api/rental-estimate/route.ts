@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { unstable_cache } from "next/cache";
+import { reserveRentcastCall, saveRentcastResult } from "../../../lib/rentcast-budget";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,10 +9,9 @@ type Comparable = { formattedAddress?: string; price?: number; distance?: number
 type Estimate = { rent?: number; rentRangeLow?: number; rentRangeHigh?: number; subjectProperty?: Property; comparables?: Comparable[] };
 const unavailable = (message: string, status: number) => NextResponse.json({ ok: false, message }, { status, headers: { "Cache-Control": "no-store" } });
 
-// The shared Next.js Data Cache avoids repeating RentCast requests for the
-// same normalized address within 24 hours. This is not a billing hard cap.
+// A Redis-backed rolling quota controls upstream API cost across all serverless instances.
 class RentCastStatusError extends Error { constructor(public status: number) { super("RentCast returned HTTP " + status); } }
-const cachedRentEstimate = unstable_cache(async (address: string): Promise<Estimate> => {
+async function loadRentEstimate(address: string): Promise<Estimate> {
   const url = new URL("https://api.rentcast.io/v1/avm/rent/long-term");
   url.searchParams.set("address", address);
   url.searchParams.set("compCount", "5");
@@ -22,10 +21,10 @@ const cachedRentEstimate = unstable_cache(async (address: string): Promise<Estim
   });
   if (!response.ok) throw new RentCastStatusError(response.status);
   return await response.json() as Estimate;
-}, ["koinonia-properties-rentcast-long-term-v1"], { revalidate: 86400 });
+}
 
 export async function POST(req: NextRequest) {
-  if (process.env.PROPERTIES_RENTCAST_ENABLED !== "true" || !process.env.RENTCAST_API_KEY || !process.env.PROPERTIES_TURNSTILE_SECRET_KEY) {
+  if (process.env.PROPERTIES_RENTCAST_ENABLED !== "true" || !process.env.RENTCAST_API_KEY || !process.env.PROPERTIES_TURNSTILE_SECRET_KEY || !process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
     return unavailable("The online rental estimate is not available yet. Please request a personal assessment below.", 503);
   }
   const expectedOrigin = process.env.PROPERTIES_INQUIRY_ALLOWED_ORIGIN;
@@ -55,10 +54,25 @@ export async function POST(req: NextRequest) {
   } catch { return unavailable("Verification unavailable. Please retry.", 503); }
 
   try {
-    const data = await cachedRentEstimate(address.replace(/\s+/g, " ").toLowerCase());
-    if (typeof data.rent !== "number" || !Number.isFinite(data.rent) || data.rent <= 0) return unavailable("Not enough local rental information was found. Request a personal assessment below.", 404);
+    const normalizedAddress = address.replace(/\s+/g, " ").trim().toLowerCase();
+    // Redis script atomically reads a 24-hour cached result or reserves one
+    // of at most 25 upstream requests per rolling 35-day period. If Redis is
+    // unavailable no upstream request is allowed (fail closed).
+    const reservation = await reserveRentcastCall(normalizedAddress);
+    if (reservation.status === "exhausted") {
+      return unavailable("The instant analysis quota is temporarily reached. Request a personalized rental assessment below.", 429);
+    }
+    if (reservation.status === "cached") {
+      const saved = JSON.parse(reservation.json) as { ok?: boolean; rent?: number };
+      if (!saved?.ok || typeof saved.rent !== "number" || saved.rent <= 0) throw new Error("Invalid cached valuation");
+      return NextResponse.json(saved, { headers: { "Cache-Control": "no-store" } });
+    }
+    const data = await loadRentEstimate(normalizedAddress);
+    if (typeof data.rent !== "number" || !Number.isFinite(data.rent) || data.rent <= 0) {
+      return unavailable("Not enough local rental information was found. Request a personal assessment below.", 404);
+    }
     const valid = (n: unknown) => typeof n === "number" && Number.isFinite(n) && n >= 0 ? n : null;
-    return NextResponse.json({
+    const payload = {
       ok: true, address: data.subjectProperty?.formattedAddress || address,
       rent: data.rent, low: valid(data.rentRangeLow), high: valid(data.rentRangeHigh),
       property: { type: data.subjectProperty?.propertyType || null, bedrooms: valid(data.subjectProperty?.bedrooms), bathrooms: valid(data.subjectProperty?.bathrooms), squareFootage: valid(data.subjectProperty?.squareFootage) },
@@ -66,7 +80,12 @@ export async function POST(req: NextRequest) {
         address: c.formattedAddress || "Nearby comparable", rent: c.price, distance: valid(c.distance), status: c.status || null,
         bedrooms: valid(c.bedrooms), bathrooms: valid(c.bathrooms)
       }))
-    }, { headers: { "Cache-Control": "no-store" } });
+    };
+    // A failed cache write cannot create an unbudgeted provider request: the
+    // quota reservation above is permanent for the current rolling window.
+    try { await saveRentcastResult(reservation.cacheKey, payload); }
+    catch { console.error("Rental estimate result cache write failed"); }
+    return NextResponse.json(payload, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof RentCastStatusError) {
       console.error("RentCast API returned status", error.status);
