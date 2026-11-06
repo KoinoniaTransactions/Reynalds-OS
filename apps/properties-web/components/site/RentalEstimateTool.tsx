@@ -62,9 +62,9 @@ export function RentalEstimateTool() {
       <p style={{fontSize:"2rem",fontWeight:700,margin:"10px 0"}}>{money(result.rent)} <span style={{fontSize:".85rem",fontWeight:400}}>per month</span></p>
       {result.low!==null&&result.high!==null&&<p>Estimated range: <strong>{money(result.low)} – {money(result.high)}/month</strong></p>}
       <p>{[result.property.type,result.property.bedrooms!==null?`${result.property.bedrooms} beds`:null,result.property.bathrooms!==null?`${result.property.bathrooms} baths`:null,result.property.squareFootage!==null?`${result.property.squareFootage.toLocaleString()} sq ft`:null].filter(Boolean).join(" · ")}</p>
-      <h3>What professional management could cost</h3>
-      <p>Managed With You (8%): <strong>{money(result.rent*0.08)}/month</strong></p>
-      <p>Managed for You (10%): <strong>{money(result.rent*0.10)}/month</strong></p>
+      <h3>Rental income after management fees</h3>
+      <p>Managed With You (8%): fee <strong>{money(result.rent*0.08)}/month</strong>; rent after management fee <strong>{money(result.rent*0.92)}/month</strong></p>
+      <p>Managed for You (10%): fee <strong>{money(result.rent*0.10)}/month</strong>; rent after management fee <strong>{money(result.rent*0.90)}/month</strong></p>
       <p>Potential annual gross scheduled rent: <strong>{money(result.rent*12)}</strong> (before vacancy, management, leasing, repairs, taxes, insurance and other costs).</p>
       {result.comparables.length>0&&<><h3>Nearby rental comparisons</h3><ul>{result.comparables.map((c,i)=><li key={i}>{c.address}: <strong>{money(c.rent)}/month</strong>{c.distance!==null?` · ${c.distance.toFixed(1)} miles`:""}{c.status?` · ${c.status}`:""}</li>)}</ul></>}
       <p className="properties-lead-privacy">Source: RentCast automated rent estimate and rental listing comparables. These figures are estimates, not guaranteed rents, and do not account for property condition, lease restrictions or all expenses. For multi-family properties, estimates may be per unit.</p>
