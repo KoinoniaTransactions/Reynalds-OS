@@ -226,3 +226,12 @@ Owner-approved commercial fees, maintenance plan rules, inspection policy, tenan
 `02_Companies/Koinonia/03_Pricing/KOINONIA_PROPERTIES_MANAGEMENT_LEASING_FEES_2026-11-04.md`
 
 Read that record together with the 2026-11-03 full-service Properties positioning decision above. The new pricing decision covers Properties **only**, not Transactions. It is **not** approval to publish prices, bill clients, create contracts, alter existing website/code, connect API providers, or deploy a portal. Forming/licensing the brokerage, screening/application-fee compliance and agreement terms remain gated. Historical Properties service scope/specification is preserved on `integration/koinonia-properties-web-20260812` for later reconciliation.
+
+
+---
+
+## KOINONIA REALTY BRAND DIRECTION — 2026-11-06
+
+Owner-selected successor plan: the proposed brokerage brand and legal name is **Koinonia Realty LLC**, with **Residential Real Estate** and **Property Management** as equally prominent services within one licensed brokerage; **Koinonia Properties** is not to be used as a separate public management trade name pending naming-rights review. **Koinonia Transactions LLC** remains operationally and commercially separate. Owner intends to launch solo under an Independent Broker qualification, without an Employing Broker initially, subject to DORA confirmation. This supersedes the proposed *Properties LLC* naming in the 2026-11-03 direction, but does not alter previously approved management service/pricing decisions or certify legal name availability, formation, licensing, or launch.
+
+Controlling decision and implementation gates: `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_POSITIONING_AND_LOCAL_DISCOVERY_2026-11-03.md`, section 11. Preserve Transactions and the existing Properties site assets until the Realty legal/brand migration is cleared and specifically approved. No filing, account creation, public ad, or production deployment is authorized merely by recording this direction.
