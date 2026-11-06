@@ -124,3 +124,16 @@ Historical Properties implementation records on `integration/koinonia-properties
 - `apps/properties-web/`
 
 The property-management service object continues to govern **management-specific scope and unapproved operating claims** pending a future dedicated update. This document governs the **company-wide equal-sales-and-management positioning**; it must not be used to invent licensed sales scope, pricing or operating readiness. The Transactions production commercial authority and marketing activation gate recorded in root `START_HERE.md` remain intact.
+
+
+---
+
+## 11. Successor naming / brand-architecture decision — 2026-11-06
+
+**Owner-selected direction (planning decision, not legal/name clearance or launch approval):** Use **Koinonia Realty LLC** as the proposed single licensed brokerage legal entity and customer-facing brand, with **Residential Real Estate** and **Property Management** as two equally prominent service lines within that same company. Do **not** use **Koinonia Properties** as a public-facing trade name for property management at this stage. Koinonia Transactions LLC remains a separate company and brand; do not merge the companies, websites, customer records, or marketing identities.
+
+**Why:** A separate Colorado entity reportedly already uses the name Koinonia Properties, LLC (entity ID reported as 20131532840), so naming and trademark rights require independent official verification. The owner prefers the straightforward one-brand arrangement over operating Koinonia Properties as a trade name of Koinonia Realty LLC. This supersedes earlier *proposed* Properties legal/public branding and Realty-as-optional-domain assumptions in this document, but preserves their historical context and the approved equal sales/management positioning.
+
+**Implementation:** Preserve the existing Transactions website; retain the Properties app, domain, and historical work without deleting or prematurely redirecting them. After official entity-name, trademark, domain, and handle checks, review a brand migration of the Properties app to Koinonia Realty (including website, email, metadata, social accounts, Google eligibility, legal disclosures, and customer funnels) with preview/owner approval before any production changes.
+
+**Regulatory limits:** Planned solo Independent Broker-qualified firm; no Employing Broker at initial launch. Verify current individual license practice authority and Colorado brokerage firm registration before representing the firm as licensed or advertising regulated services. Name selection does not itself grant license privileges. No filing, purchase, live marketing, domain redirect, or production deployment is authorized by this documentation alone.
