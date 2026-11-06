@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { unstable_cache } from "next/cache";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -7,6 +8,21 @@ type Property = { formattedAddress?: string; propertyType?: string; bedrooms?: n
 type Comparable = { formattedAddress?: string; price?: number; distance?: number; status?: string; bedrooms?: number; bathrooms?: number };
 type Estimate = { rent?: number; rentRangeLow?: number; rentRangeHigh?: number; subjectProperty?: Property; comparables?: Comparable[] };
 const unavailable = (message: string, status: number) => NextResponse.json({ ok: false, message }, { status, headers: { "Cache-Control": "no-store" } });
+
+// The shared Next.js Data Cache avoids repeating RentCast requests for the
+// same normalized address within 24 hours. This is not a billing hard cap.
+class RentCastStatusError extends Error { constructor(public status: number) { super("RentCast returned HTTP " + status); } }
+const cachedRentEstimate = unstable_cache(async (address: string): Promise<Estimate> => {
+  const url = new URL("https://api.rentcast.io/v1/avm/rent/long-term");
+  url.searchParams.set("address", address);
+  url.searchParams.set("compCount", "5");
+  const response = await fetch(url.toString(), {
+    headers: { "Accept": "application/json", "X-Api-Key": process.env.RENTCAST_API_KEY! },
+    cache: "no-store", signal: AbortSignal.timeout(10000)
+  });
+  if (!response.ok) throw new RentCastStatusError(response.status);
+  return await response.json() as Estimate;
+}, ["koinonia-properties-rentcast-long-term-v1"], { revalidate: 86400 });
 
 export async function POST(req: NextRequest) {
   if (process.env.PROPERTIES_RENTCAST_ENABLED !== "true" || !process.env.RENTCAST_API_KEY || !process.env.PROPERTIES_TURNSTILE_SECRET_KEY) {
@@ -39,18 +55,7 @@ export async function POST(req: NextRequest) {
   } catch { return unavailable("Verification unavailable. Please retry.", 503); }
 
   try {
-    const url = new URL("https://api.rentcast.io/v1/avm/rent/long-term");
-    url.searchParams.set("address", address);
-    url.searchParams.set("compCount", "5");
-    const response = await fetch(url.toString(), {
-      headers: { "Accept": "application/json", "X-Api-Key": process.env.RENTCAST_API_KEY },
-      cache: "no-store", signal: AbortSignal.timeout(10000)
-    });
-    if (!response.ok) {
-      console.error("RentCast API returned status", response.status);
-      return unavailable(response.status === 429 ? "Our estimate allowance is temporarily exhausted. Request a personal assessment below." : "An automated estimate is unavailable for this address. Request a personal assessment below.", response.status === 429 ? 429 : 502);
-    }
-    const data = await response.json() as Estimate;
+    const data = await cachedRentEstimate(address.replace(/\s+/g, " ").toLowerCase());
     if (typeof data.rent !== "number" || !Number.isFinite(data.rent) || data.rent <= 0) return unavailable("Not enough local rental information was found. Request a personal assessment below.", 404);
     const valid = (n: unknown) => typeof n === "number" && Number.isFinite(n) && n >= 0 ? n : null;
     return NextResponse.json({
@@ -62,7 +67,11 @@ export async function POST(req: NextRequest) {
         bedrooms: valid(c.bedrooms), bathrooms: valid(c.bathrooms)
       }))
     }, { headers: { "Cache-Control": "no-store" } });
-  } catch {
+  } catch (error) {
+    if (error instanceof RentCastStatusError) {
+      console.error("RentCast API returned status", error.status);
+      return unavailable(error.status === 429 ? "Our estimate allowance is temporarily exhausted. Request a personal assessment below." : "An automated estimate is unavailable for this address. Request a personal assessment below.", error.status === 429 ? 429 : 502);
+    }
     return unavailable("The estimate service could not be reached. Request a personal assessment below.", 503);
   }
 }
