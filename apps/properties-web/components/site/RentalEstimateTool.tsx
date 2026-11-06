@@ -66,7 +66,18 @@ export function RentalEstimateTool() {
       <p>Managed With You (8%): fee <strong>{money(result.rent*0.08)}/month</strong>; rent after management fee <strong>{money(result.rent*0.92)}/month</strong></p>
       <p>Managed for You (10%): fee <strong>{money(result.rent*0.10)}/month</strong>; rent after management fee <strong>{money(result.rent*0.90)}/month</strong></p>
       <p>Potential annual gross scheduled rent: <strong>{money(result.rent*12)}</strong> (before vacancy, management, leasing, repairs, taxes, insurance and other costs).</p>
-      {result.comparables.length>0&&<><h3>Nearby rental comparisons</h3><ul>{result.comparables.map((c,i)=><li key={i}>{c.address}: <strong>{money(c.rent)}/month</strong>{c.distance!==null?` · ${c.distance.toFixed(1)} miles`:""}{c.status?` · ${c.status}`:""}</li>)}</ul></>}
+      <p>These after-management figures are not net profit and exclude vacancy, leasing, renewals, maintenance, mortgage, property taxes, insurance and other expenses.</p>
+      <h3>Nearby rental comparisons</h3>
+      {result.comparables.length ? <div style={{overflowX:"auto"}}>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead><tr><th style={{textAlign:"left",padding:8}}>Property</th><th style={{textAlign:"right",padding:8}}>Rent / month</th><th style={{textAlign:"right",padding:8}}>Distance</th></tr></thead>
+          <tbody>{result.comparables.map((c,i)=><tr key={i}>
+            <td style={{padding:8,borderTop:"1px solid #ddd"}}>{c.address}<div style={{fontSize:".8rem",opacity:.75}}>{[c.bedrooms!==null?c.bedrooms+" beds":null,c.bathrooms!==null?c.bathrooms+" baths":null,c.status].filter(Boolean).join(" · ")}</div></td>
+            <td style={{padding:8,borderTop:"1px solid #ddd",textAlign:"right",whiteSpace:"nowrap"}}>{money(c.rent)}</td>
+            <td style={{padding:8,borderTop:"1px solid #ddd",textAlign:"right",whiteSpace:"nowrap"}}>{c.distance!==null?c.distance.toFixed(1)+" mi":"—"}</td>
+          </tr>)}</tbody>
+        </table>
+      </div> : <p>Not enough comparable listings were returned. Our team can provide a personalized market review.</p>}
       <p className="properties-lead-privacy">Source: RentCast automated rent estimate and rental listing comparables. These figures are estimates, not guaranteed rents, and do not account for property condition, lease restrictions or all expenses. For multi-family properties, estimates may be per unit.</p>
       <a className="koinonia-button primary" href="#rental-inquiry">Request a personalized rental assessment</a>
     </section>}
