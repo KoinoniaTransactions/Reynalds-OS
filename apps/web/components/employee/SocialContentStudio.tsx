@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import styles from "./SocialContentStudio.module.css";
+import { SocialPublishingJobs } from "./SocialPublishingJobs";
 
 const platformNames = ["facebook", "instagram", "tiktok", "linkedin"] as const;
 type Platform = (typeof platformNames)[number];
@@ -15,6 +16,7 @@ export function SocialContentStudio() {
   const [page, setPage] = useState<Page>("drafts");
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
+  const [campaignKey, setCampaignKey] = useState("");
   const [platforms, setPlatforms] = useState<Platform[]>(["facebook"]);
   const [editing, setEditing] = useState<{ postId: string; variantId: string; revision: number; platform: Platform } | null>(null);
   const [query, setQuery] = useState("");
@@ -58,7 +60,7 @@ export function SocialContentStudio() {
   async function refresh() {
     try {
       const [postResponse, accountResponse] = await Promise.all([
-        fetch("/api/employee/social/posts", { cache: "no-store" }),
+        fetch("/api/employee/social/posts?query=" + encodeURIComponent(query), { cache: "no-store" }),
         fetch("/api/employee/social/channels", { cache: "no-store" })
       ]);
       const postsData = await postResponse.json();
@@ -128,7 +130,7 @@ export function SocialContentStudio() {
   }, []);
 
   const filtered = useMemo(() => items.filter(item =>
-    (item.title + " " + item.variants.map(v => v.caption + " " + v.platform).join(" ")).toLowerCase().includes(query.toLowerCase())
+    (item.title + " " + (item.campaignKey ?? "") + " " + item.variants.map(v => v.caption + " " + v.platform).join(" ")).toLowerCase().includes(query.toLowerCase())
   ), [items, query]);
   const allVariants = items.flatMap(post => post.variants.map(variant => ({ ...variant, title: post.title, postId: post.id })));
   const plannedEvents = allVariants.filter(v => v.scheduledAt).sort((a, b) => a.scheduledAt!.localeCompare(b.scheduledAt!));
@@ -136,7 +138,7 @@ export function SocialContentStudio() {
   const approvedCount = allVariants.filter(v => v.status === "approved").length;
 
   function resetEditor() {
-    setEditing(null); setTitle(""); setCaption(""); setPlatforms(["facebook"]);
+    setEditing(null); setTitle(""); setCaption(""); setCampaignKey(""); setPlatforms(["facebook"]);
   }
   function beginEdit(post: Draft, variant: Variant) {
     if (!["draft", "changes_requested"].includes(variant.status) || post.status !== "draft") return;
@@ -158,7 +160,7 @@ export function SocialContentStudio() {
       const response = await fetch(editing ? "/api/employee/social/posts/" + encodeURIComponent(editing.postId) : "/api/employee/social/posts", {
         method: editing ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, caption, platforms, platform: platforms[0],
+        body: JSON.stringify({ title, caption, campaignKey, platforms, platform: platforms[0],
           variantId: editing?.variantId, revision: editing?.revision })
       });
       const data = await response.json();
@@ -424,9 +426,9 @@ export function SocialContentStudio() {
         <p className={styles.subtitle}>Prepare content for each platform, manage draft approvals, and plan your calendar in one workspace.</p>
         <Link href="/employee/dashboard">← Employee dashboard</Link>
       </div>
-      <div><span className={styles.pill}>Publishing disabled</span></div>
+      <div><span className={styles.pill}>Owner-controlled publishing</span></div>
     </div>
-    <div className={styles.notice}>This workspace saves drafts and proposed dates only. No connections, scheduled jobs, advertising, or public posts are activated.</div>
+    <div className={styles.notice}>Prepare and approve content, authorize accounts, and test scheduled jobs in Preview. Public publishing remains separately gated.</div>
     <div className={styles.stats}>
       <div className={styles.stat}><strong>{items.length}</strong><span>Content items</span></div>
       <div className={styles.stat}><strong>{reviewCount}</strong><span>Awaiting review</span></div>
@@ -446,6 +448,7 @@ export function SocialContentStudio() {
         <form onSubmit={saveDraft}>
           <label className={styles.field} htmlFor="social-title">Internal post title</label>
           <input className={styles.input} id="social-title" value={title} maxLength={160} required onChange={e => setTitle(e.target.value)} placeholder="e.g. 3 ways to reclaim your Friday"/>
+          {!editing && <><label className={styles.field} htmlFor="social-campaign">Campaign (optional)</label><input className={styles.input} id="social-campaign" value={campaignKey} maxLength={80} pattern="[a-z0-9][a-z0-9_-]*" onChange={event => setCampaignKey(event.target.value)} placeholder="e.g. agent-overflow-november"/><p className={styles.meta}>Use a consistent campaign name for related posts and tracked website links.</p></>}
           <div className={styles.field}>Target platforms</div>
           <div className={styles.platforms}>
             {platformNames.map(p => <label className={styles.choice} key={p}>
@@ -467,9 +470,11 @@ export function SocialContentStudio() {
         <h2>Content library</h2>
         <label className={styles.field} htmlFor="social-search">Search drafts</label>
         <input className={styles.input} id="social-search" type="search" placeholder="Search title, caption or platform" value={query} onChange={e => setQuery(e.target.value)}/>
+        <button type="button" className={styles.secondary} disabled={busy} onClick={() => void refresh()}>Search saved content</button><p className={styles.meta}>Showing up to 50 recent matching items.</p>
         <div className={styles.items}>{filtered.length ? filtered.map(post =>
           <article className={styles.post} key={post.id}>
             <div className={styles.posthead}><h3>{post.title}</h3><span className={styles.meta}>{new Date(post.createdAt).toLocaleDateString()}</span></div>
+            {post.campaignKey && <p className={styles.meta}>Campaign: {post.campaignKey}</p>}
             {post.variants.map(variant => variantCard(post, variant))}
           </article>) : <div className={styles.empty}>{items.length ? "No matching content." : "No drafts yet. Create your first content item."}</div>}</div>
       </section>
@@ -481,12 +486,12 @@ export function SocialContentStudio() {
         <article className={styles.post} key={v.id}><h3>{post.title}</h3>{variantCard(post,v)}</article>
       )) : <div className={styles.empty}>Nothing is awaiting review.</div>}</div>
     </section>}
-    {page === "calendar" && <section className={styles.panel}><h2>Planned content calendar</h2><p className={styles.meta}>Proposed dates only. The scheduler does not publish or create jobs.</p>
+    {page === "calendar" && <><section className={styles.panel}><h2>Planned content calendar</h2><p className={styles.meta}>Proposed dates are separate from the execution jobs below.</p>
       <div className={styles.calendar}>{plannedEvents.length ? plannedEvents.map(e =>
         <div className={styles.event} key={e.id}><span className={styles.date}>{new Date(e.scheduledAt!).toLocaleString()}</span>
           <div><strong>{e.title}</strong><div className={styles.meta}>{e.platform} · {e.status}</div></div></div>
       ) : <div className={styles.empty}>Approved content with proposed dates will appear here.</div>}</div>
-    </section>}
+    </section><SocialPublishingJobs versions={items.flatMap(post => post.variants.filter(v => v.status === "approved").map(v => ({ id: v.id, revision: v.revision, platform: v.platform, title: post.title })))} accounts={connections} onChanged={refresh}/></>}
     {page === "accounts" && <section className={styles.panel}><h2>Social accounts</h2>
       <div className={styles.post} style={{ marginBottom: 18 }}>
         <h3>Private media storage</h3>

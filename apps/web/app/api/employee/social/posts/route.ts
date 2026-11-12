@@ -15,11 +15,12 @@ async function requireStaff() {
   return assertPermission("employee-portal:view");
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const actor = await requireStaff();
+    const query = new URL(request.url).searchParams.get("query")?.trim().slice(0, 100) ?? "";
     const posts = await prisma.socialPost.findMany({
-      where: { workspaceId: actor.workspaceId },
+      where: { workspaceId: actor.workspaceId, ...(query ? { OR: [ { title: { contains: query, mode: "insensitive" as const } }, { campaignKey: { contains: query, mode: "insensitive" as const } }, { variants: { some: { caption: { contains: query, mode: "insensitive" as const } } } } ] } : {}) },
       include: { variants: { select: { id: true, platform: true, caption: true, status: true, revision: true, scheduledAt: true, media: true } } },
       orderBy: { createdAt: "desc" }, take: 50
     });
@@ -45,9 +46,10 @@ export async function POST(request: Request) {
     const input = body as Record<string, unknown>;
     const title = typeof input.title === "string" ? input.title.trim() : "";
     const caption = typeof input.caption === "string" ? input.caption.trim() : "";
+    const campaignKey = typeof input.campaignKey === "string" ? input.campaignKey.trim() : "";
     const selectedPlatforms = Array.isArray(input.platforms) ? input.platforms : [input.platform];
     const platforms = [...new Set(selectedPlatforms)];
-    if (!title || title.length > 160 || !caption || caption.length > 5000 || platforms.length < 1 || platforms.length > 4 || !platforms.every(p => typeof p === "string" && validPlatforms.has(p))) {
+    if (!title || title.length > 160 || !caption || caption.length > 5000 || (campaignKey && !/^[a-z0-9][a-z0-9_-]{0,79}$/.test(campaignKey)) || platforms.length < 1 || platforms.length > 4 || !platforms.every(p => typeof p === "string" && validPlatforms.has(p))) {
       return NextResponse.json({ error: "A valid title, caption and platform are required." }, { status: 400 });
     }
     const post = await prisma.socialPost.create({
@@ -55,6 +57,7 @@ export async function POST(request: Request) {
         workspaceId: actor.workspaceId,
         createdById: actor.id,
         title,
+        campaignKey: campaignKey || null,
         status: "draft",
         variants: { create: platforms.map(platform => ({ platform: platform as string, caption, status: "draft", revision: 1 })) }
       }, include: { variants: true }

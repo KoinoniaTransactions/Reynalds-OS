@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { assertPermission, getAuthProvider } from "../../../../../lib/auth";
 import { getAuthErrorResponse } from "../../../../../lib/api-auth";
 import { prisma } from "../../../../../lib/db";
+import { liveSocialPublishingEnabled } from "../../../../../lib/social-queue-policy";
+import { metaOAuthConfigured } from "../../../../../lib/social-meta-oauth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,11 +23,12 @@ export async function GET() {
       configuration: {
         draftStudio: process.env.SOCIAL_CONTENT_STUDIO_ENABLED === "true",
         previewImageUploads: process.env.VERCEL_ENV === "preview" && process.env.SOCIAL_MEDIA_UPLOADS_ENABLED === "true",
-        publishDispatch: false,
-        queueWorkers: false,
-        oauthConnections: false
+        publishDispatch: liveSocialPublishingEnabled(),
+        queueWorkers: true,
+        previewSimulations: process.env.VERCEL_ENV === "preview",
+        oauthConnections: metaOAuthConfigured()
       },
-      nextSteps: ["Securely connect each platform", "Validate media requirements by provider", "Implement explicit approved-revision queueing", "Add worker retries and audit evidence"],
+      nextSteps: ["Complete provider app configuration and owner authorization", "Verify supported provider formats against official APIs", "Run isolated queue simulations and authenticated Preview QA", "Review owner launch gates before enabling any public publishing"],
       statement: "No social media requests are sent by this endpoint."
     };
     return NextResponse.json(report, { headers: { "Cache-Control": "private, no-store" } });

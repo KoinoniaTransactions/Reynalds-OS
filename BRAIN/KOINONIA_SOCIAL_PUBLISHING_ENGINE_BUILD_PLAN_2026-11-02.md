@@ -107,3 +107,23 @@ Official references checked 2026-11-12:
 - https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/posts-api (versioned Posts API and organization permissions)
 - https://developers.facebook.com/docs/pages-api/posts/ and Instagram content-publishing docs were inaccessible/rate-limited to the web reader. Current adapters must remain unverified until official API requirements and authorized account scopes are checked.
 - Vercel has newly introduced Schedules beta; do not add a paid/beta dependency automatically. The existing DB ledger can be driven by a secured bounded server worker.
+
+
+### Durable execution batch — 2026-11-12
+Implemented the existing job ledger rather than adding a second queue:
+- Owner-only, workspace-scoped queue, cancellation and retry endpoints; a version-specific deterministic idempotency key and approved content snapshot.
+- Explicit UTC instants and IANA timezone labels; DST regression coverage; simulations cannot bind provider accounts.
+- Database leases and fenced completion, durable attempt history, exponential backoff, rate-limit classification, owner notifications and audit events.
+- Expired dispatch intent without a known provider ID enters `needs_reconciliation` and cannot be canceled/requeued blindly. Recorded external IDs are verified instead of resent.
+- Separate Preview simulation runner: no token decryption, media requests or provider traffic. Simulated jobs are labeled `simulated`, never `published`.
+- Secured server dispatch endpoint, default-deny global plus owner approval and per-channel enablement; no live flag set. Candidate Vercel cron config is included for the eventual approved Production release; Vercel Cron does not execute these jobs in Preview. Frequency/plan suitability must be checked before rollout, with no upgrades authorized.
+- Provider implementations added behind explicit verification gates: Facebook text/images; Instagram single JPEG/MP4 Reel container processing; LinkedIn text. LinkedIn media, Facebook video, Instagram carousel and all provider insights remain incomplete; unsupported media is rejected instead of dropped.
+- Studio Calendar includes job queue controls, explicit simulation/live mode, account selection, cancellation/retry and attempt history.
+
+Database evidence: Neon branch `br-spring-flower-af6eyttp` independently verified as non-default/non-primary Preview, endpoint `ep-billowing-silence-afy5ci4i`. The additive migration `20261112193000_social_queue_execution` was applied through the Neon connector in a single transaction with its SHA-256 Prisma ledger entry (`8982037436c59d05b6f38ce8546becf3dbdbdfafab5d999f369b1cb32fc75b2e`); readback confirms fields and ledger. No existing records reset or deleted. Historical orphan `SocialOAuthState` migration/table was preserved. PR #49's branch-specific DATABASE_URL is explicitly pinned to this Preview endpoint; Production variables untouched.
+
+Local verification limitation: Prisma's native macOS connection reports `bad certificate format`, including when using the system CA bundle; TLS validation was not disabled. Consequently no Prisma-backed worker integration test is claimed. Connector SQL readback proves migration application, and worker tests currently use mocked DB transactions. Native browser binding also timed out; no authenticated UI QA is claimed.
+
+Recovery discovery: full git-history search found the older DORA universe workflow and fetch script at `c582bc9` / `57d8a98`, on `main` and related branches. These are recoverable source assets, not proof the approximately 1,000 enriched contacts have been imported into this Preview CRM. Person-level records must remain outside this public repository.
+
+Queue verification: 64 focused tests passed across 16 files, including worker fencing, immutable approvals, simulation without provider calls, ambiguous outcomes, provider response classification, queue idempotency, and dispatcher authorization. TypeScript passed before the latest campaign search UI change; final checks are tracked below. Optimized Next.js build passed with the local Prisma engine path supplied (no database credentials used for build). Campaign names can now be assigned at draft creation and searched on the server; existing approved business copy is unchanged.

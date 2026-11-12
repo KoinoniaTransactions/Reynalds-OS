@@ -325,6 +325,7 @@ model SocialChannelConnection {
   scopes            Json?
   connectedAt       DateTime?
   expiresAt         DateTime?
+  publishingEnabled Boolean @default(false)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -424,6 +425,17 @@ model SocialPublishJob {
   externalPostId String?
   lockedUntil    DateTime?
   attemptsCount  Int      @default(0)
+  mode           String   @default("live")
+  snapshot       Json?
+  timeZone       String   @default("America/Denver")
+  queuedById     String?
+  connectionId   String?
+  nextAttemptAt  DateTime?
+  leaseToken     String?
+  dispatchStartedAt DateTime?
+  providerState  Json?
+  lastErrorCode  String?
+  lastErrorMessage String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -432,6 +444,7 @@ model SocialPublishJob {
 
   @@index([status, scheduledAt])
   @@index([variantId, revision])
+  @@index([mode, status, nextAttemptAt])
 }
 
 model SocialPublishAttempt {
