@@ -8,7 +8,7 @@ import { META_GRAPH_VERSION, META_OAUTH_COOKIE, metaCallbackUrl, metaOAuthConfig
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-type PageRecord = { id?: string; name?: string; access_token?: string; instagram_business_account?: { id?: string; username?: string } };
+import { metaRecord, metaToken, parseMetaPages, validateMetaGrant } from "../../../../../../../lib/social-meta-validation";
 function returnToStudio(status: "connected" | "denied" | "invalid" | "unavailable", request: NextRequest) {
   const response = NextResponse.redirect(new URL(safeSocialSettingsRedirect(status), request.url), { status: 303 });
   response.cookies.set(META_OAUTH_COOKIE, "", { httpOnly: true, secure: true, sameSite: "lax",
@@ -16,11 +16,11 @@ function returnToStudio(status: "connected" | "denied" | "invalid" | "unavailabl
   response.headers.set("Cache-Control", "private, no-store");
   return response;
 }
-async function metaJson<T>(url: URL): Promise<T> {
-  const result = await fetch(url, { headers: { Accept: "application/json" }, cache: "no-store", signal: AbortSignal.timeout(12000) });
+async function metaJson(url: URL): Promise<unknown> {
+  const result = await fetch(url, { headers: { Accept: "application/json" }, cache: "no-store", redirect: "error", signal: AbortSignal.timeout(12000) });
   const body: unknown = await result.json();
   if (!result.ok) throw new Error("Meta returned HTTP " + result.status);
-  return body as T;
+  return body;
 }
 export async function GET(request: NextRequest) {
   try {
@@ -48,48 +48,62 @@ export async function GET(request: NextRequest) {
     tokenUrl.searchParams.set("client_secret", process.env.META_APP_SECRET!);
     tokenUrl.searchParams.set("redirect_uri", metaCallbackUrl());
     tokenUrl.searchParams.set("code", code);
-    const issued = await metaJson<{ access_token?: string; expires_in?: number }>(tokenUrl);
-    if (!issued.access_token || issued.access_token.length > 8192) throw new Error("Meta authorization had no valid access token");
+    const issued = metaRecord(await metaJson(tokenUrl));
+    const accessToken = metaToken(issued.access_token);
     const inspectUrl = new URL("https://graph.facebook.com/" + META_GRAPH_VERSION + "/debug_token");
-    inspectUrl.searchParams.set("input_token", issued.access_token);
+    inspectUrl.searchParams.set("input_token", accessToken);
     inspectUrl.searchParams.set("access_token", process.env.META_APP_ID! + "|" + process.env.META_APP_SECRET!);
-    const inspected = await metaJson<{ data?: { is_valid?: boolean; app_id?: string; scopes?: string[]; expires_at?: number } }>(inspectUrl);
-    if (!inspected.data?.is_valid || String(inspected.data.app_id) !== process.env.META_APP_ID) {
-      throw new Error("Meta token validation failed");
-    }
-    const grantedScopes = inspected.data.scopes ?? [];
-    const pageReady = ["pages_show_list","pages_manage_posts","pages_read_engagement"].every(p => grantedScopes.includes(p));
-    const instagramReady = grantedScopes.includes("instagram_content_publish") && grantedScopes.includes("instagram_basic");
+    const userGrant = validateMetaGrant(await metaJson(inspectUrl), process.env.META_APP_ID!);
+    const grantedScopes = userGrant.scopes;
+    const instagramReady = ["pages_show_list", "pages_read_engagement", "instagram_content_publish", "instagram_basic"].every(scope => grantedScopes.includes(scope));
 
     const pagesUrl = new URL("https://graph.facebook.com/" + META_GRAPH_VERSION + "/me/accounts");
     pagesUrl.searchParams.set("fields", "id,name,access_token,instagram_business_account{id,username}");
     pagesUrl.searchParams.set("limit", "100");
-    pagesUrl.searchParams.set("access_token", issued.access_token);
-    const pagesResponse = await metaJson<{ data?: PageRecord[] }>(pagesUrl);
-    const pages = (pagesResponse.data ?? []).filter(p => p.id && p.name);
+    pagesUrl.searchParams.set("access_token", accessToken);
+    const pages: ReturnType<typeof parseMetaPages>["pages"] = [];
+    const cursors = new Set<string>();
+    for (let batch = 0; batch < 10; batch++) {
+      const result = parseMetaPages(await metaJson(pagesUrl));
+      pages.push(...result.pages);
+      if (!result.after) break;
+      if (batch === 9 || cursors.has(result.after)) throw new Error("Meta pagination limit reached");
+      cursors.add(result.after);
+      pagesUrl.searchParams.set("after", result.after);
+    }
     if (!pages.length) return returnToStudio("unavailable", request);
-    const expiry = inspected.data.expires_at && inspected.data.expires_at > 0 ?
-      new Date(inspected.data.expires_at * 1000) : typeof issued.expires_in === "number" && issued.expires_in > 0 ?
-      new Date(Date.now() + issued.expires_in * 1000) : null;
-    const now = new Date();
+    if (new Set(pages.map(page => page.id)).size !== pages.length) throw new Error("Duplicate Meta assets");
+    // Validate each Page token independently; never substitute a user token for a missing Page grant.
+    const verified: { page: typeof pages[number]; grant: ReturnType<typeof validateMetaGrant> }[] = [];
     for (const page of pages) {
-      const pageId = page.id!;
-      const connection = await prisma.socialChannelConnection.upsert({
+      inspectUrl.searchParams.set("input_token", page.accessToken);
+      const grant = validateMetaGrant(await metaJson(inspectUrl), process.env.META_APP_ID!);
+      if (grant.profileId !== page.id) throw new Error("Meta Page identity mismatch");
+      verified.push({ page, grant });
+    }
+    const expiry = userGrant.expiresAt;
+    const now = new Date();
+    await prisma.$transaction(async tx => {
+    for (const { page, grant } of verified) {
+      const pageId = page.id;
+      const pageReady = ["pages_show_list", "pages_manage_posts", "pages_read_engagement"].every(scope => grant.scopes.includes(scope));
+      const pageExpiry = grant.expiresAt && expiry ? new Date(Math.min(grant.expiresAt.getTime(), expiry.getTime())) : grant.expiresAt ?? expiry;
+      const connection = await tx.socialChannelConnection.upsert({
         where: { workspaceId_platform_providerAccountId: { workspaceId: actor.workspaceId, platform: "facebook", providerAccountId: pageId } },
-        update: { status: pageReady ? "connected" : "needs_permission", displayName: page.name!, connectedAt: now, expiresAt: expiry,
-          scopes: grantedScopes },
-        create: { workspaceId: actor.workspaceId, platform: "facebook", providerAccountId: pageId, displayName: page.name!,
-          status: pageReady ? "connected" : "needs_permission", connectedAt: now, expiresAt: expiry, scopes: grantedScopes }
+        update: { status: pageReady ? "connected" : "needs_permission", displayName: page.name, connectedAt: now, expiresAt: pageExpiry,
+          scopes: grant.scopes },
+        create: { workspaceId: actor.workspaceId, platform: "facebook", providerAccountId: pageId, displayName: page.name,
+          status: pageReady ? "connected" : "needs_permission", connectedAt: now, expiresAt: pageExpiry, scopes: grant.scopes }
       });
-      await prisma.socialConnectionVault.upsert({
+      await tx.socialConnectionVault.upsert({
         where: { connectionId: connection.id },
-        update: { encodedData: sealSocialConnection({ accessToken: page.access_token || issued.access_token, source: "meta_login", pageId }, actor.workspaceId, connection.id) },
+        update: { encodedData: sealSocialConnection({ accessToken: page.accessToken, source: "meta_login", pageId }, actor.workspaceId, connection.id) },
         create: { workspaceId: actor.workspaceId, connectionId: connection.id,
-          encodedData: sealSocialConnection({ accessToken: page.access_token || issued.access_token, source: "meta_login", pageId }, actor.workspaceId, connection.id) }
+          encodedData: sealSocialConnection({ accessToken: page.accessToken, source: "meta_login", pageId }, actor.workspaceId, connection.id) }
       });
-      const instagram = page.instagram_business_account;
+      const instagram = page.instagram;
       if (instagram?.id) {
-        const ig = await prisma.socialChannelConnection.upsert({
+        const ig = await tx.socialChannelConnection.upsert({
           where: { workspaceId_platform_providerAccountId: { workspaceId: actor.workspaceId, platform: "instagram", providerAccountId: instagram.id } },
           update: { status: instagramReady ? "connected" : "needs_permission", displayName: instagram.username ?? "Instagram " + instagram.id, connectedAt: now, expiresAt: expiry,
             scopes: grantedScopes },
@@ -97,23 +111,24 @@ export async function GET(request: NextRequest) {
             displayName: instagram.username ?? "Instagram " + instagram.id, status: instagramReady ? "connected" : "needs_permission", connectedAt: now, expiresAt: expiry,
             scopes: grantedScopes }
         });
-        await prisma.socialConnectionVault.upsert({
+        await tx.socialConnectionVault.upsert({
           where: { connectionId: ig.id },
-          update: { encodedData: sealSocialConnection({ accessToken: issued.access_token, pageId, source: "meta_login" }, actor.workspaceId, ig.id) },
+          update: { encodedData: sealSocialConnection({ accessToken, pageId, source: "meta_login" }, actor.workspaceId, ig.id) },
           create: { workspaceId: actor.workspaceId, connectionId: ig.id,
-            encodedData: sealSocialConnection({ accessToken: issued.access_token, pageId, source: "meta_login" }, actor.workspaceId, ig.id) }
+            encodedData: sealSocialConnection({ accessToken, pageId, source: "meta_login" }, actor.workspaceId, ig.id) }
         });
       }
     }
-    await prisma.auditEvent.create({ data: { workspaceId: actor.workspaceId, actorId: actor.id,
+    await tx.auditEvent.create({ data: { workspaceId: actor.workspaceId, actorId: actor.id,
       action: "social.oauth.meta_connected", subjectType: "SocialChannelConnection",
       summary: "Meta business assets authorized; publishing remains disabled",
-      metadata: { pages: pages.length, instagramAccounts: pages.filter(p => p.instagram_business_account?.id).length } } });
+      metadata: { pages: pages.length, instagramAccounts: pages.filter(p => p.instagram?.id).length } } });
+    });
     return returnToStudio("connected", request);
   } catch (error) {
     const auth = getAuthErrorResponse(error);
     if (auth) return NextResponse.json({ error: "Authorization required" }, { status: 401 });
-    console.error("Meta callback failed", error instanceof Error ? error.message : "unknown");
+    console.error("Meta callback failed", error instanceof Error ? error.name : "unknown");
     return returnToStudio("unavailable", request);
   }
 }

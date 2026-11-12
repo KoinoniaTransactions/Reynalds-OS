@@ -16,6 +16,8 @@ export async function POST(request: Request) {
     }
     const actor = await assertPermission("employee-portal:view");
     if (actor.role !== "Owner") return NextResponse.json({ error: "Owner approval required to connect social accounts" }, { status: 403 });
+    const recent = await prisma.socialAuthorization.count({ where: { workspaceId: actor.workspaceId, actorId: actor.id, platform: "meta", createdAt: { gt: new Date(Date.now() - 600000) } } });
+    if (recent >= 5) return NextResponse.json({ error: "Too many connection attempts. Try again in ten minutes." }, { status: 429 });
     const state = newMetaOAuthState();
     const callback = buildMetaLoginUrl(state);
     await prisma.socialAuthorization.create({ data: {

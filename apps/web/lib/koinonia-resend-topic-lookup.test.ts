@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { getResendContactTopicsSnapshot as get } from "./koinonia-resend-topic-lookup";
 const id = "f6a8cde9-b7e9-4dd2-a1fe-f8e193db8c85";
-const response = (payload: unknown, status=200) => vi.fn(async () => new Response(JSON.stringify(payload), {status}));
+const response = (payload: unknown, status=200) => vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => new Response(JSON.stringify(payload), {status}));
 describe("Resend contact topics (GET only)", () => {
   it("reads subscription summaries without reporting permission granted", async () => {
     const mock=response({object:"list",has_more:false,data:[{id:"topic-1",subscription:"opt_in"},{id:"topic-2",subscription:"opt_out"}]});

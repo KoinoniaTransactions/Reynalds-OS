@@ -14,10 +14,14 @@ export async function GET() {
     const actor = await assertPermission("employee-portal:view");
     const channels = await prisma.socialChannelConnection.findMany({
       where: { workspaceId: actor.workspaceId },
-      select: { id: true, platform: true, displayName: true, status: true, scopes: true, expiresAt: true },
+      select: { id: true, platform: true, displayName: true, status: true, scopes: true, expiresAt: true, vault: { select: { id: true } } },
       orderBy: { platform: "asc" }
     });
-    return NextResponse.json({ channels, connectionChangesEnabled: false }, { headers: { "Cache-Control": "private, no-store" } });
+    const safeChannels = channels.map(({ vault, ...channel }) => ({ ...channel,
+      status: channel.status !== "connected" ? channel.status : !vault ? "needs_reauthorization" :
+        channel.expiresAt && channel.expiresAt <= new Date() ? "expired" : "connected"
+    }));
+    return NextResponse.json({ channels: safeChannels, connectionChangesEnabled: actor.role === "Owner" }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     const auth = getAuthErrorResponse(error);
     if (auth) return auth;

@@ -34,11 +34,12 @@ export async function PATCH(request: Request, { params }: Context) {
       if (variant.revision !== revision) return { error: "conflict" } as const;
       const changed = await tx.socialPostVariant.updateMany({
         where: { id: variant.id, revision: revision as number, status: { in: ["draft", "changes_requested"] } },
-        data: { caption, revision: { increment: 1 }, status: "draft" }
+        data: { caption, revision: { increment: 1 }, status: "draft", scheduledAt: null }
       });
       if (changed.count !== 1) return { error: "conflict" } as const;
+      await tx.socialApproval.updateMany({ where: { variantId: variant.id, revokedAt: null }, data: { revokedAt: new Date() } });
       await tx.socialPost.update({ where: { id: post.id }, data: { title } });
-      await tx.auditEvent.create({ data: { workspaceId: actor.workspaceId, actorId: actor.id, action: "social.draft.updated", subjectType: "SocialPost", subjectId: post.id, summary: "Social draft edited; approval reset", metadata: { variantId: variant.id, previousRevision: revision } } });
+      await tx.auditEvent.create({ data: { workspaceId: actor.workspaceId, actorId: actor.id, action: "social.draft.updated", subjectType: "SocialPostVariant", subjectId: variant.id, summary: "Social draft edited; approval reset", metadata: { postId: post.id, previousRevision: revision, previousCaption: variant.caption, caption, previousTitle: post.title, title } } });
       return { ok: true } as const;
     });
     if ("error" in updated) return NextResponse.json({ error: updated.error }, { status: updated.error === "not_found" ? 404 : 409 });

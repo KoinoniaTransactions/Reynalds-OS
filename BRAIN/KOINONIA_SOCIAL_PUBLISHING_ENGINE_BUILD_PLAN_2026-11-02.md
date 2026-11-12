@@ -57,5 +57,53 @@ S9. Owner production launch gate: approved accounts, approved posts, verified fa
 ## Approval boundary
 This branch is construction only. Do not change production DB, set live provider credentials, post, schedule live jobs, contact prospects, run ads or send outbound marketing without distinct owner approval. No production merge until build, isolated-DB QA, authorization testing and owner review pass.
 
-## Next engineering task
-Inspect production Prisma schema and existing reusable auth, RBAC, task, media-storage and API patterns; implement S1 against current production schema on this branch. Do not duplicate existing models.
+## Current engineering task
+Continue the existing durable SocialPublishJob/Attempt ledger with fail-closed queueing, isolated execution tests, cancellation, retry classification and an owner operational view. Actual provider authorization, publication, marketing activation and production promotion remain separate owner gates.
+
+
+## 2026-11-12 takeover audit and implementation record
+
+Authority: owner master handoff authorizes substantial development, tests and isolated Preview deployments. It supersedes older per-step approval and budget-mode instructions for this assignment. It does not authorize production merges, marketing sends or public posts. Transactions and Properties remain distinct.
+
+### Baseline and preservation
+- PR #49 branch recovered at `7216a3e`; reviewed all 88 branch commits by log and inspected the current social/auth/media/schema implementation.
+- Latest production observed at `1fd246d`; its only changes after the branch fork were two short-link files. Merged production into this development branch without conflicts. No production ref changed.
+- Existing July local checkout has unrelated uncommitted work and was preserved. Current isolated clone is under this chat's `work/Reynalds-OS`.
+- Stable social Preview alias resolves to `dpl_2d6XCy3QB957ar5xGxMtbEVZMPEr`, source `7216a3e`, status READY. HTTP read of `/employee/social` returned 200; this is reachability proof, not an authenticated end-to-end workflow test.
+
+### Feature inventory (source audit, not live certification)
+| Area | Classification | Evidence / remaining work |
+| --- | --- | --- |
+| Public website and approved prices | Already implemented | Production content; preserve six current products and five capabilities |
+| Consultation -> Relationship, timeline, task, first/latest/conversion touch | Implemented but unified live proof unverified | `api/koinonia/consultation`, attribution and CRM modules; no replacement contact database |
+| CRM follow-up tasks and lifecycle | Implemented | Existing RosObject/Task/timeline and CRM components |
+| Approximately 1,000 prospect import and competitor classification | Not recovered in this branch's runtime code | Repository-wide keyword search found playbooks and short-link references, not a verified complete import; preserve external lists |
+| Consent, Resend contact/topic lookup, suppression and unsubscribe webhook ledger | Implemented but deployment coverage varies | Libraries and webhook tests; marketing-integration-specific flags are not inherited by this branch |
+| Campaign email sequences, SMS provider, delivery/bounce reporting | Incomplete / not established by audit | No mass sends authorized; build on existing contact policy |
+| Social draft/review/calendar/private R2 media | Implemented but full authenticated QA unverified | Existing Studio/routes; prior live R2 evidence remains historical |
+| Meta OAuth / encrypted vault | Implemented with new security regression tests; live blocked | Single-use scoped state; Page token identity validation, bounded cursor pagination, atomic connection/vault writes |
+| LinkedIn authorization/publishing | Missing / external app setup not configured | No client ID/secret in current Vercel metadata |
+| TikTok Direct Post | Blocked by intended-use policy | Official guidelines exclude internal utilities for team-managed accounts; do not bypass or promise approval |
+| Persistent scheduler / provider adapters / reconciliation / metrics | Incomplete | Existing DB ledger is a foundation, not an executing publisher |
+| Unified acquisition reporting | Incomplete | Existing attribution and reporting pieces; do not fabricate traffic, impressions or revenue |
+
+### Verified foundation batch
+- Added same-origin middleware protection for all social browser mutations.
+- Approved variants can return to draft; prior approvals revoked and planned time cleared.
+- Caption edits increment revision, revoke old approvals and retain previous/new copy in audit metadata.
+- Approval audit retains exact caption/media reviewed.
+- Meta responses are runtime-validated; no missing Page token fallback; Page tokens independently checked for app/account identity; token/data-access expiry enforced; pagination follows cursors against fixed endpoints only.
+- Connection/vault writes and connection audit are atomic. Logs contain error class only.
+- OAuth-start request rate is bounded per workspace/actor using the existing authorization ledger.
+- Channel reads report expired/missing-vault grants accurately; disconnect cancels pending jobs.
+- Fixed two existing TypeScript errors in Resend test mock signatures without changing production behavior.
+- Tests: 43 passing across 13 social/Resend test files. `tsc --noEmit` passed. No live provider or marketing sends.
+
+### External configuration and policy blockers
+Vercel metadata inspected without decrypting or printing values. Branch-specific `META_APP_ID`, callback and vault key exist. `META_APP_SECRET`, `META_BUSINESS_LOGIN_CONFIG_ID`, `SOCIAL_META_OAUTH_ENABLED`, LinkedIn/TikTok app credentials and live-publishing enablement are absent. Global/branch metadata does not establish database isolation; verify Neon branch identity before any DB migration or integration fixture.
+
+Official references checked 2026-11-12:
+- https://developers.tiktok.com/doc/content-sharing-guidelines/ (intended-use restriction; indexed official page also available at `/docs/en/content-sharing-guidelines`)
+- https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/posts-api (versioned Posts API and organization permissions)
+- https://developers.facebook.com/docs/pages-api/posts/ and Instagram content-publishing docs were inaccessible/rate-limited to the web reader. Current adapters must remain unverified until official API requirements and authorized account scopes are checked.
+- Vercel has newly introduced Schedules beta; do not add a paid/beta dependency automatically. The existing DB ledger can be driven by a secured bounded server worker.

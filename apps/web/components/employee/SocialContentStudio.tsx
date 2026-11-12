@@ -405,6 +405,7 @@ export function SocialContentStudio() {
         </>}
       </div>
       {variant.status === "approved" && <div>
+        <button type="button" disabled={busy} className={styles.secondary} onClick={() => action(post, variant, "revise")}>Return to draft and revoke approval</button>
         <label className={styles.field} htmlFor={"date-" + variant.id}>Proposed publishing date (planning only)</label>
         <div className={styles.controls}>
           <input className={styles.input} id={"date-" + variant.id} type="datetime-local" value={planned[variant.id] ?? ""} onChange={e => setPlanned(current => ({ ...current, [variant.id]: e.target.value }))}/>

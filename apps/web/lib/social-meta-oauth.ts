@@ -15,7 +15,7 @@ export function metaCallbackUrl(): string {
   const permitted = url.hostname === "koinoniatransactions.com" ||
     url.hostname === "www.koinoniatransactions.com" ||
     (process.env.VERCEL_ENV === "preview" && url.hostname === process.env.VERCEL_BRANCH_URL);
-  if (url.protocol !== "https:" || !permitted ||
+  if (url.protocol !== "https:" || !permitted || url.username || url.password || url.port ||
     url.pathname !== "/api/employee/social/oauth/meta/callback" || url.search || url.hash) {
     throw new Error("Unapproved Meta OAuth callback URL");
   }
