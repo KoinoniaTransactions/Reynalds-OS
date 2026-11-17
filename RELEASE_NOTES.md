@@ -2,7 +2,7 @@
 
 Clarified session entry points, subject/branch authority, historical handoffs and commercial-object scope. Exposed unmerged November Realty decisions and later Properties/social work. Preserved original history and private-record boundaries. Added root AI orientation. Updated manifest navigation and recorded ROS-0088 in the change log. No application code, dependency, schema, software version, object ID, business decision or deployment changed. Software VERSION and object_registry.csv are intentionally unchanged because this is a documentation revision, not a product release or new business object.
 
-Audit limitations: Drive discovery only; reported ChatGPT vault not verified; no exhaustive content, legal or live-runtime certification. Review unresolved sources in BRAIN/CANONICAL_REGISTRY.md before further consolidation.
+Audit limitations: Drive discovery only; no separate vault established or required; no exhaustive content, legal or live-runtime certification. Review unresolved sources in BRAIN/CANONICAL_REGISTRY.md before further consolidation.
 
 # Release Notes
 

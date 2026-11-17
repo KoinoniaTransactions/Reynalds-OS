@@ -6,4 +6,4 @@ The Transactions website was approved and released in September; production sour
 
 Properties has approved November positioning and management fees. The November 6 Realty successor-name and unified social direction is recorded in open PR #58, outside `main`. November website/inquiry/rental-estimate implementation is on the Properties branches. Recover it before recommending a rebuild; its previews do not establish full production readiness.
 
-This cleanup updates documentation navigation only. Private Drive data and the reported ChatGPT vault are not fully reconciled. Unresolved sources remain visible in the registry; no business decision, private dataset, legal status or live deployment is certified by this summary.
+This cleanup updates documentation navigation only. Private Drive data and relevant ChatGPT history are not fully reconciled. No separate vault is established or required. Unresolved sources remain visible in the registry; no business decision, private dataset, legal status or live deployment is certified by this summary.

@@ -16,7 +16,7 @@ Documentation reconciliation: 2026-11-17. This is the session entry point; `BRAI
 - **Properties / Realty:** approved November 3 dual sales/management positioning and November 4 management fees are on `main`. November 6 owner-selected **Koinonia Realty** successor naming and unified social identity are recorded on `decision-koinonia-realty-2026-11-06`, PR #58, not merged to `main` at this audit. Read that record before recommending a name, account structure or site rebuild. Legal/name/licensing clearance and public migration remain unverified here.
 - **Properties implementation:** recover the November consolidated preview at `integration/koinonia-properties-consolidated-2026-11-17`, not only the August baseline. Inquiry and rental-estimate work exists; preview evidence does not prove a production release.
 - **Social engine:** active independent work on `feature/koinonia-social-publishing-engine-foundation-2026-11-02`, draft PR #49. Read its current build plan and acceptance record in that branch. Do not reset it to the older marketing prototype or declare live publishing approved.
-- **Private records:** Drive contains project material; the owner reports a ChatGPT vault. Vault contents/location are not verified by this audit. No inaccessible source may be treated as reviewed or obsolete.
+- **Private records:** Drive contains project material. No separate vault has been established as a project source; do not require the owner to locate one. Continue reconciliation from GitHub, accessible Drive records and relevant ChatGPT history. No inaccessible source may be treated as reviewed or obsolete.
 
 ## Decision rules
 

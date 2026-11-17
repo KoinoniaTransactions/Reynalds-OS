@@ -43,7 +43,7 @@ Use this registry before old handoffs. Record **decision / implementation / veri
 
 - Git: fetched remote branch refs on November 17; inspected key main, production, Realty, Properties and social records. No branches deleted, merged, rebased or reset. No claim that all historical documents have been semantically audited.
 - Drive: located Koinonia Admin, Marketing & Website, Templates & SOPs, legal-filings folders and several sales-tracker versions. Discovery is not content approval; version names and modification dates do not prove which tracker is authoritative. Private file IDs, client records and contact data belong in a private locator/index, not this public registry.
-- Vault: owner reports “ChatGPT vault”; exact accessible resource and contents unverified. Do not infer it is empty, obsolete, or synchronized.
+- Storage clarification: the owner is unsure whether a separate vault was ever used. No separate vault is established as a project source, and locating one is not a prerequisite. Continue with GitHub, accessible Drive records and relevant ChatGPT history; record an additional source only if evidence identifies it.
 - Cross-source decisions: confirm original approvals and private source coverage before archiving business data or choosing among tracker copies. Carry only sanitized business decisions into Git; keep supporting private evidence and locators private.
 - Realty PR #58 records later decisions missing from `main`; reconcile its source deliberately. This navigation cleanup does not merge the PR or implement the rebrand.
 - Deployment and legal status: this audit reads historical evidence and source trees. It does not reverify live hosting, legal formation, license authority, ownership of domains/accounts, or provider credentials.
