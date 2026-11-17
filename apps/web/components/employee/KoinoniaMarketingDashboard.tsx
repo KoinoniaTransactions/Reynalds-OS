@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import type { buildKoinoniaMarketingReport } from "../../lib/koinonia-marketing-report";
 import styles from "./SocialContentStudio.module.css";
@@ -7,7 +7,7 @@ type Overview = { report: ReturnType<typeof buildKoinoniaMarketingReport>; total
   jobs: { status: string; mode: string; _count: { _all: number } }[];
   channels: { platform: string; displayName: string; status: string; expiresAt: string | null; publishingEnabled: boolean }[];
   issues: { id: string; status: string; mode: string; lastErrorMessage: string | null }[] };
-export function KoinoniaMarketingDashboard() {
+export function KoinoniaMarketingDashboard({ children }: { children?: ReactNode }) {
   const [overview, setOverview] = useState<Overview | null>(null);
   const [error, setError] = useState("");
   useEffect(() => {
@@ -37,5 +37,6 @@ export function KoinoniaMarketingDashboard() {
         <h3>Needs attention</h3>{overview.issues.length ? overview.issues.map(issue => <p key={issue.id}>{issue.mode === "dry_run" ? "Simulation" : "Public publishing"} · {issue.status}: {issue.lastErrorMessage ?? "Review job history."}</p>) : <p>No failed jobs recorded.</p>}
       </section>
     </>}
+    {children}
   </main>;
 }
