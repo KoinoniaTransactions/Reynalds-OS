@@ -10,6 +10,8 @@ import {
   relationshipPressureCategories,
   relationshipServiceOptions,
   relationshipSources,
+  relationshipAudienceTypes,
+  type RelationshipAudienceType,
   type KoinoniaRelationshipData
 } from "../lib/koinonia-relationship";
 import { RelationshipFollowUpQueue } from "./relationship-follow-up-queue";
@@ -44,6 +46,7 @@ type RelationshipForm = {
   email: string;
   phone: string;
   role: string;
+  audienceType: RelationshipAudienceType;
   brokerage: string;
   market: string;
   source: string;
@@ -68,6 +71,7 @@ const blankForm: RelationshipForm = {
   email: "",
   phone: "",
   role: "Realtor",
+  audienceType: "unreviewed",
   brokerage: "",
   market: "",
   source: "",
@@ -107,6 +111,7 @@ function relationshipToForm(relationship: RosObject): RelationshipForm {
     email: profile.contact?.email ?? "",
     phone: profile.contact?.phone ?? "",
     role: profile.contact?.role ?? "",
+    audienceType: profile.contact?.audienceType ?? "unreviewed",
     brokerage: profile.contact?.brokerage ?? "",
     market: profile.contact?.market ?? "",
     source: profile.acquisition?.source ?? "",
@@ -131,6 +136,7 @@ function formToProfile(form: RelationshipForm): KoinoniaRelationshipData {
       email: form.email.trim(),
       phone: form.phone.trim(),
       role: form.role.trim(),
+      audienceType: form.audienceType,
       brokerage: form.brokerage.trim(),
       market: form.market.trim()
     },
@@ -620,6 +626,8 @@ function RelationshipFormFields({
       <input value={form.email} onChange={(event) => patch({ email: event.target.value })} placeholder="Email" type="email" />
       <input value={form.phone} onChange={(event) => patch({ phone: event.target.value })} placeholder="Phone" />
       <input value={form.role} onChange={(event) => patch({ role: event.target.value })} placeholder="Role" />
+      <label>Relationship category<select aria-label="Relationship category" value={form.audienceType} onChange={event => patch({ audienceType: event.target.value as RelationshipAudienceType })}>{relationshipAudienceTypes.map(type => <option key={type} value={type}>{type}</option>)}</select></label>
+      {form.audienceType === "competitor" && <p>Excluded from customer marketing eligibility and acquisition totals.</p>}
       <input value={form.brokerage} onChange={(event) => patch({ brokerage: event.target.value })} placeholder="Brokerage / Team" />
       <input value={form.market} onChange={(event) => patch({ market: event.target.value })} placeholder="Market / Area" />
 

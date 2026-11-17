@@ -25,9 +25,11 @@ export async function GET(_request: Request, { params }: Params) {
         take: 20
       },
       sourceLinks: {
+        where: { targetObject: { workspaceId: user.workspaceId, archivedAt: null } },
         include: { targetObject: true }
       },
       targetLinks: {
+        where: { sourceObject: { workspaceId: user.workspaceId, archivedAt: null } },
         include: { sourceObject: true }
       }
     }

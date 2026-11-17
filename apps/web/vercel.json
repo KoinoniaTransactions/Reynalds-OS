@@ -1,0 +1,5 @@
+{
+  "crons": [
+    { "path": "/api/internal/social/dispatch", "schedule": "*/5 * * * *" }
+  ]
+}

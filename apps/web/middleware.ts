@@ -1,9 +1,14 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
+import { isSameOriginSocialMutation } from "./lib/social-request-policy";
 
 const protectedPortalPrefixes = ["/client", "/employee", "/crm"];
 
 export default function middleware(request: NextRequest, event: NextFetchEvent) {
+  if (request.nextUrl.pathname.startsWith("/api/employee/social/") &&
+      !["GET", "HEAD", "OPTIONS"].includes(request.method) && !isSameOriginSocialMutation(request)) {
+    return NextResponse.json({ error: "Same-origin request required" }, { status: 403 });
+  }
   if (!hasClerkConfiguration()) {
     return NextResponse.next();
   }

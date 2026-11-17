@@ -1,3 +1,5 @@
+export const relationshipAudienceTypes = ["unreviewed", "prospect", "client", "partner", "competitor"] as const;
+export type RelationshipAudienceType = typeof relationshipAudienceTypes[number];
 export const relationshipLifecycleStages = [
   "Awareness",
   "Interest",
@@ -92,6 +94,7 @@ export type KoinoniaRelationshipData = {
     role?: string;
     brokerage?: string;
     market?: string;
+    audienceType?: RelationshipAudienceType;
   };
   acquisition?: {
     source?: string;
@@ -287,7 +290,8 @@ export function normalizeKoinoniaRelationshipData(
       phone: text(contact.phone),
       role: text(contact.role),
       brokerage: text(contact.brokerage),
-      market: text(contact.market)
+      market: text(contact.market),
+      audienceType: relationshipAudienceTypes.includes(text(contact.audienceType) as RelationshipAudienceType) ? text(contact.audienceType) as RelationshipAudienceType : "unreviewed"
     },
     acquisition: {
       ...acquisition,
