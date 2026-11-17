@@ -16,6 +16,8 @@ export function SocialPublishingJobs({ versions, accounts, onChanged }: { versio
   const [date, setDate] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [externalIds, setExternalIds] = useState<Record<string, string>>({});
+  const [acknowledged, setAcknowledged] = useState<Record<string, boolean>>({});
   const selected = versions.find(v => v.id === variantId);
   const queueMode = canSimulate ? mode : "live";
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -82,6 +84,12 @@ export function SocialPublishingJobs({ versions, accounts, onChanged }: { versio
       {job.externalPostId && <p>Provider post ID: {job.externalPostId}</p>}
       {job.lastErrorMessage && <p>{job.lastErrorMessage}</p>}
       {job.status === "needs_reconciliation" && <p>Do not create a replacement post until the provider outcome is confirmed.</p>}
+      {owner && job.mode === "live" && job.status === "needs_reconciliation" && <div>
+        <label className={styles.field} htmlFor={"external-" + job.id}>Existing provider post ID</label>
+        <input className={styles.input} id={"external-" + job.id} value={externalIds[job.id] ?? job.externalPostId ?? ""} onChange={event => setExternalIds(current => ({ ...current, [job.id]: event.target.value }))}/>
+        <label className={styles.choice}><input type="checkbox" checked={acknowledged[job.id] === true} onChange={event => setAcknowledged(current => ({ ...current, [job.id]: event.target.checked }))}/>I matched this existing provider post to this job.</label>
+        <button type="button" className={styles.secondary} disabled={busy || !acknowledged[job.id] || !(externalIds[job.id] ?? job.externalPostId)} onClick={() => void perform("/api/employee/social/jobs/" + encodeURIComponent(job.id), { action: "reconcile", externalId: externalIds[job.id] ?? job.externalPostId, acknowledged: true })}>Verify existing post and resolve</button>
+      </div>}
       {owner && ["scheduled", "preparing", "retry_wait", "failed", "needs_reauthorization"].includes(job.status) && !job.externalPostId && <div className={styles.actions}>
         <button type="button" className={styles.secondary} disabled={busy} onClick={() => void perform("/api/employee/social/jobs/" + encodeURIComponent(job.id), { action: "cancel" })}>Cancel and return to draft</button>
         {["failed", "needs_reauthorization"].includes(job.status) && job.lastErrorCode?.startsWith("retryable_") && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void perform("/api/employee/social/jobs/" + encodeURIComponent(job.id), { action: "retry" })}>Retry same job</button>}

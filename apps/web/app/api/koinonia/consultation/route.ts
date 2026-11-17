@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { contactConfig } from "../../../../config/contact.config";
 import type { Prisma } from "@reynalds-os/database";
 import { prisma } from "../../../../lib/db";
+import { marketingAcquisitionChannel } from "../../../../lib/marketing-acquisition-channel";
 import {
   mapConsultationTypeToRelationshipIntent,
   mergeKoinoniaRelationshipData,
@@ -161,17 +162,8 @@ function deriveAcquisition(touch: MarketingTouch) {
   const isGoogle = sourceName.includes("google") || Boolean(touch.gclid || touch.gbraid || touch.wbraid);
   const isMicrosoft = sourceName.includes("bing") || sourceName.includes("microsoft") || Boolean(touch.msclkid);
   const isEmail = sourceName.includes("email") || medium.includes("email");
-  const isPaid =
-    medium.includes("paid") ||
-    medium.includes("cpc") ||
-    Boolean(
-      touch.fbclid ||
-        touch.ttclid ||
-        touch.gclid ||
-        touch.gbraid ||
-        touch.wbraid ||
-        touch.msclkid
-    );
+  const channel = marketingAcquisitionChannel(touch);
+  const isPaid = channel === "paid";
 
   let source = "Website";
   let firstTouchChannel = "Website";
@@ -184,7 +176,7 @@ function deriveAcquisition(touch: MarketingTouch) {
       : isTikTok
         ? "TikTok"
         : "Facebook";
-    sourceDetail = `${firstTouchChannel}${isPaid ? " paid" : " organic"}`;
+    sourceDetail = `${firstTouchChannel}${isPaid ? " paid" : channel === "organic" ? " organic" : " (acquisition type unverified)"}`;
   } else if (isGoogle) {
     firstTouchChannel = "Google";
     sourceDetail = `Google${isPaid ? " paid" : ""}`;

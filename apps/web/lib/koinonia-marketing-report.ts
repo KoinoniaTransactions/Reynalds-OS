@@ -1,14 +1,17 @@
 import { normalizeKoinoniaRelationshipData } from "./koinonia-relationship";
+import { marketingAcquisitionChannel } from "./marketing-acquisition-channel";
 export type MarketingRelationshipRecord = { status: string; data: unknown };
 type CampaignRow = { campaign: string; relationships: number; consultations: number; currentQualified: number; customers: number; tagged: number; staffRecorded: number; recordedRevenue: number };
 const customerStages = new Set(["Client", "Active Client", "Active Engagement", "Successful Delivery", "Advocate"]);
 export function buildKoinoniaMarketingReport(records: MarketingRelationshipRecord[]) {
   const campaigns = new Map<string, CampaignRow>();
+  const acquisitionChannels = { paid: 0, organic: 0, email: 0, referral: 0, unknown: 0 };
   let competitors = 0, unclassified = 0, recordedRevenue = 0, consultationRequests = 0, customers = 0, currentQualified = 0, suppressed = 0;
   for (const row of records) {
     const profile = normalizeKoinoniaRelationshipData(row.data);
     if (profile.contact?.audienceType === "competitor") { competitors++; continue; }
     if (!profile.contact?.audienceType || profile.contact.audienceType === "unreviewed") unclassified++;
+    acquisitionChannels[marketingAcquisitionChannel(profile.acquisition?.conversionTouch)]++;
     const tagged = profile.acquisition?.conversionTouch?.utmCampaign?.trim() ?? "";
     const manual = profile.acquisition?.campaign?.trim() ?? "";
     const campaign = tagged || manual || "Unattributed";
@@ -24,7 +27,7 @@ export function buildKoinoniaMarketingReport(records: MarketingRelationshipRecor
     if (["unsubscribed", "do_not_contact"].includes(profile.emailMarketing?.status ?? "")) suppressed++;
     campaigns.set(campaign, aggregate);
   }
-  return { relationships: records.length - competitors, competitors, unclassified, consultationRequests, currentQualified, customers, recordedRevenue, suppressed,
+  return { relationships: records.length - competitors, competitors, unclassified, consultationRequests, currentQualified, customers, recordedRevenue, suppressed, acquisitionChannels,
     campaigns: [...campaigns.values()].sort((a, b) => b.relationships - a.relationships),
     websiteVisits: null, landingPageConversionRate: null, socialImpressions: null, emailEngagement: null, advertisingSpend: null,
     measurementNote: "Campaigns reflect CRM acquisition fields. Recorded relationship revenue is not verified cash, incremental revenue, or ROAS. Website/provider metrics require their own validated data connections." };

@@ -6,6 +6,10 @@ on:
       - "apps/web/app/api/webhooks/resend/contact/**"
       - "apps/web/lib/resend-contact-**"
       - "apps/web/lib/social-**"
+      - "apps/web/lib/koinonia-prospect-import*"
+      - "apps/web/app/api/employee/marketing/prospects/**"
+      - "apps/web/app/api/koinonia/consultation/**"
+      - "apps/web/lib/marketing-acquisition-channel*"
       - "apps/web/app/api/employee/social/**"
       - "packages/database/prisma/**"
       - ".github/workflows/resend-contact-db-test.yml"
@@ -35,6 +39,10 @@ jobs:
       RUN_RESEND_WEBHOOK_DB_INTEGRATION: "true"
       RUN_SOCIAL_QUEUE_DB_INTEGRATION: "true"
       SOCIAL_QUEUE_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/resend_webhook_test
+      RUN_PROSPECT_IMPORT_DB_INTEGRATION: "true"
+      PROSPECT_IMPORT_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/resend_webhook_test
+      RUN_CONSULTATION_DB_INTEGRATION: "true"
+      CONSULTATION_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/resend_webhook_test
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -47,3 +55,5 @@ jobs:
       - run: pnpm --filter @reynalds-os/database exec prisma migrate deploy
       - run: pnpm --filter @reynalds-os/web exec vitest run app/api/webhooks/resend/contact/route.db-integration.test.ts
       - run: pnpm --filter @reynalds-os/web exec vitest run lib/social-queue.db-integration.test.ts
+      - run: pnpm --filter @reynalds-os/web exec vitest run lib/koinonia-prospect-import.db-integration.test.ts
+      - run: pnpm --filter @reynalds-os/web exec vitest run app/api/koinonia/consultation/route.db-integration.test.ts

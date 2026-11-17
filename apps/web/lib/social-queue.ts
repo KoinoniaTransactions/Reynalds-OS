@@ -34,7 +34,8 @@ export async function enqueueSocialVariant(actor: SocialQueueActor, input: {
     const changed = await tx.socialPostVariant.updateMany({ where: { id: variant.id, revision: input.revision, status: "approved" }, data: { status: "scheduled", scheduledAt, connectionId: input.connectionId } });
     if (changed.count !== 1) throw new SocialQueueError("Content changed while queueing; refresh");
     const job = await tx.socialPublishJob.create({ data: { variantId: variant.id, revision: variant.revision, connectionId: input.connectionId, mode: input.mode, snapshot: snapshot as unknown as Prisma.InputJsonValue,
-      timeZone: input.timeZone, queuedById: actor.id, scheduledAt, nextAttemptAt: scheduledAt, idempotencyKey: key } });
+      timeZone: input.timeZone, queuedById: actor.id, scheduledAt,
+      nextAttemptAt: input.mode === "live" ? new Date(Math.max(Date.now(), scheduledAt.getTime() - 30 * 60000)) : scheduledAt, idempotencyKey: key } });
     await tx.auditEvent.create({ data: { workspaceId: actor.workspaceId, actorId: actor.id, action: "social.job.queued", subjectType: "SocialPublishJob", subjectId: job.id,
       summary: input.mode === "dry_run" ? "Approved revision queued for simulation; no provider request authorized" : "Owner queued an approved revision for publishing", metadata: { variantId: variant.id, revision: variant.revision, mode: input.mode, scheduledAt: scheduledAt.toISOString(), timeZone: input.timeZone, connectionId: input.connectionId } } });
     return { id: job.id, status: job.status, existing: false };

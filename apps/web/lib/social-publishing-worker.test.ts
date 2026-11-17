@@ -51,6 +51,10 @@ describe("durable publishing worker", () => {
     expect(m.adapter.publish).toHaveBeenCalledTimes(1);
     expect(m.tx.socialPublishJob.updateMany).toHaveBeenLastCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "needs_reconciliation", nextAttemptAt: null }) }));
   });
+  it("prepares early but cannot publish before the requested instant", async () => {
+    enable(); queued(fixture({ mode: "live", providerState: { prepared: true }, scheduledAt: new Date(Date.now() + 600000) }));
+    expect((await runSocialPublishingWorker({ mode: "live" })).results).toEqual(["waiting_schedule"]); expect(m.adapter.publish).not.toHaveBeenCalled();
+  });
   it("retries explicit non-published rate limits without discarding prepared media", async () => {
     enable(); queued(fixture({ mode: "live", providerState: { prepared: true } }));
     m.adapter.publish.mockRejectedValue(new SocialProviderError("retryable", "rate_limit", 120));

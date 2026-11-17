@@ -131,6 +131,16 @@ Queue verification: 64 focused tests passed across 16 files, including worker fe
 
 ## Current continuation checkpoint — 2026-11-17
 
+### Credential-free continuation — 2026-11-17
+- Added owner-only resolution of uncertain live jobs by verifying an existing provider post ID against the original authorized account and approved caption, then fencing the local transition and writing an audit. Resolution never dispatches a new post and does not offer an unproven “not published” reset.
+- Provider verification now checks account/author and caption as well as ID/publication state. LinkedIn supports one to four approved JPEG/PNG images up to 3 MiB each, with bounded private R2 reads, magic-byte/metadata checks, strict upload-origin validation, durable image checkpoints and processing/ownership checks. Other unsupported formats remain rejected. No live provider behavior is claimed verified.
+- Live preparation begins up to 30 minutes before the requested instant, while a separate scheduled-time guard prevents early publishing. Preview still needs its manual simulation runner; no automatic Preview cron is claimed.
+- Added a Preview-only, managed-auth, same-origin, owner CSV review/import workflow under `/employee/marketing`. It uses existing Relationship records, keeps source URLs/check dates and import fingerprints, skips matching email/phone/license/source IDs including archived relationships, serializes simultaneous imports using a workspace advisory lock, and audits the transaction. Existing records are never overwritten. Recognizable transaction coordinators become competitors. Consent remains unknown; no provisioning, email/SMS or contact export occurs. Other manual CRM creation paths are not covered by the import lock.
+- Added paid/organic/email/referral/unknown conversion-tag counts and removed the unsupported assumption that a social click ID alone proves paid acquisition. These are recorded tags, not independently verified platform attribution.
+- Extended disposable local PostgreSQL CI with two prospect import tests (concurrent duplicate avoidance, workspace isolation and archived opt-out preservation) and one actual consultation-route-to-CRM test (tag persistence, follow-up creation, repeat-request deduplication, advanced lifecycle and opt-out preservation, no sends). CI execution evidence follows after push; they are guarded/skipped locally.
+- Exact secure provider setup walkthrough: `02_Companies/Koinonia/04_Departments/Marketing/SOCIAL_PREVIEW_ACCOUNT_SETUP.md`. Meta official Login for Business configuration requirements and LinkedIn Images/MultiImage schemas were rechecked on 2026-11-17. No credentials configured by this batch.
+- Local verification: 535 unit/route tests pass; eleven explicit disposable-DB cases skip locally. TypeScript and optimized Next.js build pass. These checks do not substitute for authenticated owner browser acceptance or live provider tests. No schema migration is needed.
+
 Branch/production review: PR #49 remains open/draft; remote development head was `a8822eb`, production `1fd246d`. Neither branch changed since the preceding batch. Continue this PR; do not restart or merge Production.
 
 ### Newly implemented
@@ -159,8 +169,8 @@ Configure secrets directly in the Vercel dashboard scoped only to this feature b
 
 ### Remaining implementation and acceptance work (not claimed complete)
 1. Authenticated Preview browser/route/database workflow proof and live account authorization once secure app configuration exists.
-2. Provider format expansion (LinkedIn media, Facebook video, Instagram carousel), reconciliation tooling and real insights with permission-specific verification. Current supported adapters remain activation-gated.
-3. Recover and review the current enriched prospect dataset from approved private storage; implement/import with duplicate/source/competitor review into existing Relationship records. The DORA source recovery is not proof of the approximately 1,000-contact import.
+2. Provider format expansion (LinkedIn video, Facebook video, Instagram carousel) and real insights with permission-specific verification. LinkedIn images and conservative reconciliation tooling were added in the continuation below; adapters remain activation-gated.
+3. Recover and review the current enriched prospect dataset from approved private storage, then use the Preview import review workflow below. The DORA source recovery is not proof of the approximately 1,000-contact import.
 4. Campaign landing-page and unified tagged lead-to-CRM acceptance evidence; existing website and approved commercial copy remain authoritative.
 5. Complete consent-based email sequences, delivery/bounce telemetry and SMS provider/opt-out workflows using the existing contact policies. No outbound campaigns or messages authorized.
 6. Production readiness review, account/platform policy review, privacy checks and explicit owner approval before any Production merge or marketing activation.

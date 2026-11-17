@@ -38,7 +38,7 @@ export function liveSocialContentProblem(snapshot: SocialSnapshot): string | nul
   if (snapshot.platform === "linkedin" && snapshot.caption.length > 3000) return "LinkedIn captions must be 3,000 characters or fewer.";
   if (snapshot.platform === "instagram" && snapshot.caption.length > 2200) return "Instagram captions must be 2,200 characters or fewer.";
   if (snapshot.platform === "instagram" && (snapshot.media.length !== 1 || !["image/jpeg", "video/mp4"].includes(snapshot.media[0].type))) return "Instagram publishing currently supports one JPEG image or MP4 Reel; other formats require conversion or a carousel adapter.";
-  if (snapshot.platform === "linkedin" && snapshot.media.length) return "LinkedIn media upload must be verified before live media publishing; text posts are supported.";
+  if (snapshot.platform === "linkedin" && snapshot.media.some(asset => !["image/jpeg", "image/png"].includes(asset.type) || asset.size > 3 * 1024 * 1024)) return "LinkedIn supports JPEG/PNG images up to 3 MiB each; videos and other formats require a separate adapter.";
   if (snapshot.platform === "facebook" && snapshot.media.some(m => m.type.startsWith("video/"))) return "Facebook video processing must be verified before live video publishing; text and image posts are supported.";
   return null;
 }

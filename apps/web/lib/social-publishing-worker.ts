@@ -5,6 +5,7 @@ import { openSocialConnection } from "./social-connection-vault";
 import { presignR2Object } from "./r2-presign";
 import { liveSocialContentProblem, liveSocialPublishingEnabled, readSocialSnapshot, socialRetryAt } from "./social-queue-policy";
 import { SocialProviderError, socialProviderAdapter, type ProviderContext } from "./social-provider-adapters";
+import { readPrivateSocialImage } from "./social-private-image";
 
 const LEASE_MS = 180000; // Longer than the route's 60-second maximum execution.
 const runnable = ["scheduled", "retry_wait", "preparing", "verifying"];
@@ -85,7 +86,7 @@ async function runClaimedJob(job: NonNullable<JobContext>) {
     const grant = openSocialConnection(connection.vault.encodedData, snapshot.workspaceId, connection.id);
     if (typeof grant.accessToken !== "string" || !grant.accessToken) throw new SocialProviderError("reauthorize", "invalid_vault_grant");
     const state = job.providerState && typeof job.providerState === "object" && !Array.isArray(job.providerState) ? job.providerState as Record<string, unknown> : {};
-    const context: ProviderContext = { snapshot, accountId: connection.providerAccountId, accessToken: grant.accessToken, mediaUrl: privateMediaUrl, state };
+    const context: ProviderContext = { snapshot, accountId: connection.providerAccountId, accessToken: grant.accessToken, mediaUrl: privateMediaUrl, mediaBytes: key => readPrivateSocialImage(snapshot, key), state };
     const adapter = socialProviderAdapter(snapshot.platform);
     if (job.externalPostId) {
       if (await adapter.verify(context, job.externalPostId)) {
@@ -98,8 +99,11 @@ async function runClaimedJob(job: NonNullable<JobContext>) {
     if (state.prepared !== true) {
       const prepared = await adapter.prepare(context);
       if (job.attemptsCount >= 30 && !prepared.ready) throw new SocialProviderError("permanent", "media_processing_timeout");
-      await finish(job, { status: "preparing", state: { ...prepared.state, prepared: prepared.ready }, retryAt: new Date(Date.now() + (prepared.ready ? 0 : 60000)) });
+      await finish(job, { status: "preparing", state: { ...prepared.state, prepared: prepared.ready }, retryAt: prepared.ready ? new Date(Math.max(Date.now(), job.scheduledAt.getTime())) : new Date(Date.now() + 60000) });
       return "preparing"; // Persist provider media IDs before the publishing step.
+    }
+    if (job.scheduledAt > new Date()) {
+      await finish(job, { status: "preparing", retryAt: job.scheduledAt }); return "waiting_schedule";
     }
     // Commit intent before the non-idempotent external POST. A crash now requires reconciliation.
     const marked = await prisma.$transaction(async tx => {

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { SocialProviderError, socialProviderAdapter, type ProviderContext } from "./social-provider-adapters";
+import { SocialProviderError, socialProviderAdapter, linkedinImageUploadUrl, type ProviderContext } from "./social-provider-adapters";
 const fetcher = vi.fn();
 const base: ProviderContext = { snapshot: { workspaceId: "w1", variantId: "v1", revision: 1, platform: "facebook", caption: "Approved caption", media: [], campaignKey: null }, accountId: "101", accessToken: "fake-secret-token", mediaUrl: () => "https://storage.example/private?signature=fake", state: {} };
 beforeEach(() => { fetcher.mockReset(); vi.stubGlobal("fetch", fetcher); });
@@ -59,5 +59,25 @@ describe("provider dispatch boundaries", () => {
     expect(() => socialProviderAdapter("tiktok")).toThrow(SocialProviderError);
     await expect(socialProviderAdapter("facebook").publish({ ...base, accountId: "../me" })).rejects.toMatchObject({ code: "invalid_account_id" });
     expect(fetcher).not.toHaveBeenCalled();
+  });
+  it("rejects off-provider upload URLs before forwarding authorization", () => {
+    for (const url of ["https://attacker.example/dms-uploads/file", "https://www.linkedin.com.attacker.example/dms-uploads/file", "http://www.linkedin.com/dms-uploads/file", "https://secret@www.linkedin.com/dms-uploads/file", "https://www.linkedin.com/other"]) expect(() => linkedinImageUploadUrl(url)).toThrow();
+    expect(linkedinImageUploadUrl("https://www.linkedin.com/dms-uploads/image?signature=test").hostname).toBe("www.linkedin.com");
+  });
+  it("uploads and checkpoints a LinkedIn image without publishing", async () => {
+    vi.stubEnv("SOCIAL_LINKEDIN_API_VERSION", "202609");
+    const bytes = new Uint8Array([255, 216, 255]);
+    const context = { ...base, accountId: "urn:li:organization:101", snapshot: { ...base.snapshot, platform: "linkedin" as const, media: [{ key: "social-preview/w1/v1/photo.jpg", type: "image/jpeg", size: 3, name: "photo" }] }, mediaBytes: vi.fn(async () => bytes) };
+    fetcher.mockResolvedValueOnce(new Response(JSON.stringify({ value: { image: "urn:li:image:abc", uploadUrl: "https://www.linkedin.com/dms-uploads/image?signature=test", uploadUrlExpiresAt: Date.now() + 60000 } }))).mockResolvedValueOnce(new Response(null, { status: 201 }));
+    expect(await socialProviderAdapter("linkedin").prepare(context)).toEqual({ ready: false, state: { imageUrns: ["urn:li:image:abc"] } });
+    expect(fetcher.mock.calls[1][1].method).toBe("PUT"); expect(fetcher.mock.calls.some(([url]) => String(url).endsWith("/posts"))).toBe(false);
+    fetcher.mockResolvedValueOnce(new Response(JSON.stringify({ id: "urn:li:image:abc", owner: context.accountId, status: "AVAILABLE" })));
+    expect((await socialProviderAdapter("linkedin").prepare({ ...context, state: { imageUrns: ["urn:li:image:abc"] } })).ready).toBe(true);
+  });
+  it("requires the post's actual author and approved caption during verification", async () => {
+    fetcher.mockResolvedValueOnce(new Response(JSON.stringify({ id: "101_202", is_published: true, from: { id: "999" }, message: base.snapshot.caption })));
+    expect(await socialProviderAdapter("facebook").verify(base, "101_202")).toBe(false);
+    fetcher.mockResolvedValueOnce(new Response(JSON.stringify({ id: "101_202", is_published: true, from: { id: "101" }, message: base.snapshot.caption })));
+    expect(await socialProviderAdapter("facebook").verify(base, "101_202")).toBe(true);
   });
 });

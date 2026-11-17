@@ -16,4 +16,8 @@ describe("evidence-based acquisition reporting", () => {
     const decision = evaluateKoinoniaMarketingEligibility({ contact: { email: "test@example.com", audienceType: "competitor" }, emailMarketing: { status: "eligible", permissionSource: "documented", permissionRecordedAt: "2026-01-01T00:00:00Z" } }, "verified_clear");
     expect(decision.eligible).toBe(false); expect(decision.reasons).toContain("competitor_excluded");
   });
+  it("separates recorded organic and paid tags without inferring spend from click IDs", () => {
+    const report = buildKoinoniaMarketingReport(["organic_social", "paid_social", ""].map(utmMedium => ({ status: "Lead", data: { acquisition: { conversionTouch: { utmMedium, fbclid: "click" } } } })));
+    expect(report.acquisitionChannels).toEqual({ paid: 1, organic: 1, unknown: 1, email: 0, referral: 0 });
+  });
 });
