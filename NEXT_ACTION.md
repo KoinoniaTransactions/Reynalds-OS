@@ -3,8 +3,8 @@
 Documentation reconciliation: 2026-11-17.
 
 1. Read `START_HERE.md` and `BRAIN/CANONICAL_REGISTRY.md`.
-2. Review the documentation cleanup against its pinned sources. Preserve open Realty decision PR #58, Properties implementation PRs #53–57, and active social-engine PR #49; do not merge them wholesale.
-3. Continue reviewing accessible Drive records and relevant ChatGPT project/chat history. No separate vault is established or required. Record private locators and version lineage privately, then reconcile only sanitized decisions into their existing Git sources.
+2. Resolve the single open owner decision found in this pass: the brokerage public name. Read the existing positioning decision, section 13, showing the earlier Realty selection and later Dwellings/Property Partners research. Preserve all candidates until the owner chooses.
+3. Use the verified native working sales tracker; preserve the eight labeled Excel snapshots and standalone Quick Responses file. Do not union old contacts by reused prospect IDs or overwrite current opt-outs/history. Continue any additional source review with private locators outside public Git. No separate vault is established or required.
 4. Resolve actual outstanding choices with the owner using both sources. Do not reopen settled decisions or archive uncertain records merely because of age.
 5. When a source is superseded, record the subject, replacement, approval provenance and scope at its entry point; retain history and working paths.
 

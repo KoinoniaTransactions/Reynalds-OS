@@ -1,7 +1,11 @@
+> **Implementation chronology reconciled 2026-11-17.** Numeric owner decisions below are retained. This November 4 record initially described capabilities as unbuilt. Later November 5–6 records show a successful rental-inquiry preview and a working RentCast rental-estimate preview. A separate Redis-budget build exists but its activation was not established by the reviewed evidence. Do not interpret the original absence statements as present-day implementation status or equate preview evidence with production release.
+>
+> Read the later checkpoints in `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_LEAD_INTAKE_ACTIVATION_2026-11-04.md` on `integration/koinonia-properties-consolidated-2026-11-17` at `af7b28b`. The Owner Maintenance Center remains a planned feature in the reviewed record. Brokerage brand naming is currently under review; see the existing positioning decision, section 13.
+
 # Koinonia Properties — Owner-Approved Management and Leasing Model
 
 Decision record: 2026-11-04  
-Status: Owner-approved commercial decisions; **not published, implemented, or legally reviewed**  
+Status: Owner-approved commercial decisions; implementation and verification have separate checkpoints below. Legal review and public release are not established by this record.
 Scope: Koinonia Properties property management and tenant placement only, not the unrelated Koinonia Transactions pricing model.
 
 ## 1. Prices and terms approved by owner
@@ -67,10 +71,10 @@ Half-month tenant placement fee should include the agreed scope of listing/adver
 - Provide photos, condition observations and an owner report through an approved secure process when implemented. Visual management inspections are not certified building or home inspections. State entry-notice, access, privacy and tenant rights must be observed.
 - Billing triggers, included travel radius and what qualifies as a separate visit require final agreement language.
 
-## 5. Future digital capabilities — specified but not yet built
+## 5. Digital capabilities — original specification with later implementation evidence
 
 ### Instant rental analysis
-Owners should see a **data-backed rental estimate directly on the website** after entering and confirming a property address/details, rather than waiting for a callback merely to receive an initial number. Consider licensed **RentCast** API as a candidate primary provider, with Rentometer or commercially licensed Zillow rental data as potential alternatives. None is selected or connected yet.
+Owners should see a **data-backed rental estimate directly on the website** after entering and confirming a property address/details, rather than waiting for a callback merely to receive an initial number. Consider licensed **RentCast** API as a candidate primary provider, with Rentometer or commercially licensed Zillow rental data as potential alternatives. Provider selection was open at this decision checkpoint; later November previews selected and connected RentCast. See the implementation chronology above for the verification limits.
 
 Requirements before implementation: validate actual API licensing, data rights, current pricing/quotas, geographic coverage, comparable quality, address normalization, backend key secrecy, costs/abuse controls, uncertainty ranges, attribution and disclaimer requirements. The model/AI may summarize verified data but must not manufacture rents, comparables or confidence. Do not require contact information before showing a basic estimate unless a later explicit decision changes that.
 
@@ -86,7 +90,7 @@ Contractor relationships, prepricing and discounts must be actually negotiated a
 
 ## 6. Compliance and operational gates before public pricing / transactions
 
-1. Confirm Colorado real estate brokerage entity and employing-broker licensing, supervision and permissible property-management activities.
+1. Confirm the actual brokerage entity, individual practice authority, applicable firm registration, supervision model and permissible property-management activities. Later planning selected a solo Independent Broker route; this document does not establish that route as legally cleared or require an Employing Broker as the sole possible model.
 2. Attorney/broker review of the owner management agreement, leasing/renewal terms, early-termination terms, owner maintenance participation, delegated authority, entry notices, habitability, trust money and accounting.
 3. Verify application screening vendor charges and Colorado application-fee legal limits, receipts, portable-screening-report obligations, refunds and disclosures before posting a flat $35 charge.
 4. Establish what `rent collected` includes/excludes: concessions, partial rents, fees, nonpayment, late fees, deposits, utilities, first/last month and reversals.

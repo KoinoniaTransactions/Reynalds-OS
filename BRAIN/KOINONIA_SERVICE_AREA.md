@@ -137,3 +137,8 @@ Do not use either of these as a service-area restriction:
 
 - the former 20-mile operating-radius rule; or
 - the former 17-city approved-service-area whitelist.
+
+
+## Research sequencing clarification — 2026-11-17
+
+The working tracker distinguishes long-term operating geography from the current research phase. Boulder through Colorado Springs and adjacent corridor communities are being researched first; Pueblo/Pueblo West are deferred for prospect research, not removed from the long-term corridor. Earlier city-based qualification weights are heuristics, not a new service-area exclusion or permission to rewrite territory. This clarification is based on the working tracker's Qualification Rules, not a new geographic policy.

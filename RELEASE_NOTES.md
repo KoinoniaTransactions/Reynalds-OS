@@ -1,3 +1,7 @@
+## Documentation/data reconciliation follow-up — 2026-11-17
+
+Selective recovery of Realty decision history into the existing positioning source, with the later reopened naming choice explicit. Clarified preview implementation evidence, legacy pricing/collateral scope, customer-facing email source, platform recommendation limits and research geography. Working native tracker confirmed; eight Excel snapshots labeled and retained; one stale Playbook note corrected with its original preserved in a cell note. No prospect/contact/opt-out/campaign values changed. No social-engine, application, schema or production changes.
+
 ## Documentation reconciliation — 2026-11-17
 
 Clarified session entry points, subject/branch authority, historical handoffs and commercial-object scope. Exposed unmerged November Realty decisions and later Properties/social work. Preserved original history and private-record boundaries. Added root AI orientation. Updated manifest navigation and recorded ROS-0088 in the change log. No application code, dependency, schema, software version, object ID, business decision or deployment changed. Software VERSION and object_registry.csv are intentionally unchanged because this is a documentation revision, not a product release or new business object.

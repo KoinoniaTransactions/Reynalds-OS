@@ -1,3 +1,5 @@
+> **Platform decision check — 2026-11-17.** The reviewed November 12 roadmap suggested assessing Framer/Webflow as possible alternatives; no owner approval to migrate was found. Recover existing Transactions/Properties implementations before recommending replacement. This July launch decision is preserved as history and platform rationale, not a claim that July routing or launch blockers remain current.
+
 # Koinonia Launch Platform Decision
 
 Status: Approved  
