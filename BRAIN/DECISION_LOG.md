@@ -1,3 +1,5 @@
+> **Read the subject map first:** `BRAIN/CANONICAL_REGISTRY.md` identifies later approval records on other branches, including November 6 Realty sections 11–12 in PR #58. This log is not proof that decisions absent from `main` do not exist.
+
 # Decision Log
 
 ## D-001 — Use Shared Object Engine

@@ -1,3 +1,5 @@
+> **Session entry point updated 2026-11-17:** read root `START_HERE.md` then `BRAIN/CANONICAL_REGISTRY.md`. The September checkpoint and reading order below are preserved as history, not the current task list.
+
 # Reynalds OS Brain
 
 Last reconciled: 2026-09-05

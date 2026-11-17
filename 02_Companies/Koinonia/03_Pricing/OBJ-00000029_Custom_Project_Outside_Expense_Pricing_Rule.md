@@ -1,3 +1,5 @@
+> **Commercial authority check — scoped use only.** For current Transactions offers/pricing, consult `BRAIN/CANONICAL_REGISTRY.md` before using this object. Later approved commercial decisions override conflicting prices, packages and public claims; compatible service scope remains reference material. Preserve this record for lineage.
+
 # OBJ-00000029 — Custom Project & Outside Expense Pricing Rule
 
 Applies to: Approved Koinonia custom projects and variable third-party expenses  

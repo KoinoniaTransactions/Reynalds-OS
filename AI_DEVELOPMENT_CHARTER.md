@@ -1,3 +1,5 @@
+> **Orientation reconciled 2026-11-17:** use `START_HERE.md` and `BRAIN/CANONICAL_REGISTRY.md` before the older boot sequence below. Apply current explicit owner authorization. Documentation-only revisions record their change and package without implying a software, business-object or production release.
+
 # AI Development Charter — Reynalds OS
 
 ## Purpose

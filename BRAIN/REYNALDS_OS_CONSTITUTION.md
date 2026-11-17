@@ -12,7 +12,7 @@
 
 ## 1. The Repository Is the Source of Truth
 
-The Git repository is the authoritative source of truth for Reynalds OS.
+The Git repository is the durable record for public Reynalds OS software and business decisions. Use `START_HERE.md` and `BRAIN/CANONICAL_REGISTRY.md` to identify the governing subject, branch and approval provenance. Explicit later owner decisions must be reconciled rather than dismissed because an older repository statement conflicts. Private evidence remains in its designated private source.
 
 Documentation is developed alongside the software and is considered part of the product.
 
