@@ -611,3 +611,9 @@ Complete Phase 1 in this order:
 7. Build the first 30-day organic content calendar from this canonical strategy.
 
 The account inventory must happen before new account creation so Koinonia does not fragment its public identity.
+
+---
+
+# Related Research
+
+- [Koinonia Properties website conversion research (2026-11-17)](Properties_Website_Conversion_Research_2026-11-17/README.md) — competitor teardown, keyword map, owner content playbook, sales/conversion strategy, compliance guardrails and implementation backlog for `apps/properties-web`.
