@@ -28,18 +28,18 @@ export function SocialContentStudio() {
   const [ownerApprovalAcknowledged, setOwnerApprovalAcknowledged] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ message: string; error: boolean } | null>(null);
   const [connections, setConnections] = useState<{ id: string; platform: string; displayName: string; status: string; expiresAt: string | null }[]>([]);
-  const [providerReadiness, setProviderReadiness] = useState<{platform:string;label:string;configured:boolean;connectEnabled?:boolean;missingSettings:string[];portal:string;capabilities:string[]}[]>([]);
+  const [providerReadiness, setProviderReadiness] = useState<{platform:string;label:string;configured:boolean;connectEnabled?:boolean;missingSettings:string[];portal:string;capabilities:string[];blockedReason?:string|null}[]>([]);
   const [storageCors, setStorageCors] = useState<{ configured: boolean; canConfigure: boolean; canVerify?: boolean; origin: string; error?: string } | null>(null);
 
   async function disconnectAccount(id: string, name: string) {
-    if (!window.confirm("Disconnect " + name + " from Koinonia? Stored credentials will be permanently removed. To revoke the original Meta grant, also remove it in Meta Business Integrations.")) return;
+    if (!window.confirm("Disconnect " + name + " from Koinonia? Stored credentials will be permanently removed and pending jobs canceled. Revoke the original grant separately in the provider’s authorized-app settings.")) return;
     setBusy(true); setFeedback(null);
     try {
       const response = await fetch("/api/employee/social/channels/" + encodeURIComponent(id), { method: "DELETE" });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error ?? "Disconnect failed");
       await refresh();
-      setFeedback({ message: "Account disconnected locally; encrypted credentials removed. Revoke external authorization separately in Meta if needed.", error: false });
+      setFeedback({ message: "Account disconnected locally; encrypted credentials removed. Revoke external authorization separately with the provider if needed.", error: false });
     } catch(error) {
       setFeedback({ message: error instanceof Error ? error.message : "Disconnect failed", error: true });
     } finally { setBusy(false); }
@@ -56,6 +56,16 @@ export function SocialContentStudio() {
       setFeedback({ message: error instanceof Error ? error.message : "Unable to start Meta login", error: true });
       setBusy(false);
     }
+  }
+  async function connectLinkedin() {
+    if (!window.confirm("Authorize Koinonia to access the configured LinkedIn company page? This does not enable publishing.")) return;
+    setBusy(true); setFeedback(null);
+    try {
+      const response = await fetch("/api/employee/social/oauth/linkedin/start", { method: "POST", cache: "no-store" });
+      const data = await response.json();
+      if (!response.ok || typeof data.authorizationUrl !== "string") throw new Error(data.error ?? "Unable to start LinkedIn authorization");
+      window.location.assign(data.authorizationUrl);
+    } catch (error) { setFeedback({ message: error instanceof Error ? error.message : "Unable to connect LinkedIn", error: true }); setBusy(false); }
   }
   async function refresh() {
     try {
@@ -121,11 +131,16 @@ export function SocialContentStudio() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const meta = params.get("meta");
+    const linkedin = params.get("linkedin");
     if (params.get("tab") === "accounts" || meta) setPage("accounts");
     if (meta === "connected") setFeedback({ message: "Meta account authorization completed. Connected assets are shown below. Publishing is still disabled.", error: false });
     if (meta === "denied") setFeedback({ message: "Meta authorization was declined; no connection was created.", error: true });
     if (meta === "invalid") setFeedback({ message: "Meta authorization expired or failed security checks. Please start again.", error: true });
     if (meta === "unavailable") setFeedback({ message: "Meta could not verify the selected business assets. Check the Meta app and Page permissions.", error: true });
+    if (linkedin) {
+      setPage("accounts");
+      setFeedback({ message: linkedin === "connected" ? "LinkedIn company authorization verified. Public publishing remains gated." : linkedin === "denied" ? "LinkedIn authorization was declined." : "LinkedIn authorization could not be verified. Check configuration, permissions and the registered callback, then reconnect.", error: linkedin !== "connected" });
+    }
     void refresh(); void refreshStorageCors();
   }, []);
 
@@ -425,6 +440,7 @@ export function SocialContentStudio() {
         <h1 className={styles.title}>Social Content Studio</h1>
         <p className={styles.subtitle}>Prepare content for each platform, manage draft approvals, and plan your calendar in one workspace.</p>
         <Link href="/employee/dashboard">← Employee dashboard</Link>
+        {" · "}<Link href="/employee/marketing">Marketing and acquisition</Link>
       </div>
       <div><span className={styles.pill}>Owner-controlled publishing</span></div>
     </div>
@@ -508,7 +524,7 @@ export function SocialContentStudio() {
         const readiness = providerReadiness.find(item => item.platform === p);
         return <div key={p} className={styles.post}><div className={styles.posthead}>
           <strong style={{ textTransform: "capitalize" }}>{p}</strong><span className={styles.pill}>{entries.length ? entries[0].status : "Not connected"}</span>
-        </div>{entries.map(c => <div key={c.id}><p className={styles.meta}>{c.displayName}{c.expiresAt ? " · Expires " + new Date(c.expiresAt).toLocaleDateString() : ""}</p>{c.status !== "disconnected" && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void disconnectAccount(c.id, c.displayName)}>Disconnect account</button>}</div>)} {readiness && <div style={{ marginTop: 12 }}><p className={styles.meta}>{readiness.configured ? "Developer app and secure Meta connection are configured. You can authorize the business assets." : "Developer app configuration is required before connection."}</p> {!readiness.configured && <p className={styles.meta}>Missing settings: {readiness.missingSettings.join(", ")}</p>} <p className={styles.meta}>Capabilities: {readiness.capabilities.join(" · ")}</p> <a href={readiness.portal} target="_blank" rel="noopener noreferrer">Open {readiness.label} developer portal</a> {readiness.connectEnabled && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void connectMeta()}>Connect with Meta</button>}</div>}</div>;
+        </div>{entries.map(c => <div key={c.id}><p className={styles.meta}>{c.displayName}{c.expiresAt ? " · Expires " + new Date(c.expiresAt).toLocaleDateString() : ""}</p>{c.status !== "disconnected" && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void disconnectAccount(c.id, c.displayName)}>Disconnect account</button>}</div>)} {readiness && <div style={{ marginTop: 12 }}><p className={styles.meta}>{readiness.configured ? "Developer app configuration is ready. The owner can authorize the configured business assets." : "Developer app configuration is required before connection."}</p> {!readiness.configured && <p className={styles.meta}>Missing settings: {readiness.missingSettings.join(", ")}</p>} <p className={styles.meta}>Capabilities: {readiness.capabilities.join(" · ")}</p> <a href={readiness.portal} target="_blank" rel="noopener noreferrer">Open {readiness.label} developer portal</a> {readiness.blockedReason && <p className={styles.meta}>{readiness.blockedReason}</p>} {readiness.connectEnabled && <button type="button" className={styles.secondary} disabled={busy} onClick={() => void (p === "linkedin" ? connectLinkedin() : connectMeta())}>{p === "linkedin" ? "Connect with LinkedIn" : "Connect with Meta"}</button>}</div>}</div>;
       })}</div>
     </section>}
   </main>;

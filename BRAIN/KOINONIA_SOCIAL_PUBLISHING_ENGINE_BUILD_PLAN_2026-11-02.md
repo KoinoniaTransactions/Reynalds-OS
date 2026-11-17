@@ -58,7 +58,7 @@ S9. Owner production launch gate: approved accounts, approved posts, verified fa
 This branch is construction only. Do not change production DB, set live provider credentials, post, schedule live jobs, contact prospects, run ads or send outbound marketing without distinct owner approval. No production merge until build, isolated-DB QA, authorization testing and owner review pass.
 
 ## Current engineering task
-Continue the existing durable SocialPublishJob/Attempt ledger with fail-closed queueing, isolated execution tests, cancellation, retry classification and an owner operational view. Actual provider authorization, publication, marketing activation and production promotion remain separate owner gates.
+Verify the current Preview owner workflows and disposable-PostgreSQL queue tests. Then complete provider media/insights, CRM prospect import and consent-based follow-up work below. Actual provider authorization, publication, marketing activation and production promotion remain separate owner gates.
 
 
 ## 2026-11-12 takeover audit and implementation record
@@ -127,3 +127,45 @@ Local verification limitation: Prisma's native macOS connection reports `bad cer
 Recovery discovery: full git-history search found the older DORA universe workflow and fetch script at `c582bc9` / `57d8a98`, on `main` and related branches. These are recoverable source assets, not proof the approximately 1,000 enriched contacts have been imported into this Preview CRM. Person-level records must remain outside this public repository.
 
 Queue verification: 64 focused tests passed across 16 files, including worker fencing, immutable approvals, simulation without provider calls, ambiguous outcomes, provider response classification, queue idempotency, and dispatcher authorization. TypeScript passed before the latest campaign search UI change; final checks are tracked below. Optimized Next.js build passed with the local Prisma engine path supplied (no database credentials used for build). Campaign names can now be assigned at draft creation and searched on the server; existing approved business copy is unchanged.
+
+
+## Current continuation checkpoint — 2026-11-17
+
+Branch/production review: PR #49 remains open/draft; remote development head was `a8822eb`, production `1fd246d`. Neither branch changed since the preceding batch. Continue this PR; do not restart or merge Production.
+
+### Newly implemented
+- `/employee/marketing` and owner-only `/api/employee/marketing/overview`: existing workspace CRM relationships, qualified leads, recorded consultation requests, customer lifecycle, campaign acquisition, opt-outs, overdue workspace tasks, social job counts, account metadata and failed-job issues.
+- Attribution distinguishes conversion-tagged campaigns, staff-entered campaign labels and unattributed records. Recorded cumulative relationship revenue replaces first-engagement revenue to avoid double-counting. It is not presented as verified cash or causal ROAS. Website traffic, conversion rates, platform engagement, spend and email engagement remain explicitly unavailable.
+- Reports are bounded to 5,000 relationships with explicit truncation disclosure. No prospect email/phone fields leave the reporting API.
+- Existing CRM supports manual audience classification: unreviewed, prospect, client, partner or competitor. Competitors are excluded from customer marketing eligibility and acquisition reporting; other consent/suppression controls are retained.
+- CRM relationship linking now awaits authorization, verifies both active records belong to the workspace, and commits relation/audit/timeline evidence atomically. Object detail responses filter related objects to the same workspace.
+- Recovered the existing DORA prospect-source playbook and fetch script from Git history; no person-level dataset committed, fetched or imported.
+- Added LinkedIn company OAuth start/callback and readiness/UI wiring, using the existing single-use authorization ledger and encrypted connection vault. Callback validates current owner, origin, state actor/workspace/expiry, token introspection (app, 3-legged authorization, actual scopes, expiry), and an approved publishing role on one explicitly configured organization. Provider response bodies and credentials are not logged. Reconnect uses the same authorization flow; no unsupported refresh-token claims.
+- TikTok setup clearly reports the intended-use blocker rather than offering an unsupported connection.
+- Extended the existing disposable PostgreSQL CI harness with real queue tests: concurrent worker claim, idempotent queue, future execution boundary, workspace isolation, cancellation/reapproval, changed revision rejection and interrupted-dispatch reconciliation. It rejects cloud database URLs and only cleans UUID-tagged fixtures in the named local test service. No new service/subscription, production credentials or provider network requests are required.
+
+### Verification at this checkpoint
+- Complete local unit/route suite: 514 passed, 3 existing Resend database tests skipped before adding the new guarded PostgreSQL test file. These are not provider live tests.
+- TypeScript and optimized Next.js build pass, including the new dashboard and OAuth routes.
+- PostgreSQL CI tests are pending the next PR update; record their real result after completion. Local native macOS Prisma still has the certificate-format limitation; TLS was not weakened.
+- Preview-only schema from the preceding batch remains additive. No new database migration is needed for classification, reporting or LinkedIn authorization.
+
+### Secure setup required before live provider validation
+Configure secrets directly in the Vercel dashboard scoped only to this feature branch's Preview environment; never paste them into chat or public documentation.
+- Meta: `META_APP_SECRET`, `META_BUSINESS_LOGIN_CONFIG_ID`, `SOCIAL_META_OAUTH_ENABLED=true`; verify the exact registered callback and actual permissions.
+- LinkedIn: `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `SOCIAL_LINKEDIN_CALLBACK_URL`, `SOCIAL_LINKEDIN_ORGANIZATION_URN`, `SOCIAL_LINKEDIN_API_VERSION`, `SOCIAL_LINKEDIN_OAUTH_ENABLED=true`. The app needs `r_organization_admin`, `w_organization_social`, and `r_organization_social` for the implemented company workflow.
+- Both use the existing Preview-only `SOCIAL_CONNECTION_VAULT_KEY`. The owner completes the provider consent flow from the registered Preview origin. Connecting an account does not enable publishing.
+- Keep `SOCIAL_PUBLISHING_ENABLED`, `SOCIAL_LIVE_PUBLISHING_OWNER_APPROVED`, all `SOCIAL_<PLATFORM>_ADAPTER_VERIFIED` flags and per-account `publishingEnabled` off until their separate launch review. No activation authorized by the owner's “proceed”.
+
+### Remaining implementation and acceptance work (not claimed complete)
+1. Authenticated Preview browser/route/database workflow proof and live account authorization once secure app configuration exists.
+2. Provider format expansion (LinkedIn media, Facebook video, Instagram carousel), reconciliation tooling and real insights with permission-specific verification. Current supported adapters remain activation-gated.
+3. Recover and review the current enriched prospect dataset from approved private storage; implement/import with duplicate/source/competitor review into existing Relationship records. The DORA source recovery is not proof of the approximately 1,000-contact import.
+4. Campaign landing-page and unified tagged lead-to-CRM acceptance evidence; existing website and approved commercial copy remain authoritative.
+5. Complete consent-based email sequences, delivery/bounce telemetry and SMS provider/opt-out workflows using the existing contact policies. No outbound campaigns or messages authorized.
+6. Production readiness review, account/platform policy review, privacy checks and explicit owner approval before any Production merge or marketing activation.
+
+Official LinkedIn implementation references checked 2026-11-17:
+- https://learn.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow
+- https://learn.microsoft.com/en-us/linkedin/shared/authentication/token-introspection
+- https://learn.microsoft.com/en-us/linkedin/marketing/community-management/organizations/organization-access-control-by-role

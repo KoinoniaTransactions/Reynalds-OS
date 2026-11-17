@@ -5,7 +5,7 @@ export type ProviderMarketingStatus = "verified_clear" | "suppressed" | "unknown
 export type MarketingEligibilityReason =
   | "invalid_email" | "not_eligible" | "permission_missing"
   | "permission_date_invalid" | "prior_opt_out"
-  | "provider_suppressed" | "provider_unverified";
+  | "provider_suppressed" | "provider_unverified" | "competitor_excluded";
 
 export function evaluateKoinoniaMarketingEligibility(
   rawData: unknown,
@@ -15,6 +15,7 @@ export function evaluateKoinoniaMarketingEligibility(
   const email = (profile.contact?.email ?? "").trim().toLowerCase();
   const m = profile.emailMarketing;
   const reasons: MarketingEligibilityReason[] = [];
+  if (profile.contact?.audienceType === "competitor") reasons.push("competitor_excluded");
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) reasons.push("invalid_email");
   if (m?.status !== "eligible") reasons.push("not_eligible");
   if (!m?.permissionSource?.trim()) reasons.push("permission_missing");

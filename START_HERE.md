@@ -169,3 +169,7 @@ Build third.
 
 **New session procedure:** first identify the actual branch and latest approved deployment, inspect the approved production commercial content, read the current marketing-branch checklist and activation gate, then inspect relevant implementation before proposing any new work. Never equate a ready preview, passing build or draft PR with approval to publish or deploy. No marketing publishing, outbound sends, paid spend, new test submissions or production promotion without applicable explicit owner authorization. When later owner-approved changes occur, update these existing entry points and the relevant governing sources together; do not create competing 'master truth' documents.
 
+
+
+## Social/acquisition development continuation — 2026-11-17
+For PR #49, continue `feature/koinonia-social-publishing-engine-foundation-2026-11-02` and read the latest checkpoint in `BRAIN/KOINONIA_SOCIAL_PUBLISHING_ENGINE_BUILD_PLAN_2026-11-02.md`. It records recovered code, Preview schema, verified tests, implementation still outstanding and provider setup gates. A deployed Preview and passing tests do not authorize public posts, campaigns, sends or Production promotion.

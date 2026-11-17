@@ -17,6 +17,7 @@ export function SocialPublishingJobs({ versions, accounts, onChanged }: { versio
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const selected = versions.find(v => v.id === variantId);
+  const queueMode = canSimulate ? mode : "live";
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   async function load() {
     const response = await fetch("/api/employee/social/jobs", { cache: "no-store" });
@@ -48,7 +49,7 @@ export function SocialPublishingJobs({ versions, accounts, onChanged }: { versio
     // Reject a local time normalized across the spring-forward gap.
     const local = new Date(instant.getTime() - instant.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
     if (local !== date) { setMessage("That local time does not exist because the clocks change. Choose another time."); return; }
-    void perform("/api/employee/social/jobs", { variantId: selected.id, revision: selected.revision, mode, scheduledAt: instant.toISOString(), timeZone, connectionId: mode === "live" ? connectionId : null });
+    void perform("/api/employee/social/jobs", { variantId: selected.id, revision: selected.revision, mode: queueMode, scheduledAt: instant.toISOString(), timeZone, connectionId: queueMode === "live" ? connectionId : null });
   }
   return <section className={styles.panel}>
     <h2>Publishing jobs and activity</h2>
@@ -60,16 +61,16 @@ export function SocialPublishingJobs({ versions, accounts, onChanged }: { versio
         <option value="">Choose approved content</option>{versions.map(v => <option key={v.id} value={v.id}>{v.title} · {v.platform} · revision {v.revision}</option>)}
       </select>
       <label className={styles.field} htmlFor="queue-mode">Execution</label>
-      <select className={styles.input} id="queue-mode" value={mode} onChange={event => setMode(event.target.value)}>
+      <select className={styles.input} id="queue-mode" value={queueMode} onChange={event => setMode(event.target.value)}>
         {canSimulate && <option value="dry_run">Simulation — no public post</option>}{liveEnabled && <option value="live">Public publishing</option>}
       </select>
-      {mode === "live" && <><label className={styles.field} htmlFor="queue-account">Publishing account</label><select className={styles.input} id="queue-account" value={connectionId} required onChange={event => setConnectionId(event.target.value)}>
+      {queueMode === "live" && <><label className={styles.field} htmlFor="queue-account">Publishing account</label><select className={styles.input} id="queue-account" value={connectionId} required onChange={event => setConnectionId(event.target.value)}>
         <option value="">Choose account</option>{accounts.filter(a => a.platform === selected?.platform && a.status === "connected").map(a => <option key={a.id} value={a.id}>{a.displayName}</option>)}
       </select></>}
       <label className={styles.field} htmlFor="queue-time">Scheduled time · {timeZone}</label>
       <input className={styles.input} id="queue-time" type="datetime-local" value={date} required onChange={event => setDate(event.target.value)} />
       {date && Number.isFinite(new Date(date).getTime()) && <p className={styles.meta}>Scheduled instant: {new Date(date).toISOString()}. Times use this device’s timezone.</p>}
-      <button className={styles.secondary} type="submit" disabled={busy || !selected}>{mode === "live" ? "Schedule approved post" : "Queue simulation"}</button>
+      <button className={styles.secondary} type="submit" disabled={busy || !selected}>{queueMode === "live" ? "Schedule approved post" : "Queue simulation"}</button>
     </form>}
     <div className={styles.actions}>
       <button type="button" className={styles.secondary} disabled={busy} onClick={() => { void load().catch(error => setMessage(error instanceof Error ? error.message : "Unable to refresh")); }}>Refresh history</button>

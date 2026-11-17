@@ -105,3 +105,14 @@ Always identify the canonical source before creating or modifying documentation,
 
 **New session procedure:** first identify the actual branch and latest approved deployment, inspect the approved production commercial content, read the current marketing-branch checklist and activation gate, then inspect relevant implementation before proposing any new work. Never equate a ready preview, passing build or draft PR with approval to publish or deploy. No marketing publishing, outbound sends, paid spend, new test submissions or production promotion without applicable explicit owner authorization. When later owner-approved changes occur, update these existing entry points and the relevant governing sources together; do not create competing 'master truth' documents.
 
+
+
+## Social publishing and acquisition development — Preview only
+
+| Subject | Governing source | Status |
+|---|---|---|
+| Current PR #49 inventory, progress, tests, configuration and blockers | BRAIN/KOINONIA_SOCIAL_PUBLISHING_ENGINE_BUILD_PLAN_2026-11-02.md | Latest continuation checkpoint dated 2026-11-17; development only |
+| Acquisition report | apps/web/lib/koinonia-marketing-report.ts and apps/web/app/api/employee/marketing/overview/route.ts | Owner-only CRM aggregates; external measurements unavailable until verified |
+| Recovered prospect-source pipeline | 02_Companies/Koinonia/04_Departments/Marketing/DORA_PROSPECT_UNIVERSE_PIPELINE.md | Recovered from existing Git history; private data stays outside this public repository |
+
+These development sources do not supersede approved public pricing, the existing master launch checklist or marketing activation gates.
