@@ -147,7 +147,7 @@ Branch/production review: PR #49 remains open/draft; remote development head was
 ### Verification at this checkpoint
 - Complete local unit/route suite: 514 passed, 3 existing Resend database tests skipped before adding the new guarded PostgreSQL test file. These are not provider live tests.
 - TypeScript and optimized Next.js build pass, including the new dashboard and OAuth routes.
-- PostgreSQL CI tests are pending the next PR update; record their real result after completion. Local native macOS Prisma still has the certificate-format limitation; TLS was not weakened.
+- Disposable PostgreSQL CI tests passed on source commit `14fed1d`; see the verification receipt below. Local native macOS Prisma still has the certificate-format limitation; TLS was not weakened.
 - Preview-only schema from the preceding batch remains additive. No new database migration is needed for classification, reporting or LinkedIn authorization.
 
 ### Secure setup required before live provider validation
@@ -169,3 +169,15 @@ Official LinkedIn implementation references checked 2026-11-17:
 - https://learn.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow
 - https://learn.microsoft.com/en-us/linkedin/shared/authentication/token-introspection
 - https://learn.microsoft.com/en-us/linkedin/marketing/community-management/organizations/organization-access-control-by-role
+
+
+### Verified release-candidate receipt — 2026-11-17
+- Source commit: `14fed1d15778b0115015236c004ecc80b8d3f6ff`; PR #49 remains development-only/draft.
+- GitHub CI run 679 (`44141124217`): SUCCESS, including the complete automated unit/route checks and build.
+- Disposable PostgreSQL run 141 (`44141124212`), job `134243881578`: SUCCESS. Logs confirm all three Resend database tests and all five social queue database tests actually executed and passed (not skipped). Concurrency, persistence and reconciliation are now proven on a real disposable PostgreSQL database, without provider calls or production credentials.
+- Local checks: 514 unit/route tests passed, TypeScript passed, optimized Next.js build passed. Cloud-only database suites are correctly guarded/skipped locally. No live provider API publishing test or authenticated browser end-to-end acceptance is claimed.
+- Vercel Preview: READY, deployment `dpl_3BfSAc6rYToEybij3qEkvLizshxH`, https://reynalds-os-fxafika8v-koinonia3.vercel.app, matching source `14fed1d`.
+- Deployed unauthenticated GET checks returned HTTP 401 for `/api/employee/marketing/overview`, `/api/employee/social/jobs`, and `/api/internal/social/dispatch`; these checks do not establish authenticated owner-flow acceptance.
+- Rechecked Vercel variable-name metadata: Meta secret/configuration/enable flag and LinkedIn app configuration remain absent. No credentials decrypted or logged. Temporary local database configuration removed after testing.
+- Production was not merged, promoted or migrated. No social post, marketing email/SMS, ad, subscription or contact import was initiated.
+- This receipt records technical development progress. Remaining implementation and owner/provider acceptance work listed above is still open; the complete marketing engine is not yet production-ready.
