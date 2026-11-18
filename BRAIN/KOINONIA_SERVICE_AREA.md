@@ -2,7 +2,8 @@
 
 Status: Approved Operating Rule  
 Owner: Koinonia Transactions  
-Effective: 2026-09-02
+Effective: 2026-09-02  
+Amended: 2026-11-17 — southern boundary is Fountain; Pueblo is a planned later expansion (owner decision)
 
 ## Purpose
 
@@ -23,7 +24,7 @@ Individual requests remain subject to normal operating requirements such as sche
 
 ## Approved Service-Area Geography
 
-Koinonia's working service area is the Colorado Front Range corridor running approximately from the Boulder/Broomfield market south through the Denver metropolitan area, Douglas County, the Pikes Peak/Colorado Springs market, and through the Pueblo market.
+Koinonia's working service area is the Colorado Front Range corridor running approximately from the Boulder/Broomfield market south through the Denver metropolitan area, Douglas County, and the Pikes Peak/Colorado Springs market south to Fountain. The Pueblo market is a **planned later expansion**, not part of the current service area (owner decision 2026-11-17).
 
 The corridor is the geographic rule. A short city list must never be used to exclude a prospect who is plainly inside this service corridor.
 
@@ -85,9 +86,9 @@ Includes Colorado Springs and surrounding communities, including examples such a
 - Security-Widefield
 - nearby El Paso County communities within the operating corridor
 
-### Southern Corridor
+### Southern Corridor — planned later expansion
 
-Includes Pueblo and surrounding serviceable communities, including examples such as:
+Not in the current service area. When the owner approves the expansion, this segment will include Pueblo and surrounding serviceable communities, including examples such as:
 
 - Pueblo
 - Pueblo West
@@ -97,10 +98,10 @@ Includes Pueblo and surrounding serviceable communities, including examples such
 
 For prospecting databases and campaign selection:
 
-- First determine whether the prospect's verified public business/brokerage location is reasonably inside the Boulder-to-Pueblo Front Range service corridor.
+- First determine whether the prospect's verified public business/brokerage location is reasonably inside the Boulder-to-Fountain Front Range service corridor. Pueblo-area prospects are held as `FUTURE EXPANSION` rather than marketed to now.
 - Do not require an exact city-name match against a fixed whitelist.
 - Use city, ZIP, county, metro/region, and verified public business address together when practical.
-- A prospect in an obvious corridor city such as Westminster, Broomfield, Arvada, Boulder, Castle Rock, Colorado Springs, or Pueblo must not be excluded merely because an older city list omitted that city.
+- A prospect in an obvious corridor city such as Westminster, Broomfield, Arvada, Boulder, Castle Rock, Colorado Springs, or Fountain must not be excluded merely because an older city list omitted that city.
 - If a location sits near the practical edge of the corridor, retain it as `SERVICE AREA REVIEW` rather than automatically excluding it.
 - All approved in-area prospects are eligible for marketing around the full current Koinonia service catalog.
 
@@ -113,13 +114,13 @@ The corridor should be segmented for routing, measurement, and in-person follow-
 3. Aurora / East & Southeast Metro
 4. South Metro / Parker / Douglas County
 5. Monument / Colorado Springs / Pikes Peak
-6. Pueblo / Southern Corridor
+6. Pueblo / Southern Corridor — later expansion; not active
 
 These segments help prioritize email batches, office visits, travel days, and campaign performance. They are not separate service tiers.
 
 ## Public Profile Alignment
 
-Google Business Profile is an important public reference for the intended service footprint. Website structured data, social profiles, paid-media targeting, prospecting filters, CRM geography, and future service-area documentation should remain aligned with the Boulder-to-Pueblo Front Range operating corridor.
+Google Business Profile is an important public reference for the intended service footprint. Website structured data, social profiles, paid-media targeting, prospecting filters, CRM geography, and future service-area documentation should remain aligned with the Boulder-to-Fountain Front Range operating corridor (Pueblo later).
 
 If an exact public profile city list is later exported or recovered, use it to refine examples and edge cases without replacing the corridor principle with another brittle whitelist.
 

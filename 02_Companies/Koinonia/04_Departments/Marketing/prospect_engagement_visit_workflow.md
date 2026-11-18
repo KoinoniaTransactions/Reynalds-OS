@@ -27,7 +27,7 @@ Digital engagement should help Jeremiah know who is paying attention. A physical
 
 ## Service-Area Gate
 
-The prospect must have a verified public business/brokerage location reasonably inside Koinonia's approved Boulder-to-Pueblo Colorado Front Range service corridor, unless a later business decision establishes another valid service-area basis.
+The prospect must have a verified public business/brokerage location reasonably inside Koinonia's approved Boulder-to-Fountain Colorado Front Range service corridor (Pueblo is a later expansion per `BRAIN/KOINONIA_SERVICE_AREA.md`, amended 2026-11-17), unless a later business decision establishes another valid service-area basis.
 
 Do not require an exact city-name match against a fixed whitelist. Use city, ZIP, county, metro/region, and verified public business address together. Borderline locations should be retained for service-area review rather than silently excluded.
 
@@ -335,7 +335,7 @@ Use these operating segments for batches, analytics, and office-visit routing:
 3. Aurora / East & Southeast Metro
 4. South Metro / Parker / Douglas County
 5. Monument / Colorado Springs / Pikes Peak
-6. Pueblo / Southern Corridor
+6. Pueblo / Southern Corridor (later expansion; not active)
 
 Segment assignment does not change service eligibility.
 
