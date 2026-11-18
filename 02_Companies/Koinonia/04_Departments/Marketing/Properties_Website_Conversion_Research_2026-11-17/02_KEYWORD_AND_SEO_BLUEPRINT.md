@@ -23,7 +23,9 @@ Key findings:
 
 ## 2. Koinonia target keyword map
 
-Priority markets follow the approved Douglas County focus. Tier A = launch; Tier B = after first reviews/results; Tier C = later.
+**Service area update 2026-11-17:** the owner set the Properties service area to the Koinonia Transactions corridor (Fountain to Boulder, east to Aurora, ~50 miles west of Parker; Pueblo later). Douglas County stays the launch priority because that's where Koinonia can show the most local knowledge; the rest of the corridor follows the city-page order in `07_OWNER_DECISIONS_2026-11-17.md` §6.
+
+Priority markets below follow the Douglas County launch focus. Tier A = launch; Tier B = after first reviews/results; Tier C = later.
 
 ### Owner / property-management keywords
 
@@ -71,7 +73,7 @@ Current titles (consolidated branch) contain no city or county names. Proposed r
 | `/real-estate` | Buy or Sell a Home \| Koinonia Properties | Buy or Sell a Home in Castle Rock & Parker \| Koinonia | Buying or selling in Douglas County |
 | `/rentals` | Available Rentals | Homes for Rent in Castle Rock & Parker \| Koinonia | Homes for rent |
 
-Final wording requires owner copy approval, and the service area must match the area Koinonia can actually serve.
+Final wording requires owner copy approval. With the corridor service area, the home page and `/owners` can name "Denver to Colorado Springs" or "the Front Range" while city pages carry the city names.
 
 ## 4. City page template (built only for real markets)
 

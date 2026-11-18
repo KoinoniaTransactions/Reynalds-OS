@@ -27,6 +27,7 @@ Where research suggests a change to an approved decision (for example, adding a 
 | 04 | `04_SALES_AND_CONVERSION_STRATEGY.md` | Funnel benchmarks, lead sources, speed-to-lead, follow-up, channel budget — **business-plan input** |
 | 05 | `05_COMPLIANCE_GUARDRAILS.md` | Colorado and federal rules that constrain what the site may claim or charge |
 | 06 | `06_IMPLEMENTATION_BACKLOG.md` | Prioritized, route-mapped work items for `apps/properties-web/` |
+| 07 | `07_OWNER_DECISIONS_2026-11-17.md` | Owner decisions on guarantee, markup, payout, referral credits, service area and response standard — **business-plan input** |
 | — | `source_data/` | Structured extractions of every page studied, plus a local Maps snapshot |
 
 ## Executive summary — the 12 things that matter most

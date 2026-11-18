@@ -9,8 +9,8 @@ Priority: **P0** = before public launch · **P1** = launch window · **P2** = af
 | # | Item | Files / routes | Depends on |
 |---|---|---|---|
 | 0.1 | Confirm brokerage of record and licensing language; add license/brokerage footer | `components/site/*Footer*`, `/policies` | Owner + attorney (file 05) |
-| 0.2 | Owner approves service area list (Castle Rock, Parker, + any of Highlands Ranch, Lone Tree, Castle Pines) | `config/seo.config.ts` | Owner |
-| 0.3 | Owner decisions: placement guarantee, markup, response standard, payout date (file 04 §7) | `/pricing`, `/owners` | Owner |
+| 0.2 | Service area set to the corridor (decided 2026-11-17, file 07 §6); choose the 20 GBP service areas and `areaServed` list; settle straight-line vs driving for the 50-mile west line | `config/seo.config.ts`, `/service-areas` | Owner (edge towns) |
+| 0.3 | Put the 2026-11-17 decisions on the site: 12-month placement guarantee (after terms are confirmed), 10% markup disclosure, fixed payout day, 1-hour response standard with business hours and emergency line, referral credit program (after DRE check) | `/pricing`, `/owners`, `/standards`, `/contact` | Owner confirms guarantee terms, payout day, business hours, credit amount |
 | 0.4 | Replace placeholder address with service-area language (home address hidden) | `config/seo.config.ts`, `/contact` | — |
 | 0.5 | Equal Housing Opportunity logo + statement sitewide | layout/footer | — |
 
@@ -21,7 +21,7 @@ Priority: **P0** = before public launch · **P1** = launch window · **P2** = af
 | 1.1 | City-and-county titles, descriptions and H1s (file 02 §3) | `config/seo.config.ts`, page assemblies |
 | 1.2 | `RealEstateAgent`/`LocalBusiness` JSON-LD with `areaServed`, phone, hours, `priceRange` | `config/seo.config.ts` / JSON-LD component |
 | 1.3 | `FAQPage` JSON-LD on `/owners`, `/pricing`, city pages | FAQ component |
-| 1.4 | City pages `/property-management/castle-rock` and `/parker` using the file 02 §4 template; Douglas County hub at `/service-areas` | new `app/property-management/[city]/page.tsx` + content data file |
+| 1.4 | City pages `/property-management/castle-rock` and `/parker` using the file 02 §4 template; corridor hub at `/service-areas` (map + county list per file 07 §6) | new `app/property-management/[city]/page.tsx` + content data file |
 | 1.5 | `/pricing`: full fee table, "included at no charge," first-year calculator, total-price disclosure note | `KoinoniaPropertiesPricing*.tsx` |
 | 1.6 | `/owners` rebuilt in the file 03 §2 order; response standard; maintenance approvals; screening standard | `KoinoniaPropertiesOwners*.tsx` |
 | 1.7 | "Koinonia vs self-managing" comparison and "Switching managers" section | `/owners` |
@@ -51,7 +51,7 @@ Priority: **P0** = before public launch · **P1** = launch window · **P2** = af
 | 3.4 | Blog with the file 02 §6 article list |
 | 3.5 | Reviews display (only verified) + review request automation |
 | 3.6 | Dated performance metrics block with definitions (after ≥10 leases or 6 months) |
-| 3.7 | Additional city pages (Highlands Ranch, Lone Tree, Castle Pines) once each has real local content |
+| 3.7 | Additional city pages in the file 07 §6 order (Highlands Ranch/Lone Tree/Castle Pines, Aurora, Denver, Colorado Springs/Monument, Lakewood/Golden/Evergreen, Boulder/Broomfield) once each has real local content; Pueblo after expansion |
 | 3.8 | Realtor partner page and referral form (after DRE review) |
 | 3.9 | Google Ads landing pages per city (owner-only language) |
 

@@ -89,7 +89,7 @@ From `source_data/local_maps_snapshot_2026-11-17.json`:
 | Distinct audience paths at top of homepage | Evernest, Keyrenter, Belong, Mynd, Grace | Universal | **Built** (buy/sell, own a rental, looking for a home, resident) |
 | City name in title + H1 | BMG, Colorado RPM, Grace, Bergan, PURE, TurboTenant, Mynd | 79.3% of 111 audited sites have 3+ city pages ([Clienvora](https://www.clienvora.com/blog/property-management-seo/)) | **Missing** — no city names in any title, H1 or schema |
 | Published fee numbers | Bergan, BMG, PURE, Doorstead, Belong | Only 22.5% of audited sites ([Clienvora](https://www.clienvora.com/blog/property-management-seo/)) | Plan names and % present on `/pricing`; full fee table pending release gates |
-| Named guarantees with limits | Evernest, Mynd, Grace, Bergan, BMG | Common locally | **Not offered** by approved pricing (owner decision request) |
+| Named guarantees with limits | Evernest, Mynd, Grace, Bergan, BMG | Common locally | **Approved 2026-11-17:** 12-month tenant placement guarantee, terms pending review (file 07) |
 | Dated operating metrics | Grace, Colorado RPM, BMG, Keyrenter | Common among leaders | None yet (new company — use standards, then measured results) |
 | Cancel-anytime / no termination fee | Evernest, Green, Grace, Bergan, Doorstead | Common | **Approved policy** ("no early owner termination penalty") — not yet marketed prominently |
 | Self-management comparison | BMG, Colorado RPM, TurboTenant | Common | Missing |

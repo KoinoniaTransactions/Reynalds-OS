@@ -90,6 +90,8 @@ Visitors by page and source · rental analyses started/completed · lead → con
 
 ## 7. Decisions for the owner (business plan inputs)
 
+**Update 2026-11-17:** the owner decided the guarantee (yes), markup (keep 10%), payout (fixed monthly day), referrals (credits only), response standard (1-hour next steps) and service area (Fountain–Boulder–Aurora–50 mi west of Parker). See `07_OWNER_DECISIONS_2026-11-17.md`. Ads budget and start date remain open. The original options are kept below for the record.
+
 | Decision | Market evidence | Options |
 |---|---|---|
 | Tenant placement guarantee | Bergan and Grace advertise 12-month lease/placement guarantees (file 01); current pricing says none | Keep none; offer a free re-placement if a tenant leaves in the first 6 months; match 12 months |
