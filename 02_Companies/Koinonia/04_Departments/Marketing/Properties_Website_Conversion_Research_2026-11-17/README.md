@@ -29,6 +29,7 @@ Where research suggests a change to an approved decision (for example, adding a 
 | 06 | `06_IMPLEMENTATION_BACKLOG.md` | Prioritized, route-mapped work items for `apps/properties-web/` |
 | 07 | `07_OWNER_DECISIONS_2026-11-17.md` | Owner decisions on guarantee, markup, payout, referral credits, service area and response standard — **business-plan input** |
 | 08 | `08_AFTER_HOURS_AND_EMERGENCY_POLICY_DRAFT.md` | Draft after-hours, emergency and on-call policy built around Colorado's habitability deadlines |
+| 09 | `09_SITE_ARCHITECTURE_AND_CONTENT_SPEC.md` | Full site map, navigation, page-by-page content, owner FAQ bank, business assets needed and build order — **start here to build the site** |
 | — | `source_data/` | Structured extractions of every page studied, plus a local Maps snapshot |
 
 ## Executive summary — the 12 things that matter most

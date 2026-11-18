@@ -1,6 +1,6 @@
 # 08 — After-Hours and Emergency Policy (Draft)
 
-Status: **draft for owner review** · not legally reviewed · not published. Have the managing broker and a Colorado landlord-tenant attorney review it before it goes into leases, management agreements or the website.
+Status: **owner-approved 2026-11-17 (including all §10 proposals)** · not legally reviewed · not published. Have the managing broker and a Colorado landlord-tenant attorney review it before it goes into leases, management agreements or the website.
 
 Business hours (owner-approved 2026-11-17): **Monday–Friday, 8:00 a.m.–5:00 p.m. Mountain Time**, excluding posted holidays.
 
@@ -84,9 +84,9 @@ New Year's Day, Memorial Day, Independence Day, Labor Day, Thanksgiving Day and 
 >
 > **After hours, weekends and holidays:** For fire, a gas smell or anything life-threatening, call 911 first. For emergencies like flooding, no heat, sewage backup or a home that can't be secured, call our 24/7 emergency line at [number] — a person will call you back within one hour. Urgent repairs reported through the resident portal are answered within 24 hours, every day of the week. Routine requests are handled the next business day.
 
-## 10. Open items for the owner
+## 10. Launch settings (owner-approved 2026-11-17)
 
-| Item | Proposal |
+| Item | Approved setting |
 |---|---|
 | Who covers on-call at launch | Owner as primary, with a licensed backup or answering service |
 | Answering service vs call forwarding | Start with forwarding to the on-call phone; add an answering service once there are about 25+ doors |

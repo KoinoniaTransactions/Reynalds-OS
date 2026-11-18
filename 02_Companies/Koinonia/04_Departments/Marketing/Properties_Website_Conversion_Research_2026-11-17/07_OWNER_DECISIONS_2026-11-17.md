@@ -10,6 +10,7 @@
 > | After-hours policy | Draft written: `08_AFTER_HOURS_AND_EMERGENCY_POLICY_DRAFT.md` |
 > | Referral credit | **One month's management fee** |
 > | West boundary ("50 miles west of Parker") | **Major cities only** within that area, not every mountain town (see §6) |
+> | After-hours launch settings | **Approved:** owner is primary on-call with a backup; call forwarding until ~25 doors, then an answering service; $1,000 emergency spending cap; 24/7 vendors per region; holiday list in file 08 §8 |
 > | Pueblo | **Later expansion** for both Properties and Transactions; `BRAIN/KOINONIA_SERVICE_AREA.md` amended |
 
 Status: owner-approved commercial direction · **not legally reviewed, not published** · terms marked "proposed" still need owner confirmation and attorney/managing-broker review before they go in a management agreement or on the website.
