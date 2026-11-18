@@ -2,6 +2,8 @@
 
 Date: 2026-11-17 · Status: recommended build spec for `apps/properties-web` (consolidated integration branch). Built from files 01–08 and the owner decisions in 07/08. Copy still needs owner approval; licensing and legal gates in file 05 still apply.
 
+> **Superseded in part (2026-11-18):** the agreed launch site map, navigation and build order are in `10_GO_TO_MARKET_AND_LAUNCH_SITE_PLAN_2026-11-18.md`, which replaces §3 and §9 below. The rest of this file (page content notes, FAQ bank, assets, technical requirements) still applies.
+
 ## 1. The core idea
 
 A competitive property management site answers every question an owner has **before** the first call, and makes the next step obvious on every page. The leaders do this with:

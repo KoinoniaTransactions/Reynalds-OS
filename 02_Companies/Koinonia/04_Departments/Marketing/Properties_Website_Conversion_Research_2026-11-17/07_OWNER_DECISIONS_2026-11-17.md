@@ -1,5 +1,7 @@
 # 07 — Owner Decisions Recorded 2026-11-17
 
+> **2026-11-18:** agent referral program terms, prospect data sourcing and the launch site map are recorded in `10_GO_TO_MARKET_AND_LAUNCH_SITE_PLAN_2026-11-18.md`.
+
 > **Second round of decisions (same day) — these settle the open items below:**
 >
 > | Topic | Final decision |
