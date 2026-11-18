@@ -1,3 +1,7 @@
+## Service-area overlap avoided — 2026-11-17
+
+PR #60 expanded into BRAIN/KOINONIA_SERVICE_AREA.md. Removed our edits to that file as well; the strategy worker owns both pricing and service-area changes. Registry notes remain navigation pointers, not competing operating-policy edits. No merge into main while parallel work is active is implied.
+
 ## Concurrent policy addendum preserved — 2026-11-17
 
 PR #60 later added an owner-policy addendum and modified the management-pricing source. Removed our pricing-file edits from this cleanup to avoid competing writes. The registry now points to its recorded new direction and distinguishes proposed guarantee terms, payout date, credit amount, response hours and geography details from approved concepts. PR #60's worker owns those open details; no duplicate owner decision requested here.
