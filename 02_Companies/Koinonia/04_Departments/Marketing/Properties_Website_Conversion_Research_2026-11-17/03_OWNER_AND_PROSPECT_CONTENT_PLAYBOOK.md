@@ -52,8 +52,8 @@ Publishing fees is uncommon — only 22.5% of 111 audited PM sites publish them 
 | Mid-lease inspection / extra visits | $99 each | $99 each |
 | Contractor coordination markup | 10% | 10% |
 | Termination penalty | None | None |
-| Tenant placement guarantee (approved 2026-11-17; terms pending) | 12-month free re-placement | 12-month free re-placement |
-| Owner payout | Fixed day each month (proposed 10th) | Fixed day each month (proposed 10th) |
+| Tenant placement guarantee (approved 2026-11-17) | 12-month free re-placement | 12-month free re-placement |
+| Owner payout | 10th of each month (5 business days after receipt if rent is late) | Same |
 
 ### 3b. Market context (shown honestly, not as an attack)
 

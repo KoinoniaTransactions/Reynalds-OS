@@ -3,7 +3,7 @@
 Status: Production Working Copy — NOT AUTHORIZED FOR SEND  
 Owner: Koinonia Transactions  
 Campaign: Coverage Campaign 01 — Everything at Once / Bigger Than the Transaction  
-Audience: Qualified Realtor prospects in Koinonia's Boulder-to-Pueblo Front Range service corridor
+Audience: Qualified Realtor prospects in Koinonia's Boulder-to-Fountain Front Range service corridor (Pueblo later)
 
 ## Purpose
 

@@ -31,12 +31,13 @@ These terms are the owner's current selected commercial model, **not representat
 
 | Item | Decision |
 | --- | --- |
-| Tenant placement guarantee | **Approved** — proposed 12-month free re-placement (see §3) |
+| Tenant placement guarantee | **Approved and terms confirmed** — 12-month free re-placement with exclusions (see §3) |
 | Contractor markup | **10% on both plans confirmed** |
-| Owner payout | **Fixed day each month** (proposed: 10th; to confirm) |
-| Referral rewards | **Credits only, no cash**; amount and DRE/broker permissibility to confirm |
+| Owner payout | **10th of each month if rent is paid on time; otherwise 5 business days after rent is received** |
+| Referral rewards | **Credit equal to one month's management fee**, no cash; DRE/broker permissibility to confirm |
+| Business hours | **Monday–Friday, 8 a.m.–5 p.m. Mountain**; after-hours/emergency policy drafted (research file 08) |
 | Response standard | **Next steps within 1 hour during business hours; work begins the same or next business day**; emergencies and statutory deadlines are never delayed |
-| Service area | Koinonia Transactions corridor: Fountain (Pueblo later) to Boulder, east to Aurora, ~50 miles west of Parker |
+| Service area | Koinonia Transactions corridor: Fountain (Pueblo later) to Boulder, east to Aurora, major cities within ~50 miles west of Parker |
 
 Detail: `04_Departments/Marketing/Properties_Website_Conversion_Research_2026-11-17/07_OWNER_DECISIONS_2026-11-17.md`.
 
@@ -67,7 +68,7 @@ Half-month tenant placement fee should include the agreed scope of listing/adver
 
 **Success-fee rule approved:** No additional placement fee is due because an applicant withdraws, a first marketing round fails, or additional showings are needed **before a successful placement**. The placement fee is earned upon an approved tenant signing the lease and satisfying the contractually defined move-in conditions. Document exact timing, cancellations and deposits in the agreement.
 
-**Superseded 2026-11-17 — tenant placement guarantee approved.** The owner reversed the earlier "no complimentary replacement" decision. Proposed terms (pending owner confirmation and attorney review): if a Koinonia-placed tenant breaks the lease or is evicted within the first 12 months, Koinonia re-places the tenant with no placement fee, once per placement, while the property remains under Koinonia management; excludes owner-caused departures and lawful tenant termination rights. See `04_Departments/Marketing/Properties_Website_Conversion_Research_2026-11-17/07_OWNER_DECISIONS_2026-11-17.md`.
+**Superseded 2026-11-17 — tenant placement guarantee approved.** The owner reversed the earlier "no complimentary replacement" decision. Terms confirmed by owner 2026-11-17 (pending attorney review): if a Koinonia-placed tenant breaks the lease or is evicted within the first 12 months, Koinonia re-places the tenant with no placement fee, once per placement, while the property remains under Koinonia management; excludes owner-caused departures and lawful tenant termination rights. See `04_Departments/Marketing/Properties_Website_Conversion_Research_2026-11-17/07_OWNER_DECISIONS_2026-11-17.md`.
 
 ~~Original 2026-11-04 text:~~ No complimentary tenant replacement or 90-day guarantee. If a tenant leaves early and Koinonia subsequently performs a new successful placement, a new **50% of one month's rent** placement fee applies. The lease should define only lawful, enforceable early-termination obligations, which when owed and actually collected are accounted to the owner as required. Do not promise every early departure will incur a collectible penalty; account for legal termination rights, mitigation requirements, security-deposit law, and rules against double recovery.
 
