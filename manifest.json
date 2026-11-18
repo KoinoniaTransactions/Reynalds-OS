@@ -3,14 +3,14 @@
   "version": "11.3.1",
   "created": "2026-07-02",
   "baseline": "ROS Core v3.3 Architecture Baseline",
-  "current_change_id": "ROS-0089",
+  "current_change_id": "ROS-0090",
   "status": "Documentation navigation reconciled; cross-branch and private-source reconciliation remains incomplete. See BRAIN/CANONICAL_REGISTRY.md.",
   "next_object": "No new object in documentation-only revision.",
   "object_count": 13,
   "change_count": 24,
   "portal": "ROS_Portal_v1_0.html",
   "project_model": "Portable repository structured for Git version control",
-  "next_step": "Resolve reopened brokerage naming using positioning section 13; retain native working tracker and historical snapshots; preserve runtime/legal evidence gaps and independent social-engine work.",
+  "next_step": "Carry forward Koinonia Dwellings as the owner-selected working brokerage brand; review the cleanup draft and verify legal/runtime prerequisites before any public migration. Preserve native tracker, historical snapshots and independent social-engine work.",
   "certified_objects": [
     "OBJ-00000002",
     "OBJ-00000003",
@@ -31,7 +31,7 @@
   "supersedes": "Standalone static Dashboard/App Shell v7.2",
   "primary_application": "apps/web",
   "source_of_truth": "BRAIN/",
-  "current_state": "Documentation/data reconciliation follow-up: later Realty decision history recovered, name reconsideration explicit, native tracker confirmed and Excel snapshots retained. No production, software or social-engine change.",
+  "current_state": "Koinonia Dwellings selected by owner for working brokerage brand; earlier naming history preserved. Native tracker confirmed and Excel snapshots retained. Documentation and metadata changes only; no production or social-engine change.",
   "name": "Reynalds OS",
   "release": "Documentation reconciliation review checkpoint",
   "date": "2026-11-17",
@@ -63,6 +63,6 @@
     "software_version": "11.3.1",
     "status": "Historical September 5 snapshot; superseded for current navigation."
   },
-  "documentation_revision": "2026-11-17.2",
+  "documentation_revision": "2026-11-17.3",
   "legacy_counts_status": "object_count and change_count are inherited historical metadata, not a fresh inventory."
 }

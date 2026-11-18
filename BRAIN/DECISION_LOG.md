@@ -1,6 +1,6 @@
 ## Documentation reconciliation follow-up — 2026-11-17
 
-Recovered the existing positioning record's November 6 sections from PR #58 without merging its branch. Later chat evidence reopened brokerage naming; no final candidate selected. Existing pricing, equal sales/management positioning, Transactions separation and accepted site assets are preserved. Native tracker confirmed; old Excel copies labeled snapshots, not deleted. See the canonical registry for resolved context differences and remaining verification gaps. Social-engine work excluded.
+Recovered the existing positioning record's November 6 sections from PR #58 without merging its branch. Later chat evidence reopened brokerage naming; the owner then explicitly selected Koinonia Dwellings in this cleanup on November 17. See positioning section 13 for the current decision and separate clearance/migration gates. Existing pricing, equal sales/management positioning, Transactions separation and accepted site assets are preserved. Native tracker confirmed; old Excel copies labeled snapshots, not deleted. See the canonical registry for resolved context differences and remaining verification gaps. Social-engine work excluded.
 
 > **Read the subject map first:** `BRAIN/CANONICAL_REGISTRY.md` identifies later approval records on other branches, including November 6 Realty sections 11–12 in PR #58. This log is not proof that decisions absent from `main` do not exist.
 

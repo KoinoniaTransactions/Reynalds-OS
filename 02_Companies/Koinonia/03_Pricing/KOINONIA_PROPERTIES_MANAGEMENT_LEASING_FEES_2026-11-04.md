@@ -1,6 +1,6 @@
 > **Implementation chronology reconciled 2026-11-17.** Numeric owner decisions below are retained. This November 4 record initially described capabilities as unbuilt. Later November 5–6 records show a successful rental-inquiry preview and a working RentCast rental-estimate preview. A separate Redis-budget build exists but its activation was not established by the reviewed evidence. Do not interpret the original absence statements as present-day implementation status or equate preview evidence with production release.
 >
-> Read the later checkpoints in `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_LEAD_INTAKE_ACTIVATION_2026-11-04.md` on `integration/koinonia-properties-consolidated-2026-11-17` at `af7b28b`. The Owner Maintenance Center remains a planned feature in the reviewed record. Brokerage brand naming is currently under review; see the existing positioning decision, section 13.
+> Read the later checkpoints in `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_LEAD_INTAKE_ACTIVATION_2026-11-04.md` on `integration/koinonia-properties-consolidated-2026-11-17` at `af7b28b`. The Owner Maintenance Center remains a planned feature in the reviewed record. Koinonia Dwellings is now the owner-selected working brokerage brand; see the existing positioning decision, section 13. These management-fee decisions are retained.
 
 # Koinonia Properties — Owner-Approved Management and Leasing Model
 

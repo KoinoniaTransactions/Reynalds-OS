@@ -1,6 +1,14 @@
+## Parallel research preservation — 2026-11-17
+
+Registered the owner's active PR #60 research workstream. Its 12 changed paths at `531ab10` did not overlap this cleanup; neither its branch nor its research/README files were modified. Keep Properties research/source names intact and review future findings separately from approved policy.
+
+## Owner working-brand selection — 2026-11-17
+
+Recorded the owner's explicit selection of Koinonia Dwellings in the existing positioning authority, section 13, and synchronized entry points. Earlier Realty/Properties naming remains history. No legal clearance, formation, domain/account transaction, code rebrand, deployment or social-engine change is implied.
+
 ## Documentation/data reconciliation follow-up — 2026-11-17
 
-Selective recovery of Realty decision history into the existing positioning source, with the later reopened naming choice explicit. Clarified preview implementation evidence, legacy pricing/collateral scope, customer-facing email source, platform recommendation limits and research geography. Working native tracker confirmed; eight Excel snapshots labeled and retained; one stale Playbook note corrected with its original preserved in a cell note. No prospect/contact/opt-out/campaign values changed. No social-engine, application, schema or production changes.
+Selective recovery of Realty decision history into the existing positioning source, with the later naming reconsideration and subsequent owner choice explicit. Clarified preview implementation evidence, legacy pricing/collateral scope, customer-facing email source, platform recommendation limits and research geography. Working native tracker confirmed; eight Excel snapshots labeled and retained; one stale Playbook note corrected with its original preserved in a cell note. No prospect/contact/opt-out/campaign values changed. No social-engine, application, schema or production changes.
 
 ## Documentation reconciliation — 2026-11-17
 
