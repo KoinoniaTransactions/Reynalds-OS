@@ -1,3 +1,29 @@
+## Service-area overlap avoided — 2026-11-17
+
+PR #60 expanded into BRAIN/KOINONIA_SERVICE_AREA.md. Removed our edits to that file as well; the strategy worker owns both pricing and service-area changes. Registry notes remain navigation pointers, not competing operating-policy edits. No merge into main while parallel work is active is implied.
+
+## Concurrent policy addendum preserved — 2026-11-17
+
+PR #60 later added an owner-policy addendum and modified the management-pricing source. Removed our pricing-file edits from this cleanup to avoid competing writes. The registry now points to its recorded new direction and distinguishes proposed guarantee terms, payout date, credit amount, response hours and geography details from approved concepts. PR #60's worker owns those open details; no duplicate owner decision requested here.
+
+## Parallel research preservation — 2026-11-17
+
+Registered the owner's active PR #60 research workstream. Its 12 changed paths at `531ab10` did not overlap this cleanup; neither its branch nor its research/README files were modified. Keep Properties research/source names intact and review future findings separately from approved policy.
+
+## Owner working-brand selection — 2026-11-17
+
+Recorded the owner's explicit selection of Koinonia Dwellings in the existing positioning authority, section 13, and synchronized entry points. Earlier Realty/Properties naming remains history. No legal clearance, formation, domain/account transaction, code rebrand, deployment or social-engine change is implied.
+
+## Documentation/data reconciliation follow-up — 2026-11-17
+
+Selective recovery of Realty decision history into the existing positioning source, with the later naming reconsideration and subsequent owner choice explicit. Clarified preview implementation evidence, legacy pricing/collateral scope, customer-facing email source, platform recommendation limits and research geography. Working native tracker confirmed; eight Excel snapshots labeled and retained; one stale Playbook note corrected with its original preserved in a cell note. No prospect/contact/opt-out/campaign values changed. No social-engine, application, schema or production changes.
+
+## Documentation reconciliation — 2026-11-17
+
+Clarified session entry points, subject/branch authority, historical handoffs and commercial-object scope. Exposed unmerged November Realty decisions and later Properties/social work. Preserved original history and private-record boundaries. Added root AI orientation. Updated manifest navigation and recorded ROS-0088 in the change log. No application code, dependency, schema, software version, object ID, business decision or deployment changed. Software VERSION and object_registry.csv are intentionally unchanged because this is a documentation revision, not a product release or new business object.
+
+Audit limitations: Drive discovery only; no separate vault established or required; no exhaustive content, legal or live-runtime certification. Review unresolved sources in BRAIN/CANONICAL_REGISTRY.md before further consolidation.
+
 # Release Notes
 
 ## ROS v11.3.1 — Recovery Audit and Preservation Delta

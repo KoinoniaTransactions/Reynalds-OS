@@ -1,3 +1,5 @@
+> **Commercial authority reconciled 2026-11-17 — preserve as scoped history/reference.** This record contains legacy prices, proposals or examples. Do not carry its $389/$599 transaction choices, $299/$599/$999 monthly tiers, $50 showing starting price, or standalone document-support public pricing into current offers. Use `BRAIN/CANONICAL_REGISTRY.md` and approved production commercial sources; retain compatible service scope and the original decision lineage below. This warning does not approve a new fee or revoke compatible operating rules.
+
 # Koinonia Client-Facing Website Sales Architecture — 2026-09-03
 
 Status: Working Recommendation / Owner Review Required  

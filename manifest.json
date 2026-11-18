@@ -3,14 +3,14 @@
   "version": "11.3.1",
   "created": "2026-07-02",
   "baseline": "ROS Core v3.3 Architecture Baseline",
-  "current_change_id": "ROS-0087",
-  "status": "Koinonia commercial architecture reconciled; September Homepage and Services & Pricing redesign exists on main as unfinished preview-only work; production promotion requires explicit owner approval.",
-  "next_object": "Koinonia public website visual QA and marketing integration from current main",
+  "current_change_id": "ROS-0090",
+  "status": "Documentation navigation reconciled; cross-branch and private-source reconciliation remains incomplete. See BRAIN/CANONICAL_REGISTRY.md.",
+  "next_object": "No new object in documentation-only revision.",
   "object_count": 13,
   "change_count": 24,
   "portal": "ROS_Portal_v1_0.html",
   "project_model": "Portable repository structured for Git version control",
-  "next_step": "Review and refine the non-production Homepage and Services & Pricing preview, validate desktop/mobile/CTA/routes, then obtain owner approval before any promotion to koinonia-production. Marketing-readiness work must be selectively integrated from a fresh branch based on current main.",
+  "next_step": "Carry forward Koinonia Dwellings as the owner-selected working brokerage brand; review the cleanup draft and verify legal/runtime prerequisites before any public migration. Preserve native tracker, historical snapshots and independent social-engine work.",
   "certified_objects": [
     "OBJ-00000002",
     "OBJ-00000003",
@@ -31,10 +31,10 @@
   "supersedes": "Standalone static Dashboard/App Shell v7.2",
   "primary_application": "apps/web",
   "source_of_truth": "BRAIN/",
-  "current_state": "Current main contains the reconciled Koinonia white-glove commercial model, current pricing, controlled-launch readiness artifacts, product-detail sales copy, and unfinished Homepage/Services/SEO implementation. koinonia-production remains the separate live-production path and must not be updated without explicit owner approval.",
+  "current_state": "Koinonia Dwellings selected as working brokerage brand. Native tracker confirmed and snapshots retained. Active PR60 owns new brokerage operating-policy details and the pricing file; cleanup avoids that overlap. No production or social-engine changes.",
   "name": "Reynalds OS",
-  "release": "Unfinished Koinonia Commercial Website Continuity Checkpoint",
-  "date": "2026-09-05",
+  "release": "Documentation reconciliation review checkpoint",
+  "date": "2026-11-17",
   "canonical_routes": [
     "/",
     "/services",
@@ -46,18 +46,23 @@
     "/koinonia/contact"
   ],
   "repository_first": true,
-  "canonical_status": "ACTIVE_WORKING_REPOSITORY_PREVIEW_NOT_PRODUCTION_APPROVED",
+  "canonical_status": "DOCUMENTATION_RECONCILIATION_REVIEW_PRIVATE_COVERAGE_INCOMPLETE",
   "primary_handoffs": [
-    "BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_COMMERCIAL_WEBSITE_UNFINISHED.md",
-    "BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md"
+    "START_HERE.md",
+    "BRAIN/CANONICAL_REGISTRY.md"
   ],
   "production_branch": "koinonia-production",
   "working_branch": "main",
   "do_not_promote_until": [
-    "current Homepage and Services & Pricing preview visually reviewed",
-    "desktop and mobile presentation verified",
-    "CTA and route behavior verified",
-    "build/typecheck/tests appropriate to the change pass",
-    "owner explicitly approves the reviewed website state"
-  ]
+    "Relevant implementation and release evidence verified on its product branch",
+    "Applicable owner approval obtained for the reviewed production change"
+  ],
+  "historical_checkpoint": {
+    "date": "2026-09-05",
+    "release": "Unfinished Koinonia Commercial Website Continuity Checkpoint",
+    "software_version": "11.3.1",
+    "status": "Historical September 5 snapshot; superseded for current navigation."
+  },
+  "documentation_revision": "2026-11-17.4",
+  "legacy_counts_status": "object_count and change_count are inherited historical metadata, not a fresh inventory."
 }

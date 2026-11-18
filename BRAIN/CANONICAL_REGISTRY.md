@@ -1,90 +1,72 @@
 # Reynalds OS Canonical Registry
 
-## Purpose
+Reconciled for navigation: 2026-11-17. Audit baseline: `main` at `868c265aba7ef625b1dd471f7d5fc508e2770151`.
 
-This document identifies the authoritative source for every major area of the Reynalds OS repository.
+## How to resolve authority
 
-Before creating new documentation, copy, or code, verify whether a canonical source already exists.
+Use this registry before old handoffs. Record **decision / implementation / verification / production** independently. Read later sections of each source for explicit supersession. Newer timestamps, merged status and labels alone are insufficient. Current owner instructions govern the authorized task; preserve conflicting evidence rather than silently selecting a winner.
 
-Core principle:
+## Authority and recovery map
 
-Recover before reinventing.
+| Subject | Source and observed location | What the evidence establishes / limits |
+| --- | --- | --- |
+| Transactions commercial model | Approved September production checkpoint `f6c821111ff17a602eee92db01998a0c52bf62f0`, `apps/web/content/{brand,home,services,about,contact,referrals}.ts`; later production code on `koinonia-production` | Website accepted/released, not awaiting original redesign approval. Confirm later subject changes before using September content as current. See retained October precedence below. |
+| Transactions production source | `koinonia-production` at `1fd246d` observed November 17 | Contains October services/social-link changes and November branded-link expansion. Branch tip is not fresh runtime/deployment proof. `main` is a different tree. |
+| Marketing checklist and activation | `koinonia-marketing-integration-2026-09-16`: `BRAIN/KOINONIA_MASTER_LAUNCH_CHECKLIST.md` and `02_Companies/Koinonia/04_Departments/Marketing/MARKETING_ACTIVATION_READINESS_PLAN.md` | Existing integration/checklist; do not recreate from the September 5 task list. Later social-engine evidence must be read separately. |
+| Social publishing/acquisition implementation | `feature/koinonia-social-publishing-engine-foundation-2026-11-02`: `BRAIN/KOINONIA_SOCIAL_PUBLISHING_ENGINE_BUILD_PLAN_2026-11-02.md`; draft PR #49 | Active work owned by another AI. Preview implementation and tests are distinct from authenticated acceptance and live activation. Fetch its latest head when needed; this audit does not edit it. |
+| Properties dual-service positioning | `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_POSITIONING_AND_LOCAL_DISCOVERY_2026-11-03.md`, on audit baseline `main` | Approved equal residential sales / management; initial management Maps priority. Proposed Properties name later superseded in the November 6 record below. |
+| Brokerage brand succession and unified identity | Same positioning path, **sections 11–12**, on `decision-koinonia-realty-2026-11-06` at `6438c32`; [PR #58](https://github.com/KoinoniaTransactions/Reynalds-OS/pull/58) | Records owner-selected Koinonia Realty LLC, one Realty brand / two funnels, Transactions separate. Sections 11–12 preserve the earlier Realty selection. After later naming research, the owner selected Koinonia Dwellings on November 17; section 13 governs the current working brand. Naming clearance, legal entity registration, firm authority and public migration remain gated. |
+| Management fees and operating decisions | `02_Companies/Koinonia/03_Pricing/KOINONIA_PROPERTIES_MANAGEMENT_LEASING_FEES_2026-11-04.md`, on `main` | Approved numeric 8% / 10% management model retained. Later PR #60 policy addendum supersedes the earlier no-complimentary-placement rule and adds operating direction; read it before carrying forward older policy claims. Not Transactions pricing or release/legal evidence. |
+| Properties website/conversion research | `docs/properties-website-conversion-research-2026-11-17`, [PR #60](https://github.com/KoinoniaTransactions/Reynalds-OS/pull/60), research folder under Marketing | Active independent AI research. Later head `ef20853` also records owner-approved direction in `07_OWNER_DECISIONS_2026-11-17.md` and updates the pricing record. Distinguish that addendum from ordinary research recommendations and still-proposed details. This cleanup relinquishes pricing and service-area file edits to avoid overlap. Snapshot `1fa226f` had 18 PR60 paths; none overlap the narrowed cleanup. Recheck latest paths before merge. |
+| Latest brokerage operating-policy addendum | PR #60 at `ef20853667b6266f06eea94c7cb8518e0a9f452c`, `Properties_Website_Conversion_Research_2026-11-17/07_OWNER_DECISIONS_2026-11-17.md` under Marketing | Records owner reversal of no tenant-placement guarantee; fixed payout day concept, referral credits, one-hour business-hours next-steps response and Properties launch boundaries. Guarantee length/conditions, payout day, credit amount, distance interpretation and business hours remain proposed/open under that worker. No implementation or legal clearance inferred. |
+| Owner communication standard | `docs/properties-communication-integrity-standard-2026-11-04`, PR #53 | Earlier proactive-communication draft preserved. PR #60 later records owner direction for next steps within one business hour; exact hours/after-hours process and public wording remain unfinished. Do not treat the earlier draft as proof of present operating performance. |
+| Properties / future Realty website | `integration/koinonia-properties-consolidated-2026-11-17` at `af7b28b`, `apps/properties-web/`; PRs #54–57 and rental-budget branch | November dual-service, pricing, inquiry and rental-estimate work exists. August DEV-state claims about 14 routes, no domain or absent features are historical. Consolidation branch is a recovery pointer, not a released or fully reconciled master. |
+| Properties inquiry / rental runtime evidence | Same consolidated branch: `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_LEAD_INTAKE_ACTIVATION_2026-11-04.md`, especially November 5–6 checkpoints | Owner-reported rental inquiry receipt and one rent-estimate validation. Later budget build requires Redis activation/tests. Earlier “not implemented” paragraphs are time-bound. Does not prove every inquiry type, protected budget runtime or production release. |
+| Historical service, package, pricing and website specs | `02_Companies/Koinonia/{01_Services,02_Packages,03_Pricing}/`, `03_Knowledge/Website/`, `docs/specifications/` | Mixed scope/history. September commercial precedence and November subject decisions override conflicting older claims. Use still-compatible scope; never treat entire directories as uniformly approved/current. |
+| Governance / architecture | `BRAIN/REYNALDS_OS_CONSTITUTION.md`, `BRAIN/DEVELOPMENT_STANDARDS.md`, `docs/ARCHITECTURE.md` | Shared principles, subject to explicit owner instructions and current product/branch boundaries. Product Copilot behavior is not a blanket prohibition on authorized development. |
+| Private records | `BRAIN/PRIVATE_RECORDS_BOUNDARY.md`; `BRAIN/PRIVATE_CASE_WORKSPACES.md` | Public code/governance and private factual records have different storage homes. Private content must not be copied into public Git for convenience. |
 
----
+## Additional subject navigation
 
-# Brain & Platform
+| Subject | Existing source | Scope |
+| --- | --- | --- |
+| Product vision | `BRAIN/PRODUCT_VISION.md` | Platform vision; not proof of delivery or current priorities. |
+| Brand core | `03_Knowledge/Brand/koinonia_brand_core.md` | Shared voice; read later company-specific naming and positioning decisions. |
+| Commercial sales architecture | `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md` | Commercial rationale; reconcile with approved production and later subject decisions. |
+| Marketing Management fulfillment | `02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md` | Retain service-specific fulfillment/public-claim limits. |
+| Partnership fulfillment | `02_Companies/Koinonia/04_Departments/Operations/KOINONIA_PARTNERSHIP_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md` | Retain service-specific fulfillment/public-claim limits. |
+| Campaign creative | `02_Companies/Koinonia/05_Business_Materials/social_paid_campaign_01_coverage.md` | Working creative, not authority to publish, spend or revive a dated calendar. |
+| Website framework and components | `03_Knowledge/Website/WEBSITE_PRODUCTION_FRAMEWORK.md`, `03_Knowledge/Website/PRODUCTION_INDEX.md`, `03_Knowledge/Website/component_catalog.md` | Production method/history; current source and release evidence control actual state. |
+| Shared design and data | `BRAIN/DESIGN_SYSTEM_RULES.md`, `packages/design-system/`, `packages/database/prisma/schema.prisma` | Check the target branch; implementation/schema may differ across workstreams. |
+| Decision lineage | `BRAIN/DECISION_LOG.md` | Read alongside the branch-specific approval records above. |
+| Recovery snapshots | `RECOVERY_AUDIT/` | Historical reference; preserve. |
 
-| Subject | Canonical Source | Status |
-|---------|------------------|--------|
-| Project Vision | BRAIN/PRODUCT_VISION.md | Active |
-| Project State | BRAIN/PROJECT_STATE.md | Active |
-| Constitution | BRAIN/REYNALDS_OS_CONSTITUTION.md | Active |
-| Development Standards | BRAIN/DEVELOPMENT_STANDARDS.md | Active |
-| Design System Rules | BRAIN/DESIGN_SYSTEM_RULES.md | Active |
-| Repository Architecture | docs/ARCHITECTURE.md | Active |
-| Decision Log | BRAIN/DECISION_LOG.md | Active |
-| Current Priorities | BRAIN/CURRENT_PRIORITIES.md | Active |
-| Current AI / Developer Handoff | BRAIN/HANDOFF.md | Active |
-| Koinonia Marketing Launch Handoff | BRAIN/AI_HANDOFF_2026-09-05_KOINONIA_MARKETING_READINESS.md | Active Checkpoint |
-| Private Case Workspace Architecture | BRAIN/PRIVATE_CASE_WORKSPACES.md | Active |
+## Coverage and unresolved reconciliation
 
----
+- Git: captured November 17 branch refs and checked the cleanup branch head before the follow-up. Reviewed main, production, Realty and Properties subject records; social-engine implementation is excluded from further cleanup. No existing branches deleted, merged, rebased or reset. No claim that every historical document is fully reconciled.
+- Drive: native `koinonia_sales_tracker_readable_autofill` is the working tracker, supported by repeated chat update records and current campaign/history tabs with 1,000 unique IDs. Eight earlier Excel copies were content-reviewed, labeled HISTORICAL SNAPSHOT and retained in place. Original names and IDs are recorded privately for reversal. Standalone Quick Responses remains unclassified/preserved. Private IDs/contact records stay outside Git.
+- Storage clarification: the owner is unsure whether a separate vault was ever used. No separate vault is established as a project source, and locating one is not a prerequisite. Continue with GitHub, accessible Drive records and relevant ChatGPT history; record an additional source only if evidence identifies it.
+- Cross-source decisions: confirm original approvals and private source coverage before archiving business data or choosing among tracker copies. Carry only sanitized business decisions into Git; keep supporting private evidence and locators private.
+- Realty PR #58 sections were selectively recovered into the existing positioning source, retaining original content and provenance. This is not a branch merge or rebrand implementation; the later owner selection of Koinonia Dwellings is recorded in section 13.
+- Deployment and legal status: this audit reads historical evidence and source trees. It does not reverify live hosting, legal formation, license authority, ownership of domains/accounts, or provider credentials.
 
-# Koinonia Business
+## Second-pass resolutions and owner naming decision — 2026-11-17
 
-| Subject | Canonical Source | Status |
-|---------|------------------|--------|
-| Brand Core | 03_Knowledge/Brand/koinonia_brand_core.md | Active |
-| Service Objects | 02_Companies/Koinonia/01_Services/ | Active |
-| Packages | 02_Companies/Koinonia/02_Packages/ | Active |
-| Pricing | 02_Companies/Koinonia/03_Pricing/ | Active |
-| Client-Facing Sales Architecture | 02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_CLIENT_FACING_WEBSITE_SALES_ARCHITECTURE_2026-09-03.md | Active |
-| Marketing Management Launch Controls | 02_Companies/Koinonia/04_Departments/Operations/MARKETING_MANAGEMENT_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md | Active |
-| Koinonia Partnership Launch Controls | 02_Companies/Koinonia/04_Departments/Operations/KOINONIA_PARTNERSHIP_PUBLIC_CLAIM_AND_FULFILLMENT_READINESS_2026-09-03.md | Active |
-| Paid Social Campaign 01 | 02_Companies/Koinonia/05_Business_Materials/social_paid_campaign_01_coverage.md | Production Working Spec |
-| Marketing Technical Readiness | 02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_MARKETING_TECHNICAL_READINESS_2026-09-05.md | Active Checkpoint |
+- **Owner decision resolved:** the current working brokerage brand is **Koinonia Dwellings**, explicitly selected in this cleanup on November 17. It supersedes earlier Realty/Properties branding for future planning. See positioning section 13. Preserve existing source identifiers/assets and execution gates; selection does not establish legal clearance or approve public migration.
+- **Working data:** use the native tracker; preserve Excel snapshots. Reused historical prospect IDs are not safe cross-version person identifiers. Keep current consent, suppression and contact history; do not overwrite from an older workbook.
+- **Acquisition emphasis vs brand scope:** the November 12 roadmap's management/owner-services priority is an acquisition focus, not approval to erase residential sales or reverse equal company-wide service prominence.
+- **Website platform:** Framer/Webflow in the November 12 roadmap are AI recommendations conditional on assessment, not an owner-approved migration. Existing built/accepted assets remain the recovery starting point.
+- **Contact identity:** October owner instructions moved customer-facing Transactions communications to its own domain, retaining Admin for internal/vendor use. `koinonia-production` contact config reflects `jeremiah@koinoniatransactions.com` and real social URLs. Do not restore old Admin/empty-link configs from `main`; current mail routing still requires runtime evidence if changed.
+- **Outreach evidence:** chat records report owner-sent messages and opt-outs. “No messages sent by the AI” and future HOLD gates do not mean no historical outreach occurred. Current tracker preserves the specifically reported STOP records; do not clear them during deduplication. Branded links are the owner-selected format, separate from message copy, and the production resolver includes original K031–K060 plus an explicit next-60 allowlist. Recorded release evidence is not new permission to send or expand campaigns.
+- **Legal/company planning:** earlier one-LLC and multi-trade-name explorations do not override the later recorded separate Transactions + single sales/management brokerage plan. Solo Independent Broker is the later planned path; actual firm/practice authority, ownership documentation and compliance are evidence gaps, not established facts or a reason to mandate an Employing Broker by default.
+- **New concurrent decisions:** PR #60 subsequently added owner-policy direction that reverses the old no-placement-guarantee rule and defines launch boundaries/response expectations. Its expressly proposed terms remain open; the other AI owns that follow-through. Do not ask the owner to resolve those twice or adopt examples as final terms. Our pricing and service-area file edits were removed to avoid competing writes. Open details listed above reflect the reviewed addendum checkpoint; the active worker may resolve them later, so read its latest record before asking the owner again.
+- **Runtime gaps:** Properties quota-control activation, complete production inquiry acceptance, legal/name clearance and current domain/account configuration remain verification work. Do not ask the owner to choose a new business policy merely because setup evidence is missing.
 
----
+**History review coverage:** relevant retrieved turns in 17 ChatGPT chats plus the November 12 Codex roadmap; 300 active chat titles screened and archived title listing checked. Some older chats have more retrievable pages; attachments were not treated as independently inspected evidence. The private source index records what was actually retrieved. No chat was edited or deleted. The social-engine workstream remains untouched. The owner subsequently identified PR #60 as another active AI workstream. When its later owner-policy addendum began editing the pricing file, this cleanup relinquished that file and recorded the newer addendum as a source. PR #60 itself was not edited or merged.
 
-# Website
+## Retained approval provenance — October 13, 2026
 
-| Subject | Canonical Source | Status |
-|---------|------------------|--------|
-| Website Framework | 03_Knowledge/Website/WEBSITE_PRODUCTION_FRAMEWORK.md | Active |
-| Production Index | 03_Knowledge/Website/PRODUCTION_INDEX.md | Active |
-| Page Specifications | docs/specifications/ | Active |
-| Component Catalog | 03_Knowledge/Website/component_catalog.md | Active |
-| Koinonia Deployment / Hosting Readiness | BRAIN/KOINONIA_DEPLOYMENT_READINESS.md | Active / Reconciled 2026-09-05 |
-
----
-
-# Application
-
-| Subject | Canonical Source | Status |
-|---------|------------------|--------|
-| React Application | apps/web/ | Active |
-| Design System | packages/design-system/ | Active |
-| Database Schema | packages/database/prisma/schema.prisma | Active |
-| Marketing Instrumentation Prototype | branch `koinonia-marketing-readiness` | Reference / Do Not Merge Wholesale |
-
----
-
-# Recovery
-
-| Subject | Canonical Source | Status |
-|---------|------------------|--------|
-| Recovery Snapshots | RECOVERY_AUDIT/ | Reference Only |
-
----
-
-## Rule
-
-Always identify the canonical source before creating or modifying documentation, business rules, or application code.
-
-When a dated checkpoint conflicts with a newer approved canonical business/readiness document, the newer approved canonical source controls. Experimental branches are implementation references, not business-rule authority.
-
-
----
+The following is the previously recorded October checkpoint, preserved for provenance. For later branches/evidence use the map above; in particular, do not interpret its September production SHA, “current” next steps or implementation limits as a November runtime audit.
 
 ## CURRENT KOINONIA APPROVAL PRECEDENCE — 2026-10-13
 
@@ -104,22 +86,3 @@ When a dated checkpoint conflicts with a newer approved canonical business/readi
 
 
 ---
-
-## Koinonia Properties — New Controlling Strategy Decision (2026-11-03)
-
-| Subject | Canonical Source | Status |
-|---------|------------------|--------|
-| Koinonia Properties equal residential-sales / property-management positioning, relationship to Transactions, initial property-management Google Maps priority, implementation gates | `02_Companies/Koinonia/04_Departments/Marketing/KOINONIA_PROPERTIES_POSITIONING_AND_LOCAL_DISCOVERY_2026-11-03.md` | Owner-approved strategy; execution not authorized |
-
-This newer decision governs **future Properties company-wide positioning** and supersedes historical management-only assumptions for planning. The historical Properties specification, service object and accepted implementation on `integration/koinonia-properties-web-20260812` remain evidence of what was previously built, not authority to treat new sales pages or brokerage licensing as implemented. The property-management service object still governs management-specific scope and prohibits unapproved pricing, policy, service area or private portal claims. The existing Transactions production commercial authority and marketing activation restrictions above are unchanged.
-
-
----
-
-## Koinonia Properties — Management Commercial Authority (2026-11-04)
-
-| Subject | Canonical Source | Status |
-| --- | --- | --- |
-| Owner-approved property management 8%/10% plans, 10% vendor markup, leasing/renewal/application/inspection charges, maintenance authority, placement timing, planned instant rental valuations and owner maintenance tools | `02_Companies/Koinonia/03_Pricing/KOINONIA_PROPERTIES_MANAGEMENT_LEASING_FEES_2026-11-04.md` | Approved decision record; legal, operational, public-site and implementation gates remain |
-
-This record governs **Properties management commercial decisions**, not Transactions public pricing. The historical Properties management service object on `integration/koinonia-properties-web-20260812` continues to define management *scope* until a deliberate reconciled implementation. The 2026-11-03 company-wide Properties positioning authority remains unchanged.

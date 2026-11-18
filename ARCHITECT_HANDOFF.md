@@ -1,3 +1,5 @@
+> **Historical checkpoint / subject-limited reference — navigation reconciled 2026-11-17.** Read `START_HERE.md` and `BRAIN/CANONICAL_REGISTRY.md` first. The body is preserved for provenance; its “current”, “active”, blocker and next-step statements apply to its recorded checkpoint, not automatically to today. Later approved commercial, production, Realty/Properties and social-engine records may supersede individual claims. Do not restart completed work or treat this warning as revoking still-compatible scope.
+
 # Architect Handoff — Reynalds OS
 
 ## What This Project Is

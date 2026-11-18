@@ -47,4 +47,4 @@ Use:
 
 Chat may contain ideas, approvals, and explanations. Reynalds OS contains the project record.
 
-If chat and repository conflict, the repository wins.
+If a current explicit owner decision conflicts with an older repository statement, preserve the evidence and reconcile the affected subject source and entry points. Repository age, branch membership and labels alone do not override owner approval. Do not infer approval from an AI recommendation or silently resolve unclear provenance.

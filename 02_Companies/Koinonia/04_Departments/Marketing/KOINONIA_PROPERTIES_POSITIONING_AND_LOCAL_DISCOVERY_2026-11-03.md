@@ -1,3 +1,7 @@
+> **Current working brokerage brand — Koinonia Dwellings, selected by owner 2026-11-17.** Read section 13 first. This supersedes the earlier Realty/Properties public-brand choices for future planning. Sections 1–12 preserve their original history and still-compatible equal sales/management positioning, Transactions separation, service decisions and execution gates. Name selection does not certify legal clearance, entity formation or public migration.
+>
+> Provenance: sections 1–12 recovered unchanged from `decision-koinonia-realty-2026-11-06` at `6438c32747840bbeb9a0d01616b9f2474328983c` (PR #58). Section 13 records the owner's explicit choice in the documentation cleanup chat. No branch merge or software rebrand was performed.
+
 # Koinonia Properties — Business Positioning and Local Discovery Strategy
 
 Decision date: 2026-11-03  
@@ -124,3 +128,43 @@ Historical Properties implementation records on `integration/koinonia-properties
 - `apps/properties-web/`
 
 The property-management service object continues to govern **management-specific scope and unapproved operating claims** pending a future dedicated update. This document governs the **company-wide equal-sales-and-management positioning**; it must not be used to invent licensed sales scope, pricing or operating readiness. The Transactions production commercial authority and marketing activation gate recorded in root `START_HERE.md` remain intact.
+
+
+---
+
+## 11. Successor naming / brand-architecture decision — 2026-11-06
+
+**Owner-selected direction (planning decision, not legal/name clearance or launch approval):** Use **Koinonia Realty LLC** as the proposed single licensed brokerage legal entity and customer-facing brand, with **Residential Real Estate** and **Property Management** as two equally prominent service lines within that same company. Do **not** use **Koinonia Properties** as a public-facing trade name for property management at this stage. Koinonia Transactions LLC remains a separate company and brand; do not merge the companies, websites, customer records, or marketing identities.
+
+**Why:** A separate Colorado entity reportedly already uses the name Koinonia Properties, LLC (entity ID reported as 20131532840), so naming and trademark rights require independent official verification. The owner prefers the straightforward one-brand arrangement over operating Koinonia Properties as a trade name of Koinonia Realty LLC. This supersedes earlier *proposed* Properties legal/public branding and Realty-as-optional-domain assumptions in this document, but preserves their historical context and the approved equal sales/management positioning.
+
+**Implementation:** Preserve the existing Transactions website; retain the Properties app, domain, and historical work without deleting or prematurely redirecting them. After official entity-name, trademark, domain, and handle checks, review a brand migration of the Properties app to Koinonia Realty (including website, email, metadata, social accounts, Google eligibility, legal disclosures, and customer funnels) with preview/owner approval before any production changes.
+
+**Regulatory limits:** Planned solo Independent Broker-qualified firm; no Employing Broker at initial launch. Verify current individual license practice authority and Colorado brokerage firm registration before representing the firm as licensed or advertising regulated services. Name selection does not itself grant license privileges. No filing, purchase, live marketing, domain redirect, or production deployment is authorized by this documentation alone.
+
+
+## 12. Owner-approved unified Realty social and funnel direction — 2026-11-06
+
+**Decision:** Koinonia Realty is to use one public brand identity across social platforms and, if independently eligible, one Google Business Profile. Residential sales and property management are **service lines, not separately named public businesses**. Do not create Koinonia Properties-branded social accounts or a second property-management Google profile. Preserve Koinonia Transactions as a separately owned/operated market-facing business with its own website, audience, contact routes, campaign attribution, permissions and data controls.
+
+**Proposed social structure:** Instagram and TikTok preferred handle `@koinoniarealty`; Facebook Page and LinkedIn Company Page named `Koinonia Realty`; availability/ownership/verification have **not** been confirmed. Do not use public brokerage claims before authority is verified. Account reservations may be pursued after name clearance and applicable owner approval; publication and ad spend remain separately gated.
+
+**Distinct acquisition paths:** Residential sales content, ads and leads route to `/real-estate` (buyer/seller intent); property-management content, ads and leads route to `/owners` and `/rental-analysis` (landlord/investor intent). Separate intake fields, attribution, follow-ups, CRM pipelines and conversion metrics; shared account identities and platform software do not imply unrestricted data cross-use. Do not use historical Properties names in public marketing before legal clearance.
+
+**Recovery baseline:** The November 4 branch `preview/properties-sales-management-home-2026-11-04` contains an implemented dual-service homepage, `/real-estate` page and the pre-existing management pages in `apps/properties-web`. Also inspect November 4 management pricing and inquiry branches and the November 6 rental-analysis preview, carefully reconciling later work without overwriting independent unmerged changes. The August `integration/koinonia-properties-web-20260812` documentation is a historical baseline, not proof that the November functionality is absent.
+
+**Implementation intent after clearance:** Name/copy, nav/footer, SEO/schema, favicon/logo references, contact and sender domains, social URLs, legal disclosures, and production-domain settings should be audited for a focused rebrand. Preserve layout and functional sales/management pathways; do not rebuild. Validate all routes and forms, legal advertising compliance, privacy/consent, and deployment before any production promotion.
+
+**Unresolved gates:** Official Colorado legal entity name availability, trademark clearance, registrar domain availability/purchase, platform handle reservation, individual broker status and brokerage firm authority, Google Business eligibility, and owner-approved public activation. Neither account creation nor production edits are claimed completed by this record.
+
+## 13. Current owner-selected working brand — Koinonia Dwellings, 2026-11-17
+
+**Decision: Koinonia Dwellings.** During documentation reconciliation, the owner was presented with the earlier Realty selection and the later Dwellings/Property Partners exploration, then explicitly selected **Koinonia Dwellings** as the working name to carry forward. This resolves the naming preference previously left open. It supersedes Koinonia Realty and Koinonia Properties as the proposed customer-facing brokerage brand for future planning; do not ask the owner to choose again merely because an older file disagrees.
+
+**Retained business structure and scope:** Koinonia Transactions remains a separate brand/business. The planned brokerage continues to encompass equally prominent residential real estate sales and property management under one brokerage identity with distinct customer funnels. The approved management-fee and maintenance decisions are unchanged. The name choice does not form an LLC or independently select/clear a legal entity name; actual legal registration, ownership, firm/practice authority and operating arrangements require evidence and applicable approval.
+
+**Implementation boundary:** Keep existing Properties/Realty app identifiers, assets and domains intact until a focused migration is reviewed and approved. No domain purchase, account reservation, filing, redirect, production rebrand, website/code change or social-engine change is authorized by recording this preference. Domain/handle availability and naming/trademark clearance are not established by the selection or by earlier AI research.
+
+**History:** November 3 proposed Properties; November 6 selected Realty; November 9–17 naming concerns reopened research; November 17 candidate exploration considered Property Partners and Dwellings. The November 17 cleanup question then obtained the explicit owner answer **“Koinonia Dwellings.”** The earlier candidate research remains history rather than competing current approval.
+
+**Source handling:** Relevant chats include “Set Up Social Channels,” “Direct AI To Vercel Properties,” and the current documentation reconciliation chat. Preserve private locators outside public Git. Research requests, AI rankings and reported domain availability are not legal clearance or purchase records.

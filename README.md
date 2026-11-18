@@ -1,40 +1,9 @@
-# Reynalds OS v11.2.0
+# Reynalds OS
 
-Reynalds OS is the canonical repository for the Koinonia public website and the broader Reynalds OS application architecture.
+Shared software and public business documentation for Koinonia and related applications.
 
-## Current Release
+Start with [START_HERE.md](START_HERE.md), then [BRAIN/CANONICAL_REGISTRY.md](BRAIN/CANONICAL_REGISTRY.md). The registry distinguishes approved decisions, branch-specific implementation, verification evidence, production status and sources that remain unreviewed.
 
-**v11.2.0 — Koinonia Contact Page Assembly**
+`main`, Transactions production, Properties previews, the Realty decision branch and the active social engine have different histories and roles. Do not use this checkout alone to infer what exists across the project.
 
-This release completes assembly of the four primary public Koinonia website routes:
-
-- `/koinonia`
-- `/koinonia/services`
-- `/koinonia/about`
-- `/koinonia/contact`
-
-The internal Reynalds OS dashboard remains preserved at `/`.
-
-## Start Here
-
-Future chats or developers should read:
-
-1. `START_HERE.md`
-2. `CURRENT_STATE.md`
-3. `PROJECT_MEMORY.md`
-4. `NEXT_ACTION.md`
-5. `AI_DEVELOPMENT_CHARTER.md`
-6. `ARCHITECT_HANDOFF.md`
-
-## Development Rule
-
-Repository changes are only complete when the actual files are modified, audited, versioned, and repackaged into a release ZIP.
-
-## Next Sprint
-
-Site QA and Launch Readiness Review.
-
-
-## Recovery Status — v11.3.1
-
-This repository has been marked as a recovery-safe baseline, not the final Bible. The v11.2.1 contact-config website baseline is retained, and the v11.3.0 Services & Pricing assembly is preserved under `RECOVERY_AUDIT/source_snapshots/` for review before integration.
+Release/version snapshots and older handoffs are preserved as history. They are not current task lists. Private records remain outside this public repository under [the private-record boundary](BRAIN/PRIVATE_RECORDS_BOUNDARY.md).
