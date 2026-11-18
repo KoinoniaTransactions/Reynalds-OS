@@ -1,3 +1,7 @@
+## Concurrent policy addendum preserved — 2026-11-17
+
+PR #60 later added an owner-policy addendum and modified the management-pricing source. Removed our pricing-file edits from this cleanup to avoid competing writes. The registry now points to its recorded new direction and distinguishes proposed guarantee terms, payout date, credit amount, response hours and geography details from approved concepts. PR #60's worker owns those open details; no duplicate owner decision requested here.
+
 ## Parallel research preservation — 2026-11-17
 
 Registered the owner's active PR #60 research workstream. Its 12 changed paths at `531ab10` did not overlap this cleanup; neither its branch nor its research/README files were modified. Keep Properties research/source names intact and review future findings separately from approved policy.

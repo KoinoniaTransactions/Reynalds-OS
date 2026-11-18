@@ -8,4 +8,4 @@ Documentation reconciliation: 2026-11-17.
 4. Resolve actual outstanding choices with the owner using both sources. Do not reopen settled decisions or archive uncertain records merely because of age.
 5. When a source is superseded, record the subject, replacement, approval provenance and scope at its entry point; retain history and working paths.
 
-Other AI work on the social engine and Properties research PR #60 continues independently. Recheck file overlap with PR #60 before merging this cleanup; do not consolidate unfinished research as approved strategy. This list does not replace that branch's build plan or authorize deployment, outreach, imports, account creation or spend.
+Other AI work on the social engine and Properties research PR #60 continues independently. Recheck file overlap with PR #60 before merging this cleanup; distinguish ordinary research from its newer owner-policy addendum and leave proposed details to that worker. Our cleanup relinquishes the pricing-file edit to avoid competing changes. This list does not replace that branch's build plan or authorize deployment, outreach, imports, account creation or spend.

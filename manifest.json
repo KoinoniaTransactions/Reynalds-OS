@@ -31,7 +31,7 @@
   "supersedes": "Standalone static Dashboard/App Shell v7.2",
   "primary_application": "apps/web",
   "source_of_truth": "BRAIN/",
-  "current_state": "Koinonia Dwellings selected by owner for working brokerage brand; earlier naming history preserved. Native tracker confirmed and Excel snapshots retained. Documentation and metadata changes only; no production or social-engine change.",
+  "current_state": "Koinonia Dwellings selected as working brokerage brand. Native tracker confirmed and snapshots retained. Active PR60 owns new brokerage operating-policy details and the pricing file; cleanup avoids that overlap. No production or social-engine changes.",
   "name": "Reynalds OS",
   "release": "Documentation reconciliation review checkpoint",
   "date": "2026-11-17",
@@ -63,6 +63,6 @@
     "software_version": "11.3.1",
     "status": "Historical September 5 snapshot; superseded for current navigation."
   },
-  "documentation_revision": "2026-11-17.3",
+  "documentation_revision": "2026-11-17.4",
   "legacy_counts_status": "object_count and change_count are inherited historical metadata, not a fresh inventory."
 }

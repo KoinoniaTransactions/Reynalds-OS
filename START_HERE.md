@@ -18,7 +18,7 @@ Documentation reconciliation: 2026-11-17. This is the session entry point; `BRAI
 - **Social engine:** active independent work on `feature/koinonia-social-publishing-engine-foundation-2026-11-02`, draft PR #49. Read its current build plan and acceptance record in that branch. Do not reset it to the older marketing prototype or declare live publishing approved.
 - **Private records:** Drive contains the verified working native sales tracker and preserved historical Excel snapshots. No separate vault has been established as a project source; do not require the owner to locate one. Continue reconciliation from GitHub, accessible Drive records and relevant ChatGPT history. No inaccessible source may be treated as reviewed or obsolete.
 
-- **Concurrent Properties research:** PR #60 on `docs/properties-website-conversion-research-2026-11-17` is active work by another AI. Its research and Marketing README link are outside this cleanup. Preserve its historical Properties names/source extracts; findings and recommendations do not automatically replace owner-approved decisions.
+- **Concurrent Properties research:** PR #60 on `docs/properties-website-conversion-research-2026-11-17` is active work by another AI. Its research, Marketing README and now its pricing/owner-policy addendum are outside this cleanup. Preserve historical Properties names/source extracts. Read its `07_OWNER_DECISIONS_2026-11-17.md` separately: it records newer owner direction while leaving proposed details open. Research recommendations alone are not approval.
 
 ## Decision rules
 

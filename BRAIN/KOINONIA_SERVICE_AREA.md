@@ -142,3 +142,5 @@ Do not use either of these as a service-area restriction:
 ## Research sequencing clarification — 2026-11-17
 
 The working tracker distinguishes long-term operating geography from the current research phase. Boulder through Colorado Springs and adjacent corridor communities are being researched first; Pueblo/Pueblo West are deferred for prospect research, not removed from the long-term corridor. Earlier city-based qualification weights are heuristics, not a new service-area exclusion or permission to rewrite territory. This clarification is based on the working tracker's Qualification Rules, not a new geographic policy.
+
+PR #60 later records brokerage/Properties launch boundaries in its November 17 owner-decision addendum, including Fountain at launch and Pueblo later. That is a separate brokerage launch-scope record, not authority to silently rewrite this Transactions corridor. Consult both subject sources; the precise west-side distance interpretation remains open in that active workstream.
