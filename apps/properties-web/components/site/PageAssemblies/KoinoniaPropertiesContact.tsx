@@ -65,8 +65,8 @@ export function KoinoniaPropertiesContact() {
       <Hero
         visualVariant="properties"
         eyebrow="Contact"
-        title="Start with the property or the question you need help with."
-        lead="Koinonia Properties keeps owner, resident, maintenance, vendor, and rental inquiries inside the Properties website so you can reach the right next step clearly."
+        title="Talk to Koinonia Properties."
+        lead="Call, text or email. During business hours (Monday–Friday, 8 a.m.–5 p.m. Mountain Time) we reply with next steps within one hour. Maintenance emergencies are handled any time through our main line."
         primaryLabel="Email Koinonia Properties"
         primaryHref={generalInquiry}
         secondaryLabel="Request Rental Analysis"

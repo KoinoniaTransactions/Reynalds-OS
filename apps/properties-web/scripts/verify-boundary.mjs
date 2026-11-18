@@ -69,7 +69,13 @@ const expectedRoutes = [
   "/apply",
   "/maintenance",
   "/vendors",
-  "/standards"
+  "/standards",
+  "/home-not-selling",
+  "/for-agents",
+  "/owner-faq",
+  "/about",
+  "/property-management/castle-rock",
+  "/property-management/parker"
 ];
 
 const expectedAssemblies = [
@@ -87,7 +93,12 @@ const expectedAssemblies = [
   "KoinoniaPropertiesApply.tsx",
   "KoinoniaPropertiesMaintenance.tsx",
   "KoinoniaPropertiesVendors.tsx",
-  "KoinoniaPropertiesStandards.tsx"
+  "KoinoniaPropertiesStandards.tsx",
+  "KoinoniaPropertiesHomeNotSelling.tsx",
+  "KoinoniaPropertiesForAgents.tsx",
+  "KoinoniaPropertiesOwnerFaq.tsx",
+  "KoinoniaPropertiesAbout.tsx",
+  "KoinoniaPropertiesCity.tsx"
 ];
 
 for (const route of expectedRoutes) {
@@ -116,7 +127,7 @@ for (const route of expectedRoutes) {
 }
 
 pass(
-  "all 15 standalone route pages exist with matching metadata paths"
+  "all 21 standalone route pages exist with matching metadata paths"
 );
 
 const seoSource =
@@ -135,7 +146,7 @@ assertExactSet(
 );
 
 pass(
-  "SEO registry contains only the 15 standalone Properties routes"
+  "SEO registry contains only the 21 standalone Properties routes"
 );
 
 const assemblyDir =
@@ -157,7 +168,7 @@ assertExactSet(
 );
 
 pass(
-  "all 15 Koinonia Properties page assemblies are isolated"
+  "all 20 Koinonia Properties page assemblies are isolated"
 );
 
 function walk(directory) {

@@ -19,11 +19,11 @@ const policyGroups = [
 ];
 
 const complianceNotes = [
-  "Verify fair housing language before publishing tenant criteria.",
-  "Verify late fee, notice, security deposit, and habitability rules for the state.",
-  "Confirm broker supervision and trust accounting requirements.",
-  "Add privacy policy language before collecting personal data.",
-  "Keep accessibility and equal housing information visible on tenant-facing pages."
+  "Equal Housing Opportunity: every applicant is reviewed against the same written criteria, in line with federal and Colorado fair housing law.",
+  "Application fees are $35, limited to the actual cost of screening. Portable screening reports are accepted as Colorado law allows.",
+  "Security deposits are held and returned under Colorado law, with an itemized statement of any deductions.",
+  "After hours, call our main line. Emergencies get a call back within 1 hour, 24/7. For fire, gas smell or carbon monoxide, call 911 first.",
+  "Urgent issues get a written plan within 24 hours, 7 days a week. Routine requests are handled the next business day."
 ];
 
 const policyReadiness = [
@@ -56,19 +56,20 @@ export function KoinoniaPropertiesPolicies() {
       <Hero
         visualVariant="properties"
         eyebrow="Policies"
-        title="Rules should protect clarity, compliance, and trust."
-        lead="Koinonia Properties keeps public policy guidance clear while property-specific terms are provided with the relevant listing, lease process, or management relationship."
+        title="Rental policies, in plain language."
+        lead="Fair housing, application fees, deposits and after-hours emergencies. Property-specific terms come with each listing and lease."
         primaryLabel="Tenant Services"
         primaryHref="/tenants"
         secondaryLabel="Owner Services"
         secondaryHref="/owners"
+        visualDesktopSrc="/assets/images/properties/heroes/policies-hero.webp"
       />
 
       <section className="koinonia-section">
         <div className="koinonia-container">
           <div className="koinonia-section-header">
             <div className="koinonia-eyebrow">Policy Library</div>
-            <h2 className="koinonia-heading">The public site should make expectations easy to find.</h2>
+            <h2 className="koinonia-heading">Where to find the terms that apply to you.</h2>
           </div>
           <div className="koinonia-grid three">
             {policyGroups.map((group) => (
@@ -82,9 +83,9 @@ export function KoinoniaPropertiesPolicies() {
         <div className="koinonia-container">
           <div className="koinonia-split">
             <div>
-              <div className="koinonia-eyebrow">Compliance Notes</div>
-              <h2 className="koinonia-heading">Property-specific terms come with the property or service.</h2>
-              <p>These checks stay explicit so the website does not publish operational promises ahead of the legal and brokerage structure.</p>
+              <div className="koinonia-eyebrow">Key Policies</div>
+              <h2 className="koinonia-heading">The rules we follow for every home.</h2>
+              <p>Your lease or management agreement has the full terms for your home.</p>
             </div>
             <ul>
               {complianceNotes.map((note) => (

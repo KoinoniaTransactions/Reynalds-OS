@@ -1,86 +1,74 @@
-import { FAQ, Footer, Hero, PropertiesInquiry, PropertiesNav, PropertiesSeoContent, UniversalCard } from "../index";
+import { FAQ, FaqJsonLd, Footer, Hero, PropertiesInquiry, PropertiesNav, Section, UniversalCard } from "../index";
+import { contactConfig } from "../../../config/contact.config";
+import { businessHours } from "../../../config/business.config";
 
 const tenantPaths = [
   {
-    title: "Find a Rental",
-    body: "Browse public rental availability and review the details provided for each property.",
-    items: ["Current availability", "Property details", "Rental questions"],
-    actionLabel: "View Rentals",
+    title: "Find a rental",
+    body: "See available homes, with rent, deposit, pet details and move-in dates up front.",
+    items: ["Available homes", "Written rental criteria", "$35 application fee"],
+    actionLabel: "Available Homes",
     actionHref: "/rentals"
   },
   {
-    title: "Apply",
-    body: "Applications are tied to active rental listings. Follow the application instructions provided for the property.",
-    items: ["Listing first", "Application instructions", "Next-step communication"],
-    actionLabel: "Application Help",
-    actionHref: "/apply"
-  },
-  {
-    title: "Maintenance and Support",
-    body: "Use the maintenance page for routine issue guidance and contact Koinonia Properties when you need help with the next step.",
-    items: ["Routine requests", "Property details", "Support questions"],
+    title: "Request maintenance",
+    body: "Emergencies get a call back within 1 hour, 24/7. Routine requests are handled the next business day.",
+    items: ["Emergency: call our main line", "Fire, gas or CO: call 911 first", "Include photos for routine requests"],
     actionLabel: "Maintenance",
     actionHref: "/maintenance"
+  },
+  {
+    title: "Pay rent and resident login",
+    body: "Residents receive rent payment and account instructions with their lease. Log in from the Login page.",
+    items: ["Rent instructions with your lease", "Resident login", "Questions? Call or text us"],
+    actionLabel: "Login",
+    actionHref: "/portals"
   }
 ];
 
 const tenantFaqs = [
-  {
-    q: "How do I apply for a rental?",
-    a: "Start with an active rental listing and follow the application instructions provided for that property."
-  },
-  {
-    q: "How do I request maintenance?",
-    a: "Use the Maintenance page for guidance and the contact path provided for your property. Include the property address and a short description of the issue."
-  },
-  {
-    q: "Where do I find payment or portal information?",
-    a: "Residents receive payment and secure account-access instructions directly for the property they occupy."
-  }
+  { q: "How do I request maintenance?", a: `For emergencies, call ${contactConfig.phone.display} any time. For routine requests, use the Maintenance page and include photos, the location in the home and permission to enter.` },
+  { q: "What counts as an emergency?", a: "Fire, gas smell or carbon monoxide (call 911 first), flooding or active leaks, no heat in cold weather, sewage backup, or a home that can't be secured." },
+  { q: "How do I pay rent?", a: "You'll receive rent payment instructions with your lease. If you can't find them, call or text us." },
+  { q: "When is the office open?", a: `${businessHours.label}. Emergencies are handled any time.` }
 ];
 
 export function KoinoniaPropertiesTenants() {
   return (
     <main className="koinonia-site">
+      <FaqJsonLd items={tenantFaqs} />
       <PropertiesNav />
       <Hero
         visualVariant="properties"
-        eyebrow="Tenant Services"
-        title="A rental experience with clearer next steps."
-        lead="Koinonia Properties gives residents clear paths for rentals, applications, maintenance guidance, account access, and support."
-        primaryLabel="View Rentals"
+        eyebrow="Resident Services"
+        title="Renting with Koinonia: clear answers, fast repairs."
+        lead="Find a home, request maintenance and get help when you need it. Emergencies get a call back within one hour, any time."
+        primaryLabel="Available Homes"
         primaryHref="/rentals"
-        secondaryLabel="Tenant Portal"
-        secondaryHref="/portals"
+        secondaryLabel="Request Maintenance"
+        secondaryHref="/maintenance"
+        visualDesktopSrc="/assets/images/properties/heroes/tenants-hero.webp"
       />
 
-      <PropertiesSeoContent variant="tenants" />
-
-      <section className="koinonia-section">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header">
-            <div className="koinonia-eyebrow">Resident Paths</div>
-            <h2 className="koinonia-heading">Clear next steps for residents.</h2>
-          </div>
-          <div className="koinonia-grid three">
-            {tenantPaths.map((path, index) => (
-              <UniversalCard
-                key={path.title}
-                eyebrow={`0${index + 1}`}
-                title={path.title}
-                body={path.body}
-                items={path.items}
-                actionLabel={path.actionLabel}
-                actionHref={path.actionHref}
-              />
-            ))}
-          </div>
+      <Section eyebrow="Residents" title="What do you need today?">
+        <div className="koinonia-grid three">
+          {tenantPaths.map((path, index) => (
+            <UniversalCard
+              key={path.title}
+              eyebrow={`0${index + 1}`}
+              title={path.title}
+              body={path.body}
+              items={path.items}
+              actionLabel={path.actionLabel}
+              actionHref={path.actionHref}
+            />
+          ))}
         </div>
-      </section>
+      </Section>
 
-      <FAQ items={tenantFaqs} eyebrow="Tenant Questions" title="Simple answers for residents." />
+      <FAQ items={tenantFaqs} eyebrow="Resident Questions" title="Quick answers for residents." />
       <PropertiesInquiry kind="tenant" />
-      <Footer serviceLine="Koinonia Properties" supportLine="Tenant services" />
+      <Footer serviceLine="Koinonia Properties" supportLine="Resident services" />
     </main>
   );
 }

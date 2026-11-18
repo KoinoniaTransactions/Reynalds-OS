@@ -2,35 +2,37 @@
 
 import { useEffect, useState } from "react";
 
-const realEstateLinks = [
-  { label: "Buying a Home", href: "/real-estate#buy" },
-  { label: "Selling a Home", href: "/real-estate#sell" },
-  { label: "Real Estate Overview", href: "/real-estate" }
-] as const;
-
 const ownerLinks = [
   { label: "Owner Services", href: "/owners" },
-  { label: "Rental Analysis", href: "/rental-analysis", emphasis: true },
-  { label: "Pricing & Scope", href: "/pricing" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Free Rental Analysis", href: "/rental-analysis", emphasis: true },
+  { label: "Owner FAQ", href: "/owner-faq" },
   { label: "Service Areas", href: "/service-areas" },
-  { label: "Management Standards", href: "/standards" }
+  { label: "Castle Rock", href: "/property-management/castle-rock" },
+  { label: "Parker", href: "/property-management/parker" }
 ] as const;
 
-const renterLinks = [
+const rentalLinks = [
   { label: "Available Homes", href: "/rentals" },
   { label: "How to Apply", href: "/apply" },
-  { label: "Rental Policies & Criteria", href: "/policies" }
+  { label: "Rental Policies", href: "/policies" }
 ] as const;
 
 const residentLinks = [
   { label: "Resident Services", href: "/tenants" },
-  { label: "Maintenance Help", href: "/maintenance" },
-  { label: "Account & Portal Access", href: "/portals" },
-  { label: "Resident Policies", href: "/policies" },
-  { label: "Contact Support", href: "/contact" }
+  { label: "Maintenance Request", href: "/maintenance" },
+  { label: "Portal Login", href: "/portals" },
+  { label: "Policies", href: "/policies" }
 ] as const;
 
-type NavGroupLabel = "Real Estate" | "Owners" | "Find a Home" | "Residents";
+const aboutLinks = [
+  { label: "About & Team", href: "/about" },
+  { label: "For Real Estate Agents", href: "/for-agents" },
+  { label: "Buying & Selling", href: "/real-estate" },
+  { label: "Vendors", href: "/vendors" }
+] as const;
+
+type NavGroupLabel = "Owners" | "Rentals" | "Residents" | "About";
 
 type NavGroupProps = {
   label: NavGroupLabel;
@@ -167,24 +169,24 @@ export function PropertiesNav() {
         id="koinonia-property-navigation-menu"
       >
         <NavGroup
-          label="Real Estate"
-          links={realEstateLinks}
-          isOpen={openGroup === "Real Estate"}
-          onToggle={() => toggleGroup("Real Estate")}
-          onNavigate={closeNavigation}
-        />
-        <NavGroup
           label="Owners"
           links={ownerLinks}
           isOpen={openGroup === "Owners"}
           onToggle={() => toggleGroup("Owners")}
           onNavigate={closeNavigation}
         />
+        <a
+          className="koinonia-property-nav-contact"
+          href="/home-not-selling"
+          onClick={closeNavigation}
+        >
+          Home Not Selling
+        </a>
         <NavGroup
-          label="Find a Home"
-          links={renterLinks}
-          isOpen={openGroup === "Find a Home"}
-          onToggle={() => toggleGroup("Find a Home")}
+          label="Rentals"
+          links={rentalLinks}
+          isOpen={openGroup === "Rentals"}
+          onToggle={() => toggleGroup("Rentals")}
           onNavigate={closeNavigation}
         />
         <NavGroup
@@ -194,13 +196,22 @@ export function PropertiesNav() {
           onToggle={() => toggleGroup("Residents")}
           onNavigate={closeNavigation}
         />
+        <NavGroup
+          label="About"
+          links={aboutLinks}
+          isOpen={openGroup === "About"}
+          onToggle={() => toggleGroup("About")}
+          onNavigate={closeNavigation}
+        />
+
+        <a className="koinonia-property-nav-contact" href="/contact" onClick={closeNavigation}>Contact</a>
 
         <a
-          className="koinonia-property-nav-contact"
-          href="/contact"
+          className="koinonia-property-nav-contact koinonia-property-nav-login"
+          href="/portals"
           onClick={closeNavigation}
         >
-          Contact
+          Login
         </a>
 
         <a
@@ -208,7 +219,7 @@ export function PropertiesNav() {
           href="/rental-analysis"
           onClick={closeNavigation}
         >
-          Request Rental Analysis
+          Free Rental Analysis
         </a>
       </div>
     </nav>

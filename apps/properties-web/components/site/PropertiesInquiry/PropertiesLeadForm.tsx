@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { mailto } from "../../../config/contact.config";
 
-type InquiryKind = "owner" | "rental" | "buyer" | "seller" | "general";
+type InquiryKind = "owner" | "rental" | "buyer" | "seller" | "general" | "agent" | "listed";
 
 type TurnstileClient = {
   render: (container: HTMLElement, config: { sitekey: string; theme: "auto" }) => string | undefined;
@@ -21,7 +21,9 @@ const labels: Record<InquiryKind, string> = {
   rental: "Rental analysis request",
   buyer: "Buying a home",
   seller: "Selling a home",
-  general: "General question"
+  general: "General question",
+  agent: "Agent referral",
+  listed: "Home not selling? Rent it instead"
 };
 
 const available =
@@ -134,7 +136,7 @@ export function PropertiesLeadForm({ kind }: { kind: InquiryKind }) {
         <form onSubmit={submit}>
           <div className="properties-lead-row">
             <label>
-              Your name <span aria-hidden="true">*</span>
+              {kind === "agent" ? "Your name and brokerage" : "Your name"} <span aria-hidden="true">*</span>
               <input name="name" autoComplete="name" maxLength={110} required />
             </label>
             <label>
@@ -148,14 +150,18 @@ export function PropertiesLeadForm({ kind }: { kind: InquiryKind }) {
               <input type="tel" name="phone" autoComplete="tel" maxLength={40} />
             </label>
             <label>
-              Property address (if applicable)
+              {kind === "agent" ? "Client property address" : "Property address (if applicable)"}
               <input name="propertyAddress" maxLength={250} autoComplete="street-address" />
             </label>
           </div>
           <label>
             How can we help? <span aria-hidden="true">*</span>
             <textarea name="message" rows={4} minLength={12} maxLength={1600} required
-              placeholder="A few details about your property, plans, or timing" />
+              placeholder={kind === "agent"
+                ? "Your client's name, how long the home has been listed, and the best way to reach you"
+                : kind === "listed"
+                  ? "How long the home has been listed, your timing, and whether your agent knows you're exploring renting"
+                  : "A few details about your property, plans, or timing"} />
           </label>
           <div className="properties-lead-trap" aria-hidden="true">
             <label>Website <input name="website" autoComplete="off" tabIndex={-1} /></label>
