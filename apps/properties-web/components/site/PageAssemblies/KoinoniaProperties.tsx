@@ -1,135 +1,54 @@
-import { FAQ, Footer, Hero, PropertiesNav, UniversalCard } from "../index";
+import { FAQ, FaqJsonLd, Footer, Hero, PromiseStrip, PropertiesNav, Section, UniversalCard } from "../index";
 import { contactConfig } from "../../../config/contact.config";
 import { absoluteUrl } from "../../../config/seo.config";
+import { included, plans, serviceArea } from "../../../config/business.config";
 
-const audiencePaths = [
+const doors = [
   {
-    title: "Buy or Sell a Home",
-    body: "Explore the next chapter in homeownership. Whether you are preparing to sell or looking for a place to call home, begin with a conversation about your goals and timing.",
-    actionLabel: "Explore Real Estate",
-    actionHref: "/real-estate"
-  },
-  {
-    title: "Own a Rental Property",
-    body:
-      "Whether you own one rental property or are building an investment portfolio, start with the property itself. Explore management services, understand how Koinonia approaches the work, and request a rental analysis when you are ready to talk through the next step.",
-    actionLabel: "Explore Owner Services",
+    title: "Rent out my home",
+    body: "Full-service management with every fee published. Start with a free rent estimate for your address.",
+    actionLabel: "Owner Services",
     actionHref: "/owners"
   },
   {
-    title: "Looking for a Home",
-    body:
-      "See available rental homes, understand the application process, and find the information you need before applying.",
-    actionLabel: "View Available Homes",
+    title: "My home isn't selling",
+    body: "Rent it now and sell when the market turns. See if rent can cover your payment.",
+    actionLabel: "Run the Numbers",
+    actionHref: "/home-not-selling"
+  },
+  {
+    title: "I'm a real estate agent",
+    body: "Keep your client and get paid. We send them back to you when they're ready to sell.",
+    actionLabel: "Agent Program",
+    actionHref: "/for-agents"
+  },
+  {
+    title: "Find a rental",
+    body: "See available homes, rental criteria and the $35 application, limited to actual screening cost.",
+    actionLabel: "Available Homes",
     actionHref: "/rentals"
   },
   {
-    title: "Already a Resident",
-    body:
-      "Find maintenance guidance, resident policies, account-access direction, and the right contact path when you need help with your home.",
+    title: "I'm a resident",
+    body: "Pay rent, request maintenance, and know exactly what to do in an emergency.",
     actionLabel: "Resident Services",
     actionHref: "/tenants"
   }
 ];
 
-const approach = [
-  {
-    title: "Clear Communication",
-    body:
-      "Owners should understand what is happening with their property, what needs attention, and what comes next. Koinonia is built around communication that keeps important information visible instead of scattered or unclear."
-  },
-  {
-    title: "Steady Systems",
-    body:
-      "Leasing, maintenance, resident communication, owner updates, and recurring property-management responsibilities work better when there is an organized process behind them. Koinonia brings structure and follow-through to the moving parts so the work does not depend on memory alone."
-  },
-  {
-    title: "Responsible Care",
-    body:
-      "A rental property is both an investment and someone's home. Good management requires thoughtful decisions, clear responsibilities, professional communication, and care for the property and the people connected to it."
-  }
+const steps = [
+  { title: "Free rental analysis", body: "Enter your address for an instant estimate, then talk through the numbers with us." },
+  { title: "Sign and onboard", body: "No setup fee. We collect keys, HOA rules, warranties and utility details and assess the home." },
+  { title: "Market, screen and lease", body: "Listing, showings, screening to written criteria, lease signing and a move-in inspection." },
+  { title: "Get paid and stay informed", body: "Rent collection, payouts on the 10th, monthly statements and maintenance handled to your approval limits." }
 ];
 
-const services = [
-  {
-    title: "Rental Analysis & Leasing",
-    body:
-      "Start with the property, its current rental status, condition, timing, and owner goals. When leasing support is part of the management scope, Koinonia can coordinate the approved work around rental preparation, marketing, applicant communication, and the path toward an executed lease.",
-    items: ["Rental analysis", "Rental marketing", "Leasing coordination"]
-  },
-  {
-    title: "Tenant Screening & Lease Administration",
-    body:
-      "Keep the applicant-to-resident process organized through clear communication, screening coordination, lease administration, and appropriate move-in preparation.",
-    items: ["Applicant communication", "Screening coordination", "Lease administration"]
-  },
-  {
-    title: "Rent Collection & Owner Communication",
-    body:
-      "Coordinate approved rent and payment processes while keeping owners informed through organized communication, updates, and reporting.",
-    items: ["Rent collection workflows", "Owner updates", "Reporting"]
-  },
-  {
-    title: "Maintenance & Property Care",
-    body:
-      "Coordinate maintenance needs, resident communication, vendor activity, and documented next steps around the property.",
-    items: ["Maintenance coordination", "Vendor communication", "Move-in and move-out support"]
-  }
-];
-
-const process = [
-  {
-    title: "Understand the Property",
-    body:
-      "Review the property, current rental status, occupancy, condition, known concerns, timing, and the owner's goals."
-  },
-  {
-    title: "Clarify the Management Plan",
-    body:
-      "Define the approved management scope, responsibilities, communication expectations, and property-specific next steps."
-  },
-  {
-    title: "Coordinate Leasing or Onboarding",
-    body:
-      "When applicable, organize the approved leasing, resident, property, and management-onboarding work needed to move forward."
-  },
-  {
-    title: "Manage the Ongoing Work",
-    body:
-      "Coordinate the approved rent, maintenance, resident communication, vendor, and property-management workflows."
-  },
-  {
-    title: "Keep the Owner Informed",
-    body:
-      "Provide organized communication, updates, reporting, and continued support as the management relationship moves forward."
-  }
-];
-
-const propertyFaqs = [
-  {
-    q: "What does a property management company handle for a rental property owner?",
-    a: "Property management can involve leasing, applicant and resident coordination, lease administration, rent and payment processes, maintenance, vendor communication, move-in and move-out coordination, owner updates, and other recurring responsibilities around the property. The exact scope depends on the property and management agreement."
-  },
-  {
-    q: "What property management services does Koinonia Properties provide?",
-    a: "Koinonia Properties may provide rental analysis, rental marketing and leasing support, tenant screening coordination, lease administration, rent collection and payment-process coordination, maintenance coordination, owner communication and reporting, move-in and move-out coordination, vendor coordination, and ongoing property-management support. The exact service scope is confirmed for each property."
-  },
-  {
-    q: "Where should a rental property owner start?",
-    a: "Start with a rental analysis. Share the property address, current rental status, occupancy and condition, known concerns, owner goals, and timing so Koinonia can understand the property and determine the appropriate next conversation."
-  },
-  {
-    q: "How does Koinonia handle maintenance coordination?",
-    a: "Maintenance coordination may include resident communication, documenting the issue, coordinating with appropriate vendors, communicating next steps, and keeping the owner informed according to the approved management process and property-specific responsibilities."
-  },
-  {
-    q: "How does Koinonia keep rental property owners informed?",
-    a: "Owner communication is part of the management approach. Koinonia emphasizes organized updates, clear next steps, and reporting through the approved management process so owners have better visibility into the work around their property."
-  },
-  {
-    q: "Does Koinonia Properties work with real estate investors?",
-    a: "Real estate investors are part of the owner journey. Koinonia can discuss property-management needs for individual rental properties as well as multi-property or portfolio considerations, with the actual management scope confirmed based on the properties and the owner's goals."
-  }
+const homeFaqs = [
+  { q: "How much does property management cost?", a: "10% of rent collected for full service, or 8% if you handle eligible non-urgent maintenance yourself. Tenant placement is 50% of one month's rent and renewals are $199. No setup, vacancy or termination fees." },
+  { q: "What is the 12-month tenant guarantee?", a: "If a tenant we place breaks the lease or is evicted in the first 12 months, we re-place the home with no placement fee while it's under our management. Owner-caused departures and lawful tenant termination rights are excluded." },
+  { q: "When do owners get paid?", a: "On the 10th of each month when rent is on time. If rent is late, 5 business days after we receive it." },
+  { q: "How fast do you respond?", a: "During business hours (Monday–Friday, 8–5 Mountain), we reply with next steps within one hour and start work the same or next business day. Emergencies are handled any time." },
+  { q: "What areas do you serve?", a: "The Front Range corridor from Boulder south to Fountain, east to Aurora, and the major west-side cities, starting with Castle Rock and Parker. Pueblo is planned for later." }
 ];
 
 const organizationUrl = absoluteUrl("/");
@@ -143,7 +62,9 @@ const propertiesOrganizationJsonLd = {
   url: organizationUrl ?? undefined,
   logo: absoluteUrl("/icon.svg") ?? undefined,
   email: contactConfig.email,
-  telephone: contactConfig.phone.href.replace("tel:", "")
+  telephone: contactConfig.phone.href.replace("tel:", ""),
+  areaServed: serviceArea.regions.flatMap((region) => region.cities).map((name) => ({ "@type": "City", name: `${name}, Colorado` })),
+  openingHours: "Mo-Fr 08:00-17:00"
 };
 
 const propertiesServiceJsonLd = {
@@ -152,7 +73,7 @@ const propertiesServiceJsonLd = {
   name: "Rental Property Management",
   url: organizationUrl ?? undefined,
   description:
-    "Organized rental property management with rental analysis, leasing support, tenant screening coordination, lease administration, rent and payment-process coordination, maintenance coordination, owner communication, and responsible property care.",
+    "Front Range rental property management with published fees: 10% full service or 8% owner-involved, a 12-month tenant guarantee, payouts on the 10th and next steps within one hour during business hours.",
   serviceType: "Rental property management",
   provider: organizationId
     ? {
@@ -221,204 +142,95 @@ export function KoinoniaProperties() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(propertiesServiceJsonLd) }}
       />
+      <FaqJsonLd items={homeFaqs} />
 
       <PropertiesNav />
 
       <Hero
         visualVariant="properties"
-        eyebrow="Residential Real Estate & Property Management"
-        title="Your Property. Your Priorities. Our Partnership."
-        lead="Whether you are buying, selling, or looking for thoughtful management of a rental home, Koinonia Properties brings clear guidance, personal accessibility, and dependable follow-through to the decisions that matter."
-        primaryLabel="Buy or Sell a Home"
-        primaryHref="/real-estate"
-        secondaryLabel="Explore Property Management"
-        secondaryHref="/owners"
+        eyebrow="Front Range Property Management"
+        title="Property management with every fee published."
+        lead="Koinonia Properties leases and manages rental homes from Boulder to Fountain, starting in Castle Rock and Parker. Clear pricing, a 12-month tenant guarantee, payouts on the 10th, and a reply within one hour during business hours."
+        primaryLabel="Free Rental Analysis"
+        primaryHref="/rental-analysis"
+        secondaryLabel="See Pricing"
+        secondaryHref="/pricing"
         visualDesktopSrc="/assets/images/properties/heroes/home-hero.webp"
         visualAlt="Bright, well-cared-for residential interior with a property management workspace for Koinonia Properties"
       />
 
-      <section className="koinonia-section">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header">
-            <div className="koinonia-eyebrow">Start Here</div>
-            <h2 className="koinonia-heading">
-              Find the right next step for buying, selling, managing, or renting a home.
-            </h2>
-            <p className="koinonia-copy">
-              Koinonia Properties supports residential real estate and rental property management. Choose the path that fits your needs today.
-            </p>
-          </div>
-          <div className="koinonia-grid four properties-audience-grid">
-            {audiencePaths.map((path) => (
-              <UniversalCard
-                key={path.title}
-                title={path.title}
-                body={path.body}
-                actionLabel={path.actionLabel}
-                actionHref={path.actionHref}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      <PromiseStrip />
 
-      <section className="koinonia-section">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">The Koinonia Approach</div>
-            <h2 className="koinonia-heading">
-              Thoughtful guidance. Clear communication. Responsible care.
-            </h2>
-            <p className="koinonia-copy">
-              Buying or selling a home and managing a rental property are different decisions, but each deserves honest advice, clear responsibilities, and follow-through. Koinonia brings a practical, relationship-first approach to residential real estate and property management, keeping important details moving and the people involved informed.
-            </p>
-          </div>
-          <div className="koinonia-grid three">
-            {approach.map((item, index) => (
-              <UniversalCard
-                key={item.title}
-                eyebrow={`0${index + 1}`}
-                title={item.title}
-                body={item.body}
-              />
-            ))}
-          </div>
+      <Section eyebrow="Start Here" title="What brings you here today?">
+        <div className="koinonia-grid three properties-audience-grid">
+          {doors.map((door) => (
+            <UniversalCard
+              key={door.title}
+              title={door.title}
+              body={door.body}
+              actionLabel={door.actionLabel}
+              actionHref={door.actionHref}
+            />
+          ))}
         </div>
-      </section>
+      </Section>
 
-      <section className="koinonia-section" id="residential-real-estate">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">Residential Real Estate</div>
-            <h2 className="koinonia-heading">Buying or selling a home deserves a clear plan and a partner who follows through.</h2>
-            <p className="koinonia-copy">Whether you are beginning a search, planning a move, or preparing a property for sale, we start by understanding your goals, timing, and priorities.</p>
-          </div>
-          <div className="koinonia-grid two">
-            <UniversalCard title="Buying a Home" body="Talk through the search, your priorities, and the steps ahead without pressure to move before you are ready." actionLabel="Explore Buying" actionHref="/real-estate#buy" />
-            <UniversalCard title="Selling a Home" body="Start with your goals, timing, property preparation, and a thoughtful strategy for the sale." actionLabel="Explore Selling" actionHref="/real-estate#sell" />
-          </div>
+      <Section eyebrow="Pricing" title="Two simple plans." lead="Both plans include the same guarantee, payout schedule and response standard." band>
+        <div className="koinonia-grid two">
+          {plans.map((plan) => (
+            <UniversalCard
+              key={plan.key}
+              title={`${plan.name} — ${plan.rateLabel}`}
+              body={plan.fits}
+              items={plan.items}
+            />
+          ))}
         </div>
-      </section>
+        <div className="koinonia-actions">
+          <a className="koinonia-button secondary" href="/pricing">Full fee schedule</a>
+        </div>
+      </Section>
 
-      <section className="koinonia-section koinonia-band" id="owner-services">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">Property Management Services</div>
-            <h2 className="koinonia-heading">
-              The essential work of managing a rental property, kept organized.
-            </h2>
-            <p className="koinonia-copy">
-              Every property and owner relationship is different. Koinonia begins by understanding the property and the owner's goals, then clarifies the appropriate management scope, responsibilities, and next steps.
-            </p>
-          </div>
-          <div className="koinonia-grid properties-services-grid">
-            {services.map((service, index) => (
-              <UniversalCard
-                key={service.title}
-                eyebrow={`0${index + 1}`}
-                title={service.title}
-                body={service.body}
-                items={service.items}
-              />
-            ))}
-          </div>
-          <div className="koinonia-actions" style={{ justifyContent: "center" }}>
-            <a className="koinonia-button secondary" href="/owners">
-              Explore Owner Services
-            </a>
-          </div>
+      <Section eyebrow="Included" title="What every owner gets at no extra charge.">
+        <ul className="properties-check-list">
+          {included.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+        <div className="koinonia-actions">
+          <a className="koinonia-button secondary" href="/owners">See all owner services</a>
         </div>
-      </section>
+      </Section>
 
-      <section className="koinonia-section">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header">
-            <div className="koinonia-eyebrow">For Rental Property Owners</div>
-            <h2 className="koinonia-heading">
-              Know what is happening with your property—and what comes next.
-            </h2>
-            <p className="koinonia-copy">
-              Owning rental property creates a steady stream of decisions, responsibilities, communication, and follow-through. Leasing activity has to move. Residents need clear communication. Maintenance needs must be coordinated. Vendors need direction. Property information has to stay organized. Owners need meaningful updates without having to chase every detail themselves.
-            </p>
-            <p className="koinonia-copy">
-              Koinonia Properties is built to bring structure to that work. Whether the conversation involves one rental home or multiple investment properties, the goal is the same: understand the property, define the management responsibilities clearly, keep the work moving, and help the owner stay informed.
-            </p>
-            <div className="koinonia-actions" style={{ justifyContent: "center" }}>
-              <a className="koinonia-button primary" href="/rental-analysis">
-                Request Rental Analysis
-              </a>
-            </div>
-          </div>
+      <Section eyebrow="How It Works" title="From first call to first payout." band>
+        <div className="koinonia-grid four">
+          {steps.map((step, index) => (
+            <UniversalCard key={step.title} eyebrow={`0${index + 1}`} title={step.title} body={step.body} />
+          ))}
         </div>
-      </section>
+      </Section>
 
-      <section className="koinonia-section">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header center">
-            <div className="koinonia-eyebrow">How Property Management Begins</div>
-            <h2 className="koinonia-heading">
-              Start with the property. Build a clear management plan around what it needs.
-            </h2>
-            <p className="koinonia-copy">
-              Koinonia's process begins with understanding before execution. The property, owner goals, current situation, responsibilities, and next steps should be clear before ongoing management begins.
-            </p>
-          </div>
-          <div className="koinonia-grid properties-process-grid">
-            {process.map((step, index) => (
-              <UniversalCard
-                key={step.title}
-                eyebrow={`0${index + 1}`}
-                title={step.title}
-                body={step.body}
-              />
-            ))}
-          </div>
+      <Section eyebrow="Service Area" title="Serving the Front Range corridor." lead={`${serviceArea.summary} ${serviceArea.later}`}>
+        <div className="koinonia-actions">
+          <a className="koinonia-button secondary" href="/property-management/castle-rock">Castle Rock</a>
+          <a className="koinonia-button secondary" href="/property-management/parker">Parker</a>
+          <a className="koinonia-button secondary" href="/service-areas">All service areas</a>
         </div>
-      </section>
+      </Section>
+
+      <FAQ items={homeFaqs} eyebrow="Owner Questions" title="Quick answers before you call." />
 
       <section className="koinonia-section koinonia-band">
         <div className="koinonia-container">
           <div className="koinonia-cta">
-            <div className="koinonia-eyebrow">Start With a Rental Analysis</div>
-            <h2 className="koinonia-heading">
-              A better property-management conversation starts with understanding the property.
-            </h2>
+            <div className="koinonia-eyebrow">Free Rental Analysis</div>
+            <h2 className="koinonia-heading">Find out what your home will rent for.</h2>
             <p className="koinonia-copy">
-              Before deciding what management should look like, start with the property itself. Share the property address, property type, current condition and occupancy, rental status, known maintenance or turnover concerns, owner goals, and desired timing.
-            </p>
-            <p className="koinonia-copy">
-              Koinonia can use that information to understand the situation, discuss the appropriate management scope, and determine the right next step. No sensitive financial, identity, payment, or private account information is needed to begin the conversation.
+              Enter your address for an instant estimate. We'll follow up with next steps within one business hour.
             </p>
             <div className="koinonia-actions" style={{ justifyContent: "center" }}>
-              <a className="koinonia-button primary" href="/rental-analysis">
-                Request Rental Analysis
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <FAQ
-        items={propertyFaqs}
-        eyebrow="Property Management Questions"
-        title="Helpful answers before you decide what comes next."
-      />
-
-      <section className="koinonia-section koinonia-band">
-        <div className="koinonia-container">
-          <div className="koinonia-cta">
-            <div className="koinonia-eyebrow">Koinonia Properties</div>
-            <h2 className="koinonia-heading">Let's start with the property.</h2>
-            <p className="koinonia-copy">
-              If you are considering professional property management, begin with a rental analysis and a clear conversation about the property, your goals, and what support would be most useful. Looking for a rental home instead? View current availability and rental information.
-            </p>
-            <div className="koinonia-actions" style={{ justifyContent: "center" }}>
-              <a className="koinonia-button primary" href="/rental-analysis">
-                Request Rental Analysis
-              </a>
-              <a className="koinonia-button secondary" href="/rentals">
-                View Available Homes
-              </a>
+              <a className="koinonia-button primary" href="/rental-analysis">Free Rental Analysis</a>
+              <a className="koinonia-button secondary" href="/owner-faq">Owner FAQ</a>
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { contactConfig, mailto } from "../../../config/contact.config";
+import { businessHours } from "../../../config/business.config";
 import styles from "./Footer.module.css";
 
 const footerContent = {
@@ -7,11 +8,16 @@ const footerContent = {
     "Property management built on clear communication, steady systems, and responsible care.",
   desktopExplore: [
     { label: "Owner Services", href: "/owners" },
-    { label: "Rental Analysis", href: "/rental-analysis" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "Free Rental Analysis", href: "/rental-analysis" },
+    { label: "Home Not Selling", href: "/home-not-selling" },
+    { label: "For Agents", href: "/for-agents" },
+    { label: "Owner FAQ", href: "/owner-faq" },
+    { label: "Service Areas", href: "/service-areas" },
     { label: "Available Homes", href: "/rentals" },
     { label: "Resident Services", href: "/tenants" },
-    { label: "Maintenance Help", href: "/maintenance" },
-    { label: "Service Areas", href: "/service-areas" },
+    { label: "Maintenance Request", href: "/maintenance" },
+    { label: "About & Team", href: "/about" },
     { label: "Contact", href: "/contact" }
   ],
   mobileGroups: [
@@ -19,39 +25,39 @@ const footerContent = {
       title: "Owners",
       links: [
         { label: "Owner Services", href: "/owners" },
-        { label: "Rental Analysis", href: "/rental-analysis" },
-        { label: "Pricing & Scope", href: "/pricing" },
+        { label: "Pricing", href: "/pricing" },
+        { label: "Free Rental Analysis", href: "/rental-analysis" },
+        { label: "Home Not Selling", href: "/home-not-selling" },
+        { label: "Owner FAQ", href: "/owner-faq" },
         { label: "Service Areas", href: "/service-areas" },
-        { label: "Management Standards", href: "/standards" }
+        { label: "Castle Rock", href: "/property-management/castle-rock" },
+        { label: "Parker", href: "/property-management/parker" }
       ]
     },
     {
-      title: "Find a Home",
+      title: "Rentals & Residents",
       links: [
         { label: "Available Homes", href: "/rentals" },
         { label: "How to Apply", href: "/apply" },
-        { label: "Rental Policies & Criteria", href: "/policies" }
-      ]
-    },
-    {
-      title: "Residents",
-      links: [
         { label: "Resident Services", href: "/tenants" },
-        { label: "Maintenance Help", href: "/maintenance" },
-        { label: "Account & Portal Access", href: "/portals" },
-        { label: "Resident Policies", href: "/policies" }
+        { label: "Maintenance Request", href: "/maintenance" },
+        { label: "Portal Login", href: "/portals" },
+        { label: "Policies", href: "/policies" }
       ]
     },
     {
       title: "Koinonia",
       links: [
-        { label: "Contact", href: "/contact" },
-        { label: "Vendor Information", href: "/vendors" }
+        { label: "About & Team", href: "/about" },
+        { label: "For Agents", href: "/for-agents" },
+        { label: "Buying & Selling", href: "/real-estate" },
+        { label: "Vendors", href: "/vendors" },
+        { label: "Contact", href: "/contact" }
       ]
     }
   ],
   ctaHref: "/rental-analysis",
-  ctaLabel: "Request Rental Analysis",
+  ctaLabel: "Free Rental Analysis",
   faith: {
     line: "Bear one another’s burdens. Work heartily, as for the Lord.",
     reference: "Galatians 6:2 · Colossians 3:23"
@@ -114,6 +120,9 @@ export function Footer({ serviceLine, supportLine }: FooterProps = {}) {
 
             <p className={styles.description}>
               {supportLine ?? footer.positioning}
+            </p>
+            <p className={styles.description}>
+              Office hours: {businessHours.label}. Emergencies: call any time.
             </p>
           </section>
 
@@ -187,7 +196,9 @@ export function Footer({ serviceLine, supportLine }: FooterProps = {}) {
           <small>{footer.faith.reference}</small>
         </div>
 
-        <p className={styles.legal}>{footer.legal}</p>
+        <p className={styles.legal}>
+          {footer.legal} Equal Housing Opportunity.
+        </p>
       </div>
     </footer>
   );

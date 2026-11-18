@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const acceptedKinds = new Set(["owner", "rental", "buyer", "seller", "general"]);
+const acceptedKinds = new Set(["owner", "rental", "buyer", "seller", "general", "agent", "listed"]);
 const MAX_BODY_BYTES = 12_000;
 const MAX_TEXT = 1600;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

@@ -6,7 +6,9 @@ type InquiryKind =
   | "tenant"
   | "maintenance"
   | "vendor"
-  | "rental";
+  | "rental"
+  | "agent"
+  | "listed";
 
 type PropertiesInquiryProps = {
   kind?: InquiryKind;
@@ -90,6 +92,34 @@ const inquiryContent: Record<InquiryKind, {
       "Owner goals and target timeline"
     ],
     caution: "Please keep the first email focused on property and contact information rather than sensitive financial or account data."
+  },
+  agent: {
+    eyebrow: "Refer a Client",
+    title: "Send us a client whose home isn't selling.",
+    body: "Tell us about your client and the listing. We'll reach out to you first, then to your client, and we'll keep you in the loop from the first call.",
+    subject: "Koinonia Properties Agent Referral",
+    primaryLabel: "Email a Referral",
+    details: [
+      "Your name, brokerage and phone",
+      "Client name and property address",
+      "Days on market and current list price",
+      "When your listing agreement ends"
+    ],
+    caution: "Please share only what your client has agreed to share. Referral fees are paid only between licensed brokerages under a signed agreement."
+  },
+  listed: {
+    eyebrow: "Talk Through Your Options",
+    title: "Tell us about your home and your timing.",
+    body: "We'll run the rent numbers for your address and talk through renting now and selling later. If you have an agent, we'll work with them.",
+    subject: "Koinonia Properties Rent Instead of Sell",
+    primaryLabel: "Email Us",
+    details: [
+      "Property address",
+      "How long it's been on the market",
+      "Your monthly payment, if you'd like us to check the numbers",
+      "Whether your listing agent knows you're exploring renting"
+    ],
+    caution: "Please don't send account numbers or other sensitive financial information."
   }
 };
 
@@ -115,7 +145,7 @@ export function PropertiesInquiry({
             <p className="koinonia-copy">
               {content.body}
             </p>
-            {kind === "owner" || kind === "rental" ? (
+            {kind === "owner" || kind === "rental" || kind === "agent" || kind === "listed" ? (
               <PropertiesLeadForm kind={kind} />
             ) : (
               <div className="koinonia-actions">

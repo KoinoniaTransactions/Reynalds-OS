@@ -1,29 +1,13 @@
-import { Footer, Hero, PropertiesInquiry, PropertiesNav, PropertiesSeoContent, UniversalCard } from "../index";
+import { Footer, Hero, PropertiesInquiry, PropertiesNav, Section, UniversalCard } from "../index";
+import { contactConfig } from "../../../config/contact.config";
+import { businessHours, maintenanceTiers } from "../../../config/business.config";
 
-const requestTypes = [
-  {
-    title: "Routine Requests",
-    body: "Non-urgent repairs should go through the tenant portal with photos, location details, and access notes.",
-    items: ["Repair description", "Photos", "Permission to enter"]
-  },
-  {
-    title: "Urgent Issues",
-    body: "Urgent maintenance needs a separate routing path with clear definitions and response expectations.",
-    items: ["Water intrusion", "No heat in required season", "Safety concerns"]
-  },
-  {
-    title: "Owner Approvals",
-    body: "Requests above the approved threshold should route to the owner with a recommendation, estimate, and decision deadline.",
-    items: ["Vendor estimate", "Owner approval", "Work-order tracking"]
-  }
-];
-
-const maintenanceRules = [
-  "Define emergency versus routine maintenance before launch.",
-  "Set owner approval thresholds in the management agreement.",
-  "Require vendor insurance and invoice standards.",
-  "Use portal intake for records instead of scattered text messages.",
-  "State expected response times carefully and only after operations can support them."
+const requestTips = [
+  "What's wrong and where in the home",
+  "Photos or a short video if you can",
+  "When it started and whether it's getting worse",
+  "Whether we have permission to enter",
+  "Pets in the home and best times to reach you"
 ];
 
 export function KoinoniaPropertiesMaintenance() {
@@ -33,46 +17,37 @@ export function KoinoniaPropertiesMaintenance() {
       <Hero
         visualVariant="properties"
         eyebrow="Maintenance"
-        title="Maintenance requests need clear routing from the first message."
-        lead="Koinonia Properties provides a clear path for routine maintenance questions, issue details, access information, and follow-up."
-        primaryLabel="Tenant Portal"
-        primaryHref="/portals"
-        secondaryLabel="Policies"
-        secondaryHref="/policies"
+        title="Request maintenance, day or night."
+        lead={`For emergencies, call our main line at ${contactConfig.phone.display} any time. You'll get a call back within one hour, 24/7.`}
+        primaryLabel={`Call ${contactConfig.phone.display}`}
+        primaryHref={contactConfig.phone.href}
+        secondaryLabel="Resident Services"
+        secondaryHref="/tenants"
+        visualDesktopSrc="/assets/images/properties/heroes/tenants-hero.webp"
       />
 
-      <PropertiesSeoContent variant="maintenance" />
-
-      <section className="koinonia-section">
-        <div className="koinonia-container">
-          <div className="koinonia-section-header">
-            <div className="koinonia-eyebrow">Maintenance Flow</div>
-            <h2 className="koinonia-heading">Requests should become trackable work, not scattered messages.</h2>
-          </div>
-          <div className="koinonia-grid three">
-            {requestTypes.map((type, index) => (
-              <UniversalCard key={type.title} eyebrow={`0${index + 1}`} title={type.title} body={type.body} items={type.items} />
-            ))}
-          </div>
+      <Section eyebrow="Safety First" title="Fire, gas smell or carbon monoxide? Call 911 first." lead={`Get everyone out, call 911, then call us at ${contactConfig.phone.display}.`}>
+        <div className="koinonia-actions">
+          <a className="koinonia-button primary" href="tel:911">Call 911</a>
+          <a className="koinonia-button secondary" href={contactConfig.phone.href}>Call Koinonia</a>
         </div>
-      </section>
+      </Section>
 
-      <section className="koinonia-section koinonia-band">
-        <div className="koinonia-container">
-          <div className="koinonia-split">
-            <div>
-              <div className="koinonia-eyebrow">Operating Rules</div>
-              <h2 className="koinonia-heading">Maintenance policy must match the management agreement.</h2>
-              <p>Clear issue details, access information, and communication help maintenance requests move forward efficiently.</p>
-            </div>
-            <ul>
-              {maintenanceRules.map((rule) => (
-                <li key={rule}>{rule}</li>
-              ))}
-            </ul>
-          </div>
+      <Section eyebrow="Response Times" title="How fast we respond." band>
+        <div className="koinonia-grid three">
+          {maintenanceTiers.map((tier) => (
+            <UniversalCard key={tier.name} eyebrow={tier.name} title={tier.response} body="For example:" items={tier.examples} />
+          ))}
         </div>
-      </section>
+      </Section>
+
+      <Section eyebrow="Routine Requests" title="What to include in your request." lead={`Routine requests are handled the next business day. Office hours are ${businessHours.label}.`}>
+        <ul className="properties-check-list">
+          {requestTips.map((tip) => (
+            <li key={tip}>{tip}</li>
+          ))}
+        </ul>
+      </Section>
 
       <PropertiesInquiry kind="maintenance" />
 

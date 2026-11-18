@@ -37,112 +37,156 @@ export const seoConfig = {
   businessName: "Koinonia Properties",
   locale: "en_US",
   defaultTitle:
-    "Residential Real Estate & Property Management | Koinonia Properties",
+    "Front Range Property Management | Koinonia Properties",
   defaultDescription:
-    "Explore residential buying and selling alongside rental property management with Koinonia Properties.",
+    "Rental property management and residential real estate on Colorado's Front Range, with every fee published.",
   publicRoutes: [
     {
       path: "/",
       title:
-        "Residential Real Estate & Property Management | Koinonia Properties",
+        "Front Range Property Management | Castle Rock & Parker | Koinonia Properties",
       description:
-        "Explore buying, selling, and rental property management with Koinonia Properties, focused on clear guidance and thoughtful follow-through."
+        "Rental property management from Boulder to Fountain. 10% full service or 8% owner-involved, 12-month tenant guarantee, payouts on the 10th and a reply within one hour."
     },
     {
       path: "/real-estate",
-      title: "Buy or Sell a Home | Koinonia Properties",
-      description: "Explore residential home buying and selling with Koinonia Properties. Discuss your goals, timing, and next steps."
+      title:
+        "Buy or Sell a Home | Koinonia Properties",
+      description:
+        "Residential home buying and selling with Koinonia Properties. Rent now, sell later, with the same team."
     },
     {
       path: "/owners",
       title:
-        "Rental Property Management for Owners | Koinonia Properties",
+        "Property Management Services for Owners | Koinonia Properties",
       description:
-        "Koinonia Properties helps rental property owners organize leasing, resident communication, rent processes, maintenance coordination, owner updates, and responsible property care."
+        "Leasing, tenant screening, rent collection, maintenance and monthly reporting for Front Range rental homes. Every fee published."
     },
     {
       path: "/tenants",
       title:
-        "Tenant Services | Koinonia Properties",
+        "Resident Services | Koinonia Properties",
       description:
-        "Resident information for rentals, applications, maintenance guidance, property communication, and secure account-access direction."
+        "Find a rental, request maintenance and get help from Koinonia Properties. Emergencies get a call back within one hour, 24/7."
     },
     {
       path: "/rentals",
       title:
-        "Available Rentals | Koinonia Properties",
+        "Homes for Rent | Koinonia Properties",
       description:
-        "Public rental availability and tenant next steps from Koinonia Properties."
+        "Available rental homes managed by Koinonia Properties on Colorado's Front Range."
     },
     {
       path: "/portals",
       title:
-        "Account Access | Koinonia Properties",
+        "Owner and Resident Login | Koinonia Properties",
       description:
-        "Guidance for Koinonia Properties owner and resident account access, payment questions, maintenance direction, and secure-property information."
+        "Login and account access for Koinonia Properties owners and residents."
     },
     {
       path: "/rental-analysis",
       title:
-        "Rental Analysis | Koinonia Properties",
+        "Free Rental Analysis | What Will My Home Rent For? | Koinonia Properties",
       description:
-        "Start a rental-property conversation with the address, property details, current rental status, owner goals, and target timing."
+        "Get a free rent estimate for your Front Range home, then talk through price, timing and condition with Koinonia Properties."
     },
     {
       path: "/pricing",
       title:
-        "Pricing and Service Scope | Koinonia Properties",
+        "Property Management Fees & Pricing | Koinonia Properties",
       description:
-        "Learn what shapes a Koinonia Properties management quote, including property details, service scope, occupancy, timing, and portfolio needs."
+        "10% full service or 8% owner-involved. Placement 50% of one month's rent, $199 renewals, no setup, vacancy or termination fees. See every fee."
     },
     {
       path: "/service-areas",
       title:
-        "Service Availability | Koinonia Properties",
+        "Property Management Service Areas | Front Range Colorado | Koinonia Properties",
       description:
-        "Share a property address to confirm current Koinonia Properties service availability and the appropriate next step."
+        "Property management from Boulder south to Fountain, east to Aurora and the west-side cities, starting with Castle Rock and Parker."
     },
     {
       path: "/contact",
       title:
-        "Contact | Koinonia Properties",
+        "Contact Koinonia Properties | Property Management",
       description:
-        "Contact Koinonia Properties for owner, rental, resident, maintenance, vendor, and general property management questions."
+        "Call, text or email Koinonia Properties. Next steps within one hour during business hours, Monday–Friday 8–5 Mountain."
     },
     {
       path: "/policies",
       title:
-        "Property Policies | Koinonia Properties",
+        "Rental Policies | Fair Housing & Applications | Koinonia Properties",
       description:
-        "General policy guidance for rental applicants, residents, and property owners, with property-specific terms provided at the appropriate step."
+        "Fair housing, application fees, security deposits and after-hours emergency policies for Koinonia Properties rentals."
     },
     {
       path: "/apply",
       title:
-        "Rental Applications | Koinonia Properties",
+        "Apply for a Rental Home | Koinonia Properties",
       description:
-        "Application guidance for active Koinonia Properties rental listings."
+        "Apply for a Koinonia Properties rental. $35 application fee, limited to the actual cost of screening."
     },
     {
       path: "/maintenance",
       title:
-        "Maintenance Guidance | Koinonia Properties",
+        "Request Maintenance | 24/7 Emergencies | Koinonia Properties",
       description:
-        "Routine maintenance guidance and contact direction for Koinonia Properties residents and managed properties."
+        "Request maintenance from Koinonia Properties. Emergencies get a call back within one hour, 24/7. Call 911 first for fire, gas or carbon monoxide."
     },
     {
       path: "/vendors",
       title:
         "Vendor Information | Koinonia Properties",
       description:
-        "Vendor inquiry and coordination information for property maintenance and service providers."
+        "Information for qualified, insured maintenance vendors who want to work with Koinonia Properties."
     },
     {
       path: "/standards",
       title:
         "Service Standards | Koinonia Properties",
       description:
-        "Koinonia Properties service standards for owner communication, resident support, maintenance coordination, vendor communication, records, and privacy."
+        "Koinonia Properties service standards for owner communication, resident support, maintenance, records and privacy."
+    },
+    {
+      path: "/home-not-selling",
+      title:
+        "Home Not Selling? Rent It Instead | Koinonia Properties",
+      description:
+        "Listed home sitting on the market? See whether rent can cover your payment, how the IRS 2-of-5-year rule works and how we work with your listing agent."
+    },
+    {
+      path: "/for-agents",
+      title:
+        "Agent Referral Program | Property Management Referrals | Koinonia Properties",
+      description:
+        "Refer an owner, keep your client. One month of management fee paid brokerage to brokerage, and we send your client back to you when it's time to sell."
+    },
+    {
+      path: "/owner-faq",
+      title:
+        "Property Management FAQ for Owners | Koinonia Properties",
+      description:
+        "Straight answers on fees, guarantees, payouts, repair approvals and emergencies from Koinonia Properties."
+    },
+    {
+      path: "/about",
+      title:
+        "About Koinonia Properties | Front Range Property Management",
+      description:
+        "Meet Koinonia Properties, a local Front Range property manager that publishes every fee and answers quickly."
+    },
+    {
+      path: "/property-management/castle-rock",
+      title:
+        "Castle Rock Property Management | Koinonia Properties",
+      description:
+        "Property management in Castle Rock, CO. Published fees, 12-month tenant guarantee, payouts on the 10th and local market data."
+    },
+    {
+      path: "/property-management/parker",
+      title:
+        "Parker Property Management | Koinonia Properties",
+      description:
+        "Property management in Parker, CO. Published fees, 12-month tenant guarantee, payouts on the 10th and local rent data."
     }
   ]
 } as const;
